@@ -239,16 +239,21 @@ public class HeritrixLauncher {
                      < System.currentTimeMillis())
                     || (lastTimeReceivedData + timeOutInMillisReceivedData
                         < System.currentTimeMillis())) {
-                    final double timeoutInSeconds = timeOutInMillis / 1000.0;
+                    final double noActiveQueuesTimeoutInSeconds =
+                    	timeOutInMillis / 1000.0;
+                    final double noDataReceivedTimeoutInSeconds =
+                    	timeOutInMillisReceivedData / 1000.0;
                     log.warn("Aborting crawl because of inactivity. "
                              + "No active queues for the last "
                              + ((System.currentTimeMillis()
                                  - lastNonZeroActiveQueuesTime) / 1000.0)
-                             + " seconds (timeout is " + timeoutInSeconds
+                             + " seconds (timeout is " 
+                             + noActiveQueuesTimeoutInSeconds
                              + " seconds).  No traffic for the last "
                              + ((System.currentTimeMillis()
                                  - lastTimeReceivedData) / 1000.0)
-                             + " seconds (timeout is " + timeoutInSeconds
+                             + " seconds (timeout is " 
+                             + noDataReceivedTimeoutInSeconds
                              + " seconds). URLs in queue:"
                              + heritrixController.getQueuedUriCount());
                     heritrixController.requestCrawlStop(
