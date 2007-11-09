@@ -1,0 +1,4 @@
+# Seed URIs
+http://tv2.dk
+http://netarkivet.dk
+# enter one per line

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dk>
+  <netarkivet>
+    <test>
+      <list1>item1</list1>
+      <list1>item2</list1>
+      <list1>item3</list1>
+      <q>what is the question</q>
+    </test>
+    <answer>42</answer>
+  </netarkivet>
+    <netarkivet>
+        <answer>43</answer>
+    </netarkivet>
+</dk>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/monitor_settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<monitor>
+<!--  the password used to connect to the all Mbeanservers started by the application. This password must be same as the one in jmxremote.password -->
+<jmxMonitorRolePassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxMonitorRolePassword>
+<!-- number of hosts in the NetarchiveSuite deployment -->
+<numberOfHosts>1</numberOfHosts>
+<host1>
+<!-- name of one of the servers used in the deployment -->
+<name>localhost</name>
+<!-- list of jmxports used to monitor the application deployed on this server -->
+<jmxport>8100</jmxport>
+<jmxport>8110</jmxport>
+</host1>
+</monitor>
+</settings>

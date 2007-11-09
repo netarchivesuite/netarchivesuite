@@ -1,0 +1,456 @@
+<!--
+$Id$
+$Revision$
+$Date$
+$Author$
+
+The Netarchive Suite - Software to harvest and preserve websites
+Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<project name="NetarchiveSuite" default="compile">
+    <property name="srcdir" value="src"/>
+    <property name="classdir" value="classes"/>
+    <property name="webpages" value="webpages"/>
+    <property name="testdir" value="tests"/>
+    <property name="builder" value="NetarchiveSuite development group"/>
+    <property name="releasetestdir" value="${user.home}/tmp_releasetest"/>
+    <property name="depcheckdir" value="${user.home}/tmp_dependencycheck"/>
+    <property name="jarclasspath" value="
+    db/derby-10.1.1.0.jar
+    db/derbyclient-10.1.1.0.jar
+    commons-fileupload-1.0.jar
+    commons-net-1.4.1.jar
+    dom4j-1.5.2.jar
+    heritrix/lib/heritrix-1.12.1b.jar
+    heritrix-dependencies/commons-codec-1.3.jar
+    heritrix-dependencies/fastutil-5.0.3-heritrix-subset-1.0.jar
+    heritrix-dependencies/je-3.2.23.jar
+    heritrix-dependencies/mg4j-1.0.1.jar
+    commons-httpclient-3.0.1.jar
+    commons-logging-1.0.4.jar
+    httpunit-1.6.jar
+    jaxen-1.1.jar
+    jetty-6.1.1.jar
+    jetty-dependencies/ant-1.6.5.jar
+    jetty-dependencies/core-3.1.1.jar
+    jetty-dependencies/jetty-util-6.1.1.jar
+    jetty-dependencies/jsp-2.1.jar
+    jetty-dependencies/jsp-api-2.1.jar
+    jetty-dependencies/servlet-api-2.5-6.1.1.jar
+    jetty-dependencies/slf4j-api-1.2.jar
+    jetty-dependencies/slf4j-jcl-1.2.jar
+    sunjms-lib/imq-4.1-b22g.jar
+    sunjms-lib/jms-4.1-b22g.jar
+    mail-dependencies/mail-1.4.jar
+    mail-dependencies/activation-1.1.jar
+    libidn-0.5.9.jar
+    lucene-core-2.0.0.jar
+    deduplicator-0.3.0-20061218a.jar
+    "/>
+    <property name="toolclasspath" value="${jarclasspath} "/>
+    <path id="jars.path">
+        <pathelement path="${classdir}"/>
+        <fileset dir="lib">
+            <patternset id="jars.path.set">
+                <include name="db/derby-10.1.1.0.jar"/>
+            	<include name="db/derbyclient-10.1.1.0.jar"/>
+                <include name="commons-fileupload-1.0.jar"/>
+                <include name="commons-net-1.4.1.jar"/>
+                <include name="dom4j-1.5.2.jar"/>
+                <include name="heritrix/lib/heritrix-1.12.1b.jar"/>
+                <include name="heritrix-dependencies/commons-codec-1.3.jar"/>
+                <include name="heritrix-dependencies/fastutil-5.0.3-heritrix-subset-1.0.jar"/>
+                <include name="heritrix-dependencies/je-3.2.23.jar"/>
+                <include name="heritrix-dependencies/mg4j-1.0.1.jar"/>
+                <include name="commons-httpclient-3.0.1.jar"/>
+                <include name="commons-logging-1.0.4.jar"/>
+                <include name="junit-3.8.2.jar"/>
+                <include name="jaxen-1.1.jar"/>
+                <include name="jetty-6.1.1.jar"/>
+                <include name="jetty-dependencies/ant-1.6.5.jar"/>
+                <include name="jetty-dependencies/core-3.1.1.jar"/>
+                <include name="jetty-dependencies/jetty-util-6.1.1.jar"/>
+                <include name="jetty-dependencies/jsp-2.1.jar"/>
+                <include name="jetty-dependencies/jsp-api-2.1.jar"/>
+                <include name="jetty-dependencies/servlet-api-2.5-6.1.1.jar"/>
+                <include name="jetty-dependencies/slf4j-api-1.2.jar"/>
+                <include name="jetty-dependencies/slf4j-jcl-1.2.jar"/>
+                <include name="sunjms-lib/imq-4.1-b22g.jar"/>
+                <include name="sunjms-lib/jms-4.1-b22g.jar"/>
+                <include name="mail-dependencies/mail-1.4.jar"/>
+                <include name="mail-dependencies/activation-1.1.jar"/>
+                <include name="libidn-0.5.9.jar"/>
+                <include name="lucene-core-2.0.0.jar"/>
+                <include name="deduplicator-0.3.0-20061218a.jar"/>
+            </patternset>
+        </fileset>
+    </path>
+
+    <!-- A few extra libraries are required for the unittests for web pages. -->
+    <path id="unittest.jars.path">
+        <pathelement path="${classdir}"/>
+        <fileset dir="lib">
+            <patternset refid="jars.path.set"/>
+        </fileset>
+        <fileset dir="tests/lib">
+            <include name="httpunit-1.6.jar"/>
+            <include name="httpunit-dependencies/nekohtml-0.9.4.jar"/>
+            <include name="db/derbytools-10.1.1.0.jar"/>
+            <include name="mockobjects-core-0.09.jar"/>
+            <include name="mockobjects-jdk1.4-0.09.jar"/>
+            <include name="mockobjects-jdk1.4-j2ee1.3-0.09.jar"/>
+            <include name="jakarta-oro-2.0.8.jar"/>
+        </fileset>
+    </path>
+
+    <target name="compile">
+        <!-- ensure output dir exists -->
+        <mkdir dir="${classdir}"/>
+        <javac source="1.5" srcdir="${srcdir}" destdir="${classdir}" debug="on" encoding="UTF-8">
+            <classpath refid="jars.path"/>
+        </javac>
+        <copy todir="${classdir}">
+            <fileset dir="${srcdir}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
+    <target name="compiletests" depends="compile">
+        <javac source="1.5" srcdir="${testdir}" destdir="${classdir}" debug="on" encoding="UTF-8">
+            <classpath refid="unittest.jars.path"/>
+        </javac>
+        <copy todir="${classdir}">
+            <fileset dir="${testdir}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
+    <target name="compileall" depends="compile,compiletests"></target>
+
+    <target name="compileclean" depends="clean,compileall"
+        description="cleans up before doing a compileall">
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${classdir}/dk"/>
+        <delete dir="${classdir}/webpages"/>
+        <delete verbose="false">
+           <fileset dir="webpages">
+              <include name="*.war"/>
+           </fileset>
+        </delete>
+        <delete verbose="false">
+           <fileset dir="lib">
+              <include name="dk.netarkivet.*.jar"/>
+           </fileset>
+        </delete>
+    </target>
+
+    <target name="unittest" depends="compileclean">
+        <chmod perm="+x">
+            <fileset dir="tests/dk/netarkivet/harvester/sidekick/data/">
+                <include name="*.sh"/>
+            </fileset>
+        </chmod>
+        <junit fork="true">
+            <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
+            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
+            <classpath refid="unittest.jars.path"/>
+            <formatter type="brief" usefile="false"/>
+            <test name="dk.netarkivet.UnitTesterSuite"/>
+        </junit>
+    </target>
+
+    <target name="fulltest" depends="compileclean">
+        <junit fork="true">
+            <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
+            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
+            <classpath refid="unittest.jars.path"/>
+            <formatter type="brief" usefile="false"/>
+            <test name="dk.netarkivet.FullTesterSuite"/>
+        </junit>
+    </target>
+
+    <target name="jarfiles" depends="commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar">
+    </target>
+
+    <target name="warfiles" depends="clean">
+        <!-- make the WAR-files -->
+        <war destfile="${webpages}/HarvestDefinition.war" basedir="${webpages}/HarvestDefinition" update="no" webxml="${webpages}/HarvestDefinition/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+        <war destfile="${webpages}/History.war" basedir="${webpages}/History" update="no" webxml="${webpages}/History/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+        <war destfile="${webpages}/BitPreservation.war" basedir="${webpages}/BitPreservation" update="no" webxml="${webpages}/BitPreservation/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+        <war destfile="${webpages}/QA.war" basedir="${webpages}/QA" update="no" webxml="${webpages}/QA/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+        <war destfile="${webpages}/Status.war" basedir="${webpages}/Status" webxml="${webpages}/Status/WEB-INF/web.xml">
+            <include name="**/*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <webinf dir="lib/taglibs">
+                <include name="*.tld"/>
+            </webinf>
+        </war>
+    </target>
+
+    <target name="zipball" depends="jarfiles,warfiles">
+        <zip destfile="lib/WebArchive.zip">
+            <zipfileset dir=".">
+                <include name="lib/**/*.jar"/>
+                <exclude name="lib/*releasetest.jar"/>
+                <include name="conf/**"/>
+                <include name="webpages/*.war"/>
+                <include name="log"/>
+                <include name="derby.properties"/>
+                <!--<include name="harvestdefinitionbasedir/emptyhddb.jar"/>-->
+                <include name="harvestdefinitionbasedir/fullhddb.jar"/>
+            </zipfileset>
+            <!-- include the derbytools.jar in order to use derby adminstration tool ij -->
+	    <zipfileset
+		dir="."
+		includes="tests/lib/db/derbytools-10.1.1.0.jar"
+		fullpath="lib/db/derbytools-10.1.1.0.jar"
+	     />
+        </zip>
+    </target>
+
+    <target name="sourcezipball" depends="compileclean">
+        <zip basedir="." destfile="lib/WebArchive.src.zip">
+            <include name="build.xml"/>
+            <include name="conf/**"/>
+            <include name="webpages/*.war"/>
+            <include name="src/**/*.java"/>
+            <include name="log"/>
+        </zip>
+    </target>
+
+    <target name="javadoc" description=" Build the javadocs">
+        <javadoc author="false"
+                 destdir="docs/apidocs"
+                 packagenames="dk.netarkivet.common.*,dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
+                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*"
+                 sourcepath="src"
+                 use="true"
+                 version="false"
+                 package="true">
+            <classpath refid="jars.path"/>
+        </javadoc>
+    </target>
+
+    <target name="releasezipball" depends="javadoc,jarfiles,warfiles">
+        <zip basedir="." destfile="NetarchiveSuite.zip">
+            <include name="docs/apidocs/**"/>
+            <include name="conf/**"/>
+            <include name="harvestdefinitionbasedir/**"/>
+            <include name="lib/**"/>
+            <include name="log"/>
+            <include name="modules/**"/>
+            <include name="scripts/simple_harvest/**"/>
+            <include name="scripts/sql/create**"/>
+            <include name="src/**"/>
+            <include name="tests/**"/>
+            <exclude name="tests/compatibility"/>
+            <exclude name="tests/compatibility/**"/>
+            <include name="webpages/**"/>
+            <include name="build.xml"/>
+            <include name="derby.properties"/>
+            <include name="LICENSE.txt"/>
+            <include name="README.txt"/>
+        </zip>
+    </target>
+
+    <target name="commonjar" depends="compileclean">
+        <jar destfile="lib/dk.netarkivet.common.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/common/**/*.class"/>
+            <include name="dk/netarkivet/common/**/*.properties"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path" value="${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="archivejar" depends="compileclean">
+        <jar destfile="lib/dk.netarkivet.archive.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/archive/**/*.class"/>
+            <include name="dk/netarkivet/archive/**/*.properties"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="harvesterjar" depends="compileclean">
+        <copy todir="${classdir}">
+            <fileset dir=".">
+                <include name="modules/**"/>
+            </fileset>
+        </copy>
+
+        <jar destfile="lib/dk.netarkivet.harvester.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/harvester/**/*.class"/>
+            <include name="dk/netarkivet/harvester/**/*.properties"/>
+            <include name="modules/**"/>
+            <!-- removed jndi.properties from src
+		 <include name="jndi.properties"/> -->
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="viewerproxyjar" depends="compileclean">
+        <jar destfile="lib/dk.netarkivet.viewerproxy.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/viewerproxy/**/*.class"/>
+            <include name="dk/netarkivet/viewerproxy/**/*.properties"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="monitorjar" depends="compileclean">
+        <jar destfile="lib/dk.netarkivet.monitor.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/monitor/**/*.class"/>
+            <include name="dk/netarkivet/monitor/**/*.properties"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path"
+                           value="dk.netarkivet.common.jar
+                                  ${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="deployjar" depends="compileclean">
+        <jar destfile="lib/dk.netarkivet.deploy.jar" basedir="${classdir}" update="no">
+            <include name="dk/netarkivet/deploy/**/*.class"/>
+            <include name="dk/netarkivet/deploy/**/*.properties"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path"
+                           value="dk.netarkivet.common.jar
+                                  dk.netarkivet.archive.jar
+                                  dk.netarkivet.harvester.jar
+                                  dk.netarkivet.viewerproxy.jar
+                                  dk.netarkivet.monitor.jar
+                                  ${jarclasspath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="checkdep" depends="jarfiles">
+        <delete dir="${depcheckdir}" failonerror="no"/>
+        <mkdir dir="${depcheckdir}"/>
+        <javac source="1.5" destdir="${depcheckdir}" srcdir="tests">
+            <filename name="dk/netarkivet/common/tools/ClassDependencies.java"/>
+        </javac>
+        <java fork="yes" classname="dk.netarkivet.common.tools.ClassDependencies" logerror="yes" output="${depcheckdir}/classes">
+            <classpath>
+                <path path="${depcheckdir}"/>
+                <path path="./lib/dk.netarkivet.common.jar"/>
+                <path path="./lib/dk.netarkivet.archive.jar"/>
+                <path path="./lib/dk.netarkivet.harvester.jar"/>
+                <path path="./lib/dk.netarkivet.viewerproxy.jar"/>
+                <path path="./lib/dk.netarkivet.deploy.jar"/>
+                <path path="./lib/dk.netarkivet.monitor.jar"/>
+                <path refid="unittest.jars.path"/>
+            </classpath>
+            <arg value="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication"/>
+            <arg value="dk.netarkivet.archive.bitarchive.BitarchiveApplication"/>
+            <arg value="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication"/>
+            <arg value="dk.netarkivet.deploy.DeployApplication"/>
+            <arg value="dk.netarkivet.harvester.harvesting.HarvestControllerApplication"/>
+            <arg value="dk.netarkivet.harvester.webinterface.HarvestDefinitionApplication"/>
+            <arg value="dk.netarkivet.viewerproxy.ViewerProxyApplication"/>
+            <arg value="dk.netarkivet.harvester.sidekick.SideKick"/>
+            <arg value="dk.netarkivet.FullTesterSuite"/>
+            <arg value="-x"/>
+            <arg value="org/xml/sax"/>
+            <arg value="-x"/>
+            <arg value="com/sun/jndi/"/>
+        </java>
+    </target>
+
+<!-- targets used for making clover-reports -->
+
+    <path id="clover.jars.path">
+        <path refid="unittest.jars.path"/>
+        <fileset dir="/home/konfig">
+            <include name=".ant/lib/clover.jar"/>
+        </fileset>
+    </path>
+
+    <target name="unittest.with.clover" depends="with.clover, compileclean">
+        <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
+            printsummary="withOutAndErr">
+            <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
+            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
+            <jvmarg value="-Ddk.netarkivet.environment.environmentName=CLOVER"/>
+            <jvmarg value="-Ddk.netarkivet.ftp.serverName=localhost"/>
+            <classpath refid="clover.jars.path"/>
+            <formatter type="brief" usefile="false"/>
+            <test name="dk.netarkivet.UnitTesterSuite"/>
+        </junit>
+    </target>
+
+    <target name="with.clover">
+    <taskdef resource="clovertasks"/>
+    <typedef resource="clovertypes"/>
+        <clover-setup initString="clover-db/mycoverage.db"
+            flushpolicy="interval" flushinterval="1000">
+            <files>
+                <exclude name="tests/**/*Tester*.java"/>
+            </files>
+
+        </clover-setup>
+    </target>
+
+    <target name="clover.report" depends="with.clover, unittest.with.clover">
+        <clover-report>
+            <current outfile="/usr/local/apache/htdocs/clover/clover_iteration5">
+                <!-- In the HTML output, put least absolute covered on top -->
+                <format type="html" orderby="ElementsUncoveredDesc"/>
+                <fileset dir="src" includes="**/*">
+                </fileset>
+            </current>
+        </clover-report>
+    </target>
+</project>

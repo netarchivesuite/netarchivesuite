@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:set="http://www.netarkivet.dk/schemas/monitor_settings"
+    targetNamespace="http://www.netarkivet.dk/schemas/monitor_settings"
+    elementFormDefault="qualified" >
+
+    <element name="settings">
+        <complexType>
+            <all>
+                <element name="monitor" type="set:deploy"/>
+            </all>
+        </complexType>
+    </element>
+
+    <complexType name="deploy">
+        <all>
+            <element name="jmxMonitorRolePassword" type="string"/>
+            <element name="numberOfHosts" type="integer"/>
+            <element name="host1" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host2" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host3" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host4" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host5" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host6" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host7" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host8" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host9" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host10" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host11" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host12" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host13" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host14" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host15" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host16" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host17" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host18" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host19" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host20" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host21" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host22" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host23" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host24" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host25" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host26" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host27" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host28" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host29" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host30" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host31" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host32" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host33" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host34" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host35" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host36" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host37" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host38" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host39" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host40" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host41" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host42" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host43" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host44" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host45" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host46" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host47" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host48" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host49" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host50" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host51" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host52" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host53" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host54" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host55" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host56" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host57" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host58" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host59" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host60" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host61" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host62" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host63" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host64" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host65" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host66" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host67" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host68" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host69" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host70" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host71" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host72" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host73" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host74" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host75" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host76" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host77" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host78" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host79" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host80" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host81" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host82" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host83" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host84" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host85" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host86" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host87" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host88" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host89" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host90" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host91" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host92" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host93" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host94" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host95" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host96" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host97" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host98" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host99" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="host100" minOccurs="0">
+                <complexType>
+                    <sequence>
+                        <element name="name" type="string"/>
+                        <element name="jmxport" type="integer" minOccurs="1"
+                                 maxOccurs="unbounded"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </all>
+    </complexType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    directory paths in windows and unix -->
+    <simpleType name="directoryPath" >
+        <restriction base="string" >
+            <pattern value=".*" />
+        </restriction>
+    </simpleType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    hostnames (numerical, named, and localhost) -->
+    <simpleType name="hostname" >
+        <restriction base="string" >
+            <pattern value=".*"/>
+        </restriction>
+    </simpleType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    java classnames -->
+    <simpleType name="classname" >
+        <restriction base="string">
+            <pattern value=".*" />
+        </restriction>
+    </simpleType>
+
+</schema>
