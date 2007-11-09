@@ -329,6 +329,25 @@
     <option name="GENERATE_IIOP_STUBS" value="false" />
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/branches" />
+                  <option value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
   </component>
