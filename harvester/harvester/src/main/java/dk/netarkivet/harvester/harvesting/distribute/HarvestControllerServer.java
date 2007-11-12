@@ -132,8 +132,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     
     /**
      * In this constructor, the server creates an instance of the
-     * HarvestController, uploads any arc-files from incomplete harvests
-     * and starts listening for new doOneCrawl messages.
+     * HarvestController, uploads any arc-files from incomplete harvests.
+     * Then it starts listening for new doOneCrawl messages, unless there
+     * is no available space. In that case, it sends a notication to
+     * the administrator and pauses.
      *
      * @throws PermissionDenied
      *             If the serverdir or oldjobsdir can't be created
@@ -199,7 +201,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     		break;
     	default:
     		throw new UnknownID(p + " is not a valid priority");
-    	}        
+    	}
+    	// Only listen for harvesterjobs if enough available space
     	long availableSpace = FileUtils.getBytesFree(serverDir);
     	if (availableSpace > minSpaceRequired) {
     		log.info("Starts to listen to new jobs on '" + jobChannel + "'");
