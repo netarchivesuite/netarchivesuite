@@ -19,7 +19,7 @@ echo INSTALLING TO:kb-dev-bar-010.bitarkiv.kb.dk
 echo copying $1 to:kb-dev-bar-010.bitarkiv.kb.dk
 scp $1 $3@kb-dev-bar-010.bitarkiv.kb.dk:
 echo unzipping $1 at:kb-dev-bar-010.bitarkiv.kb.dk
-ssh $3@kb-dev-bar-010.bitarkiv.kb.dk cmd /c unzip.exe -d UNITTEST -o $1
+ssh $3@kb-dev-bar-010.bitarkiv.kb.dk cmd /c unzip.exe -q -d UNITTEST -o $1
 echo copying settings and scripts
 scp -r kb-dev-bar-010.bitarkiv.kb.dk/* $3@kb-dev-bar-010.bitarkiv.kb.dk:UNITTEST\\conf\\
 echo make scripts executable
@@ -30,7 +30,7 @@ echo INSTALLING TO:kb-dev-bar-011.bitarkiv.kb.dk
 echo copying $1 to:kb-dev-bar-011.bitarkiv.kb.dk
 scp $1 $3@kb-dev-bar-011.bitarkiv.kb.dk:
 echo unzipping $1 at:kb-dev-bar-011.bitarkiv.kb.dk
-ssh $3@kb-dev-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -d UNITTEST -o $1
+ssh $3@kb-dev-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d UNITTEST -o $1
 echo copying settings and scripts
 scp -r kb-dev-bar-011.bitarkiv.kb.dk/* $3@kb-dev-bar-011.bitarkiv.kb.dk:UNITTEST\\conf\\
 echo make scripts executable
@@ -41,7 +41,7 @@ echo INSTALLING TO:kb-dev-bar-012.bitarkiv.kb.dk
 echo copying $1 to:kb-dev-bar-012.bitarkiv.kb.dk
 scp $1 $3@kb-dev-bar-012.bitarkiv.kb.dk:
 echo unzipping $1 at:kb-dev-bar-012.bitarkiv.kb.dk
-ssh $3@kb-dev-bar-012.bitarkiv.kb.dk cmd /c unzip.exe -d UNITTEST -o $1
+ssh $3@kb-dev-bar-012.bitarkiv.kb.dk cmd /c unzip.exe -q -d UNITTEST -o $1
 echo copying settings and scripts
 scp -r kb-dev-bar-012.bitarkiv.kb.dk/* $3@kb-dev-bar-012.bitarkiv.kb.dk:UNITTEST\\conf\\
 echo make scripts executable
@@ -52,7 +52,7 @@ echo INSTALLING TO:kb-dev-bar-013.bitarkiv.kb.dk
 echo copying $1 to:kb-dev-bar-013.bitarkiv.kb.dk
 scp $1 $3@kb-dev-bar-013.bitarkiv.kb.dk:
 echo unzipping $1 at:kb-dev-bar-013.bitarkiv.kb.dk
-ssh $3@kb-dev-bar-013.bitarkiv.kb.dk cmd /c unzip.exe -d UNITTEST -o $1
+ssh $3@kb-dev-bar-013.bitarkiv.kb.dk cmd /c unzip.exe -q -d UNITTEST -o $1
 echo copying settings and scripts
 scp -r kb-dev-bar-013.bitarkiv.kb.dk/* $3@kb-dev-bar-013.bitarkiv.kb.dk:UNITTEST\\conf\\
 echo make scripts executable
@@ -63,7 +63,7 @@ echo INSTALLING TO:kb-dev-bar-014.bitarkiv.kb.dk
 echo copying $1 to:kb-dev-bar-014.bitarkiv.kb.dk
 scp $1 $3@kb-dev-bar-014.bitarkiv.kb.dk:
 echo unzipping $1 at:kb-dev-bar-014.bitarkiv.kb.dk
-ssh $3@kb-dev-bar-014.bitarkiv.kb.dk cmd /c unzip.exe -d UNITTEST -o $1
+ssh $3@kb-dev-bar-014.bitarkiv.kb.dk cmd /c unzip.exe -q -d UNITTEST -o $1
 echo copying settings and scripts
 scp -r kb-dev-bar-014.bitarkiv.kb.dk/* $3@kb-dev-bar-014.bitarkiv.kb.dk:UNITTEST\\conf\\
 echo make scripts executable

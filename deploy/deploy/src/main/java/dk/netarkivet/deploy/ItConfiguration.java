@@ -533,7 +533,7 @@ public class ItConfiguration {
                             startScriptUser = "$2";
                             dir = ""; // "\"" + host.getInstallDirWindows() +
                             // "\"";
-                            unzip = "cmd /c unzip.exe -d " + environmentName
+                            unzip = "cmd /c unzip.exe -q -d " + environmentName
                                     + " -o $1";
                             confDir = environmentName + "\\\\conf\\\\";
                             ext = ".bat";
