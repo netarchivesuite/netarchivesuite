@@ -391,6 +391,14 @@ public class Settings {
      */
     public static final String HARVEST_CONTROLLER_SERVERDIR
             = "settings.harvester.harvesting.serverDir";
+    
+    
+    /**
+     * Check, that the serverdir has adequate this amount of bytes
+     * available before accepting any harvest-jobs.
+     */
+    public static final String HARVEST_SERVERDIR_MINSPACE
+    		= "settings.harvester.harvesting.minSpaceLeft";
 
     /**
      * The directory in which data from old jobs is kept after uploading.  Each

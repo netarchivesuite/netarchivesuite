@@ -530,6 +530,11 @@
                  uploading.  Each directory from serverDir will be moved to
                  here if any data remains, either due to failed uploads or
                  because it wasn't attempted uploaded. -->
+      <!--  The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is 
+                 400000000 bytes (~400 Mbytes).
+            -->
+      <minSpaceLeft>400000000</minSpaceLeft>
       <oldjobsDir>oldjobs</oldjobsDir>
       <!-- Pool to take jobs from -->
       <queuePriority>HIGHPRIORITY</queuePriority>

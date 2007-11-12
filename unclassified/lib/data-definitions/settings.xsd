@@ -243,30 +243,31 @@
 
     <complexType name="harvesting">
         <all>
-            <element name="serverDir" type="set:directoryPath" />
-            <element name="oldjobsDir" type="set:directoryPath" />
-            <element name="heritrix">
-                <complexType>
-                    <all>
-                        <element name="inactivityTimeout" type="long"/>
-                        <element name="noresponseTimeout" type="long"/>
-                        <element name="adminName" type="string"/>
-                        <element name="adminPassword" type="string"/>
-                        <element name="guiPort" type="set:userPort"/>
-                        <element name="jmxPort" type="set:userPort"/>
-                        <element name="heapSize" type="set:memorySize"/>
-                    </all>
-                </complexType>
-            </element>
-            <element name="queuePriority">
-                <simpleType>
-                    <restriction base="string">
-                        <enumeration value="HIGHPRIORITY" />
-                        <enumeration value="LOWPRIORITY" />
-                    </restriction>
-                </simpleType>
-            </element>
-            <element name="isrunningFile" type="set:directoryPath"/>
+        	<element name="serverDir" type="set:directoryPath" />
+        	<element name="minSpaceLeft" type="long"/>
+        	<element name="oldjobsDir" type="set:directoryPath" />
+        	<element name="heritrix">
+        		<complexType>
+        			<all>
+        				<element name="inactivityTimeout" type="long" />
+        				<element name="noresponseTimeout" type="long" />
+        				<element name="adminName" type="string" />
+        				<element name="adminPassword" type="string" />
+        				<element name="guiPort" type="set:userPort" />
+        				<element name="jmxPort" type="set:userPort" />
+        				<element name="heapSize" type="set:memorySize" />
+        			</all>
+        		</complexType>
+        	</element>
+        	<element name="queuePriority">
+        		<simpleType>
+        			<restriction base="string">
+        				<enumeration value="HIGHPRIORITY" />
+        				<enumeration value="LOWPRIORITY" />
+        			</restriction>
+        		</simpleType>
+        	</element>
+        	<element name="isrunningFile" type="set:directoryPath" />
         </all>
     </complexType>
 

@@ -94,7 +94,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 "Starting HarvestControllerServer.";
     /** The message to write to log when server is started. */
     private static final String STARTED_MESSAGE =
-                "HarvestControllerServer started.";
+                "HarvestControllerServer started.";    
     /** The message to write to log when stopping the server. */
     private static final String CLOSING_MESSAGE =
                 "Closing HarvestControllerServer.";
@@ -124,8 +124,12 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** This is true while a doOneCrawl is running. No jobs are accepted while
      * this boolean is true */
     private boolean running = false;
+    /** Jobs are fetched from this queue. */ 
     private final ChannelID jobChannel;
-
+    
+    /** Min. space required to start a job. */
+    private final long minSpaceRequired;
+    
     /**
      * In this constructor, the server creates an instance of the
      * HarvestController, uploads any arc-files from incomplete harvests
@@ -139,56 +143,74 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * priority.
      */
     private HarvestControllerServer() throws IOFailure {
-        log.info(STARTING_MESSAGE);
+    	log.info(STARTING_MESSAGE);
 
-        // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
-        // (where old crawl dirs are stored) exist.
-        File serverDir = new File(
-                Settings.get(Settings.HARVEST_CONTROLLER_SERVERDIR));
-        ApplicationUtils.dirMustExist(serverDir);
-        log.info("Serverdir: '" + serverDir + "'");
+    	// Make sure serverdir (where active crawl-dirs live) and oldJobsDir
+    	// (where old crawl dirs are stored) exist.
+    	File serverDir = new File(
+    			Settings.get(Settings.HARVEST_CONTROLLER_SERVERDIR));
+    	ApplicationUtils.dirMustExist(serverDir);
+    	log.info("Serverdir: '" + serverDir + "'");
+    	minSpaceRequired = Settings.getLong(Settings.HARVEST_SERVERDIR_MINSPACE);
+    	if (minSpaceRequired <= 0L) {
+    		log.warn(
+    				"Wrong setting of minSpaceLeft read from Settings: "
+    				+ minSpaceRequired);
+    		throw new ArgumentNotValid(
+    				"Wrong setting of minSpaceLeft read from Settings: "
+    				+ minSpaceRequired);
+    	}
 
-        controller = HarvestController.getInstance();
-        
-        // Set properties "heritrix.version" and
-        // "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy"
-        System.setProperty(HERITRIX_VERSION_PROPERTY,
-                Constants.getHeritrixVersionString());
-        System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
-                "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-                + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy," 
-                + "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
-                + "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");
-        
-        // Get JMS-connection
-        // Channel THIS_HACO is only used for replies to store messages so
-        // do not set as listener here. It is registered in the arcrepository
-        // client.
-        // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
-        // registered below.
-        con = JMSConnectionFactory.getInstance();
-        log.debug("Obtained JMS connection.");
+    	log.info("Harvesting requires at least " + minSpaceRequired + " bytes free.");
 
-        // If any unprocessed jobs are left on the server, process them now
-        processOldJobs();
+    	controller = HarvestController.getInstance();
 
-        //Environment and connections are now ready for processing of messages
-        JobPriority p = JobPriority.valueOf(
-                Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY));
-        switch (p) {
-            case HIGHPRIORITY:
-                jobChannel = Channels.getAnyHighpriorityHaco();
-                break;
-            case LOWPRIORITY:
-                jobChannel = Channels.getAnyLowpriorityHaco();
-                break;
-            default:
-                throw new UnknownID(p + " is not a valid priority");
-        }
-        log.info("Starts to listen to new jobs on '" + jobChannel + "'");
-        con.setListener(jobChannel, this);
-        log.info(STARTED_MESSAGE);
+    	// Set properties "heritrix.version" and
+    	// "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy"
+    	System.setProperty(HERITRIX_VERSION_PROPERTY,
+    			Constants.getHeritrixVersionString());
+    	System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
+    			"org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
+    			+ "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+    			+ "org.archive.crawler.frontier.BucketQueueAssignmentPolicy," 
+    			+ "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
+    			+ "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");        
+    	// Get JMS-connection
+    	// Channel THIS_HACO is only used for replies to store messages so
+    	// do not set as listener here. It is registered in the arcrepository
+    	// client.
+    	// Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
+    	// registered below.
+    	con = JMSConnectionFactory.getInstance();
+    	log.debug("Obtained JMS connection.");
+
+    	// If any unprocessed jobs are left on the server, process them now
+    	processOldJobs();
+
+    	//Environment and connections are now ready for processing of messages
+    	JobPriority p = JobPriority.valueOf(
+    			Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY));
+    	switch (p) {
+    	case HIGHPRIORITY:
+    		jobChannel = Channels.getAnyHighpriorityHaco();
+    		break;
+    	case LOWPRIORITY:
+    		jobChannel = Channels.getAnyLowpriorityHaco();
+    		break;
+    	default:
+    		throw new UnknownID(p + " is not a valid priority");
+    	}        
+    	long availableSpace = FileUtils.getBytesFree(serverDir);
+    	if (availableSpace > minSpaceRequired) {
+    		log.info("Starts to listen to new jobs on '" + jobChannel + "'");
+    		con.setListener(jobChannel, this);
+    		log.info(STARTED_MESSAGE);
+    	} else {
+    		String PAUSED_MESSAGE = "Not enough available diskspace. Only "
+    			+ availableSpace + " bytes available. Harvester is paused.";
+    		log.warn(PAUSED_MESSAGE);
+    		NotificationsFactory.getInstance().errorEvent(PAUSED_MESSAGE);
+    	}
     }
 
     /**

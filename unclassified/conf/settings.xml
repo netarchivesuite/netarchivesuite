@@ -520,6 +520,11 @@
             <!-- Each job gets a subdir of this dir. Job data is written and
                  Heritrix writes to that subdir-->
             <serverDir>server</serverDir>
+            <!--  The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is 
+                 400000000 bytes (~400 Mbytes).
+            -->
+            <minSpaceLeft>400000000</minSpaceLeft>
             <!-- The directory in which data from old jobs is kept after
                  uploading.  Each directory from serverDir will be moved to
                  here if any data remains, either due to failed uploads or
