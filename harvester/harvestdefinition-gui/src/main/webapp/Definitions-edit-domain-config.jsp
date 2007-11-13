@@ -226,6 +226,13 @@ Display all the form information for this domain
                         }
                         //Display multi-select showing all seedlists with
                         //actual seedlists pre-selected
+                        // If only one seed to choose from, preselect this
+                        // - done by adding the one seedList to the list 
+                        //   of actual seeds. 
+                        
+   						if (allSeedLists.size() == 1) { 
+   							actualSeedLists.addAll(allSeedLists);
+   						}
                         for (SeedList sl : allSeedLists) {
                             String selected = "";
                             if (actualSeedLists.contains(sl)) {
