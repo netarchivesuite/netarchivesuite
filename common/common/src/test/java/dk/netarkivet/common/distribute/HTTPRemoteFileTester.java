@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -121,6 +120,21 @@ public class HTTPRemoteFileTester extends TestCase {
                      FileUtils.readFile(tempFile));
         assertFalse("Original file shouldn't exist anymore",
                     TestInfo.FILE1.exists());
+        //recreate the file for next test
+        tempFile.renameTo(TestInfo.FILE1);
+
+        //Copying to a file with no parent
+        rf = new ForceRemoteHTTPRemoteFile(TestInfo.FILE1,
+                                           false, true, false);
+        tempFile = new File("dummyfile");
+        tempFile.deleteOnExit();
+        rf.copyTo(tempFile);
+        assertEquals("Files should be equal",
+                     contents,
+                     FileUtils.readFile(tempFile));
+        assertFalse("Original file shouldn't exist anymore",
+                    TestInfo.FILE1.exists());
+        FileUtils.remove(tempFile);
     }
 
     public void testCleanup() throws Exception {

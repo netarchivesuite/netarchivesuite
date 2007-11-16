@@ -76,7 +76,7 @@ public class ARCLookup {
         ArgumentNotValid.checkNotNull(
                 arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         this.arcRepositoryClient = arcRepositoryClient;
-        this.luceneIndexDir = indexDir;
+        this.luceneIndexDir = indexDir.getAbsoluteFile();
         FileUtils.createDir(luceneIndexDir.getParentFile());
         luceneSearcher = null;
     }

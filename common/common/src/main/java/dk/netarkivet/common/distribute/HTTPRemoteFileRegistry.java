@@ -268,11 +268,12 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
                     FileUtils.writeFileToStream(fileInfo.file,
                                     httpServletResponse.getOutputStream());
                     request.setHandled(true);
+                    log.debug("Served file '" + fileInfo.file.getPath()
+                              + "' with URL '" + url + "'");
                 } else {
                     httpServletResponse.sendError(404);
+                    log.debug("File not found for URL '" + url + "'");
                 }
-                log.debug("Served file '" + fileInfo.file.getPath()
-                          + "' with URL '" + url + "'");
             }
         }
     }

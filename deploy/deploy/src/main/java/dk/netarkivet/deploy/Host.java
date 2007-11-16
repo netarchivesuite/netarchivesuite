@@ -472,7 +472,7 @@ public class Host {
                           + HarvestControllerServerMonitorHook.class.getName()
                           + " ./conf/" + res.getName() + " ";
 
-        File dir = res.getParentFile();
+        File dir = res.getAbsoluteFile().getParentFile();
         String fn = res.getName().replaceAll("harvester", "sidekick");
         writeStart(new File(dir, fn), sidekick, settingsfn,
                    logdir, logProperties, "");
@@ -562,8 +562,9 @@ public class Host {
                             File logpropDir, String loggingProperties,
                             String extraOptions) {
 
-        String logfn = writeLogPropertiesFile(appName, res.getParentFile(),
-                                              logpropDir, loggingProperties);
+        String logfn = writeLogPropertiesFile(
+                appName, res.getAbsoluteFile().getParentFile(), logpropDir,
+                loggingProperties);
         PrintWriter pw = null;
         PrintWriter pw2 = null;
         try {
@@ -604,7 +605,8 @@ public class Host {
                 appName = temp[0];
 
                 pw2 = new PrintWriter(new FileWriter(
-                        new File(res.getParentFile(), killAppName)));
+                        new File(res.getAbsoluteFile().getParentFile(),
+                                 killAppName)));
                 pw2.println("#!/bin/bash");
                 pw2.println("PIDS=$(ps -wwfe | grep " + appName
                             + " | grep -v grep | grep " + settingsfn

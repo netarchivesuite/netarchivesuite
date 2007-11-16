@@ -192,6 +192,7 @@ public class BitarchiveAdmin {
      */
     public File moveToStorage(File tempLocation) {
         ArgumentNotValid.checkNotNull(tempLocation, "tempLocation");
+        tempLocation = tempLocation.getAbsoluteFile();
         String arcFileName = tempLocation.getName();
 
         /**
@@ -442,6 +443,7 @@ public class BitarchiveAdmin {
      */
     public File getAtticPath(File existingFile) {
         // Find where the file resides so we can use a dir in the same place.
+        existingFile = existingFile.getAbsoluteFile();
         String arcFileName = existingFile.getName();
         File parentDir = existingFile.getParentFile().getParentFile();
         if (!isBitarchiveDirectory(parentDir)) {

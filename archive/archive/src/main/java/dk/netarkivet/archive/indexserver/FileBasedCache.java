@@ -60,7 +60,7 @@ public abstract class FileBasedCache<I> {
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
         this.cacheDir = new File(new File(Settings.get(Settings.CACHE_DIR)),
-                                 cacheName);
+                                 cacheName).getAbsoluteFile();
         log.info("Metadata cache for '" + cacheName + "' uses directory '"
                  + getCacheDir().getAbsolutePath() + "'");
         FileUtils.createDir(getCacheDir());

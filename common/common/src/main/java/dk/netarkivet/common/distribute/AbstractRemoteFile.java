@@ -92,6 +92,7 @@ public abstract class AbstractRemoteFile implements RemoteFile {
      */
     public void copyTo(File destFile) {
         ArgumentNotValid.checkNotNull(destFile, "File destFile");
+        destFile = destFile.getAbsoluteFile();
         if ((!destFile.isFile() || !destFile.canWrite())
             && (!destFile.getParentFile().isDirectory()
                 || !destFile.getParentFile().canWrite())) {

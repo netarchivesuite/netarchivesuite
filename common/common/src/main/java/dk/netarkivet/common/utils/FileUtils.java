@@ -685,7 +685,7 @@ public class FileUtils {
             // Want to be able to test on a file we're about to make, so
             // use parent dir if not already a dir.
             if (!f.isDirectory()) {
-                f = f.getParentFile();
+                f = f.getAbsoluteFile().getParentFile();
             }
             Process p = Runtime.getRuntime().exec(
                     new String[] {"df", "-P", "-B", "1", f.getAbsolutePath() });
@@ -735,7 +735,7 @@ public class FileUtils {
         File scriptFile = null;
         try {
             if (!f.isDirectory()) {
-                f = f.getParentFile();
+                f = f.getAbsoluteFile().getParentFile();
             }
 
             // create a .bat file to run a directory command
@@ -838,14 +838,14 @@ public class FileUtils {
 
         List<String> filePathList = new ArrayList<String>();
         List<String> crawlDirPath = new ArrayList<String>();
-        File tempFile = theFile;
+        File tempFile = theFile.getAbsoluteFile();
 
         filePathList.add(tempFile.getName());
         while ((tempFile = tempFile.getParentFile()) != null) {
             filePathList.add(tempFile.getName());
         }
 
-        tempFile = crawlDir;
+        tempFile = crawlDir.getAbsoluteFile();
         crawlDirPath.add(tempFile.getName());
         while ((tempFile = tempFile.getParentFile()) != null) {
             crawlDirPath.add(tempFile.getName());

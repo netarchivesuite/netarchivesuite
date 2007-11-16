@@ -30,17 +30,17 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
  * To change this template use File | Settings | File Templates.
  */
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.CollectionAsserts;
+import dk.netarkivet.testutils.TestFileUtils;
 
 public class WorkFilesTester extends TestCase {
     public void setUp() throws Exception {
@@ -63,10 +63,10 @@ public class WorkFilesTester extends TestCase {
                         });
         FileUtils.writeCollectionToFile(f, list1);
         File sortedFileRaw =
-                new File(TestInfo.WORKING_DIR, "sorted.txt");
+                new File(TestInfo.WORKING_DIR, "sorted.txt").getAbsoluteFile();
         assertFalse("Sorted version should not exist before asking for it",
                 sortedFileRaw.exists());
-        File sortedFileGen = WorkFiles.getSortedFile(f);
+        File sortedFileGen = WorkFiles.getSortedFile(f).getAbsoluteFile();
         assertEquals("Sorted file should have the expected name",
                 sortedFileRaw, sortedFileGen);
         assertTrue("Sorted version should exist after asking for it",

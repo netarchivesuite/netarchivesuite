@@ -180,6 +180,7 @@ public enum WorkFiles {
      * file, but have the name Constants.SORTED_OUTPUT_FILE defines.
      */
     static File getSortedFile(File unsortedFile) {
+        unsortedFile = unsortedFile.getAbsoluteFile();
         File sortedOutput = new File(unsortedFile.getParentFile(),
                 SORTED_OUTPUT_FILE);
         if (!unsortedFile.exists()) {

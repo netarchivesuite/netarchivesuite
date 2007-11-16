@@ -64,7 +64,7 @@ public class DeployApplication {
         ItConfiguration itConfig = new ItConfiguration(new File(fname));
         itConfig.setEnvironment(environmentName);
         itConfig.calculateDefaultSettings(new File(fnNameSettings)
-                .getParentFile());
+                .getAbsoluteFile().getParentFile());
         itConfig.loadDefaultSettings(new File(fnNameSettings), environmentName);
         File subdir = new File(outputdir);
         itConfig.writeSettings(subdir);

@@ -74,7 +74,7 @@ public class ExtractCDX {
     private static File toArcFile(String filename) {
         File f;
         try {
-            f = FileUtils.makeValidFileFromExisting(filename);
+            f = FileUtils.makeValidFileFromExisting(filename).getAbsoluteFile();
             if (!FileUtils.ARCS_FILTER.accept(f.getParentFile(), f.getName())) {
                 dieWithError("Could not accept " + filename
                         + ": was not an arc file");

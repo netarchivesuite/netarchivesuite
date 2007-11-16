@@ -151,7 +151,8 @@ public class ZipUtils {
 
         File tmpDir = null;
         try {
-            tmpDir = FileUtils.createUniqueTempDir(toDir.getParentFile(),
+            tmpDir = FileUtils.createUniqueTempDir(
+                    toDir.getAbsoluteFile().getParentFile(),
                     toDir.getName());
             File[] fromFiles = fromDir.listFiles();
             for (File f : fromFiles) {
@@ -228,7 +229,8 @@ public class ZipUtils {
                 + fromDir + "' must exist");
         ArgumentNotValid.checkTrue(!toDir.exists(), "destination directory '"
                 + toDir + "' must not exist");
-        File tempDir = FileUtils.createUniqueTempDir(toDir.getParentFile(),
+        File tempDir = FileUtils.createUniqueTempDir(
+                toDir.getAbsoluteFile().getParentFile(),
                 toDir.getName());
         try {
             File[] gzippedFiles = fromDir.listFiles();
