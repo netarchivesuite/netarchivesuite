@@ -139,7 +139,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="compileall" depends="compile,compiletests"></target>
 
-    <target name="compileclean" depends="clean,compileall"
+    <target name="compileclean" depends="clean,compile"
+        description="cleans up before doing a compile">
+    </target>
+
+    <target name="compileallclean" depends="clean,compile"
         description="cleans up before doing a compileall">
     </target>
 
@@ -158,7 +162,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </delete>
     </target>
 
-    <target name="unittest" depends="compileclean">
+    <target name="unittest" depends="compileallclean">
         <chmod perm="+x">
             <fileset dir="tests/dk/netarkivet/harvester/sidekick/data/">
                 <include name="*.sh"/>
@@ -174,7 +178,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </junit>
     </target>
 
-    <target name="fulltest" depends="compileclean">
+    <target name="fulltest" depends="compileallclean">
         <junit fork="true">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
@@ -227,34 +231,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </war>
     </target>
 
-    <target name="zipball" depends="jarfiles,warfiles">
-        <zip destfile="lib/WebArchive.zip">
-            <zipfileset dir=".">
-                <include name="lib/**/*.jar"/>
-                <exclude name="lib/*releasetest.jar"/>
-                <include name="conf/**"/>
-                <include name="webpages/*.war"/>
-                <include name="log"/>
-                <include name="derby.properties"/>
-                <!--<include name="harvestdefinitionbasedir/emptyhddb.jar"/>-->
-                <include name="harvestdefinitionbasedir/fullhddb.jar"/>
-            </zipfileset>
-            <!-- include the derbytools.jar in order to use derby adminstration tool ij -->
-	    <zipfileset
-		dir="."
-		includes="tests/lib/db/derbytools-10.1.1.0.jar"
-		fullpath="lib/db/derbytools-10.1.1.0.jar"
-	     />
-        </zip>
-    </target>
-
-    <target name="sourcezipball" depends="compileclean">
-        <zip basedir="." destfile="lib/WebArchive.src.zip">
-            <include name="build.xml"/>
+    <target name="sourcezipball" depends="clean">
+        <zip basedir="." destfile="NetarchiveSuite-src.zip">
             <include name="conf/**"/>
-            <include name="webpages/*.war"/>
-            <include name="src/**/*.java"/>
+            <include name="harvestdefinitionbasedir/**"/>
+            <include name="lib/**"/>
+            <exclude name="lib/dk.netarkivet.*.jar"/>
             <include name="log"/>
+            <include name="modules/**"/>
+            <include name="scripts/**"/>
+            <include name="src/**"/>
+            <include name="tests/**"/>
+            <include name="webpages"/>
+            <exclude name="webpages/*.war"/>
+            <include name="log"/>
+            <include name="build.xml"/>
+            <include name="derby.properties"/>
+            <include name="LICENSE.txt"/>
+            <include name="README.txt"/>
         </zip>
     </target>
 
@@ -279,14 +273,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="lib/**"/>
             <include name="log"/>
             <include name="modules/**"/>
-            <include name="scripts/simple_harvest/**"/>
-            <include name="scripts/sql/create**"/>
-            <include name="src/**"/>
-            <include name="tests/**"/>
-            <exclude name="tests/compatibility"/>
-            <exclude name="tests/compatibility/**"/>
-            <include name="webpages/**"/>
-            <include name="build.xml"/>
+            <zipfileset dir="." includes="scripts/**" excludes="scripts/**/*.sh"/>
+            <zipfileset dir="." includes="scripts/**/*.sh" filemode="755"/>
+            <include name="webpages/*.war"/>
             <include name="derby.properties"/>
             <include name="LICENSE.txt"/>
             <include name="README.txt"/>
@@ -418,7 +407,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </fileset>
     </path>
 
-    <target name="unittest.with.clover" depends="with.clover, compileclean">
+    <target name="unittest.with.clover" depends="with.clover, compileallclean">
         <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
             printsummary="withOutAndErr">
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>

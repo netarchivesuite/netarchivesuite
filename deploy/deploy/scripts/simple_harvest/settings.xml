@@ -64,7 +64,7 @@
         <!-- Error notification settings -->
         <notifications>
             <!-- Which class to instantiate to handle error notifications -->
-            <class>dk.netarkivet.common.utils.RememberNotifications</class>
+            <class>dk.netarkivet.common.utils.NoNotifications</class>
             <!-- The sender of emails (and recipient of bounces)-->
             <sender>edit@this.mail.address</sender>
             <!-- The recipient of emails -->
