@@ -32,14 +32,13 @@ import org.xml.sax.SAXException;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUI;
 
 /**
  * @version $Id$
  */
 public class IntegrityTests extends DataModelTestCase {
     private SecurityManager m;
-    private HarvestDefinitionGUI gui;
+    private GUIWebServer gui;
 
     public IntegrityTests(String s) {
             super(s);
@@ -74,12 +73,12 @@ public class IntegrityTests extends DataModelTestCase {
         Settings.reload();
         System.setSecurityManager(m);
         if (gui != null) {
-            gui.close();
+            gui.cleanup();
         }
     }
 
     public void testRun() throws IOException, SAXException {
-        gui = HarvestDefinitionGUI.getInstance();
+        gui = GUIWebServer.getInstance();
         WebConversation conv = new WebConversation();
         conv.setExceptionsThrownOnErrorStatus(false);
         WebResponse resp = conv.getResponse("http://localhost:"+Integer.toString(TestInfo.GUI_WEB_SERVER_PORT)+"/" + TestInfo.GUI_WEB_SERVER_WEBBASE);

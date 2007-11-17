@@ -79,7 +79,7 @@ public class ClassAsserts {
         } catch (Exception e) {
             throw new PermissionDenied("Unexpected error in unit test ", e);
         }
-        TestCase.assertEquals("Expect to find only one distinct instance of " +
+        TestCase.assertSame("Expect to find only one distinct instance of " +
                 "class " + c.getName(), o1, o2);
         if (o1 instanceof CleanupIF) {
             ((CleanupIF) o1).cleanup();

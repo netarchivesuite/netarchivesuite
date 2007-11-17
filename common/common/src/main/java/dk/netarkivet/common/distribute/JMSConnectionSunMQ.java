@@ -26,6 +26,8 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
+import com.sun.messaging.ConnectionConfiguration;
+import com.sun.messaging.ConnectionFactory;
 import com.sun.messaging.QueueConnectionFactory;
 import com.sun.messaging.TopicConnectionFactory;
 
@@ -61,7 +63,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @return A JMSConnection
      * @throws IOFailure when connection to JMS broker failed
      */
-    public static JMSConnectionSunMQ getInstance() throws UnknownID, IOFailure {
+    public static synchronized JMSConnectionSunMQ getInstance() throws UnknownID, IOFailure {
         if (instance == null) {
             instance = new JMSConnectionSunMQ();
         }
@@ -78,17 +80,17 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @throws JMSException
      * @return QueueConnectionFactory
      */
-    protected javax.jms.QueueConnectionFactory getQueueConnectionFactory()
+    protected QueueConnectionFactory getQueueConnectionFactory()
     throws JMSException {
         QueueConnectionFactory cFactory = new QueueConnectionFactory();
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqBrokerHostName,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqBrokerHostName,
                 getHost());
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqBrokerHostPort,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqBrokerHostPort,
                 String.valueOf(getPort()));
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqConsumerFlowLimit,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqConsumerFlowLimit,
                 "1");
         /*((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled, "true");
         ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectAttempts, "2");
@@ -106,16 +108,16 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @throws JMSException
      * @return TopicConnectionFactory
      */
-    protected javax.jms.TopicConnectionFactory getTopicConnectionFactory() throws JMSException {
+    protected TopicConnectionFactory getTopicConnectionFactory() throws JMSException {
         TopicConnectionFactory cFactory = new TopicConnectionFactory();
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqBrokerHostName,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqBrokerHostName,
                 getHost());
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqBrokerHostPort,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqBrokerHostPort,
                 String.valueOf(getPort()));
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
-                com.sun.messaging.ConnectionConfiguration.imqConsumerFlowLimit,
+        ((ConnectionFactory) cFactory).setProperty(
+                ConnectionConfiguration.imqConsumerFlowLimit,
                 "1");
         /*((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled, "true");
         ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectAttempts, "2");
@@ -146,5 +148,15 @@ public class JMSConnectionSunMQ extends JMSConnection {
      */
     protected Topic getTopic(String topicName) throws JMSException {
         return new com.sun.messaging.Topic(topicName);
+    }
+
+    /**
+     * Close the connection and reset the singleton
+     */
+    public void cleanup() {
+        synchronized (JMSConnectionSunMQ.class) {
+            instance = null;
+            super.cleanup();
+        }
     }
 }

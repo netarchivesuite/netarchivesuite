@@ -99,7 +99,8 @@ public class IntegrityTester extends TestCase {
         byte[] block = new byte[BLOCKSIZE];
         SUBDIR.mkdirs();
         File largeFile = new File(SUBDIR, LARGE_FILE);
-        OutputStream os = new FileOutputStream(largeFile);
+        OutputStream os
+                = new BufferedOutputStream(new FileOutputStream(largeFile));
         System.out.println("Creating file - this will take a long time");
         for (long l = 0; l < LARGE / ((long) BLOCKSIZE) + 1L; l++) {
             os.write(block);

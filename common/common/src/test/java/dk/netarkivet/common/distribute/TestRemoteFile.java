@@ -24,10 +24,10 @@ package dk.netarkivet.common.distribute;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.HashSet;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
@@ -40,7 +40,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Time: 3:09:26 PM
  * </pre>
  */
-public class TestRemoteFile extends HTTPSRemoteFile implements RemoteFile {
+public class TestRemoteFile extends HTTPRemoteFile implements RemoteFile {
     public boolean failsOnCopy;
 
     public static Map<RemoteFile,String> remainingRemoteFiles

@@ -62,7 +62,7 @@ import dk.netarkivet.testutils.TestMessageListener;
  * both operate correctly, both are tested together
  */
 public class IntegrityTests extends TestCase {
-    private static final String ARC_FILE_NAME = "Upload3.ARC";
+    private static final String ARC_FILE_NAME = "Upload5.ARC";
     private static final File TEST_DIR = new File("tests/dk/netarkivet/archive/bitarchive/distribute/data/");
     private static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     private static final File WORKING_DIR = new File(TEST_DIR, "working");
@@ -106,6 +106,8 @@ public class IntegrityTests extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     public void setUp() {
+        //new UseTestRemoteFile().setUp();
+
         Settings.set(Settings.BITARCHIVE_BATCH_JOB_TIMEOUT,
                      String.valueOf(1000));
 
@@ -227,8 +229,7 @@ public class IntegrityTests extends TestCase {
      * Test that monitor can receive and aggregate data from more than one
      * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile
      */
-    public void testBatchEndedMessageAggregation()
-     {
+    public void testBatchEndedMessageAggregation() throws InterruptedException {
          Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
          bas.close();
          JMSConnection con = JMSConnectionFactory.getInstance();
@@ -286,6 +287,8 @@ public class IntegrityTests extends TestCase {
          bam.visit(bem2);
 
          ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+         Thread.sleep(5000);
+         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
 
          //Now there should also be one BatchReplyMessage in the listener and the
          //monitor should have written the data to a remote file we can collect
@@ -338,8 +341,6 @@ public class IntegrityTests extends TestCase {
         MessageTestHandler handler = new MessageTestHandler();
         JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), handler);
         JMSConnectionFactory.getInstance().setListener(Channels.getThisHaco(), handler);
-        Settings.set(Settings.REMOTE_FILE_CLASS,
-                "dk.netarkivet.common.distribute.TestRemoteFile");
 
         assertTrue("File to upload must exist: " + FILE_TO_UPLOAD,
                 FILE_TO_UPLOAD.exists());
@@ -364,6 +365,12 @@ public class IntegrityTests extends TestCase {
             }
         }
 
+        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //ignore
+        }
         ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
 
         //assertEquals("Number of messages received by the server", 4 * LARGE_MESSAGE_COUNT, bas.getCountMessages());

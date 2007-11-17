@@ -383,9 +383,11 @@ public abstract class JMSConnection implements CleanupIF {
             if (myQConn != null) {
                 myQConn.close();
             }
+            myQConn = null;
             if (myTConn != null) {
                 myTConn.close();
             }
+            myTConn = null;
 
             // reset this to make sure anything that keeps an instance of this
             // now invalid object doesn't have any invalid references to work
@@ -393,15 +395,18 @@ public abstract class JMSConnection implements CleanupIF {
             if (consumers != null) {
                 consumers.clear();
             }
+            consumers = null;
             if (senders != null) {
                 senders.clear();
             }
+            senders = null;
             if (publishers != null) {
                 publishers.clear();
             }
         } catch (JMSException e) {
             throw new IOFailure("Error closing JMS Connection.", e);
         }
+
     }
 
     /**

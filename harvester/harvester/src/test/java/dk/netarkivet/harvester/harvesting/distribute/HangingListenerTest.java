@@ -43,6 +43,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.RememberNotifications;
 
@@ -77,9 +78,9 @@ public class HangingListenerTest extends TestCase {
      * @throws JMSException
      */
     public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
-         if (!Settings.get(Settings.JMS_BROKER_CLASS).equals("dk.netarkivet.common.distribute.JMSConnectionSunMQ")) {
-          return;
-      }
+        if (!Settings.get(Settings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
+            fail("Wrong message queue for test");
+        }
         JMSConnectionFactory.getInstance().cleanup();
         JMSConnectionFactory.getInstance();
         long blockingTime = 1000l;
