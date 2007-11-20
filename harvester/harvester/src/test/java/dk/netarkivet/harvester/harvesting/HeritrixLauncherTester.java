@@ -271,7 +271,7 @@ public class HeritrixLauncherTester extends TestCase {
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
         HeritrixFiles files =
                 (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
-                                                             "heritrixFiles").get(hl);
+                                                             "files").get(hl);
         ReflectUtils.getPrivateField(hl.getClass(),
         		"heritrixController").set(hl, new TestCrawlController(files));
         hl.doCrawl();

@@ -50,6 +50,11 @@ export HTTPPORT=8070
 ## Ports 8040-8048 are used
 export FILETRANSFERPORT=8040
 
+## Initial Heritrix GUI port (with JMX port one higher), must be += 2'ed after
+## each application started.
+## Ports 8090-8093 are used.
+export HERITRIXPORT=8090
+
 ## Set $KEEPDATA to non-empty to avoid cleaning data at the start of each run.
 ## This will make the startup process more complex, but will allow you to reuse
 ## what you did last time.
@@ -108,7 +113,9 @@ function startHarvestApp {
     priority=$2;
     priority_settings=-Dsettings.harvester.harvesting.harvestControllerPriority=${priority}PRIORITY;
     portsetting="-Dsettings.harvester.harvesting.queuePriority=${priority}PRIORITY \
-             -Dsettings.common.http.port=$HTTPPORT ";
+             -Dsettings.common.http.port=$HTTPPORT \
+             -Dsettings.harvester.harvesting.heritrix.guiPort=$HERITRIXPORT \
+             -Dsettings.harvester.harvesting.heritrix.jmxPort=$(( $HERITRIXPORT + 1 ))";
     runsetting=-Dsettings.harvester.harvesting.isrunningFile=./hcs${hcsid}Running.tmp;
     title="Harvest Controller (Priority ${priority})";
     dirsetting="-Dsettings.harvester.harvesting.serverDir=server$hcsid \
@@ -125,6 +132,7 @@ function startHarvestApp {
     $scriptfile;
     JMXPORT=$(( $JMXPORT + 1 ));
     HTTPPORT=$(( $HTTPPORT + 1 ));
+    HERITRIXPORT=$(( $HERITRIXPORT + 2 ));
 
     # This starts a SideKick that re-runs the script made before
     $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title SideKick \
