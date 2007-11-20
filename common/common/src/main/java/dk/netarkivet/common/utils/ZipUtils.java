@@ -49,7 +49,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class ZipUtils {
     private static Log log = LogFactory.getLog(ZipUtils.class.getName());
     /** The standard suffix for a gzipped file. */
-    private static final String GZIP_SUFFIX = ".gz";
+    public static final String GZIP_SUFFIX = ".gz";
 
     /** Zip the contents of a directory into a file.
      *  Does *not* zip recursively.
@@ -257,17 +257,28 @@ public class ZipUtils {
      * @throws IOFailure if there are any problems gunzipping.
      */
     private static void gunzipInto(File f, File toDir) {
+        String fileName = f.getName();
+        File outFile = new File(toDir,
+                                fileName.substring(0, fileName.length()
+                                                      - GZIP_SUFFIX.length()));
+        gunzipFile(f, outFile);
+    }
+
+    /** Gunzip a single gzipped file into the given file.
+     *
+     * @param fromFile A gzipped file to unzip.
+     * @param toFile The file that the contents of fromFile should be gunzipped
+     * into.  This file must be in an existing directory.  Existing contents of
+     * this file will be overwritten.
+     */
+    public static void gunzipFile(File fromFile, File toFile) {
         try {
             GZIPInputStream in
-                    = new LargeFileGZIPInputStream(new FileInputStream(f));
-            String fileName = f.getName();
-            FileUtils.writeStreamToFile(in,
-                    new File(toDir, fileName.substring(0,
-                            fileName.length()
-                                    - GZIP_SUFFIX.length())));
+                    = new LargeFileGZIPInputStream(new FileInputStream(fromFile));
+            FileUtils.writeStreamToFile(in, toFile);
         } catch (IOException e) {
             throw new IOFailure("Error ungzipping '"
-                    + f + "'", e);
+                    + fromFile + "'", e);
         }
     }
 }

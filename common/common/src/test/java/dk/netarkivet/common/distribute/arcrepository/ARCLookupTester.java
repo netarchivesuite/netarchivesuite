@@ -69,7 +69,7 @@ public class ARCLookupTester extends TestCase {
         super(s);
     }
 
-    public void setUp() throws Exception, IOException {
+    public void setUp() throws Exception {
         super.setUp();
         TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
@@ -97,9 +97,8 @@ public class ARCLookupTester extends TestCase {
         realArcRepos = new LocalArcRepositoryClient(
                 new File(TestInfo.ARCHIVE_DIR, "filedir"));
 
-        lookup = new ARCLookup(realArcRepos,
-                new File(TestInfo.WORKING_DIR, "tmpLuceneIndex"));
-        lookup.setIndex(TestInfo.ZIPPED_INDEX);
+        lookup = new ARCLookup(realArcRepos);
+        lookup.setIndex(TestInfo.INDEX_DIR_2_3);
 
         FileInputStream fis
                 = new FileInputStream("tests/dk/netarkivet/testlog.prop");
@@ -122,12 +121,7 @@ public class ARCLookupTester extends TestCase {
 
     public void testSetIndex() throws Exception {
         ArcRepositoryClient arcrep = new TestArcRepositoryClient();
-        ARCLookup lookup = new ARCLookup(arcrep,
-                new File(TestInfo.WORKING_DIR, "tmpLuceneIndex"));
-        Field indexDirField = ReflectUtils.getPrivateField(ARCLookup.class,
-                "luceneIndexDir");
-
-        File indexDir = (File)indexDirField.get(lookup);
+        ARCLookup lookup = new ARCLookup(arcrep);
 
         try {
             lookup.setIndex(null);
@@ -138,29 +132,17 @@ public class ARCLookupTester extends TestCase {
 
         try {
             lookup.setIndex(TestInfo.LOG_FILE);
-            fail("Should die on non-zip file");
+            fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringContains("Should show file name in error",
-                    TestInfo.LOG_FILE.getName(), e.getMessage());
+            StringAsserts.assertStringContains("Should mention non-directory",
+                                               TestInfo.LOG_FILE.getName(), e.getMessage());
         }
-
-        assertFalse("Should not have index dir before unzipping",
-                indexDir.exists());
-        lookup.setIndex(TestInfo.ZIPPED_INDEX);
-        assertTrue("Should have index dir after unzipping", indexDir.exists());
-        assertEquals("Should have lucene file of right size",
-                145297, new File(indexDir, "_gy.cfs").length());
-        File testFile = File.createTempFile("foo", "bar", indexDir);
-        assertTrue("Should have temp file created", testFile.exists());
-        lookup.setIndex(TestInfo.ZIPPED_INDEX2);
-        assertFalse("Should have temp file deleted", testFile.exists());
-        assertEquals("Should have lucene file of right size",
-                31159, new File(indexDir, "_3w.cfs").length());
 
         // Test that we don't close the Lucene index twice.
         // Try with a file that fails.
         try {
             lookup.setIndex(TestInfo.LOG_FILE);
+            fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention non-directory",
                     TestInfo.LOG_FILE.getName(), e.getMessage());
@@ -169,6 +151,7 @@ public class ARCLookupTester extends TestCase {
         // No getting a "can't close" error here.
         try {
             lookup.setIndex(TestInfo.LOG_FILE);
+            fail("Should die on non-dir index");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention non-directory",
                     TestInfo.LOG_FILE.getName(), e.getMessage());
@@ -228,9 +211,8 @@ public class ARCLookupTester extends TestCase {
      */
     public void testLookupInputStream() throws Exception {
         realArcRepos.close();
-        lookup = new ARCLookup(new TestArcRepositoryClient(),
-                new File(TestInfo.WORKING_DIR, "tmpLuceneIndex"));
-        lookup.setIndex(TestInfo.ZIPPED_INDEX);
+        lookup = new ARCLookup(new TestArcRepositoryClient());
+        lookup.setIndex(TestInfo.INDEX_DIR_2_3);
         InputStream is = lookup.lookup(TestInfo.GIF_URL);
         //Read a header line
         String line1 = readLine(is);

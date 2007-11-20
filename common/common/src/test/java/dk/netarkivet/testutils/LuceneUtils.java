@@ -56,7 +56,8 @@ public class LuceneUtils {
         }
     }
 
-    public static void generateIndex(File CrawlLog, BufferedReader cdxreader, File indexDir) {
+    public static void generateIndex(File CrawlLog, BufferedReader cdxreader,
+                                     File indexDir) {
         try {
             // Setup Lucene for indexing our crawllogs
             final boolean optimizeIndex = true;

@@ -47,16 +47,13 @@ import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
  * This class allows lookup of URLs in the ArcRepository, using full Lucene
- * indexes to find offsets.
- *
+ * indexes to find offsets.  The input takes the form of a directory
+ * containing a Lucene index.
  */
 
 public class ARCLookup {
     /** The ArcRepositoryClient we use to retrieve records */
     private final ViewerArcRepositoryClient arcRepositoryClient;
-
-    /** The directory that our Lucene index lives in. */
-    private final File luceneIndexDir;
 
     /** The currently active lucene search engine. */
     private IndexSearcher luceneSearcher;
@@ -67,52 +64,41 @@ public class ARCLookup {
     /** Create a new ARCLookup object.
      *
      * @param arcRepositoryClient The interface to the ArcRepository
-     * @param indexDir Where the index will be placed.  This directory
-     * should be unique to this instance.
      * @throws ArgumentNotValid if arcRepositoryClient is null.
      */
-    public ARCLookup(ViewerArcRepositoryClient arcRepositoryClient,
-                     File indexDir) {
+    public ARCLookup(ViewerArcRepositoryClient arcRepositoryClient) {
         ArgumentNotValid.checkNotNull(
                 arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
         this.arcRepositoryClient = arcRepositoryClient;
-        this.luceneIndexDir = indexDir.getAbsoluteFile();
-        FileUtils.createDir(luceneIndexDir.getParentFile());
         luceneSearcher = null;
     }
 
     /** This method resets the current Lucene index this object works
-     * on, and replaces them with this new, gzipped index.
+     * on, and replaces them with this new index.
 
-     * @param gzippedIndexDir The new index, a directory containing gzipped Lucene files.
+     * @param indexDir The new index, a directory containing Lucene files.
      * @throws ArgumentNotValid If argument is null
-     * @throws IOFailure if the files cannot be gunzipped.
      */
-    public void setIndex(File gzippedIndexDir) {
-        ArgumentNotValid.checkNotNull(gzippedIndexDir, "File index");
+    public void setIndex(File indexDir) {
+        ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
+        ArgumentNotValid.checkTrue(indexDir.isDirectory(),
+                                   "indexDir '" + indexDir + "' should be a directory");
         if (luceneSearcher != null) {
             try {
                 // Existing lucene indices must be shut down
                 luceneSearcher.close();
             } catch (IOException e) {
-                throw new IOFailure("Unable to close index " + luceneIndexDir,
+                throw new IOFailure("Unable to close index " + luceneSearcher,
                         e);
             } finally {
                 // Must be careful to shut down only once.
                 luceneSearcher = null;
             }
         }
-        // Remove the previously existing lucene index before unpacking the
-        // next. This is required since some files in a lucene index overlap,
-        // and others don't.
-        FileUtils.removeRecursively(luceneIndexDir);
-        ZipUtils.gunzipFiles(gzippedIndexDir, luceneIndexDir);
         try {
-            luceneSearcher = new IndexSearcher
-                    (luceneIndexDir.getAbsolutePath());
+            luceneSearcher = new IndexSearcher(indexDir.getAbsolutePath());
         } catch (IOException e) {
-            throw new IOFailure("Unable to find/open index " + luceneIndexDir,
-                    e);
+            throw new IOFailure("Unable to find/open index " + indexDir, e);
         }
     }
 

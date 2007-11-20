@@ -58,7 +58,7 @@ public class IndexRequestServerTester extends TestCase {
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                                   TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupMultiFileBasedCache mmfbc = new MockupMultiFileBasedCache();

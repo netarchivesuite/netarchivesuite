@@ -121,10 +121,7 @@ public class GetRecord extends ToolRunnerBase {
             try {
                 String indexPath = args[0];
                 String uri = args[1];
-                ARCLookup lookup = new ARCLookup(arcrep,
-                                                 new File(new File(
-                                                         indexPath).getParentFile(),
-                                                          "luceneIndexUnzipped"));
+                ARCLookup lookup = new ARCLookup(arcrep);
                 lookup.setIndex(new File(indexPath));
                 InputStream is = lookup.lookup(new URI(uri));
                 if (is == null) {

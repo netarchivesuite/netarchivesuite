@@ -23,13 +23,11 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.URIException;
@@ -74,27 +72,16 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class HeritrixLauncherTester extends TestCase {
 
     private MoveTestFiles mtf;
-    private File dummyLuceneIndexZipped;
+    private File dummyLuceneIndex;
 
     public HeritrixLauncherTester() {
         mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
 
-
-
     public void setUp() throws IOException {
         mtf.setUp();
-        File dummyLuceneIndex = mtf.newTmpDir();
+        dummyLuceneIndex = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(dummyLuceneIndex);
-        File[] files = dummyLuceneIndex.listFiles();
-        for (File f : files) {
-            GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(
-                    new File(f.getAbsolutePath() + ".gz")));
-            FileUtils.writeFileToStream(f, out);
-            out.close();
-            FileUtils.remove(f);
-        }
-        dummyLuceneIndexZipped = dummyLuceneIndex;
     }
 
     public void tearDown() {
@@ -108,11 +95,11 @@ public class HeritrixLauncherTester extends TestCase {
      *  - Copies the standard seeds.txt to the proper place in the given crawlDir.
      *  - Constructs a HeritrixLauncher and returns it
      *  @param origOrderXml original order.xml
-     *  @param zippedIndex
+     *  @param indexDir
      *  @return a HeritrixLauncher used by (most) tests.
      */
     private HeritrixLauncher getHeritrixLauncher(File origOrderXml,
-                                                 File zippedIndex) {
+                                                 File indexDir) {
         File origSeeds = TestInfo.SEEDS_FILE;
         File crawlDir = TestInfo.HERITRIX_TEMP_DIR;
         crawlDir.mkdirs();
@@ -128,8 +115,8 @@ public class HeritrixLauncherTester extends TestCase {
         if (orderXml.exists() && orderXml.length() > 0 &&
             HeritrixLauncher.isDeduplicationEnabled(XmlUtils.getXmlDoc(orderXml))) {
             assertNotNull("Must have a non-null index when deduplication is enabled",
-                          zippedIndex);
-            files.writeIndex(zippedIndex);
+                          indexDir);
+            files.setIndexDir(indexDir);
             assertTrue("Indexdir should exist now ", files.getIndexDir().isDirectory());
             assertTrue("Indexdir should contain real contents now", files.getIndexDir().listFiles().length > 0);
         }
@@ -184,7 +171,7 @@ public class HeritrixLauncherTester extends TestCase {
      */
     public void testStartMissingOrderFile() {
         try {
-            HeritrixLauncher hl = HeritrixLauncher.getInstance(
+            HeritrixLauncher.getInstance(
                     new HeritrixFiles(mtf.newTmpDir(), 42, 42));
             fail("Expected IOFailure");
         } catch (ArgumentNotValid e) {
@@ -199,7 +186,7 @@ public class HeritrixLauncherTester extends TestCase {
         try {
             HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 42, 42);
             hf.getSeedsTxtFile().delete();
-            HeritrixLauncher hl = HeritrixLauncher.getInstance(hf);
+            HeritrixLauncher.getInstance(hf);
             fail("Expected FileNotFoundException");
         } catch (ArgumentNotValid e) {
             // This is correct
@@ -394,7 +381,7 @@ public class HeritrixLauncherTester extends TestCase {
          */
 
         hl = getHeritrixLauncher(TestInfo.DEDUP_ORDER_FILE,
-                                 dummyLuceneIndexZipped);
+                                 dummyLuceneIndex);
         hl.setupOrderfile();
 
         // check, that the deduplicator is present in the order
@@ -409,7 +396,7 @@ public class HeritrixLauncherTester extends TestCase {
         XmlAsserts.assertNodeTextInXpath(
                 "Should have set index to right directory",
                 doc, HeritrixLauncher.DEDUPLICATOR_INDEX_LOCATION_XPATH,
-                new File(TestInfo.HERITRIX_TEMP_DIR,"index").getAbsolutePath());
+                dummyLuceneIndex.getAbsolutePath());
     }
 
 

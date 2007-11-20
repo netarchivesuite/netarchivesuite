@@ -42,9 +42,9 @@ public class TestInfo {
      * An archive directory to work on.
      */
     static final File ARCHIVE_DIR = new File(WORKING_DIR, "bitarchive1");
-    public static final File ZIPPED_INDEX
+    public static final File INDEX_DIR_2_3
             = new File(TestInfo.WORKING_DIR, "2-3-cache");
-    public static final File ZIPPED_INDEX2
+    public static final File INDEX_DIR_2_4_3_5
             = new File(TestInfo.WORKING_DIR, "2-4-3-5-cache");
     static URI GIF_URL;
     static final File LOG_PATH = new File(WORKING_DIR, "tmp");

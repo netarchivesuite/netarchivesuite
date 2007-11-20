@@ -15,6 +15,9 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 
+/** A fake IndexServer that gives one or more files back as specified in
+ * its constructor.
+ */
 public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private File resultFile;
     private boolean responseOK = true;
@@ -22,6 +25,13 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     private boolean multiFile = false;
     private String origDir;
 
+    /** Create a new MockupIndexServer that serves back the given file or
+     * directory of files.
+     *
+     * @param resultFile Files that this IndexServer should return upon request.
+     * The file (or files if resultFile is a directory) should be gzipped, as
+     * they will be ungzipped in the receiving end. 
+     */
     public MockupIndexServer(File resultFile) {
         this.resultFile = resultFile;
     }

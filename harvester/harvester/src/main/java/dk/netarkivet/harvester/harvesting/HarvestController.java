@@ -146,7 +146,7 @@ public class HarvestController {
         files.writeSeedsTxt(job.getSeedList());
         files.writeOrderXml(job.getOrderXMLdoc());
 
-        files.writeIndex(fetchDeduplicateIndex(metadataEntries));
+        files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
         return files;
     }
 
@@ -294,7 +294,7 @@ public class HarvestController {
         if (files != null) {
             for (File f : files) {
                 try {
-                    log.info("Uploading to arcrepository the file '" 
+                    log.info("Uploading to arcrepository the file '"
                             + f.getName() + "'.");
                     arcRepController.store(f);
                 } catch (Exception e) {

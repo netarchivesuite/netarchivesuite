@@ -186,15 +186,7 @@ public class HeritrixTests extends TestCase {
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
         */
-        File[] gzippableFiles = origIndexDir.listFiles();
-        for (File f : gzippableFiles) {
-            GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(
-                    new File(f.getAbsolutePath() + ".gz")));
-            FileUtils.writeFileToStream(f, out);
-            out.close();
-            FileUtils.remove(f);
-        }
-        files.writeIndex(origIndexDir);
+        files.setIndexDir(origIndexDir);
 
         //TestFileUtils.copyDirectoryNonCVS(origIndexDir, indexDir);
 
@@ -571,7 +563,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Tests, whether org.archive.io.RecoverableIOException 
+     * Tests, whether org.archive.io.RecoverableIOException
      * from the ARCReader can be serialized (bug 755)
      * @throws IOException
      */
@@ -694,7 +686,7 @@ public class HeritrixTests extends TestCase {
         OutputStream os = new FileOutputStream(modifiedOrderFile);
         XMLWriter writer = new XMLWriter(os);
         writer.write(d);
-        
+
         runHeritrix(modifiedOrderFile, TestInfo.SEEDS_FILE2, indexDir);
         FileAsserts.assertFileMatches("Must have done some dedup",
                 "Duplicates found:  [^0]",
@@ -752,12 +744,12 @@ public class HeritrixTests extends TestCase {
         XMLWriter writer = new XMLWriter(os);
         writer.write(d);
         // Now the modified order.xml is in modifiedOrderFile
-        
+
         File indexDir = mtf.newTmpDir();
         File scratchpadDir = mtf.newTmpDir();
-  
+
         // Sort crawl-log:
-        
+
         //File orgCrawlog = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         File orgCrawlog = new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/logs/crawl.log");
         assertTrue("File does not exist", orgCrawlog.exists());
@@ -765,16 +757,16 @@ public class HeritrixTests extends TestCase {
                 "sortCrawlLog", File.class, File.class);
         File sortedCrawlLog = new File(scratchpadDir, "sorted-crawl.log");
         sortCrawlLog.invoke(null, orgCrawlog, sortedCrawlLog);
-        
+
         //File arcsDir = new File(TestInfo.HERITRIX_TEMP_DIR, "arcs");
         File arcsDir = new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/arcs");
-        
+
         // Get CDXReader of the cdx for the previous crawl.
         // Note that this may break if the arcs dir has more than one file.
         LuceneUtils.generateIndex(sortedCrawlLog,
                 getCXDReaderForArc(arcsDir.listFiles(TestFileUtils.NON_CVS_DIRS_FILTER)[0]),
                 indexDir);
-        
+
         FileUtils.removeRecursively(TestInfo.HERITRIX_TEMP_DIR);
         runHeritrix(modifiedOrderFile, TestInfo.SEEDS_FILE, indexDir);
         FileAsserts.assertFileMatches("Must have done some dedup",

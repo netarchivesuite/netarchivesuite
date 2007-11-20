@@ -38,11 +38,14 @@ import java.util.Locale;
 import java.util.Map;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
+import dk.netarkivet.testutils.CollectionAsserts;
+import dk.netarkivet.testutils.CollectionUtils;
 
 
 public class DomainTester extends DataModelTestCase {
@@ -1024,24 +1027,24 @@ public class DomainTester extends DataModelTestCase {
         d.updateAlias(null);
         assertNull("Domain should now not be alias", d.getAliasInfo());
     }
-    
+
     /** Tests that bug 891 and 971 is fixed:
      *  Automatic sorting of configurations and seed-lists om domain-page.
-     *  Fixed by adding new Domain methods that return sorted lists: 
+     *  Fixed by adding new Domain methods that return sorted lists:
      *  getAllConfigurationsAsSortedList(),
-     *  getAllSeedListsAsSortedList(), 
-     *  getAllPasswordsAsSortedList() 
+     *  getAllSeedListsAsSortedList(),
+     *  getAllPasswordsAsSortedList()
      *  Note these methods uses Locale to sort according to language
-     */ 
+     */
     public void testGetSortedSeedlistAndDomainConfigurationsAndPasswords() {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         Locale dkLocale = new Locale("da");
         Locale ukLocale = new Locale("en");
         Locale origDefault;
-        
+
         // save original default locale value for later checks (should stay the same)
         origDefault = Locale.getDefault();
-        
+
         // now contains one seedlist named defaultseeds
         List<SeedList> allSeeds = d.getAllSeedListsAsSortedList(Locale.ENGLISH);
         SeedList s0 = allSeeds.get(0);
@@ -1052,9 +1055,9 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("Only one DomainConfiguration should exist now", allConfigs.size() == 1);
         // check default locale value
         assertTrue("At 1. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
-        
-        
-        SeedList s1 = new SeedList("Plidderpladder", "http://plidder");        
+
+
+        SeedList s1 = new SeedList("Plidderpladder", "http://plidder");
         SeedList s2 = new SeedList("ny liste", "http://plidder");
         SeedList s3 = new SeedList("Anden liste", "http://plidder");
         SeedList s4 = new SeedList("Abe liste", "http://plidder");
@@ -1063,19 +1066,28 @@ public class DomainTester extends DataModelTestCase {
         SeedList s7 = new SeedList("Åse liste", "http://plidder");
         SeedList s8 = new SeedList("ø liste", "http://plidder");
         SeedList s9 = new SeedList("Æble liste", "http://plidder");
-        d.addSeedList(s1); d.addSeedList(s2); d.addSeedList(s3); d.addSeedList(s4); d.addSeedList(s5); d.addSeedList(s6); d.addSeedList(s7); d.addSeedList(s8); d.addSeedList(s9);
-                
+        d.addSeedList(s1); d.addSeedList(s2); d.addSeedList(s3);
+        d.addSeedList(s4); d.addSeedList(s5); d.addSeedList(s6);
+        d.addSeedList(s7); d.addSeedList(s8); d.addSeedList(s9);
+
         // Now we check, that DK sequence is "abe liste", "Abe liste", "Anden liste", "defaultseeds", "ny liste", "Plidderpladder"
         //                                   "Æble liste", "ø liste", "åse liste", "Åse liste"
-        allSeeds = d.getAllSeedListsAsSortedList(dkLocale);        
-        Iterator iterator = allSeeds.iterator();
+        allSeeds = d.getAllSeedListsAsSortedList(dkLocale);
+
+        // Easier way to test contents of a list.  --LC
+        CollectionAsserts.assertListEquals("List of seeds should have expected content, in order",
+                                           allSeeds,
+                                           s5.getName(), s4.getName(), s3.getName(),
+                                           "defaultseeds", s2.getName(), s1.getName());
+
+        Iterator<SeedList> iterator = allSeeds.iterator();
         // # 1 to retrieve must be the seedlist named "abe liste"
         SeedList testSeed = (SeedList) iterator.next();
-        assertTrue("1. entry must named '" + s5.getName() + "' but was: " + testSeed.getName(), 
+        assertTrue("1. entry must named '" + s5.getName() + "' but was: " + testSeed.getName(),
                 testSeed.getName().equals(s5.getName()));
         // # 2 to retrieve must be the seedlist named "Abe liste"
         testSeed = (SeedList) iterator.next();
-        assertTrue("2. entry must named '" + s4.getName() + "', but was: " + testSeed.getName(), 
+        assertTrue("2. entry must named '" + s4.getName() + "', but was: " + testSeed.getName(),
                 testSeed.getName().equals(s4.getName()));
         // # 3 to retrieve must be the seedlist named "Anden liste"
         testSeed = (SeedList) iterator.next();
@@ -1103,18 +1115,18 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("10. entry must named '" + s7.getName() + "', but was:" + testSeed.getName(), testSeed.getName().equals(s7.getName()));
         // check default locale value
         assertTrue("At 2. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
-        
-        // Now we check, that UK sequence is "abe liste", "Abe liste", "Æble liste", "Anden liste", "åse liste", "Åse liste","ny liste", 
+
+        // Now we check, that UK sequence is "abe liste", "Abe liste", "Æble liste", "Anden liste", "åse liste", "Åse liste","ny liste",
         //                                   "ø liste", "Plidderpladder"
-        allSeeds = d.getAllSeedListsAsSortedList(ukLocale);        
+        allSeeds = d.getAllSeedListsAsSortedList(ukLocale);
         iterator = allSeeds.iterator();
         // # 1 to retrieve must be the seedlist named "abe liste"
         testSeed = (SeedList) iterator.next();
-        assertTrue("1. entry must named '" + s5.getName() + "' but was: " + testSeed.getName(), 
+        assertTrue("1. entry must named '" + s5.getName() + "' but was: " + testSeed.getName(),
                 testSeed.getName().equals(s5.getName()));
         // # 2 to retrieve must be the seedlist named "Abe liste"
         testSeed = (SeedList) iterator.next();
-        assertTrue("2. entry must named '" + s4.getName() + "', but was: " + testSeed.getName(), 
+        assertTrue("2. entry must named '" + s4.getName() + "', but was: " + testSeed.getName(),
                 testSeed.getName().equals(s4.getName()));
         // # 3 to retrieve must be the seedlist named "Æble liste"
         testSeed = (SeedList) iterator.next();
@@ -1143,12 +1155,12 @@ public class DomainTester extends DataModelTestCase {
         // check default locale value
         assertTrue("At 3. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
 
-        
-        
+
+
         // Testing getAllConfigurationsAsSortedList()
         // Assuming currentconfig has name: "defaultconfig"
         DomainConfiguration defaultConfig = d.getDefaultConfiguration();
-        assertTrue("defaultConfig must have name 'defaultconfig', not " + defaultConfig.getName(), 
+        assertTrue("defaultConfig must have name 'defaultconfig', not " + defaultConfig.getName(),
                 defaultConfig.getName().equals("defaultconfig"));
         // Add three more configurations
         d.addConfiguration(cloneConfigWithNewName(defaultConfig, "SvendBent"));
@@ -1159,7 +1171,7 @@ public class DomainTester extends DataModelTestCase {
         d.addConfiguration(cloneConfigWithNewName(defaultConfig,"Åse"));
         d.addConfiguration(cloneConfigWithNewName(defaultConfig, "abe"));
         d.addConfiguration(cloneConfigWithNewName(defaultConfig, "æble"));
-        
+
         // Now we check DK sorting, that sequence is "abe", "cirkus", "defaultconfig", "gurli", "SvendBent", "æble"
         //                                           "ø", "åse", "Åse"
         assertTrue("#1 element must be named 'abe', and not: " + d.getAllConfigurationsAsSortedList(dkLocale).get(0).getName(),
@@ -1226,13 +1238,13 @@ public class DomainTester extends DataModelTestCase {
         d.addPassword(p9);
         Password p10 = clonePasswordWithNewName(p1, "åsePassword");
         d.addPassword(p10);
-        
+
         // Correct sequence in DK: "abePassword" "defaultpassword", "ditPassword", "HansPassword", "mitPassword", "æblePassword", "øPassword"
         //                         "AAseassword", "åsePassword", "ÅsePassword"
         assertTrue("#1 element must be named 'abePassword', and not: " + d.getAllPasswordsAsSortedList(dkLocale).get(0).getName(),
-                d.getAllPasswordsAsSortedList(dkLocale).get(0).getName().equals("abePassword"));       
+                d.getAllPasswordsAsSortedList(dkLocale).get(0).getName().equals("abePassword"));
         assertTrue("#2 element must be named 'defaultpassword', and not: " + d.getAllPasswordsAsSortedList(dkLocale).get(1).getName(),
-                d.getAllPasswordsAsSortedList(dkLocale).get(1).getName().equals("defaultpassword"));       
+                d.getAllPasswordsAsSortedList(dkLocale).get(1).getName().equals("defaultpassword"));
         assertTrue("#3 element must be named 'ditPassword', and not: " + d.getAllPasswordsAsSortedList(dkLocale).get(2).getName(),
                 d.getAllPasswordsAsSortedList(dkLocale).get(2).getName().equals("ditPassword"));
         assertTrue("#4 element must be named 'HansPassword', and not: " + d.getAllPasswordsAsSortedList(dkLocale).get(3).getName(),
@@ -1252,12 +1264,12 @@ public class DomainTester extends DataModelTestCase {
         // check default locale value
         assertTrue("At 6. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
 
-        // Correct sequence in UK: "AAseassword", "abePassword", "æblePassword", "åsePassword", "ÅsePassword", "defaultpassword", 
+        // Correct sequence in UK: "AAseassword", "abePassword", "æblePassword", "åsePassword", "ÅsePassword", "defaultpassword",
         //                         "ditPassword", "HansPassword", "mitPassword", "øPassword"
         assertTrue("#1 element must be named 'AAseassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(0).getName(),
                 d.getAllPasswordsAsSortedList(ukLocale).get(0).getName().equals("AAseassword"));
         assertTrue("#2 element must be named 'abePassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(1).getName(),
-                d.getAllPasswordsAsSortedList(ukLocale).get(1).getName().equals("abePassword"));       
+                d.getAllPasswordsAsSortedList(ukLocale).get(1).getName().equals("abePassword"));
         assertTrue("#3 element must be named 'æblePassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(2).getName(),
                 d.getAllPasswordsAsSortedList(ukLocale).get(2).getName().equals("æblePassword"));
         assertTrue("#4 element must be named 'åsePassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(3).getName(),
@@ -1265,7 +1277,7 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("#5 element must be named 'ÅsePassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(4).getName(),
                 d.getAllPasswordsAsSortedList(ukLocale).get(4).getName().equals("ÅsePassword"));
         assertTrue("#6 element must be named 'defaultpassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(5).getName(),
-                d.getAllPasswordsAsSortedList(ukLocale).get(5).getName().equals("defaultpassword"));       
+                d.getAllPasswordsAsSortedList(ukLocale).get(5).getName().equals("defaultpassword"));
         assertTrue("#7 element must be named 'ditPassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(6).getName(),
                 d.getAllPasswordsAsSortedList(ukLocale).get(6).getName().equals("ditPassword"));
         assertTrue("#8 element must be named 'HansPassword', and not: " + d.getAllPasswordsAsSortedList(ukLocale).get(7).getName(),
@@ -1279,7 +1291,7 @@ public class DomainTester extends DataModelTestCase {
     }
     /** Make a clone of param config and let its name be nameOfClone.
      * @param config
-     * @param nameOfClone 
+     * @param nameOfClone
      * @return a clone of config */
     private DomainConfiguration cloneConfigWithNewName(DomainConfiguration config, String nameOfClone) {
         Iterator<SeedList> seedIterator = config.getSeedLists();
@@ -1292,23 +1304,23 @@ public class DomainTester extends DataModelTestCase {
         while (passwordIterator.hasNext()) {
             passwordList.add(passwordIterator.next());
         }
-        return new DomainConfiguration(nameOfClone, config.getDomain(), seedListList, passwordList);       
+        return new DomainConfiguration(nameOfClone, config.getDomain(), seedListList, passwordList);
     }
-    
+
     private Password createDefaultPassword(String name) {
         return new Password(name, "no comments", "Domain is KB; SB", "Realm", "svc", "ThePassword");
     }
     /** Make a clone of the given password with a new name.
      * @param thePassword
      * @param nameOfClone
-     * @return a clone of thePassword 
+     * @return a clone of thePassword
      */
     private Password clonePasswordWithNewName(Password thePassword, String nameOfClone) {
         return new Password(nameOfClone, thePassword.getComments(), thePassword.getPasswordDomain(),
-                thePassword.getRealm(), 
+                thePassword.getRealm(),
                 thePassword.getUsername(),
                 thePassword.getPassword());
     }
-    
-    
+
+
 }

@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.indexserver.distribute;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.ZipUtils;
 
 /**
  * Client for index request server.
@@ -120,7 +122,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * using the index server. It will convert calls into an IndexRequestMessage
      * which is sent to the server. The Set<Long> of found jobs, and the side
      * effect of caching the index, is done using this communication with the
-     * server.
+     * server.  The resulting files will be unzipped into the cache dir.
      *
      * This method should not be called directly! Instead call cache() or
      * getIndex().
@@ -165,8 +167,12 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 try {
                     FileUtils.createDir(tmpDir);
                     for (RemoteFile f : files) {
-                        File destFile = new File(tmpDir, f.getName());
-                        copyAndDeleteRemoteFile(f, destFile);
+                        String destFileName = f.getName();
+                        destFileName
+                                = destFileName.substring(0, destFileName.length() 
+                                               - ZipUtils.GZIP_SUFFIX.length());
+                        File destFile = new File(tmpDir, destFileName);
+                        unzipAndDeleteRemoteFile(f, destFile);
                     }
                     if (!tmpDir.renameTo(cacheDir)) {
                         throw new IOFailure("Error renaming temp dir '"
@@ -178,7 +184,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 }
             } else {
                 RemoteFile remoteFile = reply.getResultFile();
-                copyAndDeleteRemoteFile(remoteFile, getCacheFile(jobSet));
+                unzipAndDeleteRemoteFile(remoteFile, getCacheFile(jobSet));
             }
         }
 
@@ -187,21 +193,35 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         return foundJobs;
     }
 
-    /** Copy a RemoteFile to a given file, deleting it afterwards.  Problems
+    /** Unzip a RemoteFile to a given file, deleting it afterwards.  Problems
      * arising while deleting are logged, but do not cause exceptions.
      *
-     * @param f A file to download. This file will be attempted deleted after
-     * successfull copying.
-     * @param destFile A place to put the file.
+     * @param remoteFile A file to download. This file will be attempted deleted
+     * after successfull unzipping.
+     * @param destFile A place to put the unzipped file.
      */
-    private void copyAndDeleteRemoteFile(RemoteFile f, File destFile) {
-        f.copyTo(destFile);
+    private void unzipAndDeleteRemoteFile(RemoteFile remoteFile, File destFile) {
+        File tmpFile = null;
         try {
-            f.cleanup();
-        } catch (IOFailure e) {
-            log.debug("Trouble deleting file '"
-                    + f.getName()
-                    + "' from FTP server after saving it", e);
+            // We cannot unzip directly from a stream, so we make a temp file.
+            tmpFile = File.createTempFile("remotefile-unzip", ".gz",
+                                FileUtils.getTempDir());
+            remoteFile.copyTo(tmpFile);
+            ZipUtils.gunzipFile(tmpFile, destFile);
+            try {
+                remoteFile.cleanup();
+            } catch (IOFailure e) {
+                log.debug("Trouble deleting file '"
+                          + remoteFile.getName()
+                          + "' from FTP server after saving it", e);
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error making temporary file in "
+                                + FileUtils.getTempDir(), e);
+        } finally {
+            if (tmpFile != null) {
+                FileUtils.remove(tmpFile);
+            }
         }
     }
 

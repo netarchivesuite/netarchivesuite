@@ -188,10 +188,10 @@ public class HarvestControllerTester extends TestCase {
                      seedsTxt, files.getSeedsTxtFile());
 
         assertTrue("Index directory should exist now",
-                   new File(crawlDir, "index").isDirectory());
+                   files.getIndexDir().isDirectory());
         //There are three files in the zip file replied
         assertEquals("Index directory should contain unzipped files",
-                     3, new File(crawlDir, "index").listFiles().length);
+                     3, files.getIndexDir().listFiles().length);
     }
 
     /**

@@ -31,6 +31,14 @@ import java.util.Set;
 /** Index server.
  * Handles request for lucene indexes of crawl logs and cdx indexes of jobs,
  * using two multifilebasedcache objects as handlers.
+ *
+ * The server sets up handlers for three kinds of indexes (as defined by
+ * RequestType):
+ * A CDX index, where each index is one file, gzip-compressed.
+ * A DEDUP_CRAWL_LOG index, where each index is multiple files, gzip-compressed,
+ * making up a Lucene index of non-HTML files.
+ * A FULL_CRAWL_LOG index, where each index is multiple files, gzip-compressed,
+ * making up a Lucene index of all files.
  * */
 public class IndexServer implements CleanupIF{
     private IndexRequestServer remoteServer;

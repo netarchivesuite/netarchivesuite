@@ -102,7 +102,8 @@ public class CollectionAsserts {
         }
         if (expected.length != actual.size()) {
             TestCase.fail(msg + ": Length mismatch: Expected " + expected.length
-                    + ", but got " + actual.size());
+                    + ", but got " + actual.size() + "\nExpected list: "
+                    + Arrays.asList(expected) + "\nActual list: " + actual);
         }
         for (int i = 0; i < expected.length; i++) {
             final Object expectedValue = expected[i];

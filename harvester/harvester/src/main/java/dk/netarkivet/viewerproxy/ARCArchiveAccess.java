@@ -79,11 +79,6 @@ public class ARCArchiveAccess implements URIResolver {
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
-    /** The name of the Lucene index dir under the settings-given viewerproxy
-     * dir.
-     */
-    private static final String LUCENE_INDEX_DIR_NAME = "luceneIndexDir";
-
     /** Initialise new ARCArchiveAcces with no index file.
      *
      * @param arcRepositoryClient The arcRepositoryClient to use when retrieving
@@ -92,17 +87,14 @@ public class ARCArchiveAccess implements URIResolver {
     public ARCArchiveAccess(ViewerArcRepositoryClient arcRepositoryClient) {
         ArgumentNotValid.checkNotNull(
                 arcRepositoryClient, "ArcRepositoryClient arcRepositoryClient");
-        File luceneIndexDir =
-                new File(new File(Settings.get(Settings.VIEWERPROXY_DIR)),
-                        LUCENE_INDEX_DIR_NAME);
-        lookup = new ARCLookup(arcRepositoryClient, luceneIndexDir);
+        lookup = new ARCLookup(arcRepositoryClient);
     }
 
     /**
      * This method resets the Lucene index this object works on, and replaces
      * it with the given index.
      *
-     * @param index The new index file, a directory containing gzipped files.
+     * @param index The new index file, a directory containing Lucene files.
      * @throws ArgumentNotValid If argument is null
      * @throws IOFailure if the file cannot be read
      */

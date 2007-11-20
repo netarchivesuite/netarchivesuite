@@ -71,7 +71,7 @@ public class HeritrixFilesTester extends TestCase {
      * Test correct behaviour of the HeritrixFiles contructor.
      *
      */
-    public void testContructor() {
+    public void testConstructor() {
         try {
             new HeritrixFiles(null, 0, 0);
             fail("Invalid arguments should throw ArgumentNotValid");
@@ -81,80 +81,26 @@ public class HeritrixFilesTester extends TestCase {
 
         HeritrixFiles hf = null;
         TestInfo.HERITRIX_TEMP_DIR.mkdir();
-        try {
-            hf = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
-
-        } catch (ArgumentNotValid e) {
-            fail("valid arguments should not throw ArgumentNotValid");
-        }
-
-        // check, that crawlDir is correctly set
-        assertEquals(TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(),
-                hf.getCrawlDir().getAbsolutePath());
-
-        // check, that arcFilePrefix is correctly set
-        assertEquals("42-42", hf.getArcFilePrefix());
-
-        // check, that indexDir is correctly set.
-        // It is not created in the constructor, but when we call writeIndex()
-        assertEquals(new File(TestInfo.HERITRIX_TEMP_DIR, "index").getAbsolutePath(), hf.getIndexDir().getAbsolutePath());
-    }
-   
-    /**
-     * Test, that the write process from zipfile on to destination dir works
-     * properly.
-     * @throws IOException
-     */
-    public void testWriteIndex() throws IOException {
-        HeritrixFiles hf = null;
-        TestInfo.HERITRIX_TEMP_DIR.mkdir();
         hf = new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
 
-        try {
-            hf.writeIndex(null);
-            fail("writeIndex should throw ArgumentNotvalid exception given invalid argument");
-        } catch (ArgumentNotValid e) {
-            // Expected;
-        }
+        // check, that crawlDir is correctly set
+        assertEquals("crawlDir should be set up correctly.",
+                     TestInfo.HERITRIX_TEMP_DIR.getAbsolutePath(),
+                     hf.getCrawlDir().getAbsolutePath());
 
-        try {
-            hf.writeIndex(TestInfo.ARC_FILE2);
-            fail("writeIndex should throw ArgumentNotValid exception given file argument");
-        } catch (ArgumentNotValid e) {
-            // Expected;
-        }
-
-        File index = getDummyIndex();
-        File[] indexFiles = index.listFiles();
-        File sourceDir = FileUtils.createUniqueTempDir(TestInfo.WORKING_DIR, "test");
-        for (File f : indexFiles) {
-            File gzipFile = new File(sourceDir, f.getName() + ".gz");
-            GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(gzipFile));
-            FileUtils.writeFileToStream(f, out);
-            out.close();
-        }
-
-        FileUtils.remove(hf.getIndexDir());
-        hf.writeIndex(sourceDir);
-        assertTrue("Index dir should exist afterwards", hf.getIndexDir().exists());
-        for (File f : indexFiles) {
-            File ungzippedFile = new File(hf.getIndexDir(), f.getName());
-            assertTrue("Ungzipped file " + f + " should exist afterwards",
-                    ungzippedFile.exists());
-            assertEquals("Ungzipped file should have correct contents",
-                    FileUtils.readFile(f),
-                    FileUtils.readFile(ungzippedFile));
-        }
+        // check, that arcFilePrefix is correctly set
+        assertEquals("arcFilePrefix should contain job id and harvest id",
+                     "42-42", hf.getArcFilePrefix());
     }
 
     /**
      * Test, that writeOrderXml fails correctly with bad arguments:
      * - null argument
      * - Document object with no contents.
-     * 
+     *
      * Bug 871 caused this test to be written.
      */
-   public void testWriteOrderXml(){
+    public void testWriteOrderXml(){
        TestInfo.HERITRIX_TEMP_DIR.mkdir();
        HeritrixFiles hf =
            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
@@ -171,29 +117,29 @@ public class HeritrixFilesTester extends TestCase {
        } catch (ArgumentNotValid e) {
            //Expected
        }
-       
+
        // test, that order xml is written, if argument is valid
-       
+
        Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
        try {
            hf.writeOrderXml(doc);
        } catch (Exception e) {
            fail("Exception not expected: " + e);
        }
-       
-       
-       
-       
-       
-   }    
-   /**
-    * Test, that writeSeedsTxt fails correctly with bad arguments:
-    * - null argument
-    * - empty String
-    * 
-    * Bug 871 caused this test to be written.
-    */
-   public void testWriteSeedsTxt() {
+
+
+
+
+
+   }
+    /**
+     * Test, that writeSeedsTxt fails correctly with bad arguments:
+     * - null argument
+     * - empty String
+     *
+     * Bug 871 caused this test to be written.
+     */
+    public void testWriteSeedsTxt() {
        TestInfo.HERITRIX_TEMP_DIR.mkdir();
        HeritrixFiles hf =
            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
@@ -203,23 +149,22 @@ public class HeritrixFilesTester extends TestCase {
        } catch (ArgumentNotValid e) {
            //Expected
        }
-       
+
        try {
            hf.writeSeedsTxt("");
            fail("ArgumentNotValid exception with seeds equal to empty string");
        } catch (ArgumentNotValid e) {
            //Expected
        }
-       
+
        try {
            hf.writeSeedsTxt("www.netarkivet.dk\nwww.sulnudu.dk");
        } catch (Exception e) {
            fail("Exception not expected with seeds equal to valid non-empty String object" + e);
        }
    }
-   
-   
-    
+
+
     private void generateIndex(File CrawlLog, File indexDir) {
         try {
             // Setup Lucene for indexing our crawllogs
@@ -260,14 +205,14 @@ public class HeritrixFilesTester extends TestCase {
                                 + indexDir, e);
         }
     }
-        /**
-         * Create Dummy Lucene index.
-         * uses an empty file as basis for the lucene-index.
-         *
-         * @return location of Dummy Lucene index
-         * @throws IOFailure
-         */
-        private File getDummyIndex() throws IOFailure  {
+    /**
+     * Create Dummy Lucene index.
+     * uses an empty file as basis for the lucene-index.
+     *
+     * @return location of Dummy Lucene index
+     * @throws IOFailure
+     */
+    private File getDummyIndex() throws IOFailure  {
             try {
             // use empty crawl.log to generate default lucene index
             File tempDir = TestFileUtils.createTempDir("index", ".scratch", TestInfo.WORKING_DIR);

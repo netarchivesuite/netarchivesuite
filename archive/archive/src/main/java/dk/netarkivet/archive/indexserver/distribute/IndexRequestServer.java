@@ -52,6 +52,7 @@ import dk.netarkivet.common.utils.StringUtils;
  *
  * It will ALWAYS reply to such messages, either with the index, a message
  * telling that only a subset is available, and which, or an error message,
+ *
  */
 public class IndexRequestServer extends ArchiveMessageHandler
         implements CleanupIF {

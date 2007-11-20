@@ -79,7 +79,7 @@ public class HeritrixFiles {
     private static final String SEEDS_TXT_FILENAME = "seeds.txt";
 
     /** The name of the index directory. */
-    private static final String INDEX_DIR_NAME = "index";
+    private File indexDir;
 
     private Log log = LogFactory.getLog(getClass().getName());
 
@@ -211,36 +211,30 @@ public class HeritrixFiles {
     }
 
     /**
-     * Ungzip the crawllog lucene index files into the indexDir.
-     * Note: This removes any existing indexDir including its contents.
-     * @param dirWithGzips the cache dir containing gzipped files
-     * @throws ArgumentNotValid if gzippedDir is not a directory or is null
-     * @throws IOFailure on trouble emptying/creating indexDir, or ungzipping
+     * Set the deduplicate index dir.
+     * @param indexDir the cache dir containing unzipped files
+     * @throws ArgumentNotValid if indexDir is not a directory or is null
      */
-    public void writeIndex(File dirWithGzips) {
-        ArgumentNotValid.checkNotNull(dirWithGzips, "File theIndexZipped");
-        ArgumentNotValid.checkTrue(dirWithGzips.isDirectory(),
-                "dirWithGzips should be a directory");
-        File indexDir = getIndexDir();
-        log.debug("Unpacking gzipfiles found in dir '"
-                + dirWithGzips.getAbsolutePath()
-                + "' into dir: '" + indexDir.getAbsolutePath() + "'");
-        FileUtils.removeRecursively(indexDir);
-        ZipUtils.gunzipFiles(dirWithGzips, indexDir);
+    public void setIndexDir(File indexDir) {
+        ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
+        ArgumentNotValid.checkTrue(indexDir.isDirectory(),
+                "indexDir should be a directory");
+        this.indexDir = indexDir;
+        log.debug("Setting dedup dir '" + indexDir + "'");
     }
 
     /**
-     * Return the index directory.
-     * @return the index directory
+     * Returns the index directory, if one has been set.
+     * @return the index directory or null if no index has been set.
      */
     public File getIndexDir() {
-     return new File(crawlDir, INDEX_DIR_NAME);
+        return indexDir;
     }
 
     /**
      * Return a list of disposable heritrix-files.
      * Currently the list consists of the File "state.job", and
-     * the directories: "checkpoints", "state", "scratch", and "index".
+     * the directories: "checkpoints", "state", "scratch".
      *
      * @return a list of disposable heritrix-files.
      */
@@ -249,8 +243,7 @@ public class HeritrixFiles {
                 new File(crawlDir, "state.job"),
                 new File(crawlDir, "state"),
                 new File(crawlDir, "checkpoints"),
-                new File(crawlDir, "scratch"),
-                new File(crawlDir, "index")
+                new File(crawlDir, "scratch")
         };
     }
 

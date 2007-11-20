@@ -53,7 +53,7 @@ public class IndexRequestClientTester extends TestCase {
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupIndexServer mis;
@@ -64,13 +64,13 @@ public class IndexRequestClientTester extends TestCase {
                 new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
         Settings.set(Settings.DIR_COMMONTEMPDIR,
                 new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
-        
+
         ulrf.setUp();
         mjms.setUp();
         mtf.setUp();
         pss.setUp();
         pse.setUp();
-        mis = new MockupIndexServer(mtf.working(TestInfo.DUMMY_INDEX_FILE));
+        mis = new MockupIndexServer(mtf.working(TestInfo.DUMMY_CACHEDIR));
         mis.setUp();
     }
     public void tearDown() throws NoSuchFieldException, IllegalAccessException {
@@ -195,6 +195,10 @@ public class IndexRequestClientTester extends TestCase {
     private void testNormalFileResponse(IndexRequestClient client, RequestType t,
                                     Set<Long> jobSet)
             throws IOException {
+        mis.tearDown();
+
+        mis = new MockupIndexServer(TestInfo.DUMMY_CACHEFILE);
+        mis.setUp();
         mis.resetMsgList();
         mis.setResponseSuccessfull(true);
         File result = client.getIndex(jobSet);
@@ -218,7 +222,7 @@ public class IndexRequestClientTester extends TestCase {
             throws IOException {
         mis.tearDown();
 
-        mis = new MockupIndexServer(TestInfo.WORKING_DIR);
+        mis = new MockupIndexServer(TestInfo.DUMMY_CACHEDIR);
         mis.setUp();
         mis.resetMsgList();
         mis.setResponseSuccessfull(true);
@@ -244,6 +248,10 @@ public class IndexRequestClientTester extends TestCase {
 
     }
     private void testFailedResponse(IndexRequestClient client) {
+        mis.tearDown();
+
+        mis = new MockupIndexServer(TestInfo.DUMMY_CACHEFILE);
+        mis.setUp();
         mis.resetMsgList();
         mis.setResponseSuccessfull(false);
         try {
