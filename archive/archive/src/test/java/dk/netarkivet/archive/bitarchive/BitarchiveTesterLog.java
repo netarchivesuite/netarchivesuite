@@ -179,6 +179,12 @@ public class BitarchiveTesterLog extends TestCase {
                     "Batch", LOG_FILE);
             FileAsserts.assertFileContains("Log contains the phrase 'Batch: Job'.",
                     "Batch: Job", LOG_FILE);
+            FileAsserts.assertFileContains("Log should have start indicator",
+                                           "Starting batch job", LOG_FILE);
+            FileAsserts.assertFileContains("Log should have end indicator",
+                                           "Finished batch job", LOG_FILE);
+            FileAsserts.assertFileContains("Log should have batch status",
+                                           "0 failures in processing 0 files", LOG_FILE);
         } catch (IOException e) {
             fail("Exception while reading log file: " + e);
         }

@@ -264,6 +264,8 @@ public class Bitarchive {
         // If output dataset is large use CircularBuffer -
         // see -
         // http://ostermiller.org/convert_java_outputstream_inputstream.html
+        log.info("Finished batch job " + job.getClass().getName()
+                 + " with status " + returnStatus);
         return returnStatus;
     }
 
@@ -305,13 +307,16 @@ public class Bitarchive {
      * @throws ArgumentNotValid If arcFileID was null or empty.
      */
     public File getFile(String arcFileID) throws ArgumentNotValid {
-        log.info("Get file: " + arcFileID);
+        log.info("Get file '" + arcFileID + "'");
         ArgumentNotValid.checkNotNullOrEmpty(arcFileID, "arcFileID");
         BitarchiveARCFile barc = admin.lookup(arcFileID);
         if (barc == null) { // the file with ID: arcFileID was not found
             return null;
         }
-        return barc.getFilePath();
+
+        File path = barc.getFilePath();
+        log.info("Getting file '" + path + "'");
+        return path;
     }
 
     /**

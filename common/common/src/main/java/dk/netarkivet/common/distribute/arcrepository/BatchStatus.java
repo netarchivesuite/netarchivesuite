@@ -173,4 +173,15 @@ public class BatchStatus {
     public boolean hasResultFile() {
         return resultFile != null;
     }
+
+    /** Returns a human-readable description of this object.  The value
+     * returned should not be machine-processed, as it is subject to change
+     * without notice.
+     *
+     * @return Human-readable description of this object.
+     */
+    public String toString() {
+        return getFilesFailed().size() + " failures in processing "
+               + getNoOfFilesProcessed() + " files at " + getBitArchiveAppId();
+    }
 }
