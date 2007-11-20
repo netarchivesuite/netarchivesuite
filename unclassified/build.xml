@@ -143,7 +143,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         description="cleans up before doing a compile">
     </target>
 
-    <target name="compileallclean" depends="clean,compile"
+    <target name="compileallclean" depends="clean,compileall"
         description="cleans up before doing a compileall">
     </target>
 
@@ -421,14 +421,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="with.clover">
-    <taskdef resource="clovertasks"/>
-    <typedef resource="clovertypes"/>
+        <taskdef resource="clovertasks"/>
+        <typedef resource="clovertypes"/>
         <clover-setup initString="clover-db/mycoverage.db"
-            flushpolicy="interval" flushinterval="1000">
+                      flushpolicy="interval" flushinterval="1000">
             <files>
                 <exclude name="tests/**/*Tester*.java"/>
             </files>
-
         </clover-setup>
     </target>
 
