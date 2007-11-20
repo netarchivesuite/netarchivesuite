@@ -311,6 +311,7 @@ public class Bitarchive {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileID, "arcFileID");
         BitarchiveARCFile barc = admin.lookup(arcFileID);
         if (barc == null) { // the file with ID: arcFileID was not found
+            log.debug("File '" + arcFileID + "' not found on this machine");
             return null;
         }
 

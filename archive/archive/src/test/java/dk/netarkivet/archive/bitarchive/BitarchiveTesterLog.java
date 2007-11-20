@@ -46,18 +46,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit test for Bitarchive API
  * The logging of bitarchive opertions is tested
 */
-public class BitarchiveTesterLog extends TestCase {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    protected final Logger log = Logger.getLogger(getClass().getName());
-
-    /**
-     * The properties-file containg properties for logging in unit-tests
-     */
-    private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-
-    private static File ARCHIVE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/log/working/");
+public class BitarchiveTesterLog extends BitarchiveTestCase {
     private static File EXISTING_ARCHIVE_DIR =
             new File("tests/dk/netarkivet/archive/bitarchive/data/log/existing/");
     private static File LOG_FILE = new File("tests/testlogs", "netarkivtest.log");
@@ -65,39 +54,21 @@ public class BitarchiveTesterLog extends TestCase {
     private static String ARC_FILE_NAME2 = "Upload2.ARC";
     private static File ARC_FILE =
             new File("tests/dk/netarkivet/archive/bitarchive/data/log/originals/", ARC_FILE_NAME1);
-    private Bitarchive archive;
 
     public BitarchiveTesterLog(String sTestName) {
         super(sTestName);
     }
 
-    protected void setUp() {
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        try {
-            // This forces an emptying of the log file.
-            FileInputStream fis = new FileInputStream(TESTLOGPROP);
-            LogManager.getLogManager().readConfiguration(fis);
-            fis.close();
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file: " + e);
-        }
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        rf.setUp();
-        try {
-            TestFileUtils.copyDirectoryNonCVS(EXISTING_ARCHIVE_DIR, ARCHIVE_DIR);
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
-            archive = Bitarchive.getInstance();
-        } catch (Exception e) {
-            fail("Error copying bit archive: " + e);
-        }
+    protected File getOriginalsDir() {
+        return EXISTING_ARCHIVE_DIR;
     }
 
-    protected void tearDown() {
-        archive.close();
-        JMSConnectionTestMQ.clearTestQueues();
-        rf.tearDown();
-        Settings.reload();
-        FileUtils.removeRecursively(ARCHIVE_DIR);
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    public  void tearDown() throws Exception {
+        super.tearDown();
     }
 
     /** Asserts that a source string does not contain a given string, and prints

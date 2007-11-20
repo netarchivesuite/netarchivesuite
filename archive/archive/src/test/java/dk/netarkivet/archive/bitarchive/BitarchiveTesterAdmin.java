@@ -39,50 +39,33 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  * Unit test for Bitarchive API
  * The handling of administrative data is tested
  */
-public class BitarchiveTesterAdmin extends TestCase {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    private static final File ARCHIVE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/admin/working/");
+public class BitarchiveTesterAdmin extends BitarchiveTestCase {
     private static String ARC_FILE_NAME = "CorrectTest1.ARC";
     private static File ARC_FILE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/admin/originals/");
+            new File(new File(TestInfo.DATA_DIR, "admin"), "originals");
     private static File ARC_FILE = new File(ARC_FILE_DIR, ARC_FILE_NAME);
 
-    private static File ARCHIVE_DIR_1 = new File(ARCHIVE_DIR, "dir1");
-    private static File ARCHIVE_DIR_2 = new File(ARCHIVE_DIR, "dir2");
-
-    /** The archive that this test queries */
-    private static Bitarchive archive;
+    private static File ARCHIVE_DIR_1 = new File(TestInfo.WORKING_DIR, "dir1");
+    private static File ARCHIVE_DIR_2 = new File(TestInfo.WORKING_DIR, "dir2");
 
     public BitarchiveTesterAdmin(String sTestName) {
         super(sTestName);
+    }
+
+    protected File getOriginalsDir() {
+        return ARC_FILE_DIR;
     }
 
     /**
      * Create Bitarchive
      * @throws Exception
      */
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        try {
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
-            archive = Bitarchive.getInstance();
-        } catch (PermissionDenied e) {
-            fail("Error creating archive: " + e);
-        }
-        rf.setUp();
     }
 
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
-        if (archive != null) {
-            archive.close();
-        }
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        rf.tearDown();
-        Settings.reload();
     }
 
     /**
@@ -92,7 +75,7 @@ public class BitarchiveTesterAdmin extends TestCase {
      * @throws IOException
      */
     public void testUploadAdminAdded()
-            throws PermissionDenied, FileNotFoundException, IOException {
+            throws PermissionDenied, IOException {
         BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
         assertNotNull("Must have admin object.", admin);
         // check that the record does not exist in the admin data before upload

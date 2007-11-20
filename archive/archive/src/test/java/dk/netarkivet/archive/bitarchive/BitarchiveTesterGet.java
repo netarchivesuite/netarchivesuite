@@ -26,49 +26,30 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
  * This class tests the get() operation of the bit archive.
  *
  */
-public class BitarchiveTesterGet extends TestCase {
-    /**
-     * The archive directory to work on.
-     */
-    private static final File ARCHIVE_DIR = new File(
-            "tests/dk/netarkivet/archive/bitarchive/data/get/working/");
-
+public class BitarchiveTesterGet extends BitarchiveTestCase {
+    private static final File ORIGINALS_DIR
+            = new File(new File(TestInfo.DATA_DIR, "get"), "existing");
+    /** The content of the first arc record (offset=0). */
+    private static final String ARC_RECORD_0 = "arc_record0.txt";
+    /** Store record 0 in this file, when reading from arc-files. */
+    private static final String ARC_RECORD_0_TMP = "arc_record0.tmp";
+    /** An ARC file that must not exist in the ARCHIVE_DIR directory. */
+    static final String MISSING_ARC_FILE_NAME = "ShouldNotExist.ARC";
     /**
      * The name of the ARC file that we're reading. This file must not exist in
      * the ARCHIVE_DIR directory.
      */
-    private static final String ARC_FILE_NAME = "Upload2.ARC";
-
-    private static final File ORIGINAL_ARCHIVE_DIR = new File(
-            "tests/dk/netarkivet/archive/bitarchive/data/get/existing/");
-
-    /** The content of the first arc record (offset=0). */
-    private static final String ARC_RECORD_0 = "arc_record0.txt";
-    
-    /** Store record 0 in this file, when reading from arc-files. */
-    private static final String ARC_RECORD_0_TMP = "arc_record0.tmp";
-    
-
-    /** An ARC file that must not exist in the ARCHIVE_DIR directory. */
-    private static final String MISSING_ARC_FILE_NAME = "ShouldNotExist.ARC";
-
-    /** The archive that this test queries. */
-    private static Bitarchive archive;
+    static final String ARC_FILE_NAME = "Upload2.ARC";
 
     /**
      * Create a new test object.
@@ -80,29 +61,8 @@ public class BitarchiveTesterGet extends TestCase {
         super(sTestName);
     }
 
-    public void setUp() {
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        try {
-            // Copy over the "existing" bit archive.
-            TestFileUtils
-                    .copyDirectoryNonCVS(ORIGINAL_ARCHIVE_DIR, ARCHIVE_DIR);
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR
-                    .getAbsolutePath());
-            archive = Bitarchive.getInstance();
-        } catch (Exception e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
-    /**
-     * After test is done, remove the "archive".
-     */
-    public void tearDown() {
-        archive.close();
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
+    protected File getOriginalsDir() {
+        return ORIGINALS_DIR;
     }
 
     /* **** Part one: Test that the parameters are legal **** */
@@ -186,23 +146,25 @@ public class BitarchiveTesterGet extends TestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals(ARC_FILE_NAME, record.getFile());
+            assertEquals("The arc file name should appear in the record.",
+                         ARC_FILE_NAME, record.getFile());
             // Write contents of record to ARC_RECORD_0_TMP
-            File recordOFile = new File(ARCHIVE_DIR, ARC_RECORD_0_TMP);
+            File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
             OutputStream os = new FileOutputStream(recordOFile);
             record.getData(os);
             // read targetContents and foundContents from respectively
             // ARC_RECORD_0 ARC_RECORD_0_TMP
-            String targetcontents = FileUtils.readFile(new File(ARCHIVE_DIR,
+            String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
                     ARC_RECORD_0));
-            String foundContents = FileUtils.readFile(new File(ARCHIVE_DIR,
+            String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
                     ARC_RECORD_0_TMP));
             // verify that their contents are identical
             assertTrue("Strings targetcontents (length = "
                     + targetcontents.length() + ") and foundContents (length="
                     + foundContents.length() + ") should have same length",
                     targetcontents.length() == foundContents.length());
-            assertEquals(targetcontents, foundContents);
+            assertEquals("The contents should be exactly the same",
+                         targetcontents, foundContents);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not "
                     + e);
@@ -216,10 +178,12 @@ public class BitarchiveTesterGet extends TestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37534);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals(ARC_FILE_NAME, record.getFile());
+            assertEquals("ARC record should be for the right file",
+                         ARC_FILE_NAME, record.getFile());
             byte[] contents = TestUtils.inputStreamToBytes(
                     record.getData(), (int) record.getLength());
-            assertEquals(contents.length, 0);
+            assertEquals("There should be no contents",
+                         contents.length, 0);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not "
                     + e);
@@ -234,10 +198,12 @@ public class BitarchiveTesterGet extends TestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 37650);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals(ARC_FILE_NAME, record.getFile());
+            assertEquals("ARC record should be for the right file",
+                         ARC_FILE_NAME, record.getFile());
             byte[] contents = TestUtils.inputStreamToBytes(
                     record.getData(), (int) record.getLength());
-            assertEquals(17111, contents.length);
+            assertEquals("Contents length should match file",
+                         17111, contents.length);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not "
                     + e);
@@ -253,31 +219,33 @@ public class BitarchiveTesterGet extends TestCase {
         try {
             BitarchiveRecord record = archive.get(ARC_FILE_NAME, 0);
             assertNotNull("ARC record should be non-null", record);
-            assertEquals(ARC_FILE_NAME, record.getFile());
-            
+            assertEquals("ARC record should be for the right file",
+                         ARC_FILE_NAME, record.getFile());
+
             // Write contents of record to ARC_RECORD_0_TMP
-            File recordOFile = new File(ARCHIVE_DIR, ARC_RECORD_0_TMP);
+            File recordOFile = new File(TestInfo.WORKING_DIR, ARC_RECORD_0_TMP);
             OutputStream os = new FileOutputStream(recordOFile);
             record.getData(os);
             // read targetContents and foundContents from respectively
             // ARC_RECORD_0 ARC_RECORD_0_TMP
-            String targetcontents = FileUtils.readFile(new File(ARCHIVE_DIR,
+            String targetcontents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
                     ARC_RECORD_0));
-            String foundContents = FileUtils.readFile(new File(ARCHIVE_DIR,
+            String foundContents = FileUtils.readFile(new File(TestInfo.WORKING_DIR,
                     ARC_RECORD_0_TMP));
             // verify that their contents are identical
             assertTrue("Strings targetcontents (length = "
                     + targetcontents.length() + ") and foundContents (length="
                     + foundContents.length() + ") should have same length",
                     targetcontents.length() == foundContents.length());
-            assertEquals(targetcontents, foundContents);
+            assertEquals("Contents should be exactly as expected",
+                         targetcontents, foundContents);
         } catch (Exception e) {
             fail("Proper ARC file access should not give any exceptions, not "
                     + e);
         }
         assertTrue("File should be deletable",
                    FileUtils.removeRecursively(
-                           new File(new File(ARCHIVE_DIR, "filedir"),
+                           new File(new File(TestInfo.WORKING_DIR, "filedir"),
                                     ARC_FILE_NAME)));
     }
 }

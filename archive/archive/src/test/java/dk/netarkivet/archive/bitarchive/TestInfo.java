@@ -23,11 +23,9 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
-import java.util.List;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import static dk.netarkivet.testutils.CollectionUtils.list;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,23 +35,16 @@ import static dk.netarkivet.testutils.CollectionUtils.list;
  * To change this template use File | Settings | File Templates.
  */
 public class TestInfo {
-    static final File ARCHIVE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/batch/working/");
-    static final File ORIGINALS_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/batch/originals/");
+    static final File DATA_DIR =
+            new File("tests/dk/netarkivet/archive/bitarchive/data");
+    static final File WORKING_DIR = new File(DATA_DIR, "working");
+    static final File FILE_DIR = new File(WORKING_DIR, "filedir");
 
     static final File LOGFILE = new File("tests/testlogs", "netarkivtest.log");
     static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    static final File BATCH_OUTPUT_FILE = new File(ARCHIVE_DIR, "batch_output.log");
+    static final File BATCH_OUTPUT_FILE = new File(WORKING_DIR, "batch_output.log");
 
-    static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc",
-            "Upload1.ARC", "Upload2.ARC");
-    static int ARCHIVE_SIZE = arcFiles.size();
     static String baAppId = "bitArchiveApp_1";
 
     static ChannelID QUEUE_1 = Channels.getAnyBa();
-    static ChannelID QUEUE_2 = Channels.getError();
-
-    static String PREFIX = "hello world";
-    static final File ARCFILE = new File("tests/dk/netarkivet/archive/bitarchive/data/batch/originals/fyensdk.arc");
 }

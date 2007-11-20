@@ -22,36 +22,30 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.BatchFilter;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
  * This class tests the bitarchive's batch() method.
  */
-public class BitarchiveTesterBatch extends TestCase {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    static Bitarchive archive;
+public class BitarchiveTesterBatch extends BitarchiveTestCase {
+    static final File ORIGINALS_DIR =
+            new File(new File(TestInfo.DATA_DIR, "batch"), "originals");
+    private static List<String> arcFiles = list("Upload3.ARC", "fyensdk.arc",
+            "Upload1.ARC", "Upload2.ARC");
+    private static int ARCHIVE_SIZE = arcFiles.size();
 
     /**
      * Construct a new tester object.
@@ -60,38 +54,27 @@ public class BitarchiveTesterBatch extends TestCase {
         super(sTestName);
     }
 
+    protected File getOriginalsDir() {
+        return ORIGINALS_DIR;
+    }
+
     /**
      * At start of test, set up an archive we can run against.
      */
-    public void setUp() throws PermissionDenied{
-        FileUtils.removeRecursively(TestInfo.ARCHIVE_DIR);
-        try {
-            // This forces an emptying of the log file.
-            FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
-            LogManager.getLogManager().readConfiguration(fis);
-            fis.close();
-        } catch (IOException e) {
-            fail("Could not load the testlog.prop file: " + e);
+    public void setUp() throws Exception {
+        super.setUp();
+        File fileDir = new File(TestInfo.WORKING_DIR, "filedir");
+        for (String filename : arcFiles) {
+            FileUtils.copyFile(new File(getOriginalsDir(), filename),
+                    new File(fileDir, filename));
         }
-        FileUtils.createDir(TestInfo.ARCHIVE_DIR);
-        Settings.set(Settings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, TestInfo.ARCHIVE_DIR.getAbsolutePath());
-        archive = Bitarchive.getInstance();
-        for (String filename : TestInfo.arcFiles) {
-            FileUtils.copyFile(new File(TestInfo.ORIGINALS_DIR, filename),
-                    new File(new File(TestInfo.ARCHIVE_DIR, "filedir"), filename));
-        }
-        rf.setUp();
     }
 
     /**
      * At end of test, remove any files we managed to upload.
      */
-    public void tearDown() {
-        archive.close();
-        FileUtils.removeRecursively(TestInfo.ARCHIVE_DIR);
-        rf.tearDown();
-        Settings.reload();
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
 
@@ -151,7 +134,7 @@ public class BitarchiveTesterBatch extends TestCase {
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
         assertTrue("initialize() should been called on job", job.initialized);
         assertEquals("some calls should have been made to process()",
-                TestInfo.arcFiles.size(), job.processedFileList.size());
+                arcFiles.size(), job.processedFileList.size());
         assertTrue("finish() should have been called on job", job.finished);
         lbs.getResultFile().copyTo(TestInfo.BATCH_OUTPUT_FILE);
         FileAsserts.assertFileContains("Did not log <Started> in output",
@@ -185,7 +168,7 @@ public class BitarchiveTesterBatch extends TestCase {
         TestFileBatchJob job = new TestFileBatchJob();
         archive.batch(TestInfo.baAppId, job);
         assertEquals("Number of processed files is incorrect",
-                TestInfo.ARCHIVE_SIZE, job.processedFileList.size());
+                ARCHIVE_SIZE, job.processedFileList.size());
     }
 
     public void testBatchCodeFiltersWork() {

@@ -29,11 +29,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -41,25 +38,13 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
  * Unit test for Bitarchive API.
  * The upload method is tested
  */
-public class BitarchiveTesterUpload extends TestCase {
-    private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    /** The archive directory to work on.
-     */
-    private static final File ARCHIVE_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/upload/working/");
-    /** The archive that this test queries.
-     */
-    private static Bitarchive archive;
-
+public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /** The external interface */
     private static BitarchiveServer server;
 
@@ -67,46 +52,41 @@ public class BitarchiveTesterUpload extends TestCase {
      *
      */
     private static final File ORIGINALS_DIR =
-            new File("tests/dk/netarkivet/archive/bitarchive/data/upload/originals/");
+            new File(new File(TestInfo.DATA_DIR, "upload"), "originals");
+
     /** The files that are uploaded during the tests and that must be removed
      * afterwards.
      */
     private static final List UPLOADED_FILES =
-            Arrays.asList(new String[] { "Upload1.ARC",
-                                         "Upload2.ARC",
-                                         "Upload3.ARC" });
+            Arrays.asList("Upload1.ARC",
+                          "Upload2.ARC",
+                          "Upload3.ARC");
 
     /** Construct a new tester object. */
     public BitarchiveTesterUpload(final String sTestName) {
         super(sTestName);
     }
 
+    protected File getOriginalsDir() {
+        return ORIGINALS_DIR;
+    }
+
     /** At start of test, set up an archive we can run against.
      *
      */
-    public void setUp() {
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        Settings.set(Settings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
-        archive = Bitarchive.getInstance();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+    public void setUp() throws Exception {
+        super.setUp();
         server = BitarchiveServer.getInstance();
-        rf.setUp();
     }
 
     /** At end of test, remove any files we managed to upload.
      *
      */
-    public void tearDown() {
-        archive.close();
-        FileUtils.removeRecursively(ARCHIVE_DIR);
-        Settings.reload();
+    public void tearDown() throws Exception {
         if (server != null) {
             server.close();
         }
-        rf.tearDown();
-        Settings.reload();
-        //FileUtils.removeRecursively(new File(ARCHIVE_DIR));
+        super.tearDown();
     }
 
     /* **** Part one: Test that illegal parameters are handled correctly. ***/
@@ -158,8 +138,8 @@ public class BitarchiveTesterUpload extends TestCase {
      */
     public void testUploadNoDir() {
         try {
-            archive.upload(RemoteFileFactory.getInstance(ARCHIVE_DIR, true,
-                                                         false, true), ARCHIVE_DIR.getName());
+            archive.upload(RemoteFileFactory.getInstance(TestInfo.WORKING_DIR, true,
+                                                         false, true), TestInfo.WORKING_DIR.getName());
             fail("Uploading directory should have given an exception.");
         } catch (ArgumentNotValid e) {
             /* Expected case */
@@ -242,7 +222,7 @@ public class BitarchiveTesterUpload extends TestCase {
      * Verify that we upload into specified dir.
      */
     public void testUploadUsesDir() {
-        final File dir1 = new File(ARCHIVE_DIR, "dir1");
+        final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
                     dir1.getAbsolutePath(),
                 });

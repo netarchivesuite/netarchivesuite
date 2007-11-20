@@ -50,8 +50,9 @@ public class BatchMessageTester extends TestCase {
     /**
      *
      */
-    public void setUp(){
+    public void setUp() throws Exception {
         job = new TestBatchJob();
+        super.setUp();
     }
 
     /**
