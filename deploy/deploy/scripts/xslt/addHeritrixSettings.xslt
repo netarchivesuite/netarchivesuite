@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- File:        $Id:  $
- Revision:    $Version: 1.2 $
+ File:        $Id$
+ Revision:    $Revision$
  Author:      $Author: lc $
  Date:        $Date: 2007/03/09 15:38:38 $
 

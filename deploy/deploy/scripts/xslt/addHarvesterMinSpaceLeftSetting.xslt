@@ -20,7 +20,8 @@
 
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
+ MA  02110-1301  USA
  -->
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -28,18 +29,20 @@ xmlns:dk="http://www.netarkivet.dk/schemas/settings"
 xmlns="http://www.netarkivet.dk/schemas/settings"
 exclude-result-prefixes="dk">
 
-    <!-- This script updates settings.xml files from versions before  3.3.3,
-      adding a common processTimeout setting.
+    <!-- This script updates settings.xml files from versions before 3.3.3,
+     adding a setting telling the harvester the minimum amount of space
+     required to accept a crawl job.
     -->
 
 <xsl:output method="xml" encoding="UTF-8" />
 
-    <xsl:template xml:space="preserve" match="dk:common/dk:cacheDir"><!--
+    <xsl:template xml:space="preserve" match="dk:harvesting/dk:serverDir"><!--
     --><xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates/></xsl:copy>
-        <xsl:comment>The number of milliseconds we wait for processes to react
-            to shutdown requests.</xsl:comment>
-        <processTimeout>5000</processTimeout><!--
- --></xsl:template>
+                <xsl:comment>The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is 
+                 400000000 bytes (~400 Mbytes)</xsl:comment>
+                 <minSpaceLeft>400000000</minSpaceLeft>
+    </xsl:template>
 
 <!-- Any other node gets copied unchanged. Don't change this. -->
 <xsl:template match="*">
@@ -55,3 +58,4 @@ exclude-result-prefixes="dk">
     </xsl:template>
 
 </xsl:stylesheet>
+           
