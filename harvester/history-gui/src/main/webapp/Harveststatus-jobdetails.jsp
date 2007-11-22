@@ -220,7 +220,7 @@ and reposne.getLocale use this locale.
 
 <p>
     <%
-        for (String seed : job.getSeedList().split("\n")) {
+        for (String seed : job.getSortedSeedList()) {
             String url;
             if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
                 url = "http://" + seed;

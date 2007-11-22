@@ -32,6 +32,7 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.LogManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,7 +83,7 @@ public class JobTester extends DataModelTestCase {
         dao.create(poelse);
         DomainConfiguration dc = poelse.getDefaultConfiguration();
         Job job = Job.createJob(1234L, dc, 0);
-        String seedList = job.getSeedList();
+        String seedList = job.getSeedListAsString();
         Pattern p = Pattern.compile("^http://www\\.xn--plse-gra\\.dk$", Pattern.MULTILINE);
         Matcher m = p.matcher(seedList);
         assertTrue("Should have added ascii-ized seed to seedlist " + seedList,
@@ -100,7 +102,7 @@ public class JobTester extends DataModelTestCase {
         dc.addSeedList(withUrlList);
         dao.update(poelse);
         job = Job.createJob(12342L, dc, 0);
-        seedList = job.getSeedList();
+        seedList = job.getSeedListAsString();
         for (String s : new String[] {
             "http://www.xn--plse-gra.dk/enfil",
             "http://www.xn--plse-gra.dk/enpølse",
@@ -162,7 +164,7 @@ public class JobTester extends DataModelTestCase {
         }
 
         Set<String> seedsFromJob = new HashSet<String>();
-        BufferedReader reader = new BufferedReader(new StringReader(job.getSeedList()));
+        BufferedReader reader = new BufferedReader(new StringReader(job.getSeedListAsString()));
         String s;
         while ((s = reader.readLine()) != null) {
             seedsFromJob.add(s);
@@ -792,4 +794,60 @@ public class JobTester extends DataModelTestCase {
         aliases = job.getJobAliasInfo();
         assertEquals("There should be 3 AliasInfo objects in the List returned", 3, aliases.size());
     }
+    
+    /**
+     * Test method getSortedSeedList.
+     */
+    public void testGetSortedSeedList() throws Exception {
+        DomainConfiguration dc = TestInfo.getNetarkivetConfiguration();
+        dc.setMaxBytes(-1);
+        final int harvestNum = 4;
+        Job j = new Job(42L, dc, JobPriority.HIGHPRIORITY, -1, -1, harvestNum);
+        String seeds = 
+              "http://www.politik.tv2.dk/\n"
+            + "http://dr.dk/valg\n"
+            + "http://www.bt.dk/section/DITVALG/1943\n"
+            + "http://www.kristeligt-dagblad.dk/valg2007\n"            
+            + "http://jp.dk/indland/indland_politik/\n"
+            + "http://politiken.dk/politik/\n"
+            + "http://ekstrabladet.dk/nyheder/politik/\n"
+            + "www.fyens.dk/fv2007\n"
+            + "http://information.dk/emne/valg07\n"
+            + "http://jp.dk/webtv/valg07/\n"
+            + "http://borsen.dk/politik/\n"
+            + "http://www.berlingske.dk/section/valg/\n"
+            + "http://www.fyens.dk/fv2007\n"
+            + "http://information.dk/valgaften\n"
+            + "http://www.fyens.dk/indland\n"
+            + "http://www.kvinfo.dk/side/557/article/769/\n"
+            + "http://www.netpressen.dk/index.php?option=com_simpleboard&Itemid=41&func=showcat&catid=31\n"
+            + "http://nordjyske.dk/index.aspx?page=3&action=sektionid%3D157&sender=&target=246&data=\n"
+            + "http://www.fyens.dk/fv2007\n";
+        j.setSeedList(seeds);
+        assertTrue(j.getSeedList().size() == 18); // verifies that duplicates (Here, the last seed) are removed.
+        List<String> list = j.getSortedSeedList();
+        assertTrue(list.size() == 18);
+        
+        // Find locations of 
+        // http://www.fyens.dk/fv2007 (1)
+        // www.fyens.dk/fv2007 (2)
+        // http://www.fyens.dk/indland (3)
+        
+        // verify that they are placed at consecutive locations:
+        Set<Integer> order = new TreeSet<Integer>();
+        order.add(new Integer(list.indexOf("http://www.fyens.dk/fv2007")));
+        order.add(new Integer(list.indexOf("www.fyens.dk/fv2007")));
+        order.add(new Integer(list.indexOf("http://www.fyens.dk/indland")));
+        int last = -1;
+        for (Integer i: order) {
+            if (last != -1) {
+               assertTrue("The urls must be in consecutive order", 
+                       i == (last + 1));
+            }
+            last = i;
+        }
+        
+        
+        
+    }    
 }

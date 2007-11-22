@@ -35,7 +35,9 @@ public class Constants {
     /** Pattern not used by anyone, except unittests. */
     private static final Pattern ID_PATTERN =
             Pattern.compile(".*_(\\d+)\\.xml");
-
+    /** Regexp for checking, if URL contains a protocol, 
+     * like ftp://, http:// . */
+    static final String NO_PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
     /** Maximum size of name entries in the database. */
     static final int MAX_NAME_SIZE = 300;
     /** Maximum size of comment entries in the database. */

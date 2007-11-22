@@ -38,14 +38,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.CollectionUtils;
 
 
 public class DomainTester extends DataModelTestCase {

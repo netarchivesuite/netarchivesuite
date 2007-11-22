@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +43,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import gnu.inet.encoding.IDNA;
-import gnu.inet.encoding.IDNAException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -65,7 +67,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * and at most one configuration pr. domain.
  * Each job consists of configurations of the approximate same size; that is
  * the difference in expectation from the smallest configuration to the
- * largest configuration is within a factor of eachother defined as
+ * largest configuration is within a factor of each other defined as
  * limMaxRelSize (although differences smaller than limMinAbsSize are ignored)
  * There is a limit limMaxTotalSize on the total size of the job in objects.
  *
@@ -80,9 +82,11 @@ public class Job implements Serializable {
     private transient Log log = LogFactory.getLog(getClass());
 
     //Persistent fields stored in and read from DAO
-
+    /** The persistent ID of this job. */
     private Long jobID;
+    /** The Id of the harvestdefinition, that generated this job. */
     private Long origHarvestDefinitionID;
+    /** The status of the job. See the JobStatus class for the possible statuses. */
     private JobStatus status;
     /**
      * The priority of this job.
@@ -99,25 +103,34 @@ public class Job implements Serializable {
      * retrieved from a domain when set to other than -1.
      */
     private long forceMaxBytesPerDomain = Constants.HERITRIX_MAXBYTES_INFINITY;
+    /** The name of the harvest template used by the job. */
     private String orderXMLname;
+    /** The harvest template used by the job. */
     private Document orderXMLdoc;
+    /** The list of Heritrix settings files. */
     private File[] settingsXMLfiles;
+    /** The corresponding Dom4j Documents for these files. */
     private Document[] settingsXMLdocs;
-    /** A newline-separated ('\n') list of seeds.
-     * Note: During construction this variable may be set to null, in which case
-     * it has been transferred to the seedListSet-variable. In this case it
-     * should be regenerated is seen in the getSeedList()-method - the preferred
-     * way of reading this variable is therefore the method even from inside the
-     * class.
+
+    /** 
+     * A set of seeds involved in this job. 
+     * Outside the SetSeedList() method, the set of seeds is updated
+     * in the addConfiguration() method.
      */
-    private String seedList;
+    private Set<String> seedListSet = new HashSet<String>();
     /** Which run of the harvest definition this is. */
     private int harvestNum;
+    /** Errors during harvesting. */
     private String harvestErrors;
+    /** Details about errors during harvesting. */
     private String harvestErrorDetails;
+    /** Errors during upload of the harvested data. */
     private String uploadErrors;
+    /** Details about errors during upload of the harvested data. */
     private String uploadErrorDetails;
+    /** The starting point of the job. */
     private Date actualStart;
+    /** The ending point of the job. */
     private Date actualStop;
     /**
      * Edition is used by the DAO to keep track of changes.
@@ -160,12 +173,6 @@ public class Job implements Serializable {
      * The total number of objects expected by all added configurations.
      */
     private long totalCountObjects;
-
-    /** A set of seeds involved in this job.
-     *  This is not accessible from the outside, but will be used to form
-     *  the seedList variable when that is requested the first time.
-     */
-    private Set<String> seedListSet = new HashSet<String>();
 
     /** If true, this job object is still undergoing changes due to having
      * more configurations added.  When set to false, the object is no longer
@@ -300,7 +307,7 @@ public class Job implements Serializable {
         this.status = status;
         this.orderXMLname = orderXMLname;
         this.orderXMLdoc = orderXMLdoc;
-        this.seedList = seedlist;
+        this.setSeedList(seedlist);
         this.harvestNum = harvestNum;
 
         underConstruction = false;
@@ -395,28 +402,15 @@ public class Job implements Serializable {
         //Add configuration in map
         domainConfigurationMap.put(cfg.getDomain().getName(), cfg.getName());
 
-        if (seedListSet == null) {
-            seedListSet = new HashSet<String>();
-            BufferedReader reader = new BufferedReader(new StringReader(seedList));
-            String seed;
-            try {
-                while ((seed = reader.readLine()) != null) {
-                    seedListSet.add(seed);
-                }
-            } catch (IOException e) {
-                // Cannot happen, reading from string.  Fnord!
-                seedListSet = null;
-                throw new IOFailure("IOException reading from seed string", e);
-            }
-            seedList = null;
-        }
-
-        //StringBuffer sb = new StringBuffer(seedList);
+        // Add the seeds from the configuration to the Job seeds.
+        // Take care of duplicates.
         for (Iterator<SeedList> itt = cfg.getSeedLists(); itt.hasNext(); ) {
             SeedList seed = itt.next();
             List<String> seeds = seed.getSeeds();
             for (String seedUrl: seeds) {
-                seedListSet.add(seedUrl);
+                if (!seedListSet.contains(seedUrl)) { // take care of duplicates
+                    seedListSet.add(seedUrl);
+                }
                 //TODO remove when heritrix implements this functionality
                 //try to convert a seed into a Internationalized Domain Name
                 try {
@@ -444,7 +438,9 @@ public class Job implements Serializable {
                     }
                     if (!seedASCII.equals(seedUrl)) {
                         log.trace("Converted " + seedUrl + " to " + seedASCII);
-                        seedListSet.add(seedASCII);
+                        if (!seedListSet.contains(seedASCII)) { // take care of duplicates
+                            seedListSet.add(seedASCII);
+                        }
                     }
                 } catch (IDNAException e) {
                     log.trace("Cannot convert seed "
@@ -540,7 +536,7 @@ public class Job implements Serializable {
      * whether the bytelimit is right for the job.
      * The Job limits are compared against the configuration
      * estimates and if no limits are exceeded true is returned
-     * otherwise false is returned
+     * otherwise false is returned.
      *
      * @param cfg the configuration to check
      * @return true if adding the configuration to this Job does
@@ -553,17 +549,22 @@ public class Job implements Serializable {
         // check if domain in DomainConfiguration cfg is not already in this job
         // domainName is used as key in domainConfigurationMap
         if (domainConfigurationMap.containsKey(cfg.getDomain().getName())) {
+            log.debug("Job already has a configuration for Domain '"
+                    + cfg.getDomain().getName() +"'."); 
             return false;
         }
 
         // check if template is same as this job.
         if (!orderXMLname.equals(cfg.getOrderXmlName())) {
+            log.debug("This Job only accept configurations using the harvest template '" + 
+                    orderXMLname + "'. This configuration uses the harvest template '" +
+                    cfg.getOrderXmlName() + "'.");
             return false;
         }
 
-        if (NumberUtils.compareInf(cfg.getMaxBytes(),forceMaxBytesPerDomain) < 0
+        if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
             || (configurationSetsLimit
-                && NumberUtils.compareInf(cfg.getMaxBytes(),forceMaxBytesPerDomain) != 0)) {
+                && NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) != 0)) {
             return false;
         }
 
@@ -748,17 +749,98 @@ public class Job implements Serializable {
     /**
      * Get the seedlist associated with this Job.
      *
-     * @return the seedlist as String, the seeds are separated with newlines (\n).
+     * @return the seedlist as a List of strings
+     * the seeds are separated with newlines (\n).
      */
-    public String getSeedList() {
-        if (seedList == null) {
-            // Convert from set if not in string form
-            // TODO: Get the correct newline definition, can't find it right now.
-            seedList = StringUtils.conjoin(seedListSet, "\n");
-            seedListSet = null;
-        }
-        return seedList;
+    public List<String> getSeedList() {
+        List<String> resultList = new ArrayList<String>();
+        resultList.addAll(seedListSet);
+        return resultList;
     }
+    
+    /**
+     * Returns a set of sorted seeds for this job.
+     * The sorting is done by domain. 
+     * @return a set of sorted seeds for this job.
+     */
+    public List<String> getSortedSeedList() {
+        Map<String,Set> urlMap = new HashMap<String,Set>(); 
+        for (String seed : seedListSet) {
+            String url;
+            // Assume the protocol is http://, if it is missing 
+            if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
+                url = "http://" + seed;
+            } else {
+                url = seed;
+            }
+            String domain = getDomain(url);
+            TreeSet set;
+            if (urlMap.containsKey(domain)) {
+                set = (TreeSet) urlMap.get(domain);
+            } else {
+                set = new TreeSet();
+            }
+            set.add(seed);
+            urlMap.put(domain, set);
+        }
+       List<String> resultSet = new ArrayList<String>();
+       for (Set set: urlMap.values()) {
+           resultSet.addAll(set);
+       }
+       return resultSet;
+    }
+    /**
+     * Get the domain, that the given URL belongs to.
+     * @param url an URL
+     * @return the domain, that the given URL belongs to.
+     */
+    private String getDomain(String url) {
+        try {
+            URL uri = new URL(url);
+            return Domain.domainNameFromHostname(uri.getHost());
+        } catch (MalformedURLException e) {
+            throw new ArgumentNotValid("The string '" + url
+                    + "' is not a valid URL");
+        }
+    }
+    
+    /**
+     * Set the seedlist from a seedlist,
+     * where the individual seeds are separated by
+     * a '\n' character. Duplicate seeds are removed.
+     * @param seedList List of seeds as one String
+     */
+    public void setSeedList(String seedList) {
+        //TODO The following is removed, because it breaks a "lot" of unittests.
+        // and it has not been checked up til now.
+        //ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
+        seedListSet = new HashSet<String>();
+        BufferedReader reader = new BufferedReader(new StringReader(seedList));
+        String seed;
+        try {
+            while ((seed = reader.readLine()) != null) {
+                if (!seedListSet.contains(seed)) {
+                    seedListSet.add(seed);                    
+                } else {
+                    log.debug("Seed '" + seed + "' ignored. Already in the list");
+                }
+            }
+        } catch (IOException e) {
+            // This never happens, as we're reading from a string!
+            throw new IOFailure("IOException reading from seed string", e);
+        }
+        log.info("Now " + seedListSet.size() + " seeds in the list");
+    }
+
+    /**
+     * Get the seedlist as a String. The individual seeds are
+     * separated by the character '\n'.
+     * @return the seedlist as a String
+     */
+    public String getSeedListAsString() {
+        return StringUtils.conjoin(seedListSet, "\n");
+    }
+    
 
     /**
      * Get the current status of this Job.
@@ -1004,11 +1086,22 @@ public class Job implements Serializable {
             throw new IOFailure("Unexpected error during serialization", e);
         }
     }
-
+    
+    /**
+     * Get the harvestNum for this job.
+     * The number reflects which run of the harvest definition this is.
+     * @return the harvestNum for this job.
+     */
     public int getHarvestNum() {
         return harvestNum;
     }
 
+    /**
+     * Set the harvestNum for this job.
+     * The number reflects which run of the harvest definition this is.
+     * ONLY TO BE USED IN THE CONSTRUCTION PHASE.
+     * @param harvestNum a given harvestNum
+     */
     public void setHarvestNum(int harvestNum) {
         if (!underConstruction) {
             final String msg = "Cannot modify job "
@@ -1019,10 +1112,22 @@ public class Job implements Serializable {
         this.harvestNum = harvestNum;
     }
 
+    /**
+     * Get the list of harvest errors for this job.
+     * If no harvest errors, null is returned
+     * This value is not meaningful until the job is finished
+     * (FAILED,DONE, RESUBMITTED)
+     * @return the harvest errors for this job or null if no harvest errors.
+     */
     public String getHarvestErrors() {
         return harvestErrors;
     }
 
+    /**
+     * Append to the list of harvest errors for this job.
+     * Nothing happens, if argument harvestErrors is null.
+     * @param harvestErrors a string containing harvest errors.
+     */
     public void appendHarvestErrors(String harvestErrors) {
         if (harvestErrors != null) {
             if (this.harvestErrors == null) {
@@ -1032,11 +1137,26 @@ public class Job implements Serializable {
             }
         }
     }
+    
+    /**
+     * Get the list of harvest error details for this job.
+     * If no harvest error details, null is returned
+     * This value is not meaningful until the job is finished
+     * (FAILED,DONE, RESUBMITTED)
+     * @return the list of harvest error details for this job 
+     *  or null if no harvest error details.
+     */
 
     public String getHarvestErrorDetails() {
         return harvestErrorDetails;
     }
 
+    /**
+     * Append to the list of harvest error details for this job.
+     * Nothing happens, if argument harvestErrorDetails is null.
+     * 
+     * @param harvestErrorDetails a string containing harvest error details.
+     */
     public void appendHarvestErrorDetails(String harvestErrorDetails) {
         if (harvestErrorDetails != null) {
             if (this.harvestErrorDetails == null) {
@@ -1047,10 +1167,23 @@ public class Job implements Serializable {
         }
     }
 
+    /**
+     * Get the list of upload errors.
+     * If no upload errors, null is returned.
+     * This value is not meaningful until the job is finished
+     * (FAILED,DONE, RESUBMITTED)
+     * @return the list of upload errors as String,
+     *  or null if no upload errors.
+     */
     public String getUploadErrors() {
         return uploadErrors;
     }
-
+    
+    /**
+     * Append to the list of upload errors.
+     * Nothing happens, if argument uploadErrors is null.
+     * @param uploadErrors a string containing upload errrors.
+     */
     public void appendUploadErrors(String uploadErrors) {
         if (uploadErrors != null) {
             if (this.uploadErrors == null) {
@@ -1060,11 +1193,24 @@ public class Job implements Serializable {
             }
         }
     }
-
+    
+    /**
+     * Get the list of upload error details.
+     * If no upload error details, null is returned.
+     * This value is not meaningful until the job is finished
+     * (FAILED,DONE, RESUBMITTED)
+     * @return the list of upload error details as String,
+     *  or null if no upload error details
+     */
     public String getUploadErrorDetails() {
         return uploadErrorDetails;
     }
-
+    
+    /**
+     * Append to the list of upload error details.
+     * Nothing happens, if argument uploadErrorDetails is null.
+     * @param uploadErrorDetails a string containing upload errror details.
+     */
     public void appendUploadErrorDetails(String uploadErrorDetails) {
         if (uploadErrorDetails != null) {
             if (this.uploadErrorDetails == null) {

@@ -102,7 +102,7 @@ public class JobDBDAO extends JobDAO {
             final String orderreader = job.getOrderXMLdoc().asXML();
             DBConnect.setClobMaxLength(s, 8, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job, "order.xml");
-            DBConnect.setClobMaxLength(s, 9, job.getSeedList(),
+            DBConnect.setClobMaxLength(s, 9, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE, job, "seedlist");
             s.setInt(10, job.getHarvestNum());
             DBConnect.setDateMaybeNull(s, 11, job.getActualStart());
@@ -245,7 +245,7 @@ public class JobDBDAO extends JobDAO {
             final String orderreader = job.getOrderXMLdoc().asXML();
             DBConnect.setClobMaxLength(s, 7, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job, "order.xml");
-            DBConnect.setClobMaxLength(s, 8, job.getSeedList(),
+            DBConnect.setClobMaxLength(s, 8, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE, job, "seedlist");
             s.setInt(9, job.getHarvestNum()); // Not in job yet
             DBConnect.setStringMaxLength(s, 10, job.getHarvestErrors(),

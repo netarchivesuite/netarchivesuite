@@ -143,7 +143,7 @@ public class HarvestController {
         // Create jobId-preharvest-metadata-1.arc for this job
         writePreharvestMetadata(job, metadataEntries, crawldir);
 
-        files.writeSeedsTxt(job.getSeedList());
+        files.writeSeedsTxt(job.getSeedListAsString());
         files.writeOrderXml(job.getOrderXMLdoc());
 
         files.setIndexDir(fetchDeduplicateIndex(metadataEntries));

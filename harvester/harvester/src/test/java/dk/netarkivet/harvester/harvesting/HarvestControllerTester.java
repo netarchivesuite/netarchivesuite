@@ -128,7 +128,7 @@ public class HarvestControllerTester extends TestCase {
         j.setJobID(1L);
         // Check whether job 1 is valid
         assertTrue("j.getSeedList should be non-empty",
-                j.getSeedList() != "");
+                j.getSeedListAsString() != "");
         assertTrue("j.getOrderXMLdoc() must have a content",
                 j.getOrderXMLdoc().hasContent());
 
@@ -172,7 +172,7 @@ public class HarvestControllerTester extends TestCase {
         FileAsserts.assertFileContains("Should have correct order.xml file",
                                        "OneLevel-order", orderXml);
         FileAsserts.assertFileContains("Should have correct seeds.txt file",
-                                       j.getSeedList(), seedsTxt);
+                                       j.getSeedListAsString(), seedsTxt);
         FileAsserts.assertFileContains("Should have URL in file",
                                        "metadata://netarkivet.dk", metadataFile);
         FileAsserts.assertFileContains("Should have mimetype in file",
