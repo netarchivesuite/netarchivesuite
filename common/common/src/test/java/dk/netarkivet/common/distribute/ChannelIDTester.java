@@ -1,6 +1,6 @@
-/* File:                 $Id$
- * Revision:         $Revision$
- * Author:                $Author$
+/* File:    $Id$
+ * Revision:$Revision$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -38,9 +38,6 @@ import dk.netarkivet.testutils.StringAsserts;
 /**
  * Tests the ChannelID class that defines instances of message channels
  * (ie. queues and topics).
- *
- * Extended as consequence of introduction of topics (BIST.4)
- *
  */
 public class ChannelIDTester extends TestCase {
 
@@ -57,7 +54,6 @@ public class ChannelIDTester extends TestCase {
         }
 
     }
-
 
     /**
      * Verify that a queue instance is serializable.
@@ -78,12 +74,6 @@ public class ChannelIDTester extends TestCase {
         assertEquals("The two channels should have the same name", q1.getName(), q2.getName());
         assertEquals("The two channels should be of same type (queue or topic)", q1.isTopic(), q2.isTopic());
     }
-
-
-    /**
-     * Extension - BIST.4 *
-     */
-
 
     /**
      * Test that each channel is equal only to itself

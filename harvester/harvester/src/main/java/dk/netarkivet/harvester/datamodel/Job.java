@@ -58,6 +58,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
 
 
@@ -697,32 +698,41 @@ public class Job implements Serializable {
 
     /**
      * Set the actual time when this job was started.
-     *
+     * 
+     * Throws an ArgumentNotValid exception, if trying to set actualStart to a
+     * time after actualStop.
      * @param actualStart A Date object representing the time when this job was started.
      */
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
-            log.debug("End time (" + actualStop
-                    + ") is before start time: " + actualStart);
-            throw new ArgumentNotValid("End time " + actualStop
-                    + " is before start time" + actualStart);
+            String errorMsg = "End time (" + actualStop
+            + ") is before start time: " + actualStart; 
+            log.error(errorMsg);
+            NotificationsFactory.getInstance().errorEvent(errorMsg);
+            // TODO remove this exception, when tests are corrected
+            throw new ArgumentNotValid(errorMsg);
         }
         this.actualStart = actualStart;
     }
 
     /**
      * Set the actual time when this job was stopped/completed.
-     *
+     * Throws an ArgumentNotValid exception, if trying to set actualStop to a
+     * time before actualStart.
+     * TODO Shouldn't it be forbidden to call setActualStop, if actualStart
+     * is undefined?
      * @param actualStop A Date object representing the time when this job was stopped.
      */
     public void setActualStop(Date actualStop) {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart != null && actualStop.before(actualStart)) {
-            log.debug("End time (" + actualStop
-                    + ") is before start time: " + actualStart);
-            throw new ArgumentNotValid("End time " + actualStop
-                    + " is before start time: " + actualStart);
+            String errorMsg = "End time (" + actualStop
+            + ") is before start time: " + actualStart; 
+            log.error(errorMsg);
+            NotificationsFactory.getInstance().errorEvent(errorMsg);
+            // TODO remove this exception, when tests are corrected
+            throw new ArgumentNotValid(errorMsg);
         }
         this.actualStop = actualStop;
     }
@@ -814,6 +824,7 @@ public class Job implements Serializable {
         //TODO The following is removed, because it breaks a "lot" of unittests.
         // and it has not been checked up til now.
         //ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
+        ArgumentNotValid.checkNotNull(seedList, "seedList");
         seedListSet = new HashSet<String>();
         BufferedReader reader = new BufferedReader(new StringReader(seedList));
         String seed;
@@ -860,8 +871,15 @@ public class Job implements Serializable {
     public void setStatus(int status) {
         setStatus(JobStatus.fromOrdinal(status));
     }
-
-    public void setStatus(JobStatus newStatus) {
+    
+    /**
+     * Sets status of this job.
+     *
+     * @param newStatus Must be one of the values STATUS_NEW, ..., STATUS_FAILED
+     * @throws ArgumentNotValid in case of invalid status argument or invalid status change
+     */
+    public synchronized void setStatus(JobStatus newStatus) {
+        ArgumentNotValid.checkNotNull(newStatus, "newStatus");
         if (!status.legalChange(newStatus)) {
             final String message = "Status change from " + status
                                 + " to " + newStatus + " is not allowed";
