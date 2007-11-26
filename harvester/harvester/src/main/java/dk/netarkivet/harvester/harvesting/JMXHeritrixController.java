@@ -295,12 +295,19 @@ public class JMXHeritrixController implements HeritrixController {
 
     /** @see HeritrixController#getProgressStats() */
     public String getProgressStats() {
-        String statistics =
+        String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
+
+        if (status == null) {
+            status = "NO STATUS";
+        }
+
+        String progressStatistics =
                 (String) executeCrawlJobCommand(PROGRESS_STATISTICS_COMMAND);
-        if (statistics == null) {
+
+        if (progressStatistics == null) {
             return "No progress statistics available";
         }
-        return statistics;
+        return status + " " + progressStatistics;
     }
 
     /** @see HeritrixController#isPaused()  */
