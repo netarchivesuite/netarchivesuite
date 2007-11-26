@@ -415,9 +415,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @param environment The environment from a process builder
      */
     private void updateEnvironment(Map<String, String> environment) {
-        final String[] pathArray = environment.get("CLASSPATH").split(":");
-        List<String> pathParts
-                = new ArrayList<String>(Arrays.asList(pathArray));
+        List<String> pathParts = SystemUtils.getCurrentClasspath();
         File heritrixLibDir = new File("lib/heritrix/lib");
         File[] jars = heritrixLibDir.listFiles(new FilenameFilter() {
             public boolean accept(File file, String string) {

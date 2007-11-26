@@ -27,6 +27,10 @@ import java.net.UnknownHostException;
 import java.net.ServerSocket;
 import java.net.BindException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
@@ -87,5 +91,14 @@ public class SystemUtils {
         } catch (IOException e) {
             throw new IOFailure("IO error testing port " + port, e);
         }
+    }
+
+    /** Get the current class path.
+     *
+     * @return List of directories/jar files in the current class path.
+     */
+    public static List<String> getCurrentClasspath() {
+        final String[] pathArray = System.getProperty("java.class.path").split(":");
+        return new ArrayList<String>(Arrays.asList(pathArray));
     }
 }
