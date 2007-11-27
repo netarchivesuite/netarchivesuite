@@ -30,13 +30,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
+import java.util.Map;
 
 import is.hi.bok.deduplicator.DeDuplicator;
 import junit.framework.TestCase;
@@ -62,13 +65,14 @@ import dk.netarkivet.harvester.harvesting.FixedUURI;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
+import dk.netarkivet.harvester.harvesting.JMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 
@@ -127,12 +131,20 @@ public class HeritrixTests extends TestCase {
         }
      }
 
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         // it takes a little while for heritrix to close completely (including all threads)
         // so we have to wait a little while here !
-        Thread.sleep(5000);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //okay
+        }
         mtf.tearDown();
-        Thread.sleep(5000);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            //okay
+        }
     }
 
     /**
@@ -831,14 +843,49 @@ public class HeritrixTests extends TestCase {
      * @return true, if class exists, and can be loaded.XS
      */
     private boolean validClass(String className) {
+        URLClassLoader loader = URLClassLoader.newInstance(classPathAsURLS());
         try {
-            Class.forName(className);
+            loader.loadClass(className);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Get a list of URLs as calculated by the Heritrix tests.
+     * @return The list of URLs.
+     */
+    private URL[] classPathAsURLS() {
+        URL[] urls = new URL[0];
+        try {
+            Method method = ReflectUtils
+                    .getPrivateMethod(JMXHeritrixController.class,
+                                      "updateEnvironment", Map.class);
+            Map<String, String> environment
+                = new HashMap<String, String>(System.getenv());
+            method.invoke(null, environment);
+            String[] urlStrings = environment.get("CLASSPATH").split(":");
+            urls = new URL[urlStrings.length];
+            for (int i = 0; i < urlStrings.length; i++) {
+                urls[i] = new URL("file:" + urlStrings[i]);
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace(System.err);
+            fail("Exception " + e.getMessage());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace(System.err);
+            fail("Exception " + e.getMessage());
+        } catch (InvocationTargetException e) {
+            e.printStackTrace(System.err);
+            fail("Exception " + e.getMessage());
+        } catch (MalformedURLException e) {
+            e.printStackTrace(System.err);
+            fail("Exception " + e.getMessage());
+        }
+        return urls;
     }
 
     private BufferedReader getCXDReaderForArc(File arcfile) throws Exception{
