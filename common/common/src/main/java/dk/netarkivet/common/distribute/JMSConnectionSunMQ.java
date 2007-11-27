@@ -53,7 +53,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      */
     private JMSConnectionSunMQ() {
         super();
-        log.info("Creating instance of SunMQ");
+        log.info("Creating instance of " + getClass().getName());
         initConnection();
     }
 
