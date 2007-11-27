@@ -113,8 +113,8 @@ public class Job implements Serializable {
     /** The corresponding Dom4j Documents for these files. */
     private Document[] settingsXMLdocs;
 
-    /** 
-     * A set of seeds involved in this job. 
+    /**
+     * A set of seeds involved in this job.
      * Outside the SetSeedList() method, the set of seeds is updated
      * in the addConfiguration() method.
      */
@@ -494,7 +494,7 @@ public class Job implements Serializable {
         }
 
         //Get the node to update
-        String filterMapXpath = HeritrixTemplate.ExcludeFilterMapXpath;
+        String filterMapXpath = HeritrixTemplate.EXCLUDE_FILTER_MAP_XPATH;
         Node filterMapNode
                 = orderXMLdoc.selectSingleNode(filterMapXpath);
         if (filterMapNode == null || !(filterMapNode instanceof Element)) {
@@ -551,13 +551,13 @@ public class Job implements Serializable {
         // domainName is used as key in domainConfigurationMap
         if (domainConfigurationMap.containsKey(cfg.getDomain().getName())) {
             log.debug("Job already has a configuration for Domain '"
-                    + cfg.getDomain().getName() +"'."); 
+                    + cfg.getDomain().getName() +"'.");
             return false;
         }
 
         // check if template is same as this job.
         if (!orderXMLname.equals(cfg.getOrderXmlName())) {
-            log.debug("This Job only accept configurations using the harvest template '" + 
+            log.debug("This Job only accept configurations using the harvest template '" +
                     orderXMLname + "'. This configuration uses the harvest template '" +
                     cfg.getOrderXmlName() + "'.");
             return false;
@@ -698,7 +698,7 @@ public class Job implements Serializable {
 
     /**
      * Set the actual time when this job was started.
-     * 
+     *
      * Throws an ArgumentNotValid exception, if trying to set actualStart to a
      * time after actualStop.
      * @param actualStart A Date object representing the time when this job was started.
@@ -707,7 +707,7 @@ public class Job implements Serializable {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
-            + ") is before start time: " + actualStart; 
+            + ") is before start time: " + actualStart;
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
             // TODO remove this exception, when tests are corrected
@@ -728,7 +728,7 @@ public class Job implements Serializable {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
-            + ") is before start time: " + actualStart; 
+            + ") is before start time: " + actualStart;
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
             // TODO remove this exception, when tests are corrected
@@ -767,17 +767,17 @@ public class Job implements Serializable {
         resultList.addAll(seedListSet);
         return resultList;
     }
-    
+
     /**
      * Returns a set of sorted seeds for this job.
-     * The sorting is done by domain. 
+     * The sorting is done by domain.
      * @return a set of sorted seeds for this job.
      */
     public List<String> getSortedSeedList() {
-        Map<String,Set> urlMap = new HashMap<String,Set>(); 
+        Map<String,Set> urlMap = new HashMap<String,Set>();
         for (String seed : seedListSet) {
             String url;
-            // Assume the protocol is http://, if it is missing 
+            // Assume the protocol is http://, if it is missing
             if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
                 url = "http://" + seed;
             } else {
@@ -813,7 +813,7 @@ public class Job implements Serializable {
                     + "' is not a valid URL");
         }
     }
-    
+
     /**
      * Set the seedlist from a seedlist,
      * where the individual seeds are separated by
@@ -831,7 +831,7 @@ public class Job implements Serializable {
         try {
             while ((seed = reader.readLine()) != null) {
                 if (!seedListSet.contains(seed)) {
-                    seedListSet.add(seed);                    
+                    seedListSet.add(seed);
                 } else {
                     log.debug("Seed '" + seed + "' ignored. Already in the list");
                 }
@@ -851,7 +851,7 @@ public class Job implements Serializable {
     public String getSeedListAsString() {
         return StringUtils.conjoin(seedListSet, "\n");
     }
-    
+
 
     /**
      * Get the current status of this Job.
@@ -871,7 +871,7 @@ public class Job implements Serializable {
     public void setStatus(int status) {
         setStatus(JobStatus.fromOrdinal(status));
     }
-    
+
     /**
      * Sets status of this job.
      *
@@ -1010,7 +1010,7 @@ public class Job implements Serializable {
      * TemplateDAO.create, TemplateDAO.update
      */
     private void editOrderXML_maxObjectsPerDomain(long forceMaxObjectsPerDomain) {
-        String xpath = HeritrixTemplate.QueueTotalBudgetXpath;
+        String xpath = HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH;
         Node queueTotalBudgetNode = orderXMLdoc.selectSingleNode(xpath);
         if (queueTotalBudgetNode != null) {
             queueTotalBudgetNode.setText(
@@ -1039,12 +1039,12 @@ public class Job implements Serializable {
      *      orderXMLdoc Document
      * @throws IOFailure
      *      If the group-max-all-kb element cannot be found.
-     * TODO: This group-max-all-kb check also be performed in 
+     * TODO: This group-max-all-kb check also be performed in
      * TemplateDAO.create, TemplateDAO.update
      */
     private void editOrderXML_maxBytesPerDomain(long forceMaxBytesPerDomain) {
         // get and set the group-max-all-kb Node of the orderXMLdoc:
-        String xpath = HeritrixTemplate.GroupMaxAllKbXpath;
+        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
         Node groupMaxSuccessKbNode = orderXMLdoc.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
             if (forceMaxBytesPerDomain != Constants.HERITRIX_MAXBYTES_INFINITY)
@@ -1104,7 +1104,7 @@ public class Job implements Serializable {
             throw new IOFailure("Unexpected error during serialization", e);
         }
     }
-    
+
     /**
      * Get the harvestNum for this job.
      * The number reflects which run of the harvest definition this is.
@@ -1155,13 +1155,13 @@ public class Job implements Serializable {
             }
         }
     }
-    
+
     /**
      * Get the list of harvest error details for this job.
      * If no harvest error details, null is returned
      * This value is not meaningful until the job is finished
      * (FAILED,DONE, RESUBMITTED)
-     * @return the list of harvest error details for this job 
+     * @return the list of harvest error details for this job
      *  or null if no harvest error details.
      */
 
@@ -1172,7 +1172,7 @@ public class Job implements Serializable {
     /**
      * Append to the list of harvest error details for this job.
      * Nothing happens, if argument harvestErrorDetails is null.
-     * 
+     *
      * @param harvestErrorDetails a string containing harvest error details.
      */
     public void appendHarvestErrorDetails(String harvestErrorDetails) {
@@ -1196,7 +1196,7 @@ public class Job implements Serializable {
     public String getUploadErrors() {
         return uploadErrors;
     }
-    
+
     /**
      * Append to the list of upload errors.
      * Nothing happens, if argument uploadErrors is null.
@@ -1211,7 +1211,7 @@ public class Job implements Serializable {
             }
         }
     }
-    
+
     /**
      * Get the list of upload error details.
      * If no upload error details, null is returned.
@@ -1223,7 +1223,7 @@ public class Job implements Serializable {
     public String getUploadErrorDetails() {
         return uploadErrorDetails;
     }
-    
+
     /**
      * Append to the list of upload error details.
      * Nothing happens, if argument uploadErrorDetails is null.
