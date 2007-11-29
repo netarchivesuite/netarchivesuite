@@ -47,9 +47,6 @@ public class Constants {
     public static final String CRAWLERTRAPS_PARAM = "crawlerTraps";
     public static final String SEED_LIST_PARAMETER = "seedList";
     public static final String INDEXLABEL_PARAM = "indexLabel";
-    public static final String NO_PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
-    public static final String END_TIME_FIELD = "endTimeField";
-    public static final String HOW_OFTEN_FIELD = "howOftenField";
     public static final String SCHEDULE_PARAM = "schedulename";
     public static final String HARVEST_PARAM = "harvestname";
     public static final String DOMAINLIST_PARAM = "domainlist";
@@ -91,6 +88,14 @@ public class Constants {
     /** The maximum length of a seed before it is truncated
      * before showing it. */
     public static final int MAX_SHOWN_SIZE_OF_URL = 40;
+    
+    /** Regexp for checking if a seed starts with a protocol. */
+    public static final String NO_PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
+    
+    /** Fields used in our calendar functionality. */
+    public static final String END_TIME_FIELD = "endTimeField";
+    public static final String HOW_OFTEN_FIELD = "howOftenField";
+    
     
     /**
      * This constant is used as a prefix to identify a request parameter as a
