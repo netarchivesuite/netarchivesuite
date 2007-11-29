@@ -41,7 +41,9 @@ import java.util.Set;
  * making up a Lucene index of all files.
  * */
 public class IndexServer implements CleanupIF{
+    /** The remote server that hands us indexes. */
     private IndexRequestServer remoteServer;
+    /** The singleton instance of this class. */
     private static IndexServer instance;
 
     /** Instantiates the two handlers, and starts listening for requests. */

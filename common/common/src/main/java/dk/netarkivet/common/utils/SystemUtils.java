@@ -22,24 +22,26 @@
  */
 package dk.netarkivet.common.utils;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.net.ServerSocket;
-import java.net.BindException;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /** Miscellanous utilities for getting system resources. */
 public class SystemUtils {
-
     /** Hostname for this machine used when no name can be found, or when the
      * actual name doesn't matter. */
     public static final String LOCALHOST = "localhost";
+    /** Name of standard Java property containing class path.  Why these names
+     * aren't actually defined as constants anywhere eludes me. */
+    private static final String CLASS_PATH_PROPERTY = "java.class.path";
 
     /**
      * Looks up the IP number of the local host.
@@ -93,12 +95,19 @@ public class SystemUtils {
         }
     }
 
-    /** Get the current class path.
+    /** Get the current class path entries.  Note that this does not work
+     * if we've been invoked with java -jar, as that option silently ignores
+     * classpaths.
      *
      * @return List of directories/jar files in the current class path.
      */
     public static List<String> getCurrentClasspath() {
-        final String[] pathArray = System.getProperty("java.class.path").split(":");
-        return new ArrayList<String>(Arrays.asList(pathArray));
+        String propertyValue = System.getProperty(CLASS_PATH_PROPERTY);
+        if (propertyValue != null) {
+            final String[] pathArray = propertyValue.split(File.pathSeparator);
+            return new ArrayList<String>(Arrays.asList(pathArray));
+        } else {
+            return new ArrayList<String>();
+        }
     }
 }

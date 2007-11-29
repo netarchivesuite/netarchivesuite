@@ -261,11 +261,8 @@ public class Bitarchive {
             throw new IOFailure("Failed to create temporary file for batch "
                     + job, e);
         }
-        // If output dataset is large use CircularBuffer -
-        // see -
-        // http://ostermiller.org/convert_java_outputstream_inputstream.html
         log.info("Finished batch job " + job.getClass().getName()
-                 + " with status " + returnStatus);
+                 + " with result: " + returnStatus);
         return returnStatus;
     }
 

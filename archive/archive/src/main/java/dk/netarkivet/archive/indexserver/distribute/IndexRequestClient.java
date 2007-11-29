@@ -25,6 +25,7 @@ package dk.netarkivet.archive.indexserver.distribute;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -144,7 +145,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                  + "' for the jobs [" + StringUtils.conjoin(jobSet, ",")
                  + "]");
         //Send request to server
-        IndexRequestMessage irMsg = new IndexRequestMessage(requestType, jobSet);
+        IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
+                                                            jobSet);
         NetarkivetMessage msg = getSynchronizer().sendAndWaitForOneReply(
                 irMsg, getIndexTimeout());
 
@@ -158,33 +160,16 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                       + this.requestType
                      + "' for the jobs [" + StringUtils.conjoin(jobSet, ",")
                      + "]");
-            if (reply.isIndexIsStoredInDirectory()) {
-                List<RemoteFile> files = reply.getResultFiles();
-                File cacheDir = getCacheFile(jobSet);
-                File tmpDir =
-                        FileUtils.createUniqueTempDir(cacheDir.getParentFile(),
-                                cacheDir.getName());
-                try {
-                    FileUtils.createDir(tmpDir);
-                    for (RemoteFile f : files) {
-                        String destFileName = f.getName();
-                        destFileName
-                                = destFileName.substring(0, destFileName.length() 
-                                               - ZipUtils.GZIP_SUFFIX.length());
-                        File destFile = new File(tmpDir, destFileName);
-                        unzipAndDeleteRemoteFile(f, destFile);
-                    }
-                    if (!tmpDir.renameTo(cacheDir)) {
-                        throw new IOFailure("Error renaming temp dir '"
-                                + tmpDir + "' to target directory '"
-                                + cacheDir.getAbsolutePath() + "'");
-                    }
-                } finally {
-                    FileUtils.removeRecursively(tmpDir);
+            try {
+                if (reply.isIndexIsStoredInDirectory()) {
+                    gunzipToDir(reply.getResultFiles(), getCacheFile(jobSet));
+                } else {
+                    unzipAndDeleteRemoteFile(reply.getResultFile(),
+                                             getCacheFile(jobSet));
                 }
-            } else {
-                RemoteFile remoteFile = reply.getResultFile();
-                unzipAndDeleteRemoteFile(remoteFile, getCacheFile(jobSet));
+            } catch (IOFailure e) {
+                log.warn("IOFailure during unzipping of index", e);
+                return new HashSet<Long>();
             }
         }
 
@@ -193,14 +178,51 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         return foundJobs;
     }
 
-    /** Unzip a RemoteFile to a given file, deleting it afterwards.  Problems
-     * arising while deleting are logged, but do not cause exceptions.
+    /** Gunzip a list of RemoteFiles into a given directory.  The actual
+     * unzipping takes place in a temporary directory which gets renamed,
+     * so the directory appears to be created atomically.
+     *
+     * @param files List of RemoteFiles to gunzip.  The RemoteFiles will be
+     * deleted as part of the process.
+     * @param toDir The directory that the gunzipped files will eventually
+     * be placed in.  This directory will be created and filled atomically.
+     * @throws IOFailure If errors occur during unzipping, e.g. disk full.
+     */
+    private void gunzipToDir(List<RemoteFile> files, File toDir) {
+        File tmpDir = FileUtils.createUniqueTempDir(
+                toDir.getParentFile(), toDir.getName());
+        try {
+            FileUtils.createDir(tmpDir);
+            for (RemoteFile f : files) {
+                String destFileName = f.getName();
+                destFileName = destFileName
+                        .substring(0, destFileName.length()
+                                      - ZipUtils.GZIP_SUFFIX.length());
+                File destFile = new File(tmpDir, destFileName);
+                unzipAndDeleteRemoteFile(f, destFile);
+            }
+            if (!tmpDir.renameTo(toDir)) {
+                throw new IOFailure("Error renaming temp dir '"
+                                    + tmpDir
+                                    + "' to target directory '"
+                                    + toDir.getAbsolutePath()
+                                    + "'");
+            }
+        } finally {
+            FileUtils.removeRecursively(tmpDir);
+        }
+    }
+
+    /** Unzip a RemoteFile to a given file, deleting the RemoteFile afterwards.
+     *  Problems arising while deleting are logged, but do not cause exceptions.
      *
      * @param remoteFile A file to download. This file will be attempted deleted
      * after successfull unzipping.
      * @param destFile A place to put the unzipped file.
+     * @throws IOFailure on any I/O error, e.g. disk full
      */
-    private void unzipAndDeleteRemoteFile(RemoteFile remoteFile, File destFile) {
+    private void unzipAndDeleteRemoteFile(RemoteFile remoteFile,
+                                          File destFile) {
         File tmpFile = null;
         try {
             // We cannot unzip directly from a stream, so we make a temp file.
@@ -216,6 +238,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                           + "' from FTP server after saving it", e);
             }
         } catch (IOException e) {
+            // All other IOExceptions have already been turned into IOFailure
             throw new IOFailure("Error making temporary file in "
                                 + FileUtils.getTempDir(), e);
         } finally {

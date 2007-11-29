@@ -250,7 +250,8 @@ public class ZipUtils {
         }
     }
 
-    /** Gunzip a single file into a directory.
+    /** Gunzip a single file into a directory.  Unlike with the gzip()
+     * command-line tool, the original file is not deleted.
      *
      * @param f The .gz file to unzip.
      * @param toDir The directory to gunzip into.  This directory must exist.
@@ -264,7 +265,8 @@ public class ZipUtils {
         gunzipFile(f, outFile);
     }
 
-    /** Gunzip a single gzipped file into the given file.
+    /** Gunzip a single gzipped file into the given file. Unlike with the gzip()
+     * command-line tool, the original file is not deleted.
      *
      * @param fromFile A gzipped file to unzip.
      * @param toFile The file that the contents of fromFile should be gunzipped
@@ -272,9 +274,16 @@ public class ZipUtils {
      * this file will be overwritten.
      */
     public static void gunzipFile(File fromFile, File toFile) {
+        ArgumentNotValid.checkNotNull(fromFile, "File fromFile");
+        ArgumentNotValid.checkTrue(fromFile.canRead(),
+                                   "fromFile must be readable");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        ArgumentNotValid.checkTrue(
+                toFile.getAbsoluteFile().getParentFile().canWrite(),
+                "toFile must be in a writeable dir");
         try {
-            GZIPInputStream in
-                    = new LargeFileGZIPInputStream(new FileInputStream(fromFile));
+            GZIPInputStream in = new LargeFileGZIPInputStream(
+                    new FileInputStream(fromFile));
             FileUtils.writeStreamToFile(in, toFile);
         } catch (IOException e) {
             throw new IOFailure("Error ungzipping '"

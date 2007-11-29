@@ -52,7 +52,11 @@ This page displays harvest details for one harvest definition run
     }
     //After a resubmit, forward to this page
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
-        response.sendRedirect("Harveststatus-alljobs.jsp");
+        response.sendRedirect("Harveststatus-perharvestrun.jsp?"
+                              + Constants.HARVEST_ID_PARAM + "="
+                              + request.getParameter(Constants.HARVEST_ID_PARAM)
+                              + "&" + Constants.HARVEST_NUM_PARAM + "="
+                              + request.getParameter(Constants.HARVEST_NUM_PARAM));
         return;
     }
 

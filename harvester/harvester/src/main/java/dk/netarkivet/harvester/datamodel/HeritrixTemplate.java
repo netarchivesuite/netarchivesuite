@@ -71,20 +71,39 @@ public class HeritrixTemplate {
      * legal content for the path text. */
     private static final Map<String, Pattern> requiredXpaths
             = new HashMap<String, Pattern>();
+    
+    /** A regular expression that matches a whole number, possibly negative,
+     * and with optional whitespace around it.
+     */
+    private static final String WHOLE_NUMBER_REGEXP = "\\s*-?[0-9]+\\s*";
+    /** A regular expression that matches everything.  Except newlines,
+     * unless DOTALL is given to Pattern.compile(). */
+    private static final String EVERYTHING_REGEXP = ".*";
+
+    // These two regexps are copied from
+    // org.archive.crawler.datamodel.CrawlOrder because they're private there.
+
+    /** A regular expression that matches Heritrix' specs for the user-agent
+     * field in order.xml.  It should be used with DOTALL.  An example match is
+     * "Org (ourCrawler, see +http://org.org/aPage for details) harvest".
+     */
+    private static final String USER_AGENT_REGEXP
+            = "\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*";
+    /** A regular expression that matches Heritrix' specs for the from
+     * field.  This should be a valid email address.
+     */
+    private static final String FROM_REGEXP = "\\S+@\\S+\\.\\S+";
+
     static {
         requiredXpaths.put(QUEUE_TOTAL_BUDGET_XPATH,
-                           Pattern.compile("\\s*-?[0-9]+\\s*"));
+                           Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH,
-                           Pattern.compile("\\s*-?[0-9]+\\s*"));
+                           Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(EXCLUDE_FILTER_MAP_XPATH,
-                           Pattern.compile(".*", Pattern.DOTALL));
-        // Copied from org.archive.crawler.datamodel.CrawlOrder because
-        // it's private in there:(
+                           Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_USER_AGENT_XPATH,
-                           Pattern.compile("\\S+.*\\(.*\\+http(s)?://\\S+\\.\\S+.*\\).*",
-                                           Pattern.DOTALL));
-        requiredXpaths.put(HERITRIX_FROM_XPATH,
-                           Pattern.compile("\\S+@\\S+\\.\\S+"));
+                           Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
+        requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
     }
 
     /** Constructor for HeritrixTemplate class.

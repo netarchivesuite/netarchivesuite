@@ -305,7 +305,7 @@ public class JMXHeritrixController implements HeritrixController {
                 (String) executeCrawlJobCommand(PROGRESS_STATISTICS_COMMAND);
 
         if (progressStatistics == null) {
-            return "No progress statistics available";
+            progressStatistics = "No progress statistics available";
         }
         return status + " " + progressStatistics;
     }

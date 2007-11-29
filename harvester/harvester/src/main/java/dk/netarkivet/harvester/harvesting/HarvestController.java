@@ -294,8 +294,8 @@ public class HarvestController {
         if (files != null) {
             for (File f : files) {
                 try {
-                    log.info("Uploading to arcrepository the file '"
-                            + f.getName() + "'.");
+                    log.info("Uploading file '" + f.getName()
+                             + "' to arcrepository.");
                     arcRepController.store(f);
                 } catch (Exception e) {
                     File oldJobsDir

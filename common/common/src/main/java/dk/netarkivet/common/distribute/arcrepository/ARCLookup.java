@@ -73,9 +73,9 @@ public class ARCLookup {
         luceneSearcher = null;
     }
 
-    /** This method resets the current Lucene index this object works
-     * on, and replaces them with this new index.
-
+    /** This method sets the current Lucene index this object works
+     * on, replacing and closing the current index if one is already set.
+     *
      * @param indexDir The new index, a directory containing Lucene files.
      * @throws ArgumentNotValid If argument is null
      */
