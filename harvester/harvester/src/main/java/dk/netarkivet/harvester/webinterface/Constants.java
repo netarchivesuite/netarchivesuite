@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ * USA
  */
 
 package dk.netarkivet.harvester.webinterface;
@@ -27,11 +28,18 @@ package dk.netarkivet.harvester.webinterface;
  * Harvester webinterface constants.
  */
 public class Constants {
+    
+    /**
+     * The contructor for this class. Making the constructor private prevents
+     * the class from being instantiated.
+     */
+    private Constants() {
+    }
+    
+    /** Names of various parameters used in the webinterface. */
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
     public static final String HARVEST_ID_PARAM = "harvestID";
     public static final String HARVEST_NUM_PARAM = "harvestNum";
-    public static final String QA_SITESECTION_DIRNAME = "QA";
-    public static final String DEFINITIONS_SITESECTION_DIRNAME = "HarvestDefinition";
     public static final String EDIT_CONFIG_PARAM = "editConfig";
     public static final String DEFAULT_PARAM = "default";
     public static final String EDIT_URLLIST_PARAM = "editUrlList";
@@ -42,18 +50,6 @@ public class Constants {
     public static final String NO_PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
     public static final String END_TIME_FIELD = "endTimeField";
     public static final String HOW_OFTEN_FIELD = "howOftenField";
-
-    private Constants() {
-        //Utility class, do not instantiate.
-    }
-
-    /**
-     * This constant is used as a prefix to identify a request parameter as a
-     * domain/configuration pair. Ie one sets such a pair as
-     * DOMAIN_IDENTIFIER<domainname>=<configname>
-     */
-    public static final String DOMAIN_IDENTIFIER = "domain_config_pair_";
-    //Names of various form parameters.
     public static final String SCHEDULE_PARAM = "schedulename";
     public static final String HARVEST_PARAM = "harvestname";
     public static final String DOMAINLIST_PARAM = "domainlist";
@@ -84,7 +80,25 @@ public class Constants {
     public static final String ORDER_TEMPLATE_PARAM = "orderTemplate";
     public static final String ALIAS_PARAM = "alias";
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
-
+    
+    /** Names of the two directories for the sitesections belonging to
+     * the harvester package. 
+     */
+    public static final String QA_SITESECTION_DIRNAME = "QA";
+    public static final String DEFINITIONS_SITESECTION_DIRNAME =
+        "HarvestDefinition";
+   
+    /** The maximum length of a seed before it is truncated
+     * before showing it. */
+    public static final int MAX_SHOWN_SIZE_OF_URL = 40;
+    
+    /**
+     * This constant is used as a prefix to identify a request parameter as a
+     * domain/configuration pair. Ie one sets such a pair as
+     * DOMAIN_IDENTIFIER<domainname>=<configname>
+     */
+    public static final String DOMAIN_IDENTIFIER = "domain_config_pair_";
+   
     /**
      * Extension used for XML files, including '.' separator.
      */

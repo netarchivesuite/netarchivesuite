@@ -222,15 +222,25 @@ and reposne.getLocale use this locale.
     <%
         for (String seed : job.getSortedSeedList()) {
             String url;
+            String shownSeed;
             if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
                 url = "http://" + seed;
             } else {
                 url = seed;
             }
+            shownSeed = seed;
+            // If length of seed exceeds Constants.MAX_SHOWN_SIZE_OF_URL
+            // show only Constants.MAX_SHOWN_SIZE_OF_URL of the seed, and append
+            // the string " .."
+            if (shownSeed.length() > Constants.MAX_SHOWN_SIZE_OF_URL) {
+            	
+            	shownSeed = seed.substring(0, Constants.MAX_SHOWN_SIZE_OF_URL - 1)
+            		+ " ..";
+            }
     %>
     <a target="viewerproxy"
        href="<%=HTMLUtils.escapeHtmlValues(url)%>"><%=
-        HTMLUtils.escapeHtmlValues(seed)%>
+        HTMLUtils.escapeHtmlValues(shownSeed)%>
     </a>
     <br/>
     <%
