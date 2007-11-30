@@ -360,6 +360,36 @@ public class JobTester extends DataModelTestCase {
         assertTrue("Error implementing status codes",
                 JobStatus.NEW !=
                 JobStatus.FAILED);
+        JobStatus s = JobStatus.NEW;
+        assertEquals("Error implementing status code names for NEW", 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for NEW", 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
+        s = JobStatus.SUBMITTED;
+        assertEquals("Error implementing status code names for " + s.name(), 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for " + s.name(), 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
+        s = JobStatus.STARTED;
+        assertEquals("Error implementing status code names for " + s.name(), 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for " + s.name(), 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
+        s = JobStatus.DONE;
+        assertEquals("Error implementing status code names for " + s.name(), 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for " + s.name(), 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
+        s = JobStatus.FAILED;
+        assertEquals("Error implementing status code names for " + s.name(), 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for " + s.name(), 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
+        s = JobStatus.RESUBMITTED;
+        assertEquals("Error implementing status code names for " + s.name(), 
+        		s, JobStatus.fromName( s.name()));
+        assertEquals("Error implementing status ordinal for " + s.name(), 
+        		s, JobStatus.fromOrdinal(s.ordinal()));
     }
 
     /**

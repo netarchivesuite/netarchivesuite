@@ -56,6 +56,20 @@ public enum JobStatus {
         }
     }
 
+    /** Helper method that gives a proper object from e.g. a DB-stored value.
+    *
+    * @param status a certain integer
+    * @return the JobStatus related to a certain integer
+    */
+   public static JobStatus fromName(String s) {
+       if (s.equals("NEW")) { return NEW; }
+       else if (s.equals("SUBMITTED")) { return SUBMITTED; }
+       else if (s.equals("STARTED")) { return STARTED; }
+       else if (s.equals("DONE")) { return DONE; }
+       else if (s.equals("FAILED")) { return FAILED; }
+       else if (s.equals("RESUBMITTED")) { return RESUBMITTED; }
+       else { throw new ArgumentNotValid("Invalid job status " + s); }
+   }
     /**
      * Return a localized human-readable string describing this status.
      *

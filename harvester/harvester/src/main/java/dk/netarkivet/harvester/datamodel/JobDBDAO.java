@@ -454,20 +454,41 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information.
+     * Get a list of small and immediately usable status information
+     * for given status and in given order. Is used by getStatusInfo
+     * functions in order to share code (and SQL)
+     * TBD: should also include given harvest run
      *
      * @return List of JobStatusInfo objects for all jobs.
      */
-    public List<JobStatusInfo> getStatusInfo() {
+    private List<JobStatusInfo> privateGetStatusInfo(int jobStatusCode, boolean asc) {
+    	JobStatus st;
+        ArgumentNotValid.checkNotNull(jobStatusCode, "jobstatusCode");
+        if (jobStatusCode != -1)
+        {
+            try { st = JobStatus.fromOrdinal(jobStatusCode); }
+            catch (ArgumentNotValid e)
+            { throw new ArgumentNotValid("jobStatusCode " + jobStatusCode); }
+        }
+
+        String sql;
+        sql = "SELECT jobs.job_id, status, jobs.harvest_id, "
+            + "harvestdefinitions.name, harvest_num, harvest_errors,"
+            + " upload_errors, orderxml, num_configs, startdate, enddate"
+            + " FROM jobs, harvestdefinitions "
+            + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
+        if (jobStatusCode != -1)  { 
+        	sql = sql + " AND status = " + jobStatusCode; 
+        }
+        sql = sql + " ORDER BY jobs.job_id";
+        if (!asc)  { 
+        	sql = sql + " DESC"; 
+        }
+
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("SELECT jobs.job_id, status, jobs.harvest_id, "
-                                   + "harvestdefinitions.name, harvest_num, harvest_errors,"
-                                   + " upload_errors, orderxml, num_configs, startdate, enddate"
-                                   + " FROM jobs, harvestdefinitions "
-                                   + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
-                                   + " ORDER BY jobs.job_id");
+            s = c.prepareStatement(sql);
             ResultSet res = s.executeQuery();
             List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
             while (res.next()) {
@@ -489,8 +510,48 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
+     * Get a list of small and immediately usable status information
+     *
+     * @return List of JobStatusInfo objects for all jobs.
+     */
+    public List<JobStatusInfo> getStatusInfo() {
+        return privateGetStatusInfo(-1, true);
+    }
+
+    /**
+     * Get a list of small and immediately usable status information for given job status.
+     *
+     * @param status The status asked for.
+     * @return List of JobStatusInfo objects for all jobs with given job status.
+     */
+    public List<JobStatusInfo> getStatusInfo(JobStatus status) {
+    	return privateGetStatusInfo(status.ordinal(),true);
+    }
+
+    /**
+     * Get a list of small and immediately usable status information in given job id order.
+     *
+     * @param status The status asked for.
+     * @return List of JobStatusInfo objects for all jobs with given job status.
+     */
+    public List<JobStatusInfo> getStatusInfo(boolean asc) {
+    	return privateGetStatusInfo(-1,true);
+    }
+
+    /**
+     * Get a list of small and immediately usable status information for given job status
+     * and in given job id order.
+     *
+     * @param status The status asked for.
+     * @return List of JobStatusInfo objects for all jobs with given job status.
+     */
+    public List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc) {
+    	return privateGetStatusInfo(status.ordinal(),asc);
+    }
+
+    /**
      * Get a list of small and immediately usable status information for
-     * a given harvest run.
+     * a given harvest run a given harvest run.
      *
      * @param harvestId The ID of the harvest
      * @param numEvent The harvest run number

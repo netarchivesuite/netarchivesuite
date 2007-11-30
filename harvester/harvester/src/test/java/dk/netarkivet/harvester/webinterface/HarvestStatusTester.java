@@ -27,7 +27,10 @@ package dk.netarkivet.harvester.webinterface;
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletRequest;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -38,6 +41,8 @@ import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
+import dk.netarkivet.harvester.webinterface.HarvestStatus.DefaultedRequest;
 
 
 public class HarvestStatusTester extends WebinterfaceTestCase {
@@ -126,5 +131,121 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         assertEquals("New job should have status new",
                      JobStatus.NEW, jobDAO.read(2L).getStatus());
 
+    }
+    
+    public void testGetjobStatusList () throws Exception {
+    	List<JobStatusInfo> l = HarvestStatus.getjobStatusList(-1,"ASC");
+    	assertEquals("Number of jobs should be 0", 0, l.size());
+
+    	l = HarvestStatus.getjobStatusList(0,"ASC");
+    	assertEquals("Number of jobs should be 0", 0, l.size());
+
+        try {
+        	HarvestStatus.getjobStatusList(-2,"DESC");
+            fail("Should have forwarded me to ArgumentNotValid for job status.");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+
+        try {
+        	HarvestStatus.getjobStatusList(0,"XX");
+           fail("Should have forwarded me to ArgumentNotValid for sort oder.");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+
+        try {
+        	HarvestStatus.getjobStatusList(0,"");
+           fail("Should have forwarded me to ArgumentNotValid for sort oder.");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+    }
+    
+    public void testGetSelectedSortOrder () throws Exception {
+    	TestServletRequest servletRequest = new TestServletRequest();
+    	TestPageContext context = new TestPageContext(servletRequest);
+        
+    	DefaultedRequest dfltRequest =
+    	        new HarvestStatus.DefaultedRequest(servletRequest);
+        String s;
+        try {
+            s = HarvestStatus.getSelectedSortOrder(null);
+            fail("Should have thrown ANV on null parameter.");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+
+        //check default
+        s = HarvestStatus.getSelectedSortOrder(dfltRequest);
+        assertEquals("Expected other default sort order",
+         		HarvestStatus.DEFAULT_SORTORDER, s);
+
+        //check error on faulty parameter
+        Map<String, String[]> parms = new HashMap<String, String[]>();
+        parms.put(Constants.JOBIDORDER_PARAM, new String[]{"XX"});
+        servletRequest.setParameterMap(parms);
+        context = new TestPageContext(servletRequest);
+        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
+        try {
+            s = HarvestStatus.getSelectedSortOrder(dfltRequest);
+            fail("Should have forwarded me to an error page on wrong order parameter.");
+        } catch (ForwardedToErrorPage e) {
+           //Expected
+        }
+
+        //check set order parameter
+        parms = new HashMap<String, String[]>();
+        parms.put(Constants.JOBIDORDER_PARAM, new String[]{HarvestStatus.SORTORDER_DESCENDING});
+        servletRequest.setParameterMap(parms);
+        context = new TestPageContext(servletRequest);
+        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
+        s = HarvestStatus.getSelectedSortOrder(dfltRequest);
+        assertEquals("Expected descemnding sort order",
+        		HarvestStatus.SORTORDER_DESCENDING, s);
+    }
+    
+    public void testGetSelectedJobStatusCode() throws Exception {
+    	TestServletRequest servletRequest = new TestServletRequest();
+    	TestPageContext context = new TestPageContext(servletRequest);
+        
+    	DefaultedRequest dfltRequest =
+    	        new HarvestStatus.DefaultedRequest(servletRequest);
+        int i;
+        try {
+            i = HarvestStatus.getSelectedJobStatusCode(null);
+            fail("Should have thrown ANV on null parameter.");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+
+        //check default
+        i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
+        assertEquals("Expected other default sort order",
+         		HarvestStatus.DEFAULT_JOBSTATUS, JobStatus.fromOrdinal(i).name());
+
+        //check error on faulty parameter
+        Map<String, String[]> parms = new HashMap<String, String[]>();
+        parms.put(Constants.JOBSTATUS_PARAM, new String[]{"XX"});
+        servletRequest.setParameterMap(parms);
+        context = new TestPageContext(servletRequest);
+        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
+        try {
+            i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
+            fail("Should have forwarded me to an error page on wrong order parameter.");
+        } catch (ForwardedToErrorPage e) {
+           //Expected
+        }
+
+        //check set order parameter
+        parms = new HashMap<String, String[]>();
+        parms.put(Constants.JOBSTATUS_PARAM, new String[]{JobStatus.FAILED.name()});
+        servletRequest.setParameterMap(parms);
+        context = new TestPageContext(servletRequest);
+        dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
+        i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
+        assertEquals("Expected failed job status for selection",
+        		JobStatus.FAILED.name(), JobStatus.fromOrdinal(i).name());
+    	
     }
 }

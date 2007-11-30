@@ -37,6 +37,8 @@ public class Constants {
     }
     
     /** Names of various parameters used in the webinterface. */
+    public static final String JOBSTATUS_PARAM = "jobstatusname";
+    public static final String JOBIDORDER_PARAM = "jobidorder";
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
     public static final String HARVEST_ID_PARAM = "harvestID";
     public static final String HARVEST_NUM_PARAM = "harvestNum";

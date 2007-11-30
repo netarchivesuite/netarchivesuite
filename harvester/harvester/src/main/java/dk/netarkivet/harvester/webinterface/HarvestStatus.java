@@ -23,6 +23,9 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.List;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -32,13 +35,33 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.JobDAO;
+import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 
 /**
  * This page provides support for the HarvestStatus pages of the web interface.
  */
 
 public class HarvestStatus {
-    /**
+    /** parameters used by Harveststatus-alljobs.jsp */
+    public static final String JobStatusParameter = Constants.JOBSTATUS_PARAM;
+    public static final String JobIdOrderParameter =Constants.JOBIDORDER_PARAM;
+    public static final String[] DEFAULTABLE_PARAMETERS = new String[]{
+    	JobStatusParameter,
+    	JobIdOrderParameter};
+    
+    //Sort order constants for job id
+    public static final String SORTORDER_ASCENDING = "ASC";
+    public static final String SORTORDER_DESCENDING = "DESC";
+    
+    //String code for choice of all statuses
+    public static final String JOBSTATUS_ALL = "ALL";
+    
+    //Default values for display parameters
+    public static final String DEFAULT_SORTORDER = SORTORDER_ASCENDING;
+    public static final String DEFAULT_JOBSTATUS = JobStatus.STARTED.name();
+	
+	/**
      * Process a request from Harveststatus-alljobs.
      *
      * Will resubmit a job if requested, otherwise do nothing.
@@ -85,4 +108,107 @@ public class HarvestStatus {
                 + harvestID + "&amp;harvestNum=" + harvestRun + "\">"
                 + harvestRun + "</a>";
     }
+        
+    /** Find Job status to be shown based on parameters, including possibility for All statuses
+    *
+    * @param dfltRequest contains defaulted parameters
+    * @return Interger value being the ordinal of a JobStatus or -1 for ALL (job statuses)
+    */
+   public static int getSelectedJobStatusCode(DefaultedRequest dfltRequest) {
+       ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
+       
+       String s = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM); 
+       
+       if (s.equals(JOBSTATUS_ALL))
+       { return -1; }
+       else
+       { 
+    	   try { 
+    		   int i = JobStatus.fromName(s).ordinal();
+    		   return i;
+    	
+    	   }
+    	   catch (ArgumentNotValid e)  { 
+    		   throw new ForwardedToErrorPage("Invalid job status parameter " + s);
+    	   }
+       }       
+   }
+
+   /** Find sort order of job ids to be shown based on parameters
+   *
+   * @param dfltRequest contains defaulted parameters
+   * @return String constant for selected order
+   */
+  public static String getSelectedSortOrder(DefaultedRequest dfltRequest) {
+      ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
+      
+      String s = dfltRequest.getParameter(Constants.JOBIDORDER_PARAM); 
+      
+      if (s.equals(SORTORDER_ASCENDING) || s.equals(SORTORDER_DESCENDING))
+      { return s; }
+      else
+      { throw new ForwardedToErrorPage("Invalid order parameter " + s); }       
+  }
+
+  /** Calculate list of job information to be shown
+   *
+   * @param selectedJobStatusCode integer code for job statuses to be shown
+   * @param selectedSortOrder string code whether job ids should come in asc. or desc. order
+   * @return list of job (status) information to be shown
+   */
+   public static List<JobStatusInfo> getjobStatusList(int selectedJobStatusCode, String selectedSortOrder) {
+	   boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
+	   if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) { 
+		   throw new ArgumentNotValid("Invalid sort Order " + selectedSortOrder);
+	   }
+	   
+	   if (selectedJobStatusCode==-1)
+	   { 
+		   return JobDAO.getInstance().getStatusInfo(asc); 
+	   }
+	   else
+	   { 
+		   JobStatus sortJobStatus = JobStatus.fromOrdinal(selectedJobStatusCode); 
+		   return JobDAO.getInstance().getStatusInfo(sortJobStatus, asc); 
+	   }
+   }
+   
+    /** This class encapsulates a request for reload, making non-existing
+     * parameters appear as there default value.
+     */
+    public static class DefaultedRequest {
+    	ServletRequest req;
+
+        public DefaultedRequest(ServletRequest req) {
+            ArgumentNotValid.checkNotNull(req, "ServletRequest req");
+            this.req = req;
+        }
+        
+        /** Gets a parameter from the original request, except if the
+         * parameter is unset, return the default value for the parameter
+         * @param paramName a parameter
+         * @return The parameter or the default value; never null.
+         */
+        public String getParameter(String paramName) {
+            ArgumentNotValid.checkNotNull(paramName, "paramName");
+            String value = req.getParameter(paramName);
+            if (value == null || value.length() == 0) {
+                if (JobStatusParameter.equals(paramName)) {
+                    return DEFAULT_JOBSTATUS;
+                } 
+                else {
+                	if (JobIdOrderParameter.equals(paramName)) {
+                        return DEFAULT_SORTORDER;
+                	}
+                    else {
+                    	throw new ArgumentNotValid("Invalid parameter name " + paramName);
+                    }
+                } 
+            } else {
+                return value;  
+            }
+        }
+    }
+
 }
+    

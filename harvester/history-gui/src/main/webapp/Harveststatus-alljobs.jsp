@@ -26,6 +26,7 @@ Parameters:
 resubmit - jobID of a job to resubmit.
 --%><%@ page import="java.util.List,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
+                 dk.netarkivet.common.exceptions.ArgumentNotValid,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
@@ -47,14 +48,70 @@ resubmit - jobID of a job to resubmit.
     } catch (ForwardedToErrorPage e) {
         return;
     }
+    
     //After a resubmit, forward to this page
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
         response.sendRedirect("Harveststatus-alljobs.jsp");
         return;
     }
-    List<JobStatusInfo> jobStatusList = JobDBDAO.getInstance().getStatusInfo();
     HTMLUtils.generateHeader(pageContext);
+
+    //parameters for search of jobs
+    HarvestStatus.DefaultedRequest dfltRequest =
+            new HarvestStatus.DefaultedRequest(request);
+    int selectedJobStatusCode = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
+    String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
+
+	//list of information to be shown
+    List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(selectedJobStatusCode, selectedSortOrder);
 %>
+
+<%//Make line with comboboxes with choice of job status and order to be displayed%>
+<form method="get" action="Harveststatus-alljobs.jsp">
+<h4><fmt:message key="status.job.choice"/> 
+<select name="<%= Constants.JOBSTATUS_PARAM %>" size="1">
+    <%
+    String selected = (selectedJobStatusCode == -1)?"selected=\"selected\"":"";
+    %>
+        <option <%=selected%>  value="<%=HarvestStatus.JOBSTATUS_ALL%>">
+             <fmt:message key="status.job.all"/>
+        </option>
+    <%
+    for (JobStatus st : JobStatus.values()) {
+    	selected = "";
+        if (selectedJobStatusCode == st.ordinal()) {
+            selected = "selected=\"selected\"";
+        }
+    %>
+        <option <%=selected%> value="<%=st.name()%>">
+            <%=st.getLocalizedString(response.getLocale())%>
+        </option>
+    <%
+    }
+    %>
+</select>
+<fmt:message key="sort.order.in"/>
+<select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
+    <%
+    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))?"selected=\"selected\"":"";
+    %>
+        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_ASCENDING%>">
+             <fmt:message key="sort.order.asc"/>
+        </option>
+    <%
+    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_DESCENDING))?"selected=\"selected\"":"";
+    %>
+        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_DESCENDING%>">
+             <fmt:message key="sort.order.desc"/>
+        </option>
+</select>
+<fmt:message key="sort.order.order"/>
+<input type="submit" name="upload" 
+       value="<fmt:message key="job.show"/>"/>
+</h4>
+</form>
+
+<%//Make header of page%>
 <h3 class="page_heading"><fmt:message key="pagetitle;jobstatus"/></h3>
 
 <%
@@ -62,7 +119,7 @@ if (jobStatusList.isEmpty())
 { %>
    <fmt:message key="table.job.no.jobs"/>
 <% }
-else
+else //Make table with found jobs
 { %>
 <table class="selection_table">
     <tr>

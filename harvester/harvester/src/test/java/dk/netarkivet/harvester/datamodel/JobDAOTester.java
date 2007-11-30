@@ -404,9 +404,37 @@ public class JobDAOTester extends DataModelTestCase {
         infos = dao.getStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
+        JobStatus statusj = info.getStatus();
         checkInfoCorrect(j, info);
         info = infos.get(1);
+        JobStatus statusj2 = info.getStatus();
         checkInfoCorrect(j2, info);
+        assertEquals("Status DONE for first job", statusj, JobStatus.DONE);
+        assertEquals("Status NEW for second job", statusj2, JobStatus.NEW);
+        
+
+        infos = dao.getStatusInfo(false);
+        assertEquals("Should get info on two jobs", 2, infos.size());
+        info = infos.get(0);
+        statusj = info.getStatus();
+        checkInfoCorrect(j, info);
+        info = infos.get(1);
+        statusj2 = info.getStatus();
+        checkInfoCorrect(j2, info);
+        assertEquals("Status NEW for first job", statusj2, JobStatus.NEW);
+        assertEquals("Status DONE for second job", statusj, JobStatus.DONE);
+
+        
+        infos = dao.getStatusInfo(JobStatus.DONE);
+        assertEquals("Should get info on one job with status DONE", 1, infos.size());
+        infos = dao.getStatusInfo(JobStatus.DONE, true);
+        assertEquals("Should get info on one job with status DONE (ascending)", 1, infos.size());
+        infos = dao.getStatusInfo(JobStatus.DONE, false);
+        assertEquals("Should get info on one job with status DONE (descending)", 1, infos.size());
+        infos = dao.getStatusInfo(JobStatus.NEW);
+        assertEquals("Should get info on one job with status NEW", 1, infos.size());
+        infos = dao.getStatusInfo(JobStatus.FAILED);
+        assertEquals("Should get info on no job with status FAILED", 0, infos.size());
     }
 
     /** Test that we can get reasonable status info about jobs from specific
