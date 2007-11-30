@@ -182,6 +182,33 @@ public abstract class JobDAO implements Iterable<Job> {
     public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
                                                       long numEvent);
 
+    /**
+    /** Return status information for all jobs in given job id order.
+     *
+     * @param status The status asked for.
+     * @return  A list of status objects with the pertinent information for 
+     * all jobs with given job status.
+     */
+    public abstract List<JobStatusInfo> getStatusInfo(boolean asc);
+
+    /**
+    /** Return status information for all jobs with given job status.
+     *
+     * @param status The status asked for.
+     * @return  A list of status objects with the pertinent information for 
+     * all jobs with given job status and in given job id order.
+     */
+    public abstract List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc);
+
+    /**
+    /** Return status information for all jobs with given job status.
+     *
+     * @param status The status asked for.
+     * @return  A list of status objects with the pertinent information for 
+     * all jobs with given job status.
+     */
+    public abstract List<JobStatusInfo> getStatusInfo(JobStatus status);
+
     /** Calculate all jobIDs to use for duplication reduction.
      *
      * More precisely, this method calculates the following:
