@@ -32,7 +32,6 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -53,6 +52,9 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Notifications;
+import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -68,6 +70,8 @@ public class JobTester extends DataModelTestCase {
         LogManager.getLogManager().readConfiguration();
         LogUtils.flushLogs(Job.class.getName());
         TestInfo.setup();
+        Settings.set(Settings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
     }
 
     public void tearDown() throws Exception {
@@ -437,30 +441,37 @@ public class JobTester extends DataModelTestCase {
         } catch (ArgumentNotValid e) {
             // expected
         }
-
+        
         //startdate < enddate
+        RememberNotifications.resetSingleton();
         try {
             Job job = Job.createJob(new Long(0), DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
 
             Date d1 = new Date(0);
             Date d2 = new Date(1000);
             job.setActualStart(d2);
+            assertTrue("No notifications should have been emitted", 
+                    RememberNotifications.getInstance().message == null);
             job.setActualStop(d1);
-            fail("Argument invalid start later than stop");
+            assertTrue("Argument invalid start later than stop should send an notication",
+                    RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            // expected
+            fail("Argument invalid start later than stop should not throw an exception:" + e);
         }
 
+        RememberNotifications.resetSingleton();
         try {
             Job job = Job.createJob(new Long(0), DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
-
             Date d1 = new Date(0);
             Date d2 = new Date(1000);
             job.setActualStop(d1);
+            assertTrue("No notifications should have been emitted", 
+                    RememberNotifications.getInstance().message == null);
             job.setActualStart(d2);
-            fail("Argument invalid start later than stop");
+            assertTrue("Argument invalid start later than stop should send an notication",
+                    RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            // expected
+            fail("Argument invalid start later than stop should not throw an exception:" + e);
         }
     }
 

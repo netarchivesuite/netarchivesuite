@@ -36,11 +36,13 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
+import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
@@ -571,19 +573,30 @@ public class JobDAOTester extends DataModelTestCase {
         } catch (InterruptedException e) {
             // Ignored
         }
+        
+        // It is now possible to set start date to after end date '
+        // without any exceptions being thrown. However, a notification is emitted.
+        Settings.set(Settings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
+        RememberNotifications.resetSingleton();
+        
         try {
             newJob3.setActualStart(new Date());
-            fail("Should not be allow to set start date to after end date");
+            assertTrue("Setting start date to after end date should result in notification", 
+                    RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            // expected
+            fail ("Setting start date to after end date should not throw exception: " + e);
         }
+        RememberNotifications.resetSingleton();        
         newJob3.setActualStart(stopDate);
+    
         try {
             newJob3.setActualStop(startDate);
-            fail("Should not be allow to set stop date to before end date");
+            assertTrue("Setting stop date to before end date should result in notification",
+                    RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
-            // expected
-        }
+            fail ("Setting stop date to before end date should not throw exception: " + e);
+        } 
     }
 
     /** Tests the retrieval of jobs to use for duplicate reduction.

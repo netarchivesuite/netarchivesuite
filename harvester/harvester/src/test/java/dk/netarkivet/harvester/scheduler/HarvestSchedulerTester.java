@@ -50,6 +50,7 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -98,6 +99,8 @@ public class HarvestSchedulerTester extends TestCase {
         DBUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
+        Settings.set(Settings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
     }
 
     /**
@@ -251,6 +254,7 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /** Test that runNewJobs skips bad jobs without crashing (bug #627)
+     * TODO The setActualStop/setActualStart no longer throws exception, so we need to find a way making jobs bad
      */
     public void testSubmitNewJobs() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -273,15 +277,22 @@ public class HarvestSchedulerTester extends TestCase {
         jdao.create(good);
         m.invoke(hsch);
         Job newGood = jdao.read(good.getJobID());
-        assertEquals("Bad job should still be new (can't update without reading)",
-                     bad.getJobID(), jdao.getAllJobIds(JobStatus.NEW).next());
+        // Commented out, as inconsistent actualStop/actualStart no longer prevents the job from 
+        //   being submitted.
+        
+        // Iterator<Long> iterator = jdao.getAllJobIds(JobStatus.NEW);
+        // assertTrue("No new jobs available: Bad job should still be new", iterator.hasNext());
+        // assertEquals("Bad job should still be new (can't update without reading)",
+        //               bad.getJobID(), jdao.getAllJobIds(JobStatus.NEW).next());
         assertEquals("Good job should have been scheduled",
                      JobStatus.SUBMITTED, newGood.getStatus());
+        
         // TODO: Should also check that a readable but unschedulable job fails,
         // that would require a connection that throws exceptions sometimes.
     }
 
-    /** Test that runNewJobs skips bad jobs without crashing (bug #627)
+    /** 
+     * Test that runNewJobs generates correct alias information for the job.
      */
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -361,7 +372,8 @@ public class HarvestSchedulerTester extends TestCase {
                      new String(metadataEntry.getData()));
     }
 
-    /** Test that runNewJobs skips bad jobs without crashing (bug #627)
+    /** 
+     * Test that runNewJobs makes correct duplicatio reduction information.
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -428,6 +440,14 @@ public class HarvestSchedulerTester extends TestCase {
                      new String(metadataEntry.getData()));
     }
 
+    /**
+     * Unittest testing the private method rescheduleJob.
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
+     * @throws InvocationTargetException
+     * @throws InterruptedException
+     */
     public void testRescheduleJobs() throws NoSuchMethodException,
                                             IllegalAccessException,
                                             NoSuchFieldException,
@@ -485,6 +505,10 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("Should have found new job", foundNewJob);
     }
 
+    /**
+     * MessageListener used locally to intercept messages sent
+     * by the HarvestScheduler.
+     */
     private class TestMessageListener implements MessageListener {
         private List<NetarkivetMessage> received = new ArrayList<NetarkivetMessage>();
 

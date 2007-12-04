@@ -710,8 +710,6 @@ public class Job implements Serializable {
             + ") is before start time: " + actualStart;
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
-            // TODO remove this exception, when tests are corrected
-            throw new ArgumentNotValid(errorMsg);
         }
         this.actualStart = actualStart;
     }
@@ -726,13 +724,14 @@ public class Job implements Serializable {
      */
     public void setActualStop(Date actualStop) {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
+        if (actualStart == null) {
+            log.warn("Value of actualStart is null");
+        }
         if (actualStart != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
             + ") is before start time: " + actualStart;
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
-            // TODO remove this exception, when tests are corrected
-            throw new ArgumentNotValid(errorMsg);
         }
         this.actualStop = actualStop;
     }
