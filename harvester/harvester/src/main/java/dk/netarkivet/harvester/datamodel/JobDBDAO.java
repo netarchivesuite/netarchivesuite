@@ -481,11 +481,8 @@ public class JobDBDAO extends JobDAO {
         	sql = sql + " AND status = " + jobStatusCode; 
         }
         sql = sql + " ORDER BY jobs.job_id";
-        if (asc)  {
-        	sql = sql + " ASC";
-        }
-        else {
-        	sql = sql + " DESC, jobs.job_id DESC"; 
+        if (!asc)  {
+        	sql = sql + " DESC"; 
         }
 
         Connection c = DBConnect.getDBConnection();
@@ -538,7 +535,7 @@ public class JobDBDAO extends JobDAO {
      * @return List of JobStatusInfo objects for all jobs with given job status.
      */
     public List<JobStatusInfo> getStatusInfo(boolean asc) {
-    	return privateGetStatusInfo(-1,true);
+    	return privateGetStatusInfo(-1, asc);
     }
 
     /**
