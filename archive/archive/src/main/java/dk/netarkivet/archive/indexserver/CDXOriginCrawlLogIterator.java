@@ -42,14 +42,19 @@ import dk.netarkivet.common.utils.cdx.CDXRecord;
  * are read in parallel.
  */
 public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
-    /** The reader of the (sorted) CDX index */
+    /** The reader of the (sorted) CDX index. */
     protected BufferedReader reader;
     /** The last record we read from the reader.  We may overshoot on the
-     * CDX reading if there are entires not in CDX, so we hang onto this
+     * CDX reading if there are entries not in CDX, so we hang onto this
      * until the reading of the crawl.log catches up. */
     protected CDXRecord lastRecord;
+    /**
+     * Contains the next CDXRecord. The nextRecord contains the record following
+     * the lastRecord. Necessary to store lookahead values.
+     */
+    protected CDXRecord nextRecord;
     private Log log = LogFactory.getLog(CDXOriginCrawlLogIterator.class.getName());
-    /** The constant prefixed checksums in newer Heritrixen indicating the
+    /** The constant prefixed checksums in newer versions of Heritrix indicating the
      * digest method.  The deduplicator currently doesn't use the equivalent
      * prefix, so we need to strip it off (see bug #1004).
      */
@@ -87,11 +92,14 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      * @throws IOFailure if there is an error reading the files.
      */
     protected CrawlDataItem parseLine(String line) {
+        
         CrawlDataItem item;
+        nextRecord = null;
+        log.debug("Processing crawl-log line: "+ line);
         try {
             item = super.parseLine(line);
         } catch (RuntimeException e) {
-            log.info("Skipping over bad line '" + line + "'", e);
+            log.info("Skipping over bad crawl-log line '" + line + "'", e);
             return null;
         }
         // Hack that works around bug #1004: sha1: prefix not accounted for
@@ -101,36 +109,85 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                         SHA1_PREFIX.length()));
             }
         }
-        if (item != null && item.getOrigin() == null) {
-            while (lastRecord == null
-                    || lastRecord.getURL().compareTo(item.getURL()) < 0) {
-                try {
-                    String record = reader.readLine();
-                    if (record == null) {
-                        return null;// EOF, nothing to do
-                    }
-                    if  (record.length() == 0) {
-                        continue; // skip empty lines
-                    }
-                    try {
-                        lastRecord = new CDXRecord(record);
-                    } catch (ArgumentNotValid e) {
-                        log.info("Skipping over bad CDX line '" +
-                                record + "'", e);
-                        return null;
-                    }
-                } catch (IOException e) {
-                    throw new IOFailure("Error reading CDX record", e);
-                }
-            }
-            if (!lastRecord.getURL().equals(item.getURL())) {
-                return null; // No matching CDX
-            }
-            String origin = lastRecord.getArcfile()
-                    + "," + lastRecord.getOffset();
-            item.setOrigin(origin);
+        
+        // return null, if item is null or origin for item is not null
+        if (item == null || item.getOrigin() != null) {
+            return null;
         }
+        // Iterate through the sorted CDX file until lastRecord is not null
+        // and lastRecord.getURL() is either equal to item.getURL() (we have found a possible match), or
+        // lastRecord.getURL() is lexicographically higher than item.getURL(), indicating that there is no match
+
+        while (lastRecord == null
+                || lastRecord.getURL().compareTo(item.getURL()) < 0) {
+            try {
+                String record = reader.readLine();
+                if (record == null) {
+                    log.info("Met EOF");
+                    return null; // EOF, nothing to do
+                }
+                if  (record.length() == 0) {
+                    log.info("Skipping empty line");
+                    
+                    continue; // skip empty lines
+                }
+                // Try to convert the string to a CDXrecord.
+                try {
+                    lastRecord = new CDXRecord(record);                      
+                } catch (ArgumentNotValid e) {
+                    log.info("Skipping over bad CDX line '" +
+                            record + "'", e);
+                    //TODO: Why are we returning null here: We are not only skipping bad CDX lines, but skipping a                         
+                    return null;
+                }
+                // if we have a match, look also at the next record (if it exists)
+                // and select the next record as the last record.
+                if (lastRecord.getURL().equals(item.getURL())) {
+                    lookAHead();
+                }
+            } catch (IOException e) {
+                throw new IOFailure("Error reading CDX record", e);
+            }
+        }
+        // Investigate result
+        if (!lastRecord.getURL().equals(item.getURL())) {
+            log.info("No matching CDX for URL '" + item.getURL() + "'. Last CDX was for URL: " + lastRecord.getURL());
+            return null; // No matching CDX
+        } else {
+            String origin = lastRecord.getArcfile()
+            + "," + lastRecord.getOffset();
+            item.setOrigin(origin);
+            // Set nextRecord to lastRecord
+            lastRecord = nextRecord;
+            nextRecord = null;
+        }
+        
         return item;
+    }
+    
+    /**
+     * Look at the next CDX line.
+     * 
+     * @throws IOException
+     */
+    private void lookAHead() throws IOException {
+        String nextRecordAsString = reader.readLine();
+        while (nextRecordAsString != null && nextRecordAsString.length() == 0) {
+            nextRecordAsString = reader.readLine();
+            log.debug("Read line: " + nextRecordAsString);
+        }                        
+        try {
+            nextRecord = new CDXRecord(nextRecordAsString);
+        } catch (ArgumentNotValid e) {
+            log.info("Skipping over bad CDX line '" +
+                    nextRecordAsString + "'", e);
+        }
+        if (nextRecord == null) {
+            return;
+        }
+        if (nextRecord.getURL().equals(lastRecord.getURL())) {
+            lastRecord = nextRecord;
+        }
     }
 }
 

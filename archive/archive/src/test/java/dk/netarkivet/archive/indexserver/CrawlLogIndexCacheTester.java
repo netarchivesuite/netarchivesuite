@@ -35,6 +35,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 
 public class CrawlLogIndexCacheTester extends CacheTestCase {
@@ -81,6 +82,9 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
 
     public void testPrepareCombine()
             throws NoSuchFieldException, IllegalAccessException {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         // Currently only tests that a log message is written
         CrawlLogIndexCache cache = new FullCrawlLogIndexCache();
         ReflectUtils.getPrivateField(CrawlLogIndexCache.class,

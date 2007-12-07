@@ -38,6 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Test-class for CDXOriginCrawlLogIterator.
@@ -67,6 +68,9 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
     }
 
     public void testOriginCrawlLogIterator() throws IOException {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         BufferedReader cdx =
                 new BufferedReader(new FileReader(TestInfo.CDX_CACHE_4_SORTED));
 
@@ -155,6 +159,9 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
     }
 
     public void testParseLine() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         List<String> originalLog = FileUtils.readListFromFile(TestInfo.CRAWL_LOG_4_SORTED);
         List<String> logLines = new ArrayList<String>();
         logLines.addAll(Arrays.asList("",
