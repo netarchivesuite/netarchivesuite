@@ -190,7 +190,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         try {
             s = HarvestStatus.getSelectedSortOrder(dfltRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
-        } catch (ForwardedToErrorPage e) {
+        } catch (ArgumentNotValid e) {
            //Expected
         }
 
@@ -233,7 +233,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         try {
             i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
-        } catch (ForwardedToErrorPage e) {
+        } catch (IllegalArgumentException e) {
            //Expected
         }
 

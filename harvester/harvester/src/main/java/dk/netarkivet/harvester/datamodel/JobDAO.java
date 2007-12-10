@@ -177,35 +177,39 @@ public abstract class JobDAO implements Iterable<Job> {
      * @param harvestId The ID of a harvest definition.
      * @param numEvent The harvest run number
      * @return A list of status objects with the pertinent information for
-     * all jobs for a given harvest definition.
+     *         all jobs for a given harvest definition.
+     * @throws IOFailure on trouble in database access
      */
     public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
                                                       long numEvent);
 
-    /**
     /** Return status information for all jobs in given job id order.
      *
-     * @param status The status asked for.
-     * @return  A list of status objects with the pertinent information for 
-     * all jobs with given job status.
+     * @param asc True if result must be given in ascending order, false
+     *        if result must be given in descending order
+     * @return A list of status objects with the pertinent information for 
+     *         all jobs with given job status.
+     * @throws IOFailure on trouble in database access
      */
     public abstract List<JobStatusInfo> getStatusInfo(boolean asc);
 
-    /**
     /** Return status information for all jobs with given job status.
      *
      * @param status The status asked for.
-     * @return  A list of status objects with the pertinent information for 
-     * all jobs with given job status and in given job id order.
+     * @param asc True if result must be given in ascending order, false
+     *        if result must be given in descending order
+     * @return A list of status objects with the pertinent information for 
+     *         all jobs with given job status and in given job id order.
+     * @throws IOFailure on trouble in database access
      */
     public abstract List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc);
 
-    /**
     /** Return status information for all jobs with given job status.
      *
      * @param status The status asked for.
-     * @return  A list of status objects with the pertinent information for 
-     * all jobs with given job status.
+     * @return A list of status objects with the pertinent information for 
+     *         all jobs with given job status.
+     * @throws IOFailure on trouble in database access
      */
     public abstract List<JobStatusInfo> getStatusInfo(JobStatus status);
 

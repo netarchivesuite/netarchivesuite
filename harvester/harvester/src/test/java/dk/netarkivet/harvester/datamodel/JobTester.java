@@ -366,32 +366,32 @@ public class JobTester extends DataModelTestCase {
                 JobStatus.FAILED);
         JobStatus s = JobStatus.NEW;
         assertEquals("Error implementing status code names for NEW", 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for NEW", 
         		s, JobStatus.fromOrdinal(s.ordinal()));
         s = JobStatus.SUBMITTED;
         assertEquals("Error implementing status code names for " + s.name(), 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for " + s.name(), 
         		s, JobStatus.fromOrdinal(s.ordinal()));
         s = JobStatus.STARTED;
         assertEquals("Error implementing status code names for " + s.name(), 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for " + s.name(), 
         		s, JobStatus.fromOrdinal(s.ordinal()));
         s = JobStatus.DONE;
         assertEquals("Error implementing status code names for " + s.name(), 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for " + s.name(), 
         		s, JobStatus.fromOrdinal(s.ordinal()));
         s = JobStatus.FAILED;
         assertEquals("Error implementing status code names for " + s.name(), 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for " + s.name(), 
         		s, JobStatus.fromOrdinal(s.ordinal()));
         s = JobStatus.RESUBMITTED;
         assertEquals("Error implementing status code names for " + s.name(), 
-        		s, JobStatus.fromName( s.name()));
+        		s, JobStatus.valueOf( s.name()));
         assertEquals("Error implementing status ordinal for " + s.name(), 
         		s, JobStatus.fromOrdinal(s.ordinal()));
     }

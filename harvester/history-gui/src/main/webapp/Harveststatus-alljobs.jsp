@@ -58,20 +58,29 @@ resubmit - jobID of a job to resubmit.
 
     //parameters for search of jobs
     HarvestStatus.DefaultedRequest dfltRequest =
-            new HarvestStatus.DefaultedRequest(request);
-    int selectedJobStatusCode = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
+        new HarvestStatus.DefaultedRequest(request);
+    int selectedJobStatusCode = HarvestStatus.getSelectedJobStatusCode(
+                                    dfltRequest
+                                );
     String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
 
-	//list of information to be shown
-    List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(selectedJobStatusCode, selectedSortOrder);
+    //list of information to be shown
+    List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(
+                                            selectedJobStatusCode, 
+                                            selectedSortOrder
+                                        );
 %>
 
-<%//Make line with comboboxes with choice of job status and order to be displayed%>
+<%--Make line with comboboxes with job status and order to be shown--%>
 <form method="get" action="Harveststatus-alljobs.jsp">
-<h4><fmt:message key="status.job.choice"/> 
+<h4>
+<fmt:message key="status.0.sort.order.1.job.choice">
+<fmt:param>
 <select name="<%= Constants.JOBSTATUS_PARAM %>" size="1">
     <%
-    String selected = (selectedJobStatusCode == -1)?"selected=\"selected\"":"";
+    String selected = (selectedJobStatusCode == -1)
+                      ? "selected=\"selected\""
+                      : "";
     %>
         <option <%=selected%>  value="<%=HarvestStatus.JOBSTATUS_ALL%>">
              <fmt:message key="status.job.all"/>
@@ -84,43 +93,52 @@ resubmit - jobID of a job to resubmit.
         }
     %>
         <option <%=selected%> value="<%=st.name()%>">
-            <%=st.getLocalizedString(response.getLocale())%>
+            <%=HTMLUtils.escapeHtmlValues(
+                  st.getLocalizedString(response.getLocale())
+               )%>
         </option>
     <%
     }
     %>
 </select>
-<fmt:message key="sort.order.in"/>
+</fmt:param>
+<fmt:param>
 <select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
     <%
-    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))?"selected=\"selected\"":"";
+    String selected = 
+               (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
+               ? "selected=\"selected\""
+               : "";
     %>
         <option <%=selected%> value="<%=HarvestStatus.SORTORDER_ASCENDING%>">
              <fmt:message key="sort.order.asc"/>
         </option>
     <%
-    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_DESCENDING))?"selected=\"selected\"":"";
+    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_DESCENDING))
+               ? "selected=\"selected\""
+               : "";
     %>
         <option <%=selected%> value="<%=HarvestStatus.SORTORDER_DESCENDING%>">
              <fmt:message key="sort.order.desc"/>
         </option>
 </select>
-<fmt:message key="sort.order.order"/>
+</fmt:param>
+</fmt:message>
 <input type="submit" name="upload" 
-       value="<fmt:message key="job.show"/>"/>
+       value="<fmt:message key="status.sort.order.job.show"/>"/>
 </h4>
 </form>
 
-<%//Make header of page%>
+<%--Make header of page--%>
 <h3 class="page_heading"><fmt:message key="pagetitle;jobstatus"/></h3>
 
 <%
-if (jobStatusList.isEmpty()) 
-{ %>
-   <fmt:message key="table.job.no.jobs"/>
-<% }
-else //Make table with found jobs
-{ %>
+if (jobStatusList.isEmpty()) { 
+%>
+    <fmt:message key="table.job.no.jobs"/>
+<% 
+} else { //Make table with found jobs
+%>
 <table class="selection_table">
     <tr>
         <th><fmt:message key="table.job.jobid"/></th>

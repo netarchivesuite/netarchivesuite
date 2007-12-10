@@ -457,18 +457,19 @@ public class JobDBDAO extends JobDAO {
      * Get a list of small and immediately usable status information
      * for given status and in given order. Is used by getStatusInfo
      * functions in order to share code (and SQL)
-     * TBD: should also include given harvest run
-     *
+     * TODO: should also include given harvest run
+     * 
+     * @param jobStatusCode code for jobstatus, -1 if all
+     * @param asc true if it is to be sorted in ascending order, 
+     *        false if it is to be sorted in descending order
      * @return List of JobStatusInfo objects for all jobs.
+     * @throws ArgumentNotValid for invalid jobStatusCode
+     * @throws IOFailure on trouble getting data from database
      */
-    private List<JobStatusInfo> privateGetStatusInfo(int jobStatusCode, boolean asc) {
-    	JobStatus st;
-        ArgumentNotValid.checkNotNull(jobStatusCode, "jobstatusCode");
-        if (jobStatusCode != -1)
-        {
-            try { st = JobStatus.fromOrdinal(jobStatusCode); }
-            catch (ArgumentNotValid e)
-            { throw new ArgumentNotValid("jobStatusCode " + jobStatusCode); }
+    private List<JobStatusInfo> getStatusInfo(int jobStatusCode, boolean asc) {
+        if (jobStatusCode != -1) {
+        	//thorws ArgumentNotValid if it is an invalid job status
+            JobStatus.fromOrdinal(jobStatusCode); 
         }
 
         String sql;
@@ -478,11 +479,11 @@ public class JobDBDAO extends JobDAO {
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
         if (jobStatusCode != -1)  { 
-        	sql = sql + " AND status = " + jobStatusCode; 
+            sql = sql + " AND status = " + jobStatusCode; 
         }
         sql = sql + " ORDER BY jobs.job_id";
         if (!asc)  {
-        	sql = sql + " DESC"; 
+            sql = sql + " DESC"; 
         }
 
         Connection c = DBConnect.getDBConnection();
@@ -492,16 +493,21 @@ public class JobDBDAO extends JobDAO {
             ResultSet res = s.executeQuery();
             List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
             while (res.next()) {
-                joblist.add(new JobStatusInfo(res.getLong(1),
-                                              JobStatus.fromOrdinal(res.getInt(2)), res.getLong(3),
-                                              res.getString(4), res.getInt(5), res.getString(6),
-                                              res.getString(7), res.getString(8), res.getInt(9),
-                                              DBConnect.getDateMaybeNull(res, 10),
-                                              DBConnect.getDateMaybeNull(res, 11)));
+                joblist.add(
+                    new JobStatusInfo(
+                    	    res.getLong(1),
+                            JobStatus.fromOrdinal(res.getInt(2)), 
+                            res.getLong(3), res.getString(4), res.getInt(5), 
+                            res.getString(6),res.getString(7), 
+                            res.getString(8), res.getInt(9),
+                            DBConnect.getDateMaybeNull(res, 10),
+                            DBConnect.getDateMaybeNull(res, 11)
+                ));
             }
             return joblist;
         } catch (SQLException e) {
-            String message = "SQL error asking for job status list in database";
+            String message 
+                       = "SQL error asking for job status list in database";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -513,45 +519,60 @@ public class JobDBDAO extends JobDAO {
      * Get a list of small and immediately usable status information
      *
      * @return List of JobStatusInfo objects for all jobs.
+     * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo() {
-        return privateGetStatusInfo(-1, true);
+        return getStatusInfo(-1, true);
     }
 
     /**
-     * Get a list of small and immediately usable status information for given job status.
+     * Get a list of small and immediately usable status information for given
+     * job status.
      *
      * @param status The status asked for.
-     * @return List of JobStatusInfo objects for all jobs with given job status.
+     * @return List of JobStatusInfo objects for all jobs with given job status
+     * @throws ArgumentNotValid for invalid jobStatus
+     * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo(JobStatus status) {
-    	return privateGetStatusInfo(status.ordinal(),true);
+        ArgumentNotValid.checkNotNull(status, "status");
+        return getStatusInfo(status.ordinal(),true);
     }
 
     /**
-     * Get a list of small and immediately usable status information in given job id order.
+     * Get a list of small and immediately usable status information in given 
+     * job id order.
      *
-     * @param status The status asked for.
-     * @return List of JobStatusInfo objects for all jobs with given job status.
+     * @param asc True if result must be given in ascending order, false
+     *        if result must be given in descending order
+     * @return List of JobStatusInfo objects for all jobs with given 
+     *         job id order
+     * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo(boolean asc) {
-    	return privateGetStatusInfo(-1, asc);
+        return getStatusInfo(-1, asc);
     }
 
     /**
-     * Get a list of small and immediately usable status information for given job status
-     * and in given job id order.
+     * Get a list of small and immediately usable status information for given 
+     * job status and in given job id order.
      *
      * @param status The status asked for.
-     * @return List of JobStatusInfo objects for all jobs with given job status.
+     * @param asc True if result must be given in ascending order, false
+     *        if result must be given in descending order
+     * @return List of JobStatusInfo objects for all jobs with given job status
+     *         and job id order
+     * @throws ArgumentNotValid for invalid jobStatusCode
+     * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc) {
-    	return privateGetStatusInfo(status.ordinal(),asc);
+        ArgumentNotValid.checkNotNull(status, "status");
+    	return getStatusInfo(status.ordinal(),asc);
     }
 
     /**
      * Get a list of small and immediately usable status information for
-     * a given harvest run a given harvest run.
+     * a given harvest run.
      *
      * @param harvestId The ID of the harvest
      * @param numEvent The harvest run number
