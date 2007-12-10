@@ -117,37 +117,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </fileset>
     </path>
 
-    <target name="compile">
-        <!-- ensure output dir exists -->
-        <mkdir dir="${classdir}"/>
-        <javac source="1.5" srcdir="${srcdir}" destdir="${classdir}" debug="on" encoding="UTF-8">
-            <classpath refid="jars.path"/>
-        </javac>
-        <copy todir="${classdir}">
-            <fileset dir="${srcdir}" includes="**/*.properties"/>
-        </copy>
-    </target>
-
-    <target name="compiletests" depends="compile">
-        <javac source="1.5" srcdir="${testdir}" destdir="${classdir}" debug="on" encoding="UTF-8">
-            <classpath refid="unittest.jars.path"/>
-        </javac>
-        <copy todir="${classdir}">
-            <fileset dir="${testdir}" includes="**/*.properties"/>
-        </copy>
-    </target>
-
-    <target name="compileall" depends="compile,compiletests"></target>
-
-    <target name="compileclean" depends="clean,compile"
-        description="cleans up before doing a compile">
-    </target>
-
-    <target name="compileallclean" depends="clean,compileall"
-        description="cleans up before doing a compileall">
-    </target>
-
-    <target name="clean" description="clean up">
+    <target name="clean"
+            description="Remove all compiled code and generated wars and jars">
         <delete dir="${classdir}/dk"/>
         <delete dir="${classdir}/webpages"/>
         <delete verbose="false">
@@ -162,7 +133,40 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </delete>
     </target>
 
-    <target name="unittest" depends="compileallclean">
+    <target name="compile"
+            description="Compile all production classes, and copy properties to class dir">
+        <!-- ensure output dir exists -->
+        <mkdir dir="${classdir}"/>
+        <javac source="1.5" srcdir="${srcdir}" destdir="${classdir}" debug="on"
+               encoding="UTF-8">
+            <classpath refid="jars.path"/>
+        </javac>
+        <copy todir="${classdir}">
+            <fileset dir="${srcdir}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
+    <target name="compiletests" depends="compile"
+            description="Compile all test and production classes">
+        <javac source="1.5" srcdir="${testdir}" destdir="${classdir}" debug="on"
+               encoding="UTF-8">
+            <classpath refid="unittest.jars.path"/>
+        </javac>
+        <copy todir="${classdir}">
+            <fileset dir="${testdir}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
+    <target name="compileclean" depends="clean,compile"
+            description="Clean up before doing a compile">
+    </target>
+
+    <target name="compiletestsclean" depends="clean,compiletests"
+            description="Clean up before doing a compiletests">
+    </target>
+
+    <target name="unittest" depends="compiletestsclean"
+            description="Run unit tests on a clean compile">
         <chmod perm="+x">
             <fileset dir="tests/dk/netarkivet/harvester/sidekick/data/">
                 <include name="*.sh"/>
@@ -178,7 +182,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </junit>
     </target>
 
-    <target name="fulltest" depends="compileallclean">
+    <target name="fulltest" depends="compiletestsclean"
+            description="Run unit and integrity tests on a clean compile">
         <junit fork="true">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
@@ -189,10 +194,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </junit>
     </target>
 
-    <target name="jarfiles" depends="commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar">
+    <target name="jarfiles"
+            depends="commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar"
+            description="Compile all jar files">
     </target>
 
-    <target name="warfiles" depends="clean">
+    <target name="warfiles" depends="clean"
+            description="Compile all war files">
         <!-- make the WAR-files -->
         <war destfile="${webpages}/HarvestDefinition.war" basedir="${webpages}/HarvestDefinition" update="no" webxml="${webpages}/HarvestDefinition/WEB-INF/web.xml">
             <include name="**/*"/>
@@ -231,7 +239,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </war>
     </target>
 
-    <target name="sourcezipball" depends="clean">
+    <target name="javadoc"
+            description="Build the javadocs">
+        <javadoc author="false"
+                 destdir="docs/apidocs"
+                 packagenames="dk.netarkivet.common.*,dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
+                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*"
+                 sourcepath="src"
+                 use="true"
+                 version="false"
+                 package="true">
+            <classpath refid="jars.path"/>
+        </javadoc>
+    </target>
+
+    <target name="sourcezipball" depends="clean"
+            description="Build a package of all source code needed to build the project, and develop new code">
         <zip basedir="." destfile="NetarchiveSuite-src.zip">
             <include name="conf/**"/>
             <include name="harvestdefinitionbasedir/**"/>
@@ -252,20 +275,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </zip>
     </target>
 
-    <target name="javadoc" description=" Build the javadocs">
-        <javadoc author="false"
-                 destdir="docs/apidocs"
-                 packagenames="dk.netarkivet.common.*,dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
-                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*"
-                 sourcepath="src"
-                 use="true"
-                 version="false"
-                 package="true">
-            <classpath refid="jars.path"/>
-        </javadoc>
-    </target>
-
-    <target name="releasezipball" depends="javadoc,jarfiles,warfiles">
+    <target name="releasezipball" depends="javadoc,jarfiles,warfiles"
+            description="Build a binary package with all files needed to run the system">
         <zip basedir="." destfile="NetarchiveSuite.zip">
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>
@@ -274,6 +285,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="log"/>
             <include name="modules/**"/>
             <zipfileset dir="." includes="scripts/**" excludes="scripts/**/*.sh"/>
+            <!-- Add .sh scripts with executable bit set -->
             <zipfileset dir="." includes="scripts/**/*.sh" filemode="755"/>
             <include name="webpages/*.war"/>
             <include name="derby.properties"/>
@@ -282,7 +294,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </zip>
     </target>
 
-    <target name="commonjar" depends="compileclean">
+    <target name="commonjar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.common package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.common.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/common/**/*.class"/>
             <include name="dk/netarkivet/common/**/*.properties"/>
@@ -293,7 +306,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="archivejar" depends="compileclean">
+    <target name="archivejar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.archive package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.archive.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/archive/**/*.class"/>
             <include name="dk/netarkivet/archive/**/*.properties"/>
@@ -304,7 +318,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="harvesterjar" depends="compileclean">
+    <target name="harvesterjar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.harvester package with all required libs in the manifest class path, and the modules-directory">
         <copy todir="${classdir}">
             <fileset dir=".">
                 <include name="modules/**"/>
@@ -324,7 +339,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="viewerproxyjar" depends="compileclean">
+    <target name="viewerproxyjar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.viewerproxy package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.viewerproxy.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/viewerproxy/**/*.class"/>
             <include name="dk/netarkivet/viewerproxy/**/*.properties"/>
@@ -335,7 +351,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="monitorjar" depends="compileclean">
+    <target name="monitorjar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.monitor package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.monitor.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/monitor/**/*.class"/>
             <include name="dk/netarkivet/monitor/**/*.properties"/>
@@ -348,7 +365,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="deployjar" depends="compileclean">
+    <target name="deployjar" depends="compileclean"
+            description="Build a jar file with the dk.netarkivet.deploy package with all required libs in the manifest class path">
         <jar destfile="lib/dk.netarkivet.deploy.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/deploy/**/*.class"/>
             <include name="dk/netarkivet/deploy/**/*.properties"/>
@@ -365,7 +383,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </jar>
     </target>
 
-    <target name="checkdep" depends="jarfiles">
+    <target name="checkdep" depends="jarfiles"
+            description="Print a line of any referenced classes that are not in the classpath after generating jars">
         <delete dir="${depcheckdir}" failonerror="no"/>
         <mkdir dir="${depcheckdir}"/>
         <javac source="1.5" destdir="${depcheckdir}" srcdir="tests">
@@ -390,7 +409,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <arg value="dk.netarkivet.harvester.webinterface.HarvestDefinitionApplication"/>
             <arg value="dk.netarkivet.viewerproxy.ViewerProxyApplication"/>
             <arg value="dk.netarkivet.harvester.sidekick.SideKick"/>
-            <arg value="dk.netarkivet.FullTesterSuite"/>
             <arg value="-x"/>
             <arg value="org/xml/sax"/>
             <arg value="-x"/>
@@ -407,7 +425,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </fileset>
     </path>
 
-    <target name="unittest.with.clover" depends="with.clover, compileallclean">
+    <target name="unittest.with.clover" depends="with.clover, compiletestsclean"
+            description="Run all unit tests with clover reporting">
         <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
             printsummary="withOutAndErr">
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
@@ -420,7 +439,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </junit>
     </target>
 
-    <target name="with.clover">
+    <target name="with.clover"
+            description="Enable clover reporting. Requires the clover extension in your ant classpath.">
         <taskdef resource="clovertasks"/>
         <typedef resource="clovertypes"/>
         <clover-setup initString="clover-db/mycoverage.db"
@@ -431,7 +451,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </clover-setup>
     </target>
 
-    <target name="clover.report" depends="with.clover, unittest.with.clover">
+    <target name="clover.report" depends="with.clover, unittest.with.clover"
+            description="Generate a clover report on all unit tests. Requires the clover extension in your ant classpath.">
         <clover-report>
             <current outfile="/usr/local/apache/htdocs/clover/clover_iteration5">
                 <!-- In the HTML output, put least absolute covered on top -->
