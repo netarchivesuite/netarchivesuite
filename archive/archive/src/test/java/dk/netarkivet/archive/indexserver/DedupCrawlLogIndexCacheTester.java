@@ -47,7 +47,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestUtils;
 
 
 public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
@@ -64,9 +63,6 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
     }
 
     public void testCombine() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         // These are the origins of job #4 and #1
         Map<String, String> origins = new HashMap<String, String>(8);
 

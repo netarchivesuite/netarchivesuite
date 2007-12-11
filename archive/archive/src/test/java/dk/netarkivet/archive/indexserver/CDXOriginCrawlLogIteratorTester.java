@@ -22,23 +22,24 @@
 */
 package dk.netarkivet.archive.indexserver;
 
+import is.hi.bok.deduplicator.CrawlDataItem;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import is.hi.bok.deduplicator.CrawlDataItem;
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Test-class for CDXOriginCrawlLogIterator.
@@ -68,9 +69,6 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
     }
 
     public void testOriginCrawlLogIterator() throws IOException {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         BufferedReader cdx =
                 new BufferedReader(new FileReader(TestInfo.CDX_CACHE_4_SORTED));
 
@@ -159,9 +157,6 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
     }
 
     public void testParseLine() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         List<String> originalLog = FileUtils.readListFromFile(TestInfo.CRAWL_LOG_4_SORTED);
         List<String> logLines = new ArrayList<String>();
         logLines.addAll(Arrays.asList("",
@@ -223,5 +218,64 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
         assertNotNull("Must have content digest", fromSha.getContentDigest());
         assertFalse("Checksum entry should not start with sha1:",
                 fromSha.getContentDigest().toLowerCase().startsWith("sha1:"));
+        
+           
+         }
+    
+    /**
+     * Checks, if the CDXOriginCrawlLogIterator works with password protected
+     * contents, where one crawl.log corresponds with two CDXlines, and the
+     * correct one, (the last one) needs to be selected.
+     * bug 680
+     * @throws Exception
+     */
+    public void testbug680() throws Exception {    
+        Method sortCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
+        "sortCDX", File.class, File.class);
+        Method sortCrawlLog = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
+        "sortCrawlLog", File.class, File.class);
+        
+        File unsortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680.log");
+        File sortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680-sorted.log");
+        
+        File unsortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-680");
+        File sortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-sorted-680");
+        
+        
+        sortCrawlLog.invoke(null, unsortedCrawlLogFile, sortedCrawlLogFile);
+        sortCDX.invoke(null, unsortedCDXFile, sortedCDXFile);
+        
+        BufferedReader cdx =
+            new BufferedReader(new FileReader(sortedCDXFile));
+        CDXOriginCrawlLogIterator it = new CDXOriginCrawlLogIterator
+            (sortedCrawlLogFile, cdx);
+
+        String privateUrl = "http://www.kaarefc.dk/private/";
+        
+        assertTrue("Must contain at least one item", it.hasNext());
+        boolean foundPrivateUrl = false;
+        CrawlDataItem item = null;
+        while (!foundPrivateUrl && it.hasNext()) {
+            item = it.next();
+            if (item.getURL().equals(privateUrl)){
+                foundPrivateUrl = true;
+            }
+        }
+        assertTrue("Should have found the private url", foundPrivateUrl);
+        String correctOrigin = "1-1-20071206233504-00000-dhcppc1.arc,10204";
+        assertTrue("Wrong origin", item.getOrigin().equals(correctOrigin));
+        
+        /*
+        String correctTimestamp = "20071206233508";
+        String wrongTimestamp = "20071206233507";
+        assertTrue("Timestamp is wrong, should have been " 
+                + correctTimestamp + ", but was " + item.getTimestamp(), 
+                item.getTimestamp().equals(correctTimestamp));
+        //1-1-20071206233504-00000-dhcppc1.arc 10204
+         */
     }
-}
+        
+        
+        
+    }
+   

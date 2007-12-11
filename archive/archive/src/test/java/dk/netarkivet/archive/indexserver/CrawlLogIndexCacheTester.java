@@ -22,7 +22,7 @@
 */
 package dk.netarkivet.archive.indexserver;
 /**
- * lc forgot to comment this!
+ * Testclass for class CrawlLogIndexCache.
  */
 
 import java.io.File;
@@ -35,7 +35,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 
 public class CrawlLogIndexCacheTester extends CacheTestCase {
@@ -50,7 +49,11 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
+    
+    /**
+     * Test of private method sortCrawlLog.
+     * @throws Exception
+     */
     public void testSortCrawlLog() throws Exception {
         Method sortCrawlLog
                 = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
@@ -79,12 +82,13 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
             i++;
         }
     }
-
+    
+    /**
+     * Test of preparecombine.
+     * @throws Exception
+     */
     public void testPrepareCombine()
             throws NoSuchFieldException, IllegalAccessException {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         // Currently only tests that a log message is written
         CrawlLogIndexCache cache = new FullCrawlLogIndexCache();
         ReflectUtils.getPrivateField(CrawlLogIndexCache.class,
