@@ -32,6 +32,7 @@ and reposne.getLocale use this locale.
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.exceptions.UnknownID,
                  dk.netarkivet.common.utils.I18n,
+                 dk.netarkivet.common.utils.StringUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
@@ -222,21 +223,16 @@ and reposne.getLocale use this locale.
     <%
         for (String seed : job.getSortedSeedList()) {
             String url;
-            String shownSeed;
-            if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
+            if (!seed.matches(Constants.PROTOCOL_REGEXP)) {
                 url = "http://" + seed;
             } else {
                 url = seed;
             }
-            shownSeed = seed;
             // If length of seed exceeds Constants.MAX_SHOWN_SIZE_OF_URL
             // show only Constants.MAX_SHOWN_SIZE_OF_URL of the seed, and append
             // the string " .."
-            if (shownSeed.length() > Constants.MAX_SHOWN_SIZE_OF_URL) {
-            	
-            	shownSeed = seed.substring(0, Constants.MAX_SHOWN_SIZE_OF_URL - 1)
-            		+ " ..";
-            }
+            String shownSeed = StringUtils.makeEllipsis(seed,
+            	Constants.MAX_SHOWN_SIZE_OF_URL);
     %>
     <a target="viewerproxy"
        href="<%=HTMLUtils.escapeHtmlValues(url)%>"><%=

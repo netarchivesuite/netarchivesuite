@@ -170,5 +170,22 @@ public class StringUtils {
         }
         return resultList;
     }
-
+    
+    /**
+     * Generate a ellipsis of orgString. If orgString is longer than
+     * maxLength, then we return a String containing the first maxLength 
+     * characters and then append  " ..".
+     * @param orgString the original string
+     * @param maxLength the maximum length of the string before ellipsing it
+     * @return an ellipsis of orgString
+     */
+    public static String makeEllipsis(String orgString, int maxLength)  {
+    	ArgumentNotValid.checkNotNull(orgString, "String orgString");
+    	String resultString = orgString;
+        if (orgString.length() > maxLength) {
+        	resultString = orgString.substring(0, maxLength - 1)
+        		+ " ..";
+        }
+        return resultString;
+    }
 }

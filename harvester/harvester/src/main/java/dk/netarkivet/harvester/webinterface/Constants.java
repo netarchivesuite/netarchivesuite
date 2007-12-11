@@ -92,7 +92,7 @@ public class Constants {
     public static final int MAX_SHOWN_SIZE_OF_URL = 40;
     
     /** Regexp for checking if a seed starts with a protocol. */
-    public static final String NO_PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
+    public static final String PROTOCOL_REGEXP = "^[a-zA-Z]+:.*";
     
     /** Fields used in our calendar functionality. */
     public static final String END_TIME_FIELD = "endTimeField";
