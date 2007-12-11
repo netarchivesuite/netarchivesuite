@@ -223,16 +223,18 @@ Display all the form information for this domain
                             while (actualSeedListsIt.hasNext()) {
                                 actualSeedLists.add(actualSeedListsIt.next());
                             }
+                        } else  {
+                        	// When creating a new domain configuration:
+                        	// If only one seed to choose from, preselect this
+                        	// one by adding the one seedList to the list 
+                        	// of actual seeds.
+                        	if (allSeedLists.size() == 1) { 
+   								actualSeedLists.addAll(allSeedLists);
+   							}
                         }
-                        //Display multi-select showing all seedlists with
+   						
+   						//Display multi-select showing all seedlists with
                         //actual seedlists pre-selected
-                        // If only one seed to choose from, preselect this
-                        // - done by adding the one seedList to the list 
-                        //   of actual seeds. 
-                        
-   						if (allSeedLists.size() == 1) { 
-   							actualSeedLists.addAll(allSeedLists);
-   						}
                         for (SeedList sl : allSeedLists) {
                             String selected = "";
                             if (actualSeedLists.contains(sl)) {
