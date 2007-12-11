@@ -725,6 +725,10 @@ public class JobDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     * Tests method in JobDBDAO.rescheduleJob
+     * Now verifies, that the new job has startdate and enddate set to null.
+     */
     public void testRescheduleJob() {
         createTestJobs();
         JobDAO dao = JobDAO.getInstance();
@@ -751,6 +755,8 @@ public class JobDAOTester extends DataModelTestCase {
             compareCopiedJob(oldJob, newJob, newID);
             assertEquals("Old job should have resubmitted status",
                          JobStatus.RESUBMITTED, oldJob.getStatus());
+            assertTrue("New job must have null startdate", newJob.getActualStart() == null);
+            assertTrue("New job must have null enddate", newJob.getActualStop() == null);
         }
 
         try {

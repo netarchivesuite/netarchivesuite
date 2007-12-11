@@ -780,7 +780,7 @@ public class Job implements Serializable {
             
         }
        List<String> result = new ArrayList<String>();
-       for (Set set: urlMap.values()) {
+       for (Set<String> set: urlMap.values()) {
            result.addAll(set);
        }
        return result;
@@ -822,7 +822,7 @@ public class Job implements Serializable {
             // This never happens, as we're reading from a string!
             throw new IOFailure("IOException reading from seed string", e);
         }
-        log.info("Now " + seedListSet.size() + " seeds in the list");
+        log.debug("Now " + seedListSet.size() + " seeds in the list");
     }
 
     /**

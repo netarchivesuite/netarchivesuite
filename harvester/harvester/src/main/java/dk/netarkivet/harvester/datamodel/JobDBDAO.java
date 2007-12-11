@@ -753,16 +753,18 @@ public class JobDBDAO extends JobDAO {
             }
 
             // Now do the actual copying.
+            // Note that startdate, and enddate is not copied.
+            // They must be null in JobStatus NEW.
             c.setAutoCommit(false);
             s = c.prepareStatement("INSERT INTO jobs "
                                    + " (job_id, harvest_id, priority, status,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + "  startdate, enddate, num_configs, edition) "
+                                   + "  num_configs, edition) "
                                    + " SELECT ?, harvest_id, priority, ?,"
                                    + "  forcemaxcount, forcemaxbytes, orderxml,"
                                    + "  orderxmldoc, seedlist, harvest_num,"
-                                   + "  startdate, enddate, num_configs, ?"
+                                   + " num_configs, ?"
                                    + " FROM jobs WHERE job_id = ?");
             s.setLong(1, newJobID);
             s.setLong(2, JobStatus.NEW.ordinal());
