@@ -153,17 +153,17 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     			Settings.get(Settings.HARVEST_CONTROLLER_SERVERDIR));
     	ApplicationUtils.dirMustExist(serverDir);
     	log.info("Serverdir: '" + serverDir + "'");
-    	minSpaceRequired = Settings.getLong(Settings.HARVEST_SERVERDIR_MINSPACE);
+    	minSpaceRequired = Settings.getLong(
+    			Settings.HARVEST_SERVERDIR_MINSPACE);
     	if (minSpaceRequired <= 0L) {
-    		log.warn(
-    				"Wrong setting of minSpaceLeft read from Settings: "
+    		log.warn("Wrong setting of minSpaceLeft read from Settings: "
     				+ minSpaceRequired);
     		throw new ArgumentNotValid(
     				"Wrong setting of minSpaceLeft read from Settings: "
     				+ minSpaceRequired);
     	}
-
-    	log.info("Harvesting requires at least " + minSpaceRequired + " bytes free.");
+    	log.info("Harvesting requires at least " + minSpaceRequired
+    			+ " bytes free.");
 
     	controller = HarvestController.getInstance();
 
@@ -259,8 +259,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         instance = null;
     }
 
-    /** Looks for old job directories that await uploading.
-     *
+    /** 
+     * Looks for old job directories that await uploading.
      */
     private void processOldJobs() {
         //Search through all crawldirs and process PersistentJobData

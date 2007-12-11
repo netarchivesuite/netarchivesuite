@@ -394,7 +394,7 @@ public class Settings {
     
     
     /**
-     * Check, that the serverdir has adequate this amount of bytes
+     * Check, that the serverdir has an adequate amount of bytes
      * available before accepting any harvest-jobs.
      */
     public static final String HARVEST_SERVERDIR_MINSPACE
