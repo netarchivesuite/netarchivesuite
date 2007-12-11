@@ -133,8 +133,8 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Id of read Job should equal id of original Job", job.getJobID(), readJob.getJobID());
         assertEquals("Status of read Job should equal status of original Job", job.getStatus(),
                      readJob.getStatus());
-        assertEquals("Seedlist of read Job should equal seedlist of original Job", job.getSeedList(),
-                     readJob.getSeedList());
+        assertEquals("Seedlist of read Job should equal seedlist of original Job", job.getSeedListAsString(),
+                     readJob.getSeedListAsString());
         assertEquals("Order.xml of read Job should equal order.xml of original Job", job.getOrderXMLdoc().getText(),
                      readJob.getOrderXMLdoc().getText());
         assertEquals("Filename of order.xml of read Job should equal filename of order.xml of original Job",
@@ -696,7 +696,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should have same priority",
                 oldJob1.getPriority(), newJob1.getPriority());
         assertEquals("Should have same seedlist",
-                oldJob1.getSeedList(), newJob1.getSeedList());
+                oldJob1.getSeedListAsString(), newJob1.getSeedListAsString());
         assertEquals("Should have same settingsxml docs",
                 oldJob1.getSettingsXMLdocs(), newJob1.getSettingsXMLdocs());
         assertEquals("Should have same settingsxml files",

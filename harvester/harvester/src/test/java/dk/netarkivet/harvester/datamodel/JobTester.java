@@ -52,8 +52,6 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Notifications;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
@@ -665,7 +663,7 @@ public class JobTester extends DataModelTestCase {
                 + "\nDomain->Configuration map" + job.getDomainConfigurationMap()
                 + "\nExpected max: " + job.getMaxObjectsPerDomain()
                 + "\nForced max: " + job.getForceMaxObjectsPerDomain()
-                + "\nSeedlist: " + job.getSeedList()
+                + "\nSeedlist: " + job.getSeedListAsString()
                 + "\nActual Start: " + job.getActualStart()
                 + "\nActual Stop: " + job.getActualStop()
                 + "\nPriority: " + job.getPriority().toString();
@@ -865,9 +863,8 @@ public class JobTester extends DataModelTestCase {
             + "http://nordjyske.dk/index.aspx?page=3&action=sektionid%3D157&sender=&target=246&data=\n"
             + "http://www.fyens.dk/fv2007\n";
         j.setSeedList(seeds);
-        assertTrue(j.getSeedList().size() == 18); // verifies that duplicates (Here, the last seed) are removed.
         List<String> list = j.getSortedSeedList();
-        assertTrue(list.size() == 18);
+        assertTrue(list.size() == 18); // verifies that duplicates (Here, the last seed) are removed.
         
         // Find locations of 
         // http://www.fyens.dk/fv2007 (1)
