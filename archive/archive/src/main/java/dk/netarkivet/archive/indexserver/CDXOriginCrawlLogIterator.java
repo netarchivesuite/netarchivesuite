@@ -126,6 +126,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                                 record + "'", e);
                         return null;
                     }
+                    log.debug("lastrecord is " + record);
                     // if we have a match, look also at the next record (if it exists)
                     // and select the next record as the last record.
                     if (lastRecord.getURL().equals(item.getURL())) {
@@ -145,9 +146,13 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             String origin = lastRecord.getArcfile()
                     + "," + lastRecord.getOffset();
             item.setOrigin(origin);
-            if (nextRecord != null && 
-            		!nextRecord.getURL().equals(lastRecord.getURL())) {
+            log.debug("URL '" +  item.getURL() + "' combined with origin '"
+                    +  origin + "'.");
+            // if nextRecord is not null, then we use it the next time around
+            if (nextRecord != null) {
                 lastRecord = nextRecord;
+                log.debug("lastrecord is now" + lastRecord);
+                nextRecord = null;
             }
         }
         return item;
@@ -177,7 +182,12 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             return;
         }
         if (nextRecord.getURL().equals(lastRecord.getURL())) {
-            lastRecord = nextRecord;
+            if (lastRecord.getOffset() < nextRecord.getOffset()) {
+                log.debug("lastrecord set to " + nextRecordAsString);
+                lastRecord = nextRecord;
+                // reset nextRecord 
+                nextRecord = null;
+            }
         }
     }
 }

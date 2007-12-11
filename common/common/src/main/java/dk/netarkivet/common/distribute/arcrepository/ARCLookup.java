@@ -41,8 +41,6 @@ import org.apache.lucene.search.TermQuery;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
@@ -152,6 +150,7 @@ public class ARCLookup {
             Hits hits = luceneSearcher.search(query);
             Document doc = null;
             if (hits != null) {
+                log.debug("Found " + hits.length() + " hits for uri: " +  uri);
                 for (int i = 0 ; i < hits.length(); i++) {
                     doc = hits.doc(i);
                     String origin = doc.get(DigestIndexer.FIELD_ORIGIN);
@@ -166,6 +165,7 @@ public class ARCLookup {
                         throw new IllegalState("Bad origin for URL '"
                                 + uri + "': '" + origin + "'");
                     }
+                    log.debug("Found document with origin: " + origin);
                     return new ARCKey(originParts[0],
                             Long.parseLong(originParts[1]));
                 }
