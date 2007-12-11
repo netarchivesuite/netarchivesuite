@@ -409,9 +409,8 @@ public class Job implements Serializable {
             SeedList seed = itt.next();
             List<String> seeds = seed.getSeeds();
             for (String seedUrl: seeds) {
-                if (!seedListSet.contains(seedUrl)) { // take care of duplicates
-                    seedListSet.add(seedUrl);
-                }
+                seedListSet.add(seedUrl); // duplicates is silently ignored
+                
                 //TODO remove when heritrix implements this functionality
                 //try to convert a seed into a Internationalized Domain Name
                 try {
@@ -439,9 +438,7 @@ public class Job implements Serializable {
                     }
                     if (!seedASCII.equals(seedUrl)) {
                         log.trace("Converted " + seedUrl + " to " + seedASCII);
-                        if (!seedListSet.contains(seedASCII)) { // take care of duplicates
-                            seedListSet.add(seedASCII);
-                        }
+                        seedListSet.add(seedASCII); // duplicates is silently ignored
                     }
                 } catch (IDNAException e) {
                     log.trace("Cannot convert seed "
@@ -699,33 +696,33 @@ public class Job implements Serializable {
     /**
      * Set the actual time when this job was started.
      *
-     * Throws an ArgumentNotValid exception, if trying to set actualStart to a
+     * Sends a notification, if actualStart is set to a
      * time after actualStop.
      * @param actualStart A Date object representing the time when this job was started.
      */
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
         if (actualStop != null && actualStop.before(actualStart)) {
-            String errorMsg = "End time (" + actualStop
-            + ") is before start time: " + actualStart;
+            String errorMsg = "Start time (" + actualStart
+            + ") is after end time: " + actualStop;
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
         }
-        this.actualStart = actualStart;
+        this.actualStart = (Date) actualStart.clone();
     }
 
     /**
      * Set the actual time when this job was stopped/completed.
-     * Throws an ArgumentNotValid exception, if trying to set actualStop to a
+     * Sends a notification, if actualStop is set to a
      * time before actualStart.
-     * TODO Shouldn't it be forbidden to call setActualStop, if actualStart
-     * is undefined?
      * @param actualStop A Date object representing the time when this job was stopped.
      */
     public void setActualStop(Date actualStop) {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            log.warn("Value of actualStart is null");
+            String warnMsg = "Value of actualStart is null"; 
+            log.warn(warnMsg);
+            NotificationsFactory.getInstance().errorEvent(warnMsg);
         }
         if (actualStart != null && actualStop.before(actualStart)) {
             String errorMsg = "End time (" + actualStop
@@ -733,7 +730,7 @@ public class Job implements Serializable {
             log.error(errorMsg);
             NotificationsFactory.getInstance().errorEvent(errorMsg);
         }
-        this.actualStop = actualStop;
+        this.actualStop = (Date) actualStop.clone();
     }
 
     /**
@@ -756,47 +753,37 @@ public class Job implements Serializable {
     }
 
     /**
-     * Get the seedlist associated with this Job.
-     *
-     * @return the seedlist as a List of strings
-     * the seeds are separated with newlines (\n).
-     */
-    public List<String> getSeedList() {
-        List<String> resultList = new ArrayList<String>();
-        resultList.addAll(seedListSet);
-        return resultList;
-    }
-
-    /**
-     * Returns a set of sorted seeds for this job.
-     * The sorting is done by domain.
-     * @return a set of sorted seeds for this job.
+     * Returns a list of sorted seeds for this job.
+     * The sorting is by domain, and inside each domain,
+     * the list is sorted by url
+     * @return a list of sorted seeds for this job.
      */
     public List<String> getSortedSeedList() {
-        Map<String,Set> urlMap = new HashMap<String,Set>();
+        Map<String,Set<String>> urlMap = new HashMap<String,Set<String>>();
         for (String seed : seedListSet) {
             String url;
             // Assume the protocol is http://, if it is missing
-            if (!seed.matches(Constants.NO_PROTOCOL_REGEXP)) {
+            if (!seed.matches(Constants.PROTOCOL_REGEXP)) {
                 url = "http://" + seed;
             } else {
                 url = seed;
             }
             String domain = getDomain(url);
-            TreeSet set;
+            Set<String> set;
             if (urlMap.containsKey(domain)) {
-                set = (TreeSet) urlMap.get(domain);
+                set = (TreeSet<String>) urlMap.get(domain);
             } else {
-                set = new TreeSet();
+                set = new TreeSet<String>();
+                urlMap.put(domain, set);
             }
             set.add(seed);
-            urlMap.put(domain, set);
+            
         }
-       List<String> resultSet = new ArrayList<String>();
+       List<String> result = new ArrayList<String>();
        for (Set set: urlMap.values()) {
-           resultSet.addAll(set);
+           result.addAll(set);
        }
-       return resultSet;
+       return result;
     }
     /**
      * Get the domain, that the given URL belongs to.
@@ -829,11 +816,7 @@ public class Job implements Serializable {
         String seed;
         try {
             while ((seed = reader.readLine()) != null) {
-                if (!seedListSet.contains(seed)) {
-                    seedListSet.add(seed);
-                } else {
-                    log.debug("Seed '" + seed + "' ignored. Already in the list");
-                }
+                seedListSet.add(seed); // add to seedlist if not already there
             }
         } catch (IOException e) {
             // This never happens, as we're reading from a string!
@@ -844,7 +827,7 @@ public class Job implements Serializable {
 
     /**
      * Get the seedlist as a String. The individual seeds are
-     * separated by the character '\n'.
+     * separated by the character '\n'. The order of the seeds are unknown.
      * @return the seedlist as a String
      */
     public String getSeedListAsString() {
@@ -865,7 +848,8 @@ public class Job implements Serializable {
      * Sets status of this job.
      *
      * @param status Must be one of the values STATUS_NEW, ..., STATUS_FAILED
-     * @throws ArgumentNotValid in case of invalid status argument or invalid status change
+     * @throws ArgumentNotValid
+     *  in case of invalid status argument or invalid status change
      */
     public void setStatus(int status) {
         setStatus(JobStatus.fromOrdinal(status));
@@ -875,9 +859,10 @@ public class Job implements Serializable {
      * Sets status of this job.
      *
      * @param newStatus Must be one of the values STATUS_NEW, ..., STATUS_FAILED
-     * @throws ArgumentNotValid in case of invalid status argument or invalid status change
+     * @throws ArgumentNotValid 
+     *  in case of invalid status argument or invalid status change
      */
-    public synchronized void setStatus(JobStatus newStatus) {
+    public void setStatus(JobStatus newStatus) {
         ArgumentNotValid.checkNotNull(newStatus, "newStatus");
         if (!status.legalChange(newStatus)) {
             final String message = "Status change from " + status
