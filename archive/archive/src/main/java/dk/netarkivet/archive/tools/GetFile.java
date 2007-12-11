@@ -30,8 +30,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
@@ -39,14 +37,15 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
 /**
  * A command-line tool to get ARC files from the bitarchive.
  *
- * Usage: java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
+ * Usage: 
+ * 	java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
  */
 
 public class GetFile extends ToolRunnerBase {
 
     /**
-     * Main method. Retrieves a file from the bitarchive and copies it to current 
-     * working directory.
+     * Main method. Retrieves a file from the bitarchive and copies it to
+     * current working directory.
      * Setup, teardown and run is delegated to the GetFileTool class.
      * Management of this, exception handling etc. is delegated to
      * ToolRunnerBase class.
@@ -66,8 +65,8 @@ public class GetFile extends ToolRunnerBase {
 
     private static class GetFileTool implements SimpleCmdlineTool {
         /**
-         * This instance is declared outside of run method to ensure reliable teardown
-         * in case of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable
+         * teardown in case of exceptions during execution.
          */
         private ViewerArcRepositoryClient arcrep;
         
@@ -80,7 +79,8 @@ public class GetFile extends ToolRunnerBase {
          * Accept 1 or 2 parameters.
          *
          * @param args the arguments
-         * @return true, if length of args list is 1 or 2; returns false otherwise
+         * @return true, if length of args list is 1 or 2; 
+         * 	returns false otherwise
          */
         public boolean checkArgs(String... args) {
             return (args.length > 0 && args.length < 3);
@@ -94,7 +94,6 @@ public class GetFile extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            ArgumentNotValid.checkNotNull(arcrep, "arcrep");
             myLocation = Location.get(Settings.get(
             		Settings.ENVIRONMENT_THIS_LOCATION)
             		);
@@ -102,8 +101,8 @@ public class GetFile extends ToolRunnerBase {
 
         /**
          * Ensure reliable execution of the ArcRepositoryClient.close() method.
-         * Remember to check if arcrep was actually created. Also reliably clean up
-         * JMSConnection.
+         * Remember to check if arcrep was actually created. Also reliably
+         * cleans up the JMSConnection.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -131,13 +130,15 @@ public class GetFile extends ToolRunnerBase {
             		destfile = new File(args[1]);
             	}
             	System.out.println("Retrieving file '" + filename
-            			+ "' from location '" + myLocation.getName() + "'.");
+            			+ "' from location '" + myLocation.getName()
+            			+ "' as file " + destfile.getAbsolutePath());
             	arcrep.getFile(filename, myLocation, destfile);
             	
             } catch (NetarkivetException e) {
-                throw new IOFailure(
-                        "NetarkivetException while performing arcrep.getFile(arcfilename, location, toFile)",
-                        e);
+               System.out.println("Execution of arcrep.getFile(arcfilename, " +
+               		"location, toFile) failed).");
+               e.printStackTrace();
+               System.exit(1);
             }
         }
 
@@ -147,7 +148,7 @@ public class GetFile extends ToolRunnerBase {
          * @return the list of parameters accepted.
          */
         public String listParameters() {
-            return "filename destinationfile";
+            return "filename [destination-file]";
         }
 
     }
