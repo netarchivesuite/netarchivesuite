@@ -48,7 +48,6 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      * CDX reading if there are entries not in CDX, so we hang onto this
      * until the reading of the crawl.log catches up. */
     protected CDXRecord lastRecord;
-    protected CDXRecord nextRecord;
     private Log log = LogFactory.getLog(CDXOriginCrawlLogIterator.class.getName());
     /** The constant prefixed checksums in newer versions of Heritrix indicating the
      * digest method.  The deduplicator currently doesn't use the equivalent
@@ -93,7 +92,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
         try {
             item = super.parseLine(line);
         } catch (RuntimeException e) {
-            log.info("Skipping over bad crawl-log line '" + line + "'", e);
+            log.debug("Skipping over bad crawl-log line '" + line + "'", e);
             return null;
         }
         // Hack that works around bug #1004: sha1: prefix not accounted for
@@ -104,17 +103,31 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             }
         }
         if (item != null && item.getOrigin() == null) {
-        	
+
             // Iterate through the sorted CDX file until lastRecord is not null
-            // and lastRecord.getURL() is either equal to item.getURL() (we have found a possible match), or
-            // lastRecord.getURL() is lexicographically higher than item.getURL(), indicating that there is no match
-        	
+            // and lastRecord.getURL() is lexicographically higher than
+            // item.getURL(), indicating that there are no more matches
+
+            CDXRecord foundRecord = null;
             while (lastRecord == null
-                    || lastRecord.getURL().compareTo(item.getURL()) < 0) {
+                    || lastRecord.getURL().compareTo(item.getURL()) <= 0) {
+                // if we have a match, look see if we already have a match
+                // and if so only choose this match if it is a better match.
+                if (lastRecord != null
+                    && lastRecord.getURL().equals(item.getURL())) {
+                    if (foundRecord == null
+                        || lastRecord.getArcfile().compareTo(
+                            foundRecord.getArcfile()) > 0
+                        || lastRecord.getOffset()
+                           > foundRecord.getOffset()) {
+                        foundRecord = lastRecord;
+                        log.trace("Foundrecord set to '" + foundRecord + "'");
+                    }
+                }
                 try {
                     String record = reader.readLine();
                     if (record == null) {
-                        return null;// EOF, nothing to do
+                        break;// EOF, nothing to do
                     }
                     if  (record.length() == 0) {
                         continue; // skip empty lines
@@ -122,72 +135,27 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                     try {
                         lastRecord = new CDXRecord(record);
                     } catch (ArgumentNotValid e) {
-                        log.info("Skipping over bad CDX line '" +
+                        log.debug("Skipping over bad CDX line '" +
                                 record + "'", e);
-                        return null;
+                        continue;
                     }
-                    log.debug("lastrecord is " + record);
-                    // if we have a match, look also at the next record (if it exists)
-                    // and select the next record as the last record.
-                    if (lastRecord.getURL().equals(item.getURL())) {
-                        lookAHead();
-                    }
-                    
+                    log.trace("lastrecord is '" + record + "'");
                 } catch (IOException e) {
                     throw new IOFailure("Error reading CDX record", e);
                 }
             }
-            if (!lastRecord.getURL().equals(item.getURL())) {
+            if (foundRecord == null) {
             	log.debug("No matching CDX for URL '" + item.getURL()
             			+ "'. Last CDX was for URL: " + lastRecord.getURL());
                 return null;
             }
-            
-            String origin = lastRecord.getArcfile()
-                    + "," + lastRecord.getOffset();
+
+            String origin = foundRecord.getArcfile()
+                    + "," + foundRecord.getOffset();
             item.setOrigin(origin);
             log.debug("URL '" +  item.getURL() + "' combined with origin '"
                     +  origin + "'.");
-            // if nextRecord is not null, then we use it the next time around
-            if (nextRecord != null) {
-                lastRecord = nextRecord;
-                log.debug("lastrecord is now" + lastRecord);
-                nextRecord = null;
-            }
         }
         return item;
-    }
-     
-    /**
-     * Look at the next CDX line. If the URL in the next CDXRecord
-     * is identical to the last record, set the last CDXRecord to 
-     * that one.
-     * 
-     * @throws IOException
-     */
-    private void lookAHead() throws IOException {
-        String nextRecordAsString = reader.readLine();
-        while (nextRecordAsString != null && nextRecordAsString.length() == 0) {
-            nextRecordAsString = reader.readLine();
-            log.debug("Read line: " + nextRecordAsString);
-        }                        
-        try {
-            nextRecord = new CDXRecord(nextRecordAsString);
-        } catch (ArgumentNotValid e) {
-            log.info("Skipping over bad CDX line '" +
-                    nextRecordAsString + "'", e);
-        }
-        if (nextRecord == null) {
-        	log.debug("Met EOF");
-            return;
-        }
-        if (nextRecord.getURL().equals(lastRecord.getURL())) {
-            if (lastRecord.getOffset() < nextRecord.getOffset()) {
-                log.debug("lastrecord set to " + nextRecordAsString);
-                lastRecord = nextRecord;
-                // reset nextRecord 
-                nextRecord = null;
-            }
-        }
     }
 }
