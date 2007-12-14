@@ -75,6 +75,8 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      *
      * If CrawlLogIterator is ok with this line, we must make sure that it
      * has an origin by finding missing ones in the CDX file.
+     * If multiple origins are found in the CDX files, the one that was
+     * harvested last is chosen.
      * If no origin can be found, the item is rejected.
      *
      * We assume that super.parseLine() delivers us the items in the crawl.log
@@ -88,13 +90,14 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      */
     protected CrawlDataItem parseLine(String line) {
         CrawlDataItem item;
-        log.debug("Processing crawl-log line: " + line);
+        log.trace("Processing crawl-log line: " + line);
         try {
             item = super.parseLine(line);
         } catch (RuntimeException e) {
             log.debug("Skipping over bad crawl-log line '" + line + "'", e);
             return null;
         }
+
         // Hack that works around bug #1004: sha1: prefix not accounted for
         if (item != null && item.getContentDigest() != null) {
             if (item.getContentDigest().toLowerCase().startsWith(SHA1_PREFIX)) {
@@ -102,28 +105,40 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                         SHA1_PREFIX.length()));
             }
         }
-        if (item != null && item.getOrigin() == null) {
 
+        //If a origin was found in the crawl log, we accept that as correct.
+        //Otherwise we must find the origin in the CDX file.
+        if (item != null && item.getOrigin() == null) {
             // Iterate through the sorted CDX file until lastRecord is not null
             // and lastRecord.getURL() is lexicographically higher than
-            // item.getURL(), indicating that there are no more matches
-
+            // item.getURL(), indicating that there are no more matches.
             CDXRecord foundRecord = null;
             while (lastRecord == null
                     || lastRecord.getURL().compareTo(item.getURL()) <= 0) {
-                // if we have a match, look see if we already have a match
-                // and if so only choose this match if it is a better match.
+                // If the cdx URL is the one we are looking for, we have a
+                // potential origin.
                 if (lastRecord != null
                     && lastRecord.getURL().equals(item.getURL())) {
+                    // If this is our first potential origin, or if it is better
+                    // than the one we currently consider best, we remember this
+                    // entry. A better origin is defined as one in a later ARC
+                    // file (lexicograhically higher ARC file name) or a later
+                    // offset in the same ARC file.
                     if (foundRecord == null
                         || lastRecord.getArcfile().compareTo(
                             foundRecord.getArcfile()) > 0
-                        || lastRecord.getOffset()
-                           > foundRecord.getOffset()) {
+                        || (lastRecord.getArcfile().equals(
+                            foundRecord.getArcfile()))
+                           && (lastRecord.getOffset()
+                               > foundRecord.getOffset())) {
                         foundRecord = lastRecord;
-                        log.trace("Foundrecord set to '" + foundRecord + "'");
+                        log.trace("Foundrecord set to '"
+                                  + foundRecord.getArcfile() + ","
+                                  + foundRecord.getOffset() + "'");
                     }
                 }
+
+                //Read the next line
                 try {
                     String record = reader.readLine();
                     if (record == null) {
@@ -146,7 +161,9 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             }
             if (foundRecord == null) {
             	log.debug("No matching CDX for URL '" + item.getURL()
-            			+ "'. Last CDX was for URL: " + lastRecord.getURL());
+            			+ "'. Last CDX was for URL '"
+                        + (lastRecord == null ? "(none)" : lastRecord.getURL()) 
+                        + "'");
                 return null;
             }
 
