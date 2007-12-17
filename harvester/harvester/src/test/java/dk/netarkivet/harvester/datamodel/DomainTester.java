@@ -1064,10 +1064,11 @@ public class DomainTester extends DataModelTestCase {
         SeedList s7 = new SeedList("Åse liste", "http://plidder");
         SeedList s8 = new SeedList("ø liste", "http://plidder");
         SeedList s9 = new SeedList("Æble liste", "http://plidder");
+        SeedList defaultSeeds = new SeedList("defaultseeds", "http://www.unknowndomain.dk");
         d.addSeedList(s1); d.addSeedList(s2); d.addSeedList(s3);
         d.addSeedList(s4); d.addSeedList(s5); d.addSeedList(s6);
         d.addSeedList(s7); d.addSeedList(s8); d.addSeedList(s9);
-
+        
         // Now we check, that DK sequence is "abe liste", "Abe liste", "Anden liste", "defaultseeds", "ny liste", "Plidderpladder"
         //                                   "Æble liste", "ø liste", "åse liste", "Åse liste"
         allSeeds = d.getAllSeedListsAsSortedList(dkLocale);
@@ -1075,8 +1076,8 @@ public class DomainTester extends DataModelTestCase {
         // Easier way to test contents of a list.  --LC
         CollectionAsserts.assertListEquals("List of seeds should have expected content, in order",
                                            allSeeds,
-                                           s5.getName(), s4.getName(), s3.getName(),
-                                           "defaultseeds", s2.getName(), s1.getName());
+                                           s5, s4, s3, defaultSeeds, s2, s1, s9, s8, s6, s7
+        );
 
         Iterator<SeedList> iterator = allSeeds.iterator();
         // # 1 to retrieve must be the seedlist named "abe liste"
@@ -1288,9 +1289,10 @@ public class DomainTester extends DataModelTestCase {
         assertTrue("At 7. check Locale default value has change from " + origDefault.getLanguage() + " to " + Locale.getDefault().getLanguage(), Locale.getDefault().getLanguage() == origDefault.getLanguage());
     }
     /** Make a clone of param config and let its name be nameOfClone.
-     * @param config
-     * @param nameOfClone
-     * @return a clone of config */
+     * @param config a given domainconfig
+     * @param nameOfClone The name of the cloned config
+     * @return a clone of config 
+     */
     private DomainConfiguration cloneConfigWithNewName(DomainConfiguration config, String nameOfClone) {
         Iterator<SeedList> seedIterator = config.getSeedLists();
         Iterator<Password> passwordIterator = config.getPasswords();
@@ -1309,8 +1311,8 @@ public class DomainTester extends DataModelTestCase {
         return new Password(name, "no comments", "Domain is KB; SB", "Realm", "svc", "ThePassword");
     }
     /** Make a clone of the given password with a new name.
-     * @param thePassword
-     * @param nameOfClone
+     * @param thePassword a given Password
+     * @param nameOfClone the name of the cloned password
      * @return a clone of thePassword
      */
     private Password clonePasswordWithNewName(Password thePassword, String nameOfClone) {

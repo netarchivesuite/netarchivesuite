@@ -457,16 +457,14 @@ public class JobTester extends DataModelTestCase {
             fail("Argument invalid start later than stop should not throw an exception:" + e);
         }
 
-        RememberNotifications.resetSingleton();
         try {
             Job job = Job.createJob(new Long(0), DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration(), 0);
             Date d1 = new Date(0);
             Date d2 = new Date(1000);
             job.setActualStop(d1);
-            assertTrue("No notifications should have been emitted", 
-                    RememberNotifications.getInstance().message == null);
+            RememberNotifications.resetSingleton();
             job.setActualStart(d2);
-            assertTrue("Argument invalid start later than stop should send an notication",
+            assertTrue("Argument invalid start later than stop should send an notification",
                     RememberNotifications.getInstance().message.length() > 0);
         } catch (ArgumentNotValid e) {
             fail("Argument invalid start later than stop should not throw an exception:" + e);
