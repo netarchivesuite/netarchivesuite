@@ -1581,7 +1581,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/heritrix-dependencies/mg4j-1.0.1.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/index.html/" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>

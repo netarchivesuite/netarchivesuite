@@ -346,7 +346,10 @@ public class JMXHeritrixController implements HeritrixController {
             }
         }
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
-        return status == null || status.startsWith(FINISHED_STATUS_PREFIX);
+        return status == null
+               || status.startsWith(FINISHED_STATUS_PREFIX)
+               || status.equals(CrawlJob.STATUS_MISCONFIGURED)
+               || status.equals(CrawlJob.STATUS_DELETED);
     }
 
     /** Return true if the Heritrix process has exited, logging the exit

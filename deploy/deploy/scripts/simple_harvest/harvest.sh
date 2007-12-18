@@ -72,7 +72,8 @@ fi
 function makeJmxOptions {
     echo "-Dsettings.common.jmx.port=$JMXPORT \
       -Dsettings.common.jmx.rmiPort=$(( $JMXPORT + 100 )) \
-      -Dsettings.common.jmx.passwordFile=$NETARCHIVEDIR/conf/jmxremote.password";
+      -Dsettings.common.jmx.passwordFile=$NETARCHIVEDIR/conf/jmxremote.password \
+      -Dcom.sun.management.jmxremote";
 }
 
 function makeXtermOffset {

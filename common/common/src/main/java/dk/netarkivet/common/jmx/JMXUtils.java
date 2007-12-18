@@ -257,6 +257,7 @@ public class JMXUtils {
             Throwable lastException;
             int retries = 0;
             do {
+                retries++;
                 try {
                     Object ret = connection
                             .getAttribute(getBeanName(beanName), attribute);

@@ -197,16 +197,22 @@ public class HeritrixLauncher {
     public void doCrawl() throws IOFailure {
         setupOrderfile();
 
-        // Initialize Heritrix settings according to the order.xml
-        heritrixController = new JMXHeritrixController(files);
-        //heritrixController = new DirectHeritrixController(files);
-        heritrixController.initialize();
-        log.debug("Starting crawl..");
-        heritrixController.requestCrawlStart();
-        if (heritrixController.atFinish()) {
-            heritrixController.beginCrawlStop();
-        } else {
-            doCrawlLoop();
+        try {
+            // Initialize Heritrix settings according to the order.xml
+            heritrixController = new JMXHeritrixController(files);
+            //heritrixController = new DirectHeritrixController(files);
+            heritrixController.initialize();
+            log.debug("Starting crawl..");
+            heritrixController.requestCrawlStart();
+            if (heritrixController.atFinish()) {
+                heritrixController.beginCrawlStop();
+            } else {
+                doCrawlLoop();
+            }
+        } finally {
+            if (heritrixController != null) {
+                heritrixController.cleanup();
+            }
         }
         log.debug("Heritrix is finished crawling...");
     }
@@ -219,9 +225,6 @@ public class HeritrixLauncher {
     private void doCrawlLoop() {
         long lastNonZeroActiveQueuesTime = System.currentTimeMillis();
         long lastTimeReceivedData = System.currentTimeMillis();
-        //TODO: Use below value!
-        //long harvestedSinceLastTime = getTotalBytesWritten();
-        try {
             while (!heritrixController.crawlIsEnded()) {
                 log.info("Job ID: " + files.getJobID()
                          + ", Harvest ID: " + this.files.getHarvestID()
@@ -247,12 +250,12 @@ public class HeritrixLauncher {
                              + "No active queues for the last "
                              + ((System.currentTimeMillis()
                                  - lastNonZeroActiveQueuesTime) / 1000.0)
-                             + " seconds (timeout is " 
+                             + " seconds (timeout is "
                              + noActiveQueuesTimeoutInSeconds
                              + " seconds).  No traffic for the last "
                              + ((System.currentTimeMillis()
                                  - lastTimeReceivedData) / 1000.0)
-                             + " seconds (timeout is " 
+                             + " seconds (timeout is "
                              + noDataReceivedTimeoutInSeconds
                              + " seconds). URLs in queue:"
                              + heritrixController.getQueuedUriCount());
@@ -277,9 +280,6 @@ public class HeritrixLauncher {
                     }
                 }
             } // end of while (!crawlIsEnded)
-        } finally {
-            heritrixController.cleanup();
-        }
     }
 
     /**
