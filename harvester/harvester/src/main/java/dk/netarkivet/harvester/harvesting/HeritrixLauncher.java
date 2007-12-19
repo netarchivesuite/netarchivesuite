@@ -225,61 +225,61 @@ public class HeritrixLauncher {
     private void doCrawlLoop() {
         long lastNonZeroActiveQueuesTime = System.currentTimeMillis();
         long lastTimeReceivedData = System.currentTimeMillis();
-            while (!heritrixController.crawlIsEnded()) {
-                log.info("Job ID: " + files.getJobID()
-                         + ", Harvest ID: " + this.files.getHarvestID()
-                         +  "\n" + heritrixController.getProgressStats());
-                // Note that we don't check for timeout while paused.
-                if (heritrixController.getCurrentProcessedKBPerSec() > 0 ||
-                    heritrixController.isPaused()) {
-                    lastTimeReceivedData = System.currentTimeMillis();
-                }
-                if (heritrixController.getActiveToeCount() > 0 ||
-                    heritrixController.isPaused()) {
-                    lastNonZeroActiveQueuesTime = System.currentTimeMillis();
-                }
-                if ((lastNonZeroActiveQueuesTime + timeOutInMillis
-                     < System.currentTimeMillis())
-                    || (lastTimeReceivedData + timeOutInMillisReceivedData
-                        < System.currentTimeMillis())) {
-                    final double noActiveQueuesTimeoutInSeconds =
-                    	timeOutInMillis / 1000.0;
-                    final double noDataReceivedTimeoutInSeconds =
-                    	timeOutInMillisReceivedData / 1000.0;
-                    log.warn("Aborting crawl because of inactivity. "
-                             + "No active queues for the last "
-                             + ((System.currentTimeMillis()
-                                 - lastNonZeroActiveQueuesTime) / 1000.0)
-                             + " seconds (timeout is "
-                             + noActiveQueuesTimeoutInSeconds
-                             + " seconds).  No traffic for the last "
-                             + ((System.currentTimeMillis()
-                                 - lastTimeReceivedData) / 1000.0)
-                             + " seconds (timeout is "
-                             + noDataReceivedTimeoutInSeconds
-                             + " seconds). URLs in queue:"
-                             + heritrixController.getQueuedUriCount());
-                    heritrixController.requestCrawlStop(
-                            "Aborting because of inactivity");
-                }
+        while (!heritrixController.crawlIsEnded()) {
+            log.info("Job ID: " + files.getJobID()
+                     + ", Harvest ID: " + this.files.getHarvestID()
+                     +  "\n" + heritrixController.getProgressStats());
+            // Note that we don't check for timeout while paused.
+            if (heritrixController.getCurrentProcessedKBPerSec() > 0 ||
+                heritrixController.isPaused()) {
+                lastTimeReceivedData = System.currentTimeMillis();
+            }
+            if (heritrixController.getActiveToeCount() > 0 ||
+                heritrixController.isPaused()) {
+                lastNonZeroActiveQueuesTime = System.currentTimeMillis();
+            }
+            if ((lastNonZeroActiveQueuesTime + timeOutInMillis
+                 < System.currentTimeMillis())
+                || (lastTimeReceivedData + timeOutInMillisReceivedData
+                    < System.currentTimeMillis())) {
+                final double noActiveQueuesTimeoutInSeconds =
+                        timeOutInMillis / 1000.0;
+                final double noDataReceivedTimeoutInSeconds =
+                        timeOutInMillisReceivedData / 1000.0;
+                log.warn("Aborting crawl because of inactivity. "
+                         + "No active queues for the last "
+                         + ((System.currentTimeMillis()
+                             - lastNonZeroActiveQueuesTime) / 1000.0)
+                         + " seconds (timeout is "
+                         + noActiveQueuesTimeoutInSeconds
+                         + " seconds).  No traffic for the last "
+                         + ((System.currentTimeMillis()
+                             - lastTimeReceivedData) / 1000.0)
+                         + " seconds (timeout is "
+                         + noDataReceivedTimeoutInSeconds
+                         + " seconds). URLs in queue:"
+                         + heritrixController.getQueuedUriCount());
+                heritrixController.requestCrawlStop(
+                        "Aborting because of inactivity");
+            }
 
-                //Optimization: don't wait if ended since beginning of the loop
-                if (!heritrixController.crawlIsEnded()) {
-                    try {
-                        /* Wait for heritrix to do something.
-                        * WAIT_PERIOD is the interval between checks of whether
-                        * we have passed timeouts. Note that timeouts are defined
-                        * in the settings, while WAIT_PERIOD (being less relevant
-                        * to the user) is defined in this class.
-                        */
-                        synchronized (this) {
-                            wait(WAIT_PERIOD);
-                        }
-                    } catch (InterruptedException e) {
-                        log.trace("Waiting thread awoken: " + e.getMessage());
+            //Optimization: don't wait if ended since beginning of the loop
+            if (!heritrixController.crawlIsEnded()) {
+                try {
+                    /* Wait for heritrix to do something.
+                    * WAIT_PERIOD is the interval between checks of whether
+                    * we have passed timeouts. Note that timeouts are defined
+                    * in the settings, while WAIT_PERIOD (being less relevant
+                    * to the user) is defined in this class.
+                    */
+                    synchronized (this) {
+                        wait(WAIT_PERIOD);
                     }
+                } catch (InterruptedException e) {
+                    log.trace("Waiting thread awoken: " + e.getMessage());
                 }
-            } // end of while (!crawlIsEnded)
+            }
+        } // end of while (!crawlIsEnded)
     }
 
     /**

@@ -1,7 +1,7 @@
-/* File:        $Id:  $
- * Revision:    $Revision: 100 $
- * Author:      $Author: lars $
- * Date:        $Date: 2007-10-18 08:18:30 +0200 (Thu, 18 Oct 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

@@ -55,7 +55,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  *
  */
 public class JMXUtils {
-    public static Log log = LogFactory.getLog(JMXUtils.class.getName());
+    public static final Log log = LogFactory.getLog(JMXUtils.class.getName());
 
     /** The system property that Java uses to get an initial context
      * for JNDI. This must be set for RMI connections to work.
@@ -205,16 +205,17 @@ public class JMXUtils {
     public static Object executeCommand(MBeanServerConnection connection,
                                   String beanName, String command,
                                   String... arguments) {
-        log.debug("Preparing to execute " + command + " with args " + arguments
-                 + " on " + beanName);
+        log.debug("Preparing to execute " + command + " with args " +
+                  Arrays.toString(arguments) + " on " + beanName);
         try {
             final String[] signature = new String[arguments.length];
             Arrays.fill(signature, String.class.getName());
             // The first time we attempt to connect to an mbean, we might have
             // to wait a bit for it to appear
             Throwable lastException;
-            int retries = 0;
+            int tries = 0;
             do {
+                tries++;
                 try {
                     Object ret = connection.invoke(getBeanName(beanName), command,
                                              arguments, signature);
@@ -222,14 +223,14 @@ public class JMXUtils {
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
-                    if (retries < MAX_TRIES) {
-                        exponentialBackoffSleep(retries);
+                    if (tries < MAX_TRIES) {
+                        exponentialBackoffSleep(tries);
                     }
                 }
-            } while (retries < MAX_TRIES);
+            } while (tries < MAX_TRIES);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for executing " + command
-                                + " after " + retries + " attempts",
+                                + " after " + tries + " attempts",
                                 lastException);
         } catch (MBeanException e) {
             throw new IOFailure("MBean exception for " + beanName, e);
@@ -255,9 +256,9 @@ public class JMXUtils {
             // The first time we attempt to connect to an mbean, we might have
             // to wait a bit for it to appear
             Throwable lastException;
-            int retries = 0;
+            int tries = 0;
             do {
-                retries++;
+                tries++;
                 try {
                     Object ret = connection
                             .getAttribute(getBeanName(beanName), attribute);
@@ -266,14 +267,14 @@ public class JMXUtils {
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
-                    if (retries < MAX_TRIES) {
-                        exponentialBackoffSleep(retries);
+                    if (tries < MAX_TRIES) {
+                        exponentialBackoffSleep(tries);
                     }
                 }
-            } while (retries < MAX_TRIES);
+            } while (tries < MAX_TRIES);
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for getting attribute " + attribute
-                                + " after " + retries + " attempts",
+                                + " after " + tries + " attempts",
                                 lastException);
         } catch (AttributeNotFoundException e) {
             throw new IOFailure("MBean exception for " + beanName, e);
