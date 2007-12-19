@@ -419,12 +419,12 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
         statusj = info.getStatus();
-        checkInfoCorrect(j, info);
+        checkInfoCorrect(j2, info);
         info = infos.get(1);
         statusj2 = info.getStatus();
-        checkInfoCorrect(j2, info);
-        assertEquals("Status NEW for first job", statusj2, JobStatus.NEW);
-        assertEquals("Status DONE for second job", statusj, JobStatus.DONE);
+        checkInfoCorrect(j, info);
+        assertEquals("Status NEW for first job", statusj, JobStatus.NEW);
+        assertEquals("Status DONE for second job", statusj2, JobStatus.DONE);
 
         
         infos = dao.getStatusInfo(JobStatus.DONE);
