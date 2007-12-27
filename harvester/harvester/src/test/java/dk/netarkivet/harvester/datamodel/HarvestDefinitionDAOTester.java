@@ -33,6 +33,7 @@ import java.util.Set;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
@@ -851,6 +852,46 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     private Date getDate(int year, int month, int day) {
         Calendar cal = new GregorianCalendar(year, month, day);
         return cal.getTime();
+    }
+
+    public void testGetHarvestName() throws Exception {
+        final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        assertEquals("Should find Tværhøstning for ID 42",
+                     hddao.read(42L).getName(), hddao.getHarvestName(42L));
+        assertEquals("Should find Tværhøstning for ID 43",
+                     hddao.read(43L).getName(), hddao.getHarvestName(43L));
+        try {
+            hddao.getHarvestName(44L);
+            fail("Should have thrown UnknownID on missing HD");
+        } catch (UnknownID e) {
+            // Expected
+        }
+        try {
+            hddao.getHarvestName(null);
+            fail("Should have thrown ArgumentNotValid on null id");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+    }
+
+    public void testIsSnapshot() throws Exception {
+        final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        assertFalse("Should find selective harvest for ID 42",
+                     hddao.isSnapshot(42L));
+        assertTrue("Should find snapshot harvest for ID 43",
+                     hddao.isSnapshot(43L));
+        try {
+            hddao.isSnapshot(44L);
+            fail("Should have thrown UnknownID on missing HD");
+        } catch (UnknownID e) {
+            // Expected
+        }
+        try {
+            hddao.isSnapshot(null);
+            fail("Should have thrown ArgumentNotValid on null id");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
     }
 
 }

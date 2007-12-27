@@ -74,11 +74,12 @@ This page displays harvest details for one harvest definition run
     }
     List<JobStatusInfo> jobStatusList = JobDBDAO.getInstance()
             .getStatusInfo(harvestID, harvestNum);
-    HarvestDefinition hd = HarvestDefinitionDAO.getInstance().read(harvestID);
+    final String harvestName
+            = HarvestDefinitionDAO.getInstance().getHarvestName(harvestID);
     String harvestLink = "<a href=\"Harveststatus-perhd.jsp?"
                          + Constants.HARVEST_PARAM + "="
-                         + HTMLUtils.encodeAndEscapeHTML(hd.getName())
-                         + "\">" + HTMLUtils.escapeHtmlValues(hd.getName())
+                         + HTMLUtils.encodeAndEscapeHTML(harvestName)
+                         + "\">" + HTMLUtils.escapeHtmlValues(harvestName)
                          + "</a>";
     HTMLUtils.generateHeader(pageContext);
 %>
@@ -171,7 +172,7 @@ This page displays harvest details for one harvest definition run
                 <input type="hidden" name="<%=Constants.JOB_PARAM%>" value="<%=jobID%>"/>
                 <% } %>
                 <input type="hidden" name="<%=Constants.INDEXLABEL_PARAM%>" value="<fmt:message key="harvest.0.run.1">
-                    <fmt:param value="<%=HTMLUtils.escapeHtmlValues(hd.getName())%>"/>
+                    <fmt:param value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
                     <fmt:param value="<%=harvestNum%>"/>
                 </fmt:message>">
                 <p><a href="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"

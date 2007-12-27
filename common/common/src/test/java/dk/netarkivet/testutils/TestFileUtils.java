@@ -85,7 +85,7 @@ public class TestFileUtils {
             } catch (Exception e) {
                 throw new IOFailure("Error copying from "
                                     + from.getAbsolutePath() + " to "
-                                    + to.getAbsolutePath());
+                                    + to.getAbsolutePath(), e);
             }
         } else {
             if (from.getName().equals("CVS")) {
@@ -110,9 +110,9 @@ public class TestFileUtils {
 
             File[] subfiles = from.listFiles();
 
-            for (int i = 0; i < subfiles.length; i++) {
-                copyDirectoryNonCVS(subfiles[i],
-                                    new File(to, subfiles[i].getName()));
+            for (File subfile : subfiles) {
+                copyDirectoryNonCVS(subfile,
+                                    new File(to, subfile.getName()));
             }
         }
     }
@@ -203,8 +203,7 @@ public class TestFileUtils {
      * @return The name of the file without the specified path prefix.
      */
     private static String removePrefixDir(File dir, File f) {
-        String key = f.getAbsolutePath().replaceAll(dir.getAbsolutePath(), "");
-        return key;
+        return f.getAbsolutePath().replaceAll(dir.getAbsolutePath(), "");
     }
 
 

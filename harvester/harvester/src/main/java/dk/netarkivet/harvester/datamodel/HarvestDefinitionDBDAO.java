@@ -931,6 +931,63 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     }
 
     /**
+     * Get the name of a harvest given its ID.
+     *
+     * @param harvestDefinitionID The ID of a harvest
+     *
+     * @return The name of the given harvest.
+     *
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID        if no harvest has the given ID.
+     */
+    public String getHarvestName(Long harvestDefinitionID) {
+        ArgumentNotValid.checkNotNull(harvestDefinitionID,
+                                      "harvestDefinitionID");
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            return DBConnect.selectStringValue(
+                    "SELECT name FROM harvestdefinitions WHERE harvest_id = ?",
+                    harvestDefinitionID);
+        } catch (IOFailure e) {
+            throw new UnknownID("Failed to find harvest definition with id "
+                                + harvestDefinitionID, e);
+        }
+    }
+
+    /**
+     * Get whether a given harvest is a snapshot or selective harvest.
+     *
+     * @param harvestDefinitionID ID of a harvest
+     *
+     * @return True if the given harvest is a snapshot harvest, false
+     *         otherwise.
+     *
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID        if no harvest has the given ID.
+     */
+    public boolean isSnapshot(Long harvestDefinitionID) {
+        ArgumentNotValid.checkNotNull(harvestDefinitionID,
+                                      "harvestDefinitionID");
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        boolean isSnapshot = DBConnect.selectAny(
+                "SELECT harvest_id FROM fullharvests WHERE harvest_id = ?",
+                harvestDefinitionID);
+        if (isSnapshot) {
+            return true;
+        }
+        boolean isSelective = DBConnect.selectAny(
+                "SELECT harvest_id FROM partialharvests WHERE harvest_id = ?",
+                harvestDefinitionID);
+        if (isSelective) {
+            return false;
+        }
+        throw new UnknownID("Failed to find harvest definition with id "
+                            + harvestDefinitionID);
+    }
+
+    /**
      * Get a sparse version of a full harvest for GUI purposes.
      *
      * @param harvestName Name of harvest definition.

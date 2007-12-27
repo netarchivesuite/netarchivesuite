@@ -69,13 +69,13 @@ and reposne.getLocale use this locale.
     String harvesturl= "/HarvestDefinition/Definitions-selective-harvests.jsp";
     boolean definitionsSitesectionDeployed = SiteSection.isDeployed(
                     Constants.DEFINITIONS_SITESECTION_DIRNAME);
+    final Long harvestID = job.getOrigHarvestDefinitionID();
     try {
-        HarvestDefinition hd = HarvestDefinitionDAO.getInstance().read(
-                job.getOrigHarvestDefinitionID());
-        harvestname = hd.getName();
+        harvestname = HarvestDefinitionDAO.getInstance().getHarvestName(
+                harvestID);
         // define harvesturl, only if we have deployed the Definitions sitesection
-        if (definitionsSitesectionDeployed) {                    
-        	if (hd.isSnapShot()) {
+        if (definitionsSitesectionDeployed) {
+        	if (HarvestDefinitionDAO.getInstance().isSnapshot(harvestID)) {
             	harvesturl =
                     "/HarvestDefinition/Definitions-edit-snapshot-harvest.jsp?"
                             + Constants.HARVEST_PARAM + "="
@@ -88,7 +88,7 @@ and reposne.getLocale use this locale.
         }
     } catch (UnknownID e) {
         harvestname = I18N.getString(response.getLocale(),
-                "unknown.harvest.0", job.getOrigHarvestDefinitionID());
+                "unknown.harvest.0", harvestID);
     }
     String tdContents = HTMLUtils.escapeHtmlValues(harvestname);
     if (definitionsSitesectionDeployed) {
@@ -120,7 +120,7 @@ and reposne.getLocale use this locale.
         </td>
         <td><%=tdContents %></td>
         <td><%=dk.netarkivet.harvester.webinterface.HarvestStatus
-                .makeHarvestRunLink(job.getOrigHarvestDefinitionID(),
+                .makeHarvestRunLink(harvestID,
                                     job.getHarvestNum())%>
         </td>
         <td><fmt:formatDate type="both" value="<%=job.getActualStart()%>"/></td>

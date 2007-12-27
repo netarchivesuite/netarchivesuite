@@ -200,7 +200,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
             synchronized(this) {
                 // Make every HD run in its own thread, but at most once.
                 if (harvestDefinitionsBeingScheduled.contains(id)) {
-                    // With the small importance of this logmessage, 
+                    // With the small importance of this logmessage,
                     // we won't spend time looking up the corresponding name for
                     // the harvestdefinition with this id number.
                     log.debug("Not creating jobs for harvestdefinition with id #" + id
@@ -273,7 +273,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     }
 
     /** Get the IDs of the harvest definitions that are ready to run.
-     * 
+     *
      * @param now
      * @return IDs of the harvest definitions that are currently ready to
      * be scheduled.  Some of these might already be in the process of being
@@ -385,4 +385,23 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      */
     public abstract Iterable<SparseFullHarvest>
             getAllSparseFullHarvestDefinitions();
+
+    /** Get the name of a harvest given its ID.
+     *
+     * @param harvestDefinitionID The ID of a harvest
+     * @return The name of the given harvest.
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID if no harvest has the given ID.
+     */
+    public abstract String getHarvestName(Long harvestDefinitionID);
+
+    /** Get whether a given harvest is a snapshot or selective harvest.
+     *
+     * @param harvestDefinitionID ID of a harvest
+     * @return True if the given harvest is a snapshot harvest, false
+     * otherwise.
+     * @throws ArgumentNotValid on null argument
+     * @throws UnknownID if no harvest has the given ID.
+     */
+    public abstract boolean isSnapshot(Long harvestDefinitionID);
 }
