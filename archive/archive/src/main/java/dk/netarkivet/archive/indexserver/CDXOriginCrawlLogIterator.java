@@ -121,20 +121,15 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                     && lastRecord.getURL().equals(item.getURL())) {
                     // If this is our first potential origin, or if it is better
                     // than the one we currently consider best, we remember this
-                    // entry. A better origin is defined as one in a later ARC
-                    // file (lexicograhically higher ARC file name) or a later
-                    // offset in the same ARC file.
+                    // entry. A better origin is defined as one with a later
+                    // date than the current choice.
                     if (foundRecord == null
-                        || lastRecord.getArcfile().compareTo(
-                            foundRecord.getArcfile()) > 0
-                        || (lastRecord.getArcfile().equals(
-                            foundRecord.getArcfile()))
-                           && (lastRecord.getOffset()
-                               > foundRecord.getOffset())) {
+                        || lastRecord.getDate().compareTo(
+                                foundRecord.getDate()) > 0) {
                         foundRecord = lastRecord;
-                        log.trace("Foundrecord set to '"
-                                  + foundRecord.getArcfile() + ","
-                                  + foundRecord.getOffset() + "'");
+                      log.trace("Foundrecord set to '"
+                                + foundRecord.getArcfile() + ","
+                                + foundRecord.getOffset() + "'");  
                     }
                 }
 

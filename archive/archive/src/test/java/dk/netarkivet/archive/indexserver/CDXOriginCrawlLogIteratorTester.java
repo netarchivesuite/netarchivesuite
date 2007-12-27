@@ -44,7 +44,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * Test-class for CDXOriginCrawlLogIterator.
  *
- *
  */
 public class CDXOriginCrawlLogIteratorTester extends TestCase {
 
@@ -231,27 +230,27 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
      */
     public void testbug680() throws Exception {    
         Method sortCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-        "sortCDX", File.class, File.class);
+                "sortCDX", File.class, File.class);
         Method sortCrawlLog = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-        "sortCrawlLog", File.class, File.class);
-        
+                "sortCrawlLog", File.class, File.class);
+
         File unsortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680.log");
         File sortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680-sorted.log");
-        
+
         File unsortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-680");
         File sortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-sorted-680");
-        
-        
+
+
         sortCrawlLog.invoke(null, unsortedCrawlLogFile, sortedCrawlLogFile);
         sortCDX.invoke(null, unsortedCDXFile, sortedCDXFile);
-        
+
         BufferedReader cdx =
             new BufferedReader(new FileReader(sortedCDXFile));
         CDXOriginCrawlLogIterator it = new CDXOriginCrawlLogIterator
-            (sortedCrawlLogFile, cdx);
+        (sortedCrawlLogFile, cdx);
 
         String privateUrl = "http://www.kaarefc.dk/private/";
-        
+
         assertTrue("Must contain at least one item", it.hasNext());
         boolean foundPrivateUrl = false;
         CrawlDataItem item = null;
@@ -264,18 +263,39 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
         assertTrue("Should have found the private url", foundPrivateUrl);
         String correctOrigin = "1-1-20071206233504-00000-dhcppc1.arc,10204";
         assertTrue("Wrong origin", item.getOrigin().equals(correctOrigin));
-        
-        /*
-        String correctTimestamp = "20071206233508";
-        String wrongTimestamp = "20071206233507";
-        assertTrue("Timestamp is wrong, should have been " 
-                + correctTimestamp + ", but was " + item.getTimestamp(), 
-                item.getTimestamp().equals(correctTimestamp));
-        //1-1-20071206233504-00000-dhcppc1.arc 10204
-         */
+
+        // Introducing new set of testfiles based on job 9 run 27-12-2007
+
+        unsortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-9.log");
+        sortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-9-sorted.log");
+
+        unsortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-9-cache");
+        sortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-9-sorted-cache");
+
+
+        sortCrawlLog.invoke(null, unsortedCrawlLogFile, sortedCrawlLogFile);
+        sortCDX.invoke(null, unsortedCDXFile, sortedCDXFile);
+
+        cdx =
+            new BufferedReader(new FileReader(sortedCDXFile));
+        it = new CDXOriginCrawlLogIterator
+        (sortedCrawlLogFile, cdx);
+
+        assertTrue("Must contain at least one item", it.hasNext());
+        foundPrivateUrl = false;
+        item = null;
+        while (!foundPrivateUrl && it.hasNext()) {
+            item = it.next();
+            if (item.getURL().equals(privateUrl)){
+                foundPrivateUrl = true;
+            }
+        }
+        assertTrue("Should have found the private url", foundPrivateUrl);
+        correctOrigin = "9-2-20071227125128-00000-kb-test-har-002.kb.dk.arc,9167";
+        assertTrue("Wrong Origin. Should have been '" + 
+                correctOrigin + "', but was '" + item.getOrigin() + "'."
+                , item.getOrigin().equals(correctOrigin));
+
     }
-        
-        
-        
-    }
+}
    
