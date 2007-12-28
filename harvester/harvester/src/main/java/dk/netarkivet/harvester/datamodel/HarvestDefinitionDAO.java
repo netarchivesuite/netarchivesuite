@@ -392,6 +392,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @return The name of the given harvest.
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID if no harvest has the given ID.
+     * @throws IOFailure        on any other error talking to the database
      */
     public abstract String getHarvestName(Long harvestDefinitionID);
 
@@ -402,6 +403,7 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * otherwise.
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID if no harvest has the given ID.
+     * @throws IOFailure        on any other error talking to the database
      */
     public abstract boolean isSnapshot(Long harvestDefinitionID);
 }

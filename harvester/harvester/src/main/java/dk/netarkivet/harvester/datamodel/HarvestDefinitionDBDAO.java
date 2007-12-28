@@ -939,6 +939,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      *
      * @throws ArgumentNotValid on null argument
      * @throws UnknownID        if no harvest has the given ID.
+     * @throws IOFailure        on any other error talking to the database
      */
     public String getHarvestName(Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
@@ -946,12 +947,29 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            return DBConnect.selectStringValue(
-                    "SELECT name FROM harvestdefinitions WHERE harvest_id = ?",
-                    harvestDefinitionID);
-        } catch (IOFailure e) {
-            throw new UnknownID("Failed to find harvest definition with id "
-                                + harvestDefinitionID, e);
+            s = c.prepareStatement("SELECT name FROM harvestdefinitions WHERE harvest_id = ?");
+            s.setLong(1, harvestDefinitionID);
+            ResultSet res = s.executeQuery();
+            String name = null;
+            while (res.next()) {
+                if (name != null) {
+                    throw new IOFailure("Found more than one name for harvest"
+                                        + " definition " + harvestDefinitionID
+                                        + ": '" + name + "' and '"
+                                        + res.getString(1) + "'");
+                }
+                name = res.getString(1);
+            }
+            if (name == null) {
+                throw new UnknownID("No name found for harvest definition "
+                                    + harvestDefinitionID);
+            }
+            return name;
+        } catch (SQLException e) {
+            throw new IOFailure("An error occurred finding the name for "
+                                + "harvest definition " + harvestDefinitionID, e);
+        } finally {
+            DBConnect.closeStatementIfOpen(s);
         }
     }
 
@@ -969,8 +987,6 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     public boolean isSnapshot(Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
         boolean isSnapshot = DBConnect.selectAny(
                 "SELECT harvest_id FROM fullharvests WHERE harvest_id = ?",
                 harvestDefinitionID);
@@ -993,6 +1009,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @param harvestName Name of harvest definition.
      * @return Sparse version of full harvest or null for none.
      * @throws ArgumentNotValid on null or empty name.
+     * @throws UnknownID        if no harvest has the given ID.
+     * @throws IOFailure        on any other error talking to the database
      */
     public SparseFullHarvest getSparseFullHarvest(
             String harvestName) {
