@@ -199,6 +199,11 @@ form.inlineform {
     text-align: right;
 }
 
+.systeminfo {
+    background-color: #ACC8E3;
+    text-align: right;
+}
+
 .sidebarHeader {
     font-family: sans-serif;
     font-size: 18pt;

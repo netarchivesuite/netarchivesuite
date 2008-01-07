@@ -45,6 +45,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -815,7 +816,12 @@ public class HTMLUtilsTester extends TestCase {
         HTMLUtils.generateFooter(out);
         String result = out.sw.toString();
         JspTestCase.assertValidXHTML(result);
-
+        StringAsserts.assertStringContains("The version string must be present",
+                                           Constants.getVersionString(),
+                                           result);
+        StringAsserts.assertStringContains("The environment name must be there",
+                                           "UNITTEST",
+                                           result);
     }
 
     /** Test makeTableElement. */

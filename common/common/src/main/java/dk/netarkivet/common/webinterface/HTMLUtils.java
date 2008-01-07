@@ -253,8 +253,15 @@ public class HTMLUtils {
         out.print("</td>\n");
         // Close the single row in the table
         out.print("</tr>\n");
-        // Close the table and page
-        out.print("</table></body></html>");
+        // Close the table
+        out.print("</table>\n");
+        // Add information about the running system
+        out.print("<div class='systeminfo'>");
+        out.print("NetarchiveSuite " + Constants.getVersionString()
+                  + ", " + Settings.get(Settings.ENVIRONMENT_NAME));
+        out.print("</div>");
+        // Close the page
+        out.print("</body></html>");
 
 
     }
