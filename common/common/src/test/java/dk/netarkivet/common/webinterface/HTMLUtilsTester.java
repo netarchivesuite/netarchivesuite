@@ -820,7 +820,7 @@ public class HTMLUtilsTester extends TestCase {
                                            Constants.getVersionString(),
                                            result);
         StringAsserts.assertStringContains("The environment name must be there",
-                                           "UNITTEST",
+                                           "DEV",
                                            result);
     }
 
