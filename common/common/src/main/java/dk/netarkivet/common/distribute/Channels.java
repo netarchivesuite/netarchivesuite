@@ -281,7 +281,9 @@ public class Channels {
     	ArgumentNotValid.checkNotNullOrEmpty(location, "location");
         ChannelID[] bamons = getAllArchives_BAMONs();
         for (ChannelID bamon : bamons) {
-            if ((bamon.getName().split("_")[1]).equals(location)) {
+            if (bamon.getName().equals(
+                    Settings.get(Settings.ENVIRONMENT_NAME)
+                    + "_" + location + "_THE_BAMON")) {
                 return bamon;
             }
         }

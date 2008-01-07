@@ -32,6 +32,7 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.testutils.StringAsserts;
 
 
 public class ChannelsTester extends TestCase {
@@ -238,6 +239,13 @@ public class ChannelsTester extends TestCase {
         } catch (ArgumentNotValid e) {
             //expected
         }
+
+        Settings.set(Settings.ENVIRONMENT_NAME, "A_B");
+        Channels.reset();
+        ChannelID ch = Channels.getBaMonForLocation("SB");
+        StringAsserts.assertStringContains(
+                "Should find channel even when environment contains underscores",
+                "SB", ch.getName());
     }
 
     /**

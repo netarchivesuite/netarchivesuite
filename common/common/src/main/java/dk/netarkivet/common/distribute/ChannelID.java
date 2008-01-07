@@ -40,7 +40,7 @@ public class ChannelID implements Serializable {
      * It is used for prefixing all ChannelIDs.
      * An example value is "PROD".
      */
-    private static final String environmentName =
+    private final String environmentName =
         Settings.get(Settings.ENVIRONMENT_NAME);
     /**
      * httpPortNumber is the IP port that is reserved for this application's
@@ -102,7 +102,7 @@ public class ChannelID implements Serializable {
     * @return The properly concatenated channel name.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    private static String constructName(String app, String locationName,
+    private String constructName(String app, String locationName,
         boolean useNodeId, boolean useProcId) {
         String userId = environmentName;
         String id = "";
