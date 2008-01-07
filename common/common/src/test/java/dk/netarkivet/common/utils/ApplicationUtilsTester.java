@@ -151,15 +151,6 @@ public class ApplicationUtilsTester extends TestCase {
         FileAsserts.assertFileContains("Should have shutdown hook mentioned in log",
                                        "Added shutdown hook for dk.netarkivet.common.utils.App3", TestInfo.LOG_FILE);
         assertTrue("Should have tempdir after start", tempdir.exists());
-
-        // Check, that aliveness is logged
-        // Cf. http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/AssignmentGroupE1#E1.1)
-
-        Thread.sleep(10);
-        LogUtils.flushLogs(LivenessLogger.class.getName());
-        FileAsserts.assertFileContains("Should have liveness entries in log",
-                "dk.netarkivet.common.utils.App3 is alive at", TestInfo.LOG_FILE);
-
     }
 }
 

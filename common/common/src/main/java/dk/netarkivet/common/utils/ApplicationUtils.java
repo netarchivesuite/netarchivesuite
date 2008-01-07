@@ -59,10 +59,6 @@ public abstract class ApplicationUtils {
      * for the application could not be added. */
     public static final int EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK = 4;
 
-    /** System.exit() value for the case where the liveness logger for
-     * the application could not be started. */
-    public static final int EXCEPTION_WHEN_ADDING_LIVENESSLOGGER = 5;
-
     /** System.exit() value for the case where the management registration for
      * the application could not be started. */
     public static final int EXCEPTION_WHEN_ADDING_MANAGEMENT = 6;
@@ -170,15 +166,6 @@ public abstract class ApplicationUtils {
             logExceptionAndPrint("Could not add shutdown hook for class "
                                  + appName, e);
             System.exit(EXCEPTION_WHEN_ADDING_SHUTDOWN_HOOK);
-        }
-        // Start the livenesslogger
-        try {
-            new Thread(new LivenessLogger(c)).start();
-            log.trace("Added LivenessLogger for " + appName);
-        } catch (Throwable e) {
-            logExceptionAndPrint("Could not add liveness logger for class "
-                    + appName, e);
-            System.exit(EXCEPTION_WHEN_ADDING_LIVENESSLOGGER);
         }
     }
 

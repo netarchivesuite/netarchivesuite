@@ -31,7 +31,6 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.MBeanConnectorCreator;
-import dk.netarkivet.common.utils.LivenessLogger;
 import dk.netarkivet.common.utils.ProcessUtils;
 
 /**
@@ -72,8 +71,6 @@ public class SideKick implements Runnable {
         Settings.set(Settings.APPLICATIONNAME, SideKick.class.getName());
         MBeanConnectorCreator.exposeJMXMBeanServer();
         new Thread(new SideKick(args[0], args[1])).start();
-        /** Start liveness logger for the sidekick. */
-        new Thread(new LivenessLogger(SideKick.class)).start();
     }
 
     /**
