@@ -184,10 +184,16 @@ public class HostForwarding<T> {
             if (knownJmxConnections.containsKey(host)) {                
                 Set<HostEntry> registeredJmxPortsOnHost = knownJmxConnections.get(host);
                 
-                for (HostEntry he: hostentriesForHost) {
+                for (HostEntry he : hostentriesForHost) {
                     if (!registeredJmxPortsOnHost.contains(he)) {
                         newJmxHosts.add(he);
                         registeredJmxPortsOnHost.add(he);
+                    } else {
+                        for (HostEntry existing : registeredJmxPortsOnHost) {
+                            if (existing.equals(he)) {
+                                existing.setTime(he.getTime());
+                            }
+                        }
                     }
                 }
                 knownJmxConnections.put(host, registeredJmxPortsOnHost);
@@ -196,9 +202,9 @@ public class HostForwarding<T> {
                 knownJmxConnections.put(host, hostentriesForHost);
             }
         }
-        log.info("Found " + newJmxHosts.size() + " new JMX hosts");
         if (newJmxHosts.size() > 0) {
-                registerRemoteMbeans(newJmxHosts);
+            log.info("Found " + newJmxHosts.size() + " new JMX hosts");
+            registerRemoteMbeans(newJmxHosts);
         }
     }
 
@@ -386,7 +392,8 @@ public class HostForwarding<T> {
                 //Still unable to connect. Oh well.
                 return "Unable to proxy JMX beans on host '"
                        + hostEntry.getName() + ":" + hostEntry.getJmxPort()
-                       + "'\n"
+                       + "', last seen active at '"
+                       + hostEntry.getTime() + "'\n"
                        + ExceptionUtils.getStackTrace(e);
             }
         }
@@ -433,11 +440,19 @@ public class HostForwarding<T> {
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
             //establish or reestablish mbean
-            JMXProxyConnection connection = connectionFactory.getConnection(
-                    hostEntry.getName(),
-                    hostEntry.getJmxPort(),
-                    hostEntry.getRmiPort(),
-                    jmxUsername, jmxPassword);
+            JMXProxyConnection connection;
+            try {
+                connection = connectionFactory.getConnection(
+                        hostEntry.getName(),
+                        hostEntry.getJmxPort(),
+                        hostEntry.getRmiPort(),
+                        jmxUsername, jmxPassword);
+            } catch (Exception e) {
+                throw new IOFailure("Could not connect to host '"
+                       + hostEntry.getName() + ":" + hostEntry.getJmxPort()
+                       + "', last seen active at '"
+                       + hostEntry.getTime() + "'\n", e);
+            }
             //call remote method
             T mBean = connection.createProxy(name, asInterface);
             return method.invoke(mBean, args);

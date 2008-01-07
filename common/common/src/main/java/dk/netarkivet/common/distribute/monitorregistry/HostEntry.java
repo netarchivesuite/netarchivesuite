@@ -29,7 +29,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Helper class to encapsulate information about one remote JmxConnection.
- * This object is immutable.
  */
 public class HostEntry implements Serializable {
     /**
@@ -47,7 +46,7 @@ public class HostEntry implements Serializable {
     /**
      * The time this host-entry was created.
      */
-    private final Date time;
+    private Date time;
 
     /**
      * Constructor for the HostEntry helper class.
@@ -130,5 +129,9 @@ public class HostEntry implements Serializable {
     public String toString() {
         return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort
                 + ", last seen live at " + time;
+    }
+
+    public void setTime(Date time) {
+        this.time=time;
     }
 }
