@@ -222,7 +222,7 @@ startApp ArcRepository archive.arcrepository.ArcRepositoryApplication
 startApp IndexServer archive.indexserver.IndexServerApplication
 
 ## Start HarvestDefinitionGui
-startApp HarvestDefinition harvester.webinterface.HarvestDefinitionApplication
+startApp HarvestDefinition common.webinterface.GUIApplication
 
 # Start viewerproxy
 startApp Viewerproxy viewerproxy.ViewerProxyApplication

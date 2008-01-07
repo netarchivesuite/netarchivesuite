@@ -5,13 +5,12 @@ handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netar
 .level=INFO
 #setup the File Handler
 java.util.logging.FileHandler.level=FINE
-java.util.logging.FileHandler.pattern=./log/harvestdefinitionapplication%u.log
+java.util.logging.FileHandler.pattern=./log/guiapplication%u.log
 java.util.logging.FileHandler.limit=1000000
 java.util.logging.FileHandler.count=100
 java.util.logging.FileHandler.append=true
 java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
 #setup the MonitorHandler
-org.level=SEVERE
 dk.netarkivet.monitor.MonitorLogHandler.level=FINE
 #define logging levels
 java.util.logging.ConsoleHandler.level=CONFIG

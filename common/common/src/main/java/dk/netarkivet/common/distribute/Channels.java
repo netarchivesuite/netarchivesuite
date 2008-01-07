@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -323,6 +322,22 @@ public class Channels {
             ChannelID.COMMON,
             ChannelID.INCLUDE_IP,
             ChannelID.INCLUDE_PROC_ID,
+            ChannelID.QUEUE);
+
+
+    /** Return the queue for the monitor registry.
+     *
+     * @return the <code>ChannelID</code> object for the queue.
+     */
+    public static ChannelID getTheMonitorServer() {
+        return getInstance().THE_MONITOR_SERVER;
+    }
+
+    private final ChannelID THE_MONITOR_SERVER = new ChannelID(
+            "MONITOR",
+            ChannelID.COMMON,
+            ChannelID.NO_IP,
+            ChannelID.NO_PROC_ID,
             ChannelID.QUEUE);
 
     /**

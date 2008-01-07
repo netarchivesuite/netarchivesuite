@@ -38,7 +38,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClientFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * Utility class that handles exposing the platform mbean server using rmi, and
@@ -107,6 +109,12 @@ public class MBeanConnectorCreator {
                 // Start the connector server.
                 cs.start();
                 isExposed = true;
+                //Register the JMX server at the registry.
+                MonitorRegistryClientFactory.getInstance().register(SystemUtils.getLocalHostName(),
+                                                                    Settings.getInt(
+                                                        Settings.JMX_PORT),
+                                                                    Settings.getInt(
+                                                        Settings.JMX_RMI_PORT));
             }
         } catch (IOException e) {
             throw new IOFailure("Error creating and registering an"

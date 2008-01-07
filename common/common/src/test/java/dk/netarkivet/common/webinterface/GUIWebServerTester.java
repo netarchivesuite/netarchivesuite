@@ -47,6 +47,8 @@ public class GUIWebServerTester extends TestCase {
                      TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
         Settings.set(Settings.SITESECTION_DEPLOYPATH,
                      TestInfo.GUI_WEB_SERVER_WEBBASE);
+        Settings.set(Settings.SITESECTION_CLASS,
+                     TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
         Settings.set(Settings.HTTP_PORT_NUMBER,
                      Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
     }

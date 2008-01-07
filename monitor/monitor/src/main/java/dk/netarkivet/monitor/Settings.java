@@ -53,8 +53,7 @@ public class Settings {
      * or are pluggable settings not always present.
      */
     public static final List<String> EXCLUDED_FIELDS = Arrays.asList(
-            "DEFAULT_FILEPATH", "DEFAULT_XSD_FILEPATH", "JMX_HOST_NAME",
-            "JMX_HOST_PORT");
+            "DEFAULT_FILEPATH", "DEFAULT_XSD_FILEPATH");
 
     /**
      * Utility method. Provides static access to getter in settingsStructure.
@@ -152,21 +151,4 @@ public class Settings {
     /** The password needed to connect as 'monitorRole' to the MBeanservers. */
     public static final String JMX_MONITOR_ROLE_PASSWORD_SETTING
             = "settings.monitor.jmxMonitorRolePassword";
-
-    /** The number of different hosts where MBeanservers reside. */
-    public static final String JMX_HOSTS_NUMBER_SETTING
-            = "settings.monitor.numberOfHosts";
-
-    /**
-     * The name of a JMX host. %d should be replaced with a number between 1
-     * and JMX_HOSTS_NUMBER_SETTING.
-     */
-    public static final String JMX_HOST_NAME = "settings.monitor.host%d.name";
-
-    /**
-     * The port of a JMX host. %d should be replaced with a number between 1
-     * and JMX_HOSTS_NUMBER_SETTING.
-     */
-    public static final String JMX_HOST_PORT
-            = "settings.monitor.host%d.jmxport";
 }

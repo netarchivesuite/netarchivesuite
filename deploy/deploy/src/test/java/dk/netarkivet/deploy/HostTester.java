@@ -38,11 +38,11 @@ import dk.netarkivet.archive.arcrepository.ArcRepositoryApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.webinterface.GUIApplication;
 import dk.netarkivet.harvester.harvesting.HarvestControllerApplication;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 import dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook;
 import dk.netarkivet.harvester.sidekick.SideKick;
-import dk.netarkivet.harvester.webinterface.HarvestDefinitionApplication;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
@@ -91,7 +91,7 @@ public class HostTester extends TestCase {
         Host host = new Host("bar", "foo", Host.Type.bitarchive);
         assertEquals("Should get right jar for harvestdefinition",
                 harvestJars,
-                host.getJarFiles(HarvestDefinitionApplication.class.getName()));
+                host.getJarFiles(GUIApplication.class.getName()));
         assertEquals("Should get right jar for harvestcontroller",
                 harvestJars,
                 host.getJarFiles(HarvestControllerApplication.class.getName()));

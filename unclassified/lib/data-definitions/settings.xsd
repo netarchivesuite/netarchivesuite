@@ -29,6 +29,7 @@
                 </complexType>
             </element>
             <element name="arcrepositoryClient" type="set:arcrepositoryclient"/>
+            <element name="monitorregistryClient" type="set:monitorregistryclient"/>
             <element name="indexClient" type="set:indexclient"/>
             <element name="cacheDir" type="set:directoryPath"/>
             <element name="processTimeout" type="long"/>
@@ -183,6 +184,19 @@
                 <sequence>
                     <element name="indexRequestTimeout" type="long"/>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="monitorregistryclient">
+        <sequence>
+            <element name="class" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="jmsmonitorregistryclient">
+        <complexContent>
+            <extension base="set:monitorregistryclient">
             </extension>
         </complexContent>
     </complexType>

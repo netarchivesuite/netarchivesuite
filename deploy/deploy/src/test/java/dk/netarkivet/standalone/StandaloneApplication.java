@@ -33,8 +33,8 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
-import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUI;
 import dk.netarkivet.viewerproxy.ViewerProxy;
 
 /**
@@ -66,7 +66,7 @@ public class StandaloneApplication {
 
 
         ApplicationUtils.startApp(BitarchiveMonitorServer.class, args);
-        ApplicationUtils.startApp(HarvestDefinitionGUI.class, args);
+        ApplicationUtils.startApp(GUIWebServer.class, args);
         ApplicationUtils.startApp(BitarchiveServer.class, args);
         ApplicationUtils.startApp(ArcRepository.class, args);
         ApplicationUtils.startApp(IndexServer.class, args);

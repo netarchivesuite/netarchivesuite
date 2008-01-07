@@ -9,15 +9,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webpages/QA" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -26,7 +17,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -193,6 +184,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -225,15 +221,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -242,7 +229,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -409,6 +396,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -441,15 +433,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webpages/BitPreservation" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -458,7 +441,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -625,6 +608,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -657,15 +645,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webpages/Status" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -674,7 +653,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -841,6 +820,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -873,15 +857,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webpages/History" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -890,7 +865,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -1057,6 +1032,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -1089,15 +1069,6 @@
         <webroots>
           <root url="file://$MODULE_DIR$/tests/dk/netarkivet/harvester/datamodel/data/jsp" relative="/" />
         </webroots>
-        <sourceRoots>
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/tests" />
-          <root url="file://$MODULE_DIR$/webpages/BitPreservation" />
-          <root url="file://$MODULE_DIR$/webpages/HarvestDefinition" />
-          <root url="file://$MODULE_DIR$/webpages/History" />
-          <root url="file://$MODULE_DIR$/webpages/QA" />
-          <root url="file://$MODULE_DIR$/webpages/Status" />
-        </sourceRoots>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -1106,7 +1077,7 @@
           <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
           <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
+          <setting name="RUN_JASPER_VALIDATION" value="false" />
           <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
@@ -1273,6 +1244,11 @@
             <attribute name="method" value="0" />
             <attribute name="URI" value="/WEB-INF/lib" />
             <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar!/</url>
+          </containerElement>
+          <containerElement type="library" level="module">
+            <attribute name="method" value="0" />
+            <attribute name="URI" value="/WEB-INF/lib" />
+            <url>jar://$MODULE_DIR$/tests/lib/httpunit-dependencies/xercesImpl.jar!/</url>
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
@@ -1357,7 +1333,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/sunjms-lib/imq-4.1-b22g.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/../projects/webarkivering/roles/externsoftware/tmp/mq/javadoc" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>
@@ -1496,7 +1474,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/sunjms-lib/jms-4.1-b22g.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/../projects/webarkivering/roles/externsoftware/tmp/mq/javadoc" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>

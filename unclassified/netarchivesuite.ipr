@@ -89,7 +89,7 @@
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
+    <option name="DEPLOY_AFTER_MAKE" value="2" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -133,6 +133,24 @@
     <option name="PRINT_LINE_NUMBERS" value="false" />
     <option name="OPEN_IN_BROWSER" value="false" />
     <option name="OUTPUT_DIRECTORY" />
+  </component>
+  <component name="FacetAutodetectingManager">
+    <autodetection-disabled>
+      <facet-type id="web">
+        <modules>
+          <module name="netarchivesuite">
+            <files>
+              <file url="file://$PROJECT_DIR$/tests/dk/netarkivet/harvester/datamodel/data/jsp/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/webpages/BitPreservation/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/webpages/HarvestDefinition/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/webpages/History/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/webpages/QA/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/webpages/Status/WEB-INF/web.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
+    </autodetection-disabled>
   </component>
   <component name="IdProvider" IDEtalkID="D36C6F163E695DAE3A55BA4FA982A0F9" />
   <component name="InspectionProjectProfileManager">

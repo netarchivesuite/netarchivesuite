@@ -45,6 +45,10 @@
                  ArcRepositoryClient.store() -->
             <storeTimeout>3600000</storeTimeout>
         </arcrepositoryClient>
+        <monitorregistryClient xsi:type="jmsmonitorregistryclient">
+            <!-- The class instantiated to register JMX urls at a registry. -->
+            <class>dk.netarkivet.common.distribute.monitorregistry.JMSMonitorRegistryClient</class>
+        </monitorregistryClient>
         <indexClient xsi:type="indexrequestclient">
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
@@ -508,6 +512,7 @@
             <configChunkSize>10000</configChunkSize>
         </scheduler>
         <harvesting>
+            <minSpaceLeft>2000000000</minSpaceLeft>
             <!-- Each job gets a subdir of this dir. Job data is written and
                  Heritrix writes to that subdir-->
             <serverDir>server</serverDir>

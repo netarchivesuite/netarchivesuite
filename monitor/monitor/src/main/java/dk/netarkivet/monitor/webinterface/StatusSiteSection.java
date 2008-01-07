@@ -25,12 +25,13 @@ package dk.netarkivet.monitor.webinterface;
 
 import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.monitor.Constants;
+import dk.netarkivet.monitor.registry.distribute.MonitorRegistryServer;
 
 /**
  * Site section that creates the menu for system status.
  */
 public class StatusSiteSection extends SiteSection {
-
+    private MonitorRegistryServer monitorListener;
 
     /**
      * Create a new status SiteSection object.
@@ -42,5 +43,20 @@ public class StatusSiteSection extends SiteSection {
               }, "Status", Constants.TRANSLATIONS_BUNDLE);
     }
 
+    /**
+     * Regsister monitor server when deploying.
+     */
+    public void initialize() {
+        monitorListener = MonitorRegistryServer.getInstance();
+    }
 
+    /**
+     * Shut down monitor server when undeploying,
+     */
+    public void close() {
+        if (monitorListener != null) {
+            monitorListener.cleanup();
+        }
+        monitorListener = null;
+    }
 }

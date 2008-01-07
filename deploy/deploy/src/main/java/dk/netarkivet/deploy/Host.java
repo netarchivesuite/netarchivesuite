@@ -52,10 +52,10 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.webinterface.GUIApplication;
 import dk.netarkivet.harvester.harvesting.HarvestControllerApplication;
 import dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook;
 import dk.netarkivet.harvester.sidekick.SideKick;
-import dk.netarkivet.harvester.webinterface.HarvestDefinitionApplication;
 import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 
@@ -414,7 +414,7 @@ public class Host {
     public void writeStartAdminApps(File dir, List<String> locations) {
         File res = new File(dir, "start_harvestdefinition.sh");
         writeStandardStart(res,
-                           HarvestDefinitionApplication.class.getName());
+                           GUIApplication.class.getName());
 
         res = new File(dir, "start_arcrepository.sh");
         writeStandardStart(res,
@@ -800,7 +800,7 @@ public class Host {
     public List<String> getJarFiles(String appName) {
         ArgumentNotValid.checkNotNullOrEmpty(appName, "appName");
         if (appName.startsWith(HarvestControllerApplication.class.getName())
-                || appName.startsWith(HarvestDefinitionApplication.class.getName())
+                || appName.startsWith(GUIApplication.class.getName())
                 || appName.startsWith(SideKick.class.getName())
                 || appName.startsWith(HarvestControllerServerMonitorHook.class.getName())) {
             return Arrays.asList("dk.netarkivet.harvester.jar",

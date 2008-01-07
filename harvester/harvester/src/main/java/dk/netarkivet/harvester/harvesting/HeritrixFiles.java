@@ -36,7 +36,6 @@ import org.dom4j.Document;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ZipUtils;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,

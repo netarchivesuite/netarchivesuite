@@ -56,7 +56,6 @@ public class Settings {
     public static final List<String> EXCLUDED_FIELDS = Arrays.asList(
             "DEFAULT_FILEPATH", "DEFAULT_XSD_FILEPATH",
             "HTTPREMOTEFILE_PORT_NUMBER");
-
     /**
      * Utility method. Provides static access to getter in settingsStructure.
      *
@@ -623,4 +622,8 @@ public class Settings {
     /** Which file to look for JMX passwords in. */
     public static final String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
+
+    public static final String MONITOR_REGISTRY_CLIENT
+            = "settings.common.monitorregistryClient.class";
+
 }

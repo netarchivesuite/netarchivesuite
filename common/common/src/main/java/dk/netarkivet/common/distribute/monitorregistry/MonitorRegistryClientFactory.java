@@ -1,7 +1,7 @@
-/* File:                $Id$
- * Revision:            $Revision$
- * Author:              $Author$
- * Date:                $Date$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,24 +20,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.webinterface;
 
-import dk.netarkivet.common.utils.ApplicationUtils;
+package dk.netarkivet.common.distribute.monitorregistry;
+
+import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * This class is used to start the GUI web applications and the scheduler in
- * the same Java VM.
- *
- * @see HarvestDefinitionGUI
+ * A factory for MonitorRegistryClient.
  */
-public class HarvestDefinitionApplication {
-   /**
-    * Runs the HarvestDefinitionApplication. Settings are read from
-    * config files
-    *
-    * @param args an empty array
-    */
-   public static void main(String[] args) {
-       ApplicationUtils.startApp(HarvestDefinitionGUI.class, args);
-   }
+public class MonitorRegistryClientFactory
+        extends SettingsFactory<MonitorRegistryClient> {
+    /** Returns a new MonitorRegistryClient as defined by the setting
+     * settings.common.monitorregistryClient.class.
+     * @return A MonitorRegistryClient.
+     */
+    public static MonitorRegistryClient getInstance() {
+        return SettingsFactory.getInstance(Settings.MONITOR_REGISTRY_CLIENT);
+    }
 }

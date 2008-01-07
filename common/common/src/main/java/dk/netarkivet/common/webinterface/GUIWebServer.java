@@ -74,19 +74,26 @@ public class GUIWebServer implements CleanupIF {
                 Settings.SITESECTION_WEBAPPLICATION);
         String[] deployDirs = Settings.getAll(
                 Settings.SITESECTION_DEPLOYPATH);
-        if (webApps.length != deployDirs.length) {
+        String[] classes = Settings.getAll(
+                Settings.SITESECTION_CLASS);
+        if (webApps.length != deployDirs.length
+            || webApps.length != classes.length) {
             throw new IOFailure(
                     "Number of webapplications and number of directories to "
-                    + "deploy them in do not match. Webapps: ["
-                    + StringUtils.conjoin(webApps, ",") + "]. Deploydirs: ["
-                    + StringUtils.conjoin(deployDirs, ",") + "]");
+                    + "deploy them in and classes defining webapps do not match. "
+                    + "Webapps: [" + StringUtils.conjoin(webApps, ",") + "]. "
+                    + "Deploydirs: [" + StringUtils.conjoin(deployDirs, ",")
+                    + "]. Classes: [" + StringUtils.conjoin(classes, ",")
+                    + "]");
         }
 
         log.info("Starting webserver. Port: " + port
                  + " deployment directories: '"
                  + StringUtils.conjoin(webApps, ",")
                  + "' webapplication directories: '"
-                 + StringUtils.conjoin(deployDirs, ",") + "'");
+                 + StringUtils.conjoin(deployDirs, ",") + "'"
+                 + "' classes: '"
+                 + StringUtils.conjoin(classes, ",") + "'");
 
         //Get a Jetty server.
         server = new Server(port);
@@ -144,6 +151,12 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Web application '" + webapp + "' not found");
         }
+        for (SiteSection section : SiteSection.getSections()) {
+            if (webbase.equals("/" + section.getDirname())) {
+                section.initialize();
+                break;
+            }
+        }
         WebAppContext webApplication = new WebAppContext(webapp, webbase);
         //Do not have a limit on the form size allowed
         webApplication.setMaxFormContentSize(-1);
@@ -181,6 +194,7 @@ public class GUIWebServer implements CleanupIF {
             try {
                 server.stop();
                 server.destroy();
+                SiteSection.cleanup();
             } catch (Exception e) {
                 throw new IOFailure("Error while stopping server", e);
             }

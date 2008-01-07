@@ -26,9 +26,7 @@ package dk.netarkivet.harvester.harvesting;
  */
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
 
 import is.hi.bok.deduplicator.CrawlLogIterator;
 import is.hi.bok.deduplicator.DigestIndexer;

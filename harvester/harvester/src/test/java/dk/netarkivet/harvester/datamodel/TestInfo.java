@@ -37,6 +37,7 @@ import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
 
 /**
@@ -181,6 +182,10 @@ public class TestInfo {
     static final File DBFILE = new File(TOPDATADIR, "fullhddb.jar");
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
+    public static final String GUI_WEB_SERVER_SITESECTION_CLASS
+            = TestSiteSection.class.getName();
+    public static final String HARVESTDEFINITION_SITESECTIONCLASS
+            = DefinitionsSiteSection.class.getName();
 
     static {
         FileUtils.createDir(new File(JOB_BASE_DIR));

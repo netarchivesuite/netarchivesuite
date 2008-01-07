@@ -22,24 +22,16 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
-import junit.framework.TestCase;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.arc.BatchFilter;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**

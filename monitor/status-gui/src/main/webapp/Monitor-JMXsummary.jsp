@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page shows the status of all applications that were known to exist
 when the GUI-application was started. That information is currently taken from
 the 'deploy' element in the setting.xml assigned to the
-dk.netarkivet.harvester.webinterface.HarvestDefinitionApplication.
+dk.netarkivet.common.webinterface.GUIApplication.
 But the actual reading is done in auxiliary class dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,
@@ -35,14 +35,14 @@ for each application can be browsed here.
 Warning: Any applications added to the system after starting the GUI-application
 will not appear here.
 
---%><%@ page import="dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.utils.I18n,
+--%><%@ page import="java.util.List,
+java.util.Locale,
+ dk.netarkivet.common.exceptions.ForwardedToErrorPage,
+ dk.netarkivet.common.utils.I18n,
  dk.netarkivet.common.webinterface.HTMLUtils,
  dk.netarkivet.monitor.Constants,
- dk.netarkivet.monitor.Settings,
  dk.netarkivet.monitor.webinterface.JMXSummaryUtils,
- dk.netarkivet.monitor.webinterface.StatusEntry,
- java.util.List,
- java.util.Locale"
+ dk.netarkivet.monitor.webinterface.StatusEntry"
              pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -52,7 +52,6 @@ will not appear here.
 %><%
     HTMLUtils.setUTF8(request);
     // Reload settings if changed
-    Settings.conditionalReload();
     HTMLUtils.generateHeader(pageContext);
 %>
 <h3 class="page_heading">

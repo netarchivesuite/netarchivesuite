@@ -36,13 +36,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
@@ -60,6 +59,8 @@ public class HTMLUtilsTester extends TestCase {
     }
 
     public void setUp() {
+        Settings.reload();
+        SiteSection.cleanup();
     }
 
     public void tearDown() {

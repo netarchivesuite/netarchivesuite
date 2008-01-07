@@ -54,6 +54,10 @@
                  ArcRepositoryClient.store() -->
       <storeTimeout>3600000</storeTimeout>
     </arcrepositoryClient>
+    <monitorregistryClient xsi:type="jmsmonitorregistryclient">
+        <!-- The class instantiated to register JMX urls at a registry. -->
+        <class>dk.netarkivet.monitor.registry.JMSMonitorRegistryClient</class>
+    </monitorregistryClient>
     <indexClient xsi:type="indexrequestclient">
       <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->

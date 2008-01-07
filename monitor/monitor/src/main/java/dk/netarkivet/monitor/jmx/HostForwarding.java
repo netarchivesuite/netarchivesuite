@@ -23,16 +23,6 @@
 
 package dk.netarkivet.monitor.jmx;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.management.SingleMBeanObject;
-import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.monitor.Settings;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.reflect.InvocationHandler;
@@ -44,6 +34,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.management.SingleMBeanObject;
+import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.monitor.Settings;
+import dk.netarkivet.monitor.registry.MonitorRegistry;
 
 /**
  * Handles the forwarding of other hosts' MBeans matching a specific regular
@@ -57,12 +57,9 @@ public class HostForwarding<T> {
     public final static Log log = LogFactory.getLog(
             HostForwarding.class);
     
-    /** The edition of the deploy_settings.xml, when this object was initiated. */
-    private int edition = Settings.getEdition();
-    
     /** List of all known and established JMX connections for this object. */
-    private Map<String, List<HostEntry>> knownJmxConnections =
-        new HashMap<String, List<HostEntry>>();
+    private Map<String, Set<HostEntry>> knownJmxConnections =
+        new HashMap<String, Set<HostEntry>>();
 
     /**
      * The username used to connect to the MBeanservers.
@@ -159,10 +156,7 @@ public class HostForwarding<T> {
                                                        query));
         }
         HostForwarding hf = instances.get(query);
-        if (hf.edition < Settings.getEdition()) {
-            hf.edition = Settings.getEdition();
-            hf.updateJmx();
-        }
+        hf.updateJmx();
         return hf;
     }    
     
@@ -183,16 +177,12 @@ public class HostForwarding<T> {
         jmxUsername = JMX_MONITOR_ROLE_USERNAME;
         log.info("jmxUsername set to '" + jmxUsername + "'.");
 
-        numberOfHosts = Settings.getInt(Settings.JMX_HOSTS_NUMBER_SETTING);
-        log.info("numberOfHosts set to '" + numberOfHosts + "'.");
-        
-        
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
-        Map<String, List<HostEntry>> potentialJmxConnections = getCurrentHostEntries();
+        Map<String, Set<HostEntry>> potentialJmxConnections = getCurrentHostEntries();
         for (String host: potentialJmxConnections.keySet()) {
-            List<HostEntry> hostentriesForHost = potentialJmxConnections.get(host);
+            Set<HostEntry> hostentriesForHost = potentialJmxConnections.get(host);
             if (knownJmxConnections.containsKey(host)) {                
-                List<HostEntry> registeredJmxPortsOnHost = knownJmxConnections.get(host);
+                Set<HostEntry> registeredJmxPortsOnHost = knownJmxConnections.get(host);
                 
                 for (HostEntry he: hostentriesForHost) {
                     if (!registeredJmxPortsOnHost.contains(he)) {
@@ -214,38 +204,11 @@ public class HostForwarding<T> {
 
     /**
      * Get current list of host-JMX port mappings.
-     * The hosts are stored in deploy_settings.xml
-     * The following settings are needed:
-     *   settings.deploy.numberOfHosts, settings.deploy.jmxMonitorRolePassword
-     * The rest of the info is in
-     *    <host1>
-     *       <name>a_host_name</name>
-     *       <jmxport>8100</jmxport>
-     *       ...
-     *       <jmxport>8110</jmxport> 
-     *    </host1>
-     *    <host2> ... </host2>
-     *     .. <hostN> .. </hostN> where N is settings.deploy.numberOfHosts
-     *
+     * This lists the mappings from the registry server.
      * @return current list of host-JMX port mappings.
      */
-    public static Map<String, List<HostEntry>> getCurrentHostEntries() {
-        HashMap<String,List<HostEntry>> map =
-            new HashMap<String,List<HostEntry>>();
-        for (int i = 1; i <= numberOfHosts; i++) {
-            List<HostEntry> collectedJmxHosts = new ArrayList<HostEntry>();
-            String host = Settings.get(String.format(Settings.JMX_HOST_NAME, i));
-            String[] valuesAsString = Settings.getAll(String.format(Settings.JMX_HOST_PORT, i));
-            List<Integer> valuesAsInt = StringUtils.parseIntList(
-                    valuesAsString);
-            for (Integer jmxPort : valuesAsInt) {
-                collectedJmxHosts.add(new HostEntry(host, jmxPort,
-                                                    jmxPort
-                                                    + JMX_RMI_INCREMENT));
-            }
-            map.put(host, collectedJmxHosts);
-        }
-        return map;
+    public static Map<String, Set<HostEntry>> getCurrentHostEntries() {
+        return MonitorRegistry.getInstance().getHostEntries();
     }
     
     /**
@@ -259,11 +222,13 @@ public class HostForwarding<T> {
      */
     private void registerRemoteMbeans(List<HostEntry> hosts) {
         for (HostEntry hostEntry : hosts) {
-            log.debug("Forwarding mbeans '" + this.mBeanQuery + "' for host: " + hostEntry);
+            log.debug("Forwarding mbeans '" + this.mBeanQuery + "' for host: "
+                      + hostEntry);
             try {
                 createProxyMBeansForHost(hostEntry);
             } catch (Exception e) {
-                log.warn("Failure connecting to remote JMX MBeanserver (" + hostEntry + ")", e);
+                log.warn("Failure connecting to remote JMX MBeanserver ("
+                         + hostEntry + ")", e);
                 try {
                     // This creates a proxy object that calls the handler on any
                     // invocation of any method on the object.
@@ -287,11 +252,12 @@ public class HostForwarding<T> {
                     names.put("hostname", hostEntry.getName());
                     handler.setSingleMBeanObject(singleMBeanObject);
                     singleMBeanObject.register();
-                    // Adding the just registered singleMBeanObject to a global list, 
-                    // so we can unregister this.
+                    // Adding the just registered singleMBeanObject to a global
+                    // list, so we can unregister this.
                     registeredMbeans.add(singleMBeanObject);
                 } catch (Exception e1) {
-                    log.warn("Failure registering error mbean for hostentry: " + hostEntry, e1);
+                    log.warn("Failure registering error mbean for hostentry: "
+                             + hostEntry, e1);
                 }
             }
         }
@@ -360,98 +326,6 @@ public class HostForwarding<T> {
      */
     public MBeanServer getMBeanServer() {
         return mBeanServer;
-    }
-
-    /**
-     * Helper class to encapsulate information about one remote JmxConnection.
-     */
-    private static class HostEntry {
-        /**
-         * The name of the remote host.
-         */
-        private String name;
-        /**
-         * The JMX port allocated on the remote host.
-         */
-        private int jmxPort;
-        /**
-         * The RMI port allocated on the remote host.
-         */
-        private int rmiPort;
-
-        /**
-         * Constructor for the HostEntry helper class.
-         *
-         * @param name    The name of the remote host
-         * @param jmxPort The JMX port allocated on the remote host
-         * @param rmiPort The RMI port allocated on the remote host
-         */
-        public HostEntry(String name, int jmxPort, int rmiPort) {
-            ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-            ArgumentNotValid.checkPositive(jmxPort, "int jmxPort");
-            ArgumentNotValid.checkPositive(rmiPort, "int rmiPort");
-            this.name = name;
-            this.jmxPort = jmxPort;
-            this.rmiPort = rmiPort;
-        }
-
-        /**
-         * @return Returns the jmxPort.
-         */
-        private int getJmxPort() {
-            return jmxPort;
-        }
-
-        /**
-         * @return Returns the name.
-         */
-        private String getName() {
-            return name;
-        }
-
-        /**
-         * @return Returns the rmiPort.
-         */
-        private int getRmiPort() {
-            return rmiPort;
-        }
-
-        /**
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof HostEntry)) return false;
-            
-            final HostEntry hostEntry1 = (HostEntry) obj;
-            
-            if (name != null ? !name.equals(hostEntry1.name)
-                    : hostEntry1.name != null) return false;
-            
-            if (jmxPort != hostEntry1.jmxPort){
-                return false;
-            }
-            if (rmiPort != hostEntry1.rmiPort) {
-                return false;
-            }
-            return true;        
-        }
-        
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        public int hashCode() {
-            int result;
-            result = (name != null ? name.hashCode() : 0);
-            result = 29 * result + jmxPort*1;
-            result = 29 * result + rmiPort*2;
-            return result;
-        }
-        
-        public String toString() {
-            return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort;  
-        }
-        
     }
 
     /**

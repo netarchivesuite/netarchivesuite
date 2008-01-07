@@ -207,6 +207,16 @@ public abstract class SiteSection {
         return dirname;
     }
 
+    /** Called when the site section is first deployed.
+     * Meant to be overridden by subclasses. */
+    public void initialize() {
+    }
+
+    /** Called when webserver shuts down.
+     * Meant to be overridden by subclasses. */
+    public void close() {
+    }
+
     /**
      * The list of sections of the website.  Each section has a number of pages,
      * as defined in the sitesection classes read from settings. These handle
@@ -234,6 +244,21 @@ public abstract class SiteSection {
             }
         }
         return sections;
+    }
+
+    /**
+     * Reset sitesections.
+     * This method calls close on all deployed site sections, and resets the
+     * list of site sections.
+     */
+    public static synchronized void cleanup() {
+        if (sections != null) {
+            for (SiteSection section : sections) {
+                section.close();
+            }
+        }
+        sections = null;
+
     }
 
     /** Check whether a section with a given dirName is deployed.

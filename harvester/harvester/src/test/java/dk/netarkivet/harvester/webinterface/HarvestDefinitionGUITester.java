@@ -23,17 +23,15 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.harvester.scheduler.HarvestScheduler;
-import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
@@ -41,7 +39,7 @@ import dk.netarkivet.testutils.LogUtils;
  * @version $Id$
  */
 public class HarvestDefinitionGUITester extends DataModelTestCase {
-    private HarvestDefinitionGUI gui;
+    private GUIWebServer gui;
 
     public HarvestDefinitionGUITester(String s) {
         super(s);
@@ -53,20 +51,23 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
                 dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_JSP_DIR);
         Settings.set(Settings.SITESECTION_DEPLOYPATH,
                 dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_WEBBASE);
+        Settings.set(Settings.SITESECTION_CLASS,
+                dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
         if (gui != null) {
-            gui.close();
+            gui.cleanup();
         }
+        Settings.reload();
     }
 
     public void testSettingsWebappFault() {
         try {
             Settings.set(Settings.SITESECTION_WEBAPPLICATION, "not_a_webapp");
-            gui = HarvestDefinitionGUI.getInstance();
+            gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid webapp");
         } catch (IOFailure e) {
             //expected
@@ -76,7 +77,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     public void testSettingsPortFault() {
         try {
             Settings.set(Settings.HTTP_PORT_NUMBER, "not_a_number");
-            gui = HarvestDefinitionGUI.getInstance();
+            gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
         } catch (NumberFormatException e) {
             //expected
@@ -86,7 +87,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     public void testSettingsPortWrong() {
         Settings.set(Settings.HTTP_PORT_NUMBER, "42");
         try {
-            gui = HarvestDefinitionGUI.getInstance();
+            gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
         } catch (IOFailure e) {
             //expected
@@ -96,34 +97,11 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     public void testSettingsWrongContext() {
         Settings.set(Settings.SITESECTION_DEPLOYPATH, "not_a_context");
         try {
-            gui = HarvestDefinitionGUI.getInstance();
+            gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid context");
         } catch (IOFailure e) {
             //expected
         }
-    }
-
-    /**
-     * Verify that the HarvestDefinitionGUI class has no public constructor.
-     */
-    public void testNoPublicConstructor() {
-        Constructor[] ctors = HarvestDefinitionGUI.class.getConstructors();
-        assertEquals("Found public constructors for BitarchiveServer.", 0, ctors.length);
-    }
-
-    /**
-     * Test that HarvestDefinitionGUI is a singleton.
-     * @throws NoSuchFieldException
-     * @throws InterruptedException
-     */
-    public void testSingletonicity() throws NoSuchFieldException, InterruptedException {
-        gui = ClassAsserts.assertSingleton(HarvestDefinitionGUI.class);
-
-        // Need to wait a bit here for the sc<heduler threads to stop
-        // Unfortunately, there are now up to three different instances
-        // of HarvestScheduler running around, so finding the right thing to
-        // wait for is tricky.  Trying just a little wait.
-        Thread.sleep(1000);
     }
 
     /**
@@ -132,12 +110,14 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
      * @throws IOException
      */
     public void testSchedulerStarted() throws IOException, InterruptedException {
-        gui = HarvestDefinitionGUI.getInstance();
+        gui = GUIWebServer.getInstance();
+        Thread.sleep(1000);
         LogUtils.flushLogs(HarvestScheduler.class.getName());
         FileAsserts.assertFileContains("Scheduler startup should be in log",
                 "Creating HarvestScheduler", TestInfo.LOG_FILE);
         Thread.sleep(1000);
-        gui.close();
+        gui.cleanup();
+        Thread.sleep(1000);
         LogUtils.flushLogs(HarvestScheduler.class.getName());
         FileAsserts.assertFileContains("Scheduler shutdown should be in log",
                 "HarvestScheduler closing down", TestInfo.LOG_FILE);
@@ -147,10 +127,10 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         // Except some threads still hang around, keeping the DB alive.
         Thread.sleep(1000);
     }
-    
+
     /**
-     * Test, that HarvestDefinitionGUI.getInstance throws UnknownID exception
-     * if templates tables does not contain the template with name 
+     * Test, that GUIWebServer.getInstance throws UnknownID exception
+     * if templates tables does not contain the template with name
      * Settings.DOMAIN_DEFAULT_ORDERXML
      * This tests the partial solution of bug 916
      * @throws InterruptedException
@@ -160,10 +140,11 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
          // remove default order.xml from dao
          dao.delete(Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML));
          try {
-             gui = HarvestDefinitionGUI.getInstance();
+             gui = GUIWebServer.getInstance();
              fail("Should fail if default template is gone");
-         } catch (UnknownID e) {
+         } catch (IOFailure e) {
              // expected
          }
      }
+
 }

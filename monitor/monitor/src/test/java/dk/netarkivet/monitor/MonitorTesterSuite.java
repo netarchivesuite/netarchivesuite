@@ -13,7 +13,6 @@ public class MonitorTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(SettingsTester.class);
     }
 
     public static void main(String args[]) {
