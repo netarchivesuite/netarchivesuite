@@ -75,6 +75,8 @@ public class JMXHeritrixController implements HeritrixController {
     private static final String DISCOVERED_COUNT_ATTRIBUTE = "DiscoveredCount";
     private static final String DOWNLOADED_COUNT_ATTRIBUTE = "DownloadedCount";
     private static final String STATUS_ATTRIBUTE = "Status";
+    private static final String PROGRESS_STATISTICS_LEGEND_COMMAND =
+            "progressStatisticsLegend";
 
     /* Commands and attributes from org.archive.crawler.Heritrix
      * @see http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html
@@ -132,6 +134,9 @@ public class JMXHeritrixController implements HeritrixController {
 
     /** Name of the JMX user that can control anything in Heritrix. */
     private static final String JMX_ADMIN_NAME = "controlRole";
+
+    /** The header line (legend) for the statistics report */
+    private String progressStatisticsLegend;
 
     /** Create a JMXHeritrixController object
      *
@@ -228,6 +233,7 @@ public class JMXHeritrixController implements HeritrixController {
                              files.getArcFilePrefix(), getJobDescription(),
                              files.getSeedsTxtFile().getAbsolutePath());
         jobName = getJobName();
+        getProgressStatisticsLegend();
     }
 
     /** @see HeritrixController#requestCrawlStart()
@@ -306,8 +312,25 @@ public class JMXHeritrixController implements HeritrixController {
 
         if (progressStatistics == null) {
             progressStatistics = "No progress statistics available";
+        } else {
+            // Since progressStatisticsLegend acts as a latch, we can check
+            // for non-null even though it gets assigned asynchronously.
+            if (progressStatisticsLegend != null) {
+                progressStatistics = progressStatisticsLegend + '\n'
+                                     + progressStatistics;
+            }
         }
         return status + " " + progressStatistics;
+    }
+
+    /** Store the statistics legend line (asynchronously) */
+    private void getProgressStatisticsLegend() {
+        new Thread() {
+            public void run() {
+                progressStatisticsLegend = (String)executeCrawlJobCommand
+                        (PROGRESS_STATISTICS_LEGEND_COMMAND);
+            }
+        }.start();
     }
 
     /** @see HeritrixController#isPaused()  */
