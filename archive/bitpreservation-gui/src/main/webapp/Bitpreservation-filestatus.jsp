@@ -25,9 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page provides information about the state of the bitarchive at every known Location.
 This page is the entrypoint to correct missing or corrupt data in the bitarchives.
 There are no parameters.
---%><%@ page import="dk.netarkivet.archive.arcrepository.bitpreservation.WorkFiles,
-         dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
-         dk.netarkivet.archive.webinterface.Constants,
+--%><%@ page import="dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
          dk.netarkivet.common.distribute.arcrepository.Location,
          dk.netarkivet.common.utils.I18n,
          dk.netarkivet.common.webinterface.HTMLUtils"
@@ -49,59 +47,18 @@ There are no parameters.
 <h4><fmt:message key="bitarchive.state"/></h4>
 
 <%
-    //
-    // For each known bitarchive in the system, print out statistics about missing files
-    //
+    // For each known bitarchive in the system, print out statistics about
+    // missing files
     for (Location location : Location.getKnown()) {
-        String locationParam = Constants.BITARCHIVE_NAME_PARAM
-                + "=" + HTMLUtils.encodeAndEscapeHTML(location.getName());
-%>
-    	<fmt:message key="filestatus.for"/>&nbsp;<b><%=HTMLUtils.escapeHtmlValues(location.getName())%></b>
-   		<br>
-    	<fmt:message key="number.of.files"/>&nbsp;<%=BitpreserveFileStatus.getBACountFiles(location)%>
-    	<br>
-    	<fmt:message key="missing.files"/>&nbsp;<%=BitpreserveFileStatus.getBACountMissingFiles(location)%>
-    	<% if (BitpreserveFileStatus.getBACountMissingFiles(location) > 0) { %>
-          &nbsp;<a href="<%= Constants.FILESTATUS_MISSING_PAGE + "?"
-              + locationParam %>">
-          <fmt:message key="show.missing.files"/></a>
-        <% } %>
-    	<br>
-        <fmt:message key="last.update.at.0"><fmt:param><fmt:formatDate type="both" value="<%=WorkFiles.getLastUpdate(location, WorkFiles.FILES_ON_BA)%>"/></fmt:param></fmt:message>
-        <br>
-        <a href="<%= Constants.FILESTATUS_PAGE + "?"
-                + Constants.FIND_MISSING_FILES_PARAM + "=1&amp;"
-                + locationParam %>">
-            <fmt:message key="update"/></a>
-        <br><br>
-    <%
-    } // end for
+        BitpreserveFileStatus.printMissingFileStatusForLocation(out, location,
+                                                          response.getLocale());
+    }
 
-    //
-    //For each known bitarchive in the system, print out statistics about corrupt files (files with wrong checksums)
-    //
-
+    // For each known bitarchive in the system, print out statistics about 
+    // corrupt files (files with wrong checksums)
     for (Location location : Location.getKnown()) {
-        String locationParam = Constants.BITARCHIVE_NAME_PARAM
-                + "=" + HTMLUtils.encodeAndEscapeHTML(location.getName());
- 	%>	<fmt:message key="checksum.status.for"/>
- 		<b><%=HTMLUtils.escapeHtmlValues(location.getName())%></b><br>
-        <fmt:message key="number.of.files.with.error"/>&nbsp;<%=BitpreserveFileStatus.getCountWrongFiles(location)%>
-        <% if (BitpreserveFileStatus.getCountWrongFiles(location) > 0) { %>
-             &nbsp;<a href="<%= Constants.FILESTATUS_CHECKSUM_PAGE + "?"
-                + locationParam %>"><fmt:message key="show.files.with.error"/></a>
-         <% } %>
-        <br><fmt:message key="last.update.at.0"> <fmt:param><fmt:formatDate
-        	type="both" value="<%=WorkFiles.getLastUpdate(location, WorkFiles.WRONG_FILES)%>"/></fmt:param></fmt:message>
-   		<br>
-        <a href="<%= Constants.FILESTATUS_PAGE + "?"
-        + Constants.CHECKSUM_PARAM + "=1&amp;" + locationParam%>">
-        <fmt:message key="update"/></a>
-        <br><br>
-        <%
-    } // end for
-
-    %>
-<%
+        BitpreserveFileStatus.printChecksumErrorStatusForLocation(out, location,
+                                                          response.getLocale());
+    }
     HTMLUtils.generateFooter(out);
 %>

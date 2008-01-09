@@ -24,8 +24,10 @@
 package dk.netarkivet.archive.webinterface;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +48,6 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
 /**
  * Class encapsulating methods for handling web requests for
  * ActiveBitPreservation.
- *
  */
 
 public class BitpreserveFileStatus {
@@ -61,14 +62,14 @@ public class BitpreserveFileStatus {
     /**
      * Extract the name of the bitarchive (parameter 'bitarchive') and whether
      * to update missing files (parameter "findmissingfiles") or checksums
-     * (parameter "checksum").
-     * Does nothing if parameter 'bitarchive' is not set.
+     * (parameter "checksum"). Does nothing if parameter 'bitarchive' is not
+     * set.
      *
      * @param request the given ServletRequest
      * @param context the current JSP context
      */
     public static void processUpdateRequest(ServletRequest request,
-            PageContext context) {
+                                            PageContext context) {
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         if (bitarchiveName == null) { // parameter BITARCHIVE_NAME_PARAM not set
@@ -76,7 +77,8 @@ public class BitpreserveFileStatus {
         }
         if (!Location.isKnownLocation(bitarchiveName)) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
-                    "errormsg;unknown.bitarchive.0", bitarchiveName);
+                                              "errormsg;unknown.bitarchive.0",
+                                              bitarchiveName);
             throw new ForwardedToErrorPage("Unknown bitarchive: "
                                            + bitarchiveName);
         }
@@ -99,26 +101,36 @@ public class BitpreserveFileStatus {
     }
 
     /**
-     * Processes a missingFiles request:
-     * Parameters of the form add##<bitarchive>##<filename> causes the file
-     *   to be added to that bitarchive.
-     * Parameters of the form getInfo##<filename> causes checksums to be
-     *   computed for the file in all bitarchives and the information to be
-     *   shown in the next update (notice that this information disappears
-     *   when the page is next reloaded).
-     * Parameters of the form setFailed##<bitarchive>##<filename> updates the
-     *   arcrepository to consider that file failed in that bitarchive.
+     * Processes a missingFiles request: Parameters of the form
+     * add##<bitarchive>##<filename> causes the file to be added to that
+     * bitarchive. Parameters of the form getInfo##<filename> causes checksums
+     * to be computed for the file in all bitarchives and the information to be
+     * shown in the next update (notice that this information disappears when
+     * the page is next reloaded). Parameters of the form
+     * setFailed##<bitarchive>##<filename> updates the arcrepository to consider
+     * that file failed in that bitarchive.
      *
      * @param context the current JSP context
      * @param res     the result object
-     * @param params  the given parameters
-     * @throws ForwardedToErrorPage if the commands have wrong number of
-     * arguments
+     *
      * @return A map of info gathered for files as requested.
+     *
+     * @throws ForwardedToErrorPage if the commands have wrong number of
+     *                              arguments
      */
     public static Map<String, FilePreservationStatus>
-            processMissingRequest(PageContext context, StringBuilder res,
-                                  Map<String, String[]> params) {
+    processMissingRequest(PageContext context, StringBuilder res) {
+        Map<String, String[]> params = context.getRequest().getParameterMap();
+        HTMLUtils.forwardOnMissingParameter(context,
+                                            Constants.BITARCHIVE_NAME_PARAM);
+        String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
+        if (!Location.isKnownLocation(bitarchiveName)) {
+            HTMLUtils.forwardOnIllegalParameter(
+                    context,
+                    Constants.BITARCHIVE_NAME_PARAM,
+                    Location.getKnownNames()
+            );
+        }
         ActiveBitPreservation preserve = ActiveBitPreservation.getInstance();
         Locale l = context.getResponse().getLocale();
         if (params.containsKey(ADD_COMMAND)) {
@@ -134,8 +146,9 @@ public class BitpreserveFileStatus {
                     removeFileFromMissingFilesList(ba, filename);
                     res.append("<br/>");
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
-                              "file.0.has.been.restored.in.bitarchive.on.1",
-                              filename, ba.getName())));
+                                                                         "file.0.has.been.restored.in.bitarchive.on.1",
+                                                                         filename,
+                                                                         ba.getName())));
                     res.append("<br/>");
                 }
             }
@@ -151,15 +164,16 @@ public class BitpreserveFileStatus {
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
                 preserve.setAdminData(filename, ba,
-                        BitArchiveStoreState.UPLOAD_FAILED);
+                                      BitArchiveStoreState.UPLOAD_FAILED);
                 res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
-                          "file.0.is.now.marked.as.failed.in.bitarchive.1",
-                          filename, ba.getName())));
+                                                                     "file.0.is.now.marked.as.failed.in.bitarchive.1",
+                                                                     filename,
+                                                                     ba.getName())));
                 res.append("<br/>");
             }
         }
         Map<String, FilePreservationStatus> infoMap =
-            new HashMap<String, FilePreservationStatus>();
+                new HashMap<String, FilePreservationStatus>();
         // Do this at the end so that the info reflects reality!
         if (params.containsKey(GET_INFO_COMMAND)) {
             String[] getInfos = params.get(GET_INFO_COMMAND);
@@ -169,56 +183,67 @@ public class BitpreserveFileStatus {
                 checkArgs(context, parts, GET_INFO_COMMAND, "filename");
                 final String filename = parts[0];
                 infoMap.put(filename,
-                        preserve.getFilePreservationStatus(filename));
+                            preserve.getFilePreservationStatus(filename));
             }
         }
 
         return infoMap;
     }
 
-    /** Check that an array of strings has the arguments corresponding to
-     * a command.
-     * @param context the JSP context to forward to error to.
-     * @param parts Array of arguments given by user
-     * @param cmd The command to match
+    /**
+     * Check that an array of strings has the arguments corresponding to a
+     * command.
+     *
+     * @param context  the JSP context to forward to error to.
+     * @param parts    Array of arguments given by user
+     * @param cmd      The command to match
      * @param argnames The names of the expected arguments.
-     * @throws ForwardedToErrorPage if the parts are not exactly as many
-     * as the arguments.
+     *
+     * @throws ForwardedToErrorPage if the parts are not exactly as many as the
+     *                              arguments.
      */
     private static void checkArgs(PageContext context, String[] parts,
                                   String cmd, String... argnames) {
         if (argnames.length != parts.length) {
-            HTMLUtils.forwardWithErrorMessage(context,I18N,
-                    "errormsg;argument.mismatch.command.needs.arguments.0.but.got.1",
-                    Arrays.asList(argnames), Arrays.asList(parts));
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                                              "errormsg;argument.mismatch.command.needs.arguments.0.but.got.1",
+                                              Arrays.asList(argnames),
+                                              Arrays.asList(parts));
 
             throw new ForwardedToErrorPage("Command " + cmd
-                    + " needs arguments " + Arrays.asList(argnames)
-                    + ", but got '" + Arrays.asList(parts) + "'");
+                                           + " needs arguments "
+                                           + Arrays.asList(argnames)
+                                           + ", but got '"
+                                           + Arrays.asList(parts) + "'");
         }
     }
 
     /**
-     * Processes a checksum request: Either sets the checksum for a given
-     * file ("file" parameter) in the arcrepository (if "fixadminchecksum"
-     * parameter is given) or removes and reuploads a file in one bitarchive
-     * ("bitarchive" parameter) checking with the checksum and credentials
-     * given.
+     * Processes a checksum request: Either sets the checksum for a given file
+     * ("file" parameter) in the arcrepository (if "fixadminchecksum" parameter
+     * is given) or removes and reuploads a file in one bitarchive ("bitarchive"
+     * parameter) checking with the checksum and credentials given.
      *
      * @param request the request
      * @param res     the result object
      * @param context the current JSP pagecontext
+     *
+     * @return The file preservation status for a file, if that was requested.
      */
-    public static void processChecksumRequest(ServletRequest request,
+    public static FilePreservationStatus processChecksumRequest(ServletRequest request,
                                               StringBuilder res,
                                               PageContext context) {
         Locale l = context.getResponse().getLocale();
+        HTMLUtils.forwardOnMissingParameter(context,
+                Constants.BITARCHIVE_NAME_PARAM);
+        HTMLUtils.forwardOnIllegalParameter(context,
+                Constants.BITARCHIVE_NAME_PARAM, Location.getKnownNames());
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         if (bitarchiveName == null) { // param BITARCHIVE_PARAMETER_NAME not set
             res.append(I18N.getString(l,
-                    "errmsg;lack.name.for.bitarchive.to.be.corrected"));
-            return;
+                                      "errmsg;lack.name.for.bitarchive.to.be.corrected"));
+            return null;
         }
         Location bitarchive = Location.get(bitarchiveName);
         String filename = request.getParameter(Constants.FILENAME_PARAM);
@@ -229,39 +254,40 @@ public class BitpreserveFileStatus {
         String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
         if (filename == null) { // param "file" not set - no action to take
             if (fixadminchecksum != null ||
-                    credentials != null ||
-                    checksum != null) {
+                credentials != null ||
+                checksum != null) {
                 // Only if an action was intended do we complain about
                 // a missing file.
                 res.append(I18N.getString(l,
-                    "errmsg;lack.name.for.file.to.be.corrected.in.0",
-                    bitarchiveName));
+                                          "errmsg;lack.name.for.file.to.be.corrected.in.0",
+                                          bitarchiveName));
             }
-            return;
+            return null;
         }
 
         if (fixadminchecksum != null) {
             ActiveBitPreservation preserve =
-                ActiveBitPreservation.getInstance();
+                    ActiveBitPreservation.getInstance();
             FilePreservationStatus fs =
-                preserve.getFilePreservationStatus(filename);
+                    preserve.getFilePreservationStatus(filename);
             if (fs == null) {
                 res.append(I18N.getString(l,
-                        "no.info.on.file.{0}", filename));
+                                          "no.info.on.file.0", filename));
                 FileUtils.removeLineFromFile(filename,
-                        WorkFiles.getFile(bitarchive, WorkFiles.WRONG_FILES));
+                                             WorkFiles.getFile(bitarchive,
+                                                               WorkFiles.WRONG_FILES));
             } else {
                 String referenceChecksum = fs.getReferenceCheckSum();
-                if (referenceChecksum != null 
+                if (referenceChecksum != null
                     && !"".equals(referenceChecksum)) {
                     // update admin.data with correct checksum for file
                     preserve.setAdminChecksum(filename, referenceChecksum);
                     res.append(I18N.getString(l,
-                            "file.0.now.has.correct.checksum.in.admin.data",
-                            filename));
+                                              "file.0.now.has.correct.checksum.in.admin.data",
+                                              filename));
                     FileUtils.removeLineFromFile(filename,
-                            WorkFiles.getFile(bitarchive,
-                                    WorkFiles.WRONG_FILES));
+                                                 WorkFiles.getFile(bitarchive,
+                                                                   WorkFiles.WRONG_FILES));
                 }
             }
         } else {
@@ -270,16 +296,16 @@ public class BitpreserveFileStatus {
             // of a broken file.
             if (checksum == null) { // param CHECKSUM_PARAM not set
                 res.append(I18N.getString(l,
-                        "errmsg;lack.checksum.for.corrupted.file.0",
-                        filename));
-                return;
+                                          "errmsg;lack.checksum.for.corrupted.file.0",
+                                          filename));
+                return null;
             }
 
             if (credentials == null) { // param CREDENTIALS_PARAM not set
                 res.append(I18N.getString(l,
-                        "errmsg;lacking.privileges.to.correct.in.bitarchive")
-                        );
-                return;
+                                          "errmsg;lacking.privileges.to.correct.in.bitarchive")
+                );
+                return null;
             }
 
             ActiveBitPreservation preserve
@@ -287,24 +313,28 @@ public class BitpreserveFileStatus {
             preserve.removeAndGetFile(filename, bitarchive,
                                       checksum, credentials);
             res.append(I18N.getString(l,
-                    "file.0.has.been.deleted.in.1.needs.copy",
-                    filename, bitarchive));
+                                      "file.0.has.been.deleted.in.1.needs.copy",
+                                      filename, bitarchive));
 
             FileUtils.removeLineFromFile(filename,
-                    WorkFiles.getFile(bitarchive, WorkFiles.MISSING_FILES_BA));
+                                         WorkFiles.getFile(bitarchive,
+                                                           WorkFiles.MISSING_FILES_BA));
         }
+        return ActiveBitPreservation.getInstance().getFilePreservationStatus(filename);
     }
 
     /**
-     * Return the number of files found in the bitarchive.
-     * If no information found about the bitarchive -1 is returned
+     * Return the number of files found in the bitarchive. If no information
+     * found about the bitarchive -1 is returned
      *
      * @param bitarchive the bitarchive to check
+     *
      * @return the number of files found in the bitarchive
      */
     public static long getBACountFiles(Location bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-        File unsortedOutput = WorkFiles.getFile(bitarchive, WorkFiles.FILES_ON_BA);
+        File unsortedOutput = WorkFiles.getFile(bitarchive,
+                                                WorkFiles.FILES_ON_BA);
 
         if (!unsortedOutput.exists()) {
             return -1;
@@ -317,11 +347,13 @@ public class BitpreserveFileStatus {
      * Get the number of wrong files for a bitarchive.
      *
      * @param bitarchive a bitarchive
+     *
      * @return the number of wrong files for the bitarchive.
      */
     public static long getCountWrongFiles(Location bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-        File wrongFileOutput = WorkFiles.getFile(bitarchive, WorkFiles.WRONG_FILES);
+        File wrongFileOutput = WorkFiles.getFile(bitarchive,
+                                                 WorkFiles.WRONG_FILES);
 
         if (!wrongFileOutput.exists()) {
             return -1;
@@ -332,13 +364,16 @@ public class BitpreserveFileStatus {
 
     /**
      * Get the number of missing files in a given bitarchive.
+     *
      * @param bitarchive a given bitarchive
+     *
      * @return the number of missing files in the given bitarchive.
      */
     public static long getBACountMissingFiles(Location bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
 
-        File missingOutput = WorkFiles.getFile(bitarchive, WorkFiles.MISSING_FILES_BA);
+        File missingOutput = WorkFiles.getFile(bitarchive,
+                                               WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
             return -1;
         }
@@ -348,21 +383,25 @@ public class BitpreserveFileStatus {
 
     /**
      * Get a list of missing files in a given bitarchive.
+     *
      * @param bitarchive a given bitarchive
-     * @param context the current JSP pagecontext
-     * @throws ForwardedToErrorPage if the file with the list
-     * cannot be found.
+     * @param context    the current JSP pagecontext
+     *
      * @return a list of missing files in a given bitarchive.
+     *
+     * @throws ForwardedToErrorPage if the file with the list cannot be found.
      */
     public static List<String> getMissingFilesList(Location bitarchive,
                                                    PageContext context) {
-        File missingOutput = WorkFiles.getFile(bitarchive, WorkFiles.MISSING_FILES_BA);
+        File missingOutput = WorkFiles.getFile(bitarchive,
+                                               WorkFiles.MISSING_FILES_BA);
 
         if (!missingOutput.exists()) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
-                    "errormsg;could.not.find.file.0", missingOutput.getAbsolutePath());
+                                              "errormsg;could.not.find.file.0",
+                                              missingOutput.getAbsolutePath());
             throw new ForwardedToErrorPage("Could not find the file: "
-                    + missingOutput.getAbsolutePath());
+                                           + missingOutput.getAbsolutePath());
         }
 
         return FileUtils.readListFromFile(missingOutput);
@@ -370,21 +409,25 @@ public class BitpreserveFileStatus {
 
     /**
      * Get a list of wrong files in a given bitarchive.
+     *
      * @param bitarchive a bitarchive
-     * @param context the current JSP pagecontext
-     * @throws ForwardedToErrorPage if the file with the list
-     * cannot be found.
+     * @param context    the current JSP pagecontext
+     *
      * @return a list of wrong files in a given bitarchive.
+     *
+     * @throws ForwardedToErrorPage if the file with the list cannot be found.
      */
     public static List<String> getWrongFilesList(Location bitarchive,
                                                  PageContext context) {
-        File wrongFilesOutput = WorkFiles.getFile(bitarchive, WorkFiles.WRONG_FILES);
+        File wrongFilesOutput = WorkFiles.getFile(bitarchive,
+                                                  WorkFiles.WRONG_FILES);
 
         if (!wrongFilesOutput.exists()) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
-                    "errormsg;could.not.find.file.0", wrongFilesOutput.getAbsolutePath());
+                                              "errormsg;could.not.find.file.0",
+                                              wrongFilesOutput.getAbsolutePath());
             throw new ForwardedToErrorPage("Could not find the file: "
-                    + wrongFilesOutput.getAbsolutePath());
+                                           + wrongFilesOutput.getAbsolutePath());
         }
 
         // Create set of file names from bitarchive data
@@ -402,16 +445,19 @@ public class BitpreserveFileStatus {
         ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
         ArgumentNotValid.checkNotNull(fileName, "fileName");
 
-        File missingOutput = WorkFiles.getFile(bitarchive, WorkFiles.MISSING_FILES_BA);
+        File missingOutput = WorkFiles.getFile(bitarchive,
+                                               WorkFiles.MISSING_FILES_BA);
         FileUtils.removeLineFromFile(fileName, missingOutput);
     }
 
-    /** Create a generic checkbox as used by processMissingRequest.
+    /**
+     * Create a generic checkbox as used by processMissingRequest.
      *
      * @param command The name of the command
-     * @param args Arguments to the command
+     * @param args    Arguments to the command
+     *
      * @return A checkbox with the command and arguments in correct format and
-     * with HTML stuff escaped.
+     *         with HTML stuff escaped.
      */
     public static String makeCheckbox(String command, String... args) {
         ArgumentNotValid.checkNotNull(command, "command");
@@ -429,7 +475,233 @@ public class BitpreserveFileStatus {
         if (res.length() != 0) {
             res.append("\"");
         }
-        return("<input type=\"checkbox\" name=\"" + command + "\""
+        return ("<input type=\"checkbox\" name=\"" + command + "\""
                 + res.toString() + ">");
+    }
+
+    /**
+     * Print HTML formatted status for missing files on a given location in a
+     * given locale.
+     *
+     * @param out      The writer to write status to.
+     * @param location The location to write status for.
+     * @param locale   The locale to write status in.
+     *
+     * @throws IOException On IO trouble writing status to the writer.
+     */
+    public static void printMissingFileStatusForLocation(JspWriter out,
+                                                         Location location,
+                                                         Locale locale)
+            throws IOException {
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "filestatus.for") + "&nbsp;<b>" + HTMLUtils
+                .escapeHtmlValues(location.getName()) + "</b>");
+        out.println("<br/>");
+
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "number.of.files") + "&nbsp;" + getBACountFiles(
+                location));
+
+        if (getBACountMissingFiles(location) > 0) {
+            out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
+                      + "?" + (Constants.BITARCHIVE_NAME_PARAM
+                               + "=" + HTMLUtils
+                    .encodeAndEscapeHTML(location.getName())) + " \">");
+            out.print(I18n.getString(
+                    dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                    locale, "show.missing.files"));
+            out.print("</a>");
+        }
+        out.println("<br/>");
+
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "last.update.at.0",
+                WorkFiles.getLastUpdate(location, WorkFiles.FILES_ON_BA)));
+        out.println("<br/>");
+
+        out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
+                    + Constants.FIND_MISSING_FILES_PARAM + "=1&amp;"
+                    + (Constants.BITARCHIVE_NAME_PARAM
+                       + "=" + HTMLUtils
+                .encodeAndEscapeHTML(location.getName())) + "\">" + I18n
+                .getString(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                           locale, "update") + "</a>");
+        out.println("<br/><br/>");
+    }
+
+    /**
+     * Print HTML formatted status for checksum errors on a given location in a
+     * given locale.
+     *
+     * @param out      The writer to write status to.
+     * @param location The location to write status for.
+     * @param locale   The locale to write status in.
+     *
+     * @throws IOException On IO trouble writing status to the writer.
+     */
+    public static void printChecksumErrorStatusForLocation(JspWriter out,
+                                                           Location location,
+                                                           Locale locale)
+            throws IOException {
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "checksum.status.for") + "&nbsp;<b>" + HTMLUtils
+                .escapeHtmlValues(location.getName()) + "</b>");
+        out.println("<br/>");
+
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "number.of.files.with.error") + "&nbsp;"
+                                                      + getCountWrongFiles(
+                location));
+
+        if (getCountWrongFiles(location) > 0) {
+            out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_CHECKSUM_PAGE
+                      + "?" + (Constants.BITARCHIVE_NAME_PARAM
+                               + "=" + HTMLUtils
+                    .encodeAndEscapeHTML(location.getName())) + " \">");
+            out.print(I18n.getString(
+                    dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                    locale, "show.files.with.error"));
+            out.print("</a>");
+        }
+        out.println("<br/>");
+
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "last.update.at.0",
+                WorkFiles.getLastUpdate(location, WorkFiles.WRONG_FILES)));
+        out.println("<br/>");
+
+        out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
+                    + Constants.CHECKSUM_PARAM + "=1&amp;"
+                    + (Constants.BITARCHIVE_NAME_PARAM
+                       + "=" + HTMLUtils
+                .encodeAndEscapeHTML(location.getName())) + "\">" + I18n
+                .getString(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                           locale, "update") + "</a>");
+        out.println("<br/><br/>");
+    }
+
+    public static void printFileName(JspWriter out, String filename,
+                                     int rowCount,
+                                     Locale locale) throws IOException {
+        out.println("<tr class=\"" + HTMLUtils.getRowClass(rowCount) + "\">");
+        out.println(HTMLUtils.makeTableElement(filename));
+        out.print("<td>");
+        out.print(makeCheckbox(GET_INFO_COMMAND, filename));
+        out.print(I18N.getString(locale, "get.info"));
+        out.println("</td>");
+        out.println("</tr>");
+    }
+
+    public static void printFileStatus(JspWriter out,
+                                        FilePreservationStatus fs,
+                                        Locale locale
+    )
+            throws IOException {
+        out.print("<tr><td>");
+        out.println(I18N.getString(locale, "status"));
+
+        //Table headers for info table
+        out.println("<table>");
+        out.println("<tr><th>&nbsp;</th>");
+        out.println("<th>" + I18N.getString(locale, "state") + "</th>");
+        out.println("<th>" + I18N.getString(locale, "checksum") + "</th>");
+        out.println("</tr>");
+
+        //Admin data info
+        printFileStatusForAdminData(out, fs, locale);
+
+        // Info for all bitarchives
+        for (Location l : Location.getKnown()) {
+            printFileStatusForBitarchive(out, l, fs, locale);
+        }
+        out.println("</table></td></tr>");
+    }
+
+    private static void printFileStatusForAdminData(JspWriter out,
+                                                   FilePreservationStatus fs,
+                                                   Locale locale)
+            throws IOException {
+        out.println("<tr><td>"
+                    + I18N.getString(locale, "admin.data")
+                    + "</td>");
+        out.println("<td>-</td>");
+        out.println(HTMLUtils.makeTableElement(fs.getAdminChecksum()));
+        out.println("</tr>");
+    }
+
+    private static void printFileStatusForBitarchive(JspWriter out, Location l,
+                                                    FilePreservationStatus fs,
+                                                    Locale locale)
+            throws IOException {
+        String baLocation = l.getName();
+        out.println("<tr>");
+        out.println(HTMLUtils.makeTableElement(baLocation)
+                    + HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(l))
+                    + HTMLUtils.makeTableElement(presentChecksum(
+                fs.getBitarchiveChecksum(l), locale)));
+        out.println("</tr>");
+    }
+
+    public static void printToggleCheckboxes(JspWriter out, Locale locale,
+                                             int numberOfMissingCheckboxes,
+                                             int numberOfFailableCheckboxes,
+                                             int numberOfUploadableCheckboxes)
+            throws IOException {
+        // Add checkbox to toggle multiple "fileinfo" checkboxes
+        printMultipleToggler(
+                out, GET_INFO_COMMAND,
+                numberOfMissingCheckboxes, "change.infobox.for.0.files",
+                locale);
+        // Add checkbox to toggle multiple "mark as failed" checkboxes
+        if (numberOfFailableCheckboxes > 0) {
+            printMultipleToggler(
+                    out, SET_FAILED_COMMAND,
+                    numberOfFailableCheckboxes, "change.0.failed", locale);
+        }
+        // Add checkbox to toggle multiple "reupload" checkboxes
+        if (numberOfUploadableCheckboxes > 0) {
+            printMultipleToggler(
+                    out, ADD_COMMAND,
+                    numberOfUploadableCheckboxes, "change.0.may.be.added",
+                    locale);
+        }
+    }
+
+    private static void printMultipleToggler(JspWriter out, String command,
+                                            int numberOfCheckboxes,
+                                            String label, Locale locale)
+            throws IOException {
+        out.print("<input type=\"checkbox\" id=\"toggle" + command
+                  + "\" onclick=\"toggleCheckboxes('" + command
+                  + "')\"/>");
+        out.print(I18N.getString(locale, label,
+                                 "<input id=\"toggleAmount" + command
+                                 + "\" value=\"" + Math.min(
+                                         numberOfCheckboxes,
+                                         Constants.MAX_TOGGLE_AMOUNT)
+                                 + "\">"));
+        out.println("<br/> ");
+    }
+
+    /** Present a list of checksums in a human-readable form.
+     *
+     * @param csum List of checksum strings
+     * @param locale
+     * @return String presenting the checksums.
+     */
+    public static String presentChecksum(List<String> csum, Locale locale) {
+        String csumString = csum.toString();
+        if (csum.isEmpty()) {
+            csumString = I18N.getString(locale, "no.checksum");
+        } else if (csum.size() == 1) {
+            csumString = csum.get(0);
+        }
+        return csumString;
     }
 }

@@ -37,7 +37,6 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
@@ -407,22 +406,6 @@ public class HTMLUtils {
         }
     }
 
-    /** Present a list of checksums in a human-readable form.
-     *
-     * @param csum List of checksum strings
-     * @param locale
-     * @return String presenting the checksums.
-     */
-    public static String presentChecksum(List<String> csum, Locale locale) {
-        String csumString = csum.toString();
-        if (csum.isEmpty()) {
-            csumString = I18N.getString(locale, "no.checksum");
-        } else if (csum.size() == 1) {
-            csumString = csum.get(0);
-        }
-        return csumString;
-    }
-
     /**
      * Given a URL in the sitesection hierarchy, returns the corresponding page
      * title.
@@ -649,7 +632,7 @@ public class HTMLUtils {
      * @param parameter parameter that must exist
      * @param legalValues legal values for the parameter
      * @throws IOFailure If the forward fails
-     * @throws ForwardedToErrorPage if a parameter was missing or empty
+     * @throws ForwardedToErrorPage if the parameter is none of the given values
      */
     public static void forwardOnIllegalParameter(PageContext context,
                                                  String parameter,

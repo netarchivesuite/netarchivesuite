@@ -21,56 +21,45 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
---%><%@ page import="java.util.HashMap,
-         java.util.List,
-         java.util.Map,
-         dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
-         dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
-         dk.netarkivet.archive.webinterface.Constants,
-         dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState,
-         dk.netarkivet.common.distribute.arcrepository.Location,
-         dk.netarkivet.common.exceptions.ForwardedToErrorPage,
-         dk.netarkivet.common.utils.I18n,
-         dk.netarkivet.common.webinterface.HTMLUtils"
-     pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE%>"/><%!
-    private static final I18n I18N
-            = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
+--%>
+<%@ page import="
+java.util.List,
+dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
+dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
+dk.netarkivet.archive.webinterface.Constants,
+dk.netarkivet.common.distribute.arcrepository.Location,
+dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+         pageEncoding="UTF-8"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"
+                 scope="page"
+/><fmt:setBundle scope="page"
+                 basename="<%=dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+    private static final I18n I18N = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
 
     StringBuilder res = new StringBuilder();
-    Map params = new HashMap(request.getParameterMap());
-
-    Map<String, FilePreservationStatus> fileInfo = null;
+    java.util.Map<String, FilePreservationStatus> fileInfo;
     try {
-        fileInfo = BitpreserveFileStatus.processMissingRequest(
-                pageContext, res, params
-        );
-    } catch (ForwardedToErrorPage e) {
+        fileInfo = BitpreserveFileStatus.processMissingRequest(pageContext,
+                                                               res);
+    } catch (dk.netarkivet.common.exceptions.ForwardedToErrorPage e) {
         return;
     }
 
-    HTMLUtils.forwardOnMissingParameter(pageContext,
-            Constants.BITARCHIVE_NAME_PARAM);
+    //Note: The parameter is checked to be legal in processMissingRequest()
     String bitarchiveName =
             request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-
-    if (!Location.isKnownLocation(bitarchiveName)) {
-        HTMLUtils.forwardOnIllegalParameter(
-                pageContext,
-                Constants.BITARCHIVE_NAME_PARAM,
-                Location.getKnownNames()
-        );
-        return;
-    }
     Location bitarchive = Location.get(bitarchiveName);
 
-    // Get the page title from its URL
-    HTMLUtils.generateHeader(
+    // Make a list of files to make status for:
+    List<String> missingFiles = BitpreserveFileStatus.getMissingFilesList(
+            bitarchive,
             pageContext);
+
+    // Get the page title from its URL
+    HTMLUtils.generateHeader(pageContext);
 %>
 <script type="text/javascript" language="javascript">
     /** Toggles the status of all checkboxes with a given class */
@@ -91,113 +80,95 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         }
     }
 </script>
-<h3 class="page_heading"><fmt:message key="pagetitle;filestatus.files.missing"/></h3>
-<p>
+<h3 class="page_heading"><fmt:message
+        key="pagetitle;filestatus.files.missing"/></h3>
 <%
-// Output result string from request processing
-if (res.length() > 0) {
-    out.print(res.toString());
-}
+    if (res.length() > 0) {
+        // Output result string from request processing
 %>
-</p>
-
-<h4><fmt:message key="missing.files.for.0"><fmt:param><%=HTMLUtils.escapeHtmlValues(bitarchive.getName())%></fmt:param></fmt:message></h4>
-<form action="" method="post">
-    <input type="hidden" name="bitarchive" value="<%= bitarchive.getName() %>">
-    <table>
+        <p>
+            <%=res%>
+        </p>
 <%
-    // Make a list of files to make status for:
-    List<String> missingFiles =
-            BitpreserveFileStatus.getMissingFilesList(bitarchive, pageContext);
+    }
+%>
+
+<h4><fmt:message key="missing.files.for.0">
+    <fmt:param><%=HTMLUtils.escapeHtmlValues(bitarchiveName)%></fmt:param>
+</fmt:message></h4>
+
+<%
+    // Generate the page for showing missing file info, and allowing taking
+    // actions.
+
+    // Table and form header
+    %>
+    <form action="" method="post">
+        <input type="hidden" name="bitarchive" value="<%=bitarchive.getName()%>"/>
+        <table>
+    <%
+
     // How many files can be uploaded with ADD_COMMAND
     int uploadableFiles = 0;
     // How many files can be set failed with SET_FAILED_COMMAND
     int failableFiles = 0;
+
+    // For all files
     int rowCount = 0;
-    for (String filename : missingFiles) { %>
-    	<tr class="<%=HTMLUtils.getRowClass(rowCount)%>">
-    	<%=HTMLUtils.makeTableElement(filename)%>
-        <td><%=BitpreserveFileStatus.makeCheckbox(BitpreserveFileStatus.GET_INFO_COMMAND, filename)%>
-        <fmt:message key="get.info"/></td></tr>
-        <%
-        rowCount++;
+    for (String filename : missingFiles) {
+        //Print a row for the file with info
+        BitpreserveFileStatus.printFileName(out, filename, rowCount, response.getLocale());
         // If info was requested, output it
         if (fileInfo.containsKey(filename)) {
+            %>
+            <tr><td>
+                <%
             FilePreservationStatus fs = fileInfo.get(filename);
             if (fs == null) {
-         %><fmt:message key="no.info.on.file.{0}">
-              <fmt:param value="<%=filename%>"/>
-           </fmt:message><%
+                %><fmt:message key="no.info.on.file.0">
+                      <fmt:param value="<%=filename%>"/>
+                  </fmt:message><%
             } else {
-                %>
-    		    <tr><td><fmt:message key="status"/>
-                <table>
-        	    <tr><td>&nbsp;</td><td><fmt:message key="state"/></td><td><fmt:message key="checksum"/></td></tr>
-        	    <tr><td><fmt:message key="admin.data"/></td><td>-</td>
-                <%= HTMLUtils.makeTableElement(fs.getAdminChecksum()) %></tr>
-                <%
-                for (Location l : Location.getKnown()) {
-                    final String baLocation = l.getName();
-                    List<String> csum = fs.getBitarchiveChecksum(l);
-                    %><tr><%= HTMLUtils.makeTableElement(baLocation)
-                     + HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(l))
-                     + HTMLUtils.makeTableElement(
-                      HTMLUtils.presentChecksum(csum, response.getLocale()))%>
-                <%
-                    if (csum.size() == 0 &&
-                        fs.getAdminBitarchiveStoreState(bitarchive) !=
-                                BitArchiveStoreState.UPLOAD_FAILED) {
-                        %><td>
-                        <%=(BitpreserveFileStatus.makeCheckbox
-                              (BitpreserveFileStatus.SET_FAILED_COMMAND,
-                                   baLocation, filename))%>
-                        <fmt:message key="mark.as.failed.upload"/></td>
-                        <%
+                // Print information about the file
+                BitpreserveFileStatus.printFileStatus(out, fs, response.getLocale());
+                // If the file is indeed missing
+                if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
+                    //TODO: I should not be the job of the webpage to
+                    //decide which actions are available.
+                    if (!fs.isAdminDataOk()) {
+                        // If this contradicts admindata, give opportunity
+                        // to correct it.
+                        out.println((BitpreserveFileStatus.makeCheckbox(
+                                BitpreserveFileStatus.SET_FAILED_COMMAND,
+                                bitarchive.getName(), filename)));
+                        %><fmt:message key="mark.as.failed.upload"/><%
                         failableFiles++;
+                    } else {
+                        // Else give opportunity to reupload the file.
+                        out.println(BitpreserveFileStatus.makeCheckbox(
+                                BitpreserveFileStatus.ADD_COMMAND,
+                                bitarchive.getName(), filename));
+                        %><fmt:message key="add.to.archive"/><%
+                        uploadableFiles++;
                     }
-                    %></tr><%
-                }
-                %></table></td></tr>
-                <% if (fs.isAdminDataOk()
-                       && fs.getBitarchiveChecksum(bitarchive).isEmpty())  {
-                    %>
-                    <tr><td><%=BitpreserveFileStatus.makeCheckbox
-                        (BitpreserveFileStatus.ADD_COMMAND, bitarchive.getName(), filename)%>
-                    <fmt:message key="add.to.archive"/>
-                    </td></tr>
-                    <%
-                    uploadableFiles++;
-            	} // if (fs.isAdminDataOk()
-        	} // if (fs != null)
+                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
+            } // if (fs != null)
+            %>
+            </td></tr>
+            <%
         } // if (fileInfo.containsKey(filename))
+        rowCount++;
     } // for (String filename : missingFiles)
-    %>
-</table>
-<input type="submit" value="<fmt:message key="execute"/>"/>
-</form>
-<br/><input type="checkbox" id="toggle<%= BitpreserveFileStatus.GET_INFO_COMMAND %>"
-            onclick="toggleCheckboxes('<%= BitpreserveFileStatus.GET_INFO_COMMAND %>')"/>
-                  <fmt:message key="change.infobox.for.0.files"><fmt:param>
-                  	  <input id="toggleAmount<%= BitpreserveFileStatus.GET_INFO_COMMAND%>"
-                                             value="<%= Math.min(missingFiles.size(),
-                                             			Constants.MAX_TOGGLE_AMOUNT)%>">
-                        </fmt:param></fmt:message><br/> <%
-if (failableFiles > 0) {
-        %><br/><input type="checkbox"
-                      id="toggle<%= BitpreserveFileStatus.SET_FAILED_COMMAND %>"
-                      onclick="toggleCheckboxes('<%= BitpreserveFileStatus.SET_FAILED_COMMAND %>')"/>
-         <fmt:message key="change"/><input id="toggleAmount<%= BitpreserveFileStatus.SET_FAILED_COMMAND%>"
-                      value="<%= Math.min(failableFiles, Constants.MAX_TOGGLE_AMOUNT)%>">
-               <fmt:message key="failed"/><br/><%
-}
-if (uploadableFiles > 0) {
-        %><br/><input type="checkbox" id="toggle<%= BitpreserveFileStatus.ADD_COMMAND %>"
-                      onclick="toggleCheckboxes('<%= BitpreserveFileStatus.ADD_COMMAND %>')"/>
-                  <fmt:message key="change"/> <input id="toggleAmount<%= BitpreserveFileStatus.ADD_COMMAND%>"
-                               value="<%= Math.min(uploadableFiles, Constants.MAX_TOGGLE_AMOUNT)%>">
-                       <fmt:message key="may.be.added"/><br/><%
-}
-%>
+
+    // Table and form footer%>
+
+        </table>
+        <input type="submit" value="<fmt:message key="execute"/>"/>
+    </form>
+    <br/>
 <%
+    //convenience checkboxes to toggle multiple
+    BitpreserveFileStatus.printToggleCheckboxes(out, response.getLocale(), missingFiles.size(), failableFiles,
+                          uploadableFiles);
     HTMLUtils.generateFooter(out);
 %>

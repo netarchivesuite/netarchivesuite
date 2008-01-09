@@ -110,8 +110,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         Map<String, FilePreservationStatus> status =
                 BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
                         defaultLocale),
-                        new StringBuilder(),
-                        request.getParameterMap());
+                        new StringBuilder()
+                );
         assertEquals("Should have one call to restablish",
                 1, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have one call to getFilePreservationStatus",
@@ -126,8 +126,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         args.clear();
         request.setupGetParameterMap(args);
         status = BitpreserveFileStatus.processMissingRequest(
-                getDummyPageContext(defaultLocale), new StringBuilder(),
-                request.getParameterMap());
+                getDummyPageContext(defaultLocale), new StringBuilder()
+        );
         assertEquals("Should have no call to restablish",
                 0, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have no call to setAdmin",
@@ -158,8 +158,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupGetParameterMap(args);
         status = BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
                 defaultLocale),
-                new StringBuilder(),
-                request.getParameterMap());
+                new StringBuilder()
+        );
         assertEquals("Should have two calls to restablish",
                 2, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have three calls to getFilePreservationStatus",
