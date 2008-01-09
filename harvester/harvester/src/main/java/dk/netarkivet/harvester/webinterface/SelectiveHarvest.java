@@ -143,8 +143,8 @@ public class SelectiveHarvest {
         Schedule sched = ScheduleDAO.getInstance().read(scheduleName);
         if (sched == null) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
-                    "errormsg;unknown.schedule.0", sched);
-            throw new ForwardedToErrorPage("Schedule '" + sched
+                    "errormsg;unknown.schedule.0", scheduleName);
+            throw new ForwardedToErrorPage("Schedule '" + scheduleName
                     + "' not found");
         }
 
@@ -266,7 +266,7 @@ public class SelectiveHarvest {
      * @param dc the initial list of configurations
      * @param extraDomains the domains to be added to dc with default
      * configurations
-     * @param unknownDomains a list to add unknonw, legal domains to
+     * @param unknownDomains a list to add unknown, legal domains to
      * @param illegalDomains a list to add illegal domains to
      */
     private static void addDomainsToConfigurations(List<DomainConfiguration> dc,
