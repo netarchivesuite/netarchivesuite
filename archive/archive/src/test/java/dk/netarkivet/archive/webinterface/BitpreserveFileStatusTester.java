@@ -52,8 +52,8 @@ import java.util.Map;
 
 import com.mockobjects.servlet.MockHttpServletRequest;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
@@ -87,7 +87,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     public void testProcessMissingRequest() throws Exception {
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
-        MockActiveBitPreservation mockabp = new MockActiveBitPreservation();
+        MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();
         MockHttpServletRequest request = new MockHttpServletRequest();
         String ba1 = "SB";
         String ba2 = "KB";
@@ -376,13 +376,15 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     /** A placeholder for ActiveBitPreservation that's easy to ask questions
      * of.
      */
-    class MockActiveBitPreservation extends ActiveBitPreservation {
+    class MockFileBasedActiveBitPreservation extends
+                                             FileBasedActiveBitPreservation {
         public Map<String, List<String>> calls
                 = new HashMap<String, List<String>>();
 
-        public MockActiveBitPreservation() throws NoSuchFieldException,
+        public MockFileBasedActiveBitPreservation() throws NoSuchFieldException,
                 IllegalAccessException {
-            Field f = ReflectUtils.getPrivateField(ActiveBitPreservation.class,
+            Field f = ReflectUtils.getPrivateField(
+                    FileBasedActiveBitPreservation.class,
                     "instance");
             f.set(null, this);
         }

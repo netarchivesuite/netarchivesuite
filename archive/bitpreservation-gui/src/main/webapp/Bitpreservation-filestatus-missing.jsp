@@ -21,14 +21,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
---%>
-<%@ page import="
-java.util.List,
+--%><%@ page import="
+dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
 dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
 dk.netarkivet.archive.webinterface.Constants,
 dk.netarkivet.common.distribute.arcrepository.Location,
-dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"
@@ -54,9 +53,17 @@ dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
     Location bitarchive = Location.get(bitarchiveName);
 
     // Make a list of files to make status for:
-    List<String> missingFiles = BitpreserveFileStatus.getMissingFilesList(
-            bitarchive,
-            pageContext);
+    Iterable<String> missingFiles;
+    try {
+        missingFiles = FileBasedActiveBitPreservation.getInstance().getMissingFiles(bitarchive);
+    } catch (IllegalState e) {
+
+        HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                                          "errormsg;unable.to.get.files");
+        throw new ForwardedToErrorPage(e.getMessage(), e);
+    }
+    int numberOfMissingFiles
+            = (int) FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(bitarchive);
 
     // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
@@ -125,9 +132,11 @@ dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
                 <%
             FilePreservationStatus fs = fileInfo.get(filename);
             if (fs == null) {
-                %><fmt:message key="no.info.on.file.0">
+                %>
+                <fmt:message key="no.info.on.file.0">
                       <fmt:param value="<%=filename%>"/>
-                  </fmt:message><%
+                </fmt:message>
+                <%
             } else {
                 // Print information about the file
                 BitpreserveFileStatus.printFileStatus(out, fs, response.getLocale());
@@ -168,7 +177,9 @@ dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
     <br/>
 <%
     //convenience checkboxes to toggle multiple
-    BitpreserveFileStatus.printToggleCheckboxes(out, response.getLocale(), missingFiles.size(), failableFiles,
-                          uploadableFiles);
+    BitpreserveFileStatus.printToggleCheckboxes(out, response.getLocale(),
+                                                numberOfMissingFiles,
+                                                failableFiles,
+                                                uploadableFiles);
     HTMLUtils.generateFooter(out);
 %>

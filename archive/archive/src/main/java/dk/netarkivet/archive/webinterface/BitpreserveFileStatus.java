@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
 import dk.netarkivet.archive.arcrepository.bitpreservation.WorkFiles;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
@@ -88,7 +88,7 @@ public class BitpreserveFileStatus {
                 request.getParameter(Constants.FIND_MISSING_FILES_PARAM);
         String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
 
-        ActiveBitPreservation preserve = ActiveBitPreservation.getInstance();
+        FileBasedActiveBitPreservation preserve = FileBasedActiveBitPreservation.getInstance();
         if (findmissingfiles != null) {
             preserve.runFileListJob(bitarchive);
             preserve.findMissingFiles(bitarchive);
@@ -131,7 +131,7 @@ public class BitpreserveFileStatus {
                     Location.getKnownNames()
             );
         }
-        ActiveBitPreservation preserve = ActiveBitPreservation.getInstance();
+        FileBasedActiveBitPreservation preserve = FileBasedActiveBitPreservation.getInstance();
         Locale l = context.getResponse().getLocale();
         if (params.containsKey(ADD_COMMAND)) {
             String[] adds = params.get(ADD_COMMAND);
@@ -143,7 +143,9 @@ public class BitpreserveFileStatus {
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
                 if (preserve.reestablishMissingFile(filename, ba, res, l)) {
-                    removeFileFromMissingFilesList(ba, filename);
+                    File missingOutput = WorkFiles.getFile(ba,
+                                                           WorkFiles.MISSING_FILES_BA);
+                    FileUtils.removeLineFromFile(filename, missingOutput);
                     res.append("<br/>");
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
                                                                          "file.0.has.been.restored.in.bitarchive.on.1",
@@ -266,8 +268,8 @@ public class BitpreserveFileStatus {
         }
 
         if (fixadminchecksum != null) {
-            ActiveBitPreservation preserve =
-                    ActiveBitPreservation.getInstance();
+            FileBasedActiveBitPreservation preserve =
+                    FileBasedActiveBitPreservation.getInstance();
             FilePreservationStatus fs =
                     preserve.getFilePreservationStatus(filename);
             if (fs == null) {
@@ -308,8 +310,8 @@ public class BitpreserveFileStatus {
                 return null;
             }
 
-            ActiveBitPreservation preserve
-                    = ActiveBitPreservation.getInstance();
+            FileBasedActiveBitPreservation preserve
+                    = FileBasedActiveBitPreservation.getInstance();
             preserve.removeAndGetFile(filename, bitarchive,
                                       checksum, credentials);
             res.append(I18N.getString(l,
@@ -320,134 +322,7 @@ public class BitpreserveFileStatus {
                                          WorkFiles.getFile(bitarchive,
                                                            WorkFiles.MISSING_FILES_BA));
         }
-        return ActiveBitPreservation.getInstance().getFilePreservationStatus(filename);
-    }
-
-    /**
-     * Return the number of files found in the bitarchive. If no information
-     * found about the bitarchive -1 is returned
-     *
-     * @param bitarchive the bitarchive to check
-     *
-     * @return the number of files found in the bitarchive
-     */
-    public static long getBACountFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-        File unsortedOutput = WorkFiles.getFile(bitarchive,
-                                                WorkFiles.FILES_ON_BA);
-
-        if (!unsortedOutput.exists()) {
-            return -1;
-        }
-
-        return FileUtils.countLines(unsortedOutput);
-    }
-
-    /**
-     * Get the number of wrong files for a bitarchive.
-     *
-     * @param bitarchive a bitarchive
-     *
-     * @return the number of wrong files for the bitarchive.
-     */
-    public static long getCountWrongFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-        File wrongFileOutput = WorkFiles.getFile(bitarchive,
-                                                 WorkFiles.WRONG_FILES);
-
-        if (!wrongFileOutput.exists()) {
-            return -1;
-        }
-
-        return FileUtils.countLines(wrongFileOutput);
-    }
-
-    /**
-     * Get the number of missing files in a given bitarchive.
-     *
-     * @param bitarchive a given bitarchive
-     *
-     * @return the number of missing files in the given bitarchive.
-     */
-    public static long getBACountMissingFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-
-        File missingOutput = WorkFiles.getFile(bitarchive,
-                                               WorkFiles.MISSING_FILES_BA);
-        if (!missingOutput.exists()) {
-            return -1;
-        }
-
-        return FileUtils.countLines(missingOutput);
-    }
-
-    /**
-     * Get a list of missing files in a given bitarchive.
-     *
-     * @param bitarchive a given bitarchive
-     * @param context    the current JSP pagecontext
-     *
-     * @return a list of missing files in a given bitarchive.
-     *
-     * @throws ForwardedToErrorPage if the file with the list cannot be found.
-     */
-    public static List<String> getMissingFilesList(Location bitarchive,
-                                                   PageContext context) {
-        File missingOutput = WorkFiles.getFile(bitarchive,
-                                               WorkFiles.MISSING_FILES_BA);
-
-        if (!missingOutput.exists()) {
-            HTMLUtils.forwardWithErrorMessage(context, I18N,
-                                              "errormsg;could.not.find.file.0",
-                                              missingOutput.getAbsolutePath());
-            throw new ForwardedToErrorPage("Could not find the file: "
-                                           + missingOutput.getAbsolutePath());
-        }
-
-        return FileUtils.readListFromFile(missingOutput);
-    }
-
-    /**
-     * Get a list of wrong files in a given bitarchive.
-     *
-     * @param bitarchive a bitarchive
-     * @param context    the current JSP pagecontext
-     *
-     * @return a list of wrong files in a given bitarchive.
-     *
-     * @throws ForwardedToErrorPage if the file with the list cannot be found.
-     */
-    public static List<String> getWrongFilesList(Location bitarchive,
-                                                 PageContext context) {
-        File wrongFilesOutput = WorkFiles.getFile(bitarchive,
-                                                  WorkFiles.WRONG_FILES);
-
-        if (!wrongFilesOutput.exists()) {
-            HTMLUtils.forwardWithErrorMessage(context, I18N,
-                                              "errormsg;could.not.find.file.0",
-                                              wrongFilesOutput.getAbsolutePath());
-            throw new ForwardedToErrorPage("Could not find the file: "
-                                           + wrongFilesOutput.getAbsolutePath());
-        }
-
-        // Create set of file names from bitarchive data
-        return FileUtils.readListFromFile(wrongFilesOutput);
-    }
-
-    /**
-     * Remove given filename from list of files missing on a given bitarchive.
-     *
-     * @param bitarchive a bitarchive
-     * @param fileName   a filename
-     */
-    public static void removeFileFromMissingFilesList(Location bitarchive,
-                                                      String fileName) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
-        ArgumentNotValid.checkNotNull(fileName, "fileName");
-
-        File missingOutput = WorkFiles.getFile(bitarchive,
-                                               WorkFiles.MISSING_FILES_BA);
-        FileUtils.removeLineFromFile(fileName, missingOutput);
+        return FileBasedActiveBitPreservation.getInstance().getFilePreservationStatus(filename);
     }
 
     /**
@@ -501,10 +376,11 @@ public class BitpreserveFileStatus {
 
         out.println(I18n.getString(
                 dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "number.of.files") + "&nbsp;" + getBACountFiles(
+                locale, "number.of.files") + "&nbsp;" + FileBasedActiveBitPreservation.getInstance().getNumberOfFiles(
                 location));
 
-        if (getBACountMissingFiles(location) > 0) {
+        if (FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(location
+        ) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
@@ -519,7 +395,8 @@ public class BitpreserveFileStatus {
         out.println(I18n.getString(
                 dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
                 locale, "last.update.at.0",
-                WorkFiles.getLastUpdate(location, WorkFiles.FILES_ON_BA)));
+                FileBasedActiveBitPreservation.getInstance().getDateForMissingFiles(location
+                )));
         out.println("<br/>");
 
         out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
@@ -555,10 +432,11 @@ public class BitpreserveFileStatus {
         out.println(I18n.getString(
                 dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
                 locale, "number.of.files.with.error") + "&nbsp;"
-                                                      + getCountWrongFiles(
+                                                      + FileBasedActiveBitPreservation.getInstance().getNumberOfChangedFiles(
                 location));
 
-        if (getCountWrongFiles(location) > 0) {
+        if (FileBasedActiveBitPreservation.getInstance().getNumberOfChangedFiles(location
+        ) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_CHECKSUM_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
@@ -573,7 +451,8 @@ public class BitpreserveFileStatus {
         out.println(I18n.getString(
                 dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
                 locale, "last.update.at.0",
-                WorkFiles.getLastUpdate(location, WorkFiles.WRONG_FILES)));
+                FileBasedActiveBitPreservation.getInstance().getDateForChangedFiles(location
+                )));
         out.println("<br/>");
 
         out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
