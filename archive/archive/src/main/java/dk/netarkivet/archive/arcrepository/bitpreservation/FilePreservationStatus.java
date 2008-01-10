@@ -22,8 +22,6 @@
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +31,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Location;
-import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NetarkivetException;
-import dk.netarkivet.common.utils.KeyValuePair;
 
 /**
  * This class collects the available bit preservation information for a file.
@@ -50,7 +43,7 @@ import dk.netarkivet.common.utils.KeyValuePair;
  *
  */
 public class FilePreservationStatus {
-    private final Log log = LogFactory.getLog(getClass().getName());
+    private static final Log log = LogFactory.getLog(FilePreservationStatus.class);
 
     /** the name of the preserved file. */
     private String filename;
@@ -71,83 +64,16 @@ public class FilePreservationStatus {
      *
      * @param filename The filename to get status for
      * @param admindata The admin data for the file
+     * @param checksumMap
      * @throws ArgumentNotValid if filename is null or empty string, or if admindata is null.
      */
-    FilePreservationStatus(String filename, ArcRepositoryEntry admindata) {
+    FilePreservationStatus(String filename, ArcRepositoryEntry admindata,
+                           Map<Location, List<String>> checksumMap) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry admindata");
         this.filename = filename;
         adminStatus = admindata;
-        bitarchive2checksum = getChecksumMap();
-    }
-
-    /** Generate a map of checksums for this file in the bitarchive.
-     *
-     * @return Map containing the output of checksum jobs from the bitarchives.
-     */
-    protected Map<Location, List<String>> getChecksumMap() {
-        // get the checksum information
-        Map<Location, List<String>> baname2checksum =
-                new HashMap<Location, List<String>>();
-        for (Location ba : Location.getKnown()) {
-            List<String> checksum = getChecksums(ba);
-            log.debug("Putting checksum line '" + checksum + "' in for " + ba);
-            baname2checksum.put(ba, checksum);
-        }
-        return baname2checksum;
-    }
-
-    /**
-     * Get the checksum of a single file in a bitarchive.
-     * <p/>
-     * Note that this method runs a batch job on the bitarchives, and therefore
-     * takes a long time.
-     *
-     * @param ba The bitarchive to ask for checksum
-     * @return The MD5 checksums of the file, or the empty string if the file was
-     *         not in the bitarchive.
-     * @see ChecksumJob#parseLine(String)
-     */
-    protected List<String> getChecksums(Location ba) {
-        ChecksumJob checksumJob = new ChecksumJob();
-        checksumJob.processOnlyFileNamed(filename);
-        String res;
-        try {
-            PreservationArcRepositoryClient arcrep =
-                    ArcRepositoryClientFactory.getPreservationInstance();
-            BatchStatus batchStatus = arcrep.batch(checksumJob, ba.getName());
-            if (batchStatus.hasResultFile()) {
-                ByteArrayOutputStream buf = new ByteArrayOutputStream();
-                batchStatus.appendResults(buf);
-                res = buf.toString();
-            } else {
-                res = "";
-            }
-        } catch (NetarkivetException e) {
-            log.warn("Error asking " + ba + " for checksums", e);
-            return Collections.emptyList();
-        }
-        List<String> checksums = new ArrayList<String>();
-        if (res.length() > 0) {
-            String[] lines = res.split("\n");
-            for (String s : lines) {
-                try {
-                    KeyValuePair<String, String> fileChecksum = ChecksumJob.parseLine(s);
-                    if (!fileChecksum.getKey().equals(filename)) {
-                        log.debug("Got checksum for unexpected file '"
-                                + fileChecksum.getKey() + " while asking " + ba
-                                + " for checksum of '" + filename + "'");
-                    } else {
-                        checksums.add(fileChecksum.getValue());
-                    }
-                } catch (ArgumentNotValid e) {
-                    log.warn("Got malformed checksum '" + res
-                            + "' while asking " + ba + " for checksum of '"
-                            + filename + "'");
-                }
-            }
-        }
-        return checksums;
+        bitarchive2checksum = checksumMap;
     }
 
     /** Get the checksum of this file in a specific bitarchive.
@@ -292,7 +218,7 @@ public class FilePreservationStatus {
      *
      */
     private String getUniqueChecksum(Location l) {
-        List<String> checksums = getChecksums(l);
+        List<String> checksums = bitarchive2checksum.get(l);
         String checksum = null;
         for (String s : checksums) {
             if (checksum != null && !checksum.equals(s)) {

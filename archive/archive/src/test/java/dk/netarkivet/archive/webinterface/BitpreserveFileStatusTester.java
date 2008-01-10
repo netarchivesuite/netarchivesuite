@@ -404,10 +404,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             oldValue.add(args);
             map.put(key, oldValue);
         }
-        public void setAdminData(String filename, Location ba,
-                                 BitArchiveStoreState state) {
+        public void setAdminData(String filename, Location ba) {
             addCall(calls, SET_FAILED_METHOD,
-                    filename + "," + ba.getName() + "," + state);
+                    filename + "," + ba.getName() + "," + BitArchiveStoreState.UPLOAD_FAILED);
         }
         public boolean reestablishMissingFile(
                 String filename, Location ba, StringBuilder res, Locale l) {

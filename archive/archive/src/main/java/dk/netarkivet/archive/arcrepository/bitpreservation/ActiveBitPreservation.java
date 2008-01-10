@@ -135,13 +135,12 @@ public interface ActiveBitPreservation {
      *
      * @param location The location to restore file to
      * @param filename The name of the file.
-     * @param filename The credentials needed for removing the file (password).
-     *
+     * @param checksum
      * @throw IOFailure if the file cannot be reestablished
      * @throw PermissionDenied if the file is not in correct state
      */
     void replaceChangedFile(Location location, String filename,
-                            String credentails);
+                            String credentails, String checksum);
 
     // Check status for admin data
 

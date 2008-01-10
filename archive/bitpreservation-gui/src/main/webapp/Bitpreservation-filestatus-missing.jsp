@@ -142,7 +142,7 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
                 BitpreserveFileStatus.printFileStatus(out, fs, response.getLocale());
                 // If the file is indeed missing
                 if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
-                    //TODO: I should not be the job of the webpage to
+                    //TODO: It should not be the job of the webpage to
                     //decide which actions are available.
                     if (!fs.isAdminDataOk()) {
                         // If this contradicts admindata, give opportunity

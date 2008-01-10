@@ -80,52 +80,38 @@ public class FilePreservationStatusTester extends TestCase {
         Settings.reload();
     }
 
-    public void testGetChecksumMap() throws Exception {
-        DummyFPS.arcrepresults.put(SB, CollectionUtils.list("string1"));
-        DummyFPS.arcrepresults.put(KB, CollectionUtils.list("string2"));
-        FilePreservationStatus fps = new DummyFPS("fooname", fooAdmindatum);
-        assertEquals("Should have string1 for SB",
-                "string1", fps.getBitarchiveChecksum(SB).get(0));
-        assertEquals("Should have string2 for KB",
-                "string2", fps.getBitarchiveChecksum(KB).get(0));
-
-        DummyFPS.arcrepresults.put(SB, CollectionUtils.list("string3"));
-        DummyFPS.arcrepresults.remove(KB);
-        fps = new DummyFPS("foobar", fooAdmindatum);
-        assertEquals("Should have string3 for SB",
-                "string3", fps.getBitarchiveChecksum(SB).get(0));
-        assertEquals("Should have illegal string2 for KB",
-                0, fps.getBitarchiveChecksum(KB).size());
-    }
-
     public void testGetBitarchiveChecksum() throws Exception {
         DummyBatchMessageReplyServer replyServer = new DummyBatchMessageReplyServer();
 
         // Test standard case
         replyServer.batchResult.put(SB, "foobar##md5-1");
         replyServer.batchResult.put(KB, "foobar##md5-2");
-        FilePreservationStatus fps = new FilePreservationStatus("foobar", fooAdmindatum);
-        assertEquals("Should have expected number of keys",
-                2, fps.getChecksumMap().size());
+        FilePreservationStatus fps = new FilePreservationStatus("foobar", fooAdmindatum,
+                                                                FileBasedActiveBitPreservation.getChecksumMap(
+                                                                        "foobar"));
         assertEquals("Should have expected size for SB",
-                1, fps.getChecksumMap().get(SB).size());
+                1, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(SB).size());
+        assertEquals("Should have expected number of keys",
+                     2, FileBasedActiveBitPreservation.getChecksumMap("foobar").size());
         assertEquals("Should have expected value for SB",
-                "md5-1", fps.getChecksumMap().get(SB).get(0));
+                "md5-1", FileBasedActiveBitPreservation.getChecksumMap("foobar").get(SB).get(0));
         assertEquals("Should have expected size for KB",
-                1, fps.getChecksumMap().get(KB).size());
+                1, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(KB).size());
         assertEquals("Should have expected value for KB",
-                "md5-2", fps.getChecksumMap().get(KB).get(0));
+                "md5-2", FileBasedActiveBitPreservation.getChecksumMap("foobar").get(KB).get(0));
 
         // Test fewer checksums
         replyServer.batchResult.clear();
         replyServer.batchResult.put(SB, "");
-        fps = new FilePreservationStatus("foobar", fooAdmindatum);
+        fps = new FilePreservationStatus("foobar", fooAdmindatum,
+                                         FileBasedActiveBitPreservation.getChecksumMap(
+                                                 "foobar"));
         assertEquals("Should have expected number of keys",
-                2, fps.getChecksumMap().size());
+                2, FileBasedActiveBitPreservation.getChecksumMap("foobar").size());
         assertEquals("Should have expected size for SB",
-                0, fps.getChecksumMap().get(SB).size());
+                0, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(SB).size());
         assertEquals("Should have expected size for KB",
-                0, fps.getChecksumMap().get(KB).size());
+                0, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(KB).size());
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileNotContains("Should have no warning about SB",
                 TestInfo.LOG_FILE, "while asking Location SB");
@@ -136,13 +122,15 @@ public class FilePreservationStatusTester extends TestCase {
         replyServer.batchResult.clear();
         replyServer.batchResult.put(SB, "foobar#klaf");
         replyServer.batchResult.put(KB, "foobarf##klaff");
-        fps = new FilePreservationStatus("foobar", fooAdmindatum);
+        fps = new FilePreservationStatus("foobar", fooAdmindatum,
+                                         FileBasedActiveBitPreservation.getChecksumMap(
+                                                 "foobar"));
         assertEquals("Should have expected number of keys",
-                2, fps.getChecksumMap().size());
+                2, FileBasedActiveBitPreservation.getChecksumMap("foobar").size());
         assertEquals("Should have expected size for SB",
-                0, fps.getChecksumMap().get(SB).size());
+                0, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(SB).size());
         assertEquals("Should have expected size for KB",
-                0, fps.getChecksumMap().get(KB).size());
+                0, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(KB).size());
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileContains("Should have warning about SB",
                 "while asking Location SB", TestInfo.LOG_FILE);
@@ -153,13 +141,15 @@ public class FilePreservationStatusTester extends TestCase {
         replyServer.batchResult.clear();
         replyServer.batchResult.put(SB, "barfu#klaf\nbarfu##klyf\nbarfu##knof");
         replyServer.batchResult.put(KB, "barfuf##klaff\nbarfu##klof\nbarfu##klof\nbarfu##klof");
-        fps = new FilePreservationStatus("barfu", fooAdmindatum);
+        fps = new FilePreservationStatus("barfu", fooAdmindatum,
+                                         FileBasedActiveBitPreservation.getChecksumMap(
+                                                 "barfu"));
         assertEquals("Should have expected number of keys",
-                2, fps.getChecksumMap().size());
+                2, FileBasedActiveBitPreservation.getChecksumMap("foobar").size());
         assertEquals("Should have expected size for SB",
-                2, fps.getChecksumMap().get(SB).size());
+                2, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(SB).size());
         assertEquals("Should have expected size for KB",
-                3, fps.getChecksumMap().get(KB).size());
+                3, FileBasedActiveBitPreservation.getChecksumMap("foobar").get(KB).size());
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileContains("Should have warning about SB",
                 "while asking Location SB", TestInfo.LOG_FILE);
@@ -204,16 +194,20 @@ public class FilePreservationStatusTester extends TestCase {
         // Test standard case
         replyServer.batchResult.put(SB, "foobar##md5-1");
         replyServer.batchResult.put(KB, "foobar##md5-2");
-        FilePreservationStatus fps = new FilePreservationStatus("foobar", fooAdmindatum);
-        List<String> checksums = fps.getChecksums(Location.get("KB"));
+        FilePreservationStatus fps = new FilePreservationStatus("foobar", fooAdmindatum,
+                                                                FileBasedActiveBitPreservation.getChecksumMap(
+                                                                        "foobar"));
+        List<String> checksums = FileBasedActiveBitPreservation.getChecksums(Location.get("KB"), "foobar");
         assertEquals("Should have one checksum for known file",
                 1, checksums.size());
         assertEquals("Should have the right checksum",
                 "md5-2", checksums.get(0));
 
         replyServer.batchResult.clear();
-        fps = new FilePreservationStatus("fobar", fooAdmindatum);
-        checksums = fps.getChecksums(Location.get("KB"));
+        fps = new FilePreservationStatus("fobar", fooAdmindatum,
+                                         FileBasedActiveBitPreservation.getChecksumMap(
+                                                 "fobar"));
+        checksums = FileBasedActiveBitPreservation.getChecksums(Location.get("KB"), "foobar");
         assertEquals("Should have no checksums for unknown file",
                 0, checksums.size());
     }
@@ -225,10 +219,11 @@ public class FilePreservationStatusTester extends TestCase {
         static Map<Location, List<String>> arcrepresults =
                 new HashMap<Location, List<String>>();
         public DummyFPS(String filename, ArcRepositoryEntry entry) {
-            super(filename, entry);
+            super(filename, entry, FileBasedActiveBitPreservation.getChecksumMap(
+                    filename));
         }
 
-        public List<String> getChecksums(Location ba) {
+        public List<String> getChecksums(Location ba, String filename) {
             if (arcrepresults.containsKey(ba)) {
                 return arcrepresults.get(ba);
             } else {

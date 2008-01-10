@@ -26,7 +26,6 @@ package dk.netarkivet.archive.webinterface;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +36,6 @@ import java.util.Map;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
 import dk.netarkivet.archive.arcrepository.bitpreservation.WorkFiles;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -90,12 +88,10 @@ public class BitpreserveFileStatus {
 
         FileBasedActiveBitPreservation preserve = FileBasedActiveBitPreservation.getInstance();
         if (findmissingfiles != null) {
-            preserve.runFileListJob(bitarchive);
             preserve.findMissingFiles(bitarchive);
         }
 
         if (checksum != null) {
-            preserve.runChecksumJob(bitarchive);
             preserve.findWrongFiles(bitarchive);
         }
     }
@@ -143,9 +139,6 @@ public class BitpreserveFileStatus {
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
                 if (preserve.reestablishMissingFile(filename, ba, res, l)) {
-                    File missingOutput = WorkFiles.getFile(ba,
-                                                           WorkFiles.MISSING_FILES_BA);
-                    FileUtils.removeLineFromFile(filename, missingOutput);
                     res.append("<br/>");
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
                                                                          "file.0.has.been.restored.in.bitarchive.on.1",
@@ -165,8 +158,7 @@ public class BitpreserveFileStatus {
                           "filename");
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
-                preserve.setAdminData(filename, ba,
-                                      BitArchiveStoreState.UPLOAD_FAILED);
+                preserve.setAdminData(filename, ba);
                 res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
                                                                      "file.0.is.now.marked.as.failed.in.bitarchive.1",
                                                                      filename,
@@ -174,6 +166,7 @@ public class BitpreserveFileStatus {
                 res.append("<br/>");
             }
         }
+
         Map<String, FilePreservationStatus> infoMap =
                 new HashMap<String, FilePreservationStatus>();
         // Do this at the end so that the info reflects reality!
@@ -267,9 +260,9 @@ public class BitpreserveFileStatus {
             return null;
         }
 
+        FileBasedActiveBitPreservation preserve
+                = FileBasedActiveBitPreservation.getInstance();
         if (fixadminchecksum != null) {
-            FileBasedActiveBitPreservation preserve =
-                    FileBasedActiveBitPreservation.getInstance();
             FilePreservationStatus fs =
                     preserve.getFilePreservationStatus(filename);
             if (fs == null) {
@@ -292,7 +285,7 @@ public class BitpreserveFileStatus {
                                                                    WorkFiles.WRONG_FILES));
                 }
             }
-        } else {
+        } else if (checksum != null || credentials != null) {
             // If FIX_ADMIN_CHECKSUM_PARAM is unset, the parameters
             // CHECKSUM_PARAM and CREDENTIALS_PARAM are used for removal
             // of a broken file.
@@ -309,20 +302,18 @@ public class BitpreserveFileStatus {
                 );
                 return null;
             }
-
-            FileBasedActiveBitPreservation preserve
-                    = FileBasedActiveBitPreservation.getInstance();
             preserve.removeAndGetFile(filename, bitarchive,
                                       checksum, credentials);
             res.append(I18N.getString(l,
                                       "file.0.has.been.deleted.in.1.needs.copy",
                                       filename, bitarchive));
 
-            FileUtils.removeLineFromFile(filename,
-                                         WorkFiles.getFile(bitarchive,
-                                                           WorkFiles.MISSING_FILES_BA));
         }
-        return FileBasedActiveBitPreservation.getInstance().getFilePreservationStatus(filename);
+        if (filename != null) {
+            return preserve.getFilePreservationStatus(filename);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -377,6 +368,11 @@ public class BitpreserveFileStatus {
         out.println(I18n.getString(
                 dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
                 locale, "number.of.files") + "&nbsp;" + FileBasedActiveBitPreservation.getInstance().getNumberOfFiles(
+                location));
+        out.println("<br/>");
+        out.println(I18n.getString(
+                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+                locale, "missing.files") + "&nbsp;" + FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(
                 location));
 
         if (FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(location
@@ -482,7 +478,6 @@ public class BitpreserveFileStatus {
                                         Locale locale
     )
             throws IOException {
-        out.print("<tr><td>");
         out.println(I18N.getString(locale, "status"));
 
         //Table headers for info table
@@ -499,7 +494,7 @@ public class BitpreserveFileStatus {
         for (Location l : Location.getKnown()) {
             printFileStatusForBitarchive(out, l, fs, locale);
         }
-        out.println("</table></td></tr>");
+        out.println("</table>");
     }
 
     private static void printFileStatusForAdminData(JspWriter out,

@@ -530,56 +530,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         assertTrue("Last temp file should be gone",
                    monitor.lastRemoteFile.isDeleted());
 
-        // Check normal run restricted to nothing
-        abp.runFileListJob(location, null,
-                           Arrays.asList(new String[]{}));
-        assertTrue("Output should exist", normalOutputFile.exists());
-        assertEquals("Output file should be empty",
-                     0, normalOutputFile.length());
-        assertFalse("Reference output should not exist",
-                    referenceOutputFile.exists());
-        normalOutputFile.delete();
-        assertTrue("Last temp file should be gone",
-                   monitor.lastRemoteFile.isDeleted());
-
-        // Check normal run restricted to nothing
-        List<String> specifiedFiles = Arrays.asList(new String[]{
-                "integrity1.ARC", "integrity12.ARC"});
-        abp.runFileListJob(location, null, specifiedFiles);
-        assertTrue("Output should exist", normalOutputFile.exists());
-        List<String> fileList = WorkFiles.getLines(location,
-                                                   WorkFiles.FILES_ON_BA);
-        assertEquals("Output file should have two lines", 2, fileList.size());
-        assertTrue("Output should contain both files",
-                   fileList.containsAll(specifiedFiles));
-        assertFalse("Reference output should not exist",
-                    referenceOutputFile.exists());
-        normalOutputFile.delete();
-        assertTrue("Last temp file should be gone",
-                   monitor.lastRemoteFile.isDeleted());
-
-        // Check reference run
-        abp.runFileListJob(otherLocation, location,
-                           null);
-        assertTrue("Output should exist", referenceOutputFile.exists());
-        assertFalse("Reference output should not exist",
-                    normalOutputFile.exists());
-        referenceOutputFile.delete();
-        assertTrue("Last temp file should be gone",
-                   monitor.lastRemoteFile.isDeleted());
-
-        // Check reference run restricted to nothing
-        abp.runFileListJob(otherLocation, location,
-                           Arrays.asList(new String[]{}));
-        assertTrue("Output should exist", referenceOutputFile.exists());
-        assertEquals("Output file should be empty",
-                     0, referenceOutputFile.length());
-        assertFalse("Reference output should not exist",
-                    normalOutputFile.exists());
-        referenceOutputFile.delete();
-        assertTrue("Last temp file should be gone",
-                   monitor.lastRemoteFile.isDeleted());
-
         // Check that wrong counts are caught
         monitor.fakeCount = 17;
         abp.runFileListJob(location);
