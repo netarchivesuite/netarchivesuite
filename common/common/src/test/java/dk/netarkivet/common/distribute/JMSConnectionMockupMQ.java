@@ -957,6 +957,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     public class TestConnection implements Connection {
         public boolean isStarted;
+        private ExceptionListener exceptionListener;
+        
         public Session createSession(boolean b, int i) throws JMSException {
             //TODO: implement method
             throw new NotImplementedException("Not implemented");
@@ -978,14 +980,13 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         }
 
         public ExceptionListener getExceptionListener() throws JMSException {
-            //TODO: implement method
-            throw new NotImplementedException("Not implemented");
+            return this.exceptionListener;
         }
 
         public void setExceptionListener(ExceptionListener exceptionListener)
                 throws JMSException {
-            //TODO: implement method
-            throw new NotImplementedException("Not implemented");
+            // TODO  implement so it works
+            this.exceptionListener = exceptionListener;
         }
 
         public void start() throws JMSException {
@@ -1066,5 +1067,10 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                 throws JMSException {
             return createTopicConnection(string, string);
         }
+    }
+
+    public void onException(JMSException arg0) {
+        // TODO Auto-generated method stub
+        
     }
 }

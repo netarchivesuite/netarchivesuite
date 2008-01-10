@@ -132,5 +132,12 @@ public class CacheData {
         public void sendMessage(NetarkivetMessage msg, ChannelID to) {
             throw new IllegalState("Attempt to use JMS, should fail");
         }
+
+        public void onException(JMSException arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        
     }
 }

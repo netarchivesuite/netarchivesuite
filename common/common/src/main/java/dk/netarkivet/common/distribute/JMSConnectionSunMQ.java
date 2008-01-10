@@ -23,16 +23,22 @@
 package dk.netarkivet.common.distribute;
 
 import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
 import javax.jms.Queue;
+import javax.jms.QueueReceiver;
 import javax.jms.Topic;
+import javax.jms.TopicSubscriber;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.ConnectionFactory;
 import com.sun.messaging.QueueConnectionFactory;
 import com.sun.messaging.TopicConnectionFactory;
 
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+
 
 /**
  * Handles the communication with a Sun JMS broker.
@@ -47,14 +53,22 @@ import dk.netarkivet.common.exceptions.UnknownID;
 public class JMSConnectionSunMQ extends JMSConnection {
     /** Singleton pattern is be used for this class. This is the one instance. */
     protected static JMSConnectionSunMQ instance = null;
-
+       
+    /** The errorcode for failure of the JMSbroker to acknowledge a message. */
+    final static String PACKET_ACK_FAILED = "C4000";
+    /** The errorcode signifying that the current session to the JMSbroker 
+     * has been closed by the jmsbroker. */
+    final static String SESSION_IS_CLOSED = "C4059";
+    /** to prevent reconnecting when reconnection is already under way. */
+    static boolean reconnectInProgress = false;
+    
     /**
      * Constructor.
      */
     private JMSConnectionSunMQ() {
         super();
         log.info("Creating instance of " + getClass().getName());
-        initConnection();
+        initConnection(true);
     }
 
     /**
@@ -159,4 +173,67 @@ public class JMSConnectionSunMQ extends JMSConnection {
             super.cleanup();
         }
     }
+    
+    /**
+     * Exceptionhandler for the JMSConnection.
+     * Only handles exceptions, if reconnectInProgress is false.
+     * Only handles exceptions with errorcode PACKET_ACK_FAILED or
+     * SESSION_IS_CLOSED.
+     * 
+     * @param e an JMSException
+     */
+    public void onException(JMSException e) {
+        ArgumentNotValid.checkNotNull(e, "JMSException e");
+        final String errorcode = e.getErrorCode();
+        log.warn("JMSException with errorcode '"
+                +  errorcode + "' encountered: " + e);
+        if (!reconnectInProgress) { 
+            handleJMSException(e);
+        }
+    }
+    
+    /**
+     * Handle the given JMSException, if anything can be done.
+     * @param e
+     */
+    private void handleJMSException(JMSException e){
+        String errorCode = e.getErrorCode();
+        log.info("Handling JMSexception with errorcode '" + errorCode 
+                + "'" + e);
+        
+        // Try to re-establish connections to the jmsbroker only when
+        // - PACKET_ACK_FAILED
+        // - SESSION_IS_CLOSED
+
+        if (errorCode.equals(PACKET_ACK_FAILED) || 
+                errorCode.equals(SESSION_IS_CLOSED)) {
+            log.info("Trying to reconnect to jmsbroker");
+            reconnectInProgress = true;
+            initConnection(false);
+
+            // Add listeners already stored in the consumers map
+            try {
+                for (String consumerkey: consumers.keySet()) {
+                    String channelName = getChannelName(consumerkey);
+                    boolean isTopic = Channels.isTopic(channelName);
+                    MessageConsumer mc = consumers.get(consumerkey);
+                    if (isTopic) {                  
+                        TopicSubscriber myTopicSubscriber = myTSess.createSubscriber(getTopic(channelName));
+                        myTopicSubscriber.setMessageListener(mc.getMessageListener());
+                    } else { // the channelName belongs to a queue
+                        Queue queue = getQueue(channelName);
+                        QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
+                        myQueueReceiver.setMessageListener(mc.getMessageListener());
+                    }
+                }
+                myQConn.setExceptionListener(this);
+                myTConn.setExceptionListener(this);
+            } catch (JMSException e1) {
+                // We cannot do anything more at this point
+                log.warn(e1);
+            } 
+            reconnectInProgress = false;
+        }
+    }
+   
 }

@@ -348,4 +348,14 @@ public class Channels {
     static void reset() {
         instance = null;
     }
+
+    /**
+     * Is a given name a ChannelName for a Topic or a Queue.
+     * @param name a given name
+     * @return true, if arg name contains the string "ALL_BA"
+     */
+    public static boolean isTopic(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name"); 
+        return name.contains("ALL_BA");
+    }
 }

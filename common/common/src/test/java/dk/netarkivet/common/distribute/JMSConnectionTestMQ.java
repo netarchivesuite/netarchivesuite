@@ -638,4 +638,9 @@ public class JMSConnectionTestMQ extends JMSConnection {
         return null;
     }
 
+    public void onException(JMSException arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

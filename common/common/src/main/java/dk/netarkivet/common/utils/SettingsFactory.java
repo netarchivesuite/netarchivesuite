@@ -86,21 +86,21 @@ public class SettingsFactory<T> {
                     c = aClass.getConstructor(classArgs);
                 } catch (NoSuchMethodException e1) {
                     throw new ArgumentNotValid("No suitable getInstance() or"
-                            + " constructor for object '" + className + "'",
+                            + " constructor for class '" + className + "'",
                             e1);
                 }
                 try {
                     return c.newInstance(args);
                 } catch (InvocationTargetException e1) {
-                    throw new ArgumentNotValid("Error creating singleton",
-                            e1.getCause());
+                    throw new ArgumentNotValid("Error creating singleton "
+                            + "of class '" + className + "': ", e1.getCause());
                 }
             }
             try {
                 return (T)m.invoke(null, args);
             } catch (InvocationTargetException e) {
-                throw new ArgumentNotValid("Error creating singleton",
-                        e.getCause());
+                throw new ArgumentNotValid("Error creating singleton of class '"
+                        + className + "': ", e.getCause());
             }
         } catch (IllegalAccessException e) {
             throw new PermissionDenied("Cannot access class '" + className

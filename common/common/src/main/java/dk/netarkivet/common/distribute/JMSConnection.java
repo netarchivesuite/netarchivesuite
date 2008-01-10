@@ -23,6 +23,7 @@
 package dk.netarkivet.common.distribute;
 
 import javax.jms.Connection;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -63,23 +64,24 @@ import dk.netarkivet.common.utils.CleanupIF;
  * which closes the connection.
  *
  */
-public abstract class JMSConnection implements CleanupIF {
+public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     protected static final Log log = LogFactory.getLog(JMSConnection.class
             .getName());
 
     /** Various members needed to establish the JMS connection to a Queue. */
     private QueueConnectionFactory myQConnFactory;
 
-    private QueueConnection myQConn;
+    protected QueueConnection myQConn;
 
-    private QueueSession myQSess;
+    protected QueueSession myQSess;
 
     /** Various members needed to establish the JMS connection to a Topic. */
     private TopicConnectionFactory myTConnFactory;
 
-    private TopicConnection myTConn;
+    protected TopicConnection myTConn;
 
-    private TopicSession myTSess;
+    protected TopicSession myTSess;
+    
 
     /**
      * Maps for caching senders and publishers (for queues and topics,
@@ -93,9 +95,11 @@ public abstract class JMSConnection implements CleanupIF {
      * Set for caching consumers (topic-subscribers and queue-receivers). Serves
      * the purpose of closing all consumers on call to JMSConnection.close()
      */
-    private Map<String, MessageConsumer> consumers = new HashMap<String, MessageConsumer>();
+    protected Map<String, MessageConsumer> consumers = new HashMap<String, MessageConsumer>();
 
     static final String CONSUMER_KEY_SEPARATOR = "##";
+    static final int JMS_MAXTRIES = 3;
+    static final long WAIT_BEFORE_JMS_RETRY = 60000;
 
     /** Shutdown hook that closes the JMS connection. */
     private Thread closeHook;
@@ -105,21 +109,23 @@ public abstract class JMSConnection implements CleanupIF {
     private String port;
 
     /**
-     * Sets the broker address and port number.
+     * Class constructor.
+     * Sets the broker address and port number using
+     * values taken from settings.
      */
     protected JMSConnection() {
         host = Settings.get(Settings.JMS_BROKER_HOST);
         port = Settings.get(Settings.JMS_BROKER_PORT);
     }
-
+    
     /**
      * Initializes the JMS connection. Creating and starting connections to
      * queues and topics. Adds the JMSConnection to a shutdown hook.
-     *
-     * @throws IOFailure
-     *             if initialization fails.
+     * @param useExceptionListener  if true, use this object as ExceptionListener 
+     * for the queue and topic connections.
+     * @throws IOFailure if initialization fails.
      */
-    protected void initConnection() {
+    protected void initConnection(boolean useExceptionListener ) {
         log.info("JMS connection. Broker:" + host + ";");
         log.info("JMS connection. Port:" + port + ";");
 
@@ -130,12 +136,12 @@ public abstract class JMSConnection implements CleanupIF {
             // Establish a queue connection and a session
             myQConn = myQConnFactory.createQueueConnection();
             myQSess = myQConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-            // myQConn.setExceptionListener(new QueueConnectionExceptionListener());
+            myQConn.setExceptionListener(this);
 
             // Establish a topic connection and a session
             myTConn = myTConnFactory.createTopicConnection();
             myTSess = myTConn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-            // myTConn.setExceptionListener(new TopicConnectionExceptionListener());
+            myTConn.setExceptionListener(this);
 
             // start consuming messages
             myQConn.start();
@@ -149,6 +155,16 @@ public abstract class JMSConnection implements CleanupIF {
                                 + host + ":"
                                 + port, e);
         }
+    }
+
+    /**
+     * Initializes the JMS connection. Creating and starting connections to
+     * queues and topics. Adds the JMSConnection to a shutdown hook.
+     * Sets this object as ExceptionListener for the queue and topic connections.
+     * @throws IOFailure if initialization fails.
+     */
+    protected void initConnection() {
+           this.initConnection(true);
     }
 
     /**
@@ -190,8 +206,8 @@ public abstract class JMSConnection implements CleanupIF {
     protected abstract Topic getTopic(String topicName) throws JMSException;
 
     /**
-     * Submit an object to the destination queue. This method should not be
-     * overwritten. Overwrite the sendMessage to change functionality.
+     * Submit an object to the destination queue. This method cannot be
+     * overridden. Override the method sendMessage to change functionality.
      *
      * @param nMsg
      *            The NetarkivetMessage to send to the destination queue (null
@@ -209,6 +225,7 @@ public abstract class JMSConnection implements CleanupIF {
 
     /**
      * Submit an object to the reply queue.
+     * We try to do it JMX_MAXTRIES times before giving up.
      *
      * @param nMsg
      *            The NetarkivetMessage to send to the reply queue (null not
@@ -220,31 +237,42 @@ public abstract class JMSConnection implements CleanupIF {
      */
     public void reply(NetarkivetMessage nMsg) {
         ArgumentNotValid.checkNotNull(nMsg, "nMsg");
-
-        try {
-            ObjectMessage msg = myQSess.createObjectMessage(nMsg);
-            String queueName = nMsg.getReplyTo().getName();
-            // Check if queueSender is in cache
-            // If it is not, it is created and stored in cache:
-            QueueSender queueSender = senders.get(queueName);
-            if (queueSender == null) {
-                queueSender = myQSess.createSender(getQueue(queueName));
-                senders.put(queueName, queueSender);
+        JMSException lastException = null;
+        boolean operationSuccessful = false;
+        int tries = 0;
+        
+        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+            tries++;
+            try {
+                tries++;
+                ObjectMessage msg = myQSess.createObjectMessage(nMsg);
+                String queueName = nMsg.getReplyTo().getName();
+                // Check if queueSender is in cache
+                // If it is not, it is created and stored in cache:
+                QueueSender queueSender = senders.get(queueName);
+                if (queueSender == null) {
+                    queueSender = myQSess.createSender(getQueue(queueName));
+                    senders.put(queueName, queueSender);
+                }
+                synchronized (nMsg) {
+                    log.debug("Sending message to " + queueName + "ID = "
+                            + nMsg.replyOfId);
+                    queueSender.send(msg);
+                    log.debug("Sent message to "
+                            + queueSender.getQueue().getQueueName());
+                    // Note: Id is only updated if the message does not already
+                    // have an id. This should never happen, 
+                    // since this is a reply.
+                    nMsg.updateId(msg.getJMSMessageID());
+                }
+                operationSuccessful = true;                
+            } catch (JMSException e) {
+                log.warn("Send failed (try " + tries + "):" + e);
+                lastException = e;
             }
-            synchronized (nMsg) {
-                log.debug("Sending message to " + queueName + "ID = "
-                        + nMsg.replyOfId);
-                queueSender.send(msg);
-                log.debug("Sent message to "
-                        + queueSender.getQueue().getQueueName());
-                // Note: Id is only updated if the message does not already have
-                // an
-                // id. This should never happen, since this is a reply, though.
-                nMsg.updateId(msg.getJMSMessageID());
-            }
-        } catch (JMSException e) {
-            log.warn("Send failed : " + e);
-            throw new IOFailure("Send failed.", e);
+        }
+        if (!operationSuccessful) {
+            throw new IOFailure("Send failed.", lastException);
         }
     }
 
@@ -261,17 +289,28 @@ public abstract class JMSConnection implements CleanupIF {
      */
     protected void sendMessage(NetarkivetMessage nMsg, ChannelID to)
             throws IOFailure {
-        try {
-            if (to.isTopic()) {
-                sendToTopic(nMsg, to);
+        JMSException lastException = null;
+        boolean operationSuccessful = false;
+        int tries = 0;
+        
+        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+            tries++;
+            try {
+                if (to.isTopic()) {
+                    sendToTopic(nMsg, to);
+                }
+                // If a Channel is not a Topic, it is a Queue:
+                else {
+                    sendToQueue(nMsg, to);
+                }
+                operationSuccessful = true;
+            } catch (JMSException e) {
+                log.warn("Send failed (try " + tries + "):" + e);
+                lastException = e;
             }
-            // If a Channel is not a Topic, it is a Queue:
-            else {
-                sendToQueue(nMsg, to);
-            }
-        } catch (JMSException e) {
-            log.warn("Send failed : " + e);
-            throw new IOFailure("Send failed.", e);
+        }
+        if (!operationSuccessful) {
+            throw new IOFailure("Send failed.", lastException);
         }
     }
 
@@ -454,83 +493,99 @@ public abstract class JMSConnection implements CleanupIF {
     /**
      * Method adds a listener to the given queue or topic.
      *
-     * @param mq
-     *            the messagequeue to listen to
-     * @param ml
-     *            the messagelistener
-     * @throws IOFailure
-     *             if the operation failed.
+     * @param mq the messagequeue to listen to
+     * @param ml the messagelistener
+     * @throws IOFailure if the operation failed.
      */
     public void setListener(ChannelID mq, MessageListener ml) throws IOFailure {
-        try {
+        ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
+        ArgumentNotValid.checkNotNull(ml, "MessageListener ml");
+        log.debug("Adding " + ml.toString() + " as listener to "
+                + mq.toString());
+        String errMsg = "JMS-error - could not add Listener to queue/topic: "
+            + mq.getName();
+        String key = getConsumerKey(mq, ml);
 
-            log.debug("Adding " + ml.toString() + " as listener to "
-                      + mq.toString());
+        int tries = 0;
+        boolean operationSuccessful = false;
+        JMSException lastException = null;
+        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+            tries++;
+            try {
+                if (mq.isTopic()) {
+                    TopicSubscriber myTopicSubscriber = myTSess
+                    .createSubscriber(getTopic(mq.getName()));
+                    myTopicSubscriber.setMessageListener(ml);
 
-            String key = getConsumerKey(mq, ml);
+                    if (consumers.get(key) == null) {
+                        consumers.put(key, myTopicSubscriber);
+                    }
 
-            if (mq.isTopic()) {
-                TopicSubscriber myTopicSubscriber = myTSess
-                        .createSubscriber(getTopic(mq.getName()));
-                myTopicSubscriber.setMessageListener(ml);
-
-                if (consumers.get(key) == null) {
-                    consumers.put(key, myTopicSubscriber);
                 }
+                // If a Channel is not a Topic, it is a Queue:
+                else {
+                    Queue queue = getQueue(mq.getName());
+                    QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
+                    myQueueReceiver.setMessageListener(ml);
 
-            }
-            // If a Channel is not a Topic, it is a Queue:
-            else {
-                Queue queue = getQueue(mq.getName());
-                QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
-                myQueueReceiver.setMessageListener(ml);
-
-                if (consumers.get(key) == null) {
-                    consumers.put(key, myQueueReceiver);
+                    if (consumers.get(key) == null) {
+                        consumers.put(key, myQueueReceiver);
+                    }
                 }
+                operationSuccessful = true;
+            } catch (JMSException e) {
+                lastException = e;
+                log.warn(errMsg, e);   
             }
-
-        } catch (JMSException e) {
-            String errMsg = "JMS-error - could not add Listener to queue/topic: "
-                    + mq.getName();
-            log.warn(errMsg, e);
-            throw new IOFailure(errMsg, e);
+        }
+        
+        if (!operationSuccessful) {
+            throw new IOFailure(errMsg, lastException);
         }
     }
 
     /**
      * Removes the specified MessageListener from the given queue or topic.
      *
-     * @param mq
-     * @param ml
+     * @param mq the given queue or topic
+     * @param ml a messagelistener
      * @throws IOFailure
      */
     public void removeListener(ChannelID mq, MessageListener ml)
             throws IOFailure {
-
-        try {
-            if (mq.isTopic()) {
-                removeListener(mq, ml, myTConn);
+        ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
+        ArgumentNotValid.checkNotNull(ml, "MessageListener ml");
+        String errMsg = "JMS-error - could not remove Listener from queue/topic: "
+            + mq.getName();
+        int tries = 0;
+        JMSException lastException = null;
+        boolean operationSuccessful = false;
+        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+            try {
+                tries++;
+                if (mq.isTopic()) {
+                    removeListener(mq, ml, myTConn);
+                }
+                // If a Channel is not a Topic, it is a Queue:
+                else {
+                    removeListener(mq, ml, myQConn);
+                }
+                operationSuccessful = true;
+            } catch (JMSException e) {           
+                lastException = e;
+                log.warn(errMsg, e);
             }
-            // If a Channel is not a Topic, it is a Queue:
-            else {
-                removeListener(mq, ml, myQConn);
-            }
-
-        } catch (JMSException e) {
-            String errMsg = "JMS-error - could not remove Listener from queue/topic: "
-                    + mq.getName();
-            log.warn(errMsg, e);
-            throw new IOFailure(errMsg, e);
+        }       
+        if (!operationSuccessful) {
+            throw new IOFailure(errMsg, lastException);
         }
     }
 
     /**
      * Auxiliary method for removing a MessageListener.
-     *
-     * @param channelID
+     * @param channelID 
      * @param messageListener
-     * @param connection
+     * @param connection 
      * @throws JMSException
      */
     private void removeListener(ChannelID channelID,
@@ -547,8 +602,8 @@ public abstract class JMSConnection implements CleanupIF {
             consumers.remove(key);
             // connection.start();
         } else {
-            log.debug("MessageConsumer " + messageConsumer
-                      + " not found among registered consumers. "
+            log.debug("No MessageConsumer for consumer with key '" + key
+                      + "' was found among registered consumers. "
                       + "Unable to remove MessageListener " + messageListener);
         }
 
@@ -559,7 +614,7 @@ public abstract class JMSConnection implements CleanupIF {
      * there are no messages on the queue/topic (though some can still arrive
      * afterwards). For a queue, this does not ensure that all messages
      * disappear, other processes could still make it in and take some. For a
-     * topic, this does not ensure that nobody recieve these messages.
+     * topic, this does not ensure that nobody will receive these messages.
      *
      * @param mq
      *            The queue/topic to remove messages from
@@ -568,44 +623,87 @@ public abstract class JMSConnection implements CleanupIF {
     public List<Message> removeAllMessages(ChannelID mq) {
         ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
         MessageConsumer consumer = null;
-        try {
-            if (mq.isTopic()) {
-                consumer = myTSess.createSubscriber(getTopic(mq.getName()));
-            } else {
-                consumer = myQSess.createReceiver(getQueue(mq.getName()));
-            }
-            List<Message> messages = new ArrayList<Message>();
-            Message msg;
-            while ((msg = consumer.receiveNoWait()) != null) {
-                messages.add(msg);
-            }
-            consumer.close();
-            return messages;
-        } catch (JMSException e) {
-            if (consumer != null) {
-                try {
-                    consumer.close();
-                } catch (JMSException e1) {
-                    // Already dealing with one exception (perhaps the same)
-                    // We're merely making a best-effort attempt right now.
+        List<Message> messages = null;
+        String message = "JMS error while emptying channel '" + mq + "'";
+        int tries = 0;
+        JMSException lastException = null;
+        boolean operationSuccessful = false;
+        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+            try {
+                messages = new ArrayList<Message>();
+                if (mq.isTopic()) {
+                    consumer = myTSess.createSubscriber(getTopic(mq.getName()));
+                } else {
+                    consumer = myQSess.createReceiver(getQueue(mq.getName()));
                 }
+                Message msg;
+                while ((msg = consumer.receiveNoWait()) != null) {
+                    messages.add(msg);
+                }
+                consumer.close();
+                operationSuccessful = true;
+            } catch (JMSException e) {
+                lastException = e;
+                if (consumer != null) {
+                    try {
+                        consumer.close();
+                    } catch (JMSException e1) {
+                        // Already dealing with one exception (perhaps the same)
+                        // We're merely making a best-effort attempt right now.
+                    }
+                }
+                log.warn(message, e);            
             }
-            String message = "JMS error while emptying channel '" + mq + "'";
-            log.warn(message, e);
-            throw new IOFailure(message, e);
+
         }
+        if (!operationSuccessful) {
+            throw new IOFailure(message, lastException);
+        }
+        return messages;
     }
 
+    /**
+     * Generate a consumerkey based on the given channelID and messageListener.
+     * @param channelID a given channelID
+     * @param messageListener a messageListener
+     * @return the generated consumerkey.
+     */
     private static String getConsumerKey(ChannelID channelID,
             MessageListener messageListener) {
         return channelID.getName() + CONSUMER_KEY_SEPARATOR + messageListener;
     }
-
+    
+    /**
+     * Get the channelName embedded in a consumerKey.
+     * @param consumerKey a consumerKey
+     * @return name of channel embedded in a consumerKey
+     */
+    protected static String getChannelName(String consumerKey) {
+        //assumes argument consumerKey was created using metod getConsumerKey()
+        return consumerKey.split(CONSUMER_KEY_SEPARATOR)[0];
+    }
+    
+    
+    /**
+     * Get the hostname for the JMSBroker.
+     * @return the hostname for the JMSBroker
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * Get the port for the JMSBroker.
+     * @return the port for the JMSBroker
+     */
     public String getPort() {
         return port;
     }
+    
+    /**
+     * Exceptionhandler for the JMSConnection.
+     * Implemented according to a specific JMS broker.
+     * @param e an JMSException
+     */
+    public abstract void onException(JMSException e);
 }

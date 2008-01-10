@@ -192,7 +192,7 @@ public class UploadTester extends TestCase {
     private void assertMsgCount(int succeeded, int failed) {
         int retries = Integer.parseInt(Settings.get(Settings.ARCREPOSITORY_STORE_RETRIES));
         int expected = succeeded + failed * retries;
-        assertEquals("Upload should generate exactly 1 StoreMessage per suceeded arc file and "
+        assertEquals("Upload should generate exactly 1 StoreMessage per succeeded arc file and "
                 + retries + " per failed store",
                 expected,marc.getMsgCount());
     }

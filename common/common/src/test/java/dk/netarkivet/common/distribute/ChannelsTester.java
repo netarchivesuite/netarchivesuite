@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.common.distribute;
 
-/**
- * lc forgot to comment this!
- */
-
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.Settings;
@@ -34,11 +30,10 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
 
-
+/**
+ * Unittests of the class dk.netarkivet.common.distribute.Channels.
+ */
 public class ChannelsTester extends TestCase {
-    private String currentLocation;
-    private String[] currentAllLocations;
-    private String currentHacoPriority;
 
     public ChannelsTester(String s) {
         super(s);
@@ -215,7 +210,7 @@ public class ChannelsTester extends TestCase {
                 if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
                     result = Channels.getAnyHighpriorityHaco();
                 } else
-                throw new UnknownID(priority + " is not a valid priority");
+                    throw new UnknownID(priority + " is not a valid priority");
             }
             fail("Should throw exception on illegal priority");
         } catch (UnknownID e) {
@@ -248,6 +243,7 @@ public class ChannelsTester extends TestCase {
                 "SB", ch.getName());
     }
 
+      
     /**
      * Verify that getting the JMS channel for the index server
      *  - does not throw an exception
@@ -264,4 +260,31 @@ public class ChannelsTester extends TestCase {
     public void testGetTheIndexServer() {
         assertNotNull("Should return a non-null ChannelID",Channels.getTheIndexServer());
     }
+    
+    /**
+     * Test if static method Channels.isTopic(String name) works.
+     * Only names containing substring "ALL_BA" is considered a name 
+     * for a topic.  
+     */
+    public void testIsTopic() {
+        ChannelID[]queues = new ChannelID[]{
+                Channels.getAnyHighpriorityHaco(),
+                Channels.getAnyBa(),
+                Channels.getAnyLowpriorityHaco(),
+                Channels.getTheArcrepos(),
+                Channels.getTheIndexServer(),
+                Channels.getTheMonitorServer(),
+                Channels.getError(),
+                Channels.getTheSched(),
+                Channels.getThisIndexClient()
+        };
+        for (ChannelID queue: queues) {
+           String queueName = queue.getName();
+           assertFalse(queueName + " is not a topic", 
+                   Channels.isTopic(queueName));
+        }
+  
+        String topicName = Channels.getAllBa().getName();
+        assertTrue(topicName + " is a topic", Channels.isTopic(topicName));
+    }    
 }
