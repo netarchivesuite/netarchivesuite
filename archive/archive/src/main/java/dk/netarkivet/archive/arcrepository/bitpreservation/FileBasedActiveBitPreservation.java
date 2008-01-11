@@ -146,7 +146,7 @@ public class FileBasedActiveBitPreservation
      * @return Map containing the output of checksum jobs from the bitarchives.
      * @param filename
      */
-    private Map<Location, List<String>> getChecksumMap(String filename) {
+    static Map<Location, List<String>> getChecksumMap(String filename) {
         // get the checksum information
         Map<Location, List<String>> baname2checksum =
                 new HashMap<Location, List<String>>();
@@ -170,7 +170,7 @@ public class FileBasedActiveBitPreservation
      *         not in the bitarchive.
      * @see ChecksumJob#parseLine(String)
      */
-    private List<String> getChecksums(Location ba, String filename) {
+    static List<String> getChecksums(Location ba, String filename) {
         ChecksumJob checksumJob = new ChecksumJob();
         checksumJob.processOnlyFileNamed(filename);
         String res;
