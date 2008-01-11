@@ -52,7 +52,7 @@ public interface ActiveBitPreservation {
      *
      * @return A list of missing files.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     Iterable<String> getMissingFiles(Location location);
 
@@ -65,7 +65,7 @@ public interface ActiveBitPreservation {
      *
      * @return A list of fiels with changed checksums.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     Iterable<String> getChangedFiles(Location location);
 
@@ -123,8 +123,8 @@ public interface ActiveBitPreservation {
      * @param location The location to restore files to
      * @param filename The names of the files.
      *
-     * @throw IOFailure if the file cannot be reestablished
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws IOFailure if the file cannot be reestablished
+     * @throws PermissionDenied if the file is not in correct state
      */
     void reuploadMissingFiles(Location location, String... filename);
 
@@ -136,8 +136,8 @@ public interface ActiveBitPreservation {
      * @param location The location to restore file to
      * @param filename The name of the file.
      * @param checksum
-     * @throw IOFailure if the file cannot be reestablished
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws IOFailure if the file cannot be reestablished
+     * @throws PermissionDenied if the file is not in correct state
      */
     void replaceChangedFile(Location location, String filename,
                             String credentails, String checksum);
@@ -149,7 +149,7 @@ public interface ActiveBitPreservation {
      *
      * @return A list of missing files.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     Iterable getMissingFilesForAdminData();
 
@@ -158,7 +158,7 @@ public interface ActiveBitPreservation {
      *
      * @return A list of files with wrong checksum or status.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     Iterable getChangedFilesForAdminData();
 
@@ -169,7 +169,7 @@ public interface ActiveBitPreservation {
      *
      * @param filename The files to reestablish state for.
      *
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws PermissionDenied if the file is not in correct state
      */
     void addMissingFilesToAdminData(String... filename);
 
@@ -178,7 +178,7 @@ public interface ActiveBitPreservation {
      *
      * @param filename The file to reestablish state for.
      *
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws PermissionDenied if the file is not in correct state
      */
     void changeStatusForAdminData(String filename);
 }

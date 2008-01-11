@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
 import dk.netarkivet.archive.arcrepository.bitpreservation.WorkFiles;
@@ -56,6 +59,7 @@ public class BitpreserveFileStatus {
     /** Internationalisation object. */
     private static final I18n I18N
             = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
+    private static Log log = LogFactory.getLog(BitpreserveFileStatus.class);
 
     /**
      * Extract the name of the bitarchive (parameter 'bitarchive') and whether
@@ -138,13 +142,21 @@ public class BitpreserveFileStatus {
                           "filename");
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
-                if (preserve.reestablishMissingFile(filename, ba, res, l)) {
+                try {
+                    preserve.reuploadMissingFiles(ba, filename);
                     res.append("<br/>");
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
                                                                          "file.0.has.been.restored.in.bitarchive.on.1",
                                                                          filename,
                                                                          ba.getName())));
                     res.append("<br/>");
+                } catch (Exception e) {
+                    res.append(I18N.getString(l, "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed", filename, ba));
+                    res.append("<br/>");
+                    res.append(e.getMessage());
+                    res.append("<br/>");
+                    log.warn("Could not restore file '" + filename
+                             + "' in bitarchive '" + ba + "'", e);
                 }
             }
         }
@@ -524,7 +536,6 @@ public class BitpreserveFileStatus {
 
     public static void printToggleCheckboxes(JspWriter out, Locale locale,
                                              int numberOfMissingCheckboxes,
-                                             int numberOfFailableCheckboxes,
                                              int numberOfUploadableCheckboxes)
             throws IOException {
         // Add checkbox to toggle multiple "fileinfo" checkboxes
@@ -532,12 +543,6 @@ public class BitpreserveFileStatus {
                 out, GET_INFO_COMMAND,
                 numberOfMissingCheckboxes, "change.infobox.for.0.files",
                 locale);
-        // Add checkbox to toggle multiple "mark as failed" checkboxes
-        if (numberOfFailableCheckboxes > 0) {
-            printMultipleToggler(
-                    out, SET_FAILED_COMMAND,
-                    numberOfFailableCheckboxes, "change.0.failed", locale);
-        }
         // Add checkbox to toggle multiple "reupload" checkboxes
         if (numberOfUploadableCheckboxes > 0) {
             printMultipleToggler(

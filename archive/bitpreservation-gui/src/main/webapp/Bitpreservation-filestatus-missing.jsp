@@ -117,8 +117,6 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
 
     // How many files can be uploaded with ADD_COMMAND
     int uploadableFiles = 0;
-    // How many files can be set failed with SET_FAILED_COMMAND
-    int failableFiles = 0;
 
     // For all files
     int rowCount = 0;
@@ -142,24 +140,13 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
                 BitpreserveFileStatus.printFileStatus(out, fs, response.getLocale());
                 // If the file is indeed missing
                 if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
-                    //TODO: It should not be the job of the webpage to
-                    //decide which actions are available.
-                    if (!fs.isAdminDataOk()) {
-                        // If this contradicts admindata, give opportunity
-                        // to correct it.
-                        out.println((BitpreserveFileStatus.makeCheckbox(
-                                BitpreserveFileStatus.SET_FAILED_COMMAND,
-                                bitarchive.getName(), filename)));
-                        %><fmt:message key="mark.as.failed.upload"/><%
-                        failableFiles++;
-                    } else {
-                        // Else give opportunity to reupload the file.
-                        out.println(BitpreserveFileStatus.makeCheckbox(
-                                BitpreserveFileStatus.ADD_COMMAND,
-                                bitarchive.getName(), filename));
-                        %><fmt:message key="add.to.archive"/><%
-                        uploadableFiles++;
-                    }
+                    // Give opportunity to reupload the file.
+                    %></td><td><%
+                    out.println(BitpreserveFileStatus.makeCheckbox(
+                            BitpreserveFileStatus.ADD_COMMAND,
+                            bitarchive.getName(), filename));
+                    %><fmt:message key="add.to.archive"/><%
+                    uploadableFiles++;
                 } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
             } // if (fs != null)
             %>
@@ -179,7 +166,6 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
     //convenience checkboxes to toggle multiple
     BitpreserveFileStatus.printToggleCheckboxes(out, response.getLocale(),
                                                 numberOfMissingFiles,
-                                                failableFiles,
                                                 uploadableFiles);
     HTMLUtils.generateFooter(out);
 %>

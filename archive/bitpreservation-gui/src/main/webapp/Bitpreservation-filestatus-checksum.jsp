@@ -129,23 +129,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(bitarchive.getName())%>" name="<%=Constants.BITARCHIVE_NAME_PARAM%>">
             <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(filename)%>" name="<%=Constants.FILENAME_PARAM%>">
 		    <%
-                List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
-                if ((checksum.size() == 1)
-                    && (fs.isAdminCheckSumOk())
-                    && (!checksum.get(0).equals(fs.getAdminChecksum()))) {
+                if (fs.isAdminCheckSumOk()) {
+                    List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
+                    if (checksum.size() == 1 && !checksum.get(0).equals(fs.getAdminChecksum())) {
                         // Remove file action
-                    %>
-                    <fmt:message key="insert.password"/><input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
-                    <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
-                    <input type="submit" value="<fmt:message key="remove.file.from.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
- 		    <%
-                } else if (!fs.isAdminCheckSumOk()) {
+                        %>
+                        <fmt:message key="insert.password"/><input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
+                        <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
+                        <input type="submit" value="<fmt:message key="remove.file.from.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
+                        <%
+                    } else {
+                        %>
+                        <fmt:message key="unable.to.correct"/>
+                        <%
+                    }
+                } else {
                     // Correct admin data action
              %>
                     <input type="hidden" value="1" name="<%=Constants.FIX_ADMIN_CHECKSUM_PARAM%>" >
                     <input type="submit" value="<fmt:message key="correct.admin.checksum"/>">
              <%
-                 }
+                }
              %>
             </form>
 <%

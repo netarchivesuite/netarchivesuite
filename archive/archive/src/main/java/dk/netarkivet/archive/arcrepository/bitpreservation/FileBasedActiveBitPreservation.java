@@ -526,14 +526,15 @@ public class FileBasedActiveBitPreservation
      * @param location The location to restore files to
      * @param filename The names of the files.
      *
-     * @throw IOFailure if the file cannot be reestablished
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws IOFailure if the file cannot be reestablished
+     * @throws PermissionDenied if the file is not in correct state
      */
     public void reuploadMissingFiles(Location location, String... filename) {
         for (String fn : filename) {
             FilePreservationStatus fps = getFilePreservationStatus(fn);
             if (!fps.isAdminDataOk()) {
                 setAdminData(fn, location);
+                admin.synchronize();
             }
             StringBuilder res = new StringBuilder();
             if (!reestablishMissingFile(fn, location, res, Locale.ENGLISH)) {
@@ -651,6 +652,7 @@ public class FileBasedActiveBitPreservation
             result.append(I18N.getString(l,
                                          "errmsg;admin.data.not.consistent.for.file.0",
                                          fileName));
+            result.append("<br/>");
             log.warn(
                     "Admin.data is not consistent regarding file: " + fileName);
             return false;
@@ -661,6 +663,7 @@ public class FileBasedActiveBitPreservation
                                          "errmsg;file.0.not.missing.in.bitarchive.on.1",
                                          fileName,
                                          damagedBitarchive.getName()));
+            result.append("<br/>");
             log.warn("File '" + fileName
                      + "' is not missing in bitarchive on location '"
                      + damagedBitarchive.getName() + "'.");
@@ -672,6 +675,7 @@ public class FileBasedActiveBitPreservation
             result.append(I18N.getString(l,
                                          "errmsg;no.correct.version.of.0.in.any.archive",
                                          fileName));
+            result.append("<br/>");
             log.warn("No correct version of file '" + fileName
                      + "' in any archive");
             return false;
@@ -687,8 +691,8 @@ public class FileBasedActiveBitPreservation
      * @param location The location to restore file to
      * @param filename The name of the file.
      * @param checksum The expected checksum.
-     * @throw IOFailure if the file cannot be reestablished
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws IOFailure if the file cannot be reestablished
+     * @throws PermissionDenied if the file is not in correct state
      */
     public void replaceChangedFile(Location location, String filename,
                                    String credentails, String checksum) {
@@ -728,7 +732,7 @@ public class FileBasedActiveBitPreservation
      *
      * @return A list of missing files.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     public Iterable getMissingFilesForAdminData() {
         //TODO: implement method
@@ -740,7 +744,7 @@ public class FileBasedActiveBitPreservation
      *
      * @return A list of files with wrong checksum or status.
      *
-     * @throw IOFailure if the list cannot be generated.
+     * @throws IOFailure if the list cannot be generated.
      */
     public Iterable getChangedFilesForAdminData() {
         //TODO: implement method
@@ -752,7 +756,7 @@ public class FileBasedActiveBitPreservation
      *
      * @param filename The files to reestablish state for.
      *
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws PermissionDenied if the file is not in correct state
      */
     public void addMissingFilesToAdminData(String... filename) {
         //TODO: implement method
@@ -764,7 +768,7 @@ public class FileBasedActiveBitPreservation
      *
      * @param filename The file to reestablish state for.
      *
-     * @throw PermissionDenied if the file is not in correct state
+     * @throws PermissionDenied if the file is not in correct state
      */
     public void changeStatusForAdminData(String filename) {
         //TODO: implement method

@@ -158,7 +158,7 @@ if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
 
     ## Remove and unzip the embedded database
     rm -rf $ARCREP_HOME/data/working/harvestdefinitionbasedir/fullhddb
-    unzip -ou -d $ARCREP_HOME/data/working/harvestdefinitionbasedir/ \
+    unzip -qou -d $ARCREP_HOME/data/working/harvestdefinitionbasedir/ \
       $ARCREP_HOME/data/working/harvestdefinitionbasedir/fullhddb.jar
 
     ## Clean up other stuff left behind
