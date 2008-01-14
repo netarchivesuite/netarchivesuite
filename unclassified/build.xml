@@ -59,7 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     mail-dependencies/activation-1.1.jar
     libidn-0.5.9.jar
     lucene-core-2.0.0.jar
-    deduplicator-0.3.0-20061218a.jar
+    deduplicator-0.3.0-20061218b.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
     <path id="jars.path">
@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="mail-dependencies/activation-1.1.jar"/>
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-2.0.0.jar"/>
-                <include name="deduplicator-0.3.0-20061218a.jar"/>
+                <include name="deduplicator-0.3.0-20061218b.jar"/>
             </patternset>
         </fileset>
     </path>
