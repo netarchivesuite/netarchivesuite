@@ -32,11 +32,11 @@ import is.hi.bok.deduplicator.DigestIndexer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.RangeFilter;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -144,8 +144,10 @@ public class ARCLookup {
             throw new IOFailure("No index set while searching for '"
                     + uri + "'");
         }
-        Query query = new TermQuery(
-                new Term(DigestIndexer.FIELD_URL, uri));
+        // RangeFilter + ConstantScoreQuery means we ignore norms and other
+        // memory-eating things we don't need that TermQuery would imply.
+        Query query = new ConstantScoreQuery(
+                new RangeFilter(DigestIndexer.FIELD_URL, uri, uri, true, true));
         try {
             Hits hits = luceneSearcher.search(query);
             Document doc = null;
