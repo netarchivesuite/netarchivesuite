@@ -170,7 +170,7 @@ public class BitpreserveFileStatus {
                           "filename");
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
-                preserve.setAdminData(filename, ba);
+                preserve.setAdminDataFailed(filename, ba);
                 res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
                                                                      "file.0.is.now.marked.as.failed.in.bitarchive.1",
                                                                      filename,
@@ -275,28 +275,10 @@ public class BitpreserveFileStatus {
         FileBasedActiveBitPreservation preserve
                 = FileBasedActiveBitPreservation.getInstance();
         if (fixadminchecksum != null) {
-            FilePreservationStatus fs =
-                    preserve.getFilePreservationStatus(filename);
-            if (fs == null) {
-                res.append(I18N.getString(l,
-                                          "no.info.on.file.0", filename));
-                FileUtils.removeLineFromFile(filename,
-                                             WorkFiles.getFile(bitarchive,
-                                                               WorkFiles.WRONG_FILES));
-            } else {
-                String referenceChecksum = fs.getReferenceCheckSum();
-                if (referenceChecksum != null
-                    && !"".equals(referenceChecksum)) {
-                    // update admin.data with correct checksum for file
-                    preserve.setAdminChecksum(filename, referenceChecksum);
-                    res.append(I18N.getString(l,
-                                              "file.0.now.has.correct.checksum.in.admin.data",
-                                              filename));
-                    FileUtils.removeLineFromFile(filename,
-                                                 WorkFiles.getFile(bitarchive,
-                                                                   WorkFiles.WRONG_FILES));
-                }
-            }
+            preserve.changeStatusForAdminData(filename);
+            FileUtils.removeLineFromFile(filename,
+                                         WorkFiles.getFile(bitarchive,
+                                                           WorkFiles.WRONG_FILES));
         } else if (checksum != null || credentials != null) {
             // If FIX_ADMIN_CHECKSUM_PARAM is unset, the parameters
             // CHECKSUM_PARAM and CREDENTIALS_PARAM are used for removal
@@ -305,6 +287,7 @@ public class BitpreserveFileStatus {
                 res.append(I18N.getString(l,
                                           "errmsg;lack.checksum.for.corrupted.file.0",
                                           filename));
+                res.append("<br/>");
                 return null;
             }
 
@@ -312,13 +295,25 @@ public class BitpreserveFileStatus {
                 res.append(I18N.getString(l,
                                           "errmsg;lacking.privileges.to.correct.in.bitarchive")
                 );
+                res.append("<br/>");
                 return null;
             }
-            preserve.removeAndGetFile(filename, bitarchive,
-                                      checksum, credentials);
-            res.append(I18N.getString(l,
-                                      "file.0.has.been.deleted.in.1.needs.copy",
-                                      filename, bitarchive));
+            try {
+                preserve.replaceChangedFile(bitarchive, filename, credentials, checksum);
+                //TODO!
+                res.append(I18N.getString(l,
+                                          "file.0.has.been.replaced.in.1",
+                                          filename, bitarchive));
+                res.append("<br/>");
+            } catch (Exception e) {
+                //TODO!
+                res.append(I18N.getString(l,
+                                          "Attempt at restoring {0} in bitarchive on location {1} failed",
+                                          filename, bitarchive));
+                res.append("<br/>");
+                res.append(e.getMessage());
+                res.append("<br/>");
+            }
 
         }
         if (filename != null) {

@@ -63,6 +63,7 @@ import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
@@ -85,6 +86,10 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessMissingRequest() throws Exception {
+        if (!TestUtils.runningAs("KFC")) {
+            //Excluded while restructuring
+            return;
+        }
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
         MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();
@@ -404,7 +409,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             oldValue.add(args);
             map.put(key, oldValue);
         }
-        public void setAdminData(String filename, Location ba) {
+        public void setAdminDataFailed(String filename, Location ba) {
             addCall(calls, SET_FAILED_METHOD,
                     filename + "," + ba.getName() + "," + BitArchiveStoreState.UPLOAD_FAILED);
         }

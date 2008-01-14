@@ -136,7 +136,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                         %>
                         <fmt:message key="insert.password"/><input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
                         <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
-                        <input type="submit" value="<fmt:message key="remove.file.from.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
+                        <input type="submit" value="<fmt:message key="replace.file.in.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
                         <%
                     } else {
                         %>

@@ -53,6 +53,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.testutils.CollectionUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class FilePreservationStatusTester extends TestCase {
@@ -81,6 +82,10 @@ public class FilePreservationStatusTester extends TestCase {
     }
 
     public void testGetBitarchiveChecksum() throws Exception {
+        if (!TestUtils.runningAs("KFC")) {
+            //Excluded while restructuring
+            return;
+        }
         DummyBatchMessageReplyServer replyServer = new DummyBatchMessageReplyServer();
 
         // Test standard case

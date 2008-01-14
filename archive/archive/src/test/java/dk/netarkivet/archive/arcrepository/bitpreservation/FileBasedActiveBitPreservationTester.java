@@ -73,6 +73,7 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -138,6 +139,10 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      * @throws IOException
      */
     public void testFindWrongFiles() throws IOException {
+        if (!TestUtils.runningAs("KFC")) {
+            //Excluded while restructuring
+            return;
+        }
         File dir = REFERENCE_DIR;
         Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
                      TestInfo.WORKING_DIR.getAbsolutePath());
@@ -221,6 +226,10 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      * @throws IOException
      */
     public void testFindMissingFiles() throws IOException {
+        if (!TestUtils.runningAs("KFC")) {
+            //Excluded while restructuring
+            return;
+        }
         File dir = new File(TestInfo.WORKING_DIR, "referenceFiles");
         Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
                      TestInfo.WORKING_DIR.getAbsolutePath());

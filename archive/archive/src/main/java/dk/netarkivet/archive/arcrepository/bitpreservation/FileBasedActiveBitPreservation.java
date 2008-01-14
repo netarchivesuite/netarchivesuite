@@ -533,7 +533,7 @@ public class FileBasedActiveBitPreservation
         for (String fn : filename) {
             FilePreservationStatus fps = getFilePreservationStatus(fn);
             if (!fps.isAdminDataOk()) {
-                setAdminData(fn, location);
+                setAdminDataFailed(fn, location);
                 admin.synchronize();
             }
             StringBuilder res = new StringBuilder();
@@ -684,6 +684,23 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
+     * Calls upon the arc repository to change the known state for the given
+     * file in one bitarchive.  This method uses JMS and blocks until a reply is
+     * sent.
+     *
+     * @param filename The file to change state for
+     * @param ba       The bitarchive to change state for the file for.
+     * @throws ArgumentNotValid if arguments are null or empty strings
+     */
+    public void setAdminDataFailed(String filename, Location ba) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
+        ArgumentNotValid.checkNotNull(ba, "ba");
+        ArcRepositoryClientFactory.getPreservationInstance()
+                .updateAdminData(filename, ba.getName(),
+                                 BitArchiveStoreState.UPLOAD_FAILED);
+    }
+
+    /**
      * Check that file checksum is indeed different to admin data and reference
      * location. If so, remove missing file and upload it from reference
      * location to this location.
@@ -771,64 +788,21 @@ public class FileBasedActiveBitPreservation
      * @throws PermissionDenied if the file is not in correct state
      */
     public void changeStatusForAdminData(String filename) {
-        //TODO: implement method
-        throw new NotImplementedException("Not implemented");
-    }
-
-    /**
-     * TODO: Integrate in changeStatusForAdminData
-     *
-     * Calls upon the arc repository to change the known state for the given
-     * file in one bitarchive.  This method uses JMS and blocks until a reply is
-     * sent.
-     *
-     * @param filename The file to change state for
-     * @param ba       The bitarchive to change state for the file for.
-     * @throws ArgumentNotValid if arguments are null or empty strings
-     */
-    public void setAdminData(String filename, Location ba
-    ) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
-        ArgumentNotValid.checkNotNull(ba, "ba");
-        ArcRepositoryClientFactory.getPreservationInstance()
-                .updateAdminData(filename, ba.getName(),
-                                 BitArchiveStoreState.UPLOAD_FAILED);
-    }
-
-    /**
-     * TODO: Integrate in changeStatusForAdminData
-     *
-     * Calls upon the arc repository to change the known checksum for the given
-     * file in one bitarchive.  This method uses JMS and blocks until a reply is
-     * sent.
-     *
-     * @param filename The file to change state for
-     * @param checksum The checksum to change to.
-     *
-     * @throws ArgumentNotValid if arguments are null or empty strings
-     */
-    public void setAdminChecksum(String filename, String checksum) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
-        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
+        ArgumentNotValid.checkNotNullOrEmpty("String filename", filename);
+        admin.synchronize();
+        FilePreservationStatus fps = getFilePreservationStatus(filename);
+        String checksum = fps.getReferenceCheckSum();
+        if (checksum == null || checksum.equals("")) {
+            throw new PermissionDenied("No correct checksum for '"
+                                       + filename + "'");
+        }
+        if (admin.getCheckSum(filename).equals(checksum)) {
+            throw new PermissionDenied("Checksum is already '" + checksum
+                                       + "' for '" + filename + "'");
+        }
         ArcRepositoryClientFactory.getPreservationInstance()
                 .updateAdminChecksum(filename, checksum);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Run any batch job on a location, possibly restricted to a certain set of
