@@ -26,6 +26,7 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.QueueReceiver;
+import javax.jms.Session;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
 
@@ -57,11 +58,17 @@ public class JMSConnectionSunMQ extends JMSConnection {
     /** The errorcode for failure of the JMSbroker to acknowledge a message. */
     final static String PACKET_ACK_FAILED = "C4000";
     /** The errorcode signifying that the current session to the JMSbroker 
-     * has been closed by the jmsbroker. */
+     * has been closed by the jmsbroker. 
+     * One of the reasons: that the JMSbroker has been shutdown previously.
+     */
     final static String SESSION_IS_CLOSED = "C4059";
-    /** to prevent reconnecting when reconnection is already under way. */
-    static boolean reconnectInProgress = false;
-    
+
+    /**
+     * The errorcode signifying that the JMSbroker 
+     * has been shutdown. This errorcode is issued by the JMS-client.
+     */
+    final static String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
+
     /**
      * Constructor.
      */
@@ -187,53 +194,104 @@ public class JMSConnectionSunMQ extends JMSConnection {
         final String errorcode = e.getErrorCode();
         log.warn("JMSException with errorcode '"
                 +  errorcode + "' encountered: " + e);
-        if (!reconnectInProgress) { 
-            handleJMSException(e);
-        }
-    }
-    
-    /**
-     * Handle the given JMSException, if anything can be done.
-     * @param e
-     */
-    private void handleJMSException(JMSException e){
-        String errorCode = e.getErrorCode();
-        log.info("Handling JMSexception with errorcode '" + errorCode 
-                + "'" + e);
         
         // Try to re-establish connections to the jmsbroker only when
         // - PACKET_ACK_FAILED
         // - SESSION_IS_CLOSED
-
-        if (errorCode.equals(PACKET_ACK_FAILED) || 
-                errorCode.equals(SESSION_IS_CLOSED)) {
-            log.info("Trying to reconnect to jmsbroker");
-            reconnectInProgress = true;
-            initConnection(false);
-
-            // Add listeners already stored in the consumers map
-            try {
-                for (String consumerkey: consumers.keySet()) {
-                    String channelName = getChannelName(consumerkey);
-                    boolean isTopic = Channels.isTopic(channelName);
-                    MessageConsumer mc = consumers.get(consumerkey);
-                    if (isTopic) {                  
-                        TopicSubscriber myTopicSubscriber = myTSess.createSubscriber(getTopic(channelName));
-                        myTopicSubscriber.setMessageListener(mc.getMessageListener());
-                    } else { // the channelName belongs to a queue
-                        Queue queue = getQueue(channelName);
-                        QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
-                        myQueueReceiver.setMessageListener(mc.getMessageListener());
-                    }
-                }
-                myQConn.setExceptionListener(this);
-                myTConn.setExceptionListener(this);
-            } catch (JMSException e1) {
-                // We cannot do anything more at this point
-                log.warn(e1);
-            } 
-            reconnectInProgress = false;
+        // - RECEIVED_GOODBYE_FROM_BROKER
+        if (errorcode.equals(PACKET_ACK_FAILED) 
+                || errorcode.equals(SESSION_IS_CLOSED)
+                || errorcode.equals(RECEIVED_GOODBYE_FROM_BROKER)) {
+            if (reconnectInProgress.compareAndSet(false, true)) { 
+                performReconnect(e);
+            } else {
+                log.warn("Ignore exception - reconnect in progress: " + e);
+            }
+        } else {
+            log.warn("Exception not handled. Don't know how to handle exceptions with errorcode "
+                    + errorcode);
         }
+    }
+    
+    /**
+     * Try to do a reconnect to the JMSbroker.
+     * @param e 
+     */
+    private void performReconnect(JMSException e){
+        String errorCode = e.getErrorCode();
+        log.info("Perform reconnect due to JMSexception with errorcode '"
+                + errorCode + "'" + e);
+
+        log.info("Trying to reconnect to jmsbroker at " 
+                + getHost() + ":" + getPort());
+
+        boolean operationSuccessful = false;
+        JMSException lastException = null;
+        int tries = 0;
+        while (!operationSuccessful && tries < 10) {
+            tries++;
+            try {
+                reconnect();
+                operationSuccessful = true;
+            } catch (JMSException e2) {
+                lastException = e2;
+                log.warn("Exception during reconnect(): " + e2);
+            }
+            log.warn("Will sleep now (Thread = " + Thread.currentThread().getId());
+            exponentialBackoffSleep(1);
+
+        }
+        if (!operationSuccessful) {
+            throw new IOFailure("Reconnect failed: " + lastException);
+        }
+
+        // Add listeners already stored in the consumers map
+        log.info("Add listeners");
+        try {
+            for (String consumerkey: consumers.keySet()) {
+                String channelName = getChannelName(consumerkey);
+                boolean isTopic = Channels.isTopic(channelName);
+                MessageConsumer mc = consumers.get(consumerkey);
+                if (isTopic) {                  
+                    TopicSubscriber myTopicSubscriber = myTSess.createSubscriber(getTopic(channelName));
+                    myTopicSubscriber.setMessageListener(mc.getMessageListener());
+                } else { // the channelName belongs to a queue
+                    Queue queue = getQueue(channelName);
+                    QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
+                    myQueueReceiver.setMessageListener(mc.getMessageListener());
+                }
+            }
+            log.info("Use this as exceptionshandler for the two JMS Connections");
+            myQConn.setExceptionListener(this);
+            myTConn.setExceptionListener(this);
+        } catch (JMSException e1) {
+            // We cannot do anything more at this point
+            log.warn(e1);
+        }
+        reconnectInProgress.compareAndSet(true, false);
+        log.info("Reconnect successful");
+    }
+    
+    /**
+     * Reconnect to JMSBroker and reestablish sessions.
+     * Resets senders and publishers.
+     * @throws JMSException
+     */
+    private void reconnect() throws JMSException {
+        myQConnFactory = getQueueConnectionFactory();
+        myTConnFactory = getTopicConnectionFactory();
+
+        // Establish a queue connection and a session
+        myQConn = myQConnFactory.createQueueConnection();
+        myQSess = myQConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        // Establish a topic connection and a session
+        myTConn = myTConnFactory.createTopicConnection();
+        myTSess = myTConn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+        
+        // Reset senders & publishers
+        senders.clear();
+        publishers.clear();
     }
    
 }
