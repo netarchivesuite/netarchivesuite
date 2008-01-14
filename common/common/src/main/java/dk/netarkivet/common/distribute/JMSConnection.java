@@ -42,7 +42,6 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -621,45 +621,46 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @return A list of all messages removed from the queue/topic.
      */
     public List<Message> removeAllMessages(ChannelID mq) {
-        ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
-        MessageConsumer consumer = null;
-        List<Message> messages = null;
-        String message = "JMS error while emptying channel '" + mq + "'";
-        int tries = 0;
-        JMSException lastException = null;
-        boolean operationSuccessful = false;
-        while (!operationSuccessful || tries < JMS_MAXTRIES) {
-            try {
-                messages = new ArrayList<Message>();
-                if (mq.isTopic()) {
-                    consumer = myTSess.createSubscriber(getTopic(mq.getName()));
-                } else {
-                    consumer = myQSess.createReceiver(getQueue(mq.getName()));
-                }
-                Message msg;
-                while ((msg = consumer.receiveNoWait()) != null) {
-                    messages.add(msg);
-                }
-                consumer.close();
-                operationSuccessful = true;
-            } catch (JMSException e) {
-                lastException = e;
-                if (consumer != null) {
-                    try {
-                        consumer.close();
-                    } catch (JMSException e1) {
-                        // Already dealing with one exception (perhaps the same)
-                        // We're merely making a best-effort attempt right now.
-                    }
-                }
-                log.warn(message, e);            
-            }
-
-        }
-        if (!operationSuccessful) {
-            throw new IOFailure(message, lastException);
-        }
-        return messages;
+        throw new NotImplementedException("Implementation fails");
+//        ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
+//        MessageConsumer consumer = null;
+//        List<Message> messages = null;
+//        String message = "JMS error while emptying channel '" + mq + "'";
+//        int tries = 0;
+//        JMSException lastException = null;
+//        boolean operationSuccessful = false;
+//        while (!operationSuccessful || tries < JMS_MAXTRIES) {
+//            try {
+//                messages = new ArrayList<Message>();
+//                if (mq.isTopic()) {
+//                    consumer = myTSess.createSubscriber(getTopic(mq.getName()));
+//                } else {
+//                    consumer = myQSess.createReceiver(getQueue(mq.getName()));
+//                }
+//                Message msg;
+//                while ((msg = consumer.receiveNoWait()) != null) {
+//                    messages.add(msg);
+//                }
+//                consumer.close();
+//                operationSuccessful = true;
+//            } catch (JMSException e) {
+//                lastException = e;
+//                if (consumer != null) {
+//                    try {
+//                        consumer.close();
+//                    } catch (JMSException e1) {
+//                        // Already dealing with one exception (perhaps the same)
+//                        // We're merely making a best-effort attempt right now.
+//                    }
+//                }
+//                log.warn(message, e);
+//            }
+//
+//        }
+//        if (!operationSuccessful) {
+//            throw new IOFailure(message, lastException);
+//        }
+//        return messages;
     }
 
     /**

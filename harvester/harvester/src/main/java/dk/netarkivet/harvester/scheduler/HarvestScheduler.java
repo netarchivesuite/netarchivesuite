@@ -22,7 +22,6 @@
 */
 package dk.netarkivet.harvester.scheduler;
 
-import javax.jms.Message;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,8 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
@@ -161,10 +158,11 @@ public class HarvestScheduler implements CleanupIF {
     private void rescheduleJobs() {
         // In case we were shut down without JMS queues being cleaned, remove
         // those messages left
-        List<Message> loprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
-                (Channels.getAnyLowpriorityHaco());
-        List<Message> hiprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
-                (Channels.getAnyHighpriorityHaco());
+        //TODO: Implementation fails
+        //List<Message> loprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+        //    (Channels.getAnyLowpriorityHaco());
+        //List<Message> hiprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+        //    (Channels.getAnyHighpriorityHaco());
         // TODO: Resubmit those just taken out with same ID, as we know no
         // harvester is using them.
         final JobDAO dao = JobDAO.getInstance();

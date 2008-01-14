@@ -25,6 +25,8 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.util.Date;
 
 import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
  * Active bitpreservation is assumed to have access to admin data and bitarchives.
