@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <installtype>dev</installtype>
+    <jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
+    <location name="kb">
+        <installdir>/home/dev</installdir>
+        <installdirwindows>c:\Documents and Settings\dev</installdirwindows>
+        <admin>
+            <host name="kb-dev-adm-001.kb.dk">
+                <port>8080</port>
+                <jmxport>8100</jmxport><!-- arcrep -->
+                <jmxport>8101</jmxport><!-- bamonkb -->
+                <jmxport>8102</jmxport><!-- harvestdef -->
+                <jmxport>8103</jmxport><!-- monitor -->
+                <remotefilePort>8104</remotefilePort><!-- arcrep -->
+                <remotefilePort>8105</remotefilePort><!-- bamonkb -->
+                <remotefilePort>8106</remotefilePort><!-- harvestdef -->
+                <remotefilePort>8107</remotefilePort><!-- monitor -->
+            </host>
+        </admin>
+        <bitarchive>
+            <host os="windows" name="kb-dev-bar-010.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <jmxport>8101</jmxport><!-- helper -->
+                <remotefilePort>8102</remotefilePort><!-- bitarchive -->
+                <remotefilePort>8103</remotefilePort><!-- helper -->
+                <filedir>m:\bitarchive</filedir>
+                <filedir>n:\bitarchive</filedir>
+                <filedir>o:\bitarchive</filedir>
+                <filedir>p:\bitarchive</filedir>
+            </host>
+            <host os="windows" name="kb-dev-bar-011.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <jmxport>8101</jmxport><!-- helper -->
+                <remotefilePort>8102</remotefilePort><!-- bitarchive -->
+                <remotefilePort>8103</remotefilePort><!-- helper -->
+                <filedir>m:\bitarchive</filedir>
+                <filedir>n:\bitarchive</filedir>
+                <filedir>o:\bitarchive</filedir>
+                <filedir>p:\bitarchive</filedir>
+            </host>
+            <host os="windows" name="kb-dev-bar-012.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <jmxport>8101</jmxport><!-- helper -->
+                <remotefilePort>8102</remotefilePort><!-- bitarchive -->
+                <remotefilePort>8103</remotefilePort><!-- helper -->
+                <filedir>m:\bitarchive</filedir>
+                <filedir>n:\bitarchive</filedir>
+                <filedir>o:\bitarchive</filedir>
+                <filedir>p:\bitarchive</filedir>
+            </host>
+            <host os="windows" name="kb-dev-bar-013.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <jmxport>8101</jmxport><!-- helper -->
+                <remotefilePort>8102</remotefilePort><!-- bitarchive -->
+                <remotefilePort>8103</remotefilePort><!-- helper -->
+                <filedir>m:\bitarchive</filedir>
+                <filedir>n:\bitarchive</filedir>
+                <filedir>o:\bitarchive</filedir>
+                <filedir>p:\bitarchive</filedir>
+            </host>
+            <host os="windows" name="kb-dev-bar-014.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <jmxport>8101</jmxport><!-- helper -->
+                <remotefilePort>8102</remotefilePort><!-- bitarchive -->
+                <remotefilePort>8103</remotefilePort><!-- helper -->
+                <filedir>m:\bitarchive</filedir>
+                <filedir>n:\bitarchive</filedir>
+                <filedir>o:\bitarchive</filedir>
+                <filedir>p:\bitarchive</filedir>
+            </host>
+        </bitarchive>
+        <harvesters>
+            <host name="kb-dev-har-001.kb.dk">
+                <lowpriport>8081</lowpriport>
+                <lowpriport>8082</lowpriport>
+                <lowpriport>8083</lowpriport>
+                <jmxport>8100</jmxport><!-- harvester 8081 -->
+                <jmxport>8101</jmxport><!-- sidekick 8081-->
+                <jmxport>8102</jmxport><!-- harvester 8082 -->
+                <jmxport>8103</jmxport><!-- sidekick 8082-->
+                <jmxport>8104</jmxport><!-- harvester 8083 -->
+                <jmxport>8105</jmxport><!-- sidekick 8083-->
+                <remotefilePort>8106</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8107</remotefilePort><!-- sidekick 8081-->
+                <remotefilePort>8108</remotefilePort><!-- harvester 8082 -->
+                <remotefilePort>8109</remotefilePort><!-- sidekick 8082-->
+                <remotefilePort>8110</remotefilePort><!-- harvester 8083 -->
+                <remotefilePort>8111</remotefilePort><!-- sidekick 8083-->
+                <heritrixGuiPort>8090</heritrixGuiPort>
+                <heritrixJmxPort>8091</heritrixJmxPort>
+                <heritrixGuiPort>8092</heritrixGuiPort>
+                <heritrixJmxPort>8093</heritrixJmxPort>
+                <heritrixGuiPort>8094</heritrixGuiPort>
+                <heritrixJmxPort>8095</heritrixJmxPort>
+            </host>
+            <host name="kb-dev-har-002.kb.dk">
+                <lowpriport>8081</lowpriport>
+                <lowpriport>8082</lowpriport>
+                <lowpriport>8083</lowpriport>
+                <jmxport>8100</jmxport><!-- harvester 8081 -->
+                <jmxport>8101</jmxport><!-- sidekick 8081-->
+                <jmxport>8102</jmxport><!-- harvester 8082 -->
+                <jmxport>8103</jmxport><!-- sidekick 8082-->
+                <jmxport>8104</jmxport><!-- harvester 8083 -->
+                <jmxport>8105</jmxport><!-- sidekick 8083-->
+                <remotefilePort>8106</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8107</remotefilePort><!-- sidekick 8081-->
+                <remotefilePort>8108</remotefilePort><!-- harvester 8082 -->
+                <remotefilePort>8109</remotefilePort><!-- sidekick 8082-->
+                <remotefilePort>8110</remotefilePort><!-- harvester 8083 -->
+                <remotefilePort>8111</remotefilePort><!-- sidekick 8083-->
+                <heritrixGuiPort>8090</heritrixGuiPort>
+                <heritrixJmxPort>8091</heritrixJmxPort>
+                <heritrixGuiPort>8092</heritrixGuiPort>
+                <heritrixJmxPort>8093</heritrixJmxPort>
+                <heritrixGuiPort>8094</heritrixGuiPort>
+                <heritrixJmxPort>8095</heritrixJmxPort>
+            </host>
+        </harvesters>
+        <access>
+            <host name="kb-dev-acs-001.kb.dk">
+                <port>8081</port>
+                <port>8082</port>
+                <jmxport>8100</jmxport><!-- viewerproxy 8081-->
+                <jmxport>8101</jmxport><!-- viewerproxy 8082-->
+                <jmxport>8102</jmxport><!-- indexserver -->
+                <remotefilePort>8100</remotefilePort><!-- viewerproxy 8081-->
+                <remotefilePort>8101</remotefilePort><!-- viewerproxy 8082-->
+                <remotefilePort>8102</remotefilePort><!-- indexserver -->
+            </host>
+        </access>
+        <ftp>
+            <host name="kb-dev-har-001.kb.dk">
+                <user>dev</user>
+                <pw>devpassword</pw>
+            </host>
+            <host name="kb-dev-har-002.kb.dk">
+                <user>dev</user>
+                <pw>devpassword</pw>
+            </host>
+        </ftp>
+        <jms>
+            <host name="kb-dev-adm-001.kb.dk">
+                <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+            </host>
+        </jms>
+        <mail>
+            <host name="mailserverexample.kb.dk">
+                <sender>dev@netarkivet.dk</sender>
+                <receiver>dev@netarkivet.dk</receiver>
+            </host>
+        </mail>
+        <application type="indexserver" host="kb-dev-acs-001.kb.dk"/>
+    </location>
+</root>

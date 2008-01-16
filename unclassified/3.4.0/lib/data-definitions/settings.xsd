@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:set="http://www.netarkivet.dk/schemas/settings"
+    targetNamespace="http://www.netarkivet.dk/schemas/settings"
+    elementFormDefault="qualified" >
+
+    <element name="settings">
+        <complexType>
+            <all>
+                <element name="common" type="set:common"/>
+                <element name="harvester" type="set:harvester"/>
+                <element name="archive" type="set:archive"/>
+                <element name="viewerproxy" type="set:viewerproxy"/>
+                <element name="monitor" type="set:monitor"/>
+            </all>
+        </complexType>
+    </element>
+
+    <complexType name="common">
+        <all>
+            <element name="tempDir" type="set:directoryPath"/>
+            <element name="remoteFile" type="set:remotefile"/>
+            <element name="jms" type="set:jms"/>
+            <element name="http">
+                <complexType>
+                    <all>
+                        <element name="port" type="set:userPort"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="arcrepositoryClient" type="set:arcrepositoryclient"/>
+            <element name="indexClient" type="set:indexclient"/>
+            <element name="cacheDir" type="set:directoryPath"/>
+            <element name="processTimeout" type="long"/>
+            <element name="mail">
+                <complexType>
+                    <all>
+                        <element name="server" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="notifications">
+                <complexType>
+                    <all>
+                        <element name="class" type="set:classname"/>
+                        <element name="sender" type="string"/>
+                        <element name="receiver" type="set:hostname"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="jmx">
+                <complexType>
+                    <all>
+                        <element name="port" type="set:userPort"/>
+                        <element name="rmiPort" type="set:userPort"/>
+                        <element name="passwordFile" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="webinterface" type="set:webinterface"/>
+        </all>
+    </complexType>
+
+    <complexType name="harvester">
+        <all>
+            <element name="datamodel" type="set:datamodel"/>
+            <element name="scheduler" type="set:scheduler"/>
+            <element name="harvesting" type="set:harvesting"/>
+        </all>
+    </complexType>
+
+    <complexType name="archive">
+        <all>
+            <element name="arcrepository" type="set:arcrepository"/>
+            <element name="bitarchive" type="set:bitarchive"/>
+            <element name="bitpreservation">
+                <complexType>
+                    <all>
+                        <element name="baseDir" type="set:directoryPath"/>
+                    </all>
+                </complexType>
+            </element>
+        </all>
+    </complexType>
+
+    <complexType name="viewerproxy">
+        <all>
+            <element name="baseDir" type="set:directoryPath"/>
+        </all>
+    </complexType>
+
+    <complexType name="monitor">
+        <all>
+            <element name="applicationName" type="string"/>
+            <element name="logging">
+                <complexType>
+                    <all>
+                        <element name="historySize" type="long"/>
+                    </all>
+                </complexType>
+            </element>
+        </all>
+    </complexType>
+
+    <complexType name="remotefile">
+        <sequence>
+            <element name="class" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="ftpremotefile">
+        <complexContent>
+            <extension base="set:remotefile">
+                <sequence>
+                    <element name="serverName" type="set:hostname"/>
+                    <element name="serverPort" type="set:port"/>
+                    <element name="userName" type="string"/>
+                    <element name="userPassword" type="string"/>
+                    <element name="retries" type="int"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="httpremotefile">
+        <complexContent>
+            <extension base="set:remotefile">
+                <sequence>
+                    <element name="port" type="set:userPort"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="httpsremotefile">
+        <complexContent>
+            <extension base="set:httpremotefile">
+                <sequence>
+                    <element name="certificateKeyStore" type="string"/>
+                    <element name="certificateKeyStorePassword" type="string"/>
+                    <element name="certificatePassword" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="jms">
+        <all>
+            <element name="class" type="set:classname"/>
+            <element name="broker" type="set:hostname" />
+            <element name="port" type="set:userPort" />
+            <element name="environmentName" type="string"/>
+        </all>
+    </complexType>
+
+    <complexType name="arcrepositoryclient">
+        <sequence>
+            <element name="class" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="jmsarcrepositoryclient">
+        <complexContent>
+            <extension base="set:arcrepositoryclient">
+                <sequence>
+                    <element name="getTimeout" type="long"/>
+                    <element name="storeRetries" type="int"/>
+                    <element name="storeTimeout" type="long"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="indexclient">
+        <sequence>
+            <element name="class" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="indexrequestclient">
+        <complexContent>
+            <extension base="set:indexclient">
+                <sequence>
+                    <element name="indexRequestTimeout" type="long"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="datamodel">
+        <all>
+            <element name="domain">
+                <complexType>
+                    <sequence>
+                        <element name="defaultSeedlist" type="string"/>
+                        <element name="defaultConfig" type="string"/>
+                        <element name="defaultOrderxml" type="string"/>
+                        <element name="defaultMaxrate" type="string"/>
+                        <element minOccurs="1" maxOccurs="unbounded" name="tld"
+                                 type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="database" type="set:database"/>
+        </all>
+    </complexType>
+
+    <complexType name="database">
+        <sequence>
+            <element name="url" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="specificsclass" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="derbydatabase">
+        <complexContent>
+            <extension base="set:database">
+                <sequence>
+                    <element name="backupInitHour" type="int"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="scheduler">
+        <all>
+            <element name="errorFactorPrevResult" type="long" />
+            <element name="errorFactorBestGuess" type="long" />
+            <element name="expectedAverageBytesPerObject" type="long" />
+            <element name="maxDomainSize" type="long" />
+            <element name="jobs">
+                <complexType>
+                    <all>
+                        <element name="maxRelativeSizeDifference" type="long" />
+                        <element name="minAbsoluteSizeDifference" type="long" />
+                        <element name="maxTotalSize" type="long" />
+                    </all>
+                </complexType>
+            </element>
+            <element name="configChunkSize" type="long" />
+        </all>
+    </complexType>
+
+    <complexType name="harvesting">
+        <all>
+        	<element name="serverDir" type="set:directoryPath" />
+        	<element name="minSpaceLeft" type="long"/>
+        	<element name="oldjobsDir" type="set:directoryPath" />
+        	<element name="heritrix">
+        		<complexType>
+        			<all>
+        				<element name="inactivityTimeout" type="long" />
+        				<element name="noresponseTimeout" type="long" />
+        				<element name="adminName" type="string" />
+        				<element name="adminPassword" type="string" />
+        				<element name="guiPort" type="set:userPort" />
+        				<element name="jmxPort" type="set:userPort" />
+        				<element name="heapSize" type="set:memorySize" />
+        			</all>
+        		</complexType>
+        	</element>
+        	<element name="queuePriority">
+        		<simpleType>
+        			<restriction base="string">
+        				<enumeration value="HIGHPRIORITY" />
+        				<enumeration value="LOWPRIORITY" />
+        			</restriction>
+        		</simpleType>
+        	</element>
+        	<element name="isrunningFile" type="set:directoryPath" />
+        </all>
+    </complexType>
+
+    <complexType name="webinterface">
+        <sequence>
+            <element name="language" minOccurs="1" maxOccurs="unbounded">
+                <complexType>
+                    <all>
+                        <element name="locale" type="string"/>
+                        <element name="name" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="siteSection" minOccurs="0" maxOccurs="unbounded">
+                <complexType>
+                    <all>
+                        <element name="class" type="set:classname"/>
+                        <element name="webapplication" type="set:directoryPath"/>
+                        <element name="deployPath" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="arcrepository">
+        <sequence>
+            <element name="baseDir" type="set:directoryPath"/>
+            <element name="location" maxOccurs="unbounded">
+                <complexType>
+                    <all>
+                        <element name="name" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="batchLocation" type="string"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="bitarchive">
+        <sequence>
+            <element name="minSpaceLeft" type="long"/>
+            <element name="fileDir" type="set:directoryPath" maxOccurs="unbounded"/>
+            <element name="heartbeatFrequency" type="long"/>
+            <element name="acceptableHeartbeatDelay" type="long"/>
+            <element name="batchMessageTimeout" type="long"/>
+            <element name="thisLocation" type="string"/>
+            <element name="thisCredentials" type="string"/>
+            <element name="limitForRecordDatatransferInFile" type="long"/>
+        </sequence>
+    </complexType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    directory paths in windows and unix -->
+    <simpleType name="directoryPath" >
+        <restriction base="string" >
+            <pattern value=".*" />
+        </restriction>
+    </simpleType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    hostnames (numerical, named, and localhost) -->
+    <simpleType name="hostname" >
+        <restriction base="string" >
+            <pattern value=".*"/>
+        </restriction>
+    </simpleType>
+
+    <!-- A placeholder for a simpleType corresponding to legal
+    java classnames -->
+    <simpleType name="classname" >
+        <restriction base="string">
+            <pattern value=".*" />
+        </restriction>
+    </simpleType>
+
+    <!-- A TCP/IP port that can be used by a user process -->
+    <simpleType name="userPort">
+        <restriction base="integer">
+            <minInclusive value="1024"/>
+            <maxExclusive value="65536"/>
+        </restriction>
+    </simpleType>
+
+    <!-- A TCP/IP port that can be used by any process -->
+    <simpleType name="port">
+        <restriction base="integer">
+            <minInclusive value="0"/>
+            <maxExclusive value="65536"/>
+        </restriction>
+    </simpleType>
+
+    <!-- A description of memory size, as used by java -Xmx etc -->
+    <simpleType name="memorySize">
+        <restriction base="string">
+            <pattern value="[0-9]+[kKmMgGpP]"/>
+        </restriction>
+    </simpleType>
+
+</schema>
