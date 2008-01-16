@@ -35,9 +35,13 @@ import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.Constants;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Various utilities for running processes -- not exactly Java's forte.
@@ -45,6 +49,8 @@ import dk.netarkivet.common.Constants;
  */
 
 public class ProcessUtils {
+    private static Log log = LogFactory.getLog(ProcessUtils.class);
+
     /** Runs an external process that takes no input, discarding its output.
      *
      * @param environment An environment to run the process in (may be null)
@@ -232,11 +238,12 @@ public class ProcessUtils {
      * @return Exit value for process, or null if the process didn't exit
      * within the expected time.
      */
-    public static Integer waitFor(Process p, long maxWait) {
+    public static Integer waitFor(final Process p, long maxWait) {
         long startTime = System.currentTimeMillis();
         Timer timer = new Timer(true);
         final Thread waitThread = Thread.currentThread();
         boolean wakeupScheduled = false;
+        final AtomicBoolean doneWaiting = new AtomicBoolean(false);
         while (System.currentTimeMillis() < startTime + maxWait) {
             try {
                 if (!wakeupScheduled) {
@@ -246,21 +253,35 @@ public class ProcessUtils {
                         timer.schedule(new TimerTask() {
                             public void run() {
                                 synchronized(waitThread) {
-                                    waitThread.interrupt();
+                                    if (!doneWaiting.get()) {
+                                        waitThread.interrupt();
+                                    }
                                 }
                             }
                         }, maxWait);
                         wakeupScheduled = true;
-                        return p.waitFor();
                     }
-                } else {
-                    return p.waitFor();
                 }
+
+                p.waitFor();
+                break;
             } catch (InterruptedException e) {
                 // May happen for a number of reasons.  We just check if we've
                 // timed out yet when we go through the loop again.
             }
         }
-        return null;
+        synchronized (waitThread) {
+            timer.cancel();
+            doneWaiting.set(true);
+            Thread.interrupted(); // In case the timer task interrupted.
+        }
+        try {
+            return p.exitValue();
+        } catch (IllegalThreadStateException e) {
+            log.warn("Process '" + p + "' did not exit within "
+                     + (System.currentTimeMillis() - startTime)
+                     + " milliseconds");
+            return null;
+        }
     }
 }

@@ -45,13 +45,17 @@ public class UtilsTesterSuite {
         suite.addTestSuite(ExceptionUtilsTester.class);
         suite.addTestSuite(FileUtilsTester.class);
         suite.addTestSuite(FilterIteratorTester.class);
+        suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
         suite.addTestSuite(MD5Tester.class);
+        suite.addTestSuite(ProcessUtilsTester.class);
+        suite.addTestSuite(SettingsFactoryTester.class);
         suite.addTestSuite(SimpleXmlTester.class);
+        suite.addTestSuite(StreamUtilsTester.class);
         suite.addTestSuite(StringUtilsTester.class);
         suite.addTestSuite(SystemUtilsTester.class);
+        suite.addTestSuite(XmlTreeTester.class);
         suite.addTestSuite(XmlUtilsTester.class);
         suite.addTestSuite(ZipUtilsTester.class);
-        suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
     }
 
     public static void main(String args[]) {
