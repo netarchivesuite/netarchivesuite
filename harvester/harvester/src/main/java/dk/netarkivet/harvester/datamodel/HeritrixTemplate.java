@@ -22,6 +22,7 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
+import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import java.util.regex.Pattern;
@@ -58,6 +59,12 @@ public class HeritrixTemplate {
         "/crawl-order/controller/newObject"
         + "/newObject[@name='exclude-filter']"
         + "/map[@name='filters']";
+    /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
+    public static final String DECIDERULES_MAP_XPATH = 
+        "/crawl-order/controller/newObject"
+        + "/newObject[@name='decide-rules']"
+        + "/map[@name='rules']";
+    
     /** Xpath checked by Heritrix for correct user-agent field in requests. */
     public static final String HERITRIX_USER_AGENT_XPATH =
             "/crawl-order/controller/map[@name='http-headers']"
@@ -66,7 +73,12 @@ public class HeritrixTemplate {
     public static final String HERITRIX_FROM_XPATH =
             "/crawl-order/controller/map[@name='http-headers']/"
             + "string[@name='from']";
-
+    /** Xpath to check, that all templates use the DecidingScope. */
+    public static final String DECIDINGSCOPE_XPATH =
+            "/crawl-order/controller/newObject[@name='scope']"
+            + "[@class='" + DecidingScope.class.getName()
+            + "']";
+    
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
     private static final Map<String, Pattern> requiredXpaths
@@ -99,8 +111,15 @@ public class HeritrixTemplate {
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
         requiredXpaths.put(GROUP_MAX_ALL_KB_XPATH,
                            Pattern.compile(WHOLE_NUMBER_REGEXP));
-        requiredXpaths.put(EXCLUDE_FILTER_MAP_XPATH,
-                           Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
+        
+        // Require that we use DecidingScope
+        //requiredXpaths.put(DECIDINGSCOPE_XPATH,
+        //                    Pattern.compile(EVERYTHING_REGEXP));   
+        
+        // Required that we have a rules map used to add crawlertraps
+        //requiredXpaths.put(DECIDERULES_MAP_XPATH,
+        //                   Pattern.compile(EVERYTHING_REGEXP, Pattern.DOTALL));
+ 
         requiredXpaths.put(HERITRIX_USER_AGENT_XPATH,
                            Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));

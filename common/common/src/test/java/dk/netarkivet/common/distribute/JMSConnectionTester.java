@@ -524,12 +524,9 @@ public class JMSConnectionTester extends TestCase {
         msg = new TestMessage(Channels.getTheArcrepos(),
                 Channels.getTheBamon(), "testMSG");
 
-        if (!TestUtils.runningAs("LC")) { // Can you reply to an unsent msg?
-            return;
-        }
         try {
             con.reply(msg);
-            fail("Shouldn't be able to reply to unsent message");
+            fail("Shouldn't be able to reply to unsent message.");
         } catch (PermissionDenied e) {
             // expected - msg has not been sent.
         }

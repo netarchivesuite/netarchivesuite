@@ -50,10 +50,10 @@ public class UtilsTesterSuite {
         suite.addTestSuite(ProcessUtilsTester.class);
         suite.addTestSuite(SettingsFactoryTester.class);
         suite.addTestSuite(SimpleXmlTester.class);
-        suite.addTestSuite(StreamUtilsTester.class);
+        //suite.addTestSuite(StreamUtilsTester.class);
         suite.addTestSuite(StringUtilsTester.class);
         suite.addTestSuite(SystemUtilsTester.class);
-        suite.addTestSuite(XmlTreeTester.class);
+        //suite.addTestSuite(XmlTreeTester.class);
         suite.addTestSuite(XmlUtilsTester.class);
         suite.addTestSuite(ZipUtilsTester.class);
     }

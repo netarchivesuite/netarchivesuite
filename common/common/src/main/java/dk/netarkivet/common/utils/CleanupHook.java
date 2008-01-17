@@ -53,7 +53,7 @@ public class CleanupHook extends Thread {
      * Called by the JVM to clean up the object before exiting.
      * The method calls the cleanup() method 
      * Note: System.out.println is added in this method
-     * because logging may or may not active at this time.
+     * because logging may or may not be active at this time.
      */
     public void run() {
         Log log = null;

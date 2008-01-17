@@ -467,21 +467,20 @@ public class Job implements Serializable {
         assert (maxCountObjects >= minCountObjects) : "basic invariant";
     }
 
-    /** Updates this jobs order.xml to include filters defined by crawler traps
-     * for the given domain.
+    /** Updates this jobs order.xml to include a MatchesRegExpDecideRule
+     *  for each crawlertrap associated with for the given domain.
      *
      * The added nodes have the form
      *
      * <newObject name="domain.dk{0,1,2,..}"
-     *     class="org.archive.crawler.filter.URIRegExpFilter">
-     *     <boolean name="enabled">true</boolean>
-     *     <boolean name="if-match-return">true</boolean>
-     *     <string name="regexp">theregexp</string>
-     * </newObject>
+     *      class="org.archive.crawler.deciderules.MatchesRegExpDecideRule">
+     *       <string name="decision">REJECT</string>
+     *       <string name="regexp">theregexp</string>
+     *     </newObject>
      *
-     * @param d The domain for which to generate crawler traps.
+     * @param d The domain for which to generate crawler trap deciderules
      * @throws ArgumentNotValid
-     *          If unable to order.xml due to wrong order.xml format
+     *          If unable to update order.xml due to wrong order.xml format
      */
     private void editOrderXML_crawlerTraps(Domain d) throws ArgumentNotValid {
         //Get the regexps to exclude
@@ -510,15 +509,11 @@ public class Job implements Serializable {
             Element filter = filterMap.addElement("newObject");
             filter.addAttribute("name", d.getName() + count);
             filter.addAttribute("class",
-                    "org.archive.crawler.filter.URIRegExpFilter");
+            "org.archive.crawler.deciderules.MatchesRegExpDecideRule");
 
-            Element enabled = filter.addElement("boolean");
-            enabled.addAttribute("name", "enabled");
-            enabled.addText("true");
-
-            Element ifMatchReturn = filter.addElement("boolean");
-            ifMatchReturn.addAttribute("name", "if-match-return");
-            ifMatchReturn.addText("true");
+            Element decision = filter.addElement("string");
+            decision.addAttribute("name", "decision");
+            decision.addText("REJECT");
 
             Element regexp = filter.addElement("string");
             regexp.addAttribute("name", "regexp");
@@ -526,6 +521,7 @@ public class Job implements Serializable {
 
             count++;
         }
+
     }
 
     /**

@@ -24,11 +24,13 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
 
+import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 import junit.framework.TestCase;
 import java.util.List;
@@ -198,5 +200,19 @@ public class HeritrixTemplateTester extends TestCase {
         String templateAsXML = ht.getXML();
         assertEquals("should have equal contents", templateAsXML, doc.asXML());
     }
-
+    
+    public void testForDecidingScope() {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
+        File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
+        Document doc = XmlUtils.getXmlDoc(f);        
+        String xpath = "/crawl-order/controller/newObject[@name='scope']"
+            + "[@class='" + DecidingScope.class.getName()
+            + "']";
+        Node node = doc.selectSingleNode(xpath);
+        assertTrue("DecidingScope not found in order.xml", node != null);
+        HeritrixTemplate ht = new HeritrixTemplate(doc);
+        assertTrue("Order not verified", ht.isVerified());
+    }
 }

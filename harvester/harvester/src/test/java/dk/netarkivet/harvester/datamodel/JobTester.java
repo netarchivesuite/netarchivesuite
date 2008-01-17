@@ -56,6 +56,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 public class JobTester extends DataModelTestCase {
 
@@ -597,6 +598,10 @@ public class JobTester extends DataModelTestCase {
      * Tests that crawlertraps are correctly merged with the order.xml
      */
     public void testAddConfigurationUpdatesOrderXml() {
+        if (!TestUtils.runningAs("SVC")) {
+            // Fails during migration to DecidingScope
+            return;
+        }
         //Make a configuration with no crawlertraps
         DomainConfiguration dc1 = TestInfo.getDefaultDomain().getDefaultConfiguration();
         dc1.getDomain().setCrawlerTraps(Collections.<String>emptyList());

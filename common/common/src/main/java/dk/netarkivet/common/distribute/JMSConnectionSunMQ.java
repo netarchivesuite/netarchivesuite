@@ -75,7 +75,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private JMSConnectionSunMQ() {
         super();
         log.info("Creating instance of " + getClass().getName());
-        initConnection(true);
+        initConnection();
     }
 
     /**
@@ -203,9 +203,9 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 || errorcode.equals(SESSION_IS_CLOSED)
                 || errorcode.equals(RECEIVED_GOODBYE_FROM_BROKER)) {
             if (reconnectInProgress.compareAndSet(false, true)) { 
-                performReconnect(e);
+                performReconnect();
             } else {
-                log.warn("Ignore exception - reconnect in progress: " + e);
+                log.warn("Ignore exception - reconnect already in progress: " + e);
             }
         } else {
             log.warn("Exception not handled. Don't know how to handle exceptions with errorcode "
@@ -215,20 +215,15 @@ public class JMSConnectionSunMQ extends JMSConnection {
     
     /**
      * Try to do a reconnect to the JMSbroker.
-     * @param e 
      */
-    private void performReconnect(JMSException e){
-        String errorCode = e.getErrorCode();
-        log.info("Perform reconnect due to JMSexception with errorcode '"
-                + errorCode + "'" + e);
-
+    private void performReconnect(){
         log.info("Trying to reconnect to jmsbroker at " 
                 + getHost() + ":" + getPort());
 
         boolean operationSuccessful = false;
         JMSException lastException = null;
         int tries = 0;
-        while (!operationSuccessful && tries < 10) {
+        while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
             try {
                 reconnect();
@@ -237,8 +232,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 lastException = e2;
                 log.warn("Exception during reconnect(): " + e2);
             }
-            log.warn("Will sleep now (Thread = " + Thread.currentThread().getId());
-            exponentialBackoffSleep(1);
+            log.info("Will sleep now for " + (int) (Math.pow(2, tries-1)) + " minutes before trying to reconnect again");
+            exponentialBackoffSleep(tries-1);
 
         }
         if (!operationSuccessful) {
@@ -246,7 +241,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
         }
 
         // Add listeners already stored in the consumers map
-        log.info("Add listeners");
+        log.debug("Add listeners");
         try {
             for (String consumerkey: consumers.keySet()) {
                 String channelName = getChannelName(consumerkey);
@@ -261,7 +256,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
                     myQueueReceiver.setMessageListener(mc.getMessageListener());
                 }
             }
-            log.info("Use this as exceptionshandler for the two JMS Connections");
+            log.debug("Using this() as exceptionhandler for the two JMS Connections");
             myQConn.setExceptionListener(this);
             myTConn.setExceptionListener(this);
         } catch (JMSException e1) {
