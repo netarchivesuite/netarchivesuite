@@ -55,11 +55,6 @@ public class HeritrixTemplate {
         + "/newObject[@name='QuotaEnforcer']"
         + "/long[@name='group-max-all-kb']";
     /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
-    public static final String EXCLUDE_FILTER_MAP_XPATH =
-        "/crawl-order/controller/newObject"
-        + "/newObject[@name='exclude-filter']"
-        + "/map[@name='filters']";
-    /** Xpath needed by Job.editOrderXML_crawlerTraps(). */
     public static final String DECIDERULES_MAP_XPATH = 
         "/crawl-order/controller/newObject"
         + "/newObject[@name='decide-rules']"
