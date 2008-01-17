@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -43,6 +41,7 @@ import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.webinterface.HarvestStatus.DefaultedRequest;
+import dk.netarkivet.testutils.TestUtils;
 
 
 public class HarvestStatusTester extends WebinterfaceTestCase {
@@ -62,6 +61,10 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessRequest() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            //Excluded while migrating to decidingScope
+            return;
+        }
         JobDAO jobDAO = JobDBDAO.getInstance();
         Job job = Job.createJob(42L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);

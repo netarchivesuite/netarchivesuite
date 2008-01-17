@@ -65,7 +65,7 @@ import dk.netarkivet.common.utils.StringUtils;
 /**
  * This class represents one job to run by Heritrix.
  * It's based on a number of configurations all based on the same order.xml
- * and at most one configuration pr. domain.
+ * and at most one configuration for each domain.
  * Each job consists of configurations of the approximate same size; that is
  * the difference in expectation from the smallest configuration to the
  * largest configuration is within a factor of each other defined as
@@ -100,7 +100,7 @@ public class Job implements Serializable {
     private long forceMaxObjectsPerDomain =
             Constants.HERITRIX_MAXOBJECTS_INFINITY;
     /**
-     * Overrides the invidual configurations maximum setting for bytes
+     * Overrides the individual configurations maximum setting for bytes
      * retrieved from a domain when set to other than -1.
      */
     private long forceMaxBytesPerDomain = Constants.HERITRIX_MAXBYTES_INFINITY;
@@ -490,15 +490,15 @@ public class Job implements Serializable {
         }
 
         //Get the node to update
-        String filterMapXpath = HeritrixTemplate.EXCLUDE_FILTER_MAP_XPATH;
-        Node filterMapNode
-                = orderXMLdoc.selectSingleNode(filterMapXpath);
-        if (filterMapNode == null || !(filterMapNode instanceof Element)) {
+        String rulesMapXpath = HeritrixTemplate.DECIDERULES_MAP_XPATH;
+        Node rulesMapNode
+                = orderXMLdoc.selectSingleNode(rulesMapXpath);
+        if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
             throw new PermissionDenied("Unable to update order.xml document."
                                        + "Does not have the right form to add"
-                                       + "crawler trap filters.");
+                                       + "crawler trap deciderules.");
         }
-        Element filterMap = (Element) filterMapNode;
+        Element rulesMap = (Element) rulesMapNode;
 
         //Add all regexps under the node
 
@@ -506,16 +506,16 @@ public class Job implements Serializable {
         // each regexp.
         int count = 0;
         for (String trap : crawlerTraps) {
-            Element filter = filterMap.addElement("newObject");
-            filter.addAttribute("name", d.getName() + count);
-            filter.addAttribute("class",
+            Element deciderule = rulesMap.addElement("newObject");
+            deciderule.addAttribute("name", d.getName() + count);
+            deciderule.addAttribute("class",
             "org.archive.crawler.deciderules.MatchesRegExpDecideRule");
 
-            Element decision = filter.addElement("string");
+            Element decision = deciderule.addElement("string");
             decision.addAttribute("name", "decision");
             decision.addText("REJECT");
 
-            Element regexp = filter.addElement("string");
+            Element regexp = deciderule.addElement("string");
             regexp.addAttribute("name", "regexp");
             regexp.addText(trap);
 
@@ -804,7 +804,7 @@ public class Job implements Serializable {
      */
     public void setSeedList(String seedList) {
         //TODO The following is removed, because it breaks a "lot" of unittests.
-        // and it has not been checked up til now.
+        // and it has not been checked up until now.
         //ArgumentNotValid.checkNotNullOrEmpty(seedList, "seedList");
         ArgumentNotValid.checkNotNull(seedList, "seedList");
         seedListSet = new HashSet<String>();
@@ -902,8 +902,8 @@ public class Job implements Serializable {
     /**
      * Gets the maximum number of bytes harvested per domain.
      *
-     * @return The maximum number of bytes harvested per domain.  -1 means
-     * no limit.
+     * @return The maximum number of bytes harvested per domain.
+     *  -1 means no limit.
      */
     public long getMaxBytesPerDomain() {
         return forceMaxBytesPerDomain;
@@ -928,7 +928,8 @@ public class Job implements Serializable {
     }
 
     public String toString() {
-        return "Job " + getJobID() + " (state = " + getStatus() + ") for HD: " + getOrigHarvestDefinitionID();
+        return "Job " + getJobID() + " (state = " + getStatus() + ") for HD: "
+            + getOrigHarvestDefinitionID();
     }
 
 
@@ -943,7 +944,8 @@ public class Job implements Serializable {
      * Sets the maxObjectsPerDomain value.
      * @param forceMaxObjectsPerDomain The forceMaxObjectsPerDomain to set.
      * 0 means no limit.
-     * @throws IOFailure Thrown from auxiliary method editOrderXML_maxObjectsPerDomain.
+     * @throws IOFailure
+     *  Thrown from auxiliary method editOrderXML_maxObjectsPerDomain.
      */
     private void setForceMaxObjectsPerDomain(long forceMaxObjectsPerDomain) {
         if (!underConstruction) {
@@ -1180,7 +1182,7 @@ public class Job implements Serializable {
     /**
      * Append to the list of upload errors.
      * Nothing happens, if argument uploadErrors is null.
-     * @param uploadErrors a string containing upload errrors.
+     * @param uploadErrors a string containing upload errors.
      */
     public void appendUploadErrors(String uploadErrors) {
         if (uploadErrors != null) {
@@ -1207,7 +1209,7 @@ public class Job implements Serializable {
     /**
      * Append to the list of upload error details.
      * Nothing happens, if argument uploadErrorDetails is null.
-     * @param uploadErrorDetails a string containing upload errror details.
+     * @param uploadErrorDetails a string containing upload error details.
      */
     public void appendUploadErrorDetails(String uploadErrorDetails) {
         if (uploadErrorDetails != null) {

@@ -203,6 +203,8 @@ public class HeritrixTemplateTester extends TestCase {
     
     public void testForDecidingScope() {
         if (!TestUtils.runningAs("SVC")) {
+            // Fails during migration to DecidingScope
+            
             return;
         }
         File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
