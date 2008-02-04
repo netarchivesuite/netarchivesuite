@@ -26,12 +26,13 @@ package dk.netarkivet.externalsoftware;
 import java.io.File;
 
 /**
- * lc forgot to comment this!
- *
+ * Information about directories, and files used by the tests in
+ * the dk.netarkivet.externalsoftware package.
  */
 
 public class TestInfo {
-    static final File TEST_DIR = new File("tests/dk/netarkivet/externalsoftware/data/launcher");
+    /** Most of the dataset is also by the tests for package dk.netarkivet.harvester.harvesting. */
+    static final File TEST_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");
     static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
     static final File ORDER_FILE = new File(ORIGINALS_DIR, "order.xml");
@@ -70,6 +71,4 @@ public class TestInfo {
     static final File TEST_ARCREADER_DIR = new File("tests/dk/netarkivet/externalsoftware/data/ARCReader");
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
     static final File DEDUPLICATOR_ORDERXML_FILE = new File(ORIGINALS_DIR, "deduplicator_orderxml.xml");
-    
-    
 }

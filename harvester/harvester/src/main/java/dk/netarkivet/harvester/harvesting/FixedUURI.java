@@ -30,8 +30,7 @@ import org.archive.net.UURI;
  * Fixed UURI which extends UURI to fix an NPE bug in getReferencedHost.
  *
  * Pending fix of bug in Heritrix. The bug has been reported, and
- * has number 1543846. Cf. http://sourceforge.net/tracker/index.php?func=detail&aid=1543846&group_id=73833&atid=539099
- *
+ * has number 616: http://webteam.archive.org/jira/browse/HER-616 
  */
 
 public class FixedUURI extends UURI {
