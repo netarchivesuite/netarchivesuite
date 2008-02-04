@@ -1,7 +1,7 @@
-/*$Id: IngestableFilesTester.java 11 2007-07-24 10:11:24Z kfc $
-* $Revision: 11 $
-* $Date: 2007-07-24 12:11:24 +0200 (ti, 24 jul 2007) $
-* $Author: kfc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -33,8 +33,8 @@ import org.archive.util.ArchiveUtils;
 import org.archive.util.SurtPrefixSet;
 
 /**
- * Class that re-creates the SurtPrifixSet to include only domain names
- * according to the domain definition of NetarchiveSuite
+ * Class that re-creates the SurtPrefixSet to include only domain names
+ * according to the domain definition of NetarchiveSuite.
  */
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
@@ -45,11 +45,11 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
         super(s);
         setDescription(
                 "OnNSDomainsDecideRule. Makes the configured decision " +
-                        "for any URI which is inside one of the domains in the " +
-                        "configured set of domains - according to the domain " +
-                        "definition of the NetarchiveSuite system. " +
-                        "Giving that e.g. sports.tv2.dk will resolve to tv2.dk" +
-                        "but ??????????");
+                "for any URI which is inside one of the domains in the " +
+                "configured set of domains - according to the domain " +
+                "definition of the NetarchiveSuite system. " +
+                "Giving that e.g. sports.tv2.dk will resolve to tv2.dk" +
+                "but ??????????");
     }
 
     protected void readPrefixes() {
@@ -60,13 +60,13 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Method that rebuilds the SurtPrefixSet to include only
-     * Top most domains - according to the domain definition in NetarchiveSuite
+     * Top most domains - according to the domain definition
+     * in NetarchiveSuite.
      */
-
     protected void myBuildSurtPrefixSet() {
         //make copy of original SurtPrefixSet to loop
         SurtPrefixSet newSurtPrefixes = (SurtPrefixSet) surtPrefixes.clone();
-        //pattern that matches fist part of SURT - until
+        //pattern that matches first part of SURT - until
         Pattern p = Pattern.compile("http\\://\\([^\\)]*");
         //loop all original SURTs
         for (String s : newSurtPrefixes) {
@@ -77,13 +77,15 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
                 //split in hostname/domainname/TLD parts
                 String[] parts = hostpart.split(",");
                 String domname = "";
-                //loop through parts in reverse order - add '.' (not after last part)
+                //loop through parts in reverse order - add '.'
+                //(not after last part)
                 for (int j = parts.length - 1; j >= 0; j--) {
                     domname += parts[j];
                     if (j != 0) domname += ".";
                 }
                 //add the new domain name to surtPrefixes
-                //since this is always shorter SURTs than the originals they will automatically
+                //since this is always shorter SURTs than the originals
+                //they will automatically
                 //override longer ones (built in SURTs logic)
                 surtPrefixes.add(prefixFrom(domname));
             }
@@ -91,9 +93,11 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
     }
 
     /**
-     * Generate the SURT prefix that matches the domain definition of NetarchiveSuite
+     * Generate the SURT prefix that matches the domain definition
+     * of NetarchiveSuite.
      * @param uri URL to convert to SURT
-     * @return String with SURT that matches the domain definition of NetarchiveSuite
+     * @return String with SURT that matches the domain definition
+     * of NetarchiveSuite
      */
     protected String prefixFrom(String uri) {
         uri = ArchiveUtils.addImpliedHttpIfNecessary(uri);
@@ -102,7 +106,8 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Convert a URI to its domain.
-     * @param uri URL to convert to Top most domain-name according to NetarchiveSuite definition
+     * @param uri URL to convert to Top most domain-name according to
+     * NetarchiveSuite definition
      * @return Domain name
      */
     public static String convertToDomain(String uri) {
