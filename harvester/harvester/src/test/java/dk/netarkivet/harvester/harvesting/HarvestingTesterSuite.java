@@ -44,6 +44,7 @@ public class HarvestingTesterSuite {
         suite.addTestSuite(HeritrixFilesTester.class);
         suite.addTestSuite(HeritrixLauncherTester.class);
         suite.addTestSuite(IngestableFilesTester.class);
+        suite.addTestSuite(OnNSDomainsDecideRuleTester.class);
     }
 
     public static void main(String args[])

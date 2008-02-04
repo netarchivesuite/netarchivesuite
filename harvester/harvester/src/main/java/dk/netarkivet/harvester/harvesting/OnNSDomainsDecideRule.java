@@ -49,7 +49,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
                 "configured set of domains - according to the domain " +
                 "definition of the NetarchiveSuite system. " +
                 "Giving that e.g. sports.tv2.dk will resolve to tv2.dk" +
-                "but ??????????");
+                " but www.bbc.co.uk will resolve to bbc.co.uk");
     }
 
     protected void readPrefixes() {
