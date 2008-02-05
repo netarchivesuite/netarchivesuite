@@ -51,7 +51,6 @@ public class BitPreservationTesterSuite {
         suite.addTestSuite(ChecksumJobTester.class);
         suite.addTestSuite(FileListJobTester.class);
         suite.addTestSuite(WorkFilesTester.class);
-        suite.addTestSuite(FilePreservationStatusTester.class);
     }
 
     public static void main(String args[]) {

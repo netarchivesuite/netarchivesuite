@@ -22,13 +22,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@ page import="java.util.List,
+                 dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
                  dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
                  dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
                  dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
                  dk.netarkivet.archive.webinterface.Constants,
                  dk.netarkivet.common.distribute.arcrepository.Location,
-                 dk.netarkivet.common.exceptions.ForwardedToErrorPage,
-		 	     dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+		 	     dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -52,7 +52,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     Iterable<String> wrongFiles;
     try {
-        wrongFiles = FileBasedActiveBitPreservation.getInstance().getChangedFiles(bitarchive
+        ActiveBitPreservation bitPreservation
+                = FileBasedActiveBitPreservation.getInstance();
+        wrongFiles = bitPreservation.getChangedFiles(bitarchive
         );
     } catch (IllegalState e) {
         HTMLUtils.forwardWithErrorMessage(pageContext,

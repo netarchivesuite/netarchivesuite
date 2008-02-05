@@ -22,12 +22,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@ page import="
+dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
 dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
 dk.netarkivet.archive.webinterface.Constants,
-dk.netarkivet.common.distribute.arcrepository.Location,
-dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"
@@ -54,8 +54,10 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
 
     // Make a list of files to make status for:
     Iterable<String> missingFiles;
+    ActiveBitPreservation activeBitPreservation
+            = FileBasedActiveBitPreservation.getInstance();
     try {
-        missingFiles = FileBasedActiveBitPreservation.getInstance().getMissingFiles(bitarchive);
+        missingFiles = activeBitPreservation.getMissingFiles(bitarchive);
     } catch (IllegalState e) {
 
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
@@ -63,30 +65,11 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
         throw new ForwardedToErrorPage(e.getMessage(), e);
     }
     int numberOfMissingFiles
-            = (int) FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(bitarchive);
+            = (int) activeBitPreservation.getNumberOfMissingFiles(bitarchive);
 
     // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
 %>
-<script type="text/javascript" language="javascript">
-    /** Toggles the status of all checkboxes with a given class */
-    function toggleCheckboxes(command) {
-        var toggler = document.getElementById("toggle" + command);
-        if (toggler.checked) {
-            var setOn = true;
-        } else {
-            var setOn = false;
-        }
-        var elements = document.getElementsByName(command);
-        var maxToggle = document.getElementById("toggleAmount" + command).value;
-        if (maxToggle <= 0) {
-            maxToggle = elements.length;
-        }
-        for (var i = 0; i < elements.length && i < maxToggle; i++) {
-            elements[i].checked = setOn;
-        }
-    }
-</script>
 <h3 class="page_heading"><fmt:message
         key="pagetitle;filestatus.files.missing"/></h3>
 <%
@@ -123,7 +106,7 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
     for (String filename : missingFiles) {
         //Print a row for the file with info
         BitpreserveFileStatus.printFileName(out, filename, rowCount, response.getLocale());
-        // If info was requested, output it
+        // If info for file exists, output it
         if (fileInfo.containsKey(filename)) {
             %>
             <tr><td>
@@ -156,7 +139,8 @@ dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.excep
         rowCount++;
     } // for (String filename : missingFiles)
 
-    // Table and form footer%>
+    // Table and form footer
+    %>
 
         </table>
         <input type="submit" value="<fmt:message key="execute"/>"/>

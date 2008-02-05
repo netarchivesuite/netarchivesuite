@@ -36,13 +36,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
-import dk.netarkivet.archive.arcrepository.bitpreservation.WorkFiles;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 
@@ -90,13 +89,14 @@ public class BitpreserveFileStatus {
                 request.getParameter(Constants.FIND_MISSING_FILES_PARAM);
         String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
 
-        FileBasedActiveBitPreservation preserve = FileBasedActiveBitPreservation.getInstance();
+        ActiveBitPreservation preserve
+                = FileBasedActiveBitPreservation.getInstance();
         if (findmissingfiles != null) {
             preserve.findMissingFiles(bitarchive);
         }
 
         if (checksum != null) {
-            preserve.findWrongFiles(bitarchive);
+            preserve.findChangedFiles(bitarchive);
         }
     }
 
@@ -131,7 +131,8 @@ public class BitpreserveFileStatus {
                     Location.getKnownNames()
             );
         }
-        FileBasedActiveBitPreservation preserve = FileBasedActiveBitPreservation.getInstance();
+        ActiveBitPreservation preserve
+                = FileBasedActiveBitPreservation.getInstance();
         Locale l = context.getResponse().getLocale();
         if (params.containsKey(ADD_COMMAND)) {
             String[] adds = params.get(ADD_COMMAND);
@@ -145,13 +146,16 @@ public class BitpreserveFileStatus {
                 try {
                     preserve.reuploadMissingFiles(ba, filename);
                     res.append("<br/>");
-                    res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
-                                                                         "file.0.has.been.restored.in.bitarchive.on.1",
-                                                                         filename,
-                                                                         ba.getName())));
+                    res.append(HTMLUtils.escapeHtmlValues(I18N.getString(
+                            l,
+                            "file.0.has.been.restored.in.bitarchive.on.1",
+                            filename, ba.getName())));
                     res.append("<br/>");
                 } catch (Exception e) {
-                    res.append(I18N.getString(l, "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed", filename, ba));
+                    res.append(I18N.getString(
+                            l,
+                            "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
+                            filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
                     res.append("<br/>");
@@ -160,25 +164,6 @@ public class BitpreserveFileStatus {
                 }
             }
         }
-
-        if (params.containsKey(SET_FAILED_COMMAND)) {
-            String[] setFaileds = params.get(SET_FAILED_COMMAND);
-            for (String s : setFaileds) {
-                String[] parts = s.split(dk.netarkivet.archive.arcrepository
-                        .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-                checkArgs(context, parts, SET_FAILED_COMMAND, "bitarchive name",
-                          "filename");
-                final Location ba = Location.get(parts[0]);
-                final String filename = parts[1];
-                preserve.setAdminDataFailed(filename, ba);
-                res.append(HTMLUtils.escapeHtmlValues(I18N.getString(l,
-                                                                     "file.0.is.now.marked.as.failed.in.bitarchive.1",
-                                                                     filename,
-                                                                     ba.getName())));
-                res.append("<br/>");
-            }
-        }
-
         Map<String, FilePreservationStatus> infoMap =
                 new HashMap<String, FilePreservationStatus>();
         // Do this at the end so that the info reflects reality!
@@ -212,10 +197,11 @@ public class BitpreserveFileStatus {
     private static void checkArgs(PageContext context, String[] parts,
                                   String cmd, String... argnames) {
         if (argnames.length != parts.length) {
-            HTMLUtils.forwardWithErrorMessage(context, I18N,
-                                              "errormsg;argument.mismatch.command.needs.arguments.0.but.got.1",
-                                              Arrays.asList(argnames),
-                                              Arrays.asList(parts));
+            HTMLUtils.forwardWithErrorMessage(
+                    context, I18N,
+                    "errormsg;argument.mismatch.command.needs.arguments.0.but.got.1",
+                    Arrays.asList(argnames),
+                    Arrays.asList(parts));
 
             throw new ForwardedToErrorPage("Command " + cmd
                                            + " needs arguments "
@@ -237,19 +223,22 @@ public class BitpreserveFileStatus {
      *
      * @return The file preservation status for a file, if that was requested.
      */
-    public static FilePreservationStatus processChecksumRequest(ServletRequest request,
-                                              StringBuilder res,
-                                              PageContext context) {
+    public static FilePreservationStatus processChecksumRequest(
+            ServletRequest request,
+            StringBuilder res,
+            PageContext context) {
         Locale l = context.getResponse().getLocale();
         HTMLUtils.forwardOnMissingParameter(context,
-                Constants.BITARCHIVE_NAME_PARAM);
+                                            Constants.BITARCHIVE_NAME_PARAM);
         HTMLUtils.forwardOnIllegalParameter(context,
-                Constants.BITARCHIVE_NAME_PARAM, Location.getKnownNames());
+                                            Constants.BITARCHIVE_NAME_PARAM,
+                                            Location.getKnownNames());
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         if (bitarchiveName == null) { // param BITARCHIVE_PARAMETER_NAME not set
-            res.append(I18N.getString(l,
-                                      "errmsg;lack.name.for.bitarchive.to.be.corrected"));
+            res.append(I18N.getString(
+                    l,
+                    "errmsg;lack.name.for.bitarchive.to.be.corrected"));
             return null;
         }
         Location bitarchive = Location.get(bitarchiveName);
@@ -265,56 +254,59 @@ public class BitpreserveFileStatus {
                 checksum != null) {
                 // Only if an action was intended do we complain about
                 // a missing file.
-                res.append(I18N.getString(l,
-                                          "errmsg;lack.name.for.file.to.be.corrected.in.0",
-                                          bitarchiveName));
+                res.append(I18N.getString(
+                        l,
+                        "errmsg;lack.name.for.file.to.be.corrected.in.0",
+                        bitarchiveName));
             }
             return null;
         }
 
-        FileBasedActiveBitPreservation preserve
+        ActiveBitPreservation preserve
                 = FileBasedActiveBitPreservation.getInstance();
         if (fixadminchecksum != null) {
             preserve.changeStatusForAdminData(filename);
-            FileUtils.removeLineFromFile(filename,
-                                         WorkFiles.getFile(bitarchive,
-                                                           WorkFiles.WRONG_FILES));
         } else if (checksum != null || credentials != null) {
             // If FIX_ADMIN_CHECKSUM_PARAM is unset, the parameters
             // CHECKSUM_PARAM and CREDENTIALS_PARAM are used for removal
             // of a broken file.
             if (checksum == null) { // param CHECKSUM_PARAM not set
-                res.append(I18N.getString(l,
-                                          "errmsg;lack.checksum.for.corrupted.file.0",
-                                          filename));
+                res.append(I18N.getString(
+                        l,
+                        "errmsg;lack.checksum.for.corrupted.file.0",
+                        filename));
                 res.append("<br/>");
                 return null;
             }
 
             if (credentials == null) { // param CREDENTIALS_PARAM not set
-                res.append(I18N.getString(l,
-                                          "errmsg;lacking.privileges.to.correct.in.bitarchive")
+                res.append(I18N.getString(
+                        l,
+                        "errmsg;lacking.privileges.to.correct.in.bitarchive")
                 );
                 res.append("<br/>");
                 return null;
             }
             try {
-                preserve.replaceChangedFile(bitarchive, filename, credentials, checksum);
-                //TODO!
-                res.append(I18N.getString(l,
-                                          "file.0.has.been.replaced.in.1",
-                                          filename, bitarchive));
+                preserve.replaceChangedFile(bitarchive, filename, credentials,
+                                            checksum);
+                res.append(I18N.getString(
+                        l,
+                        "file.0.has.been.replaced.in.1",
+                        filename, bitarchive));
                 res.append("<br/>");
             } catch (Exception e) {
-                //TODO!
-                res.append(I18N.getString(l,
-                                          "Attempt at restoring {0} in bitarchive on location {1} failed",
-                                          filename, bitarchive));
+                res.append(I18N.getString(
+                        l,
+                        "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
+                        filename, bitarchive));
                 res.append("<br/>");
                 res.append(e.getMessage());
                 res.append("<br/>");
+                log.warn("Attempt at restoring '" + filename
+                         + "' in bitarchive on location '" + bitarchive
+                         + "' failed", e);
             }
-
         }
         if (filename != null) {
             return preserve.getFilePreservationStatus(filename);
@@ -366,39 +358,44 @@ public class BitpreserveFileStatus {
                                                          Location location,
                                                          Locale locale)
             throws IOException {
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+        ActiveBitPreservation activeBitPreservation
+                = FileBasedActiveBitPreservation.getInstance();
+
+        //Header
+        out.println(I18N.getString(
                 locale, "filestatus.for") + "&nbsp;<b>" + HTMLUtils
                 .escapeHtmlValues(location.getName()) + "</b>");
         out.println("<br/>");
 
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "number.of.files") + "&nbsp;" + FileBasedActiveBitPreservation.getInstance().getNumberOfFiles(
+        //Number of files, and number of files missing
+        out.println(I18N.getString(
+                locale,
+                "number.of.files")
+                    + "&nbsp;"
+                    + activeBitPreservation.getNumberOfFiles(
                 location));
         out.println("<br/>");
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "missing.files") + "&nbsp;" + FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(
+        out.println(I18N.getString(
+                locale,
+                "missing.files")
+                    + "&nbsp;"
+                    + activeBitPreservation.getNumberOfMissingFiles(
                 location));
 
-        if (FileBasedActiveBitPreservation.getInstance().getNumberOfMissingFiles(location
-        ) > 0) {
+        if (activeBitPreservation.getNumberOfMissingFiles(location) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
                     .encodeAndEscapeHTML(location.getName())) + " \">");
-            out.print(I18n.getString(
-                    dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+            out.print(I18N.getString(
                     locale, "show.missing.files"));
             out.print("</a>");
         }
         out.println("<br/>");
 
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+        out.println(I18N.getString(
                 locale, "last.update.at.0",
-                FileBasedActiveBitPreservation.getInstance().getDateForMissingFiles(location
+                activeBitPreservation.getDateForMissingFiles(location
                 )));
         out.println("<br/>");
 
@@ -406,9 +403,8 @@ public class BitpreserveFileStatus {
                     + Constants.FIND_MISSING_FILES_PARAM + "=1&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(location.getName())) + "\">" + I18n
-                .getString(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                           locale, "update") + "</a>");
+                .encodeAndEscapeHTML(location.getName())) + "\">" + I18N
+                .getString(locale, "update") + "</a>");
         out.println("<br/><br/>");
     }
 
@@ -426,48 +422,60 @@ public class BitpreserveFileStatus {
                                                            Location location,
                                                            Locale locale)
             throws IOException {
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "checksum.status.for") + "&nbsp;<b>" + HTMLUtils
-                .escapeHtmlValues(location.getName()) + "</b>");
+        ActiveBitPreservation bitPreservation
+                = FileBasedActiveBitPreservation.getInstance();
+
+        //Header
+        out.println(I18N.getString(locale, "checksum.status.for")
+                    + "&nbsp;<b>"
+                    + HTMLUtils.escapeHtmlValues(location.getName()) + "</b>");
         out.println("<br/>");
 
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "number.of.files.with.error") + "&nbsp;"
-                                                      + FileBasedActiveBitPreservation.getInstance().getNumberOfChangedFiles(
-                location));
+        //Number of changed files
+        out.println(I18N.getString(locale, "number.of.files.with.error")
+                    + "&nbsp;"
+                    + bitPreservation.getNumberOfChangedFiles(location));
 
-        if (FileBasedActiveBitPreservation.getInstance().getNumberOfChangedFiles(location
-        ) > 0) {
+        //Link to fix-page
+        if (bitPreservation.getNumberOfChangedFiles(location) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_CHECKSUM_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
                     .encodeAndEscapeHTML(location.getName())) + " \">");
-            out.print(I18n.getString(
-                    dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
+            out.print(I18N.getString(
                     locale, "show.files.with.error"));
             out.print("</a>");
         }
         out.println("<br/>");
 
-        out.println(I18n.getString(
-                dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                locale, "last.update.at.0",
-                FileBasedActiveBitPreservation.getInstance().getDateForChangedFiles(location
-                )));
+        //Time for last update
+        out.println(I18N.getString(locale, "last.update.at.0",
+                                   bitPreservation.getDateForChangedFiles(
+                                           location)));
         out.println("<br/>");
 
+        //Link for running a new job
         out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
                     + Constants.CHECKSUM_PARAM + "=1&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(location.getName())) + "\">" + I18n
-                .getString(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE,
-                           locale, "update") + "</a>");
+                .encodeAndEscapeHTML(location.getName())) + "\">" + I18N
+                .getString(locale, "update") + "</a>");
+
+        //Separator
         out.println("<br/><br/>");
     }
 
+    /**
+     * Print a table row with a file name and a checkbox to request more info.
+     *
+     * @param out      The stream to print to.
+     * @param filename The name of the file.
+     * @param rowCount The rowcount, used for styling rows.
+     * @param locale   The current locale for labels.
+     *
+     * @throws IOException On trouble writing to stream.
+     */
     public static void printFileName(JspWriter out, String filename,
                                      int rowCount,
                                      Locale locale) throws IOException {
@@ -480,9 +488,19 @@ public class BitpreserveFileStatus {
         out.println("</tr>");
     }
 
+    /**
+     * Print a file status table for a file. This will present the state of the
+     * file in admin data and all bitarchives.
+     *
+     * @param out    The stream to print to.
+     * @param fs     The file status for the file.
+     * @param locale The locale to print labels in.
+     *
+     * @throws IOException On trouble printing to a stream.
+     */
     public static void printFileStatus(JspWriter out,
-                                        FilePreservationStatus fs,
-                                        Locale locale
+                                       FilePreservationStatus fs,
+                                       Locale locale
     )
             throws IOException {
         out.println(I18N.getString(locale, "status"));
@@ -504,21 +522,40 @@ public class BitpreserveFileStatus {
         out.println("</table>");
     }
 
+    /**
+     * Print a table row with current status of a file in admin data.
+     *
+     * @param out    The stream to print status to.
+     * @param fs     The file preservation status for that file.
+     * @param locale Locale of the labels.
+     *
+     * @throws IOException on trouble printing the status.
+     */
     private static void printFileStatusForAdminData(JspWriter out,
-                                                   FilePreservationStatus fs,
-                                                   Locale locale)
+                                                    FilePreservationStatus fs,
+                                                    Locale locale)
             throws IOException {
-        out.println("<tr><td>"
-                    + I18N.getString(locale, "admin.data")
-                    + "</td>");
-        out.println("<td>-</td>");
+        out.println("<tr>");
+        out.println(HTMLUtils.makeTableElement(
+                I18N.getString(locale, "admin.data")));
+        out.println(HTMLUtils.makeTableElement("-"));
         out.println(HTMLUtils.makeTableElement(fs.getAdminChecksum()));
         out.println("</tr>");
     }
 
+    /**
+     * Print a table row with current status of a file in a given bitarchive.
+     *
+     * @param out    The stream to print status to.
+     * @param l      The location of the files.
+     * @param fs     The file preservation status for that file.
+     * @param locale Locale of the labels.
+     *
+     * @throws IOException
+     */
     private static void printFileStatusForBitarchive(JspWriter out, Location l,
-                                                    FilePreservationStatus fs,
-                                                    Locale locale)
+                                                     FilePreservationStatus fs,
+                                                     Locale locale)
             throws IOException {
         String baLocation = l.getName();
         out.println("<tr>");
@@ -529,10 +566,45 @@ public class BitpreserveFileStatus {
         out.println("</tr>");
     }
 
+    /**
+     * Print checkboxes for changing status for files. This will print two
+     * checkboxes for changing a number of checkboxes, one for getting more
+     * info, one for reestablishing missing files.
+     *
+     * @param out                          The stream to print the checkboxes
+     *                                     to.
+     * @param locale                       The locale of the labels.
+     * @param numberOfMissingCheckboxes    The total possible number of missing
+     *                                     checkboxes.
+     * @param numberOfUploadableCheckboxes The total possible number of
+     *                                     reestablish checkboxes.
+     *
+     * @throws IOException On trouble printing the checkboxes.
+     */
     public static void printToggleCheckboxes(JspWriter out, Locale locale,
                                              int numberOfMissingCheckboxes,
                                              int numberOfUploadableCheckboxes)
             throws IOException {
+        // Print the javascript needed.
+        out.print("<script type=\"text/javascript\" language=\"javascript\">\n"
+                  + "    /** Toggles the status of all checkboxes with a given class */\n"
+                  + "    function toggleCheckboxes(command) {\n"
+                  + "        var toggler = document.getElementById(\"toggle\" + command);\n"
+                  + "        if (toggler.checked) {\n"
+                  + "            var setOn = true;\n"
+                  + "        } else {\n"
+                  + "            var setOn = false;\n"
+                  + "        }\n"
+                  + "        var elements = document.getElementsByName(command);\n"
+                  + "        var maxToggle = document.getElementById(\"toggleAmount\" + command).value;\n"
+                  + "        if (maxToggle <= 0) {\n"
+                  + "            maxToggle = elements.length;\n"
+                  + "        }\n"
+                  + "        for (var i = 0; i < elements.length && i < maxToggle; i++) {\n"
+                  + "            elements[i].checked = setOn;\n"
+                  + "        }\n"
+                  + "    }\n"
+                  + "</script>");
         // Add checkbox to toggle multiple "fileinfo" checkboxes
         printMultipleToggler(
                 out, GET_INFO_COMMAND,
@@ -547,9 +619,24 @@ public class BitpreserveFileStatus {
         }
     }
 
+    /**
+     * Print a checkbox that on click will turn a number of checkboxes of a
+     * certain type on or off.
+     *
+     * @param out                The stream to print the checkbox to.
+     * @param command            The type of checkbox.
+     * @param numberOfCheckboxes The total number of checksboxes possible to
+     *                           turn on or off.
+     * @param label              The I18N label for the describing text, an
+     *                           input box with the number to change will be
+     *                           added as parameter {0} in this label.
+     * @param locale             The locale for the checkbox.
+     *
+     * @throws IOException On trouble printing the checkbox.
+     */
     private static void printMultipleToggler(JspWriter out, String command,
-                                            int numberOfCheckboxes,
-                                            String label, Locale locale)
+                                             int numberOfCheckboxes,
+                                             String label, Locale locale)
             throws IOException {
         out.print("<input type=\"checkbox\" id=\"toggle" + command
                   + "\" onclick=\"toggleCheckboxes('" + command
@@ -563,10 +650,12 @@ public class BitpreserveFileStatus {
         out.println("<br/> ");
     }
 
-    /** Present a list of checksums in a human-readable form.
+    /**
+     * Present a list of checksums in a human-readable form.
      *
-     * @param csum List of checksum strings
+     * @param csum   List of checksum strings
      * @param locale
+     *
      * @return String presenting the checksums.
      */
     public static String presentChecksum(List<String> csum, Locale locale) {

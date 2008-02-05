@@ -48,7 +48,8 @@ public interface ActiveBitPreservation {
     /**
      * Return a list of files marked as missing on this location.
      * A file is considered missing if it does not exist compared to
-     * admin data.
+     * admin data. Guaranteed not to recheck the archive, simply returns the
+     * number returned by the last test.
      *
      * @param location The location to get missing files from.
      *
@@ -61,7 +62,8 @@ public interface ActiveBitPreservation {
     /**
      * Return a list of files with changed checksums on this location.
      * A file is considered changed if checksum does not compare to
-     * admin data.
+     * admin data. Guaranteed not to recheck the archive, simply returns the
+     * number returned by the last test.
      *
      * @param location The location to get list of changed files from.
      *
@@ -70,6 +72,20 @@ public interface ActiveBitPreservation {
      * @throws IOFailure if the list cannot be generated.
      */
     Iterable<String> getChangedFiles(Location location);
+
+    /** Update the list of files in a given bitarchive. This will be used for
+     * the next call to getMissingFiles.
+     *
+     * @param bitarchive The bitarchive to update list of files for.
+     */
+    void findMissingFiles(Location bitarchive);
+
+    /** Update the list of checksums in a given bitarchive. This will be used
+     * for the next call to getChangedFiles.
+     *
+     * @param bitarchive The bitarchive to update list of files for.
+     */
+    void findChangedFiles(Location bitarchive);
 
     /**
      * Return the number of missing files for location. Guaranteed not to
@@ -92,6 +108,17 @@ public interface ActiveBitPreservation {
      * @return The number of changed files.
      */
     long getNumberOfChangedFiles(Location location);
+
+    /**
+     * Return the total number of files for location. Guaranteed not to
+     * recheck the archive, simply returns the number returned by the last
+     * update.
+     *
+     * @param location The location to get number of files from.
+     *
+     * @return The number of files.
+     */
+    long getNumberOfFiles(Location location);
 
     /**
      * Return the date for last check of missing files for location. Guaranteed
