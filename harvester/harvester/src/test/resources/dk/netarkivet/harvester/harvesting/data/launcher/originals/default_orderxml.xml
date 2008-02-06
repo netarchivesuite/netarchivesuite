@@ -148,12 +148,22 @@
                 <boolean name="enabled">true</boolean>
                 <map name="filters">
                 </map>
-              <long name="server-max-fetch-successes">-1</long>
-              <long name="server-max-success-kb">-1</long>
-              <long name="host-max-fetch-successes">-1</long>
-              <long name="host-max-success-kb">-1</long>
-              <long name="server-max-fetch-successes">-1</long>
-              <long name="group-max-success-kb">-1</long>
+
+               <long name="server-max-fetch-successes">-1</long>
+               <long name="server-max-success-kb">-1</long>
+               <long name="server-max-fetch-responses">-1</long>
+               <long name="server-max-all-kb">-1</long>
+
+               <long name="host-max-fetch-successes">-1</long>
+               <long name="host-max-success-kb">-1</long>
+               <long name="host-max-fetch-responses">-1</long>
+               <long name="host-max-all-kb">-1</long>
+
+               <long name="group-max-fetch-successes">-1</long>
+               <long name="group-max-success-kb">-1</long>
+               <long name="group-max-fetch-responses">-1</long>
+               <long name="group-max-all-kb">-1</long>
+
             </newObject>
 
             <newObject name="Preselector" class="org.archive.crawler.prefetch.Preselector">
