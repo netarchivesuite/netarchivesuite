@@ -21,8 +21,11 @@
 */
 package dk.netarkivet.archive.bitarchive;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +34,10 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.arc.BatchFilter;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.testutils.CollectionAsserts;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
 
@@ -217,6 +222,52 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
 
     }
 
+    /** Test that illegal code (e.g. that tries to read outside of bitarchive
+     * dir, or that tries to write anywhere) cannot be executed.
+     */
+    public void testIllegalCode() throws IOException {
+        String fyensdk = FileUtils.readFile(new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
+        // A class that gets loaded from outside our normal area.
+        final File evilClassFile = new File(TestInfo.WORKING_DIR, "EvilBatch.class");
+        FileUtils.copyFile(new File("classes/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
+                           evilClassFile);
+        InputStream in = new FileInputStream(evilClassFile);
+        ByteArrayOutputStream out = new ByteArrayOutputStream((int) evilClassFile.length());
+        StreamUtils.copyInputStreamToOutputStream(in, out);
+        out.close();
+        final byte[] fileBatchJobClass = out.toByteArray();
+        Class c = new ClassLoader() {
+            Class initialize() {
+                return defineClass(null, fileBatchJobClass,
+                                   0, fileBatchJobClass.length);
+            }
+        }.initialize();
+        FileBatchJob job;
+        try {
+            job = (FileBatchJob) c.newInstance();
+        } catch (InstantiationException e) {
+            throw new IOFailure("Unable to initialise class", e);
+        } catch (IllegalAccessException e) {
+            throw new IOFailure("Illegal access for class", e);
+        }
+        BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
+        assertEquals("Batch should have processed two files",
+                     4, lbs.getNoOfFilesProcessed());
+        List<File> failedFiles = new ArrayList<File>();
+        failedFiles.addAll(lbs.getFilesFailed());
+        File fileDir = new File(TestInfo.WORKING_DIR, "filedir").getCanonicalFile();
+        CollectionAsserts.assertListEquals("Batch should have ",
+                                           failedFiles,
+                                           new File(fileDir, "Upload3.ARC"),
+                                           new File(fileDir, "fyensdk.arc"));
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        lbs.appendResults(result);
+        assertEquals("Batch should have written only the legal part",
+                     "Legal\n", result.toString());
+        FileAsserts.assertFileContains("fyensdk.arc must not have been changed",
+                                       fyensdk,
+                                       new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
+    }
     private BatchStatus assertBatchJobProcessesCorrectly(String message,
                                                          TestFileBatchJob job,
                                                          String... files) {
