@@ -40,16 +40,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * File utilities specific to the test classes
- *
- */
-
-/**
- *
+ * File utilities specific to the test classes.
  */
 public class TestFileUtils {
     public static final FilenameFilter NON_CVS_DIRS_FILTER =
@@ -272,14 +268,20 @@ public class TestFileUtils {
     /**
      * Unzip a zip file into a given directory.
      *
-     * @param f
-     * @param destdir
+     * @param zipfile a given zipfile.
+     * @param destdir the destination directory,
+     *  to which the zipfile should be unzipped.
      */
-    public static void unzip(File f, File destdir) throws IOException {
+    public static void unzip(File zipfile, File destdir) throws IOException {
+        ArgumentNotValid.checkNotNull(zipfile, "File f");
+        ArgumentNotValid.checkNotNull(destdir, "File destdir");
         Enumeration entries;
         ZipFile zipFile;
-
-        zipFile = new ZipFile(f);
+        ArgumentNotValid.checkTrue(zipfile.exists(), 
+                "File '" + zipfile.getAbsolutePath() + "' does not exist");
+        ArgumentNotValid.checkTrue(destdir.exists(), 
+                "File '" + destdir.getAbsolutePath() + "' does not exist");
+        zipFile = new ZipFile(zipfile);
 
         entries = zipFile.entries();
 

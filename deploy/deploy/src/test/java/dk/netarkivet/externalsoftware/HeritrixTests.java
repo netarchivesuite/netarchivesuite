@@ -60,6 +60,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.cdx.ExtractCDX;
 import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.FixedUURI;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
@@ -540,11 +541,8 @@ public class HeritrixTests extends TestCase {
         // to do
         long byteLimit = 500000;
         String xpath =
-            "/crawl-order/controller/map[@name='pre-fetch-processors']"
-            + "/newObject[@name='QuotaEnforcer']"
-            //+ "/long[@name='group-max-success-kb']";
-            + "/long[@name='group-max-all-kb']";
-       Node groupMaxSuccessKbNode = orderDocument.selectSingleNode(xpath);
+            HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;
+        Node groupMaxSuccessKbNode = orderDocument.selectSingleNode(xpath);
         if (groupMaxSuccessKbNode != null) {
             // Divide by 1024 since Heritrix uses KB rather than bytes,
             // and add 1 to avoid to low limit due to rounding.
@@ -683,8 +681,11 @@ public class HeritrixTests extends TestCase {
             + "/string[@name='index-location']";
         Node indexLocationNode = d.selectSingleNode(INDEX_LOCATION_PATH);
         File indexDir = mtf.newTmpDir();
-        LuceneUtils.generateIndex(new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/logs/sorted-crawl.log"),
-                getCXDReaderForArc(new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/arcs/42-23-20060726143926-00000-udvikling.kb.dk.arc.gz")),
+  
+        LuceneUtils.generateIndex(new File(TestInfo.TEST_LAUNCH_HARVEST_DIR,
+                    "logs/sorted-crawl.log"),
+                getCXDReaderForArc(new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, 
+                        "arcs/42-23-20060726143926-00000-udvikling.kb.dk.arc.gz")),
                 indexDir);
         if (indexLocationNode != null) {
             // Divide by 1024 since Heritrix uses KB rather than bytes,
@@ -763,7 +764,7 @@ public class HeritrixTests extends TestCase {
         // Sort crawl-log:
 
         //File orgCrawlog = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        File orgCrawlog = new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/logs/crawl.log");
+        File orgCrawlog = new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, "logs/crawl.log");
         assertTrue("File does not exist", orgCrawlog.exists());
         Method sortCrawlLog = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
                 "sortCrawlLog", File.class, File.class);
@@ -771,7 +772,7 @@ public class HeritrixTests extends TestCase {
         sortCrawlLog.invoke(null, orgCrawlog, sortedCrawlLog);
 
         //File arcsDir = new File(TestInfo.HERITRIX_TEMP_DIR, "arcs");
-        File arcsDir = new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals/netarkivet/testLaunchHarvest/arcs");
+        File arcsDir = new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, "arcs");
 
         // Get CDXReader of the cdx for the previous crawl.
         // Note that this may break if the arcs dir has more than one file.
@@ -801,7 +802,7 @@ public class HeritrixTests extends TestCase {
        // parse the document
        Document document = reader.read(anOrderFile);
        if (!errorHandler.getErrors().asXML().contentEquals("<errors/>")) {
-           fail (anOrderFile.getAbsolutePath() + "is invalid according to schema: "
+           fail (anOrderFile.getAbsolutePath() + " is invalid according to schema: "
                    + errorHandler.getErrors().asXML());
        }
 
@@ -937,8 +938,8 @@ public class HeritrixTests extends TestCase {
    private void setOrderXMLNode(Document doc, String xpath, String value) {
        Node xpath_node = doc.selectSingleNode(xpath);
        if (xpath_node == null) {
-           throw new IOFailure("Element " + xpath
-                   + "could not be found in this order-file!");
+           throw new IOFailure("Element '" + xpath
+                   + "' could not be found in this order-file!");
        }
        xpath_node.setText(value);
    }

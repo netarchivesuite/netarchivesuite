@@ -126,7 +126,7 @@ public class HeritrixTemplateTester extends TestCase {
         // Check validation of DECIDERULES_MAP_XPATH
         doc = XmlUtils.getXmlDoc(f);
 
-        checkLegalValues("The value should be legal for ExcludeFilterMapXpath",
+        checkLegalValues("The value should be legal for DecideRulesMapXpath",
                          doc, HeritrixTemplate.DECIDERULES_MAP_XPATH,
                          "", "<map><foo/></map>", "bl<af=10\"<</</>");
 

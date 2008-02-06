@@ -23,6 +23,7 @@
 package dk.netarkivet.testutils;
 
 import dk.netarkivet.archive.indexserver.CDXOriginCrawlLogIterator;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 import is.hi.bok.deduplicator.CrawlLogIterator;
@@ -34,9 +35,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Some Lucene Utilities used in some of our tests.
+ */
 public class LuceneUtils {
 
-    static final File ORIGINALS_DIR = new File("tests/dk/netarkivet/externalsoftware/data/launcher/originals");
+    static final File ORIGINALS_DIR =
+        new File("tests/dk/netarkivet/harvester/harvesting/data/launcher/originals");
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
 
     /**
@@ -56,8 +61,20 @@ public class LuceneUtils {
         }
     }
 
+    /**
+     * Generate a Lucene index from a crawllog, and a CDXReader.
+     * @param CrawlLog some crawllog
+     * @param cdxreader some CDXReader
+     * @param indexDir Destinationdirector for the Lucene index.
+     */
     public static void generateIndex(File CrawlLog, BufferedReader cdxreader,
                                      File indexDir) {
+        ArgumentNotValid.checkNotNull(CrawlLog, "File CrawlLog");
+        ArgumentNotValid.checkNotNull(cdxreader, "BufferedReader cdxreader");
+        ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
+        ArgumentNotValid.checkTrue(CrawlLog.exists(), "The crawl log '"
+                + CrawlLog.getAbsolutePath() + "' does not exist.");
+        
         try {
             // Setup Lucene for indexing our crawllogs
             final boolean optimizeIndex = true;

@@ -77,11 +77,15 @@ public class JobDBDAO extends JobDAO {
      *                          writing the job_<jobID>.xml
      */
     public synchronized void create(Job job) {
+        ArgumentNotValid.checkNotNull(job, "Job job");
         if (job.getJobID() != null) {
             // If not, we're still migrating from XML.
         } else {
             job.setJobID(generateNextID());
         }
+        
+        log.debug("Creating " + job.toString());
+        
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
@@ -91,6 +95,8 @@ public class JobDBDAO extends JobDAO {
                                    + "forcemaxbytes, orderxml, orderxmldoc, seedlist, harvest_num, "
                                    + "startdate, enddate, num_configs, edition) "
                                    + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
+            
+
             s.setLong(1, job.getJobID());
             s.setLong(2, job.getOrigHarvestDefinitionID());
             s.setInt(3, job.getStatus().ordinal());

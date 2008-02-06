@@ -52,6 +52,8 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
+import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
+
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -87,7 +89,7 @@ public class Job implements Serializable {
     private Long jobID;
     /** The Id of the harvestdefinition, that generated this job. */
     private Long origHarvestDefinitionID;
-    /** The status of the job. See the JobStatus class for the possible statuses. */
+    /** The status of the job. See the JobStatus class for the possible states. */
     private JobStatus status;
     /**
      * The priority of this job.
@@ -472,14 +474,15 @@ public class Job implements Serializable {
      *
      * The added nodes have the form
      *
-     * <newObject name="domain.dk{0,1,2,..}"
-     *      class="org.archive.crawler.deciderules.MatchesRegExpDecideRule">
+     * <newObject name="domain.dk"
+     *      class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
      *       <string name="decision">REJECT</string>
+     *       <string name="list-logic">OR</string>
      *       <string name="regexp">theregexp</string>
      *     </newObject>
      *
      * @param d The domain for which to generate crawler trap deciderules
-     * @throws ArgumentNotValid
+     * @throws IllegalState
      *          If unable to update order.xml due to wrong order.xml format
      */
     private void editOrderXML_crawlerTraps(Domain d) throws ArgumentNotValid {
@@ -494,34 +497,34 @@ public class Job implements Serializable {
         Node rulesMapNode
                 = orderXMLdoc.selectSingleNode(rulesMapXpath);
         if (rulesMapNode == null || !(rulesMapNode instanceof Element)) {
-            throw new PermissionDenied("Unable to update order.xml document."
-                                       + "Does not have the right form to add"
-                                       + "crawler trap deciderules.");
+            throw new IllegalState(
+                    "Unable to update order.xml document."
+                    + "It does not have the right form to add"
+                    + "crawler trap deciderules.");
         }
         Element rulesMap = (Element) rulesMapNode;
 
-        //Add all regexps under the node
+        //Add all regexps for the domain in a single MatchesListRegExpDecideRule
+        //which is appended to the rulesMapNode.
+        Element deciderule = rulesMap.addElement("newObject");
+        deciderule.addAttribute("name", d.getName());
+        deciderule.addAttribute("class",
+                MatchesListRegExpDecideRule.class.getName()        
+            );
 
-        // The counter count is used to distinguish the names given to
-        // each regexp.
-        int count = 0;
+        Element decision = deciderule.addElement("string");
+        decision.addAttribute("name", "decision");
+        decision.addText("REJECT");
+
+        Element listlogic = decision.addElement("string");
+        listlogic.addAttribute("name", "list-logic");
+        listlogic.addText("OR");
+        
+        Element regexpList = listlogic.addElement("stringList");
+        
         for (String trap : crawlerTraps) {
-            Element deciderule = rulesMap.addElement("newObject");
-            deciderule.addAttribute("name", d.getName() + count);
-            deciderule.addAttribute("class",
-            "org.archive.crawler.deciderules.MatchesRegExpDecideRule");
-
-            Element decision = deciderule.addElement("string");
-            decision.addAttribute("name", "decision");
-            decision.addText("REJECT");
-
-            Element regexp = deciderule.addElement("string");
-            regexp.addAttribute("name", "regexp");
-            regexp.addText(trap);
-
-            count++;
+                regexpList.addElement("string").addText(trap);
         }
-
     }
 
     /**
@@ -926,12 +929,19 @@ public class Job implements Serializable {
     void setEdition(long edition) {
         this.edition = edition;
     }
-
+    
+    /**
+     * toString method for the Job class.
+     */
     public String toString() {
-        return "Job " + getJobID() + " (state = " + getStatus() + ") for HD: "
-            + getOrigHarvestDefinitionID();
+        return "Job " + getJobID() + " (state = " + getStatus() + ", HD = "
+            + getOrigHarvestDefinitionID() + ", priority = " + getPriority()
+            + ", forcemaxcount = " + getForceMaxObjectsPerDomain()
+            + ", forcemaxbytes = " + getMaxBytesPerDomain()
+            + ", orderxml = " + getOrderXMLName()
+            + ", numconfigs = " + getDomainConfigurationMap().size()
+            + ")";
     }
-
 
     /**
      * @return Returns the forceMaxObjectsPerDomain. 0 means no limit.

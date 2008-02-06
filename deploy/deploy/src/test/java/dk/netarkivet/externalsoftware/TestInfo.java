@@ -29,9 +29,11 @@ import java.io.File;
  * Information about directories, and files used by the tests in
  * the dk.netarkivet.externalsoftware package.
  */
-
 public class TestInfo {
-    /** Most of the dataset is also by the tests for package dk.netarkivet.harvester.harvesting. */
+    /**
+     *  The data is stored at tests/dk/netarkivet/harvester/harvesting/data to
+     *  avoid duplicate templates.
+     */
     static final File TEST_DIR = new File("tests/dk/netarkivet/harvester/harvesting/data/launcher");
     static final File WORKING_DIR = new File(TEST_DIR, "working");
     static final File ORIGINALS_DIR = new File(TEST_DIR, "originals");
@@ -68,7 +70,10 @@ public class TestInfo {
     static final int MAX_OBJECTS = 10;
     public static final long JOBID = 42;
     public static final long HARVESTID = 23;
-    static final File TEST_ARCREADER_DIR = new File("tests/dk/netarkivet/externalsoftware/data/ARCReader");
+    
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
     static final File DEDUPLICATOR_ORDERXML_FILE = new File(ORIGINALS_DIR, "deduplicator_orderxml.xml");
+    
+    static final File TEST_LAUNCH_HARVEST_DIR =
+        new File("tests/dk/netarkivet/harvester/harvesting/data/launcher/originals/netarkivet/testLaunchHarvest");
 }

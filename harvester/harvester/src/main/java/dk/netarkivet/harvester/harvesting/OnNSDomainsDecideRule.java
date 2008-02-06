@@ -35,23 +35,30 @@ import org.archive.util.SurtPrefixSet;
 /**
  * Class that re-creates the SurtPrefixSet to include only domain names
  * according to the domain definition of NetarchiveSuite.
+ * The NetarchiveSuite can't use the
+ * org.archive.crawler.deciderules.OnDomainsDecideRule because
+ * it uses a different domain definition.  
  */
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
-    //this is what SurtPrefixSet.prefixFromPlain returns for a non valid URI
-    public final static String NON_VALID_DOMAIN="http://(http,)";
+    /** This is what SurtPrefixSet.prefixFromPlain returns for a non valid URI. */
+    public final static String NON_VALID_DOMAIN = "http://(http,)";
 
+    /** 
+     * Constructor for the class OnNSDomainsDecideRule. 
+     * @param s The name of this DecideRule
+     */
     public OnNSDomainsDecideRule(String s) {
         super(s);
         setDescription(
-                "OnNSDomainsDecideRule. Makes the configured decision " +
-                "for any URI which is inside one of the domains in the " +
-                "configured set of domains - according to the domain " +
-                "definition of the NetarchiveSuite system. " +
-                "Giving that e.g. sports.tv2.dk will resolve to tv2.dk" +
-                " but www.bbc.co.uk will resolve to bbc.co.uk");
+                "OnNSDomainsDecideRule. Makes the configured decision "
+                + "for any URI which is inside one of the domains in the "
+                + "configured set of domains - according to the domain "
+                + "definition of the NetarchiveSuite system. "
+                + "Giving that e.g. sports.tv2.dk will resolve to tv2.dk"
+                + " but www.bbc.co.uk will resolve to bbc.co.uk");
     }
-
+    
     protected void readPrefixes() {
         buildSurtPrefixSet();
         myBuildSurtPrefixSet();
@@ -60,7 +67,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /**
      * Method that rebuilds the SurtPrefixSet to include only
-     * Top most domains - according to the domain definition
+     * topmost domains - according to the domain definition
      * in NetarchiveSuite.
      */
     protected void myBuildSurtPrefixSet() {
