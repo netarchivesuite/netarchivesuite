@@ -28,7 +28,6 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -67,8 +66,8 @@ public class ReadOnlyAdminDataTester extends TestCase {
                 0, ad.getAllFileNames().size());
 
         Thread.sleep(1000);
-        updad.addEntry("foo", null, "bar",
-                new ArchiveStoreState(BitArchiveStoreState.DATA_UPLOADED));
+        updad.addEntry("foo", null, "bar"
+        );
         assertEquals("Should not have noticed change without synch",
                 0, ad.getAllFileNames().size());
 

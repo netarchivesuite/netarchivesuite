@@ -34,7 +34,6 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.archive.arcrepositoryadmin.ArchiveStoreState;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
@@ -267,10 +266,7 @@ public class ArcRepository implements CleanupIF {
                      + " Already completed: " + isStoreCompleted(filename));
             ad.setReplyInfo(filename, replyInfo);
         } else {
-            // Set generalState for this entry to UPLOAD_STARTED
-            ArchiveStoreState ass = new ArchiveStoreState(
-                    BitArchiveStoreState.UPLOAD_STARTED);
-            ad.addEntry(filename, replyInfo, rf.getChecksum(), ass);
+            ad.addEntry(filename, replyInfo, rf.getChecksum());
         }
         for (Map.Entry<String, BitarchiveClient> entry : connectedBitarchives
                 .entrySet()) {

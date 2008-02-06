@@ -37,7 +37,6 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.archive.arcrepositoryadmin.ArchiveStoreState;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
@@ -175,8 +174,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
-                STORABLE_FILE), new ArchiveStoreState(
-                        BitArchiveStoreState.UPLOAD_COMPLETED));
+                STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
@@ -245,8 +243,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
-        adminData.addEntry(STORABLE_FILE.getName(), null, "FFFFFFFFFFFFFFFF", new ArchiveStoreState(
-                BitArchiveStoreState.UPLOAD_COMPLETED));
+        adminData.addEntry(STORABLE_FILE.getName(), null, "FFFFFFFFFFFFFFFF");
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
@@ -365,8 +362,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
-                STORABLE_FILE), new ArchiveStoreState(
-                        BitArchiveStoreState.UPLOAD_FAILED));
+                STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_FAILED);
@@ -445,8 +441,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
-                STORABLE_FILE), new ArchiveStoreState(
-                        BitArchiveStoreState.DATA_UPLOADED));
+                STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
@@ -525,8 +520,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
-                STORABLE_FILE), new ArchiveStoreState(
-                        BitArchiveStoreState.UPLOAD_STARTED));
+                STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
@@ -605,8 +599,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
-                STORABLE_FILE), new ArchiveStoreState(
-                        BitArchiveStoreState.UPLOAD_STARTED));
+                STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
@@ -678,8 +671,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
-                        STORABLE_FILE), new ArchiveStoreState(
-                                BitArchiveStoreState.UPLOAD_STARTED));
+                        STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
@@ -748,8 +740,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
-                        STORABLE_FILE), new ArchiveStoreState(
-                                BitArchiveStoreState.DATA_UPLOADED));
+                        STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
@@ -826,8 +817,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
-                        STORABLE_FILE), new ArchiveStoreState(
-                                BitArchiveStoreState.DATA_UPLOADED));
+                        STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
@@ -904,8 +894,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
-                        STORABLE_FILE), new ArchiveStoreState(
-                                BitArchiveStoreState.DATA_UPLOADED));
+                        STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForLocation("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);

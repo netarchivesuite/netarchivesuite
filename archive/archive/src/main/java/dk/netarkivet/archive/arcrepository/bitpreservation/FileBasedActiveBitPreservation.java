@@ -118,6 +118,7 @@ public class FileBasedActiveBitPreservation
     /**
      * Retrieve the preservation status for the file with a given filename. This
      * will ask for a fresh checksum from bitarchives and admin data.
+     * This will ask for a fresh checksum from bitarchives and admin data.
      *
      * @param filename a given filename
      *
@@ -204,9 +205,9 @@ public class FileBasedActiveBitPreservation
                             = ChecksumJob.parseLine(s);
                     if (!fileChecksum.getKey().equals(filename)) {
                         log.debug("Got checksum for unexpected file '"
-                                  + fileChecksum.getKey() + " while asking "
+                                  + fileChecksum.getKey() + " while asking '"
                                   + ba
-                                  + " for checksum of '" + filename + "'");
+                                  + "' for checksum of '" + filename + "'");
                     } else {
                         checksums.add(fileChecksum.getValue());
                     }
@@ -233,7 +234,8 @@ public class FileBasedActiveBitPreservation
         File missingOutput = WorkFiles.getFile(bitarchive,
                                                WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
-            findMissingFiles(bitarchive);
+            throw new IllegalState("Could not find the file: "
+                                   + missingOutput.getAbsolutePath());
         }
         return FileUtils.readListFromFile(missingOutput);
     }

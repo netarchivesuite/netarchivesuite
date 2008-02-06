@@ -179,7 +179,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
         String arcFileName = "store1a.ARC";
         ArchiveStoreState generalState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(arcFileName, null, correctChecksum, generalState);
+        ad.addEntry(arcFileName, null, correctChecksum);
         ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
 
@@ -196,7 +196,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
         arcFileName = "store1b.ARC";
 
-        ad.addEntry(arcFileName, null, correctChecksum, generalState);
+        ad.addEntry(arcFileName, null, correctChecksum);
         ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
         m.invoke(arcRepos, new Object[] { arcFileName,
@@ -209,7 +209,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
 
         arcFileName = "NetarchiveSuite-store2.arc";
-        ad.addEntry(arcFileName, null, correctChecksum, generalState);
+        ad.addEntry(arcFileName, null, correctChecksum);
         ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
         Field f = ArcRepository.class.getDeclaredField("outstandingRemoteFiles");

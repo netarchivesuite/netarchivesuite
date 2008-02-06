@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 import com.mockobjects.servlet.MockHttpServletRequest;
 
@@ -57,18 +58,15 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPre
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
-    private static final String SET_FAILED_METHOD = "setAdminData";
 
     public BitpreserveFileStatusTester(String s) {
         super(s);
@@ -86,10 +84,6 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessMissingRequest() throws Exception {
-        if (!TestUtils.runningAs("KFC")) {
-            //Excluded while restructuring
-            return;
-        }
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
         MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();
@@ -105,38 +99,44 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        args.put(BitpreserveFileStatus.GET_INFO_COMMAND,
-                new String[] { filename1 });
-        args.put(BitpreserveFileStatus.SET_FAILED_COMMAND,
+        request.setupAddParameter(BitpreserveFileStatus.ADD_COMMAND,
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
+        args.put(BitpreserveFileStatus.GET_INFO_COMMAND,
+                new String[] { filename1 });
+        request.setupAddParameter(BitpreserveFileStatus.GET_INFO_COMMAND,
+                new String[] { filename1 });
+        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba1).getName()});
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
+        request.setupGetParameterNames(new Vector(args.keySet()).elements());
         Map<String, FilePreservationStatus> status =
                 BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
-                        defaultLocale),
-                        new StringBuilder()
-                );
-        assertEquals("Should have one call to restablish",
+                        defaultLocale, request),
+                        new StringBuilder());
+        assertEquals("Should have one call to reestablish",
                 1, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have one call to getFilePreservationStatus",
                 1, mockabp.getCallCount(GET_INFO_METHOD));
-        assertEquals("Should have one call to setAdmin",
-                1, mockabp.getCallCount(SET_FAILED_METHOD));
         assertEquals("Should have one info element (with mock results)",
                 null, status.get(filename1));
         // Check that we can call without any params
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
+        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba1).getName()});
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileStatus.processMissingRequest(
-                getDummyPageContext(defaultLocale), new StringBuilder()
+                getDummyPageContext(defaultLocale, request), new StringBuilder()
         );
         assertEquals("Should have no call to restablish",
                 0, mockabp.getCallCount(ADD_METHOD));
-        assertEquals("Should have no call to setAdmin",
-                0, mockabp.getCallCount(SET_FAILED_METHOD));
         assertEquals("Should have no call to getFilePreservationStatus",
                 0, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have no status",
@@ -147,30 +147,45 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
-        args.put(BitpreserveFileStatus.ADD_COMMAND,
+        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba2).getName()});
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+                 new String[]{Location.get(ba2).getName()});
+        request.setupAddParameter(BitpreserveFileStatus.ADD_COMMAND,
                 new String[] {
-                    ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
+        args.put(BitpreserveFileStatus.ADD_COMMAND,
+                new String[] {
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                });
+        request.setupAddParameter(BitpreserveFileStatus.GET_INFO_COMMAND,
+                new String[] { filename1, filename2, filename1 });
         args.put(BitpreserveFileStatus.GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
+        request.setupAddParameter(BitpreserveFileStatus.SET_FAILED_COMMAND,
+                new String[] {
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2
+                });
         args.put(BitpreserveFileStatus.SET_FAILED_COMMAND,
                 new String[] {
-                    ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    ba1 + Constants.STRING_FILENAME_SEPARATOR + filename2,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2
                 });
         request.setupGetParameterMap(args);
         status = BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
-                defaultLocale),
+                defaultLocale, request),
                 new StringBuilder()
         );
         assertEquals("Should have two calls to restablish",
                 2, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have three calls to getFilePreservationStatus",
                 3, mockabp.getCallCount(GET_INFO_METHOD));
-        assertEquals("Should have two calls to setAdmin",
-                3, mockabp.getCallCount(SET_FAILED_METHOD));
         assertEquals("Should have two info elements",
                 2, status.size());
         assertEquals("Should have info for filename1",
@@ -178,22 +193,17 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         assertEquals("Should have info for filename2",
                 null, status.get(filename2));
         CollectionAsserts.assertIteratorEquals("Should have the args given add",
-                Arrays.asList(new String[] { filename1 + "," + ba1,
+                Arrays.asList(new String[] { filename1 + "," + ba2,
                                              filename1 + "," + ba2}).iterator(),
                 mockabp.calls.get(ADD_METHOD).iterator());
         CollectionAsserts.assertIteratorEquals("Should have the args given info",
                 Arrays.asList(new String[] {
                     filename1, filename2, filename1 }).iterator(),
                 mockabp.calls.get(GET_INFO_METHOD).iterator());
-        CollectionAsserts.assertIteratorEquals("Should have the args given fail",
-                Arrays.asList(new String[] {
-                    filename1 + "," + ba1 + ",UPLOAD_FAILED",
-                    filename2 + "," + ba1 + ",UPLOAD_FAILED",
-                    filename2 + "," + ba2 + ",UPLOAD_FAILED" }).iterator(),
-                mockabp.calls.get(SET_FAILED_METHOD).iterator());
     }
 
-    private PageContext getDummyPageContext(final Locale l) {
+    private PageContext getDummyPageContext(final Locale l,
+                                            final ServletRequest request) {
         return new PageContext() {
             public void initialize(Servlet servlet, ServletRequest servletRequest,
                                    ServletResponse servletResponse,
@@ -217,7 +227,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             }
 
             public ServletRequest getRequest() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return request;
             }
 
             public ServletResponse getResponse() {
@@ -409,16 +419,12 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             oldValue.add(args);
             map.put(key, oldValue);
         }
-        public void setAdminDataFailed(String filename, Location ba) {
-            addCall(calls, SET_FAILED_METHOD,
-                    filename + "," + ba.getName() + "," + BitArchiveStoreState.UPLOAD_FAILED);
-        }
-        public boolean reestablishMissingFile(
-                String filename, Location ba, StringBuilder res, Locale l) {
+
+        public void reuploadMissingFiles(Location location, String... filename) {
             addCall(calls, ADD_METHOD,
-                    filename + "," + ba.getName());
-            return true;
+                    filename[0] + "," + location.getName());
         }
+
         public FilePreservationStatus
                 getFilePreservationStatus(String filename) {
             addCall(calls, GET_INFO_METHOD, filename);

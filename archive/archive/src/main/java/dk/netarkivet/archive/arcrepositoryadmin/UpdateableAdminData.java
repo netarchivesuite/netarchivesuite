@@ -94,11 +94,10 @@ public class UpdateableAdminData extends AdminData {
      * @param filename  A filename
      * @param replyInfo A replyInfo for this entry (may be null)
      * @param checksum  The Checksum for this file
-     * @param generalState The generalState for this entry
      */
     public void addEntry(String filename, StoreMessage replyInfo,
-                         String checksum, ArchiveStoreState generalState) {
-        addEntry(filename, replyInfo, checksum, generalState, true);
+                         String checksum) {
+        addEntry(filename, replyInfo, checksum, true);
     }
 
     /**
@@ -107,15 +106,13 @@ public class UpdateableAdminData extends AdminData {
      * @param filename  A filename
      * @param replyInfo A replyInfo for this entry (may be null)
      * @param checksum  The Checksum for this file
-     * @param generalState The generalState for this entry
      * @param persistNow Shall we persist this entry now?
      */
     public void addEntry(String filename, StoreMessage replyInfo,
-            String checksum, ArchiveStoreState generalState,
-            boolean persistNow) {
+                         String checksum,
+                         boolean persistNow) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
-        ArgumentNotValid.checkNotNull(generalState, "generalState");
         storeEntries.put(filename,
                 new ArcRepositoryEntry(filename, checksum, replyInfo));
         if (persistNow) {

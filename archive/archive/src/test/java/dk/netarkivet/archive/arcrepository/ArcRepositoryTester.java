@@ -33,7 +33,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.archive.arcrepositoryadmin.ArchiveStoreState;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
@@ -244,7 +243,7 @@ public class ArcRepositoryTester extends TestCase {
         // First try the regular cases:
         // Matching checksum
         outstanding.put(id1, arcname1);
-        ad.addEntry(arcname1, null, "f00", new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED));
+        ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheArcrepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0),
                 new StringRemoteFile(arcname1
@@ -262,7 +261,7 @@ public class ArcRepositoryTester extends TestCase {
 
         // Test what happens when a known arcfile gets an error message.
         outstanding.put(id1, arcname1);
-        ad.addEntry(arcname1, null, "f00", new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED));
+        ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheArcrepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
         JMSConnectionTestMQ.updateMsgID(bamsg2, id1);

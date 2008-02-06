@@ -110,7 +110,7 @@ public class AdminDataTester extends TestCase {
                 = new StoreMessage(Channels.getError(),
                                    File.createTempFile("dummy","dummy"));
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(myFile, myReplyInfo, "checksum", dummyGeneralState);
+        ad.addEntry(myFile, myReplyInfo, "checksum");
         assertTrue("replyInfo has been set", ad.hasReplyInfo(myFile));
         assertEquals("Wrong replyInfo returned", myReplyInfo, ad.removeReplyInfo(myFile));
         try {
@@ -144,7 +144,7 @@ public class AdminDataTester extends TestCase {
                 ad.hasEntry(myFile));
         String myChecksum = "Dummy checksum";
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(myFile, null, myChecksum, dummyGeneralState);
+        ad.addEntry(myFile, null, myChecksum);
         assertTrue("Entry for File: " + myFile + " should exist now.",
                 ad.hasEntry(myFile));
         assertEquals("Should get just set checksum", myChecksum, ad.getCheckSum(myFile));
@@ -169,7 +169,7 @@ public class AdminDataTester extends TestCase {
         String myBA = "Test ID of bit archive";
         //TODO: Needs to incorporate the timestamps, and generalstate into this test
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(myFile, null, "checksum", dummyGeneralState);
+        ad.addEntry(myFile, null, "checksum");
         assertFalse("No state set for " + myFile + " " + myBA, ad.hasState(myFile, myBA));
         ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_STARTED);
         assertEquals("Wrong store state returned", BitArchiveStoreState.UPLOAD_STARTED, ad.getState(myFile, myBA));
@@ -199,7 +199,7 @@ public class AdminDataTester extends TestCase {
                                    File.createTempFile("dummy","dummy"));
         String myChecksum = "Dummychecksum";
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(myFile, myReplyInfo, myChecksum, dummyGeneralState);
+        ad.addEntry(myFile, myReplyInfo, myChecksum);
         String myBA = "TestIDofbitarchive";
         ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_STARTED);
         ad.close();
@@ -245,7 +245,7 @@ public class AdminDataTester extends TestCase {
         String filename = file.getName();
         String bitArchiveID = "bitArchiveID";
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        ad.addEntry(filename, null, "checksum", dummyGeneralState);
+        ad.addEntry(filename, null, "checksum");
 
         try {
             // no state has been set yet:
@@ -315,7 +315,7 @@ public class AdminDataTester extends TestCase {
         FileAsserts.assertFileNotContains("File " + filename
                 + " should not be in admin data before adding",
                 datafile, filename);
-        ad.addEntry(filename, null, "foobar", dummyGeneralState);
+        ad.addEntry(filename, null, "foobar");
         FileAsserts.assertFileContains("File " + filename
                 + " should be in admin data after adding", filename, datafile);
         ad.setState(filename, "DummyBA1", BitArchiveStoreState.UPLOAD_COMPLETED);
@@ -343,7 +343,7 @@ public class AdminDataTester extends TestCase {
         FileAsserts.assertFileContains("Should have state for bitarchive2",
                 "DummyBA2 UPLOAD_COMPLETED", datafile);
         String filename2 = TestInfo.files[1];
-        ad.addEntry(filename2, null, "aChecksum", dummyGeneralState);
+        ad.addEntry(filename2, null, "aChecksum");
         ad.setState(filename2, "DummyBA1", BitArchiveStoreState.UPLOAD_STARTED);
         ad.setState(filename, "DummyBA1", BitArchiveStoreState.UPLOAD_COMPLETED);
         ad.setState(filename2, "DummyBA2", BitArchiveStoreState.DATA_UPLOADED);

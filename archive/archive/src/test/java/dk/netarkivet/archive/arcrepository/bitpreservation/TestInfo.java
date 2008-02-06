@@ -52,10 +52,10 @@ public class TestInfo {
     public static final String CREDENTIALS = "42";
     public static final File GOOD_ARCHIVE_DIR =
             new File(WORKING_DIR, "bitarchive1");
-    public static final File ERR_ARCHIVE_DIR =
-            new File(WORKING_DIR, "bitarchive1_errors");
     public static final File FAIL_ARCHIVE_DIR =
             new File(WORKING_DIR, "bitarchive1_to_fail");
+    public static final File GOOD_ARCHIVE_FILE_DIR
+            = new File(GOOD_ARCHIVE_DIR, "filedir");
     public static final File THE_ARCHIVE_DIR =
             new File(WORKING_DIR, Channels.getTheBamon().getName());
     public static final File ORIGINAL_ARCHIVE =
