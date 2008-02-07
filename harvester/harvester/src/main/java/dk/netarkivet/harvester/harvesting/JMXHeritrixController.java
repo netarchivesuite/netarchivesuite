@@ -57,6 +57,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /** This implementation of the HeritrixController interface starts Heritrix
  * as a separate process and uses JMX to communicate with it.  Each instance
@@ -434,7 +435,7 @@ public class JMXHeritrixController implements HeritrixController {
             if (!anyAlive) {
                 break;
             }
-            JMXUtils.exponentialBackoffSleep(attempt);
+            TimeUtils.exponentialBackoffSleep(attempt);
         } while (attempt++ < JMXUtils.MAX_TRIES);
     }
 
@@ -628,7 +629,7 @@ public class JMXHeritrixController implements HeritrixController {
                 }
             }
             if (retries < JMXUtils.MAX_TRIES) {
-                JMXUtils.exponentialBackoffSleep(retries);
+                TimeUtils.exponentialBackoffSleep(retries);
             }
         }
         // If all went well, we now have exactly one job in the pending

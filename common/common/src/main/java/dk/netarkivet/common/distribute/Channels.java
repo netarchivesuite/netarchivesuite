@@ -356,6 +356,6 @@ public class Channels {
      */
     public static boolean isTopic(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name"); 
-        return name.contains("ALL_BA");
+        return name.contains("_ALL_");
     }
 }

@@ -49,6 +49,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Various JMX-related utility functions that have nowhere better to live.
@@ -224,7 +225,7 @@ public class JMXUtils {
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
             } while (tries < MAX_TRIES);
@@ -268,7 +269,7 @@ public class JMXUtils {
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
             } while (tries < MAX_TRIES);
@@ -301,21 +302,6 @@ public class JMXUtils {
         }
     }
 
-    /** Sleep for an exponentially backing off amount of time, in milliseconds.
-     * Thus the first attempt will sleep for 1 ms, the second for 2, the third
-     * for 4, etc.
-     *
-     * @param attempt The attempt number, which is the log2 of the number of
-     * milliseconds spent asleep.
-     */
-    public static void exponentialBackoffSleep(int attempt) {
-        try {
-            Thread.sleep((long) (Math.pow(2, attempt)));
-        } catch (InterruptedException e) {
-            // Early wake-up is not a problem
-        }
-    }
-
     /** Get a JMXConnector to a given host and port, using login and password.
      *
      * @param hostName The host to attempt to connect to.
@@ -342,7 +328,7 @@ public class JMXUtils {
                     e.getCause() != null
                     && e.getCause() instanceof ServiceUnavailableException) {
                     // Sleep a bit before trying again
-                    exponentialBackoffSleep(retries);
+                    TimeUtils.exponentialBackoffSleep(retries);
                     continue;
                 }
                 break;

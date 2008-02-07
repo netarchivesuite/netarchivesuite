@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.Connection;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -44,6 +43,7 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +58,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Handles the communication with a JMS broker. Note on Thread-safety: the
@@ -69,33 +70,46 @@ import dk.netarkivet.common.utils.CleanupIF;
  *
  */
 public abstract class JMSConnection implements ExceptionListener, CleanupIF {
+    /** The log. */
     protected static final Log log = LogFactory.getLog(JMSConnection.class
             .getName());
 
-    /** Various members needed to establish the JMS connection to a Queue. */
+    /** The factory used to create QueueConnections. */
     protected QueueConnectionFactory myQConnFactory;
-
+    
+    /** The QueueConnection. */
     protected QueueConnection myQConn;
-
+    
+    /** 
+     * The Session handling messages sent to / received from
+     * the NetarchiveSuite queues.
+     */
     protected QueueSession myQSess;
 
-    /** Various members needed to establish the JMS connection to a Topic. */
+    /** The factory used to create TopicConnections. */
     protected TopicConnectionFactory myTConnFactory;
-
+    
+    /** The TopicConnection. */
     protected TopicConnection myTConn;
-
+    
+    /** 
+     * The Session handling messages sent to / received from
+     * the NetarchiveSuite topics.
+     */
+ 
     protected TopicSession myTSess;
 
     /** Semaphore for whether or not a reconnect is in progress.  */
     protected static AtomicBoolean reconnectInProgress = new AtomicBoolean(false);
     
     /**
-     * Maps for caching senders and publishers (for queues and topics,
-     * respectively).
+     * Map for caching Queue senders.
      */
     protected Map<String, QueueSender> senders = new HashMap<String, QueueSender>();
-
-    protected Map<String, TopicPublisher> publishers = new HashMap<String, TopicPublisher>();
+    /**
+     *  Map for caching Topic publishers. 
+     */  
+   protected Map<String, TopicPublisher> publishers = new HashMap<String, TopicPublisher>();
 
     /**
      * Set for caching consumers (topic-subscribers and queue-receivers). Serves
@@ -103,7 +117,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     protected Map<String, MessageConsumer> consumers = new HashMap<String, MessageConsumer>();
 
+    /**
+     * Separator used in the consumerkey. Separates the ChannelName from the 
+     * MessageListener.toString().
+     */
     static final String CONSUMER_KEY_SEPARATOR = "##";
+    /**
+     *  The number to times to (re)try whenever
+     *  a JMSException is thrown.
+     */
     static final int JMS_MAXTRIES = 3;
 
     /** Shutdown hook that closes the JMS connection. */
@@ -132,28 +154,18 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure if initialization fails.
      */
     protected void initConnection() {
-        log.info("JMS connection. Broker:" + host + ";");
-        log.info("JMS connection. Port:" + port + ";");
+        log.info("Initialing a JMS connection to Broker at "
+                + host + ":" + port + ".");
 
         int tries = 0;
         JMSException lastException = null;
         boolean operationSuccessful = false;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
-            try {
-                myQConnFactory = getQueueConnectionFactory();
-                myTConnFactory = getTopicConnectionFactory();
-
-                // Establish a queue connection and a session
-                // The connection has this object as exceptionHandler.
-                myQConn = myQConnFactory.createQueueConnection();
-                myQSess = myQConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+            try {         
+                establishConnectionAndSessions();
+                // Both connections uses this object as the exceptionHandler.
                 myQConn.setExceptionListener(this);
-
-                // Establish a topic connection and a session
-                // The connection has this object as exceptionHandler.
-                myTConn = myTConnFactory.createTopicConnection();
-                myTSess = myTConn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
                 myTConn.setExceptionListener(this);
 
                 // start consuming messages
@@ -163,19 +175,36 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             } catch (JMSException e) {
                 cleanup();
                 lastException = e;
-                log.info("Sleep for a minute before attempting to connect again");
-                exponentialBackoffSleep(0);
+                log.info("Sleep some time before attempting to connect again");
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
             }
         }
         if (!operationSuccessful) {
             throw new IOFailure("Could not initialize JMS connection to "
-                    + host + ":"
-                    + port, lastException);
+                    + host + ":" + port, lastException);
         }
         closeHook = new CleanupHook(this);
         Runtime.getRuntime().addShutdownHook(closeHook);
     }
 
+    /**
+     * Helper method to establish one QueueConnection and associated Session,
+     * and one TopicConnection and associated Session.
+     * @throws JMSException
+     */
+    protected void establishConnectionAndSessions() throws JMSException {
+        myQConnFactory = getQueueConnectionFactory();
+        myTConnFactory = getTopicConnectionFactory();
+
+        // Establish a queue connection and a session
+        myQConn = myQConnFactory.createQueueConnection();
+        myQSess = myQConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+
+        // Establish a topic connection and a session
+        myTConn = myTConnFactory.createTopicConnection();
+        myTSess = myTConn.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+    }
+    
     /**
      * Should be implemented according to a specific JMS broker.
      *
@@ -250,41 +279,42 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         JMSException lastException = null;
         boolean operationSuccessful = false;
         int tries = 0;
-        if (!hasMessageBeenSent(nMsg)) {
+        if (!nMsg.hasBeenSent()) {
             throw new PermissionDenied("Message has not been sent yet");
         }
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            if (reconnectInProgress.get() != true) {
-                try {
-                    tries++;
-                    ObjectMessage msg = myQSess.createObjectMessage(nMsg);
-                    String queueName = nMsg.getReplyTo().getName();
-                    // Check if queueSender is in cache
-                    // If it is not, it is created and stored in cache:
-                    QueueSender queueSender = senders.get(queueName);
-                    if (queueSender == null) {
-                        queueSender = myQSess.createSender(getQueue(queueName));
-                        senders.put(queueName, queueSender);
-                    }
-                    synchronized (nMsg) {
-                        log.info("Sending message to " + queueName + "ID = "
-                                + nMsg.replyOfId);
-                                                
-                        queueSender.send(msg);
-                        log.debug("Sent message to "
-                                + queueSender.getQueue().getQueueName());
-                        // Note: Id is only updated if the message does not already
-                        // have an id. This should never happen, 
-                        // since this is a reply. 
-                        // TODO Is this redundant?
-                        nMsg.updateId(msg.getJMSMessageID());
-                        
-                    }
-                    operationSuccessful = true;                
-                } catch (JMSException e) {
-                    log.warn("Send failed (try " + tries + "):" + e);
-                    lastException = e;
+            try {
+                waitUntilReconnectIsDone();
+                tries++;
+                ObjectMessage msg = myQSess.createObjectMessage(nMsg);
+                String queueName = nMsg.getReplyTo().getName();
+                // Check if queueSender is in cache
+                // If it is not, it is created and stored in cache:
+                QueueSender queueSender = senders.get(queueName);
+                if (queueSender == null) {
+                    queueSender = myQSess.createSender(getQueue(queueName));
+                    senders.put(queueName, queueSender);
                 }
+                synchronized (nMsg) {
+                    log.info("Sending message to " + queueName + "ID = "
+                            + nMsg.replyOfId);
+
+                    queueSender.send(msg);
+                    log.debug("Sent message to "
+                            + queueSender.getQueue().getQueueName());
+                    // Note: Id is only updated if the message does not already
+                    // have an id. This should never happen, 
+                    // since this is a reply. 
+                    // TODO Is this redundant?
+                    nMsg.updateId(msg.getJMSMessageID());
+
+                }
+                operationSuccessful = true;                
+            } catch (JMSException e) {
+                log.debug("Send failed (try " + tries + "):" + e);
+                lastException = e;
+                // wait some time before trying again
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.SECOND);
             }
         }
         if (!operationSuccessful) {
@@ -311,10 +341,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
-            while (reconnectInProgress.get() != false) {
-                log.warn("Waiting for reconnect to finish");
-                exponentialBackoffSleep(tries);
-            }
+            waitUntilReconnectIsDone();
             try {
                 if (to.isTopic()) {
                     sendToTopic(nMsg, to);
@@ -327,6 +354,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             } catch (JMSException e) {
                 log.warn("Send failed (try " + tries + "):" + e);
                 lastException = e;
+                // wait some time before trying again
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.SECOND);
             }
         }
         if (!operationSuccessful) {
@@ -334,6 +363,19 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         }
     }
 
+    /**
+     * Wait until the reconnection process is finished.
+     * Intervals of one minute are waited before checking the status
+     * of the reconnection.
+     */
+    private void waitUntilReconnectIsDone() {
+        while (reconnectInProgress.get() == true) {
+            // Wait one minute before checking if reconnection is finished
+            log.debug("Waiting one minute to let the reconnect process finish");
+            TimeUtils.exponentialBackOffSleep(1, Calendar.MINUTE);
+        }
+    }
+    
     /**
      * Sends an ObjectMessage on a topic destination.
      *
@@ -435,10 +477,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     public void cleanup() {
         log.info("Starting cleanup");
-        while (reconnectInProgress.get() != false) {
-            log.warn("Waiting a minute for reconnect to finish before doing cleanup");
-            exponentialBackoffSleep(1);
-        }
+        waitUntilReconnectIsDone();
         try {
             // Close terminates all pending message received on the connection's
             // sessions' consumers.
@@ -537,11 +576,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         boolean operationSuccessful = false;
         JMSException lastException = null;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            tries++;
-            while (reconnectInProgress.get() != false) {
-                log.warn("Waiting for reconnect to finish");
-                exponentialBackoffSleep(tries-1);
-            }
+            
+            waitUntilReconnectIsDone();
             try {
                 if (mq.isTopic()) {
                     TopicSubscriber myTopicSubscriber = myTSess
@@ -568,7 +604,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 lastException = e;
                 log.warn(errMsg, e);
                 // Wait sometime before trying again
-                exponentialBackoffSleep(tries-1);
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
             }
         }
         
@@ -593,59 +629,36 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         int tries = 0;
         JMSException lastException = null;
         boolean operationSuccessful = false;
+        
+        log.info("Removing listener from channel '" + mq.getName() + "'");
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            while (reconnectInProgress.get() != false) {
-                log.warn("Waiting for reconnect to finish");
-                exponentialBackoffSleep(1);
-            }
+            waitUntilReconnectIsDone();
             try {
                 tries++;
-                if (mq.isTopic()) {
-                    removeListener(mq, ml, myTConn);
-                }
-                // If a Channel is not a Topic, it is a Queue:
-                else {
-                    removeListener(mq, ml, myQConn);
+                 
+                String key = getConsumerKey(mq, ml);
+                MessageConsumer messageConsumer = consumers.get(key);
+
+                if (messageConsumer != null) {
+                    messageConsumer.setMessageListener(null);
+                    messageConsumer.close();
+                    consumers.remove(key);
+                } else {
+                    log.debug("No MessageConsumer for consumer with key '" + key
+                              + "' was found among registered consumers. "
+                              + "Unable to remove MessageListener " + ml);
                 }
                 operationSuccessful = true;
             } catch (JMSException e) {           
                 lastException = e;
                 log.warn(errMsg, e);
                 // Wait sometime before trying again
-                exponentialBackoffSleep(tries);
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
             }
         }       
         if (!operationSuccessful) {
             throw new IOFailure(errMsg, lastException);
         }
-    }
-
-    /**
-     * Auxiliary method for removing a MessageListener.
-     * @param channelID 
-     * @param messageListener
-     * @param connection 
-     * @throws JMSException
-     */
-    private void removeListener(ChannelID channelID,
-            MessageListener messageListener, Connection connection)
-            throws JMSException {
-
-        String key = getConsumerKey(channelID, messageListener);
-        MessageConsumer messageConsumer = consumers.get(key);
-
-        if (messageConsumer != null) {
-            // connection.stop();
-            messageConsumer.setMessageListener(null);
-            messageConsumer.close();
-            consumers.remove(key);
-            // connection.start();
-        } else {
-            log.debug("No MessageConsumer for consumer with key '" + key
-                      + "' was found among registered consumers. "
-                      + "Unable to remove MessageListener " + messageListener);
-        }
-
     }
 
     /**
@@ -671,10 +684,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         boolean operationSuccessful = false;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
-            while (reconnectInProgress.get() != false) {
-                log.warn("Waiting for reconnect to finish");
-                exponentialBackoffSleep(1);
-            }
+            waitUntilReconnectIsDone();
             try {
                 messages = new ArrayList<Message>();
                 if (mq.isTopic()) {
@@ -700,7 +710,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 }
                 log.warn(message, e);
                 // Wait sometime before trying again
-                exponentialBackoffSleep(tries);
+                TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
             }
 
         }
@@ -755,35 +765,4 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @param e an JMSException
      */
     public abstract void onException(JMSException e);
-  
-    /** Sleep for an exponentially backing off amount of time, in minutes.
-     * Thus the first attempt will sleep for 1 minute, the second for 2, the third
-     * for 4, etc.
-     *
-     * @param attempt The attempt number, which is the log2 of the number of
-     * minutes spent asleep.
-     */
-    public void exponentialBackoffSleep(int attempt) {
-        try {
-            double millisecondsToSleep = (Math.pow(2, attempt)) * 60000L;
-            Thread.sleep((long) millisecondsToSleep);
-        } catch (InterruptedException e) {
-            //
-        }
-    }   
-
-    /**
-     * Test, if message has been sent yet.
-     * @param nMsg
-     * @return true, if message has been sent yet, false otherwise.
-     */
-    private boolean hasMessageBeenSent(NetarkivetMessage nMsg) {
-     try {
-         System.out.println(nMsg.getID());
-     } catch (PermissionDenied e) {
-         System.out.println("Message not sent yet");
-         return false;
-     }
-     return true;
-    }
 }

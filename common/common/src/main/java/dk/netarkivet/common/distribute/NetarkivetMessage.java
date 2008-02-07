@@ -225,4 +225,13 @@ public abstract class  NetarkivetMessage implements Serializable {
         }
     }
 
+    /**
+     * Check, if a given message has been sent yet.
+     * If the message has a null id, it hasn't been sent yet.
+     * @return true, if message has been sent yet, false otherwise.
+     */
+    public synchronized boolean hasBeenSent() {
+        return (this.id != null);
+    }
 }
+
