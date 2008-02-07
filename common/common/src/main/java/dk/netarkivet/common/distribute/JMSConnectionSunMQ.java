@@ -224,7 +224,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private void performReconnect(){
         
         if (!reconnectInProgress.compareAndSet(false, true)) {
-            log.warn("Reconnection already in progress. Do nothing");
+            log.debug("Reconnection already in progress. Do nothing");
             return;
         }
 
@@ -241,16 +241,19 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 operationSuccessful = true;
             } catch (JMSException e) {
                 lastException = e;
-                log.warn("Exception occurred during reconnect()", e);
+                log.warn("Nr #" + tries
+                        + " attempt at reconnect failed with exception. ", e);               
+                if (tries < JMS_MAXTRIES) {
+                    log.debug("Will sleep a while before trying to reconnect again");
+                    TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
+                }
             }
-            log.info("Will sleep now for " + (int) (Math.pow(2, tries-1)) + " minutes before trying to reconnect again");
-            TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
-
+            
         }
         if (!operationSuccessful) {
             // Tell everybody, that we are not trying to reconnect any longer
             reconnectInProgress.compareAndSet(true, false);
-            throw new IOFailure("Reconnect failed: " + lastException);
+            throw new IOFailure("Reconnect failed with exception ", lastException);
         }
 
         // Add listeners already stored in the consumers map
@@ -274,7 +277,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
             myTConn.setExceptionListener(this);
         } catch (JMSException e) {
             // We cannot do anything more at this point
-            log.warn(e);
+            log.warn("Exception thrown while adding listeners", e);
         }
         reconnectInProgress.compareAndSet(true, false);
         log.info("Reconnect successful");
