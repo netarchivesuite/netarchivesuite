@@ -67,7 +67,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      */
     public File getIndex(Set<Long> jobIDs) {
         File cacheFile = new File(dir,
-                StringUtils.conjoin(jobIDs, "-") + "-" +
+                StringUtils.conjoin("-",jobIDs ) + "-" +
                         requestType + "-cache");
         if (!cacheFile.exists()) {
             log.warn("The cache does not contain '" + cacheFile + "' for "

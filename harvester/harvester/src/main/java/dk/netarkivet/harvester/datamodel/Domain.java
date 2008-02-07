@@ -128,7 +128,7 @@ public class Domain implements Named {
             = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
     /** A string for a regexp recognising a TLD read from settings */
     private static final String TLD_REGEX_STRING = ("\\.("
-                                  + StringUtils.conjoin(readTlds(), "|")
+                                  + StringUtils.conjoin("|",readTlds() )
                                   + ")" );
     private static final Pattern HOSTNAME_REGEX = Pattern.compile("^(|.*?\\.)("
                                       + DOMAINNAME_CHAR_REGEX_STRING
@@ -1030,7 +1030,7 @@ public class Domain implements Named {
                                  + "' an alias of '" + otherD.getName()
                                  + "', as the domains '"
                                  + StringUtils
-                        .conjoin(aliasesForThisDomain, ",")
+                        .conjoin(",",aliasesForThisDomain )
                                  + "' are "
                                  + "already aliases of '" + this.getName()
                                  + "'";

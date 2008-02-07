@@ -81,19 +81,19 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Number of webapplications and number of directories to "
                     + "deploy them in and classes defining webapps do not match. "
-                    + "Webapps: [" + StringUtils.conjoin(webApps, ",") + "]. "
-                    + "Deploydirs: [" + StringUtils.conjoin(deployDirs, ",")
-                    + "]. Classes: [" + StringUtils.conjoin(classes, ",")
+                    + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
+                    + "Deploydirs: [" + StringUtils.conjoin(",", deployDirs)
+                    + "]. Classes: [" + StringUtils.conjoin(",", classes)
                     + "]");
         }
 
         log.info("Starting webserver. Port: " + port
                  + " deployment directories: '"
-                 + StringUtils.conjoin(webApps, ",")
+                 + StringUtils.conjoin(",", webApps)
                  + "' webapplication directories: '"
-                 + StringUtils.conjoin(deployDirs, ",") + "'"
+                 + StringUtils.conjoin(",", deployDirs) + "'"
                  + "' classes: '"
-                 + StringUtils.conjoin(classes, ",") + "'");
+                 + StringUtils.conjoin(",", classes) + "'");
 
         //Get a Jetty server.
         server = new Server(port);

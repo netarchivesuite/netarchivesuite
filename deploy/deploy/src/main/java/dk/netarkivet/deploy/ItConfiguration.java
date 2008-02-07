@@ -642,7 +642,7 @@ public class ItConfiguration {
      */
     public String toString() {
         //Note no separator: hosts end with newline already.
-        return "It configuration:\n" + StringUtils.conjoin(hostlist, "");
+        return "It configuration:\n" + StringUtils.conjoin("",hostlist );
     }
 
     /**

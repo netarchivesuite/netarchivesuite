@@ -177,7 +177,7 @@ public class HTTPControllerServer extends CommandResolver {
             if (!request.getParameterMap().containsKey(parameter)) {
                 throw new IOFailure("Bad request: '" + request.getURI() + "':\n"
                                     + "Wrong parameters. Expected: "
-                                    + StringUtils.conjoin(parameterNames, ","));
+                                    + StringUtils.conjoin(",", parameterNames));
             }
         }
     }

@@ -108,7 +108,7 @@ public class DomainDBDAO extends DomainDAO {
             DBConnect.setName(s, 1, d);
             DBConnect.setComments(s, 2, d);
             DBConnect.setStringMaxLength(s, 3,
-                    StringUtils.conjoin(d.getCrawlerTraps(), "\n"),
+                    StringUtils.conjoin("\n",d.getCrawlerTraps() ),
                     Constants.MAX_CRAWLER_TRAP_SIZE, d, "crawlertraps");
             long initialEdition = 1;
             s.setLong(4, initialEdition);
@@ -213,7 +213,7 @@ public class DomainDBDAO extends DomainDAO {
             }
             d.setID(domainID);
 
-            // The alias field is now updated using a separate select request rather 
+            // The alias field is now updated using a separate select request rather
             // than embedding the select inside the update statement.
             // This change was needed to accomodate MySQL, and may lower performance.
             s = c.prepareStatement("UPDATE domains SET "
@@ -222,7 +222,7 @@ public class DomainDBDAO extends DomainDAO {
                     + "WHERE domain_id = ? AND edition = ?");
             DBConnect.setComments(s, 1, d);
             DBConnect.setStringMaxLength(s, 2,
-                    StringUtils.conjoin(d.getCrawlerTraps(), "\n"),
+                    StringUtils.conjoin("\n",d.getCrawlerTraps() ),
                     Constants.MAX_CRAWLER_TRAP_SIZE, d, "crawlertraps");
 
             final long newEdition = d.getEdition() + 1;

@@ -109,7 +109,7 @@ public class CDXRecord {
                 this.offset = Long.parseLong(fields[6]);
             } catch (NumberFormatException e) {
                 String message = "Could not make CDXRecord - out of fields "
-                                 + StringUtils.conjoin(fields, ",")
+                                 + StringUtils.conjoin(",", fields)
                                  + ". Length or offset was not a parsable"
                                  + " long value.";
                 log.debug(message);
@@ -118,7 +118,7 @@ public class CDXRecord {
         } else {
             String message = "Could not make CDXRecord - out of "
                              + fields.length + " fields: "
-                             + StringUtils.conjoin(fields, ",");
+                             + StringUtils.conjoin(",", fields);
             log.debug(message);
             throw new ArgumentNotValid(message);
         }

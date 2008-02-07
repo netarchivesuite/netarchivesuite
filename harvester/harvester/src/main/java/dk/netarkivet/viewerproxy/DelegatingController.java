@@ -159,7 +159,7 @@ public class DelegatingController implements Controller {
             Collections.sort(jobList);
             status.append(I18N.getString(locale, "index.0.built.on.jobs.1",
                                          indexLabel,
-                                         StringUtils.conjoin(jobList, ", ")));
+                                         StringUtils.conjoin(", ",jobList )));
         }
         return status.toString();
     }

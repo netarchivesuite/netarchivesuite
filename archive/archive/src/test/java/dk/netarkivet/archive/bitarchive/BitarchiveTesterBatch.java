@@ -102,31 +102,29 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
      * back to the caller
      */
     public void testBatchExceptionInBatch() {
-        try {
-            archive.batch(TestInfo.baAppId, new FileBatchJob() {
-                /**
-                 * Get the filter on this batch job.
-                 */
-                public BatchFilter getFilter() {
-                    return BatchFilter.NO_FILTER;
-                }
+        BatchStatus status =
+                archive.batch(TestInfo.baAppId, new FileBatchJob() {
+                    /**
+                     * Get the filter on this batch job.
+                     */
+                    public BatchFilter getFilter() {
+                        return BatchFilter.NO_FILTER;
+                    }
 
-                public void initialize(OutputStream os) {
-                }
+                    public void initialize(OutputStream os) {
+                    }
 
+                    public boolean processFile(File f, OutputStream os) {
+                        throw new IOFailure("Testing IO throws");
+                    }
 
-                public boolean processFile(File f, OutputStream os) {
-                    throw new IOFailure("Testing IO throws");
-                }
-
-                public void finish(OutputStream os) {
-                }
-
-            });
-            fail("Failed to throw expected IOFailure");
-        } catch (IOFailure e) {
-            // expected
-        }
+                    public void finish(OutputStream os) {
+                    }
+                });
+        assertEquals("Status should show all files processed",
+                     4, status.getNoOfFilesProcessed());
+        assertEquals("Status should show all files failed",
+                     4, status.getFilesFailed().size());
     }
 
     /**

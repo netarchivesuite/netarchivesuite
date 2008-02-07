@@ -192,7 +192,7 @@ public class MetadataEntry implements Serializable {
 
         return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
                                  StringUtils.conjoin(
-                                         jobIDsForDuplicateReduction, ","));
+                                         ",",jobIDsForDuplicateReduction ));
     }
 
     /**

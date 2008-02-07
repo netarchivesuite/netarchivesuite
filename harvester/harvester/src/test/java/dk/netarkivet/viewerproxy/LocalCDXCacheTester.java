@@ -394,6 +394,6 @@ public class LocalCDXCacheTester extends TestCase {
      * @return Newline separated list
      */
     public static String listToString(List<String> objects) {
-        return StringUtils.conjoin(objects, "\n") + "\n";
+        return StringUtils.conjoin("\n",objects ) + "\n";
     }
 }

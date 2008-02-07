@@ -586,9 +586,15 @@ public class Host {
                         + " -Dsettings.common.jmx.passwordFile="
                         + JMXPasswordFile.getAbsolutePath();
                 String httpFileTransferArgs = getHttpFileTransferArgs();
-                String OPTIONS = extraOptions + " " + SETTINGSFILE + " "
-                                 + LOGFILE + " " + JMXArgs
-                                 + httpFileTransferArgs;
+                String securityArgs = "-Djava.security.manager "
+                                      + "-Djava.security.policy=conf/security.policy";
+                String OPTIONS = StringUtils.conjoin(" ",
+                                                     extraOptions,
+                                                     SETTINGSFILE,
+                                                     LOGFILE,
+                                                     JMXArgs,
+                                                     securityArgs,
+                                                     httpFileTransferArgs);
                 pw.println("#!/bin/bash");
                 pw.println("export CLASSPATH=" +
                         StringUtils.surjoin(getJarFiles(appName),

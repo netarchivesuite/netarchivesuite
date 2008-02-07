@@ -103,7 +103,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             }
             if (args.length > 1) {
                 System.err.println("Too many arguments: '"
-                        + StringUtils.conjoin(Arrays.asList(args), "', '")
+                        + StringUtils.conjoin("', '",Arrays.asList(args) )
                         + "'");
                 return false;
             }

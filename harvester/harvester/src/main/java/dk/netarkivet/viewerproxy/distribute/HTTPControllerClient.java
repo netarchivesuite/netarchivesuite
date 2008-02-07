@@ -172,7 +172,7 @@ public class HTTPControllerClient implements Controller {
             out.println(I18N.getString(response.getLocale(),
                                        "generating.index.0.for.jobs.1",
                                        HTMLUtils.escapeHtmlValues(label),
-                                       StringUtils.conjoin(jobList, ", ")));
+                                       StringUtils.conjoin(", ",jobList )));
             out.println("</body></html>");
         } catch (IOException e) {
             throw new IOFailure("Unable to redirect to controller server", e);

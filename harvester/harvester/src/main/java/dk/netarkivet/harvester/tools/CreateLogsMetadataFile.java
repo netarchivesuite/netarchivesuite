@@ -2,7 +2,7 @@
  * $Date$
  * $Revision$
  * $Author$
- * 
+ *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
@@ -86,26 +86,26 @@ public class CreateLogsMetadataFile extends ToolRunnerBase {
            }
            if (args.length > 2) {
                System.err.println("Too many arguments: '"
-                       + StringUtils.conjoin(Arrays.asList(args), "', '")
+                       + StringUtils.conjoin("', '",Arrays.asList(args) )
                        + "'");
                return false;
            }
            if (!(new File(args[0])).isFile()) {
                System.err.println("The first argument is not a file or it does not exist: '"
-                       + StringUtils.conjoin(Arrays.asList(args), "', '")
+                       + StringUtils.conjoin("', '",Arrays.asList(args) )
                        + "'");
                return false;
            }
            if (!(new File(args[1])).isDirectory()) {
                System.err.println("The second argument is not a directory or it does not exist: '"
-                       + StringUtils.conjoin(Arrays.asList(args), "', '")
+                       + StringUtils.conjoin("', '",Arrays.asList(args) )
                        + "'");
                return false;
            }
            if (!(new File(args[1], "harvestInfo.xml").exists())) {
                System.err.println("The second argument is not a valid jobsdir. "
                        + "It does not contain a harvestInfo.xml file: "
-                       + StringUtils.conjoin(Arrays.asList(args), "', '")
+                       + StringUtils.conjoin("', '",Arrays.asList(args) )
                        + "'");
                return false;
            }

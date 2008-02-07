@@ -529,7 +529,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                                 + bjs.bitarchiveBatchID
                                 + ". Missing replies from ["
                                 + StringUtils.conjoin(
-                                        bjs.missingRespondents, ", ")
+                                        ", ",bjs.missingRespondents )
                                 + "]";
                         log.warn(errMsg);
                         bjs.appendError(errMsg);

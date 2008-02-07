@@ -149,14 +149,14 @@ public class IndexRequestServer extends ArchiveMessageHandler
             RequestType type = irMsg.getRequestType();
             Set<Long> jobIDs = irMsg.getRequestedJobs();
             log.info("Generating an index of type '" + type
-                     + "' for the jobs [" + StringUtils.conjoin(jobIDs, ",")
+                     + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
                      + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             Set<Long> foundIDs = handler.cache(jobIDs);
             irMsg.setFoundJobs(foundIDs);
             if (foundIDs.equals(jobIDs)) {
                 log.info("Successfully generated index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(jobIDs, ",")
+                         + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
                          + "]");
                 File cacheFile = handler.getCacheFile(jobIDs);
                 if (cacheFile.isDirectory()) {
@@ -176,15 +176,15 @@ public class IndexRequestServer extends ArchiveMessageHandler
                 }
             } else {
                 log.warn("Failed generating index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(jobIDs, ",")
+                         + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
                          + "], only the jobs ["
-                         + StringUtils.conjoin(foundIDs, ",")
+                         + StringUtils.conjoin(",",foundIDs )
                          + "] are available.");
             }
         } catch (Exception e) {
             log.warn(
                     "Unable to generate index for jobs ["
-                    + StringUtils.conjoin(irMsg.getRequestedJobs(), ",") + "]",
+                    + StringUtils.conjoin(",",irMsg.getRequestedJobs() ) + "]",
                     e);
             irMsg.setNotOk(e);
         } finally {

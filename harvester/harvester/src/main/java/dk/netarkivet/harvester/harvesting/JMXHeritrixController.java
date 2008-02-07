@@ -480,7 +480,7 @@ public class JMXHeritrixController implements HeritrixController {
         } else {
             throw new IOFailure("Heritrix jar file not found");
         }
-        environment.put("CLASSPATH", StringUtils.conjoin(pathParts, ":"));
+        environment.put("CLASSPATH", StringUtils.conjoin(":",pathParts ));
     }
 
     /** Write various info on the system we're using into the given file.

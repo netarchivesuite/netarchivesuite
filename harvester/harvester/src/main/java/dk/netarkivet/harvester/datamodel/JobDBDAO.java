@@ -464,9 +464,9 @@ public class JobDBDAO extends JobDAO {
      * for given status and in given order. Is used by getStatusInfo
      * functions in order to share code (and SQL)
      * TODO: should also include given harvest run
-     * 
+     *
      * @param jobStatusCode code for jobstatus, -1 if all
-     * @param asc true if it is to be sorted in ascending order, 
+     * @param asc true if it is to be sorted in ascending order,
      *        false if it is to be sorted in descending order
      * @return List of JobStatusInfo objects for all jobs.
      * @throws ArgumentNotValid for invalid jobStatusCode
@@ -475,7 +475,7 @@ public class JobDBDAO extends JobDAO {
     private List<JobStatusInfo> getStatusInfo(int jobStatusCode, boolean asc) {
         if (jobStatusCode != -1) {
         	//thorws ArgumentNotValid if it is an invalid job status
-            JobStatus.fromOrdinal(jobStatusCode); 
+            JobStatus.fromOrdinal(jobStatusCode);
         }
 
         String sql;
@@ -484,12 +484,12 @@ public class JobDBDAO extends JobDAO {
             + " upload_errors, orderxml, num_configs, startdate, enddate"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
-        if (jobStatusCode != -1)  { 
-            sql = sql + " AND status = " + jobStatusCode; 
+        if (jobStatusCode != -1)  {
+            sql = sql + " AND status = " + jobStatusCode;
         }
         sql = sql + " ORDER BY jobs.job_id";
         if (!asc)  {
-            sql = sql + " DESC"; 
+            sql = sql + " DESC";
         }
 
         Connection c = DBConnect.getDBConnection();
@@ -502,9 +502,9 @@ public class JobDBDAO extends JobDAO {
                 joblist.add(
                     new JobStatusInfo(
                     	    res.getLong(1),
-                            JobStatus.fromOrdinal(res.getInt(2)), 
-                            res.getLong(3), res.getString(4), res.getInt(5), 
-                            res.getString(6),res.getString(7), 
+                            JobStatus.fromOrdinal(res.getInt(2)),
+                            res.getLong(3), res.getString(4), res.getInt(5),
+                            res.getString(6),res.getString(7),
                             res.getString(8), res.getInt(9),
                             DBConnect.getDateMaybeNull(res, 10),
                             DBConnect.getDateMaybeNull(res, 11)
@@ -512,7 +512,7 @@ public class JobDBDAO extends JobDAO {
             }
             return joblist;
         } catch (SQLException e) {
-            String message 
+            String message
                        = "SQL error asking for job status list in database";
             log.warn(message, e);
             throw new IOFailure(message, e);
@@ -546,12 +546,12 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information in given 
+     * Get a list of small and immediately usable status information in given
      * job id order.
      *
      * @param asc True if result must be given in ascending order, false
      *        if result must be given in descending order
-     * @return List of JobStatusInfo objects for all jobs with given 
+     * @return List of JobStatusInfo objects for all jobs with given
      *         job id order
      * @throws IOFailure on trouble getting data from database
      */
@@ -560,7 +560,7 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information for given 
+     * Get a list of small and immediately usable status information for given
      * job status and in given job id order.
      *
      * @param status The status asked for.
@@ -662,7 +662,7 @@ public class JobDBDAO extends JobDAO {
                 jobs.addAll(DBConnect.selectLongList(
                         "SELECT jobs.job_id FROM jobs"
                         + " WHERE jobs.harvest_id IN ("
-                        + StringUtils.conjoin(harvestDefinitions, ",")
+                        + StringUtils.conjoin(",",harvestDefinitions )
                         + ")"));
             }
         } catch (SQLException e) {

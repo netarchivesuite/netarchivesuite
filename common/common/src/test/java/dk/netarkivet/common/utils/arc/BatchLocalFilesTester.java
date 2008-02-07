@@ -98,14 +98,10 @@ public class BatchLocalFilesTester extends TestCase {
                         "testOneJob_ExceptionInInitialize");
                 }
             };
-        try {
-            blf.run(job, os);
-            fail("Should have thrown an Exception");
-        } catch (Exception e) {
-            assertEquals(0, initialized);
-            assertEquals(0, processed);
-            assertEquals(0, finished);
-        }
+        blf.run(job, os);
+        assertEquals(0, initialized);
+        assertEquals(0, processed);
+        assertEquals(1, finished);
     }
     /**
      * Verfies that thrown Exceptions in process interrupt the processing
@@ -124,14 +120,10 @@ public class BatchLocalFilesTester extends TestCase {
                     return super.processFile(file, new ByteArrayOutputStream());
                 }
             };
-        try {
-            blf.run(job, os);
-            fail("Should have thrown an Exception");
-        } catch (Exception e) {
-            assertEquals(1, initialized);
-            assertEquals(2, processed);
-            assertEquals(0, finished);
-        }
+        blf.run(job, os);
+        assertEquals(1, initialized);
+        assertEquals(2, processed);
+        assertEquals(1, finished);
     }
     /**
     * Verifies that an Exception thrown during finish()
@@ -143,14 +135,10 @@ public class BatchLocalFilesTester extends TestCase {
                     throw new RuntimeException("testOneJob_ExceptionInFinish");
                 }
             };
-        try {
-            blf.run(job, os);
-            fail("Should have thrown an Exception");
-        } catch (Exception e) {
-            assertEquals(1, initialized);
-            assertEquals(FILES, processed);
-            assertEquals(0, finished);
-        }
+        blf.run(job, os);
+        assertEquals(1, initialized);
+        assertEquals(FILES, processed);
+        assertEquals(0, finished);
     }
     /**
      * Verify that batch jobs sequentially does not disturb the results

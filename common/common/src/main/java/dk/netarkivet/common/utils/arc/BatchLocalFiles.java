@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.HashSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -37,6 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class BatchLocalFiles {
     //The list of files to run batch jobs on:
     private File[] files;
+    private Log log = LogFactory.getLog(BatchLocalFiles.class);
 
     /**
      * Given an array of files, constructs a BatchLocalFiles instance
@@ -66,17 +70,24 @@ public class BatchLocalFiles {
         //Initialize the job:
         job.noOfFilesProcessed = 0;
         job.filesFailed = new HashSet<File>();
-        job.initialize(os);
-
-        //Process each file:
-        for (File file : files) {
-            if (job.getFilenamePattern().matcher(file.getName()).matches()) {
-                processFile(job, file, os);
+        try {
+            job.initialize(os);
+            //Process each file:
+            for (File file : files) {
+                if (job.getFilenamePattern().matcher(file.getName()).matches()) {
+                    processFile(job, file, os);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Exception while initializing job " + job, e);
+        } finally {
+            // Finally, allow the job to finish up: */
+            try {
+                job.finish(os);
+            } catch (Exception e) {
+                log.warn("Exception while finishing job " + job, e);
             }
         }
-
-        // Finally, allow the job to finish up: */
-        job.finish(os);
     }
 
     /** Process a single file.
@@ -86,7 +97,13 @@ public class BatchLocalFiles {
      * @param os Where to put the output.
      */
     private void processFile(FileBatchJob job, final File file, OutputStream os) {
-        boolean success = job.processFile(file, os);
+        boolean success = false;
+        try {
+            success = job.processFile(file, os);
+        } catch (Exception e) {
+            log.warn("Exception while processing file " + file
+                     + " with job " + job, e);
+        }
         job.noOfFilesProcessed++;
         if (!success) {
             job.filesFailed.add(file);

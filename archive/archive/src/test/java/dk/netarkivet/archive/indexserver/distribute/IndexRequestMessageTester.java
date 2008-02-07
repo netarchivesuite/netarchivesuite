@@ -254,8 +254,8 @@ public class IndexRequestMessageTester extends TestCase {
 
     private String relevantState(IndexRequestMessage irMsg) {
         return irMsg.toString()
-                + StringUtils.conjoin(irMsg.getRequestedJobs(), ",")
-                + StringUtils.conjoin(irMsg.getFoundJobs(), ",")
+                + StringUtils.conjoin(",",irMsg.getRequestedJobs() )
+                + StringUtils.conjoin(",",irMsg.getFoundJobs() )
                 + irMsg.getRequestType() + irMsg.getResultFiles()
                 + irMsg.isIndexIsStoredInDirectory();
     }

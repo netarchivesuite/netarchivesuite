@@ -104,10 +104,10 @@ public class LocalCDXCache implements JobIndexCache {
         List<Long> jobIDList = new ArrayList<Long>(jobIDs);
         Collections.sort(jobIDList);
 
-        String allIDsString = StringUtils.conjoin(jobIDList, "-");
+        String allIDsString = StringUtils.conjoin("-",jobIDList );
         if (jobIDList.size() > MAX_JOB_IDS_IN_FILENAME) {
-            String firstNIDs = StringUtils.conjoin(jobIDList.subList(0,
-                    MAX_JOB_IDS_IN_FILENAME), "-");
+            String firstNIDs = StringUtils.conjoin("-",jobIDList.subList(0,
+                    MAX_JOB_IDS_IN_FILENAME) );
             return new File(CACHE_DIR, PREFIX + firstNIDs + "-"
                     + MD5.generateMD5(allIDsString.getBytes()) + SUFFIX);
         } else {

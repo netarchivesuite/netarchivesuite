@@ -117,7 +117,7 @@ public abstract class FileBatchJob implements Serializable {
      */
     public void processOnlyFilesMatching(List<String> specifiedPatterns) {
         processOnlyFilesMatching("("
-                        + StringUtils.conjoin(specifiedPatterns, "|") + ")");
+                        + StringUtils.conjoin("|",specifiedPatterns ) + ")");
     }
 
     /** Set this job to match only a certain pattern.  This will

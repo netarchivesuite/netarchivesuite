@@ -1,31 +1,35 @@
 /* AUTOMATICALLY GENERATED ON Thu Jan 10 14:28:25 CET 2008*/
 /* DO NOT EDIT */
 
-grant codeBase "file:${user.home}/netarchive/lib/-" {
+grant codeBase "file:lib/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/lib/heritrix/lib/-" {
+grant codeBase "file:${java.home}/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/Status/jsp/-" {
+grant codeBase "file:scripts/simple_harvest/lib/heritrix/lib/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/QA/jsp/-" {
+grant codeBase "file:scripts/simple_harvest/tests/commontempdir/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/History/jsp/-" {
+grant codeBase "file:scripts/simple_harvest/tests/commontempdir/QA/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/HarvestDefinition/jsp/-" {
+grant codeBase "file:scripts/simple_harvest/tests/commontempdir/History/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/BitPreservation/jsp/-" {
+grant codeBase "file:scripts/simple_harvest/tests/commontempdir/HarvestDefinition/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:scripts/simple_harvest/tests/commontempdir/BitPreservation/jsp/-" {
   permission java.security.AllPermission;
 };
 

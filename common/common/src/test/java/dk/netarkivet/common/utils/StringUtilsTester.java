@@ -68,9 +68,9 @@ public class StringUtilsTester extends TestCase {
     private static <T> String conjoinList(String sep, T... objects) {
         if (objects == null) {
             // Can't do Arrays.asList(null)
-            return StringUtils.conjoin((Collection<String>)null, sep);
+            return StringUtils.conjoin(sep,(Collection<String>)null );
         } else {
-            return StringUtils.conjoin(Arrays.asList(objects), sep);
+            return StringUtils.conjoin(sep, Arrays.asList(objects) );
         }
     }
 

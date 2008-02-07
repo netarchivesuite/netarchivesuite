@@ -412,7 +412,7 @@ public class Job implements Serializable {
             List<String> seeds = seed.getSeeds();
             for (String seedUrl: seeds) {
                 seedListSet.add(seedUrl); // duplicates is silently ignored
-                
+
                 //TODO remove when heritrix implements this functionality
                 //try to convert a seed into a Internationalized Domain Name
                 try {
@@ -719,7 +719,7 @@ public class Job implements Serializable {
     public void setActualStop(Date actualStop) {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
         if (actualStart == null) {
-            String warnMsg = "Value of actualStart is null"; 
+            String warnMsg = "Value of actualStart is null";
             log.warn(warnMsg);
             NotificationsFactory.getInstance().errorEvent(warnMsg);
         }
@@ -776,7 +776,7 @@ public class Job implements Serializable {
                 urlMap.put(domain, set);
             }
             set.add(seed);
-            
+
         }
        List<String> result = new ArrayList<String>();
        for (Set<String> set: urlMap.values()) {
@@ -830,7 +830,7 @@ public class Job implements Serializable {
      * @return the seedlist as a String
      */
     public String getSeedListAsString() {
-        return StringUtils.conjoin(seedListSet, "\n");
+        return StringUtils.conjoin("\n",seedListSet );
     }
 
 
@@ -858,7 +858,7 @@ public class Job implements Serializable {
      * Sets status of this job.
      *
      * @param newStatus Must be one of the values STATUS_NEW, ..., STATUS_FAILED
-     * @throws ArgumentNotValid 
+     * @throws ArgumentNotValid
      *  in case of invalid status argument or invalid status change
      */
     public void setStatus(JobStatus newStatus) {

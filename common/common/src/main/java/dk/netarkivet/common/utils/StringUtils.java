@@ -74,12 +74,12 @@ public class StringUtils {
      *  the conjoined string in list order.  If the objects are not Strings,
      *  the toString method will be used to convert them to strings.
      *
-     * @param objects A collection of object to concatenate as a string.
      * @param sep A string to separate the list items.
+     * @param objects A collection of object to concatenate as a string.
      * @return The concatenated string, or null if the list was null.
      */
-    public static final <T> String conjoin(Collection<T> objects,
-                                           String sep) {
+    public static final <T> String conjoin(String sep, Collection<T> objects
+    ) {
         if (objects == null) {
             return null;
         }
@@ -96,11 +96,11 @@ public class StringUtils {
     /** Concatenate all strings in a collection with the given separator
      *  between each.
      *
-     * @param strings An array of strings to concatenate
      * @param sep A string to separate the list items.
+     * @param strings An array of strings to concatenate
      * @return The concatenated string, or null if the list was null.
      */
-    public static final String conjoin(String[] strings, String sep) {
+    public static final String conjoin(String sep, String... strings) {
         if (strings == null) {
             return null;
         }
@@ -170,10 +170,10 @@ public class StringUtils {
         }
         return resultList;
     }
-    
+
     /**
      * Generate a ellipsis of orgString. If orgString is longer than
-     * maxLength, then we return a String containing the first maxLength 
+     * maxLength, then we return a String containing the first maxLength
      * characters and then append  " ..".
      * @param orgString the original string
      * @param maxLength the maximum length of the string before ellipsing it

@@ -201,8 +201,8 @@ public class HTMLUtils {
         if (locales.length != languageNames.length) {
             throw new ArgumentNotValid(
                     "Different number of locales and names for them. Locales: ["
-                    + StringUtils.conjoin(locales, ",") + "]; Languages: ["
-                    + StringUtils.conjoin(languageNames, ",") + "]");
+                    + StringUtils.conjoin(",", locales) + "]; Languages: ["
+                    + StringUtils.conjoin(",", languageNames) + "]");
         }
         for (int i = 0; i < locales.length; i++) {
             out.print("<a href=\"lang.jsp?locale="

@@ -142,7 +142,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
 
         log.debug("Requesting an index of type '" + this.requestType
-                 + "' for the jobs [" + StringUtils.conjoin(jobSet, ",")
+                 + "' for the jobs [" + StringUtils.conjoin(",",jobSet )
                  + "]");
         //Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
@@ -158,7 +158,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         if (jobSet.equals(foundJobs)) {
             log.debug("Successfully received an index of type '"
                       + this.requestType
-                     + "' for the jobs [" + StringUtils.conjoin(jobSet, ",")
+                     + "' for the jobs [" + StringUtils.conjoin(",",jobSet )
                      + "]");
             try {
                 if (reply.isIndexIsStoredInDirectory()) {
@@ -270,36 +270,36 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         //Read and check reply
         if (msg == null) {
             throw new IOFailure("Timeout waiting for reply of index request "
-                                + "for jobs " + StringUtils.conjoin(jobSet,
-                                                                    ","));
+                                + "for jobs " + StringUtils.conjoin(",",jobSet
+                                                                    ));
         }
         if (!msg.isOk()) {
             throw new IllegalState("Reply message not ok. Message is: '"
                                    + msg.getErrMsg()
                                    + "' in index request for jobs "
-                                   + StringUtils.conjoin(jobSet, ","));
+                                   + StringUtils.conjoin(",",jobSet ));
         }
         if (!(msg instanceof IndexRequestMessage)) {
             throw new IOFailure("Unexpected type of reply message: '"
                                 + msg.getClass().getName()
                                 + "' in index request for jobs "
-                                + StringUtils.conjoin(jobSet, ","));
+                                + StringUtils.conjoin(",",jobSet ));
         }
         IndexRequestMessage reply = (IndexRequestMessage) msg;
         Set<Long> foundJobs = reply.getFoundJobs();
         if (foundJobs == null) {
             throw new ArgumentNotValid("Missing parameter foundjobs in reply to"
                                        + " index request for jobs "
-                                       + StringUtils.conjoin(jobSet, ","));
+                                       + StringUtils.conjoin(",",jobSet ));
         }
 
         //FoundJobs should always be a subset
         if (!jobSet.containsAll(foundJobs)) {
             throw new ArgumentNotValid("foundJobs is not a subset of requested "
                     + "jobs. Requested: "
-                    + StringUtils.conjoin(jobSet, ",")
+                    + StringUtils.conjoin(",",jobSet )
                     + ". Found: "
-                    + StringUtils.conjoin(foundJobs, ","));
+                    + StringUtils.conjoin(",",foundJobs ));
         }
 
         if (jobSet.equals(foundJobs)) {
@@ -310,14 +310,14 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 if  (files == null) {
                     throw new ArgumentNotValid("Missing files in reply to"
                             + " index request for jobs "
-                            + StringUtils.conjoin(jobSet, ","));
+                            + StringUtils.conjoin(",",jobSet ));
                 }
             } else {
                 RemoteFile file = reply.getResultFile();
                 if  (file == null) {
                     throw new ArgumentNotValid("Missing file in reply to"
                             + " index request for jobs "
-                            + StringUtils.conjoin(jobSet, ","));
+                            + StringUtils.conjoin(",",jobSet ));
                 }
             }
 

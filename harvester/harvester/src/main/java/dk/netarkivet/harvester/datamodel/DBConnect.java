@@ -429,13 +429,13 @@ public class DBConnect {
                                            Object o, String fieldname)
             throws SQLException {
         if (contents != null) {
-            if (contents.length() > maxSize) {            	
+            if (contents.length() > maxSize) {
             	log.warn(fieldname + " of " + o
-                        + " is longer than the allowed " + maxSize 
+                        + " is longer than the allowed " + maxSize
                         + " characters. The contents is truncated to length " + maxSize
                         +		". The untruncated contents was: " + contents);
             	// truncate to length maxSize
-            	contents = contents.substring(0, maxSize); 
+            	contents = contents.substring(0, maxSize);
             }
             s.setString(fieldNum, contents);
         } else {
@@ -448,14 +448,14 @@ public class DBConnect {
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
      * @throws SQLException
-     * @throws PermissionDenied If length of o.getName() is larger than 
+     * @throws PermissionDenied If length of o.getName() is larger than
      * Constants.MAX_NAME_SIZE
      */
     static void setName(PreparedStatement s, int fieldNum, Named o)
             throws SQLException {
     	if (o.getName().length() > Constants.MAX_NAME_SIZE) {
-    		throw new PermissionDenied("Length of name (" 
-    				+ o.getName().length() 
+    		throw new PermissionDenied("Length of name ("
+    				+ o.getName().length()
     				+ ") is larger than allowed. Max length is "
     				+ Constants.MAX_NAME_SIZE);
     	}
@@ -469,14 +469,14 @@ public class DBConnect {
      * @param fieldNum the index of the given field to be set
      * @param o the Named object
      * @throws SQLException
-     * @throws PermissionDenied If length of o.getComments() is larger than 
+     * @throws PermissionDenied If length of o.getComments() is larger than
      * Constants.MAX_COMMENT_SIZE
      */
     static void setComments(PreparedStatement s, int fieldNum, Named o)
             throws SQLException {
     	if (o.getComments().length() > Constants.MAX_COMMENT_SIZE) {
-    		throw new PermissionDenied("Length of comments (" 
-    				+ o.getComments().length() 
+    		throw new PermissionDenied("Length of comments ("
+    				+ o.getComments().length()
     				+ ") is larger than allowed. Max length is "
     				+ Constants.MAX_COMMENT_SIZE);
     	}
@@ -562,8 +562,8 @@ public class DBConnect {
         if (contents != null) {
             if (contents.length() > maxSize) {
             	log.warn(fieldName + " of " + o
-                        + " is longer than the allowed " + maxSize 
-                        + " characters. The contents is now truncated to length " + maxSize 
+                        + " is longer than the allowed " + maxSize
+                        + " characters. The contents is now truncated to length " + maxSize
                         +		". The untruncated contents was: " + contents);
                	// truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
             	// else truncate to length Integer.MAX_VALUE
@@ -831,7 +831,7 @@ public class DBConnect {
             s.executeUpdate();
             c.setAutoCommit(true);
             log.info("Updated " + table + " to version " + newVersion
-                    + " using updates '" + StringUtils.conjoin(updates, ";")
+                    + " using updates '" + StringUtils.conjoin(";", updates)
                     + "'.");
         } catch (SQLException e) {
             String msg = "SQL error updating " + table + " table to version "

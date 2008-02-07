@@ -1,15 +1,23 @@
 /* AUTOMATICALLY GENERATED ON Thu Jan 10 15:18:43 CET 2008*/
 /* DO NOT EDIT */
 
-grant codeBase "file:${user.home}/netarchivesuite/classes/-" {
+grant codeBase "file:classes/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:${user.home}/netarchivesuite/lib/-" {
+grant codeBase "file:lib/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:/opt/IntelliJ-IDEA-7.0.1/lib/-" {
+grant codeBase "file:${java.home}/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:/opt/IntelliJ-IDEA-7.0.1/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tests/lib/-" {
   permission java.security.AllPermission;
 };
 

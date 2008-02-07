@@ -48,9 +48,9 @@ public class RawMetadataCacheTester extends CacheTestCase {
     }
 
     public void tearDown() throws Exception {
-        super.tearDown();
         mjms.tearDown();
         new TestArcRepositoryClient(TestInfo.WORKING_DIR).close();
+        super.tearDown();
     }
 
     public void testGetCacheFileName() throws Exception {

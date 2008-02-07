@@ -113,12 +113,12 @@ public class BitarchiveMonitorServerTester extends TestCase {
         if (bam_server != null) {
             bam_server.close();
         }
-        Settings.reload();
         mtf.tearDown();
         ulrf.tearDown();
         mjms.tearDown();
         rls.tearDown();
         ChannelsTester.resetChannels();
+        Settings.reload();
     }
 
     /**

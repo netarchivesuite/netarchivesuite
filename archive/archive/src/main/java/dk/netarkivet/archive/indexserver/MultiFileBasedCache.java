@@ -75,10 +75,10 @@ public abstract class MultiFileBasedCache<T extends Comparable>
         List<T> sorted = new ArrayList<T>(IDs);
         Collections.sort(sorted);
 
-        String allIDsString = StringUtils.conjoin(sorted, "-");
+        String allIDsString = StringUtils.conjoin("-",sorted );
         if (sorted.size() > MAX_IDS_IN_FILENAME) {
-            String firstNIDs = StringUtils.conjoin(sorted.subList(0,
-                                                                  MAX_IDS_IN_FILENAME), "-");
+            String firstNIDs = StringUtils.conjoin("-",sorted.subList(0,
+                                                                  MAX_IDS_IN_FILENAME) );
             return new File(getCacheDir(), firstNIDs + "-"
                                            + MD5.generateMD5(allIDsString.getBytes()) + "-cache");
         } else {
