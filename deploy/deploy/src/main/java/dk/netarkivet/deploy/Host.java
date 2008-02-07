@@ -992,4 +992,26 @@ public class Host {
         nonServiceTypes.removeAll(EnumSet.of(Type.ftp, Type.jms, Type.mail));
         return nonServiceTypes.isEmpty();
     }
+
+    /** Update a security policy file with required permissions.
+     * Known code already has permission to do anything, while third-party code
+     * (submitted for batch) must be allowed to read bitarchive files.
+     *
+     * @param securityFile File to add permissions to.
+     */
+    public void updateSecurityFile(File securityFile) {
+        if (isType(Type.bitarchive)
+            && properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY) != null) {
+            FileUtils.appendToFile(securityFile, "grant {");
+            List<String> fileDirs =
+                    properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY);
+            for (String dir : fileDirs) {
+                FileUtils.appendToFile(securityFile,
+                                       "  permission java.io.FilePermission "
+                                       + "\"" + dir + "\", \"read\";");
+            }
+            FileUtils.appendToFile(securityFile, "};");
+        }
+    }
+
 }

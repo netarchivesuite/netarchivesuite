@@ -48,3 +48,9 @@ grant {
 
 /* Directories in the bitarchives should be added below.
  */
+grant {
+  permission java.io.FilePermission "m:\bitarchive", "read";
+  permission java.io.FilePermission "n:\bitarchive", "read";
+  permission java.io.FilePermission "o:\bitarchive", "read";
+  permission java.io.FilePermission "p:\bitarchive", "read";
+};

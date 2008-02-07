@@ -63,11 +63,13 @@ public class DeployApplication {
 
         ItConfiguration itConfig = new ItConfiguration(new File(fname));
         itConfig.setEnvironment(environmentName);
-        itConfig.calculateDefaultSettings(new File(fnNameSettings)
-                .getAbsoluteFile().getParentFile());
+        final File confDir = new File(fnNameSettings)
+                .getAbsoluteFile().getParentFile();
+        itConfig.calculateDefaultSettings(confDir);
         itConfig.loadDefaultSettings(new File(fnNameSettings), environmentName);
         File subdir = new File(outputdir);
         itConfig.writeSettings(subdir);
+        itConfig.writeSecurityPolicies(confDir, subdir);
         for (String loc : itConfig.locations) {
             itConfig.writeInstallAllSSH(new File(subdir, "install_" + loc + ".sh"),
                                         new File(subdir, "startall_" + loc + ".sh"),

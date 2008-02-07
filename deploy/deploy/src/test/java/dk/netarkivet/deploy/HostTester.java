@@ -38,6 +38,7 @@ import dk.netarkivet.archive.arcrepository.ArcRepositoryApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.webinterface.GUIApplication;
 import dk.netarkivet.harvester.harvesting.HarvestControllerApplication;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
@@ -52,7 +53,7 @@ import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 
 public class HostTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-            TestInfo.WORKING_DIR);
+                                          TestInfo.WORKING_DIR);
 
     public HostTester(String s) {
         super(s);
@@ -69,64 +70,70 @@ public class HostTester extends TestCase {
     }
 
     public void testGetJarFiles() throws Exception {
-        List<String> harvestJars = Arrays.asList(new String[] {
+        List<String> harvestJars = Arrays.asList(new String[]{
                 "dk.netarkivet.harvester.jar",
                 "dk.netarkivet.archive.jar",
                 "dk.netarkivet.viewerproxy.jar",
                 "dk.netarkivet.monitor.jar"
         });
-        List<String> archiveJars = Arrays.asList(new String[] {
+        List<String> archiveJars = Arrays.asList(new String[]{
                 "dk.netarkivet.archive.jar",
                 "dk.netarkivet.viewerproxy.jar",
                 "dk.netarkivet.monitor.jar"
         });
-        List<String> accessJars = Arrays.asList(new String[] {
+        List<String> accessJars = Arrays.asList(new String[]{
                 "dk.netarkivet.viewerproxy.jar",
                 "dk.netarkivet.archive.jar",
                 "dk.netarkivet.monitor.jar"
         });
-        List<String> monitorJars = Arrays.asList(new String[] {
+        List<String> monitorJars = Arrays.asList(new String[]{
                 "dk.netarkivet.monitor.jar"
         });
         Host host = new Host("bar", "foo", Host.Type.bitarchive);
         assertEquals("Should get right jar for harvestdefinition",
-                harvestJars,
-                host.getJarFiles(GUIApplication.class.getName()));
+                     harvestJars,
+                     host.getJarFiles(GUIApplication.class.getName()));
         assertEquals("Should get right jar for harvestcontroller",
-                harvestJars,
-                host.getJarFiles(HarvestControllerApplication.class.getName()));
+                     harvestJars,
+                     host.getJarFiles(
+                             HarvestControllerApplication.class.getName()));
         assertEquals("Should get right jar for sidekick",
-                harvestJars,
-                host.getJarFiles(SideKick.class.getName()));
+                     harvestJars,
+                     host.getJarFiles(SideKick.class.getName()));
         assertEquals("Should get right jar for sidekick monitorhook",
-                harvestJars,
-                host.getJarFiles(HarvestControllerServerMonitorHook.class.getName()));
+                     harvestJars,
+                     host.getJarFiles(
+                             HarvestControllerServerMonitorHook.class.getName()));
         assertEquals("Should get right jar for sidekick extended string",
-                harvestJars,
-                host.getJarFiles("dk.netarkivet.harvester.sidekick.SideKick "
-                        + "dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook "
-                        + " ./conf/someharvester "));
+                     harvestJars,
+                     host.getJarFiles(
+                             "dk.netarkivet.harvester.sidekick.SideKick "
+                             + "dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook "
+                             + " ./conf/someharvester "));
 
         assertEquals("Should get right jar for arcrepository",
-                archiveJars,
-                host.getJarFiles(ArcRepositoryApplication.class.getName()));
+                     archiveJars,
+                     host.getJarFiles(
+                             ArcRepositoryApplication.class.getName()));
         assertEquals("Should get right jar for bamon",
-                archiveJars,
-                host.getJarFiles(BitarchiveMonitorApplication.class.getName()));
+                     archiveJars,
+                     host.getJarFiles(
+                             BitarchiveMonitorApplication.class.getName()));
         assertEquals("Should get right jar for bitarchive",
-                archiveJars,
-                host.getJarFiles(BitarchiveApplication.class.getName()));
+                     archiveJars,
+                     host.getJarFiles(BitarchiveApplication.class.getName()));
 
         assertEquals("Should get right jar for viewerproxy",
-                accessJars,
-                host.getJarFiles(ViewerProxyApplication.class.getName()));
+                     accessJars,
+                     host.getJarFiles(ViewerProxyApplication.class.getName()));
 
         try {
             host.getJarFiles(HarvestControllerServer.class.getName());
             fail("Should fail on non-application class");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention bad class",
-                    "HarvestControllerServer", e.getMessage());
+                                               "HarvestControllerServer",
+                                               e.getMessage());
         }
 
         try {
@@ -134,7 +141,7 @@ public class HostTester extends TestCase {
             fail("Should fail on non-existing class");
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Should mention bad class",
-                    "NotAClass", e.getMessage());
+                                               "NotAClass", e.getMessage());
         }
 
         try {
@@ -154,8 +161,8 @@ public class HostTester extends TestCase {
                 .getParentFile());
         itConfig.loadDefaultSettings(TestInfo.SETTINGS_FILE, environmentName);
         Field hostlist = ReflectUtils.getPrivateField(ItConfiguration.class,
-                "hostlist");
-        List<Host> hosts = (List<Host>)hostlist.get(itConfig);
+                                                      "hostlist");
+        List<Host> hosts = (List<Host>) hostlist.get(itConfig);
         for (Host h : hosts) {
             if (h.getLocation().equals("kb")) {
                 if (h.isType(Host.Type.admin)) {
@@ -188,22 +195,26 @@ public class HostTester extends TestCase {
 
     /** Check that the expected number of ports is available */
     private void checkJMXPorts(Host h, int numPorts) throws
-            NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException {
+                                                     NoSuchMethodException,
+                                                     IllegalAccessException,
+                                                     InvocationTargetException {
         Method getJMXPortParameter = ReflectUtils.getPrivateMethod(Host.class,
-                "getJMXPortParameter");
+                                                                   "getJMXPortParameter");
         for (int i = 8100; i < 8100 + numPorts; i++) {
-            String result = (String)getJMXPortParameter.invoke(h);
+            String result = (String) getJMXPortParameter.invoke(h);
             assertEquals("Must have port " + i,
-                    "-Dsettings.common.jmx.port=" + i + " -Dsettings.common.jmx.rmiPort=" + (i + 100), result);
+                         "-Dsettings.common.jmx.port=" + i
+                         + " -Dsettings.common.jmx.rmiPort=" + (i + 100),
+                         result);
         }
         try {
-            String result = (String)getJMXPortParameter.invoke(h);
+            String result = (String) getJMXPortParameter.invoke(h);
             fail("No ports should be left behind on " + h
-                    + " after " + numPorts + " are taken: " + result);
+                 + " after " + numPorts + " are taken: " + result);
         } catch (InvocationTargetException e) {
             StringAsserts.assertStringContains("Should mention host",
-                    h.toString(), e.getCause().getMessage());
+                                               h.toString(),
+                                               e.getCause().getMessage());
         }
     }
 
@@ -212,22 +223,76 @@ public class HostTester extends TestCase {
                 = new ItConfiguration(TestInfo.IT_CONF_FILE);
         String environmentName = "prod";
         itConfig.setEnvironment(environmentName);
-        itConfig.calculateDefaultSettings(TestInfo.SETTINGS_FILE.getParentFile());
+        itConfig.calculateDefaultSettings(
+                TestInfo.SETTINGS_FILE.getParentFile());
         Field pwdField = ReflectUtils.getPrivateField(ItConfiguration.class,
-                "jmxMonitorRolePassword");
+                                                      "jmxMonitorRolePassword");
         pwdField.set(itConfig, "TestPassword");
         itConfig.loadDefaultSettings(TestInfo.SETTINGS_FILE, environmentName);
         Field hostlist = ReflectUtils.getPrivateField(ItConfiguration.class,
-                "hostlist");
-        List<Host> hosts = (List<Host>)hostlist.get(itConfig);
+                                                      "hostlist");
+        List<Host> hosts = (List<Host>) hostlist.get(itConfig);
         for (Host h : hosts) {
             File confDir = new File(new File(TestInfo.TMPDIR, h.getName()),
-                    "conf");
+                                    "conf");
             confDir.mkdirs(); // This is normally created outside writeJMXPwd
             h.writeJMXPassword(confDir);
             FileAsserts.assertFileContains("Should have pwd from it-conf",
-                    "monitorRole TestPassword",
-                    new File(confDir, "jmxremote.password"));
+                                           "monitorRole TestPassword",
+                                           new File(confDir,
+                                                    "jmxremote.password"));
         }
+    }
+
+    public void testUpdateSecurityFile() throws Exception {
+        final File securityFile = new File(TestInfo.WORKING_DIR,
+                                           "security.policy");
+        String originalFile = FileUtils.readFile(securityFile);
+        Host h = new Host("test-host", "test", Host.Type.access);
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file",
+                     originalFile, FileUtils.readFile(securityFile));
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "foo");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file for access"
+                     + " machine even with filedir property",
+                     originalFile, FileUtils.readFile(securityFile));
+        h = new Host("test-host", "test", Host.Type.admin);
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "foo");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file for admin"
+                     + " machine even with filedir property",
+                     originalFile, FileUtils.readFile(securityFile));
+        h = new Host("test-host", "test", Host.Type.harvesters);
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "foo");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file for harvester"
+                     + " machine even with filedir property",
+                     originalFile, FileUtils.readFile(securityFile));
+        h = new Host("test-host", "test", Host.Type.indexserver);
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "foo");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file for indexserver"
+                     + " machine even with filedir property",
+                     originalFile, FileUtils.readFile(securityFile));
+        h = new Host("test-host", "test", Host.Type.bitarchive);
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should not have changed security file for bitarchve"
+                     + " machine with no filedir property",
+                     originalFile, FileUtils.readFile(securityFile));
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "foo");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should have added single grant block",
+                     originalFile +
+                     "grant {\n  permission java.io.FilePermission \"foo\", \"read\";\n};\n",
+                     FileUtils.readFile(securityFile));
+        FileUtils.writeBinaryFile(securityFile, originalFile.getBytes());
+        h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "${user.home}/bar");
+        h.updateSecurityFile(securityFile);
+        assertEquals("Should have added multi-line grant block",
+                     originalFile +
+                     "grant {\n  permission java.io.FilePermission \"foo\", \"read\";"
+                     + "\n  permission java.io.FilePermission \"${user.home}/bar\", \"read\";\n};\n",
+                     FileUtils.readFile(securityFile));
     }
 }
