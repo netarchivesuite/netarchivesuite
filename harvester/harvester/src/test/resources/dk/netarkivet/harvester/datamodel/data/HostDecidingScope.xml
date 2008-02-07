@@ -32,15 +32,13 @@
 
         	<map name="rules">
 			<newObject name="rejectByDefault" class="org.archive.crawler.deciderules.RejectDecideRule"/>
-			<newObject name="acceptURIFromSeedDomains" class="dk.netarkivet.harvester.harvesting.OnNSDomainsDecideRule">
-            			<string name="decision">ACCEPT</string>
-            			<string name="surts-source-file"></string>
-            			<boolean name="seeds-as-surt-prefixes">true</boolean>
-            			<string name="surts-dump-file"/>
-            			<boolean name="also-check-via">false</boolean>
-            			<boolean name="rebuild-on-reconfig">true</boolean>
-          		</newObject>
-            		<newObject name="rejectIfTooManyHops" class="org.archive.crawler.deciderules.TooManyHopsDecideRule">
+			<newObject name="acceptIfOnSeedsHosts" class="org.archive.crawler.deciderules.OnHostsDecideRule">
+				<string name="decision">ACCEPT</string>
+				<string name="surts-dump-file"></string>
+				<boolean name="also-check-via">false</boolean>
+				<boolean name="rebuild-on-reconfig">true</boolean>
+			</newObject>
+			<newObject name="rejectIfTooManyHops" class="org.archive.crawler.deciderules.TooManyHopsDecideRule">
             			<integer name="max-hops">25</integer>
           		</newObject>
 			<newObject name="rejectIfPathological" class="org.archive.crawler.deciderules.PathologicalPathDecideRule">
