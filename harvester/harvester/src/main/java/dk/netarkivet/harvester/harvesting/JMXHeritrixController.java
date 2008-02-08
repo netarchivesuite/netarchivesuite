@@ -234,7 +234,7 @@ public class JMXHeritrixController implements HeritrixController {
                              files.getArcFilePrefix(), getJobDescription(),
                              files.getSeedsTxtFile().getAbsolutePath());
         jobName = getJobName();
-        getProgressStatisticsLegend();
+        initializeProgressStatisticsLegend();
     }
 
     /** @see HeritrixController#requestCrawlStart()
@@ -325,7 +325,7 @@ public class JMXHeritrixController implements HeritrixController {
     }
 
     /** Store the statistics legend line (asynchronously) */
-    private void getProgressStatisticsLegend() {
+    private void initializeProgressStatisticsLegend() {
         new Thread() {
             public void run() {
                 progressStatisticsLegend = (String)executeCrawlJobCommand

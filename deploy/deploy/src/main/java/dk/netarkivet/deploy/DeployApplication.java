@@ -76,8 +76,5 @@ public class DeployApplication {
                                         new File(subdir, "killall_" + loc + ".sh"),
                                         loc);
         }
-//        System.out.println(itConfig);
-
     }
-
 }

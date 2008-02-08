@@ -587,7 +587,8 @@ public class Host {
                         + JMXPasswordFile.getAbsolutePath();
                 String httpFileTransferArgs = getHttpFileTransferArgs();
                 String securityArgs = "-Djava.security.manager "
-                                      + "-Djava.security.policy=conf/security.policy";
+                                      + "-Djava.security.policy=conf/"
+                                      + Constants.SECURITY_POLICY_FILE_NAME;
                 String OPTIONS = StringUtils.conjoin(" ",
                                                      extraOptions,
                                                      SETTINGSFILE,
@@ -1000,6 +1001,7 @@ public class Host {
      * @param securityFile File to add permissions to.
      */
     public void updateSecurityFile(File securityFile) {
+        ArgumentNotValid.checkNotNull(securityFile, "File securityFile");
         if (isType(Type.bitarchive)
             && properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY) != null) {
             FileUtils.appendToFile(securityFile, "grant {");

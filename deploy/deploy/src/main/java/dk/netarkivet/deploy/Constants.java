@@ -59,4 +59,6 @@ public class Constants {
     /** Property used to specify the port where the Heritrix JMX for a
      * harvester is accessible */
     static final String HERITRIX_JMX_PORT_PROPERTY = "heritrixJmxPort";
+    /** Name of the default security policy file */
+    static final String SECURITY_POLICY_FILE_NAME = "security.policy";
 }

@@ -123,10 +123,6 @@ public class ItConfiguration {
     /** How long to wait for large index generation jobs to time out */
     private long largeIndexTimeout;
 
-    /** A default policy file that we can add host-specific permissions to. */
-    private static final File DEFAULT_SECURITY_POLICY_FILE =
-            new File("conf/security.policy");
-
     /**
      * Loads an xml file. During parsing, the instance variables above are set
      * to currect values, using a customized SAX parser.
@@ -649,21 +645,24 @@ public class ItConfiguration {
         return "It configuration:\n" + StringUtils.conjoin("",hostlist );
     }
 
-    /** Write a security policy files in subdir that allows our code
+    /** Write security policy files in dir that allows our code
      * to do anything and third-party code to read the bit archives.  Files
      * are written for all hosts registered in their respective subdirs
-     * of subdir.
+     * of dir.
      *
      * @param confDir The directory that contains a default security file
      * @param dir The directory that host-specific output is placed under
      */
     public void writeSecurityPolicies(File confDir, File dir) {
+        ArgumentNotValid.checkNotNull(confDir, "File confDir");
+        ArgumentNotValid.checkNotNull(dir, "File dir");
         for (Host host : hostlist) {
             if (!host.isServiceHost()) {
                 File subDir = new File(dir, host.getName());
                 FileUtils.createDir(subDir);
-                final File securityFile = new File(subDir, "security.policy");
-                FileUtils.copyFile(new File(confDir, "security.policy"),
+                final File securityFile = new File(subDir,
+                                                   Constants.SECURITY_POLICY_FILE_NAME);
+                FileUtils.copyFile(new File(confDir, Constants.SECURITY_POLICY_FILE_NAME),
                                    securityFile);
                 host.updateSecurityFile(securityFile);
             }
