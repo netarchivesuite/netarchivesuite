@@ -97,7 +97,7 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                         + domainAsString + "</a>");
         pointer = pointer + 1;
     }
-    String aliasesString = StringUtils.conjoin(aliasLinks, ",&nbsp;");
+    String aliasesString = StringUtils.conjoin(",&nbsp;", aliasLinks);
 
     HTMLUtils.generateHeader(
             pageContext);
@@ -149,11 +149,11 @@ Display all the form information for this domain
             <input type='radio' name='<%=Constants.RENEW_ALIAS_PARAM%>'
                    value='yes'/> <fmt:message key="renew.alias"/>
     <%    }
-    } 
-    Locale loc = HTMLUtils.getLocaleObject(pageContext); 
+    }
+    Locale loc = HTMLUtils.getLocaleObject(pageContext);
     %>
-    
-    <%-- table for selecting/editing configurations --%>    
+
+    <%-- table for selecting/editing configurations --%>
     <table class="selection_table">
         <th colspan="2"><fmt:message key="configurations"/></th>
         <th colspan="1"><fmt:message key="default"/></th>
@@ -216,7 +216,7 @@ Display all the form information for this domain
                         + HTMLUtils.encode(listName) + "&"
                         + Constants.DOMAIN_PARAM + "="
                         + HTMLUtils.encode(domainName);
-                String seeds = StringUtils.conjoin(sl.getSeeds(), "; ");
+                String seeds = StringUtils.conjoin("; ", sl.getSeeds());
                 if (seeds.length() > 100) {
                     seeds = seeds.substring(0, 97) + "...";
                 }
@@ -251,8 +251,8 @@ Display all the form information for this domain
             <td>
                 <textarea rows="8" cols="40"
                           name="<%=Constants.CRAWLERTRAPS_PARAM%>"><%=HTMLUtils.escapeHtmlValues(
-                            StringUtils.conjoin(domain.getCrawlerTraps(),
-                                    "\n")) %></textarea>
+                            StringUtils.conjoin("\n", domain.getCrawlerTraps()))
+                    %></textarea>
             </td>
         </tr>
     </table>

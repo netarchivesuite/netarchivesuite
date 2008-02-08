@@ -38,7 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
-    //The list of files to run batch jobs on:
+    /** The list of files to run batch jobs on: */
     private File[] files;
     private Log log = LogFactory.getLog(BatchLocalFiles.class);
 
@@ -67,6 +67,8 @@ public class BatchLocalFiles {
      * @param os - the OutputStream to which output data is written
      */
     public void run(FileBatchJob job, OutputStream os) {
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+        ArgumentNotValid.checkNotNull(os, "OutputStream os");
         //Initialize the job:
         job.noOfFilesProcessed = 0;
         job.filesFailed = new HashSet<File>();
@@ -81,7 +83,7 @@ public class BatchLocalFiles {
         } catch (Exception e) {
             log.warn("Exception while initializing job " + job, e);
         } finally {
-            // Finally, allow the job to finish up: */
+            // Finally, allow the job to finish: */
             try {
                 job.finish(os);
             } catch (Exception e) {

@@ -24,24 +24,25 @@
 package dk.netarkivet.common.utils;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.Constants;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import dk.netarkivet.common.Constants;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * Various utilities for running processes -- not exactly Java's forte.
@@ -234,11 +235,14 @@ public class ProcessUtils {
      * method takes care of the ways waitFor can get interrupted.
      *
      * @param p Process to wait for
-     * @param maxWait
+     * @param maxWait The maximum number of milliseconds to wait for the
+     * process to exit.
      * @return Exit value for process, or null if the process didn't exit
      * within the expected time.
      */
     public static Integer waitFor(final Process p, long maxWait) {
+        ArgumentNotValid.checkNotNull(p, "Process p");
+        ArgumentNotValid.checkPositive(maxWait, "long maxWait");
         long startTime = System.currentTimeMillis();
         Timer timer = new Timer(true);
         final Thread waitThread = Thread.currentThread();
@@ -248,7 +252,7 @@ public class ProcessUtils {
             try {
                 if (!wakeupScheduled) {
                     // First time in here, we need to start the wakup thread,
-                    // but be sure it doesn't notify us too early.
+                    // but be sure it doesn't notify us too early or too late.
                     synchronized(waitThread) {
                         timer.schedule(new TimerTask() {
                             public void run() {

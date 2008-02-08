@@ -305,7 +305,7 @@ setupNextdateCalendar();
             <textarea rows="<%= unknownDomains.size() %>" cols="30"
                 name="<%=Constants.UNKNOWN_DOMAINS_PARAM%>"><%=
                 HTMLUtils.escapeHtmlValues
-                        (StringUtils.conjoin(unknownDomains, "\n"))
+                        (StringUtils.conjoin("\n", unknownDomains))
                 %></textarea>
         </td>
         <td>
@@ -330,7 +330,7 @@ setupNextdateCalendar();
     <tr>
         <td>
             <textarea rows="<%= illegalDomains.size()%>" cols="30"><%=
-                HTMLUtils.escapeHtmlValues(StringUtils.conjoin(illegalDomains, "\n"))
+                HTMLUtils.escapeHtmlValues(StringUtils.conjoin("\n", illegalDomains))
             %></textarea>
         </td>
     </tr>

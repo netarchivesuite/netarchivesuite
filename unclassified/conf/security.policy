@@ -37,7 +37,7 @@ grant codeBase "file:scripts/simple_harvest/tests/commontempdir/BitPreservation/
 */
 grant {
   permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
-}
+};;
 
 /* These permissions allow third-party batch classes to read the bitarchive
  * used in the QuickStart. */
