@@ -45,12 +45,13 @@ package dk.netarkivet.common.utils.arc;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 
@@ -74,19 +75,28 @@ public class LoadableJarBatchJobTester extends TestCase {
     public void testInitialize() {
         FileBatchJob job = new LoadableJarBatchJob(
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
-                "LoadableTestJob");
+                "dk.netarkivet.common.utils.arc.LoadableTestJob");
         OutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         assertEquals("Should have message from loaded class",
-                     "initialize() called on inner\n", os.toString());
-    }
+                     "initialize() called on me\n", os.toString());
 
-    public void testLoadableJarBatchJob() throws Exception {
-        FileBatchJob job = new LoadableJarBatchJob(
+        try {
+            job = new LoadableJarBatchJob(
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
-                "LoadableTestJob");
-        assertNotNull("Should have loaded a job from JAR file",
-                      ((LoadableJarBatchJob) job).loadedJob);
-        fail("Test not implemented yet");
+                "dk.netarkivet.common.utils.arc.LoadableTestJob$InnerClass");
+            job.initialize(os);
+            fail("Should not be possible to load non-batchjob class");
+        } catch (IOFailure e) {
+            // Expected
+        }
+
+        job = new LoadableJarBatchJob(
+                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
+                "dk.netarkivet.common.utils.arc.LoadableTestJob$InnerBatchJob");
+        os = new ByteArrayOutputStream();
+        job.initialize(os);
+        assertEquals("Should have message from loaded class",
+                     "initialize() called on inner\n", os.toString());
     }
 }

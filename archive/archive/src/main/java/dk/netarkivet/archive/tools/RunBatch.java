@@ -35,36 +35,58 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
 
 import java.io.File;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.Collection;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
  *
  * Usage:
- * 	java dk.netarkivet.archive.tools.RunBatch classfile [regexp [location]]
+ * 	java dk.netarkivet.archive.tools.RunBatch \
+ *       classfile [regexp [location [outputfile]]
+ *
+ * where classfile is a file containing a FileBatchJob implementation
+ *       regexp is a regular expression that will be matched against
+ *              file names in the archive, by default .*
+ *       location is the bitarchive location this should be run on, by
+ *              default taken from settings.
+ *       outputfile is a file where the output from the batch job will be
+ *              written.  By default, it goes to stdout.
+ *
+ * Example:
+ *
+ * java dk.netarkivet.archive.tools.RunBatch FindMime.class 10-*.arc SB mimes
+ *
+ * Note that you probably want to set the HTTP port setting
+ * (settings.common.port.http) to something other than its default value to
+ * avoid clashing with other channel listeners.
  */
-
 public class RunBatch extends ToolRunnerBase {
-
     /**
-     * Main method. Retrieves a file from the bitarchive and copies it to
-     * current working directory.
-     * Setup, teardown and run is delegated to the GetFileTool class.
+     * Main method.  Runs a batch job in the bitarchive.
+     * Setup, teardown and run is delegated to the RunBatchTool class.
      * Management of this, exception handling etc. is delegated to
      * ToolRunnerBase class.
      *
-     * @param argv Takes one or two command line parameter:
-     *    the name of the file to retrieve.
-     *    optionally, the name of the destination file.
+     * @param argv Takes one to four command line parameters, only the first is
+     * required:
+     *   the name of a file containing an implementation of FileBatchJob
+     *   a regular expression
+     *   a bitarchive location
+     *   a filename for output
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
         instance.runTheTool(argv);
     }
 
+    /** Create an instance of the actual RunBatchTool. */
     protected SimpleCmdlineTool makeMyTool() {
         return new RunBatchTool();
     }
 
+    /** The implementation of SimpleCmdlineTool for RunBatch. */
     private static class RunBatchTool implements SimpleCmdlineTool {
         /**
          * This instance is declared outside of run method to ensure reliable
@@ -73,19 +95,48 @@ public class RunBatch extends ToolRunnerBase {
         private ViewerArcRepositoryClient arcrep;
 
         /**
-         * the bitarchive location requested to run the batch job on
-         */
-        Location myLocation;
-
-        /**
-         * Accept 1 to 3 parameters.
+         * Accept 1 to 4 parameters and checks them for validity.
          *
          * @param args the arguments
-         * @return true, if length of args list is 1 to 3;
+         * @return true, if given arguments are valid
          * 	returns false otherwise
          */
         public boolean checkArgs(String... args) {
-            return (args.length > 0 && args.length < 4);
+            if (args.length < 1) {
+                System.err.println("Missing required argument: class file");
+                return false;
+            }
+            if (args.length > 4) {
+                System.err.println("Too many arguments");
+                return false;
+            }
+            if (!new File(args[0]).canRead()) {
+                System.err.println("File not found: '" + args[0] + "'");
+                return false;
+            }
+            if (args.length > 1) {
+                try {
+                    Pattern.compile(args[1]);
+                } catch (PatternSyntaxException e) {
+                    System.err.println("Illegal pattern syntax: '"
+                                       + args[1] + "'");
+                    return false;
+                }
+            }
+            if (args.length > 2 &&
+                !Location.isKnownLocation(args[2])) {
+                System.err.println("Unknown location '" + args[2]
+                                   + "', known location are "
+                                   + Location.getKnown());
+                return false;
+            }
+            if (args.length > 3 &&
+                !new File(args[3]).canWrite()) {
+                System.err.println("Output file '" + args[3]
+                                   + "' cannot be written to");
+                return false;
+            }
+            return true;
         }
 
         /**
@@ -96,9 +147,6 @@ public class RunBatch extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            myLocation = Location.get(Settings.get(
-            		Settings.ENVIRONMENT_THIS_LOCATION)
-            		);
         }
 
         /**
@@ -111,51 +159,61 @@ public class RunBatch extends ToolRunnerBase {
                 arcrep.close();
             }
             JMSConnectionFactory.getInstance().cleanup();
-            System.exit(0);
         }
 
         /**
          * Perform the actual work. Procure the necessary information from
          * command line parameters and system settings required to run the
-         * ViewerArcRepositoryClient.getFile(), and perform the operation.
+         * ViewerArcRepositoryClient.batch(), and perform the operation.
          * Creating and closing the ArcRepositoryClient (arcrep) is
          * done in setup and teardown methods.
          *
          * @param args the arguments
          */
         public void run(String... args) {
-            try {
-            	String filename = args[0];
-                LoadableFileBatchJob job
-                        = new LoadableFileBatchJob(new File(filename));
-                String regexp = ".*";
-                if (args.length > 1) {
-                    regexp = args[1];
-                    job.processOnlyFilesMatching(regexp);
-                }
-                if (args.length > 2) {
-                    myLocation = Location.get(args[2]);
-                }
-            	System.out.println("Running batch job '" + filename
-                                   + "' on files matching '" + regexp
-                                   + "' on location '" + myLocation.getName()
-                                   + "'");
-            	BatchStatus status = arcrep.batch(job, myLocation.getName());
-                System.out.println("Processed " + status.getNoOfFilesProcessed()
-                                   + " files with "
-                                   + status.getFilesFailed().size()
-                                   + " failures");
+            String filename = args[0];
+            LoadableFileBatchJob job
+                    = new LoadableFileBatchJob(new File(filename));
+            String regexp = ".*";
+            if (args.length > 1) {
+                regexp = args[1];
+                job.processOnlyFilesMatching(regexp);
+            }
+            Location myLocation = Location.get(Settings.get(
+                    Settings.ENVIRONMENT_THIS_LOCATION)
+            );
+            if (args.length > 2) {
+                myLocation = Location.get(args[2]);
+            }
+            File outputFile = null;
+            if (args.length > 3) {
+                outputFile = new File(args[3]);
+            }
+            System.out.println("Running batch job '" + filename
+                               + "' on files matching '" + regexp
+                               + "' on location '" + myLocation.getName()
+                               + "'");
+            BatchStatus status = arcrep.batch(job, myLocation.getName());
+            final Collection<File> failedFiles = status.getFilesFailed();
+            System.out.println("Processed " + status.getNoOfFilesProcessed()
+                               + " files with "
+                               + failedFiles.size()
+                               + " failures");
+            if (outputFile != null) {
+                status.copyResults(outputFile);
+            } else {
                 status.appendResults(System.out);
-            } catch (NetarkivetException e) {
-               System.out.println("Execution of arcrep.batch(job, location)"
-                                  + " failed: " + e);
-               e.printStackTrace();
-               System.exit(1);
+            }
+            if (failedFiles.size() != 0) {
+                System.out.println("Failed files:");
+                for (File f : failedFiles) {
+                    System.out.println(f.getName());
+                }
             }
         }
 
         /**
-         * Return the list of parameters accepted by the GetFileTool class.
+         * Return the list of parameters accepted by the RunBatchTool class.
          *
          * @return the list of parameters accepted.
          */

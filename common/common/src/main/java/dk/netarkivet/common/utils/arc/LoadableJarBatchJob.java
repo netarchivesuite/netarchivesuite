@@ -32,6 +32,9 @@ import java.util.Enumeration;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,17 +43,17 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.FileUtils;
 
-/** This implementation of FileBatchJob is a bridge to a class file given
- * as a byte array, or a jar file given as a File object.
+/** This implementation of FileBatchJob is a bridge to a jar file given as a
+ * File object.
  * The given class will be loaded and used to perform
  * the actions of the FileBatchJob class. */
 public class LoadableJarBatchJob extends FileBatchJob {
     transient FileBatchJob loadedJob;
-    transient static ByteJarLoader multipleClassLoader;
+    private ClassLoader multipleClassLoader;
     transient Log log = LogFactory.getLog(this.getClass().getName());
     private String jobClass;
 
-    static class ByteJarLoader extends ClassLoader {
+    static class ByteJarLoader extends ClassLoader implements Serializable {
         Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
 
         public ByteJarLoader(File file) {
@@ -71,17 +74,11 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
 
         public Class findClass(String className) throws ClassNotFoundException {
-            try {
+            if (binaryData.containsKey(className)) {
+                final byte[] bytes = binaryData.get(className);
+                return defineClass(className, bytes, 0, bytes.length);
+            } else {
                 return super.findClass(className);
-            } catch (ClassNotFoundException e) {
-                // Find class in our jar file
-                if (binaryData.containsKey(className)) {
-                    final byte[] bytes = binaryData.get(className);
-                    return defineClass(className, bytes, 0, bytes.length);
-                } else {
-                    throw new ClassNotFoundException("Class " + className
-                                                     + " not found");
-                }
             }
         }
     }
@@ -96,7 +93,6 @@ public class LoadableJarBatchJob extends FileBatchJob {
     public LoadableJarBatchJob(File jarFile, String jobClass) {
         this.jobClass = jobClass;
         multipleClassLoader = new ByteJarLoader(jarFile);
-
     }
 
     /**
@@ -108,13 +104,19 @@ public class LoadableJarBatchJob extends FileBatchJob {
     public void initialize(OutputStream os) {
         try {
             loadedJob = (FileBatchJob) multipleClassLoader
-                    .findClass(jobClass).newInstance();
+                    .loadClass(jobClass).newInstance();
         } catch (InstantiationException e) {
-            log.warn("Cannot instantiate loaded job class", e);
+            final String msg = "Cannot instantiate loaded job class";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (IllegalAccessException e) {
-            log.warn("Cannot access loaded job from byte array", e);
+            final String msg = "Cannot access loaded job from byte array";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (ClassNotFoundException e) {
-            log.warn("Cannout create job class from jar file", e);
+            final String msg = "Cannout create job class from jar file";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         }
         loadedJob.initialize(os);
     }
@@ -138,5 +140,32 @@ public class LoadableJarBatchJob extends FileBatchJob {
      */
     public void finish(OutputStream os) {
         loadedJob.finish(os);
+    }
+
+
+    /** Override of the default way to serialize this class.
+     *
+     * @param out Stream that the object will be written to.
+     * @throws IOException In case there is an error from the underlying stream,
+     * or this object cannot be serialized.
+     */
+    private void writeObject(ObjectOutputStream out)
+            throws IOException {
+        out.defaultWriteObject();
+    }
+
+    /** Override of the default way to unserialize an object of this class.
+     *
+     * @param in Stream that the object can be read from.
+     * @throws IOException If there is an error reading from the stream, or
+     * the serialized object cannot be deserialized due to errors in the
+     * serialized form.
+     * @throws ClassNotFoundException If the class definition of the
+     * serialized object cannot be found.
+     */
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        log = LogFactory.getLog(this.getClass().getName());
     }
 }

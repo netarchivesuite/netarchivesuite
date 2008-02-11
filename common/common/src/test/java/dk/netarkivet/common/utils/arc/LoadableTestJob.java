@@ -147,4 +147,58 @@ public class LoadableTestJob extends FileBatchJob {
             return "inner";
         }
     }
+
+    public static class InnerBatchJob extends FileBatchJob {
+        public InnerBatchJob() {
+        }
+
+        /**
+         * Initialize the job before runnning. This is called before the
+         * processFile() calls
+         *
+         * @param os the OutputStream to which output should be written
+         */
+        public void initialize(OutputStream os) {
+            try {
+                os.write(("initialize() called on " + this + "\n").getBytes());
+            } catch (IOException e) {
+                throw new IOFailure("Error in initializing " + this + ": ", e);
+            }
+        }
+
+        /**
+         * Process one file stored in the bit archive.
+         *
+         * @param file the file to be processed.
+         * @param os   the OutputStream to which output should be written
+         *
+         * @return true if the file was successfully processed, false otherwise
+         */
+        public boolean processFile(File file, OutputStream os) {
+            try {
+                os.write(("processFile() called on " + this + " with " + file.getName() + "\n").getBytes());
+                return true;
+            } catch (IOException e) {
+                throw new IOFailure("Error in processing " + file
+                                    + " with " + this + ": ", e);
+            }
+        }
+
+        /**
+         * Finish up the job. This is called after the last process() call.
+         *
+         * @param os the OutputStream to which output should be written
+         */
+        public void finish(OutputStream os) {
+            try {
+                os.write(("finish() called on " + this + "\n").getBytes());
+            } catch (IOException e) {
+                throw new IOFailure("Error in finishing " + this + ": ", e);
+            }
+        }
+
+        public String toString() {
+            return "inner";
+        }
+    }
 }

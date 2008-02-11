@@ -71,6 +71,7 @@ public abstract class ToolRunnerBase {
         if (!internalRunTheTool(args)) {
             exitWithFailure();
         }
+        System.exit(0);
     }
 
     // Private methods follow for doing setup, run and teardown with rudimentary
