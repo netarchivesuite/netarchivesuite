@@ -62,10 +62,13 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
- * csr forgot to comment this!
- *
+ * A TestCase specifically tailored to test webinterface classes, primarily 
+ * the classes in dk.netarkivet.harvester.webinterface:
+ *   HarvestStatusTester, EventHarvestTester, DomainDefinitionTester, 
+ *   ScheduleDefinitionTester, SnapshotHarvestDefinitionTester
+ * but also 
+ *  dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
-
 public class WebinterfaceTestCase extends TestCase {
     static final File HARVEST_DEFINITION_BASEDIR
             = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");

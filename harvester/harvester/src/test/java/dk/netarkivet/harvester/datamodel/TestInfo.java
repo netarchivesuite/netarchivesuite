@@ -41,11 +41,10 @@ import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
 
 /**
- * Contains test information about all harvest definition test data
- *
+ * Contains test information about all harvest definition test data.
  */
 public class TestInfo {
-    protected static final Logger log = Logger.getLogger("dk.netarkivet.harvester.datamodel.TestInfo");
+    protected static final Logger log = Logger.getLogger(TestInfo.class.getName());
     public static final File TOPDATADIR = new File("./tests/dk/netarkivet/harvester/datamodel/data/");
     public static final File DATADIR = new File(TOPDATADIR, "hadebasedir/");
     public static final File TEMPDIR = new File(TOPDATADIR, "working/");
@@ -115,8 +114,8 @@ public class TestInfo {
         new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
         new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml")
     };
-    public static Document ORDERXMLDOC = null;
-    public static Document[] SETTINGSXMLDOCS = null;
+    //public static Document ORDERXMLDOC = null;
+    //public static Document[] SETTINGSXMLDOCS = null;
     public static Date START_DATE = new GregorianCalendar(105, 2, 3, 4, 5, 6).getTime();
     public static Date END_DATE = new GregorianCalendar(106, 2, 3, 4, 5, 6).getTime();
     public static Frequency DEFAULT_FREQ = new DailyFrequency(3);
@@ -192,9 +191,7 @@ public class TestInfo {
     }
 
     /**
-     * Load resources needed by unit tests
-     * <p/>
-     * author: SSC
+     * Load resources needed by unit tests.
      */
     public TestInfo() {
     }
@@ -227,8 +224,8 @@ public class TestInfo {
     }
 
     public static void setup() {
-        ORDERXMLDOC = getOrderXmlDoc(ORDERXMLFILE);
-        SETTINGSXMLDOCS = getSettingsXmlDocs(SETTINGSXMLFILES);
+        //ORDERXMLDOC = getOrderXmlDoc(ORDERXMLFILE);
+        //SETTINGSXMLDOCS = getSettingsXmlDocs(SETTINGSXMLFILES);
     }
 
     protected static Document getOrderXmlDoc(File f) {

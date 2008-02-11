@@ -40,6 +40,7 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -65,10 +66,8 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
- * Tests of HarvestSchedulerMonitorServer
- *
+ * Tests of the class HarvestSchedulerMonitorServer.
  */
-
 public class HarvestSchedulerMonitorServerTester extends TestCase {
 
 
@@ -79,11 +78,16 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
             new File("tests/dk/netarkivet/harvester/scheduler/data/");
     public static final File ORIGINALS = new File(BASEDIR, "originals");
     public static final File WORKING = new File(BASEDIR, "working");
-    private static final File CRAWL_REPORT = new File (WORKING, "harvestreports/crawl.log");
-    private static final File STOP_REASON_CRAWL_REPORT = new File(WORKING,
-                                                                  "harvestreports/stop-reason-crawl.log");
-
-    private static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
+    private static final File CRAWL_REPORT =
+        new File (WORKING, "harvestreports/crawl.log");
+    private static final File STOP_REASON_CRAWL_REPORT =
+        new File(WORKING, "harvestreports/stop-reason-crawl.log");
+    private static final StopReason DEFAULT_STOPREASON =
+        StopReason.DOWNLOAD_COMPLETE;
+    
+    /**
+     * setUp method for this set of unittests.
+     */
     public void setUp() throws IOException, SQLException,
             IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
@@ -99,8 +103,12 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Settings.set(Settings.DB_URL, "jdbc:derby:" + WORKING.getCanonicalPath() + "/fullhddb");
         DBUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"), WORKING);
         the_dao = JobDAO.getInstance();
+        Settings.set(Settings.NOTIFICATIONS_CLASS,
+                     RememberNotifications.class.getName());
     }
-
+    /**
+     * tearDown method for this set of unittests.
+     */
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         TestUtils.resetDAOs();
         FileUtils.removeRecursively(WORKING);
@@ -128,7 +136,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     }
 
     /**
-     * Test that HSMS actually listens to THE_SCHED (see bug 203)
+     * Test that HSMS actually listens to THE_SCHED (see bug 203).
      */
     public void testListens () {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -143,7 +151,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
     /**
      * Test that we can call onMessage with the expected sequence of messages
-     * for a successful crawl job
+     * for a successful crawl job.
      */
     public void testOnMessageGoodJob() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -216,18 +224,19 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Iterator hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
-        assertEquals("Unexpected number of objects retireved", 22, dh.getCountObjectRetrieved());
+        assertEquals("Unexpected number of objects retireved", 
+                22, dh.getCountObjectRetrieved());
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
     }
 
     /**
      * Test that we can do a failed job with no (ie NULL_REMOTE_FILE) crawl
-     * report returned
+     * report returned.
      */
     public void testOnMessageFailedJobNoReport() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        //
+        
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -270,7 +279,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     //
 
     /**
-     * Test that receiving a message on a NEW job results in an exception
+     * Test that receiving a message on a NEW job results in an exception.
      */
     public void testMessageWhileNew() {
         Job j1 = TestInfo.getJob();
@@ -292,7 +301,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
     /**
      * Send a STARTED message after a DONE message. The STARTED message should
-     * be ignored
+     * be ignored.
      */
     public void testStartedAfterDone() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -340,9 +349,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     }
 
     /**
-         * Send a STARTED message after a Failed message. The STARTED message should
-         * be ignored
-         */
+     * Send a STARTED CrawlStatusMessage after a Failed message. This STARTED message should
+     * be ignored.
+     */
     public void testStartedAfterFailed() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
@@ -387,7 +396,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     }
 
     /**
-     * If FAILED arrives after DONE, the jobis marked as FAILED
+     * If FAILED arrives after DONE, the jobis marked as FAILED.
      */
     public void testFailedAfterDone() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -435,7 +444,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     }
 
     /**
-     * If DONE arrives after FAILED, the job should be marked FAILED
+     * If DONE arrives after FAILED, the job should be marked FAILED.
      */
      public void testDoneAfterFailed() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -479,9 +488,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Unexpected total size of harvest", 270, dh.getSizeDataRetrieved());
     }
 
-    /**
-     * Test that receiving a "DONE" directly after a "SUBMITTED" runs ok but is logged
-     */
+     /**
+      * Test that receiving a "DONE" directly after a "SUBMITTED" runs ok
+      * but is logged.
+      */
     public void testDoneAfterSubmitted() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
@@ -518,7 +528,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                                        "unexpected state", LOG_FILE);
     }
 
-    /** Test that stop reason is set correctly.
+    /** Test that the stop reason is set correctly.
      *
      * There are the following cases:
      * Completed domains are set as completed
@@ -527,10 +537,10 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * - We reached the harvest byte limit but not yet the config limit
      * - We reached the config limit
      *
-     * We use a crawl log with the following characteristica:
-     * statsbiblioteket.dk reached object limit
-     * dr.dk reached byte limit
-     * kb.dk harvested complete
+     * We use a crawl log with the following characteristics:
+     * - statsbiblioteket.dk reached object limit
+     * - dr.dk reached byte limit
+     * - kb.dk harvested complete
      *
      * (netarkivet.dk we fiddle with harvest and config limit to see
      * results but use the same crawllog)
@@ -543,17 +553,22 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         DomainDAO.getInstance().create(Domain.getDefaultDomain("dr.dk"));
 
         //The host report we use
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(STOP_REASON_CRAWL_REPORT, DEFAULT_STOPREASON);
+        DomainHarvestReport hhr =
+            new HeritrixDomainHarvestReport(STOP_REASON_CRAWL_REPORT, DEFAULT_STOPREASON);
 
         //A harvest definition with no limit
-        HarvestDefinition snapshot = new FullHarvest("TestHarvest", "", null, Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                                                     Constants.HERITRIX_MAXBYTES_INFINITY);
+        HarvestDefinition snapshot =
+            new FullHarvest("TestHarvest", "", null,
+                    Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                    Constants.HERITRIX_MAXBYTES_INFINITY);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest
         Domain dom = DomainDAO.getInstance().read("kb.dk");
         DomainConfiguration conf = dom.getDefaultConfiguration();
-        Job job = Job.createSnapShotJob(snapshot.getOid(), conf, Constants.HERITRIX_MAXOBJECTS_INFINITY, Constants.HERITRIX_MAXBYTES_INFINITY, 0);
+        Job job = Job.createSnapShotJob(snapshot.getOid(), conf,
+                Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                Constants.HERITRIX_MAXBYTES_INFINITY, 0);
         dom = DomainDAO.getInstance().read("statsbiblioteket.dk");
         conf = dom.getDefaultConfiguration();
         job.addConfiguration(conf);
@@ -573,36 +588,45 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         //Check correct historyinfo for kb.dk: complete
         dom = DomainDAO.getInstance().read("kb.dk");
-        HarvestInfo dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(), dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 1, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 521, dh.getSizeDataRetrieved());
-        assertEquals("Should be marked as complete", StopReason.DOWNLOAD_COMPLETE, dh.getStopReason());
+        HarvestInfo dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(), 
+                dom.getDefaultConfiguration().getName());
+        assertEquals("Should have expected number of objects retrieved",
+                1, dh.getCountObjectRetrieved());
+        assertEquals("Should have expected total size of harvest", 
+                521, dh.getSizeDataRetrieved());
+        assertEquals("Should be marked as complete",
+                StopReason.DOWNLOAD_COMPLETE, dh.getStopReason());
 
         //Check correct historyinfo for statsbiblioteket.dk: object limit
         dom = DomainDAO.getInstance().read("statsbiblioteket.dk");
-        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(), dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 0, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 0, dh.getSizeDataRetrieved());
+        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(),
+                dom.getDefaultConfiguration().getName());
+        assertEquals("Should have expected number of objects retrieved",
+                0, dh.getCountObjectRetrieved());
+        assertEquals("Should have expected total size of harvest",
+                0, dh.getSizeDataRetrieved());
         assertEquals("Should be marked as stopped due to object limit",
-                StopReason.OBJECT_LIMIT,
-                dh.getStopReason());
+                StopReason.OBJECT_LIMIT, dh.getStopReason());
 
         //Check correct historyinfo for dr.dk: size limit - config limit is lowest, so this should be a size_limit
         dom = DomainDAO.getInstance().read("dr.dk");
-        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(), dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 2, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 580, dh.getSizeDataRetrieved());
+        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(),
+                dom.getDefaultConfiguration().getName());
+        assertEquals("Should have expected number of objects retrieved", 
+                2, dh.getCountObjectRetrieved());
+        assertEquals("Should have expected total size of harvest", 
+                580, dh.getSizeDataRetrieved());
         assertEquals("Should be marked as stopped due to size limit",
-                StopReason.CONFIG_SIZE_LIMIT,
-                dh.getStopReason());
+                StopReason.CONFIG_SIZE_LIMIT, dh.getStopReason());
 
         //A harvest definition with low byte limit
-        snapshot = new FullHarvest("TestHarvest2", "", null, Constants.HERITRIX_MAXOBJECTS_INFINITY,
-                                   10L);
+        snapshot = new FullHarvest("TestHarvest2", "", null,
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L);
         HarvestDefinitionDAO.getInstance().create(snapshot);
 
         //A job from that harvest (note: conf is the dr.dk config)
-        job = Job.createSnapShotJob(snapshot.getOid(), conf, Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 0);
+        job = Job.createSnapShotJob(snapshot.getOid(), conf,
+                Constants.HERITRIX_MAXOBJECTS_INFINITY, 10L, 0);
         job.setStatus(JobStatus.STARTED);
         JobDAO.getInstance().create(job);
 
@@ -615,9 +639,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
         //Check correct historyinfo for dr.dk: Harvest limit is lowest and wins
         dom = DomainDAO.getInstance().read("dr.dk");
-        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(), dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 2, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 580, dh.getSizeDataRetrieved());
-        assertEquals("Should be marked as size limit reached", StopReason.SIZE_LIMIT, dh.getStopReason());
+        dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(),
+                dom.getDefaultConfiguration().getName());
+        assertEquals("Should have expected number of objects retrieved", 
+                2, dh.getCountObjectRetrieved());
+        assertEquals("Should have expected total size of harvest",
+                580, dh.getSizeDataRetrieved());
+        assertEquals("Should be marked as size limit reached", 
+                StopReason.SIZE_LIMIT, dh.getStopReason());
     }
 }

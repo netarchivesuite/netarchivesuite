@@ -41,6 +41,7 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
+import org.dom4j.Document;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.Settings;
@@ -48,6 +49,8 @@ import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
@@ -171,6 +174,11 @@ public class HarvestControllerTester extends TestCase {
                                        harvestInfo);
         FileAsserts.assertFileContains("Should have correct order.xml file",
                                        "OneLevel-order", orderXml);
+        
+        // Verify that order.xml is valid HeritrixTemplate
+        Document order = XmlUtils.getXmlDoc(orderXml);
+        HeritrixTemplate template = new HeritrixTemplate(order, true);
+        
         FileAsserts.assertFileContains("Should have correct seeds.txt file",
                                        j.getSeedListAsString(), seedsTxt);
         FileAsserts.assertFileContains("Should have URL in file",

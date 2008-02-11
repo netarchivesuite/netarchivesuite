@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,13 +70,13 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
- * Test HarvestControllerServer
+ * Test HarvestScheduler class.
  */
 public class HarvestSchedulerTester extends TestCase {
 
     TestInfo info = new TestInfo();
 
-    /* The harvestScheduler used for testing */
+    /** The harvestScheduler used for testing. */
     HarvestScheduler hsch;
 
     public HarvestSchedulerTester(String sTestName) {
@@ -123,16 +122,9 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Testing close() For the moment, we only test that this does not throw an
      * exception.
-     * @throws InterruptedException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws Exception
      */
-    public void testClose()
-            throws InterruptedException, IllegalAccessException,
-                   NoSuchFieldException, NoSuchMethodException,
-                   InvocationTargetException {
+    public void testClose() throws Exception {
         hsch = getSchedulerInstance();
         hsch.close();
         hsch = null;
@@ -141,16 +133,9 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that running the scheduler creates certain jobs.
-     * @throws InterruptedException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws Exception
      */
-    public void testRun()
-            throws InterruptedException, IllegalAccessException,
-                   NoSuchFieldException, NoSuchMethodException,
-                   InvocationTargetException {
+    public void testRun() throws Exception {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Should have no jobs before start", 0, dao.getCountJobs());
         TestMessageListener hacoListener = new TestMessageListener();
@@ -188,15 +173,9 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that the getInstance method works.
-     * @throws InterruptedException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws Exception
      */
-    public void testCreateInstance()
-            throws InterruptedException, IllegalAccessException,
-                   NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
+    public void testCreateInstance() throws Exception {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Should have no jobs before start", 0, dao.getCountJobs());
         hsch = getSchedulerInstance();
@@ -204,9 +183,7 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("Should have created a job", dao.getCountJobs() > 0);
     }
 
-    private HarvestScheduler getSchedulerInstance()
-            throws InterruptedException, IllegalAccessException,
-                   NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
+    private HarvestScheduler getSchedulerInstance() throws Exception {
         final HarvestScheduler instance = HarvestScheduler.getInstance();
         HarvestDefinitionDAOTester.waitForJobGeneration();
         Method m = HarvestScheduler.class.getDeclaredMethod("submitNewJobs", new Class[0]);
@@ -215,11 +192,11 @@ public class HarvestSchedulerTester extends TestCase {
         return instance;
     }
 
-    public void testGetHoursPassedSince() throws NoSuchMethodException,
-                                                 IllegalAccessException,
-                                                 NoSuchFieldException,
-                                                 InvocationTargetException,
-                                                 InterruptedException {
+    /**
+     * Test private method getHoursPassedSince().
+     * @throws Exception
+     */
+    public void testGetHoursPassedSince() throws Exception {
         hsch = getSchedulerInstance();
         Method getHoursPassedSince = hsch.getClass().getDeclaredMethod("getHoursPassedSince", Date.class);
         getHoursPassedSince.setAccessible(true);
@@ -237,11 +214,9 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that HarvestScheduler is a singleton.
-     * @throws InterruptedException
+     * @throws Exception
      */
-    public void testSingletonicity() throws InterruptedException,
-                                            IllegalAccessException, NoSuchFieldException,
-                                            NoSuchMethodException, InvocationTargetException {
+    public void testSingletonicity() throws Exception {
         ClassAsserts.assertSingleton(HarvestScheduler.class);
         // There are threads left over that can disturb the database
         // test setup.  Must wait for them to end.
@@ -253,7 +228,7 @@ public class HarvestSchedulerTester extends TestCase {
         m.invoke((hsch = getSchedulerInstance()), new Object[0]);
     }
 
-    /** Test that runNewJobs skips bad jobs without crashing (bug #627)
+    /** Test that runNewJobs skips bad jobs without crashing (bug #627).
      * TODO The setActualStop/setActualStart no longer throws exception, so we need to find a way making jobs bad
      */
     public void testSubmitNewJobs() throws Exception {
@@ -293,6 +268,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /** 
      * Test that runNewJobs generates correct alias information for the job.
+     * @throws Exception
      */
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -373,7 +349,8 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /** 
-     * Test that runNewJobs makes correct duplicatio reduction information.
+     * Test that runNewJobs makes correct duplication reduction information.
+     * @throws Exception
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -442,17 +419,9 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Unittest testing the private method rescheduleJob.
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     * @throws InvocationTargetException
-     * @throws InterruptedException
+     * @throws Exception
      */
-    public void testRescheduleJobs() throws NoSuchMethodException,
-                                            IllegalAccessException,
-                                            NoSuchFieldException,
-                                            InvocationTargetException,
-                                            InterruptedException {
+    public void testRescheduleJobs() throws Exception {
         hsch = HarvestScheduler.getInstance();
         HarvestDefinitionDAOTester.waitForJobGeneration();
 

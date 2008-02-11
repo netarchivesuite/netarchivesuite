@@ -218,7 +218,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         TemplateDAO tdao = TemplateDAO.getInstance();
         Document template = tdao.read(TestInfo.ORDER_XML_NAME).getTemplate();
         Node filterMapNode
-                = template.selectSingleNode("/crawl-order/controller/newObject/newObject[@name='exclude-filter']/map[@name='filters']");
+                = template.selectSingleNode(HeritrixTemplate.DECIDERULES_MAP_XPATH);
         filterMapNode.setText("åæø");
         tdao.update(TestInfo.ORDER_XML_NAME, new HeritrixTemplate(template));
         Document template2 = tdao.read(TestInfo.ORDER_XML_NAME).getTemplate();

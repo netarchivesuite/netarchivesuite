@@ -28,13 +28,13 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 
 /**
- * Contains test information about all scheduler test data
+ * Contains test information about all scheduler test data.
  *
  */
 public class TestInfo {
 
     /**
-     * The properties-file containg properties for logging in unit-tests
+     * The properties-file containg properties for logging in unit-tests.
      */
     static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
@@ -47,12 +47,15 @@ public class TestInfo {
     }
 
     /**
-     * Get a simple job
+     * Get a simple job.
      */
     static Job getJob() {
         // This job doesn't get an ID here, because we want to see what happens
         // with an ID-less job, too.
-        return Job.createJob(new Long(0), DomainDAO.getInstance().read("netarkivet.dk").getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
+        return Job.createJob(new Long(0), 
+                DomainDAO.getInstance()
+                .read("netarkivet.dk")
+                .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
     }
 }
 

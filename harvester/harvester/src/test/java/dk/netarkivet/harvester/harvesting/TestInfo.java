@@ -41,22 +41,27 @@ import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.testutils.ReflectUtils;
 
 /**
- * Testdata for this package
- *
+ * Testdata for this package.
  */
-
 public class TestInfo {
 
     static final StopReason DEFAULT_STOPREASON = StopReason.DOWNLOAD_COMPLETE;
 
     //General dirs:
     private static final File BASEDIR = new File("tests/dk/netarkivet/harvester/harvesting/data");
+    
+    private static final File FUTURE_BASEDIR = new File("tests/dk/netarkivet/harvester/data");
+    private static final File TEMPLATES_DIR = new File(FUTURE_BASEDIR, "originals/order_templates");
+    
+    private static final File ONE_LEVEL_ORDER_FILE = new File(TEMPLATES_DIR, "OneLevel-order.xml");
+    
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
+    
     static final File WORKING_DIR = new File(BASEDIR, "working");
     static final File CRAWLDIR_ORIGINALS_DIR = new File(BASEDIR, "crawldir");
     static final File UNFINISHED_CRAWLDIR = new File(BASEDIR,
                                                      "unfinished_crawl_dir");
-    static final File ORDER_AND_SEEDS_ORIGINALS_DIR = new File(new File(BASEDIR,"launcher"), "originals");
+    static final File ORDER_AND_SEEDS_ORIGINALS_DIR = new File(new File(BASEDIR, "launcher"), "originals");
 
     //Single files inside ORDER_AND_SEEDS_ORGINALS_DIR:
     //(We should ALWAYS move these to WORKING_DIR and reference the copies!)
@@ -156,8 +161,7 @@ public class TestInfo {
     static final String TEST_DOMAIN = "netarkivet.dk";
     static final int NO_OF_OBJECTS_TEST = 37;
     static final int NO_OF_BYTES_TEST = 1162154;
-    private static final File ONE_LEVEL_ORDER_FILE = new File(ORIGINALS_DIR, "OneLevel-order.xml");
-
+   
     /** Get a simple job with high priority.
      *  @return a simple job with high priority
      */

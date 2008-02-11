@@ -44,6 +44,8 @@ import java.util.logging.LogManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.archive.crawler.deciderules.DecideRuleSequence;
+import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -58,6 +60,10 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestUtils;
 
+/**
+ * Test class for the Job class.
+ * 
+ */
 public class JobTester extends DataModelTestCase {
 
     public JobTester(String sTestName) {
@@ -78,7 +84,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that seedlists have ascii versions added
+     * Tests that seedlists have ascii versions added.
      */
     public void testDanskTegn() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
@@ -396,8 +402,7 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Check handling of invalid arguments
-     * author: SSC
+     * Check handling of invalid arguments.
      */
     public void testInvalidArgs() {
         // HarvestID
@@ -619,21 +624,24 @@ public class JobTester extends DataModelTestCase {
         Job j = Job.createJob(new Long(42L), dc1, 0);
         j.addConfiguration(dc2);
 
-        j.getOrderXMLdoc().normalize();
-        List<Node> nodes = j.getOrderXMLdoc().selectNodes(
-                "/crawl-order/controller/newObject"
-                + "/newObject[@name='exclude-filter']/map"
-                + "/newObject[@class='org.archive.crawler.filter.URIRegExpFilter']");
+        String domainCrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/<newObject[@class='"
+            + DecideRuleSequence.class.getName() + "']/map[@name='rules']"
+            + "/newObject[@class='" + MatchesListRegExpDecideRule.class.getName()  + "']";
+    
 
+        j.getOrderXMLdoc().normalize();
+        List<Node> nodes = j.getOrderXMLdoc().selectNodes(domainCrawlerTrapsXpath);
+           
         int found = 0;
 
         //Check that there are no crawlertraps for the first domain and exactly
         //the right two in the second domain
         for (Node n : nodes) {
             String name = n.valueOf("@name");
-            assertFalse("There should no occurences of a domain with no crawler traps",
+            assertFalse("There shouldn't be any crawler traps for domain '" + domain1name 
+                    + "'.",
                         name.startsWith(domain1name.substring(0, domain1name.indexOf('.'))));
-            if(name.startsWith(domain2name.substring(0, domain2name.indexOf('.')))) {
+            if (name.startsWith(domain2name.substring(0, domain2name.indexOf('.')))) {
                 assertNotNull("The filter should be enabled",
                               n.selectNodes("boolean[@name='enabled' and text()='true']"));
                 assertNotNull("The filter should return on match",
@@ -672,9 +680,9 @@ public class JobTester extends DataModelTestCase {
                 + "\nPriority: " + job.getPriority().toString();
     }
 
-    /** Test fields are set correctly, especially harvestNum (after bug 544)
-     * and max-bytes since that now uses limit from configuration if present
-     *
+    /** 
+     * Test fields are set correctly, especially harvestNum (after bug 544)
+     * and max-bytes since that now uses limit from configuration if present.
      */
     public void testCreateJob() {
         DomainConfiguration dc = TestInfo.getNetarkivetConfiguration();
@@ -760,10 +768,7 @@ public class JobTester extends DataModelTestCase {
         Domain d = ddao.read(TestInfo.EXISTINGDOMAINNAME);
         DomainConfiguration cfg = d.getDefaultConfiguration();
         Job j = Job.createJob(42L, cfg, 2);
-        String xpath =
-                "/crawl-order/controller/map[@name='pre-fetch-processors']"
-            + "/newObject[@name='QuotaEnforcer']/long[@name='group-max-success-kb']";
-
+        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;   
         Document orderXML = j.getOrderXMLdoc();
         Node groupMaxSuccessKbNode = orderXML.selectSingleNode(xpath);
 
@@ -887,8 +892,5 @@ public class JobTester extends DataModelTestCase {
             }
             last = i;
         }
-        
-        
-        
     }    
 }
