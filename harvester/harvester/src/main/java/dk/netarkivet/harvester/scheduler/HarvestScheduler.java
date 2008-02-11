@@ -33,14 +33,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.jms.Message;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
@@ -163,10 +159,10 @@ public class HarvestScheduler implements CleanupIF {
         // In case we were shut down without JMS queues being cleaned, remove
         // those messages left
         //TODO: Implementation fails
-        List<Message> loprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
-            (Channels.getAnyLowpriorityHaco());
-        List<Message> hiprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
-            (Channels.getAnyHighpriorityHaco());
+//        List<Message> loprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+//            (Channels.getAnyLowpriorityHaco());
+//        List<Message> hiprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+//            (Channels.getAnyHighpriorityHaco());
         // TODO: Resubmit those just taken out with same ID, as we know no
         // harvester is using them.
         final JobDAO dao = JobDAO.getInstance();

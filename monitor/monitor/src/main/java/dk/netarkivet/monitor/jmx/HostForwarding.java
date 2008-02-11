@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -186,9 +187,12 @@ public class HostForwarding<T> {
                 
                 for (HostEntry he : hostentriesForHost) {
                     if (!registeredJmxPortsOnHost.contains(he)) {
+                        log.debug("Adding new jmx host '" + he + "'");
                         newJmxHosts.add(he);
                         registeredJmxPortsOnHost.add(he);
                     } else {
+                        log.trace("Updating last seen time for jmx host '"
+                                  + he + "'");
                         for (HostEntry existing : registeredJmxPortsOnHost) {
                             if (existing.equals(he)) {
                                 existing.setTime(he.getTime());
@@ -198,8 +202,9 @@ public class HostForwarding<T> {
                 }
                 knownJmxConnections.put(host, registeredJmxPortsOnHost);
             } else {
+                log.debug("Adding new jmx hosts '" + hostentriesForHost + "'");
                 newJmxHosts.addAll(hostentriesForHost);
-                knownJmxConnections.put(host, hostentriesForHost);
+                knownJmxConnections.put(host, new HashSet(hostentriesForHost));
             }
         }
         if (newJmxHosts.size() > 0) {
