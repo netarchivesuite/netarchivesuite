@@ -6,6 +6,10 @@ grant codeBase "file:${java.home}/-" {
   permission java.security.AllPermission;
 };
 
+grant principal javax.management.remote.JMXPrincipal "monitorRole" {
+  permission java.security.AllPermission;
+};
+
 /* Grants for the QuickStart system */
 grant codeBase "file:${user.home}/netarchive/lib/-" {
   permission java.security.AllPermission;
