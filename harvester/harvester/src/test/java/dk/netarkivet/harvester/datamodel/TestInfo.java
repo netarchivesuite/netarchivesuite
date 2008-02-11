@@ -62,7 +62,7 @@ public class TestInfo {
     public static final String SEEDS2 = "www.bt.dk\nwww.bt.dk/index.html\nwww.bt.dk/index-uk.html";
     public static final String SEEDS3 = "www.dr.dk/sporten/index.html\n";
 
-    public static final String DFEAULT_PW_LIST_NAME = "default_pw_list";
+    public static final String DEFAULT_PW_LIST_NAME = "default_pw_list";
     public static final SeedList seedlist = new SeedList(SEEDLISTNAME, SEEDS1);
 
     public static final SeedList seedlistJob4 = new SeedList(SEEDLISTNAME_JOB4,

@@ -80,7 +80,8 @@ public class IntegrityTests extends TestCase {
     private SecurityManager originalSecurityManager;
 
     /**
-     * Used in methods testNListenersToTopic and testMoreThanThreeListenersToQueue, should be set to > 3:
+     * Used in methods testNListenersToTopic and
+     * testMoreThanThreeListenersToQueue, should be set to > 3:
      */
     private static final int NO_OF_LISTENERS = 4;
 
@@ -304,6 +305,7 @@ public class IntegrityTests extends TestCase {
      */
     public void testListenAndReply() {
         TestMessage testMsg = new TestMessage(sendQ, replyQ);
+        conn.send(testMsg);
         TestMessageListener listener = new TestMessageListener(testMsg);
         conn.setListener(replyQ, listener);
         synchronized (this) {
@@ -320,7 +322,7 @@ public class IntegrityTests extends TestCase {
 
     /**
      * Test that we can subscribe more than one listener to a topic and that they
-     * all receive the message
+     * all receive the message.
      */
     public void testNListenersToTopic() {
         TestMessage testMsg = new TestMessage(sendTopic, replyQ);
@@ -367,7 +369,7 @@ public class IntegrityTests extends TestCase {
     }
 
     /**
-     * Tests that no messages are generated twice
+     * Tests that no messages are generated twice.
      * @throws Exception
      */
     public void testMsgIds() throws Exception {
@@ -441,7 +443,7 @@ public class IntegrityTests extends TestCase {
     }
 
     /**
-     * Tries to generate the mysterious NullPointerException of bug 220
+     * Tries to generate the mysterious NullPointerException of bug 220.
      * @throws java.io.IOException
      */
     public void testProvokeNullPointer() throws IOException {

@@ -44,14 +44,11 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * csr forgot to comment this!
- *
+ * Integrity tests for the package dk.netarkivet.common.utils.
  */
-
 public class IntegrityTester extends TestCase {
     private final static File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
     private final static File ORIGINALS = new File(BASE_DIR, "fileutils_data");
-    private final static File ZIP_ORIGINALS = new File(BASE_DIR, "data");
     private final static File WORKING = new File(BASE_DIR, "working");
     private final static File SUBDIR = new File(WORKING, "subdir");
     private final static File SUBDIR2 = new File(WORKING, "subdir2");
@@ -63,7 +60,7 @@ public class IntegrityTester extends TestCase {
     public void setUp() {
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        /** Do not send notification by email. Print them to STDOUT. */
+        /** Do not send notifications by email. Print them to STDOUT. */
         Settings.set(Settings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
     }
@@ -74,7 +71,7 @@ public class IntegrityTester extends TestCase {
 
     /**
      * test that FileUtils.append can append between two remote files
-     * using ftp
+     * using ftp.
      */
     public void testAppendRemoteFiles() throws IOException {
         Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());

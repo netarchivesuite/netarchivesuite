@@ -624,8 +624,8 @@ public class JobTester extends DataModelTestCase {
         Job j = Job.createJob(new Long(42L), dc1, 0);
         j.addConfiguration(dc2);
 
-        String domainCrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/<newObject[@class='"
-            + DecideRuleSequence.class.getName() + "']/map[@name='rules']"
+        String domainCrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
+            + DecideRuleSequence.class.getName() + "']/map[@name='rules']/"
             + "/newObject[@class='" + MatchesListRegExpDecideRule.class.getName()  + "']";
     
 
@@ -768,8 +768,12 @@ public class JobTester extends DataModelTestCase {
         Domain d = ddao.read(TestInfo.EXISTINGDOMAINNAME);
         DomainConfiguration cfg = d.getDefaultConfiguration();
         Job j = Job.createJob(42L, cfg, 2);
-        String xpath = HeritrixTemplate.GROUP_MAX_ALL_KB_XPATH;   
+        
         Document orderXML = j.getOrderXMLdoc();
+        final String xpath  =
+            "/crawl-order/controller/map[@name='pre-fetch-processors']"
+            + "/newObject[@name='QuotaEnforcer']"
+            + "/long[@name='group-max-success-kb']";
         Node groupMaxSuccessKbNode = orderXML.selectSingleNode(xpath);
 
         long maxBytesXML = Long.parseLong(groupMaxSuccessKbNode.getText());

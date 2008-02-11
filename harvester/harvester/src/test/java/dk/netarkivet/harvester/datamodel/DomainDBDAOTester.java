@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -45,7 +41,10 @@ import org.dom4j.Node;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
-
+/**
+ * Unittests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
+ * 
+ */
 public class DomainDBDAOTester extends DataModelTestCase {
     public DomainDBDAOTester(String s) {
         super(s);
@@ -94,7 +93,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
         dao.update(d2);
     }
 
-    /** This stresstests the DB DAOs by running several updates in parallel */
+    /** This stresstests the DB DAOs by running several updates in parallel. */
     public void testMultipleSavepoints() {
         DomainDAO dummy = DomainDAO.getInstance();
         final int maxLoop = 300;
@@ -227,8 +226,7 @@ public class DomainDBDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test method for testing DomainDBDAO.getAliases()
-     *
+     * Test method for testing DomainDBDAO.getAliases().
      */
     public void testGetAliases() throws IllegalAccessException,
             NoSuchFieldException, InterruptedException {

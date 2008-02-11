@@ -34,7 +34,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 
 /**
- * @version $Id$
+ * Integritytests for the package dk.netarkivet.harvester.datamodel.
  */
 public class IntegrityTests extends DataModelTestCase {
     private SecurityManager m;
