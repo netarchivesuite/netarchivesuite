@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
-        <!-- Common temporary directory for all applications. -->
+        <!-- Common temporary directory for all applications. Some subdirs of
+             this directory  must be set to have AllPermision in the
+             conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
         <remoteFile xsi:type="ftpremotefile">
@@ -525,7 +527,7 @@
                  Heritrix writes to that subdir-->
             <serverDir>server</serverDir>
             <!--  The minimum amount of free bytes in the serverDir
-                required before accepting any harvest-jobs. Default is 
+                required before accepting any harvest-jobs. Default is
                  400000000 bytes (~400 Mbytes).
             -->
             <minSpaceLeft>400000000</minSpaceLeft>
