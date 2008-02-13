@@ -32,6 +32,8 @@ import org.archive.net.UURIFactory;
 import org.archive.util.ArchiveUtils;
 import org.archive.util.SurtPrefixSet;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /**
  * Class that re-creates the SurtPrefixSet to include only domain names
  * according to the domain definition of NetarchiveSuite.
@@ -43,7 +45,10 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
     /** This is what SurtPrefixSet.prefixFromPlain returns for a non valid URI. */
     public final static String NON_VALID_DOMAIN = "http://(http,)";
-
+    
+    /** Pattern that matches the first part of SURT - until ?? */
+    public final static Pattern SURT_FIRSTPART_PATTERN
+    	= Pattern.compile("http\\://\\([^\\)]*");
     /** 
      * Constructor for the class OnNSDomainsDecideRule. 
      * @param s The name of this DecideRule
@@ -59,6 +64,10 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
                 + " but www.bbc.co.uk will resolve to bbc.co.uk");
     }
     
+    /**
+     * We override the default readPrefixes, because we want to
+     * make our prefixes.
+     */
     protected void readPrefixes() {
         buildSurtPrefixSet();
         myBuildSurtPrefixSet();
@@ -69,32 +78,35 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
      * Method that rebuilds the SurtPrefixSet to include only
      * topmost domains - according to the domain definition
      * in NetarchiveSuite.
+     * This is only done once, during the startup phase?
      */
     protected void myBuildSurtPrefixSet() {
         //make copy of original SurtPrefixSet to loop
         SurtPrefixSet newSurtPrefixes = (SurtPrefixSet) surtPrefixes.clone();
-        //pattern that matches first part of SURT - until
-        Pattern p = Pattern.compile("http\\://\\([^\\)]*");
+        //pattern that matches first part of SURT
+        
         //loop all original SURTs
         for (String s : newSurtPrefixes) {
-            Matcher m = p.matcher(s);
+            Matcher m = SURT_FIRSTPART_PATTERN.matcher(s);
             if (m.find()) {
                 //cut off http:// (https:// are converted by heritrix classes)
                 String hostpart = m.group().substring(8);
                 //split in hostname/domainname/TLD parts
                 String[] parts = hostpart.split(",");
-                String domname = "";
+                StringBuilder domnameBuilder = new StringBuilder();
                 //loop through parts in reverse order - add '.'
                 //(not after last part)
                 for (int j = parts.length - 1; j >= 0; j--) {
-                    domname += parts[j];
-                    if (j != 0) domname += ".";
+                    domnameBuilder.append(parts[j]);
+                    if (j != 0) {
+                    	domnameBuilder.append(".");
+                    }
                 }
                 //add the new domain name to surtPrefixes
                 //since this is always shorter SURTs than the originals
                 //they will automatically
                 //override longer ones (built in SURTs logic)
-                surtPrefixes.add(prefixFrom(domname));
+                surtPrefixes.add(prefixFrom(domnameBuilder.toString()));
             }
         }
     }
@@ -118,7 +130,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
      * @return Domain name
      */
     public static String convertToDomain(String uri) {
-        //ArgumentNotValid.checkNotNullOrEmpty(uri, "String uri");
+        ArgumentNotValid.checkNotNullOrEmpty(uri, "String uri");
         DomainnameQueueAssignmentPolicy policy
                 = new DomainnameQueueAssignmentPolicy();
         String u = uri;
