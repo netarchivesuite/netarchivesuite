@@ -1,7 +1,7 @@
-/* File:        $Id: Constants.java 11 2007-07-24 10:11:24Z kfc $
- * Revision:    $Revision: 11 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -39,12 +39,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class is coded to be thread safe.
  */
 public class MonitorRegistry {
+    /** A map from host names to known host entries. */
     private Map<String, Set<HostEntry>> hostEntries
             = Collections.synchronizedMap(new HashMap<String,
             Set<HostEntry>>());
+    /** The singleton instance. */
     private static MonitorRegistry instance;
+    /** The logger for this class. */
     private Log log = LogFactory.getLog(getClass());
 
+    /** Get the singleton instance.
+     *
+     * @return The singleton instance.
+     */
     public static synchronized MonitorRegistry getInstance() {
         if (instance == null) {
             instance = new MonitorRegistry();
@@ -52,9 +59,8 @@ public class MonitorRegistry {
         return instance;
     }
 
-
     /**
-     * Regster a new JMX host entry.
+     * Register a new JMX host entry.
      * @param hostEntry The entry to add
      *
      * @throws ArgumentNotValid if hostEntry is null.
@@ -67,12 +73,12 @@ public class MonitorRegistry {
             hostEntries.put(hostEntry.getName(), set);
         }
         if (set.add(hostEntry)) {
-            log.info("Added host " + hostEntry.getName() + " port "
+            log.info("Added host '" + hostEntry.getName() + "' port "
                      + hostEntry.getJmxPort() + "/" + hostEntry.getRmiPort());
         } else {
             set.remove(hostEntry);
             set.add(hostEntry);
-            log.debug("Updated time for " + hostEntry.getName() + " port "
+            log.debug("Updated time for '" + hostEntry.getName() + "' port "
                      + hostEntry.getJmxPort() + "/" + hostEntry.getRmiPort()
                      + " to " + hostEntry.getTime());
         }
@@ -83,6 +89,6 @@ public class MonitorRegistry {
      * @return All JMX host entries.
      */
     public synchronized Map<String, Set<HostEntry>> getHostEntries() {
-        return new HashMap((hostEntries));
+        return new HashMap<String, Set<HostEntry>>((hostEntries));
     }
 }

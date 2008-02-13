@@ -66,6 +66,7 @@ public class HostForwarding<T> {
      * The username used to connect to the MBeanservers.
      */
     public static final String JMX_MONITOR_ROLE_USERNAME = "monitorRole";
+
     /**
      * The RMI port is presently set to the JMX-port + this increment.
      */
@@ -85,16 +86,7 @@ public class HostForwarding<T> {
     /**
      * The password for JMX read from settings.
      */
-    private static String jmxPassword;
-    /**
-     * The username for JMX - currently always monitorRole
-     */
-    private static String jmxUsername;
-    
-    /**
-     * The number of hosts to proxy. Read from settings.
-     */
-    private static int numberOfHosts;
+    private String jmxPassword;
 
     /**
      * The instances of host forwardings, to ensure mbeans are only forwarded
@@ -131,7 +123,7 @@ public class HostForwarding<T> {
         this.mBeanQuery = mBeanQuery;
         this.connectionFactory = new CachingProxyConnectionFactory(
                 new RmiProxyConnectionFactory());
-        
+
         updateJmx();
     }
 
@@ -162,30 +154,27 @@ public class HostForwarding<T> {
     }    
     
     /** 
-     * Reads the list of JMX hosts and corresponding JMX ports from deploy_settings.xml,
-     * For all unknown JMXhosts, it registers proxies to all Mbeans registered on the remote MBeanservers
-     * in the given MBeanserver.
+     * Gets the list of hosts and corresponding JMX ports from the
+     * monitor regsitry.
+     * For all unknown hosts, it registers proxies to all Mbeans registered
+     * on the remote MBeanservers in the given MBeanserver.
      * JmxHosts removed from the deploy_settings.xml are currently not removed
      */
     private synchronized void updateJmx() {
-        
-        // update static variables: jmxPassword, jmxUsername, numberOfHosts
-        jmxPassword
-            = Settings.get(Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING);
-        log.info("Setting '" 
-                + Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING
-                + "' has been updated");
-        jmxUsername = JMX_MONITOR_ROLE_USERNAME;
-        log.info("jmxUsername set to '" + jmxUsername + "'.");
+        // update variable jmxPassword
+        jmxPassword = Settings.get(Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING);
+        log.trace("Setting '" + Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING
+                  + "' has been updated");
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
-        Map<String, Set<HostEntry>> potentialJmxConnections = getCurrentHostEntries();
-        for (String host: potentialJmxConnections.keySet()) {
-            Set<HostEntry> hostentriesForHost = potentialJmxConnections.get(host);
-            if (knownJmxConnections.containsKey(host)) {                
-                Set<HostEntry> registeredJmxPortsOnHost = knownJmxConnections.get(host);
-                
-                for (HostEntry he : hostentriesForHost) {
+        for (Map.Entry<String, Set<HostEntry>> entries
+                : getCurrentHostEntries().entrySet()) {
+            String host = entries.getKey();
+            Set<HostEntry> hostEntries = entries.getValue();
+            if (knownJmxConnections.containsKey(host)) {
+                Set<HostEntry> registeredJmxPortsOnHost
+                        = knownJmxConnections.get(host);
+                for (HostEntry he : hostEntries) {
                     if (!registeredJmxPortsOnHost.contains(he)) {
                         log.debug("Adding new jmx host '" + he + "'");
                         newJmxHosts.add(he);
@@ -200,11 +189,13 @@ public class HostForwarding<T> {
                         }
                     }
                 }
-                knownJmxConnections.put(host, registeredJmxPortsOnHost);
+                knownJmxConnections.put(host,
+                                        registeredJmxPortsOnHost);
             } else {
-                log.debug("Adding new jmx hosts '" + hostentriesForHost + "'");
-                newJmxHosts.addAll(hostentriesForHost);
-                knownJmxConnections.put(host, new HashSet(hostentriesForHost));
+                log.debug("Adding new jmx hosts '" + hostEntries + "'");
+                newJmxHosts.addAll(hostEntries);
+                knownJmxConnections.put(
+                        host, new HashSet<HostEntry>(hostEntries));
             }
         }
         if (newJmxHosts.size() > 0) {
@@ -290,7 +281,7 @@ public class HostForwarding<T> {
                 hostEntry.getName(),
                 hostEntry.getJmxPort(),
                 hostEntry.getRmiPort(),
-                jmxUsername, jmxPassword);
+                JMX_MONITOR_ROLE_USERNAME, jmxPassword);
 
         remoteObjectNames = (Set<ObjectName>) connection.query(mBeanQuery);
         for (ObjectName name : remoteObjectNames) {
@@ -451,7 +442,7 @@ public class HostForwarding<T> {
                         hostEntry.getName(),
                         hostEntry.getJmxPort(),
                         hostEntry.getRmiPort(),
-                        jmxUsername, jmxPassword);
+                        JMX_MONITOR_ROLE_USERNAME, jmxPassword);
             } catch (Exception e) {
                 throw new IOFailure("Could not connect to host '"
                        + hostEntry.getName() + ":" + hostEntry.getJmxPort()

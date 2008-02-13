@@ -66,6 +66,7 @@ public class Synchronizer implements MessageListener {
      * @param msg an ObjectMessage containing a NetarkivetMessage.
      */
     public void onMessage(Message msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         NetarkivetMessage naMsg = JMSConnection.unpack(msg);
         NetarkivetMessage requestMsg;
         synchronized (requests) {

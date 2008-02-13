@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
@@ -61,6 +62,7 @@ public abstract class MonitorMessageHandler
      *
      */
     public void onMessage(Message msg) {
+        ArgumentNotValid.checkNotNull(msg, "Message msg");
         log.trace("Message received:\n" + msg.toString());
         try {
             ((MonitorMessage) JMSConnection.unpack(msg)).accept(this);
@@ -73,7 +75,7 @@ public abstract class MonitorMessageHandler
 
     /** Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg The recieved message.
+     * @param msg The received message.
      * @throws PermissionDenied Always
      */
     private void deny(MonitorMessage msg) {
@@ -85,10 +87,11 @@ public abstract class MonitorMessageHandler
     /**
      * This method should be overridden and implemented by a sub class if
      * message handling is wanted.
-     * @param msg an IndexRequestMessage
+     * @param msg a RegisterHostMessage
      * @throws PermissionDenied when invoked
      */
     public void visit(RegisterHostMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "RegsiterHostMessage msg");
         deny(msg);
     }
 }

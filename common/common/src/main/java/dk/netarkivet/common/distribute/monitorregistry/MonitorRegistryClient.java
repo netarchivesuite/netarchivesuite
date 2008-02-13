@@ -1,7 +1,7 @@
-/* File:        $Id: HostForwarding.java 11 2007-07-24 10:11:24Z kfc $
-* Revision:    $Revision: 11 $
-* Author:      $Author: kfc $
-* Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+* Revision:    $Revision$
+* Author:      $Author$
+* Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -27,8 +27,9 @@ package dk.netarkivet.common.distribute.monitorregistry;
  */
 public interface MonitorRegistryClient {
     /** Register this host for monitoring.
-     * @param localHostName
-     * @param anInt
-     * @param rmiPort*/
-    public void register(String localHostName, int anInt, int rmiPort);
+     * @param hostName The name of the host.
+     * @param jmxPort The port for JMX communication.
+     * @param rmiPort The RMI port for JMX communication.
+     */
+    public void register(String hostName, int jmxPort, int rmiPort);
 }

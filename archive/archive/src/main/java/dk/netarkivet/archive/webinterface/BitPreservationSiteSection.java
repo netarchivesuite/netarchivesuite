@@ -45,4 +45,12 @@ public class BitPreservationSiteSection extends SiteSection {
               }, "BitPreservation",
                  Constants.TRANSLATIONS_BUNDLE);
     }
+
+    /** No initialisation necessary in this site section. */
+    public void initialize() {
+    }
+
+    /** No cleanup necessary in this site section. */
+    public void close() {
+    }
 }

@@ -40,6 +40,7 @@ import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
 /**
@@ -71,6 +72,7 @@ public abstract class ArchiveMessageHandler
      *
      */
     public void onMessage(Message msg) {
+        ArgumentNotValid.checkNotNull(msg, "Message msg");
         log.trace("Message received:\n" + msg.toString());
         try {
             ((ArchiveMessage) JMSConnection.unpack(msg)).accept(this);
@@ -83,7 +85,7 @@ public abstract class ArchiveMessageHandler
 
     /** Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg The recieved message.
+     * @param msg The received message.
      * @throws PermissionDenied Always
      */
     private void deny(ArchiveMessage msg) {
@@ -99,6 +101,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(BatchEndedMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -109,6 +112,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(BatchMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -119,6 +123,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(BatchReplyMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -129,6 +134,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(GetFileMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -139,6 +145,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(GetMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -149,6 +156,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(HeartBeatMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -159,6 +167,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(StoreMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -169,6 +178,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(UploadMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -179,6 +189,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(AdminDataMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -189,6 +200,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(RemoveAndGetFileMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -199,6 +211,7 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(IndexRequestMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 }

@@ -60,4 +60,12 @@ public class QASiteSection extends SiteSection {
         return request.getRequestURL().toString().replaceAll(
                 "/[^/]*\\.jsp.*$", "/QA-status.jsp");
     }
+
+    /** No initialisation necessary in this site section. */
+    public void initialize() {
+    }
+
+    /** No cleanup necessary in this site section. */
+    public void close() {
+    }
 }

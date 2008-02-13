@@ -1,7 +1,7 @@
-/* File:        $Id: HostForwarding.java 11 2007-07-24 10:11:24Z kfc $
-* Revision:    $Revision: 11 $
-* Author:      $Author: kfc $
-* Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+* Revision:    $Revision$
+* Author:      $Author$
+* Date:        $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -44,7 +44,7 @@ public class HostEntry implements Serializable {
      */
     private final int rmiPort;
     /**
-     * The time this host-entry was created.
+     * The time this host-entry was last seen alive.
      */
     private Date time;
 
@@ -66,21 +66,24 @@ public class HostEntry implements Serializable {
     }
 
     /**
-     * @return Returns the jmxPort.
+     * Get the JMX port for connections.
+     * @return The jmx port.
      */
     public int getJmxPort() {
         return jmxPort;
     }
 
     /**
-     * @return Returns the name.
+     * Get the host name.
+     * @return The name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return Returns the rmiPort.
+     * Get the RMI port for connections.
+     * @return The rmi port.
      */
     public int getRmiPort() {
         return rmiPort;
@@ -95,7 +98,16 @@ public class HostEntry implements Serializable {
     }
 
     /**
+     * Return whether two hosts are equal.
+     *
+     * Two hosts are considered equal, if they have the same name and JMX/RMI
+     * ports. However, the time last seen alive is not, and should not be,
+     * considered.
+     *
      * @see Object#equals(Object)
+     *
+     * @param obj The host to compare with.
+     * @return Whether the two objects represent the same host.
      */
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -116,6 +128,10 @@ public class HostEntry implements Serializable {
     }
 
     /**
+     * Return hash code. Coded to be consistent with equals.
+     *
+     * @return Hash code for this object.
+     *
      * @see Object#hashCode()
      */
     public int hashCode() {
@@ -126,12 +142,22 @@ public class HostEntry implements Serializable {
         return result;
     }
 
+    /**
+     * Get a human readable representation of this host and ports.
+     * @return A human readable string.
+     */
     public String toString() {
         return "Host=" + name + ", JMXport=" + jmxPort + ", RMIport=" + rmiPort
                 + ", last seen live at " + time;
     }
 
+    /**
+     * Update the time for when the host was last seen alive.
+     * @param time The time last seen alive.
+     * @throws ArgumentNotValid on null parameter.
+     */
     public void setTime(Date time) {
+        ArgumentNotValid.checkNotNull(time, "Date time");
         this.time=time;
     }
 }

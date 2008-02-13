@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnection;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
@@ -62,6 +63,7 @@ public abstract class HarvesterMessageHandler
      * @param msg an ObjectMessage
      */
     public void onMessage(Message msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Message received:\n" + msg.toString());
         try {
             ((HarvesterMessage) JMSConnection.unpack(msg)).accept(this);
@@ -74,7 +76,7 @@ public abstract class HarvesterMessageHandler
 
     /** Handles when a handler receives a message it is not prepare to handle.
      *
-     * @param msg The recieved message.
+     * @param msg The received message.
      * @throws PermissionDenied Always
      */
     private void deny(HarvesterMessage msg) {
@@ -90,6 +92,7 @@ public abstract class HarvesterMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(CrawlStatusMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 
@@ -100,6 +103,7 @@ public abstract class HarvesterMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(DoOneCrawlMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
 }

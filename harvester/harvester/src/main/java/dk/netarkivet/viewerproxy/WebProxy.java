@@ -112,7 +112,7 @@ public class WebProxy extends DefaultHandler
      *
      * @param target URL or name for request. Not used
      * @param request The original request, including URL
-     * @param response The object that recieves the result
+     * @param response The object that receives the result
      * @param dispatch The dispatch mode. Not used.
      * @see Handler#handle(java.lang.String,
      *  HttpServletRequest,

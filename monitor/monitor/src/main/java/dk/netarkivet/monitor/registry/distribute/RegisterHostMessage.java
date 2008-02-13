@@ -1,7 +1,7 @@
-/* File:        $Id: Constants.java 11 2007-07-24 10:11:24Z kfc $
- * Revision:    $Revision: 11 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -24,10 +24,12 @@ package dk.netarkivet.monitor.registry.distribute;
 
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.monitor.distribute.MonitorMessage;
 import dk.netarkivet.monitor.distribute.MonitorMessageVisitor;
 
-/** This message is sent to the monitor registry server to make a host known. */
+/** This type of message is sent to the monitor registry server to
+ * register the host for remote JMX monitoring.*/
 public class RegisterHostMessage extends MonitorMessage {
     /** The JMX URL prefix. */
     private static final String IDPREFIX = "REGISTER_HOST_MESSAGE";
@@ -43,10 +45,13 @@ public class RegisterHostMessage extends MonitorMessage {
      * @param jmxPort The JMX port allocated on the remote host.
      * @param rmiPort The RMI port allocated on the remote host.
      *
-     * @throws ArgumentNotValid if replyTo is null.
+     * @throws ArgumentNotValid on null or empty hostname, or negative ports.
      */
     public RegisterHostMessage(String name, int jmxPort, int rmiPort) {
         super(Channels.getTheMonitorServer(), Channels.getError(), IDPREFIX);
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
+        ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
+        ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         this.hostEntry = new HostEntry(name, jmxPort, rmiPort);
     }
 

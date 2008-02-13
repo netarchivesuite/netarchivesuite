@@ -44,4 +44,12 @@ public class HistorySiteSection extends SiteSection {
               }, "History",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
+
+    /** No initialisation necessary in this site section. */
+    public void initialize() {
+    }
+
+    /** No cleanup necessary in this site section. */
+    public void close() {
+    }
 }

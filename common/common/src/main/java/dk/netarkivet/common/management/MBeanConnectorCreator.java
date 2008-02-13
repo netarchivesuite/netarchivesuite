@@ -110,11 +110,10 @@ public class MBeanConnectorCreator {
                 cs.start();
                 isExposed = true;
                 //Register the JMX server at the registry.
-                MonitorRegistryClientFactory.getInstance().register(SystemUtils.getLocalHostName(),
-                                                                    Settings.getInt(
-                                                        Settings.JMX_PORT),
-                                                                    Settings.getInt(
-                                                        Settings.JMX_RMI_PORT));
+                MonitorRegistryClientFactory.getInstance().register(
+                        SystemUtils.getLocalHostName(),
+                        Settings.getInt(Settings.JMX_PORT),
+                        Settings.getInt(Settings.JMX_RMI_PORT));
             }
         } catch (IOException e) {
             throw new IOFailure("Error creating and registering an"

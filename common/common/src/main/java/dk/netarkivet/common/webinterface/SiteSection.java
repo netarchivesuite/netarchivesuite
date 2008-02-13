@@ -209,13 +209,11 @@ public abstract class SiteSection {
 
     /** Called when the site section is first deployed.
      * Meant to be overridden by subclasses. */
-    public void initialize() {
-    }
+    public abstract void initialize();
 
     /** Called when webserver shuts down.
      * Meant to be overridden by subclasses. */
-    public void close() {
-    }
+    public abstract void close();
 
     /**
      * The list of sections of the website.  Each section has a number of pages,
@@ -247,7 +245,7 @@ public abstract class SiteSection {
     }
 
     /**
-     * Reset sitesections.
+     * Clean up sitesections.
      * This method calls close on all deployed site sections, and resets the
      * list of site sections.
      */

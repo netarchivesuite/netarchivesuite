@@ -36,11 +36,11 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
 
 /**
- * Interface for all classes which handles archive-related messages recieved
+ * Interface for all classes which handles archive-related messages received
  * from a JMS server. This is implemented with a visitor pattern:  Upon
  * receipt, the ArchiveMessageHandler.onMessage() method invokes the
  * ArchiveMessage.accept() method on the message with itself as argument.
- * The accept() method in turn invokes the ArchiveMessageVisitorvisit() method,
+ * The accept() method in turn invokes the ArchiveMessageVisitor.visit() method,
  * using method overloading to invoke the visit method for the message received.
  *
  * Thus to handle a message, you should subclass ArchiveMessageHandler and

@@ -302,7 +302,7 @@ public class JMSConnectionTester extends TestCase {
                 queueSender);
         ObjectMessage sentSerialMsg = (ObjectMessage)queueSender.messagesSent.get(0);
         assertNotNull("Should have a sent message", sentSerialMsg);
-        assertEquals("Recieved message should be the same as was sent",
+        assertEquals("Received message should be the same as was sent",
                 sentSerialMsg.getObject(), msg);
         assertNotNull("Message should now have an id", msg.getID());
     }
@@ -335,7 +335,7 @@ public class JMSConnectionTester extends TestCase {
                 topicPublisher);
         ObjectMessage sentSerialMsg = (ObjectMessage)topicPublisher.messagesSent.get(0);
         assertNotNull("Should have a published message", sentSerialMsg);
-        assertEquals("Recieved message should be the same as was published",
+        assertEquals("Received message should be the same as was published",
                 sentSerialMsg.getObject(), msg);
         assertNotNull("Message should now have an id", msg.getID());
     }

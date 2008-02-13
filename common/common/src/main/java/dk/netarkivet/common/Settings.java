@@ -623,6 +623,8 @@ public class Settings {
     public static final String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
 
+    /** Which class to use for monitor registry. Must implement the interface
+     * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
     public static final String MONITOR_REGISTRY_CLIENT
             = "settings.common.monitorregistryClient.class";
 

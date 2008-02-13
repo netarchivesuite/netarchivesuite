@@ -1,7 +1,7 @@
-/* File:        $Id: Constants.java 11 2007-07-24 10:11:24Z kfc $
- * Revision:    $Revision: 11 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
@@ -49,7 +50,9 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     private Timer registryTimer;
     /** One minute in milliseconds.
      * Used for control of timer task that sends messages. */
-    private static final long EVERY_MINUTE = 60000L;
+    private static final long MINUTE_IN_MILLISECONDS = 60000L;
+    /** Delay between every reregistering in minutes. */
+    private static final long REREGISTER_DELAY = 1;
     /** Zero milliseconds from now.
      * Used for control of timer task that sends messages. */
     private static final long NOW = 0L;
@@ -75,14 +78,20 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     /** Register this host for monitoring.
      * Once this method is called it will reregister for monitoring every
      * minute, to ensure the scheduling is done.
-     * If called again, it will restart the tiemr that registers the host.
-     * @param localHostName
-     * @param jmxPort
-     * @param rmiPort
+     * If called again, it will restart the timer that registers the host.
+     * @param localHostName The name of the host.
+     * @param jmxPort The port for JMX connections to the host.
+     * @param rmiPort The port for RMI connections for JMX communication.
+     * @throws ArgumentNotValid on null or empty hostname, or negative port
+     * numbers.
      */
     public synchronized void register(final String localHostName,
                                       final int jmxPort,
                                       final int rmiPort) {
+        ArgumentNotValid.checkNotNullOrEmpty(localHostName,
+                                             "String localHostName");
+        ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
+        ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");
         if (registryTimer != null) {
             registryTimer.cancel();
         }
@@ -95,19 +104,22 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
                                                 jmxPort,
                                                 rmiPort)
                 );
-                log.debug("Registering this client for monitoring,"
+                log.trace("Registering this client for monitoring,"
                           + " using hostname '" + localHostName
                           + "' and JMX/RMI ports "
                           + jmxPort + "/"
                           + rmiPort);
             }
         };
-        log.info("Registering this client for monitoring every " + EVERY_MINUTE
-                 + " milliseconds. using hostname '"
+        log.info("Registering this client for monitoring every "
+                 + REREGISTER_DELAY
+                 + " minutes, using hostname '"
                  + localHostName + "' and JMX/RMI ports "
                  + jmxPort + "/"
                  + rmiPort);
-        registryTimer.scheduleAtFixedRate(timerTask, NOW, EVERY_MINUTE);
+        registryTimer.scheduleAtFixedRate(timerTask, NOW,
+                                          REREGISTER_DELAY
+                                          * MINUTE_IN_MILLISECONDS);
     }
 
 

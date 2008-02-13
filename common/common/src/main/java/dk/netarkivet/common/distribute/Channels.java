@@ -287,8 +287,8 @@ public class Channels {
                 return bamon;
             }
         }
-        throw new ArgumentNotValid("Did not find a BAMON queue for "
-                + location);
+        throw new ArgumentNotValid("Did not find a BAMON queue for '"
+                + location + "'");
     }
 
     /**

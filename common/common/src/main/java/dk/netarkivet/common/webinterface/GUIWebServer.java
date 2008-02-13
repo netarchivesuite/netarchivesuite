@@ -47,7 +47,7 @@ public class GUIWebServer implements CleanupIF {
     /**
      * The unique instance of this class.
      */
-    protected static GUIWebServer instance;
+    static GUIWebServer instance;
     /**
      * The Jetty server.
      */
@@ -70,6 +70,7 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Port must be in the range 1025-65535, not " + port);
         }
+        //TODO: Replace with just one setting. See feature request 1204
         String[] webApps = Settings.getAll(
                 Settings.SITESECTION_WEBAPPLICATION);
         String[] deployDirs = Settings.getAll(
@@ -164,8 +165,8 @@ public class GUIWebServer implements CleanupIF {
         webApplication.setTempDirectory(
                 new File(FileUtils.getTempDir(), webbase));
         server.addHandler(webApplication);
-        log.info("The web application '" + webbase + "' is now read from '"
-                 + webapp + "'");
+        log.info("The web application '" + webapp + "' is now deployed at '"
+                 + webbase + "'");
     }
 
     /**

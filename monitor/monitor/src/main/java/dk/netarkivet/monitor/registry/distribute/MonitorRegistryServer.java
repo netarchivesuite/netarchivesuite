@@ -1,7 +1,7 @@
-/* File:        $Id: Constants.java 11 2007-07-24 10:11:24Z kfc $
- * Revision:    $Revision: 11 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -28,14 +28,14 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.monitor.distribute.MonitorMessageHandler;
 import dk.netarkivet.monitor.registry.MonitorRegistry;
 
 /**
  * The monitor registry server listens on JMS for hosts that wish to register
- * to the service. The registry lists hosts that can be monitored with JMX.
+ * themselves to the service. The registry lists hosts that can be monitored
+ * with JMX.
  */
 public class MonitorRegistryServer extends MonitorMessageHandler
         implements CleanupIF {
@@ -48,8 +48,8 @@ public class MonitorRegistryServer extends MonitorMessageHandler
     private MonitorRegistryServer() {
         JMSConnectionFactory.getInstance().setListener(
                 Channels.getTheMonitorServer(), this);
-        log.info("MonitorRegsitryServer listening for messages on channel "
-                 + Channels.getTheMonitorServer());
+        log.info("MonitorRegsitryServer listening for messages on channel '"
+                 + Channels.getTheMonitorServer() + "'");
     }
 
     /** Get the registry server singleton.
@@ -63,14 +63,11 @@ public class MonitorRegistryServer extends MonitorMessageHandler
     }
 
     /**
-     * This method should be overridden and implemented by a sub class if
-     * message handling is wanted.
+     * This method registers the sender as a host to be monitored with JMX.
      *
-     * @param msg an IndexRequestMessage
-     *
-     * @throws PermissionDenied when invoked
+     * @throws ArgumentNotValid on null parameter. 
      */
-    public void visit(RegisterHostMessage msg) throws PermissionDenied {
+    public void visit(RegisterHostMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "RegisterHostMessage msg");
         MonitorRegistry.getInstance().register(msg.getHostEntry());
     }

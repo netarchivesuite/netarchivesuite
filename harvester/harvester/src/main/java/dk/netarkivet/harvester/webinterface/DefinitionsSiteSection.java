@@ -32,14 +32,15 @@ import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HarvestTemplateApplication;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 
 /**
- * Site section that creates the menu for data definitions.
- *
+ * Site section that creates the menu for data definitions, and starts the
+ * harvest scheduler.
  */
 public class DefinitionsSiteSection extends SiteSection {
     /** Logger for this class. */
@@ -80,6 +81,13 @@ public class DefinitionsSiteSection extends SiteSection {
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
 
+    /**
+     * Initialise the site section. This forces migration of all DAOs, validates
+     * that a default order.xml template exists, and starts the harvest
+     * scheduler.
+     *
+     * @throws UnknownID If the default order.xml does not exist.
+     */
     public void initialize() {
         // Force migration if needed
         TemplateDAO templateDao = TemplateDAO.getInstance();
@@ -90,10 +98,10 @@ public class DefinitionsSiteSection extends SiteSection {
             String message = "The default order template '"
                     + Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)
                     + "' does not exist in the template DAO. Please use the"
-                    + " dk.netarkivet.harvester.datamodel.HarvestTemplate"
-                    + "Application tool to upload this template before"
+                    + HarvestTemplateApplication.class.getName()
+                    + " tool to upload this template before"
                     + " loading the Definitions site section in the"
-                    + "GUIApplication";
+                    + " GUIApplication";
             log.fatal(message);
             throw new UnknownID(message);
         }
@@ -103,8 +111,8 @@ public class DefinitionsSiteSection extends SiteSection {
         HarvestDefinitionDAO.getInstance();
         JobDAO.getInstance();
 
-        //Start scheduler in new thread, to allow website to start while
-        //rescheduling happens.
+        // Start the scheduler in a new thread, to allow the website to start 
+        // while rescheduling happens.
         new Thread() {
             public void run() {
                 theScheduler = HarvestScheduler.getInstance();
@@ -112,6 +120,10 @@ public class DefinitionsSiteSection extends SiteSection {
         }.start();
     }
 
+    /**
+     * Clean up this site section. This stops the harvest scheduler, and closes
+     * the database.
+     */
     public void close() {
         if (theScheduler != null) {
             theScheduler.close();

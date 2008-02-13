@@ -27,7 +27,7 @@ import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 
 /**
- * Interface for all classes which handles harvester-related messages recieved
+ * Interface for all classes which handles harvester-related messages received
  * from a JMS server. This is implemented with a visitor pattern: Upon receipt,
  * the HarvesterMessageHandler.onMessage() method invokes the
  * Harvesteressage.accept() method on the message with itself as argument. The

@@ -56,6 +56,8 @@ public class SiteSectionTester extends TestCase {
                                                    {"page3", "title3"}
                                            }, "HarvestDefinition",
                                               "dk.netarkivet.harvester.Translations") {
+            public void initialize() {}
+            public void close() {}
         };
         assertEquals("Should generate correct title for page1",
                      "title1", site.getTitle(
@@ -95,6 +97,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection(null, "d", 0, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -105,6 +109,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("", "c", 0, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -115,6 +121,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("a", null, 0, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -125,6 +133,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("b", "", 0, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -135,6 +145,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("b", "e", -1, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -145,6 +157,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("b", "e", 1, null,
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -156,6 +170,8 @@ public class SiteSectionTester extends TestCase {
             new SiteSection("b", "e", 1, new String[][]{},
                             "HarvestDefinition",
                             "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -168,6 +184,8 @@ public class SiteSectionTester extends TestCase {
                     {"foo"}
             }, "HarvestDefinition",
                "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention error",
@@ -180,6 +198,8 @@ public class SiteSectionTester extends TestCase {
                     {"foo", "bar"}, {"and", "some", "more"}
             }, "HarvestDefinition",
                "dk.netarkivet.harvester.Translations") {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -192,6 +212,8 @@ public class SiteSectionTester extends TestCase {
                     {"foo", "bar"}, {"and", "some", "more"}},
                             "HarvestDefinition",
                             null) {
+                public void initialize() {}
+                public void close() {}
             };
         } catch (ArgumentNotValid e) {
             StringAsserts.assertStringContains("Must mention parameter",
@@ -203,6 +225,8 @@ public class SiteSectionTester extends TestCase {
                 {"foo", "bar"}, {"and", "more"}
         }, "HarvestDefinition",
            "dk.netarkivet.harvester.Translations") {
+            public void initialize() {}
+            public void close() {}
         };
     }
 
@@ -247,6 +271,8 @@ public class SiteSectionTester extends TestCase {
                 {"foo", "bar"}, {"and", "more"}
         }, "HarvestDefinition",
            "dk.netarkivet.harvester.Translations") {
+            public void initialize() {}
+            public void close() {}
         };
         assertEquals("Should have right dirname",
                      "HarvestDefinition", site.getDirname());
@@ -287,6 +313,8 @@ public class SiteSectionTester extends TestCase {
                                                    {"page3", "title3"}
                                            }, "HarvestDefinition",
                                               "dk.netarkivet.harvester.Translations") {
+            public void initialize() {}
+            public void close() {}
         };
         //English, URL not in site section
         JspWriterMockup jwm = new JspWriterMockup();
