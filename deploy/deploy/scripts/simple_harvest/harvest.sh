@@ -73,7 +73,9 @@ function makeJmxOptions {
     echo "-Dsettings.common.jmx.port=$JMXPORT \
       -Dsettings.common.jmx.rmiPort=$(( $JMXPORT + 100 )) \
       -Dsettings.common.jmx.passwordFile=$NETARCHIVEDIR/conf/jmxremote.password \
-      -Dcom.sun.management.jmxremote"
+      -Dcom.sun.management.jmxremote \
+      -Djava.security.manager \
+      -Djava.security.policy=$NETARCHIVEDIR/conf/security.policy";
 }
 
 function makeXtermOffset {
@@ -213,9 +215,7 @@ while ! telnet localhost 7676 2>&1 | grep 'portmapper tcp' ; do
 done
 
 ## Start Bitarchive
-startApp Bitarchive archive.bitarchive.BitarchiveApplication \ 
-      -Djava.security.manager \
-      -Djava.security.policy=$NETARCHIVEDIR/conf/security.policy;
+startApp Bitarchive archive.bitarchive.BitarchiveApplication
 
 ## Start ArcRepository
 startApp ArcRepository archive.arcrepository.ArcRepositoryApplication
