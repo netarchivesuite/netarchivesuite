@@ -157,11 +157,11 @@ if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
     cp -r $ARCREP_HOME/data/originals $ARCREP_HOME/data/working
     mkdir $ARCREP_HOME/lib
     cp -r $NETARCHIVEDIR/lib/heritrix $ARCREP_HOME/lib
-
+    
     ## Remove and unzip the embedded database
     rm -rf $ARCREP_HOME/data/working/harvestdefinitionbasedir/fullhddb
     unzip -qou -d $ARCREP_HOME/data/working/harvestdefinitionbasedir/ \
-      $ARCREP_HOME/data/working/harvestdefinitionbasedir/fullhddb.jar
+	$NETARCHIVEDIR/harvestdefinitionbasedir/fullhddb.jar
 
     ## Clean up other stuff left behind
 
