@@ -58,7 +58,6 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Test class for the Job class.
@@ -600,13 +599,19 @@ public class JobTester extends DataModelTestCase {
     }
 
     /**
-     * Tests that crawlertraps are correctly merged with the order.xml
+     * Tests that crawlertraps are correctly merged with the order.xml.
+     * Crawlertraps are expressed using MatchesListRegExpDecideRule each listing
+     * the crawlertraps specified for a single domain, e.g.
+     * <newObject name="dr.dk" class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
+     *   <string name="decision">REJECT</string>
+     *   <string name="list-logic">OR</string>
+     *   <stringList name='regexp-list'>
+     *       <string>xyz.*</string>
+     *       <string>.*[a-z]+</string>
+     *   </stringList>
+     * </newObject>
      */
     public void testAddConfigurationUpdatesOrderXml() {
-        if (!TestUtils.runningAs("SVC")) {
-            // Fails during migration to DecidingScope
-            return;
-        }
         //Make a configuration with no crawlertraps
         DomainConfiguration dc1 = TestInfo.getDefaultDomain().getDefaultConfiguration();
         dc1.getDomain().setCrawlerTraps(Collections.<String>emptyList());
@@ -615,8 +620,11 @@ public class JobTester extends DataModelTestCase {
         //Make a configuration with two crawlertraps
         DomainConfiguration dc2 = TestInfo.getDomainNotDefault().getDefaultConfiguration();
         List<String> traps = new ArrayList<String>();
-        traps.add("xyz.*");
-        traps.add(".*[a-z]+");
+        
+        String crawlerTrap1 = "xyz.*"; 
+        String crawlerTrap2 = ".*[a-z]+";
+        traps.add(crawlerTrap1);
+        traps.add(crawlerTrap2);
         dc2.getDomain().setCrawlerTraps(traps);
         String domain2name = dc2.getDomain().getName();
 
@@ -624,41 +632,45 @@ public class JobTester extends DataModelTestCase {
         Job j = Job.createJob(new Long(42L), dc1, 0);
         j.addConfiguration(dc2);
 
-        String domainCrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
+        // Check that there are no crawlertraps for the first domain and exactly
+        // the right two in the second domain
+ 
+        String domain1CrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
             + DecideRuleSequence.class.getName() + "']/map[@name='rules']/"
-            + "/newObject[@class='" + MatchesListRegExpDecideRule.class.getName()  + "']";
-    
-
+            + "/newObject[@name='" + domain1name +"'][@class='" + MatchesListRegExpDecideRule.class.getName()  + "']";
+  
+        String domain2CrawlerTrapsXpath = "/crawl-order/controller/newObject[@name='scope']/newObject[@class='"
+            + DecideRuleSequence.class.getName() + "']/map[@name='rules']/"
+            + "/newObject[@name='" + domain2name +"'][@class='" + MatchesListRegExpDecideRule.class.getName()  + "']";
+       
         j.getOrderXMLdoc().normalize();
-        List<Node> nodes = j.getOrderXMLdoc().selectNodes(domainCrawlerTrapsXpath);
-           
-        int found = 0;
-
-        //Check that there are no crawlertraps for the first domain and exactly
-        //the right two in the second domain
-        for (Node n : nodes) {
-            String name = n.valueOf("@name");
-            assertFalse("There shouldn't be any crawler traps for domain '" + domain1name 
-                    + "'.",
-                        name.startsWith(domain1name.substring(0, domain1name.indexOf('.'))));
-            if (name.startsWith(domain2name.substring(0, domain2name.indexOf('.')))) {
-                assertNotNull("The filter should be enabled",
-                              n.selectNodes("boolean[@name='enabled' and text()='true']"));
-                assertNotNull("The filter should return on match",
-                              n.selectNodes("boolean[@name='if-match-return' and text()='true']"));
-                String regexp = n.valueOf("string[@name='regexp']/text()");
-                if (regexp.equals("xyz.*")) {
-                    ++found;
-                } else if (regexp.equals(".*[a-z]+")) {
-                    ++found;
-                } else {
-                    fail("Only the defined regexps should exist, but found "
-                         + regexp);
-                }
-            }
+        List<Node> nodes = j.getOrderXMLdoc().selectNodes(domain1CrawlerTrapsXpath);
+        assertFalse("There shouldn't be any crawler traps for domain '" + domain1name 
+                + "'", nodes.size() != 0);
+        nodes = j.getOrderXMLdoc().selectNodes(domain2CrawlerTrapsXpath);
+        assertTrue("There should be crawler traps for domain '" + domain2name 
+                + "'", nodes.size() == 1);
+        Node regexpListDeciderule = nodes.get(0);
+        //TODO add checks for 
+        //  <string name="decision">REJECT</string>
+        //  <string name="list-logic">OR</string>
+        
+        nodes = regexpListDeciderule.selectNodes("stringList[@name='regexp-list']/string"); 
+        
+        Set<String> regexpFound = new HashSet<String>();
+        
+        
+        for (Node n: nodes) {
+            String regexp = n.getText();
+            regexpFound.add(regexp);
         }
-        assertEquals("Should have found exactly the two defined regexps",
-                     2, found);
+        
+        int found = regexpFound.size();
+        assertTrue("Must only contain two regexp, but found " +  found 
+                + "("  + regexpFound.toArray().toString() + ")", found == 2);
+        assertTrue("Must contain regexp '" +  crawlerTrap1 + "'.", regexpFound.contains(crawlerTrap1));
+        assertTrue("Must contain regexp '" +  crawlerTrap2 + "'.", regexpFound.contains(crawlerTrap2));
+        
     }
 
     private String relevantState(Job job) {

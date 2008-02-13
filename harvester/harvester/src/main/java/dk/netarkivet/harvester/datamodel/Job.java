@@ -469,7 +469,7 @@ public class Job implements Serializable {
         assert (maxCountObjects >= minCountObjects) : "basic invariant";
     }
 
-    /** Updates this jobs order.xml to include a MatchesRegExpDecideRule
+    /** Updates this jobs order.xml to include a MatchesListRegExpDecideRule
      *  for each crawlertrap associated with for the given domain.
      *
      * The added nodes have the form
@@ -478,7 +478,10 @@ public class Job implements Serializable {
      *      class="org.archive.crawler.deciderules.MatchesListRegExpDecideRule">
      *       <string name="decision">REJECT</string>
      *       <string name="list-logic">OR</string>
-     *       <string name="regexp">theregexp</string>
+     *       <stringList name="regexp-list">
+     *          <string>theFirstRegexp</string>
+     *          <string>theSecondRegexp</string>
+     *       </stringList> 
      *     </newObject>
      *
      * @param d The domain for which to generate crawler trap deciderules
@@ -516,12 +519,12 @@ public class Job implements Serializable {
         decision.addAttribute("name", "decision");
         decision.addText("REJECT");
 
-        Element listlogic = decision.addElement("string");
+        Element listlogic = deciderule.addElement("string");
         listlogic.addAttribute("name", "list-logic");
         listlogic.addText("OR");
         
-        Element regexpList = listlogic.addElement("stringList");
-        
+        Element regexpList = deciderule.addElement("stringList");
+        regexpList.addAttribute("name", "regexp-list");
         for (String trap : crawlerTraps) {
                 regexpList.addElement("string").addText(trap);
         }

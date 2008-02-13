@@ -154,7 +154,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure if initialization fails.
      */
     protected void initConnection() {
-        log.info("Initialing a JMS connection to Broker at "
+        log.info("Initializing a JMS connection to Broker at "
                 + host + ":" + port + ".");
 
         int tries = 0;
