@@ -51,7 +51,7 @@ public class TimeUtils {
      * @throws ArgumentNotValid if timeunit is unsupported.
      */
     public static void exponentialBackoffSleep(int attempt, int timeunit) {
-        ArgumentNotValid.checkPositive(attempt, "int attempt");
+        ArgumentNotValid.checkNotNegative(attempt, "int attempt");
         ArgumentNotValid.checkTrue(timeunit >= 0
                                    && timeunit < Calendar.FIELD_COUNT,
                                    "Time unit must be one of the fields defined"
