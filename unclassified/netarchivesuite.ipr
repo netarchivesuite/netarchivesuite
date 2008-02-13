@@ -141,6 +141,16 @@
         <modules>
           <module name="netarchivesuite">
             <files>
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/data/working/webpages/BitPreservation/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/data/working/webpages/HarvestDefinition/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/data/working/webpages/History/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/data/working/webpages/QA/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/data/working/webpages/Status/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/tests/commontempdir/BitPreservation/webapp/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/tests/commontempdir/HarvestDefinition/webapp/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/tests/commontempdir/History/webapp/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/tests/commontempdir/QA/webapp/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/scripts/simple_harvest/tests/commontempdir/Status/webapp/WEB-INF/web.xml" />
               <file url="file://$PROJECT_DIR$/tests/dk/netarkivet/harvester/datamodel/data/jsp/WEB-INF/web.xml" />
               <file url="file://$PROJECT_DIR$/webpages/BitPreservation/WEB-INF/web.xml" />
               <file url="file://$PROJECT_DIR$/webpages/HarvestDefinition/WEB-INF/web.xml" />

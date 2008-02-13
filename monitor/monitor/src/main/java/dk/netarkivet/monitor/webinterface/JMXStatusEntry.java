@@ -40,7 +40,6 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
-import dk.netarkivet.monitor.webinterface.JMXSummaryUtils;
 
 /**
  * Implementation of StatusEntry, that receives its data from the 
@@ -127,20 +126,23 @@ public class JMXStatusEntry implements StatusEntry {
             if (logMessage == null) {
                 return HTMLUtils.escapeHtmlValues(
                         I18N.getString(l,
-                                "errmsg;remote.host.returned.null.log.record"));
+                                       "errormsg;remote.host.returned.null.log.record"));
             } else {
                 return logMessage;
             }
         } catch (RuntimeMBeanException e) {
             return HTMLUtils.escapeHtmlValues(
-                    I18N.getString(l, "errmsg;jmx.error.while.getting.log.record")
+                    I18N.getString(l,
+                                   "errormsg;jmx.error.while.getting.log.recordrd")
                     + "\n" 
-                    + I18N.getString(l, "errmsg;probably.host.is.not.responding")
+                    + I18N.getString(l,
+                                     "errormsg;probably.host.is.not.respondingng")
                     + "\n" 
                     + ExceptionUtils.getStackTrace(e));
         } catch (Exception e) {
             return HTMLUtils.escapeHtmlValues(
-                    I18N.getString(l, "errmsg;remote.jmx.bean.generated.exception")
+                    I18N.getString(l,
+                                   "errormsg;remote.jmx.bean.generated.exceptionon")
                     + "\n" + ExceptionUtils.getStackTrace(e));
         }
     }

@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%@ page import="java.util.List,
                  dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
                  dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
-                 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
-                 dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
+                 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
+                 dk.netarkivet.archive.webinterface.BitpreserveFileState,
                  dk.netarkivet.archive.webinterface.Constants,
                  dk.netarkivet.common.distribute.arcrepository.Location,
 		 	     dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
@@ -38,14 +38,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     HTMLUtils.setUTF8(request);
     // Process checksumrequest. Any errors found while processing the files are added to res.
     StringBuilder res = new StringBuilder();
-    FilePreservationStatus fs;
+    FilePreservationState fs;
     try {
-        fs = BitpreserveFileStatus.processChecksumRequest(request, res, pageContext);
+        fs = BitpreserveFileState.processChecksumRequest(res, pageContext);
     } catch (ForwardedToErrorPage e) {
         return;
     }
 
-    //Note: The parameter is checked to be legal in processChecksumRequest()
+    //Note: The parameter has already been checked to be valid in processChecksumRequest()
     String bitarchiveName
             = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
     Location bitarchive = Location.get(bitarchiveName);
@@ -60,7 +60,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         HTMLUtils.forwardWithErrorMessage(pageContext,
                                           I18N,
                                           "errormsg;unable.to.get.files");
-        throw new ForwardedToErrorPage(e.getMessage(), e);
+        return;
     }
 
     // Get the page title from its URL
@@ -111,7 +111,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <!-- Table entries for each bitarchive -->
             <%
                 for (Location l : Location.getKnown()) {
-                    String csumString = BitpreserveFileStatus.presentChecksum(
+                    String csumString = BitpreserveFileState.presentChecksum(
                             fs.getBitarchiveChecksum(l), response.getLocale());
                     String trContents = HTMLUtils.makeTableElement(l.getName())
                             + HTMLUtils.makeTableElement(
@@ -127,7 +127,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             </table>
 
             <!-- Form for taking action -->
-            <form method="post" action="./Bitpreservation-filestatus-checksum.jsp">
+            <form method="post" action="">
             <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(bitarchive.getName())%>" name="<%=Constants.BITARCHIVE_NAME_PARAM%>">
             <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(filename)%>" name="<%=Constants.FILENAME_PARAM%>">
 		    <%

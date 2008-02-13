@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -49,28 +49,28 @@ import dk.netarkivet.common.webinterface.HTMLUtils;
  * Class encapsulating methods for handling web requests for
  * ActiveBitPreservation.
  */
-
-public class BitpreserveFileStatus {
-    public static final String ADD_COMMAND = "add";
-    public static final String SET_FAILED_COMMAND = "setFailed";
-    public static final String GET_INFO_COMMAND = "getInfo";
-
+public class BitpreserveFileState {
     /** Internationalisation object. */
     private static final I18n I18N
             = new I18n(dk.netarkivet.archive.Constants.TRANSLATIONS_BUNDLE);
-    private static Log log = LogFactory.getLog(BitpreserveFileStatus.class);
+    /** The logger for this class. */
+    private static Log log = LogFactory.getLog(BitpreserveFileState.class);
 
     /**
-     * Extract the name of the bitarchive (parameter 'bitarchive') and whether
-     * to update missing files (parameter "findmissingfiles") or checksums
-     * (parameter "checksum"). Does nothing if parameter 'bitarchive' is not
-     * set.
+     * Extract the name of the bitarchive
+     * (parameter Constants.BITARCHIVE_NAME_PARAM) and whether to update missing
+     * files (parameter Constants.FIND_MISSING_FILES_PARAM) or checksums
+     * (parameter Constants.CHECKSUM_PARAM).
      *
-     * @param request the given ServletRequest
+     * Does nothing if parameter 'bitarchive' is not set.
+     *
      * @param context the current JSP context
+     *
+     * @throws ForwardedToErrorPage if an unknown bitarchive is posted.
      */
-    public static void processUpdateRequest(ServletRequest request,
-                                            PageContext context) {
+    public static void processUpdateRequest(PageContext context) {
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
+        ServletRequest request = context.getRequest();
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         if (bitarchiveName == null) { // parameter BITARCHIVE_NAME_PARAM not set
@@ -101,51 +101,53 @@ public class BitpreserveFileStatus {
     }
 
     /**
-     * Processes a missingFiles request: Parameters of the form
-     * add##<bitarchive>##<filename> causes the file to be added to that
-     * bitarchive. Parameters of the form getInfo##<filename> causes checksums
-     * to be computed for the file in all bitarchives and the information to be
-     * shown in the next update (notice that this information disappears when
-     * the page is next reloaded). Parameters of the form
-     * setFailed##<bitarchive>##<filename> updates the arcrepository to consider
-     * that file failed in that bitarchive.
+     * Processes a missingFiles request.
      *
-     * @param context the current JSP context
-     * @param res     the result object
+     * Parameters of the form Constants.ADD_COMMAND=<bitarchive>##<filename>
+     * causes the file to be added to that bitarchive, if it is missing.
+     *
+     * Parameters of the form Constants.GET_INFO_COMMAND=<filename> causes
+     * checksums to be computed for the file in all bitarchives and the
+     * information to be shown in the next update (notice that this information
+     * disappears when the page is next reloaded).
+     *
+     * @param context the current JSP context.
+     * @param res     the result object. This is updated with result
+     *                information, and expected to be printed to the resulting
+     *                page.
      *
      * @return A map of info gathered for files as requested.
      *
-     * @throws ForwardedToErrorPage if the commands have wrong number of
-     *                              arguments
+     * @throws ForwardedToErrorPage if the commands have the wrong number of
+     *                              arguments.
      */
-    public static Map<String, FilePreservationStatus>
+    public static Map<String, FilePreservationState>
     processMissingRequest(PageContext context, StringBuilder res) {
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
+        ArgumentNotValid.checkNotNull(res, "StringBuilder res");
         Map<String, String[]> params = context.getRequest().getParameterMap();
         HTMLUtils.forwardOnMissingParameter(context,
                                             Constants.BITARCHIVE_NAME_PARAM);
         String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
         if (!Location.isKnownLocation(bitarchiveName)) {
             HTMLUtils.forwardOnIllegalParameter(
-                    context,
-                    Constants.BITARCHIVE_NAME_PARAM,
+                    context, Constants.BITARCHIVE_NAME_PARAM,
                     Location.getKnownNames()
             );
         }
         ActiveBitPreservation preserve
                 = FileBasedActiveBitPreservation.getInstance();
         Locale l = context.getResponse().getLocale();
-        if (params.containsKey(ADD_COMMAND)) {
-            String[] adds = params.get(ADD_COMMAND);
+        if (params.containsKey(Constants.ADD_COMMAND)) {
+            String[] adds = params.get(Constants.ADD_COMMAND);
             for (String s : adds) {
-                String[] parts = s.split(dk.netarkivet.archive.arcrepository
-                        .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-                checkArgs(context, parts, ADD_COMMAND, "bitarchive name",
+                String[] parts = s.split(Constants.STRING_FILENAME_SEPARATOR);
+                checkArgs(context, parts, Constants.ADD_COMMAND, "bitarchive name",
                           "filename");
                 final Location ba = Location.get(parts[0]);
                 final String filename = parts[1];
                 try {
-                    preserve.reuploadMissingFiles(ba, filename);
-                    res.append("<br/>");
+                    preserve.uploadMissingFiles(ba, filename);
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(
                             l,
                             "file.0.has.been.restored.in.bitarchive.on.1",
@@ -154,7 +156,7 @@ public class BitpreserveFileStatus {
                 } catch (Exception e) {
                     res.append(I18N.getString(
                             l,
-                            "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
+                            "errormsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
                             filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -164,18 +166,15 @@ public class BitpreserveFileStatus {
                 }
             }
         }
-        Map<String, FilePreservationStatus> infoMap =
-                new HashMap<String, FilePreservationStatus>();
-        // Do this at the end so that the info reflects reality!
-        if (params.containsKey(GET_INFO_COMMAND)) {
-            String[] getInfos = params.get(GET_INFO_COMMAND);
-            for (String s : getInfos) {
-                String[] parts = s.split(dk.netarkivet.archive.arcrepository
-                        .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-                checkArgs(context, parts, GET_INFO_COMMAND, "filename");
-                final String filename = parts[0];
+        Map<String, FilePreservationState> infoMap =
+                new HashMap<String, FilePreservationState>();
+        // Do this at the end so that the info reflects the current state.
+        if (params.containsKey(Constants.GET_INFO_COMMAND)) {
+            String[] getInfos = params.get(Constants.GET_INFO_COMMAND);
+            //TODO: Run just one checksum job for these.
+            for (String filename : getInfos) {
                 infoMap.put(filename,
-                            preserve.getFilePreservationStatus(filename));
+                            preserve.getFilePreservationState(filename));
             }
         }
 
@@ -187,8 +186,8 @@ public class BitpreserveFileStatus {
      * command.
      *
      * @param context  the JSP context to forward to error to.
-     * @param parts    Array of arguments given by user
-     * @param cmd      The command to match
+     * @param parts    Array of arguments given by user.
+     * @param cmd      The command to match.
      * @param argnames The names of the expected arguments.
      *
      * @throws ForwardedToErrorPage if the parts are not exactly as many as the
@@ -212,21 +211,34 @@ public class BitpreserveFileStatus {
     }
 
     /**
-     * Processes a checksum request: Either sets the checksum for a given file
-     * ("file" parameter) in the arcrepository (if "fixadminchecksum" parameter
-     * is given) or removes and reuploads a file in one bitarchive ("bitarchive"
-     * parameter) checking with the checksum and credentials given.
+     * Processes a checksum request.
      *
-     * @param request the request
-     * @param res     the result object
-     * @param context the current JSP pagecontext
+     * The name of a bitarchive must always be given in parameter
+     * Constants.BITARCHIVE_NAME_PARAM.
      *
-     * @return The file preservation status for a file, if that was requested.
+     * If parameter Constants.FILENAME_PARAM is given, file info for that file
+     * will be returned, and all actions will work on that file.
+     *
+     * If parameter Constants.FIX_ADMIN_CHECKSUM_PARAM is given, the admin data
+     * checksum will be fixed for the file.
+     *
+     * If parameter Constants.CREDENTIALS and Constants.CHECKSUM_PARAM is given,
+     * removes and reuploads a file with that checksum in the given bitarchive,
+     * using the credentials for authorisation.
+     *
+     * @param res     the result object. This is updated with result
+     *                information, and expected to be printed to the resulting
+     *                page.
+     * @param context the current JSP pagecontext.
+     *
+     * @return The file preservation state for a file, if a filename is given
+     * in the request. Null otherwise.
      */
-    public static FilePreservationStatus processChecksumRequest(
-            ServletRequest request,
-            StringBuilder res,
-            PageContext context) {
+    public static FilePreservationState processChecksumRequest(
+            StringBuilder res, PageContext context) {
+        ArgumentNotValid.checkNotNull(res, "StringBuilder res");
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
+        ServletRequest request = context.getRequest();
         Locale l = context.getResponse().getLocale();
         HTMLUtils.forwardOnMissingParameter(context,
                                             Constants.BITARCHIVE_NAME_PARAM);
@@ -235,12 +247,6 @@ public class BitpreserveFileStatus {
                                             Location.getKnownNames());
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-        if (bitarchiveName == null) { // param BITARCHIVE_PARAMETER_NAME not set
-            res.append(I18N.getString(
-                    l,
-                    "errmsg;lack.name.for.bitarchive.to.be.corrected"));
-            return null;
-        }
         Location bitarchive = Location.get(bitarchiveName);
         String filename = request.getParameter(Constants.FILENAME_PARAM);
         String fixadminchecksum =
@@ -248,6 +254,9 @@ public class BitpreserveFileStatus {
         String credentials =
                 request.getParameter(Constants.CREDENTIALS_PARAM);
         String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
+
+        // Parameter validation. Get filename. Complain about missing filename
+        // if we are trying to do actions.
         if (filename == null) { // param "file" not set - no action to take
             if (fixadminchecksum != null ||
                 credentials != null ||
@@ -255,64 +264,64 @@ public class BitpreserveFileStatus {
                 // Only if an action was intended do we complain about
                 // a missing file.
                 res.append(I18N.getString(
-                        l,
-                        "errmsg;lack.name.for.file.to.be.corrected.in.0",
+                        l, "errormsg;lack.name.for.file.to.be.corrected.in.0",
                         bitarchiveName));
             }
             return null;
         }
 
+        //At this point we know that the parameter filename is given.
+        //Now we check for actions.
         ActiveBitPreservation preserve
                 = FileBasedActiveBitPreservation.getInstance();
         if (fixadminchecksum != null) {
-            preserve.changeStatusForAdminData(filename);
+            // Action to fix admin.data checksum.
+            preserve.changeStateForAdminData(filename);
+            res.append(I18N.getString(
+                    l,
+                    "file.0.now.has.correct.checksum.in.admin.data",
+                    filename));
+            res.append("<br/>");
         } else if (checksum != null || credentials != null) {
-            // If FIX_ADMIN_CHECKSUM_PARAM is unset, the parameters
-            // CHECKSUM_PARAM and CREDENTIALS_PARAM are used for removal
-            // of a broken file.
+            // Action to replace a broken file with a correct file.
+            // Both parameters must be given.
             if (checksum == null) { // param CHECKSUM_PARAM not set
                 res.append(I18N.getString(
                         l,
-                        "errmsg;lack.checksum.for.corrupted.file.0",
+                        "errormsg;lack.checksum.for.corrupted.file.0",
                         filename));
                 res.append("<br/>");
-                return null;
-            }
-
-            if (credentials == null) { // param CREDENTIALS_PARAM not set
+            } else if (credentials == null) { // param CREDENTIALS_PARAM not set
                 res.append(I18N.getString(
                         l,
-                        "errmsg;lacking.privileges.to.correct.in.bitarchive")
+                        "errormsg;lacking.privileges.to.correct.in.bitarchive")
                 );
                 res.append("<br/>");
-                return null;
-            }
-            try {
-                preserve.replaceChangedFile(bitarchive, filename, credentials,
-                                            checksum);
-                res.append(I18N.getString(
-                        l,
-                        "file.0.has.been.replaced.in.1",
-                        filename, bitarchive));
-                res.append("<br/>");
-            } catch (Exception e) {
-                res.append(I18N.getString(
-                        l,
-                        "errmsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
-                        filename, bitarchive));
-                res.append("<br/>");
-                res.append(e.getMessage());
-                res.append("<br/>");
-                log.warn("Attempt at restoring '" + filename
-                         + "' in bitarchive on location '" + bitarchive
-                         + "' failed", e);
+            } else {
+                // Parameters are correct. Fix the file and report result.
+                try {
+                    preserve.replaceChangedFile(bitarchive, filename,
+                                                credentials, checksum);
+                    res.append(I18N.getString(
+                            l,
+                            "file.0.has.been.replaced.in.1",
+                            filename, bitarchive));
+                    res.append("<br/>");
+                } catch (Exception e) {
+                    res.append(I18N.getString(
+                            l,
+                            "errormsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
+                            filename, bitarchive));
+                    res.append("<br/>");
+                    res.append(e.getMessage());
+                    res.append("<br/>");
+                    log.warn("Attempt at restoring '" + filename
+                             + "' in bitarchive on location '" + bitarchive
+                             + "' failed", e);
+                }
             }
         }
-        if (filename != null) {
-            return preserve.getFilePreservationStatus(filename);
-        } else {
-            return null;
-        }
+        return preserve.getFilePreservationState(filename);
     }
 
     /**
@@ -332,8 +341,7 @@ public class BitpreserveFileStatus {
             if (res.length() == 0) {
                 res.append(" value=\"");
             } else {
-                res.append(dk.netarkivet.archive.arcrepository
-                        .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
+                res.append(Constants.STRING_FILENAME_SEPARATOR);
             }
             res.append(HTMLUtils.escapeHtmlValues(arg));
         }
@@ -345,19 +353,22 @@ public class BitpreserveFileStatus {
     }
 
     /**
-     * Print HTML formatted status for missing files on a given location in a
+     * Print HTML formatted state for missing files on a given location in a
      * given locale.
      *
-     * @param out      The writer to write status to.
-     * @param location The location to write status for.
-     * @param locale   The locale to write status in.
+     * @param out      The writer to write state to.
+     * @param location The location to write state for.
+     * @param locale   The locale to write state in.
      *
-     * @throws IOException On IO trouble writing status to the writer.
+     * @throws IOException On IO trouble writing state to the writer.
      */
-    public static void printMissingFileStatusForLocation(JspWriter out,
+    public static void printMissingFileStateForLocation(JspWriter out,
                                                          Location location,
                                                          Locale locale)
             throws IOException {
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation activeBitPreservation
                 = FileBasedActiveBitPreservation.getInstance();
 
@@ -409,19 +420,22 @@ public class BitpreserveFileStatus {
     }
 
     /**
-     * Print HTML formatted status for checksum errors on a given location in a
+     * Print HTML formatted state for checksum errors on a given location in a
      * given locale.
      *
-     * @param out      The writer to write status to.
-     * @param location The location to write status for.
-     * @param locale   The locale to write status in.
+     * @param out      The writer to write state to.
+     * @param location The location to write state for.
+     * @param locale   The locale to write state in.
      *
-     * @throws IOException On IO trouble writing status to the writer.
+     * @throws IOException On IO trouble writing state to the writer.
      */
-    public static void printChecksumErrorStatusForLocation(JspWriter out,
+    public static void printChecksumErrorStateForLocation(JspWriter out,
                                                            Location location,
                                                            Locale locale)
             throws IOException {
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation bitPreservation
                 = FileBasedActiveBitPreservation.getInstance();
 
@@ -479,97 +493,103 @@ public class BitpreserveFileStatus {
     public static void printFileName(JspWriter out, String filename,
                                      int rowCount,
                                      Locale locale) throws IOException {
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
         out.println("<tr class=\"" + HTMLUtils.getRowClass(rowCount) + "\">");
         out.println(HTMLUtils.makeTableElement(filename));
         out.print("<td>");
-        out.print(makeCheckbox(GET_INFO_COMMAND, filename));
+        out.print(makeCheckbox(Constants.GET_INFO_COMMAND, filename));
         out.print(I18N.getString(locale, "get.info"));
         out.println("</td>");
         out.println("</tr>");
     }
 
     /**
-     * Print a file status table for a file. This will present the state of the
+     * Print a file state table for a file. This will present the state of the
      * file in admin data and all bitarchives.
      *
      * @param out    The stream to print to.
-     * @param fs     The file status for the file.
+     * @param fs     The file state for the file.
      * @param locale The locale to print labels in.
      *
      * @throws IOException On trouble printing to a stream.
      */
-    public static void printFileStatus(JspWriter out,
-                                       FilePreservationStatus fs,
+    public static void printFileState(JspWriter out,
+                                       FilePreservationState fs,
                                        Locale locale
     )
             throws IOException {
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNull(fs, "FilePreservationState fs");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
         out.println(I18N.getString(locale, "status"));
 
         //Table headers for info table
         out.println("<table>");
-        out.println("<tr><th>&nbsp;</th>");
-        out.println("<th>" + I18N.getString(locale, "state") + "</th>");
-        out.println("<th>" + I18N.getString(locale, "checksum") + "</th>");
-        out.println("</tr>");
+        out.print(HTMLUtils.makeTableRow(
+                "<th>&nbsp;</th>",
+                HTMLUtils.makeTableHeader(I18N.getString(locale, "state")),
+                HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
 
         //Admin data info
-        printFileStatusForAdminData(out, fs, locale);
+        printFileStateForAdminData(out, fs, locale);
 
         // Info for all bitarchives
         for (Location l : Location.getKnown()) {
-            printFileStatusForBitarchive(out, l, fs, locale);
+            printFileStateForBitarchive(out, l, fs, locale);
         }
         out.println("</table>");
     }
 
     /**
-     * Print a table row with current status of a file in admin data.
+     * Print a table row with current state of a file in admin data.
      *
-     * @param out    The stream to print status to.
-     * @param fs     The file preservation status for that file.
+     * @param out    The stream to print state to.
+     * @param fs     The file preservation state for that file.
      * @param locale Locale of the labels.
      *
-     * @throws IOException on trouble printing the status.
+     * @throws IOException on trouble printing the state.
      */
-    private static void printFileStatusForAdminData(JspWriter out,
-                                                    FilePreservationStatus fs,
+    private static void printFileStateForAdminData(JspWriter out,
+                                                    FilePreservationState fs,
                                                     Locale locale)
             throws IOException {
-        out.println("<tr>");
-        out.println(HTMLUtils.makeTableElement(
-                I18N.getString(locale, "admin.data")));
-        out.println(HTMLUtils.makeTableElement("-"));
-        out.println(HTMLUtils.makeTableElement(fs.getAdminChecksum()));
-        out.println("</tr>");
+        out.print(HTMLUtils.makeTableRow(
+                HTMLUtils.makeTableElement(I18N.getString(locale,
+                                                          "admin.data")),
+                HTMLUtils.makeTableElement("-"),
+                HTMLUtils.makeTableElement(fs.getAdminChecksum())));
     }
 
     /**
-     * Print a table row with current status of a file in a given bitarchive.
+     * Print a table row with current state of a file in a given bitarchive.
      *
-     * @param out    The stream to print status to.
+     * @param out    The stream to print state to.
      * @param l      The location of the files.
-     * @param fs     The file preservation status for that file.
+     * @param fs     The file preservation state for that file.
      * @param locale Locale of the labels.
      *
      * @throws IOException
      */
-    private static void printFileStatusForBitarchive(JspWriter out, Location l,
-                                                     FilePreservationStatus fs,
+    private static void printFileStateForBitarchive(JspWriter out, Location l,
+                                                     FilePreservationState fs,
                                                      Locale locale)
             throws IOException {
         String baLocation = l.getName();
-        out.println("<tr>");
-        out.println(HTMLUtils.makeTableElement(baLocation)
-                    + HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(l))
-                    + HTMLUtils.makeTableElement(presentChecksum(
-                fs.getBitarchiveChecksum(l), locale)));
-        out.println("</tr>");
+        out.print(HTMLUtils.makeTableRow(
+                HTMLUtils.makeTableElement(baLocation),
+                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(l)),
+                HTMLUtils.makeTableElement(presentChecksum(
+                    fs.getBitarchiveChecksum(l), locale))));
     }
 
     /**
-     * Print checkboxes for changing status for files. This will print two
+     * Print checkboxes for changing state for files. This will print two
      * checkboxes for changing a number of checkboxes, one for getting more
      * info, one for reestablishing missing files.
+     * This method assumes the file toggleCheckboxes.js to be available in the
+     * directory with the page this method is called from.
      *
      * @param out                          The stream to print the checkboxes
      *                                     to.
@@ -586,34 +606,19 @@ public class BitpreserveFileStatus {
                                              int numberOfUploadableCheckboxes)
             throws IOException {
         // Print the javascript needed.
-        out.print("<script type=\"text/javascript\" language=\"javascript\">\n"
-                  + "    /** Toggles the status of all checkboxes with a given class */\n"
-                  + "    function toggleCheckboxes(command) {\n"
-                  + "        var toggler = document.getElementById(\"toggle\" + command);\n"
-                  + "        if (toggler.checked) {\n"
-                  + "            var setOn = true;\n"
-                  + "        } else {\n"
-                  + "            var setOn = false;\n"
-                  + "        }\n"
-                  + "        var elements = document.getElementsByName(command);\n"
-                  + "        var maxToggle = document.getElementById(\"toggleAmount\" + command).value;\n"
-                  + "        if (maxToggle <= 0) {\n"
-                  + "            maxToggle = elements.length;\n"
-                  + "        }\n"
-                  + "        for (var i = 0; i < elements.length && i < maxToggle; i++) {\n"
-                  + "            elements[i].checked = setOn;\n"
-                  + "        }\n"
-                  + "    }\n"
-                  + "</script>");
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
+        out.println("<script type=\"text/javascript\" language=\"javascript\""
+                    + " src=\"toggleCheckboxes.js\">");
         // Add checkbox to toggle multiple "fileinfo" checkboxes
         printMultipleToggler(
-                out, GET_INFO_COMMAND,
+                out, Constants.GET_INFO_COMMAND,
                 numberOfMissingCheckboxes, "change.infobox.for.0.files",
                 locale);
         // Add checkbox to toggle multiple "reupload" checkboxes
         if (numberOfUploadableCheckboxes > 0) {
             printMultipleToggler(
-                    out, ADD_COMMAND,
+                    out, Constants.ADD_COMMAND,
                     numberOfUploadableCheckboxes, "change.0.may.be.added",
                     locale);
         }
@@ -627,7 +632,7 @@ public class BitpreserveFileStatus {
      * @param command            The type of checkbox.
      * @param numberOfCheckboxes The total number of checksboxes possible to
      *                           turn on or off.
-     * @param label              The I18N label for the describing text, an
+     * @param label              The I18N label for the describing text. An
      *                           input box with the number to change will be
      *                           added as parameter {0} in this label.
      * @param locale             The locale for the checkbox.
@@ -659,6 +664,8 @@ public class BitpreserveFileStatus {
      * @return String presenting the checksums.
      */
     public static String presentChecksum(List<String> csum, Locale locale) {
+        ArgumentNotValid.checkNotNull(csum, "List<String> csum");
+        ArgumentNotValid.checkNotNull(locale, "Locale locale");
         String csumString = csum.toString();
         if (csum.isEmpty()) {
             csumString = I18N.getString(locale, "no.checksum");

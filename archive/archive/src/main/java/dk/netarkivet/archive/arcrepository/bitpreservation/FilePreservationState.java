@@ -42,8 +42,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * 2) the actual upload status
  *
  */
-public class FilePreservationStatus {
-    private static final Log log = LogFactory.getLog(FilePreservationStatus.class);
+public class FilePreservationState {
+    private static final Log log = LogFactory.getLog(FilePreservationState.class);
 
     /** the name of the preserved file. */
     private String filename;
@@ -67,7 +67,7 @@ public class FilePreservationStatus {
      * @param checksumMap
      * @throws ArgumentNotValid if filename is null or empty string, or if admindata is null.
      */
-    FilePreservationStatus(String filename, ArcRepositoryEntry admindata,
+    FilePreservationState(String filename, ArcRepositoryEntry admindata,
                            Map<Location, List<String>> checksumMap) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry admindata");
@@ -217,7 +217,7 @@ public class FilePreservationStatus {
      * also returns "".
      *
      */
-    private String getUniqueChecksum(Location l) {
+    public String getUniqueChecksum(Location l) {
         List<String> checksums = bitarchive2checksum.get(l);
         String checksum = null;
         for (String s : checksums) {

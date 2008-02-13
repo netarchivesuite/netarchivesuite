@@ -58,4 +58,9 @@ public class Constants {
     /** Maximum number of files to toogle on one go. */
     public static final int MAX_TOGGLE_AMOUNT = 100;
 
+    /** Parameter for adding missing files. */
+    public static final String ADD_COMMAND = "add";
+    /** Parameter for getting info for missing files. */
+    public static final String GET_INFO_COMMAND = "getInfo";
+    public static final String STRING_FILENAME_SEPARATOR = "##";
 }

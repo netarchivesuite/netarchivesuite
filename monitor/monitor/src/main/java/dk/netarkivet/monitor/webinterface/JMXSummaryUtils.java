@@ -182,14 +182,14 @@ public class JMXSummaryUtils {
             return JMXStatusEntry.queryJMX(query);
         } catch (MalformedObjectNameException e) {
             if (query != null) {
-                HTMLUtils.forwardWithErrorMessage(context, I18N, e, 
-                        "errmsg;error.in.querying.jmx.with.query.0", 
+                HTMLUtils.forwardWithErrorMessage(context, I18N, e,
+                                                  "errormsg;error.in.querying.jmx.with.query.0",
                 query);
                 throw new ForwardedToErrorPage(
                         "Error in querying JMX with query '" + query + "'.", e);
             } else {
-                HTMLUtils.forwardWithErrorMessage(context, I18N, e, 
-                        "errmsg;error.in.building.jmxquery");
+                HTMLUtils.forwardWithErrorMessage(context, I18N, e,
+                                                  "errormsg;error.in.building.jmxquery");
                 throw new ForwardedToErrorPage("Error building JMX query", e );
             }
         }

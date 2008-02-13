@@ -24,6 +24,7 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -36,7 +37,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.Constants;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
@@ -54,12 +54,11 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
 /**
- * Class handling integrity check of a given bit archive. <p/> This class must
+ * Class handling integrity check of the arcrepository. <p/> This class must
  * run on the same machine as the arcrepository, as it uses the same admin data
  * file (read-only).  However, it still talks JMS with the arcrepository.
  */
@@ -69,15 +68,12 @@ public class FileBasedActiveBitPreservation
     private static final Log log
             = LogFactory.getLog(FileBasedActiveBitPreservation.class);
 
-    /** Internationalisation object. */
-    private static final I18n I18N
-            = new I18n(Constants.TRANSLATIONS_BUNDLE);
-
     /**
-     * Every time we need to store intermediate data during preservation, files
-     * will be put in a temp-dir with this prefix.
+     * When replacing a broken file, the broken file is downloaded and stored in
+     * a temporary directory under Settings.COMMON_TEMP_DIR with this name.
+     * It can then be inspected at your leisure.
      */
-    private static final String TMP_DIR_PREFIX = "bitpreservation";
+    private static final String REMOVED_FILES = "bitpreservation";
 
     /**
      * This should be updated at the entrance of each major use block, to ensure
@@ -88,10 +84,14 @@ public class FileBasedActiveBitPreservation
     private ReadOnlyAdminData admin;
 
     /**
-     * Note that having this as a singleton prevents more than one user from
-     * working on this at the same time.  We have no safeguards against abuse!
+     * File preservation is done in a singleton, which means that any user using
+     * the file preservation interface will update the same state.
+     *
+     * Nothing breaks by two users simultanously do bit preservation actions,
+     * but it may have undesirable consequences, such as two users simultanously
+     * starting checksum jobs of the full archive.
      */
-    private static FileBasedActiveBitPreservation instance = null;
+    private static FileBasedActiveBitPreservation instance;
 
     /** Hook to close down application. */
     private CleanupHook closeHook;
@@ -117,8 +117,7 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Retrieve the preservation status for the file with a given filename. This
-     * will ask for a fresh checksum from bitarchives and admin data.
-     * This will ask for a fresh checksum from bitarchives and admin data.
+     * will ask for a fresh checksum from the bitarchives and admin data.
      *
      * @param filename a given filename
      *
@@ -127,15 +126,15 @@ public class FileBasedActiveBitPreservation
      *
      * @throws ArgumentNotValid if argument is null or the empty string
      */
-    public FilePreservationStatus getFilePreservationStatus(String filename) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
+    public FilePreservationState getFilePreservationState(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         // Start by retrieving the admin status
         admin.synchronize();
         ArcRepositoryEntry ae = admin.getEntry(filename);
 
         // create and return the preservation status
         if (ae != null) {
-            return new FilePreservationStatus(filename, ae, getChecksumMap(
+            return new FilePreservationState(filename, ae, getChecksumMap(
                     filename));
         } else {
             // TODO: Will a file preservation status never make sense with no
@@ -147,7 +146,7 @@ public class FileBasedActiveBitPreservation
     /**
      * Generate a map of checksums for this file in the bitarchives.
      *
-     * @param filename The filename to get the checksums for
+     * @param filename The filename to get the checksums for.
      *
      * @return Map containing the output of checksum jobs from the bitarchives.
      */
@@ -157,7 +156,8 @@ public class FileBasedActiveBitPreservation
                 new HashMap<Location, List<String>>();
         for (Location ba : Location.getKnown()) {
             List<String> checksums = getChecksums(ba, filename);
-            log.debug("Putting checksums '" + checksums + "' in for " + ba);
+            log.debug("Putting checksums '" + checksums + "' in for location '"
+                      + ba + "'");
             checksummap.put(ba, checksums);
         }
         return checksummap;
@@ -167,7 +167,7 @@ public class FileBasedActiveBitPreservation
      * Get the checksum of a single file in a bitarchive.
      *
      * Note that this method runs a batch job on the bitarchives, and therefore
-     * takes a long time.
+     * may take a long time, depending on network delays.
      *
      * @param ba       The bitarchive to ask for checksum
      * @param filename The name of the file to ask for checksums for
@@ -188,12 +188,18 @@ public class FileBasedActiveBitPreservation
             if (batchStatus.hasResultFile()) {
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 batchStatus.appendResults(buf);
-                res = buf.toString();
+                try {
+                    res = buf.toString("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new IOFailure(
+                            "Should never happen: Unsupported encoding UTF-8",
+                            e);
+                }
             } else {
                 res = "";
             }
         } catch (NetarkivetException e) {
-            log.warn("Error asking '" + ba + "' for checksums", e);
+            log.warn("Error asking location '" + ba + "' for checksums", e);
             return Collections.emptyList();
         }
         List<String> checksums = new ArrayList<String>();
@@ -205,16 +211,16 @@ public class FileBasedActiveBitPreservation
                             = ChecksumJob.parseLine(s);
                     if (!fileChecksum.getKey().equals(filename)) {
                         log.debug("Got checksum for unexpected file '"
-                                  + fileChecksum.getKey() + " while asking '"
-                                  + ba
+                                  + fileChecksum.getKey() + " while asking "
+                                  + "location '" + ba
                                   + "' for checksum of '" + filename + "'");
                     } else {
                         checksums.add(fileChecksum.getValue());
                     }
                 } catch (ArgumentNotValid e) {
                     log.warn("Got malformed checksum '" + res
-                             + "' while asking '" + ba + "' for checksum of '"
-                             + filename + "'");
+                             + "' while asking location '" + ba
+                             + "' for checksum of '" + filename + "'");
                 }
             }
         }
@@ -231,6 +237,7 @@ public class FileBasedActiveBitPreservation
      * @throws IllegalState if the file with the list cannot be found.
      */
     public Iterable<String> getMissingFiles(Location bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         File missingOutput = WorkFiles.getFile(bitarchive,
                                                WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
@@ -242,14 +249,16 @@ public class FileBasedActiveBitPreservation
 
     /**
      * This method takes as input the name of a bitarchive location for which we
-     * have previously run a runFileListJob. It reads in the known files in the
+     * wish to run a FileListJob. It also reads in the known files in the
      * arcrepository from the AdminData directory specified in the Setting
      * DIRS_ARCREPOSITORY_ADMIN. The two file lists are compared and a
-     * subdirectory missingFiles is created with two files: missingba.txt
-     * containing missing files, ie those in the arcrepository but not in the
-     * bitarchive. This file is unsorted. missingadmindata.txt containing extra
-     * files, ie. those found in the bitarchive but not in the arcrepository
-     * admin data. This file is unsorted.
+     * subdirectory missingFiles is created with two unsorted files:
+     * 'missingba.txt' containing missing files, ie those registered in the
+     * admin data, but not found in the bitarchive, and 'missingadmindata.txt'
+     * containing extra files, ie. those found in the bitarchive but not in the
+     * arcrepository admin data.
+     *
+     * TODO: The second file is never used on the current implementation.
      *
      * FIXME: It is unclear if the decision if which files are missing isn't
      * better suited to be in getMissingFiles, so this method only runs the
@@ -263,10 +272,10 @@ public class FileBasedActiveBitPreservation
      * @throws PermissionDenied if the output directory cannot be created
      */
     public void findMissingFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "location");
+        ArgumentNotValid.checkNotNull(location, "Location location");
         runFileListJob(location);
-        log.trace("findMissingFile in dir:"
-                  + WorkFiles.getPreservationDir(location));
+        log.trace("findMissingFile in dir '"
+                  + WorkFiles.getPreservationDir(location) + "'");
         admin.synchronize();
 
         // Create set of file names from bitarchive data
@@ -281,10 +290,14 @@ public class FileBasedActiveBitPreservation
         extraFilesInAdminData.removeAll(filesInBitarchive);
 
         // Log result
-        log.info("The files " + extraFilesInAdminData
-                 + " are missing in the bitarchive listing in "
-                 + WorkFiles.getPreservationDir(location)
-                .getAbsolutePath());
+        if (extraFilesInAdminData.size() > 0) {
+            log.warn("The " + extraFilesInAdminData.size() + " files '"
+                     + new ArrayList(extraFilesInAdminData).subList(0, Math.min(
+                    extraFilesInAdminData.size(), 10))
+                     + "' have wrong checksum in the bitarchive listing in '"
+                     + WorkFiles.getPreservationDir(location)
+                    .getAbsolutePath() + "'");
+        }
 
         // Write output data
         WorkFiles.write(location, WorkFiles.MISSING_FILES_BA,
@@ -295,13 +308,19 @@ public class FileBasedActiveBitPreservation
         extraFilesInBA.removeAll(arcrepNameSet);
 
         // Log result
-        log.info("The files " + extraFilesInBA
-                 + " are missing in the admin data listing");
+        if (extraFilesInBA.size() > 0) {
+            log.warn("The " + extraFilesInBA.size() + " files '"
+                     + new ArrayList(extraFilesInBA).subList(0, Math.min(
+                    extraFilesInBA.size(), 10))
+                     + "' have wrong checksum in the bitarchive listing in '"
+                     + WorkFiles.getPreservationDir(location)
+                    .getAbsolutePath() + "'");
+        }
 
         // Write output data
         WorkFiles.write(location, WorkFiles.MISSING_FILES_ADMINDATA,
                         extraFilesInBA);
-        log.trace("Findmissing files -ok");
+        log.trace("Findmissing files - done");
     }
 
     /**
@@ -314,13 +333,12 @@ public class FileBasedActiveBitPreservation
      * @throws IOFailure        if there is a problem writing the output file,
      *                          or if the job fails for some reason
      */
-    private void runFileListJob(Location location)
-            throws IOFailure {
+    private void runFileListJob(Location location) throws IOFailure {
         // Pick the right directory to output to
         File batchOutputFile = WorkFiles.getFile(location,
                                                  WorkFiles.FILES_ON_BA);
-        log.trace("runFileListJob for archive:" + location
-                  + " output file:" + batchOutputFile);
+        log.trace("runFileListJob for location '" + location
+                  + "', output file '" + batchOutputFile + "'");
 
         // Send filelist batch job
         runBatchJob(new FileListJob(), location, null, batchOutputFile);
@@ -336,6 +354,7 @@ public class FileBasedActiveBitPreservation
      * @throws IllegalState if the file with the list cannot be found.
      */
     public Iterable<String> getChangedFiles(Location bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         File wrongFilesOutput = WorkFiles.getFile(bitarchive,
                                                   WorkFiles.WRONG_FILES);
 
@@ -361,14 +380,12 @@ public class FileBasedActiveBitPreservation
      *
      * @param location the bitarchive location the checksumjob came from
      *
-     * @throws IOFailure        if the given directory does not contain a file
-     *                          checksumjobOutput/unsorted.txt, or it cannot be
-     *                          read
+     * @throws IOFailure        On file or network trouble.
      * @throws PermissionDenied if the output directory cannot be created
-     * @throws ArgumentNotValid if arguments location is null
+     * @throws ArgumentNotValid if argument location is null
      */
     public void findChangedFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "location");
+        ArgumentNotValid.checkNotNull(location, "Location location");
         runChecksumJob(location);
         admin.synchronize();
 
@@ -404,7 +421,8 @@ public class FileBasedActiveBitPreservation
         wrongStates.removeAll(wrongChecksums);
         wrongStates.removeAll(arcrepCompletedChecksumSet);
 
-        // Remove files unknown in admin data
+        // Remove files unknown in admin data (note  - these are not ignored,
+        // they will be handled by missing files operations)
         for (String checksum : new ArrayList<String>(wrongChecksums)) {
             Map.Entry<String, String> entry = ChecksumJob.parseLine(checksum);
             if (!admin.hasEntry(entry.getKey())) {
@@ -414,10 +432,22 @@ public class FileBasedActiveBitPreservation
         }
 
         // Log result
-        log.info("The files " + wrongChecksums
-                 + " have wrong checksum in the bitarchive listing in "
-                 + WorkFiles.getPreservationDir(location)
-                .getAbsolutePath());
+        if (wrongChecksums.size() > 0) {
+            log.warn("The " + wrongChecksums.size() + " files '"
+                     + new ArrayList(wrongChecksums).subList(0, Math.min(
+                    wrongChecksums.size(), 10))
+                     + "' have wrong checksum in the bitarchive listing in '"
+                     + WorkFiles.getPreservationDir(location)
+                    .getAbsolutePath() + "'");
+        }
+        if (wrongStates.size() > 0) {
+            log.warn("The " + wrongStates.size() + " files '"
+                     + new ArrayList(wrongStates).subList(0, Math.min(
+                    wrongStates.size(), 10))
+                     + "' have wrong states in the bitarchive listing in '"
+                     + WorkFiles.getPreservationDir(location)
+                    .getAbsolutePath() + "'");
+        }
 
         // Collect all names of files with the wrong checksum
         Set<String> wrongChecksumFilenames = new HashSet<String>();
@@ -462,15 +492,16 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Return the number of files found in the bitarchive. If no information
-     * found about the bitarchive -1 is returned
+     * Return the number of files found in the bitarchive. If nothing is known
+     * about the bitarchive location, -1 is returned.
      *
      * @param bitarchive the bitarchive to check
      *
-     * @return the number of files found in the bitarchive
+     * @return the number of files found in the bitarchive.  If nothing is known
+     * about the bitarchive location, -1 is returned.
      */
     public long getNumberOfFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         File unsortedOutput = WorkFiles.getFile(bitarchive,
                                                 WorkFiles.FILES_ON_BA);
 
@@ -482,14 +513,16 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Get the number of missing files in a given bitarchive.
+     * Get the number of missing files in a given bitarchive. If nothing is known
+     * about the bitarchive location, -1 is returned.
      *
      * @param bitarchive a given bitarchive
      *
-     * @return the number of missing files in the given bitarchive.
+     * @return the number of missing files in the given bitarchive. If nothing
+     * is known about the bitarchive location, -1 is returned.
      */
     public long getNumberOfMissingFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
 
         File missingOutput = WorkFiles.getFile(bitarchive,
                                                WorkFiles.MISSING_FILES_BA);
@@ -501,14 +534,16 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Get the number of wrong files for a bitarchive.
+     * Get the number of wrong files for a bitarchive. If nothing is known
+     * about the bitarchive location, -1 is returned.
      *
      * @param bitarchive a bitarchive
      *
-     * @return the number of wrong files for the bitarchive.
+     * @return the number of wrong files for the bitarchive. If nothing is known
+     * about the bitarchive location, -1 is returned.
      */
     public long getNumberOfChangedFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         File wrongFileOutput = WorkFiles.getFile(bitarchive,
                                                  WorkFiles.WRONG_FILES);
 
@@ -519,38 +554,66 @@ public class FileBasedActiveBitPreservation
         return FileUtils.countLines(wrongFileOutput);
     }
 
+    /**
+     * Get the dat for last time checksum information was updated for
+     * thisis location.
+     * @param location The location to check last time for.
+     * @return The date for last check. Will return 1970-01-01 for never.
+     */
     public Date getDateForChangedFiles(Location location) {
+        ArgumentNotValid.checkNotNull(location, "Location location");
         return WorkFiles.getLastUpdate(location, WorkFiles.WRONG_FILES);
     }
 
+    /**
+     * Get the dat for last time missing files information was updated for
+     * this location.
+     * @param location The location to check last time for.
+     * @return The date for last check. Will return 1970-01-01 for never.
+     */
     public Date getDateForMissingFiles(Location location) {
+        ArgumentNotValid.checkNotNull(location, "Location location");
         return WorkFiles.getLastUpdate(location, WorkFiles.FILES_ON_BA);
     }
 
 
     /**
-     * Check that files are indeed missing, and present in admin data and
-     * reference location. If so, upload missing files from reference location
-     * to this location.
+     * Check that files are indeed missing on the bitarchive location, and
+     * present in admin data and reference location. If so, upload missing files
+     * from reference location to this location.
      *
      * @param location The location to restore files to
      * @param filename The names of the files.
      *
-     * @throws IOFailure        if the file cannot be reestablished
-     * @throws PermissionDenied if the file is not in correct state
+     * @throws IOFailure        if any file cannot be reestablished. All files
+     *                          will be attempted, though.
      */
-    public void reuploadMissingFiles(Location location, String... filename) {
+    public void uploadMissingFiles(Location location, String... filename) {
+        ArgumentNotValid.checkNotNull(location, "Location location");
+        List<String> troubleNames = new ArrayList<String>();
         for (String fn : filename) {
-            FilePreservationStatus fps = getFilePreservationStatus(fn);
-            if (!fps.isAdminDataOk()) {
-                setAdminDataFailed(fn, location);
-                admin.synchronize();
+            try {
+                FilePreservationState fps = getFilePreservationState(fn);
+                if (fps == null) {
+                    throw new IllegalState("No state known about '" + fn + "'");
+                }
+                if (!fps.isAdminDataOk()) {
+                    setAdminDataFailed(fn, location);
+                    admin.synchronize();
+                    fps = getFilePreservationState(fn);
+                    if (fps == null) {
+                        throw new IllegalState("No state known about '" + fn + "'");
+                    }
+                }
+                reestablishMissingFile(fn, location, fps);
+            } catch (Exception e) {
+                log.warn("Trouble updating file '" + fn + "'", e);
+                troubleNames.add(fn);
             }
-            StringBuilder res = new StringBuilder();
-            if (!reestablishMissingFile(fn, location)) {
-                throw new IOFailure(res.toString());
-            }
-
+        }
+        if (troubleNames.size() > 0) {
+            throw new IOFailure("Could not update all files. The following"
+                                + " files were not fixed: " + troubleNames);
         }
     }
 
@@ -562,50 +625,39 @@ public class FileBasedActiveBitPreservation
      * reference archive) 4) admin data and the reference archive agree on the
      * checksum of the file.
      *
-     * If these conditions are not satisfied, an error is appended to result and
-     * we return false without changing the bitarchives.
-     *
      * @param fileName          name of the file to reestablish
      * @param damagedBitarchive Name of the bitarchive missing the file
-     * @return True if reestablishing succeeded
+     * @param fps               The FilePreservationStatus of the file to fix.
+     * @throws IOFailure        On trouble updating the file.
      */
-    private boolean reestablishMissingFile(
+    private void reestablishMissingFile(
             String fileName,
-            Location damagedBitarchive) {
+            Location damagedBitarchive, FilePreservationState fps) {
         log.debug("Reestablishing missing file '" + fileName
                   + "' in bitarchive '" + damagedBitarchive + "'.");
-        FilePreservationStatus status = getFilePreservationStatus(fileName);
-        if (null == status) {
-            log.warn("Attempt at getting preservation status for file '"
-                     + fileName + "' failed.");
-            throw new IOFailure(
-                    "Attempt at getting preservation status for file '"
-                    + fileName + "' failed");
-        }
-        if (!satisfiesMissingFileConditions(status, damagedBitarchive,
+        if (!satisfiesMissingFileConditions(fps, damagedBitarchive,
                                             fileName)) {
             throw new IOFailure(
-                    "Unable to reestablish missing file. "
+                    "Unable to reestablish missing file. '" + fileName + "'. "
                     + "It is not in the right state.");
         }
         // Retrieve the file from the reference archive
-        Location referenceArchive = status.getReferenceBitarchive();
+        Location referenceArchive = fps.getReferenceBitarchive();
         try {
             PreservationArcRepositoryClient arcrep =
                     ArcRepositoryClientFactory.getPreservationInstance();
             File tmpDir = FileUtils.createUniqueTempDir(FileUtils.getTempDir(),
-                                                        TMP_DIR_PREFIX);
+                                                        REMOVED_FILES);
             File missingFile = new File(tmpDir, fileName);
             arcrep.getFile(fileName, referenceArchive, missingFile);
             arcrep.store(missingFile);
             tmpDir.delete();
         } catch (IOFailure e) {
-            log.warn("Failed to reestablish '" + fileName +
-                     "' in '" + damagedBitarchive.getName()
-                     + "' with copy from '" + referenceArchive + "'", e);
-            throw new IOFailure("Failed to reestablish '" + fileName
-                                + "' in '" + damagedBitarchive.getName()
-                                + "' with copy from '" + referenceArchive + "'",
+            String errmsg = "Failed to reestablish '" + fileName +
+                            "' in '" + damagedBitarchive.getName()
+                            + "' with copy from '" + referenceArchive + "'";
+            log.warn(errmsg, e);
+            throw new IOFailure(errmsg,
                                 e);
         }
         log.info("Reestablished " + fileName
@@ -618,54 +670,53 @@ public class FileBasedActiveBitPreservation
         FileUtils.appendToFile(WorkFiles.getFile(damagedBitarchive,
                                                  WorkFiles.FILES_ON_BA),
                                fileName);
-        return true;
     }
 
     /**
      * Checks the conditions that must be true before reestablishing a missing
      * file. Returns true if and only if all of the below are true; returns
-     * false and outputs a message on the given StringBuilder otherwise.
+     * false otherwise.
      *
      * 1) the file is registered correctly in AdminData 2) the file is missing
      * in the given bitarchive 3) the file is present in another bitarchive (the
      * reference archive) 4) admin data and the reference archive agree on the
      * checksum
      *
-     * @param status            the status for one file in the bitarchives
+     * @param state            the status for one file in the bitarchives
      * @param damagedBitarchive the location where the file is corrupt or
      *                          missing
      * @param fileName          the name of the file being considered
      * @return true if all conditions are true, false otherwise.
      */
     private boolean satisfiesMissingFileConditions(
-            FilePreservationStatus status,
+            FilePreservationState state,
             Location damagedBitarchive,
             String fileName) {
         // condition 1
-        if (!status.isAdminDataOk()) {
-            log.warn("Admin.data is not consistent regarding file: "
-                     + fileName);
+        if (!state.isAdminDataOk()) {
+            log.warn("Admin.data is not consistent regarding file '"
+                     + fileName + "'");
             return false;
         }
         // condition 2
-        if (!status.fileIsMissing(damagedBitarchive)) {
+        if (!state.fileIsMissing(damagedBitarchive)) {
             log.warn("File '" + fileName
                      + "' is not missing in bitarchive on location '"
                      + damagedBitarchive.getName() + "'.");
             return false;
         }
         // conditions 3 and 4
-        Location referenceArchive = status.getReferenceBitarchive();
+        Location referenceArchive = state.getReferenceBitarchive();
         if (referenceArchive == null) {
             log.warn("No correct version of file '" + fileName
-                     + "' in any archive");
+                     + "' exists in any archive");
             return false;
         }
         return true;
     }
 
     /**
-     * Calls upon the arc repository to change the known state for the given
+     * Calls upon the arcrepository to change the known state for the given
      * file in one bitarchive.  This method uses JMS and blocks until a reply is
      * sent.
      *
@@ -675,8 +726,6 @@ public class FileBasedActiveBitPreservation
      * @throws ArgumentNotValid if arguments are null or empty strings
      */
     private void setAdminDataFailed(String filename, Location ba) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
-        ArgumentNotValid.checkNotNull(ba, "ba");
         ArcRepositoryClientFactory.getPreservationInstance()
                 .updateAdminData(filename, ba.getName(),
                                  BitArchiveStoreState.UPLOAD_FAILED);
@@ -695,9 +744,13 @@ public class FileBasedActiveBitPreservation
      * @throws PermissionDenied if the file is not in correct state
      */
     public void replaceChangedFile(Location location, String filename,
-                                   String credentails, String checksum) {
-        removeAndGetFile(filename, location, checksum, credentails);
-        reuploadMissingFiles(location, filename);
+                                   String credentials, String checksum) {
+        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
+        removeAndGetFile(filename, location, checksum, credentials);
+        uploadMissingFiles(location, filename);
     }
 
     /**
@@ -712,18 +765,15 @@ public class FileBasedActiveBitPreservation
      */
     private void removeAndGetFile(String filename, Location bitarchive,
                                   String checksum, String credentials) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
-        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
-        ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
-        ArgumentNotValid.checkNotNull(bitarchive, "bitarchive");
         ArcRepositoryClientFactory.getPreservationInstance()
                 .removeAndGetFile(filename, bitarchive.getName(), checksum,
                                   credentials);
         FileUtils.appendToFile(WorkFiles.getFile(bitarchive,
                                                  WorkFiles.MISSING_FILES_BA),
                                filename);
-        FileUtils.removeLineFromFile(filename, WorkFiles.getFile(bitarchive,
-                                                                 WorkFiles.FILES_ON_BA));
+        FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
+                bitarchive,
+                WorkFiles.FILES_ON_BA));
     }
 
     /**
@@ -769,10 +819,10 @@ public class FileBasedActiveBitPreservation
      *
      * @throws PermissionDenied if the file is not in correct state
      */
-    public void changeStatusForAdminData(String filename) {
-        ArgumentNotValid.checkNotNullOrEmpty("String filename", filename);
+    public void changeStateForAdminData(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         admin.synchronize();
-        FilePreservationStatus fps = getFilePreservationStatus(filename);
+        FilePreservationState fps = getFilePreservationState(filename);
         String checksum = fps.getReferenceCheckSum();
         if (checksum == null || checksum.equals("")) {
             throw new PermissionDenied("No correct checksum for '"
@@ -783,7 +833,7 @@ public class FileBasedActiveBitPreservation
                     .updateAdminChecksum(filename, checksum);
         }
         for (Location l : Location.getKnown()) {
-            if (fps.getBitarchiveChecksum(l).equals(
+            if (fps.getUniqueChecksum(l).equals(
                     admin.getCheckSum(filename))) {
                 FileUtils.removeLineFromFile(
                         filename,

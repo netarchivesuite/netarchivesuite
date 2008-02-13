@@ -4,7 +4,7 @@ handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netar
 .level=INFO
 
 #setup the File Handler
-java.util.logging.FileHandler.level=FINE
+java.util.logging.FileHandler.level=FINEST
 java.util.logging.FileHandler.pattern=./log/APPID%u.log
 java.util.logging.FileHandler.limit=1000000
 java.util.logging.FileHandler.count=100
@@ -28,7 +28,7 @@ org.archive.crawler.framework.ToeThread.level=SEVERE
 org.archive.crawler.prefetch.QuotaEnforcer.level=WARNING
 org.apache.jsp.level=FINE
 org.mortbay.jetty.servlet.ServletHandler.level=WARNING
-dk.netarkivet.level=FINE
+dk.netarkivet.level=FINEST
 dk.netarkivet.common.distribute.JMSConnection.level=INFO
 sun.jmx.level=WARNING
 Harvest\ Definition.level=SEVERE

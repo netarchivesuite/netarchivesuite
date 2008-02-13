@@ -55,7 +55,7 @@ import com.mockobjects.servlet.MockHttpServletRequest;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.Location;
@@ -95,17 +95,17 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         Locale defaultLocale = new Locale("da");
         // First test a working set of params
         Map<String, String[]> args = new HashMap<String, String[]>();
-        args.put(BitpreserveFileStatus.ADD_COMMAND,
+        args.put(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        request.setupAddParameter(BitpreserveFileStatus.ADD_COMMAND,
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        args.put(BitpreserveFileStatus.GET_INFO_COMMAND,
+        args.put(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
                 new String[] { filename1 });
-        request.setupAddParameter(BitpreserveFileStatus.GET_INFO_COMMAND,
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
                 new String[] { filename1 });
         args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba1).getName()});
@@ -113,8 +113,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                  new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector(args.keySet()).elements());
-        Map<String, FilePreservationStatus> status =
-                BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
+        Map<String, FilePreservationState> status =
+                BitpreserveFileState.processMissingRequest(getDummyPageContext(
                         defaultLocale, request),
                         new StringBuilder());
         assertEquals("Should have one call to reestablish",
@@ -132,7 +132,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
-        status = BitpreserveFileStatus.processMissingRequest(
+        status = BitpreserveFileState.processMissingRequest(
                 getDummyPageContext(defaultLocale, request), new StringBuilder()
         );
         assertEquals("Should have no call to restablish",
@@ -151,34 +151,22 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                  new String[]{Location.get(ba2).getName()});
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba2).getName()});
-        request.setupAddParameter(BitpreserveFileStatus.ADD_COMMAND,
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
                 new String[] {
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        args.put(BitpreserveFileStatus.ADD_COMMAND,
+        args.put(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
                 new String[] {
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        request.setupAddParameter(BitpreserveFileStatus.GET_INFO_COMMAND,
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
-        args.put(BitpreserveFileStatus.GET_INFO_COMMAND,
+        args.put(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
-        request.setupAddParameter(BitpreserveFileStatus.SET_FAILED_COMMAND,
-                new String[] {
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2
-                });
-        args.put(BitpreserveFileStatus.SET_FAILED_COMMAND,
-                new String[] {
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename2
-                });
         request.setupGetParameterMap(args);
-        status = BitpreserveFileStatus.processMissingRequest(getDummyPageContext(
+        status = BitpreserveFileState.processMissingRequest(getDummyPageContext(
                 defaultLocale, request),
                 new StringBuilder()
         );
@@ -420,13 +408,13 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             map.put(key, oldValue);
         }
 
-        public void reuploadMissingFiles(Location location, String... filename) {
+        public void uploadMissingFiles(Location location, String... filename) {
             addCall(calls, ADD_METHOD,
                     filename[0] + "," + location.getName());
         }
 
-        public FilePreservationStatus
-                getFilePreservationStatus(String filename) {
+        public FilePreservationState
+        getFilePreservationState(String filename) {
             addCall(calls, GET_INFO_METHOD, filename);
             return null;
         }

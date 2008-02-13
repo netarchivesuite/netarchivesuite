@@ -276,6 +276,35 @@ public class HTMLUtils {
         return "<td>" + escapeHtmlValues(s) + "</td>";
     }
 
+    /** Create a table header element containing the given string, escaping HTML
+     * values in the process.
+     *
+     * @param s An unescaped string.  Any HTML tags in this string will end up
+     * escaped away.
+     * @return The same string escaped and enclosed in th tags.
+     */
+    public static String makeTableHeader(String contents) {
+        return "<th>" + escapeHtmlValues(contents) + "</th>";
+    }
+
+    /** Create a table row. Note that in contrast to createTableElement and
+     * createTableHeader, the contents are not escaped. They are expected to
+     * contain table elements.
+     *
+     * @param contents The contents to put into the table row.
+     * The entries will be delimited by newline characters.
+     * @return The same string escaped and enclosed in td tags.
+     */
+    public static String makeTableRow(String... contents) {
+        StringBuilder sb = new StringBuilder("<tr>");
+        for (String element: contents) {
+            sb.append(element);
+            sb.append("\n");
+        }
+        sb.append("</tr>\n");
+        return sb.toString();
+    }
+
     /** Get an HTML representation of the date given.
      *
      * @param d A date

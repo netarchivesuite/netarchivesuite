@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page provides information about the state of the bitarchive at every known Location.
 This page is the entrypoint to correct missing or corrupt data in the bitarchives.
 There are no parameters.
---%><%@ page import="dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
+--%><%@ page import="dk.netarkivet.archive.webinterface.BitpreserveFileState,
          dk.netarkivet.common.distribute.arcrepository.Location,
          dk.netarkivet.common.utils.I18n,
          dk.netarkivet.common.webinterface.HTMLUtils"
@@ -38,7 +38,7 @@ There are no parameters.
 
 %><%
     HTMLUtils.setUTF8(request);
-    BitpreserveFileStatus.processUpdateRequest(request, pageContext);
+    BitpreserveFileState.processUpdateRequest(pageContext);
     HTMLUtils.generateHeader(pageContext);
 
 %>
@@ -50,14 +50,14 @@ There are no parameters.
     // For each known bitarchive in the system, print out statistics about
     // missing files
     for (Location location : Location.getKnown()) {
-        BitpreserveFileStatus.printMissingFileStatusForLocation(out, location,
+        BitpreserveFileState.printMissingFileStateForLocation(out, location,
                                                           response.getLocale());
     }
 
     // For each known bitarchive in the system, print out statistics about 
     // corrupt files (files with wrong checksums)
     for (Location location : Location.getKnown()) {
-        BitpreserveFileStatus.printChecksumErrorStatusForLocation(out, location,
+        BitpreserveFileState.printChecksumErrorStateForLocation(out, location,
                                                           response.getLocale());
     }
     HTMLUtils.generateFooter(out);

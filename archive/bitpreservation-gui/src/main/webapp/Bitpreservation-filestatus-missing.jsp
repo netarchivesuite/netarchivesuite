@@ -24,10 +24,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%@ page import="
 dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
-dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationStatus,
-dk.netarkivet.archive.webinterface.BitpreserveFileStatus,
+dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
+dk.netarkivet.archive.webinterface.BitpreserveFileState,
 dk.netarkivet.archive.webinterface.Constants,
-dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"
@@ -39,20 +39,20 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
     HTMLUtils.setUTF8(request);
 
     StringBuilder res = new StringBuilder();
-    java.util.Map<String, FilePreservationStatus> fileInfo;
+    java.util.Map<String, FilePreservationState> fileInfo;
     try {
-        fileInfo = BitpreserveFileStatus.processMissingRequest(pageContext,
+        fileInfo = BitpreserveFileState.processMissingRequest(pageContext,
                                                                res);
     } catch (dk.netarkivet.common.exceptions.ForwardedToErrorPage e) {
         return;
     }
 
-    //Note: The parameter is checked to be legal in processMissingRequest()
+    //Note: The parameter has already been checked to be valid in processMissingRequest()
     String bitarchiveName =
             request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
     Location bitarchive = Location.get(bitarchiveName);
 
-    // Make a list of files to make status for:
+    // Make a list of files to make state for:
     Iterable<String> missingFiles;
     ActiveBitPreservation activeBitPreservation
             = FileBasedActiveBitPreservation.getInstance();
@@ -62,7 +62,7 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
 
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                                           "errormsg;unable.to.get.files");
-        throw new ForwardedToErrorPage(e.getMessage(), e);
+        return;
     }
     int numberOfMissingFiles
             = (int) activeBitPreservation.getNumberOfMissingFiles(bitarchive);
@@ -98,20 +98,21 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
         <table>
     <%
 
-    // How many files can be uploaded with ADD_COMMAND
+    // Counter for number of files that can be uploaded with ADD_COMMAND.
+    // This is increased in the loop below.
     int uploadableFiles = 0;
 
     // For all files
     int rowCount = 0;
     for (String filename : missingFiles) {
         //Print a row for the file with info
-        BitpreserveFileStatus.printFileName(out, filename, rowCount, response.getLocale());
+        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
         // If info for file exists, output it
         if (fileInfo.containsKey(filename)) {
             %>
             <tr><td>
                 <%
-            FilePreservationStatus fs = fileInfo.get(filename);
+            FilePreservationState fs = fileInfo.get(filename);
             if (fs == null) {
                 %>
                 <fmt:message key="no.info.on.file.0">
@@ -120,13 +121,13 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
                 <%
             } else {
                 // Print information about the file
-                BitpreserveFileStatus.printFileStatus(out, fs, response.getLocale());
+                BitpreserveFileState.printFileState(out, fs, response.getLocale());
                 // If the file is indeed missing
                 if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
                     // Give opportunity to reupload the file.
                     %></td><td><%
-                    out.println(BitpreserveFileStatus.makeCheckbox(
-                            BitpreserveFileStatus.ADD_COMMAND,
+                    out.println(BitpreserveFileState.makeCheckbox(
+                            Constants.ADD_COMMAND,
                             bitarchive.getName(), filename));
                     %><fmt:message key="add.to.archive"/><%
                     uploadableFiles++;
@@ -147,8 +148,9 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
     </form>
     <br/>
 <%
-    //convenience checkboxes to toggle multiple
-    BitpreserveFileStatus.printToggleCheckboxes(out, response.getLocale(),
+    //convenience checkboxes to toggle multiple action checkboxes with a
+    //single click.
+    BitpreserveFileState.printToggleCheckboxes(out, response.getLocale(),
                                                 numberOfMissingFiles,
                                                 uploadableFiles);
     HTMLUtils.generateFooter(out);
