@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Various utilities for waiting some time.
  */
 public class TimeUtils {
-    
+
     /** Sleep for an exponentially backing off amount of time, in milliseconds.
      * Thus the first attempt will sleep for 1 ms, the second for 2, the third
      * for 4, etc.
@@ -39,42 +39,34 @@ public class TimeUtils {
      * milliseconds spent asleep.
      */
     public static void exponentialBackoffSleep(int attempt) {
-        try {
-            Thread.sleep((long) (Math.pow(2, attempt)));
-        } catch (InterruptedException e) {
-            // Early wake-up is not a problem
-        }
+        exponentialBackoffSleep(attempt, Calendar.MILLISECOND);
     }
-    
+
     /**
-     * Sleep for an exponentially backing off amount of time. 
-     * The mode describes the unit of time.
-     * The supported timeunits is Calendar.MILLISECOND, Calendar.SECOND,
-     * Calendar.MINUTE, and Calendar.HOUR.
+     * Sleep for an exponentially backing off amount of time.
+     * The mode describes the unit of time as defined by @see java.util.Calendar
      * @param attempt The attempt number, which is the log2 of the number of
      * timeunits spent asleep.
      * @param timeunit the specified timeunit
      * @throws ArgumentNotValid if timeunit is unsupported.
      */
-    public static void exponentialBackOffSleep(int attempt, int timeunit) {
-        long multiplyBy;
-        if (timeunit == Calendar.MILLISECOND) {
-            multiplyBy = 1L;
-        } else if (timeunit == Calendar.SECOND) {
-            multiplyBy = 1000L;
-        } else if (timeunit == Calendar.MINUTE) {
-            multiplyBy = 60000L;
-        } else if (timeunit == Calendar.HOUR) {
-            multiplyBy = 60000L;
-        } else {
-            throw new ArgumentNotValid("The selected timeunit '" +  timeunit + "'"
-                    + " is not supported.");
-        }
-        
+    public static void exponentialBackoffSleep(int attempt, int timeunit) {
+        ArgumentNotValid.checkPositive(attempt, "int attempt");
+        ArgumentNotValid.checkTrue(timeunit >= 0
+                                   && timeunit < Calendar.FIELD_COUNT,
+                                   "Time unit must be one of the fields defined"
+                                   + " by Calendar, not " + timeunit);
+
+        Calendar now = Calendar.getInstance();
+        long startTime = now.getTimeInMillis();
+        now.add(timeunit, 1);
+        long endTime = now.getTimeInMillis();
+        long multiplyBy = endTime - startTime;
+
         try {
             Thread.sleep((long) (Math.pow(2, attempt)) * multiplyBy);
         } catch (InterruptedException e) {
             // Early wake-up is not a problem
-        }   
+        }
     }
 }

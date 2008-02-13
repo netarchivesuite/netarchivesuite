@@ -51,8 +51,8 @@ import dk.netarkivet.common.utils.TimeUtils;
  * threads).
  * Thus no synchronization is needed on methods and fields of JMSConnection.
  * A shutdown hook is also added, which closes the connection.
- * 
- * The warnings and errorcodes reported by Sun Message Queue 4.1 can be found 
+ *
+ * The warnings and errorcodes reported by Sun Message Queue 4.1 can be found
  * in Appendix A Sun Java System Message Queue 4.1 Developer's Guide
  * for Java Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
  */
@@ -60,18 +60,18 @@ public class JMSConnectionSunMQ extends JMSConnection {
     /** Singleton pattern is be used for this class.
      * This is the one and only instance. */
     protected static JMSConnectionSunMQ instance = null;
-       
+
     /** The errorcode for failure of the JMSbroker to acknowledge a message. */
     final static String PACKET_ACK_FAILED = "C4000";
-    
-    /** The errorcode signifying that the current session to the JMSbroker 
-     * has been closed by the jmsbroker. 
+
+    /** The errorcode signifying that the current session to the JMSbroker
+     * has been closed by the jmsbroker.
      * One of the reasons: that the JMSbroker has been shutdown previously.
      */
     final static String SESSION_IS_CLOSED = "C4059";
 
     /**
-     * The errorcode signifying that the JMSbroker 
+     * The errorcode signifying that the JMSbroker
      * has been shutdown. This errorcode is issued by the JMS-client.
      */
     final static String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
@@ -187,13 +187,13 @@ public class JMSConnectionSunMQ extends JMSConnection {
             super.cleanup();
         }
     }
-    
+
     /**
      * Exceptionhandler for the JMSConnection.
      * Only handles exceptions, if reconnectInProgress is false.
      * Only handles exceptions with errorcodes PACKET_ACK_FAILED,
      * SESSION_IS_CLOSED, and RECEIVED_GOODBYE_FROM_BROKER.
-     * 
+     *
      * @param e an JMSException
      */
     public void onException(JMSException e) {
@@ -201,13 +201,13 @@ public class JMSConnectionSunMQ extends JMSConnection {
         final String errorcode = e.getErrorCode();
         log.warn("JMSException with errorcode '"
                 +  errorcode + "' encountered: " + e);
-        
+
         // Try to re-establish connections to the jmsbroker only when errorcode
-        // matches one of: 
+        // matches one of:
         // - PACKET_ACK_FAILED
         // - SESSION_IS_CLOSED
         // - RECEIVED_GOODBYE_FROM_BROKER
-        if (errorcode.equals(PACKET_ACK_FAILED) 
+        if (errorcode.equals(PACKET_ACK_FAILED)
                 || errorcode.equals(SESSION_IS_CLOSED)
                 || errorcode.equals(RECEIVED_GOODBYE_FROM_BROKER)) {
             performReconnect();
@@ -216,20 +216,20 @@ public class JMSConnectionSunMQ extends JMSConnection {
                     + errorcode);
         }
     }
-    
+
     /**
      * Do a reconnect to the JMSbroker.
      * Does absolutely nothing, if already in the process of reconnecting.
      */
     private void performReconnect(){
-        
+
         if (!reconnectInProgress.compareAndSet(false, true)) {
             log.debug("Reconnection already in progress. Do nothing");
             return;
         }
 
-        log.info("Trying to reconnect to jmsbroker at " 
-                + getHost() + ":" + getPort());    
+        log.info("Trying to reconnect to jmsbroker at "
+                + getHost() + ":" + getPort());
 
         boolean operationSuccessful = false;
         JMSException lastException = null;
@@ -242,13 +242,13 @@ public class JMSConnectionSunMQ extends JMSConnection {
             } catch (JMSException e) {
                 lastException = e;
                 log.warn("Nr #" + tries
-                        + " attempt at reconnect failed with exception. ", e);               
+                        + " attempt at reconnect failed with exception. ", e);
                 if (tries < JMS_MAXTRIES) {
                     log.debug("Will sleep a while before trying to reconnect again");
-                    TimeUtils.exponentialBackOffSleep(tries, Calendar.MINUTE);
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
-            
+
         }
         if (!operationSuccessful) {
             // Tell everybody, that we are not trying to reconnect any longer
@@ -263,7 +263,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 String channelName = getChannelName(consumerkey);
                 boolean isTopic = Channels.isTopic(channelName);
                 MessageConsumer mc = consumers.get(consumerkey);
-                if (isTopic) {                  
+                if (isTopic) {
                     TopicSubscriber myTopicSubscriber = myTSess.createSubscriber(getTopic(channelName));
                     myTopicSubscriber.setMessageListener(mc.getMessageListener());
                 } else {
@@ -282,35 +282,35 @@ public class JMSConnectionSunMQ extends JMSConnection {
         reconnectInProgress.compareAndSet(true, false);
         log.info("Reconnect successful");
     }
-    
+
     /**
      * Reconnect to JMSBroker and reestablish sessions.
      * Resets senders and publishers.
      * @throws JMSException
      */
     private void reconnect() throws JMSException {
-        
+
         try {
             myQSess.close();
         } catch (Exception e) {
             // Ignore warnings: It does not matter at this time
             // Whether or not we can't close the previous session.
         }
-        
+
         try {
             myQConn.close();
         } catch (Exception e) {
             // Ignore warnings: It does not matter at this time
             // Whether or not we can't close the previous connection.
         }
-        
+
         try {
             myTSess.close();
         } catch (Exception e) {
             // Ignore warnings: It does not matter at this time
             // Whether or not we can't close the previous session.
         }
-        
+
         try {
             myTConn.close();
         } catch (Exception e) {
@@ -319,10 +319,10 @@ public class JMSConnectionSunMQ extends JMSConnection {
         }
 
         establishConnectionAndSessions();
-           
+
         // Reset senders & publishers
         senders.clear();
         publishers.clear();
     }
-   
+
 }

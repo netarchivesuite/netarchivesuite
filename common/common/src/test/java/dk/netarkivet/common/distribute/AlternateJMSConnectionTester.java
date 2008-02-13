@@ -30,10 +30,10 @@ import dk.netarkivet.common.utils.TimeUtils;
 import junit.framework.TestCase;
 
 /**
- * Testclass for testing the exceptionhandling in JMSConnection.   
+ * Testclass for testing the exceptionhandling in JMSConnection.
  */
 public class AlternateJMSConnectionTester extends TestCase {
-    
+
     public void testErrorcodes() {
         Settings.set(Settings.JMS_BROKER_PORT, "7677");
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -44,12 +44,12 @@ public class AlternateJMSConnectionTester extends TestCase {
              System.out.println("Sending message " +  msgNr);
              con.send(msg);
              System.out.println("Message " +  msgNr +  " now sent");
-             TimeUtils.exponentialBackOffSleep(1, Calendar.MINUTE);
+             TimeUtils.exponentialBackoffSleep(1, Calendar.MINUTE);
              msgNr++;
         }
         con.close();
     }
-    
+
     private static class TestMessage extends NetarkivetMessage {
         private String testID;
 
