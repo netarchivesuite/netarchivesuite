@@ -196,7 +196,12 @@ public class CreateCDXMetadataFileTester extends TestCase {
     }
 
     public void testRunSingleJob() {
-        CreateCDXMetadataFile.main(new String[] { "4" });
+        try {
+            CreateCDXMetadataFile.main(new String[] { "4" });
+        } catch (SecurityException e) {
+            assertEquals("Should have exited normally",
+                         0, pse.getExitValue());
+        }
         assertTrue("Should have a result file",
                 job4MetadataFile.exists());
         assertFalse("Should not have other results files",
@@ -221,7 +226,12 @@ public class CreateCDXMetadataFileTester extends TestCase {
         File outputFile = new File(TestInfo.WORKING_DIR, "tmpout");
         outputFile.delete();
         outputFile.mkdir(); // Force unwriteable file.
-        CreateCDXMetadataFile.main(new String[] { "5" });
+        try {
+            CreateCDXMetadataFile.main(new String[] { "5" });
+        } catch (SecurityException e) {
+            assertEquals("Should have exited normally",
+                         0, pse.getExitValue());
+        }        
         // Should not die on errors in the batch job (null result file)
     }
 

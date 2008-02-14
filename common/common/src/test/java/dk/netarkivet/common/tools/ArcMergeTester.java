@@ -58,8 +58,13 @@ public class ArcMergeTester extends TestCase {
     public void testMain() throws IOException {
         File arcFile = new File(TestInfo.WORKING_DIR,"output.arc");
         PrintStream myOut = new PrintStream(new FileOutputStream(arcFile));
-        System.setOut(myOut);
-        ArcMerge.main(new String[]{TestInfo.ARC1.getAbsolutePath(),TestInfo.ARC2.getAbsolutePath(),TestInfo.ARC3.getAbsolutePath()});
+        try {
+            System.setOut(myOut);
+            ArcMerge.main(new String[]{TestInfo.ARC1.getAbsolutePath(),TestInfo.ARC2.getAbsolutePath(),TestInfo.ARC3.getAbsolutePath()});
+        } catch (SecurityException e) {
+            assertEquals("Should have exited normally",
+                         0, pse.getExitValue());
+        }
         myOut.close();
         //Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);

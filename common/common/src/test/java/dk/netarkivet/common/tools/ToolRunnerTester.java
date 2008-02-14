@@ -53,7 +53,12 @@ public class ToolRunnerTester extends TestCase {
      * Test a normal configuration, with the right number of parameters (2).
      */
     public void testNormalRun() {
-        sctfTest.runTheTool("n", "n", "n"); // Run with no exceptions
+        try {
+            sctfTest.runTheTool("n", "n", "n"); // Run with no exceptions
+        } catch (SecurityException e) {
+            assertEquals("Should have exited normally",
+                         0, pse.getExitValue());
+        }        
         assertTrue(FakeTool.setupCompleted);
         assertTrue(FakeTool.runCompleted);
         assertTrue(FakeTool.teardownCompleted);

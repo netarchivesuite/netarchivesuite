@@ -64,7 +64,12 @@ public class ArcWrapTester extends TestCase {
         File arcFile = new File(TestInfo.WORKING_DIR,"test.arc");
         OutputStream myOut = new FileOutputStream(arcFile);
         System.setOut(new PrintStream(myOut));
-        ArcWrap.main(new String[]{storeFile.getAbsolutePath(),arcUri,mime});
+        try {
+            ArcWrap.main(new String[]{storeFile.getAbsolutePath(),arcUri,mime});
+        } catch (SecurityException e) {
+            assertEquals("Should have exited normally",
+                         0, pse.getExitValue());
+        }        
         myOut.close();
         //Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);
