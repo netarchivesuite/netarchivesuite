@@ -28,7 +28,7 @@ grant codeBase "file:tests/lib/-" {
 /* These permissions allow third-party batch classes to read the bitarchive */
 grant {
   permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
-  permission java.io.FilePermission "${user.home}/netarchivesuite/tests/dk/netarkivet/archive/bitarchive/data/working/filedir/*", "read";
-  permission java.io.FilePermission "${user.home}/netarchivesuite/tests/dk/netarkivet/common/utils/arc/data/working/*", "read";
+  permission java.io.FilePermission "${user.dir}/tests/dk/netarkivet/archive/bitarchive/data/working/filedir/*", "read";
+  permission java.io.FilePermission "${user.dir}/tests/dk/netarkivet/common/utils/arc/data/working/*", "read";
 };
 

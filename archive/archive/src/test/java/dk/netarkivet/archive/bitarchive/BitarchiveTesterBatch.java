@@ -249,15 +249,15 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
             throw new IOFailure("Illegal access for class", e);
         }
         BatchStatus lbs = archive.batch(TestInfo.baAppId, job);
-        assertEquals("Batch should have processed two files",
+        assertEquals("Batch should have processed four files",
                      4, lbs.getNoOfFilesProcessed());
         List<File> failedFiles = new ArrayList<File>();
         failedFiles.addAll(lbs.getFilesFailed());
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir").getCanonicalFile();
         CollectionAsserts.assertListEquals("Batch should have ",
                                            failedFiles,
-                                           new File(fileDir, "Upload3.ARC"),
-                                           new File(fileDir, "fyensdk.arc"));
+                                           new File(fileDir, "fyensdk.arc"),
+                                           new File(fileDir, "Upload3.ARC"));
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         lbs.appendResults(result);
         assertEquals("Batch should have written only the legal part",
