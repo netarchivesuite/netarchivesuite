@@ -10,43 +10,6 @@ grant principal javax.management.remote.JMXPrincipal "monitorRole" {
   permission java.security.AllPermission;
 };
 
-/* Grants for the QuickStart system */
-grant codeBase "file:${user.home}/netarchive/lib/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/lib/heritrix/lib/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/Status/jsp/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/QA/jsp/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/History/jsp/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/HarvestDefinition/jsp/-" {
-  permission java.security.AllPermission;
-};
-
-grant codeBase "file:${user.home}/netarchive/scripts/simple_harvest/tests/commontempdir/BitPreservation/jsp/-" {
-  permission java.security.AllPermission;
-};
-
-/* These permissions allow third-party batch classes to read the bitarchive
- * used in the QuickStart. */
-grant {
-  permission java.io.FilePermission "${user.home}/netarchive/scripts/simple_harvest/bitarchive1/filedir/*", "read";
-  permission java.io.FilePermission "${user.home}/netarchive/scripts/simple_harvest/bitarchive2/filedir/*", "read";
-};
-
-/* Grants for a regular install */
 grant codeBase "file:lib/heritrix/lib/-" {
   permission java.security.AllPermission;
 };

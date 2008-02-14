@@ -69,13 +69,14 @@ fi
 ## ----------- No interesting information below this line --------------
 
 # Utility functions
-function makeJmxOptions {
+function makeCommonOptions {
     echo "-Dsettings.common.jmx.port=$JMXPORT \
       -Dsettings.common.jmx.rmiPort=$(( $JMXPORT + 100 )) \
       -Dsettings.common.jmx.passwordFile=$NETARCHIVEDIR/conf/jmxremote.password \
       -Dcom.sun.management.jmxremote \
+      -Ddk.netarkivet.quickstart.basedir=$NETARCHIVEDIR \
       -Djava.security.manager \
-      -Djava.security.policy=$NETARCHIVEDIR/conf/security.policy";
+      -Djava.security.policy=$NETARCHIVEDIR/conf/quickstart.security.policy";
 }
 
 function makeXtermOffset {
@@ -93,7 +94,7 @@ function startApp {
     otherargs=$3;
     termgeom=$TERMSIZE`makeXtermOffset`;
     $XTERM_CMD $HOLD -geometry $termgeom -title "$title" -e $JAVA/bin/java \
-        $JVM_ARGS `makeJmxOptions` -Dsettings.common.http.port=$HTTPPORT \
+        $JVM_ARGS `makeCommonOptions` -Dsettings.common.http.port=$HTTPPORT \
         -Dsettings.common.remoteFile.port=$FILETRANSFERPORT \
         -classpath $CLASSPATH $otherargs dk.netarkivet.$app &
     WINDOWPOS=$(( $WINDOWPOS + 1 ));
@@ -124,7 +125,7 @@ function startHarvestApp {
     dirsetting="-Dsettings.harvester.harvesting.serverDir=server$hcsid \
       -Dsettings.harvester.harvesting.oldjobsDir=oldjobs$hcsid";
 
-    hcstart="$JAVA/bin/java `makeJmxOptions` $JVM_ARGS -classpath $CLASSPATH \
+    hcstart="$JAVA/bin/java `makeCommonOptions` $JVM_ARGS -classpath $CLASSPATH \
       $prioritysetting $portsetting $runsetting $dirsetting \
       dk.netarkivet.harvester.harvesting.HarvestControllerApplication";
     scriptfile=./hcs${hcsid}.sh;
@@ -139,7 +140,7 @@ function startHarvestApp {
 
     # This starts a SideKick that re-runs the script made before
     $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title SideKick \
-      -e $JAVA/bin/java `makeJmxOptions` $JVM_ARGS -classpath \
+      -e $JAVA/bin/java `makeCommonOptions` $JVM_ARGS -classpath \
       $CLASSPATH $runsetting $portsetting \
       dk.netarkivet.harvester.sidekick.SideKick \
       dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook \
@@ -155,7 +156,7 @@ function startHarvestApp {
 if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
     rm -rf $ARCREP_HOME/data/working
     cp -r $ARCREP_HOME/data/originals $ARCREP_HOME/data/working
-    mkdir $ARCREP_HOME/lib
+    mkdir -p $ARCREP_HOME/lib
     cp -r $NETARCHIVEDIR/lib/heritrix $ARCREP_HOME/lib
     
     ## Remove and unzip the embedded database
