@@ -21,6 +21,10 @@ grant codeBase "file:tests/lib/-" {
   permission java.security.AllPermission;
 };
 
+grant codeBase "file:/opt/IntelliJ-IDEA-7.0.1/-" {
+  permission java.security.AllPermission;
+};
+
 /* These permissions allow third-party batch classes to read the bitarchive */
 grant {
   permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";

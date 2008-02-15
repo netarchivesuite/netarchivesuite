@@ -587,7 +587,8 @@ public class Host {
                         + JMXPasswordFile.getAbsolutePath();
                 String httpFileTransferArgs = getHttpFileTransferArgs();
                 String securityArgs = "-Djava.security.manager "
-                                      + "-Djava.security.policy=conf/"
+                                      + "-Djava.security.policy="
+                                      + installDir + "/conf/"
                                       + Constants.SECURITY_POLICY_FILE_NAME;
                 String OPTIONS = StringUtils.conjoin(" ",
                                                      extraOptions,
@@ -691,33 +692,43 @@ public class Host {
                 pwBat = new PrintWriter(new FileWriter(batHelper));
                 pwVbs = new PrintWriter(new FileWriter(vbs));
 
-                String SETTINGSFILE = "-D"
+                pwBat.println("cd " + "\"" + installDirWindows + "\"");
+                pwBat.println("set CLASSPATH=" +
+                              StringUtils.surjoin(getJarFiles(appName),
+                                                  installDirWindows + "\\lib\\", ";"));
+
+                String settingsFile = "-D"
                                       + Settings.SETTINGS_FILE_NAME_PROPERTY
                                       + "=\"" + settingsfn + "\"";
-                String LOGFILE = "-Dorg.apache.commons.logging.Log="
+                String logFile = "-Dorg.apache.commons.logging.Log="
                                  + "org.apache.commons.logging.impl.Jdk14Logger "
                                  + "-Djava.util.logging.config.file=" + "\""
                                  + logfn + "\"";
                 //TODO: The JMX and httptransfer settings should really be
                 // merged into settings.xml. These settings override JMX
                 // settings from there
-                String JMXPasswordFile = installDirWindows + "\\conf\\"
+                String jmxPasswordFile = installDirWindows + "\\conf\\"
                         + Constants.JMX_PASSWORD_FILENAME;
-                String JMXArgs = getJMXPortParameter()
+                String jmxArgs = getJMXPortParameter()
                         + " -Dsettings.common.jmx.passwordFile=\""
-                        + JMXPasswordFile + "\"";
+                        + jmxPasswordFile + "\"";
                 String httpTransferPortArgs = getHttpFileTransferArgs();
-                String OPTIONS = SETTINGSFILE + " " + LOGFILE + " " + JMXArgs
-                        + httpTransferPortArgs;
-                pwBat.println("cd " + "\"" + installDirWindows + "\"");
-                pwBat.println("set CLASSPATH=" +
-                        StringUtils.surjoin(getJarFiles(appName),
-                                installDirWindows + "\\lib\\", ";"));
-                String JVMARGS = "-Xmx1150m -classpath \"" +
+                String jmvArgs = "-Xmx1150m -classpath \"" +
                         StringUtils.surjoin(getJarFiles(appName),
                                 installDirWindows + "\\lib\\", ";") + "\"";
-                String cmdline = "java " + JVMARGS + " " + OPTIONS + " "
-                                 + appName;
+                String securityArgs = "-Djava.security.manager "
+                                      + "-Djava.security.policy="
+                                      + installDirWindows + "\\conf\\"
+                                      + Constants.SECURITY_POLICY_FILE_NAME;
+                String cmdline = StringUtils.conjoin(" ",
+                                                     "java",
+                                                     jmvArgs,
+                                                     settingsFile,
+                                                     logFile,
+                                                     jmxArgs,
+                                                     httpTransferPortArgs,
+                                                     securityArgs,
+                                                     appName);
                 cmdline = cmdline.replaceAll("\\\\", "\\\\\\\\");
                 cmdline = cmdline.replaceAll("\"", "\"\"");
                 pwVbs.println("Set WshShell= CreateObject(\"WScript.Shell\")");
