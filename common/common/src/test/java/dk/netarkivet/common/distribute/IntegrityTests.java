@@ -502,7 +502,7 @@ public class IntegrityTests extends TestCase {
                 .getError(), "testTopicSendMessage");
         conn.send(nMsg);
         synchronized (mc1) {
-            if (mc2.nMsg == null) mc1.wait();
+            if (mc1.nMsg == null) mc1.wait();
         }
         synchronized (mc2) {
             if (mc2.nMsg == null) mc2.wait();

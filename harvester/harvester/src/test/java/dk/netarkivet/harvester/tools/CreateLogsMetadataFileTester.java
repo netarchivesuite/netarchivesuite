@@ -171,8 +171,9 @@ public class CreateLogsMetadataFileTester extends TestCase {
                             JOBID_HARVESTID_MAPPING_FILE.getAbsolutePath(),
                             TestOldjobs4.getAbsolutePath()
                     });
+            fail("SecurityException expected on valid arguments");
         } catch (SecurityException e) {
-            fail("SecurityException not expected with valid arguments: " +  e.getMessage() + baosErr.toString());
+            assertEquals("Should return succes",0, pse.getExitValue());
         }
 
         File metadataArcFile = new File("4-metadata-2.arc");

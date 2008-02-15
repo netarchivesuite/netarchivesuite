@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.viewerproxy.webinterface.QASiteSection;
 
 /**
  * Integritytests for the package dk.netarkivet.harvester.datamodel.
@@ -50,6 +51,8 @@ public class IntegrityTests extends DataModelTestCase {
                      TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
         Settings.set(Settings.SITESECTION_DEPLOYPATH,
                      TestInfo.GUI_WEB_SERVER_WEBBASE);
+        Settings.set(Settings.SITESECTION_CLASS,
+                     QASiteSection.class.getName());
         Settings.set(Settings.HTTP_PORT_NUMBER,
                      Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
 
