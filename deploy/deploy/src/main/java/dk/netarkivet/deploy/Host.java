@@ -1010,7 +1010,7 @@ public class Host {
             for (String dir : fileDirs) {
                 FileUtils.appendToFile(securityFile,
                                        "  permission java.io.FilePermission "
-                                       + "\"" + dir + "\", \"read\";");
+                                       + "\"" + dir + "/filedir/-\", \"read\";");
             }
             FileUtils.appendToFile(securityFile, "};");
         }

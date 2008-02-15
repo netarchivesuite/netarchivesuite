@@ -49,5 +49,5 @@ grant {
 /* Directories in the bitarchives should be added below.
  */
 grant {
-  permission java.io.FilePermission "q:\bitarkiv", "read";
+  permission java.io.FilePermission "q:\bitarkiv/filedir/-", "read";
 };

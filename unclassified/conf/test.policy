@@ -13,10 +13,6 @@ grant codeBase "file:${java.home}/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:/opt/IntelliJ-7.0.1/-" {
-  permission java.security.AllPermission;
-};
-
 grant codeBase "file:${idea.launcher.bin.path}/../-" {
   permission java.security.AllPermission;
 };
