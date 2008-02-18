@@ -265,7 +265,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="scripts/**"/>
             <include name="src/**"/>
             <include name="tests/**"/>
-            <include name="webpages"/>
+            <include name="webpages/**"/>
             <exclude name="webpages/*.war"/>
             <include name="log"/>
             <include name="build.xml"/>
