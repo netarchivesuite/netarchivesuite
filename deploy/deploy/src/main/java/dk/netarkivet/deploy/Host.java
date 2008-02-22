@@ -717,9 +717,10 @@ public class Host {
                         StringUtils.surjoin(getJarFiles(appName),
                                 installDirWindows + "\\lib\\", ";") + "\"";
                 String securityArgs = "-Djava.security.manager "
-                                      + "-Djava.security.policy="
+                                      + "-Djava.security.policy=\""
                                       + installDirWindows + "\\conf\\"
-                                      + Constants.SECURITY_POLICY_FILE_NAME;
+                                      + Constants.SECURITY_POLICY_FILE_NAME
+                                      + "\"";
                 String cmdline = StringUtils.conjoin(" ",
                                                      "java",
                                                      jmvArgs,
