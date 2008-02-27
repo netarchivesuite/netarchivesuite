@@ -1019,10 +1019,16 @@ public class Host {
             FileUtils.appendToFile(securityFile, "grant {");
             List<String> fileDirs =
                     properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY);
+            String dirSep = "/";
+            if (getOS() == OS.WINDOWS) {
+                dirSep = "\\";
+            }
             for (String dir : fileDirs) {
+                final String archivePath = StringUtils.conjoin(dirSep, dir,
+                                                               "filedir", "-");
                 FileUtils.appendToFile(securityFile,
-                                       "  permission java.io.FilePermission "
-                                       + "\"" + dir + "/filedir/-\", \"read\";");
+                                       "  permission java.io.FilePermission \""
+                                       + archivePath + "\", \"read\";");
             }
             FileUtils.appendToFile(securityFile, "};");
         }
