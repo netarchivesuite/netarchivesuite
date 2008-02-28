@@ -1010,6 +1010,7 @@ public class Host {
      * Known code already has permission to do anything, while third-party code
      * (submitted for batch) must be allowed to read bitarchive files.
      *
+     * @see http://java.sun.com/j2se/1.5.0/docs/guide/security/PolicyFiles.html
      * @param securityFile File to add permissions to.
      */
     public void updateSecurityFile(File securityFile) {
@@ -1019,13 +1020,12 @@ public class Host {
             FileUtils.appendToFile(securityFile, "grant {");
             List<String> fileDirs =
                     properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY);
-            String dirSep = "/";
-            if (getOS() == OS.WINDOWS) {
-                dirSep = "\\";
-            }
             for (String dir : fileDirs) {
-                final String archivePath = StringUtils.conjoin(dirSep, dir,
+                String archivePath = StringUtils.conjoin("/", dir,
                                                                "filedir", "-");
+                // ${/} is a special property that expands to the correct
+                // directory separator for the system.
+                archivePath = archivePath.replaceAll("[/\\\\]", "\\${/}");
                 FileUtils.appendToFile(securityFile,
                                        "  permission java.io.FilePermission \""
                                        + archivePath + "\", \"read\";");
