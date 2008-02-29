@@ -284,15 +284,15 @@ public class HostTester extends TestCase {
         h.updateSecurityFile(securityFile);
         assertEquals("Should have added single grant block",
                      originalFile +
-                     "grant {\n  permission java.io.FilePermission \"foo/filedir/-\", \"read\";\n};\n",
+                     "grant {\n  permission java.io.FilePermission \"foo${/}filedir${/}-\", \"read\";\n};\n",
                      FileUtils.readFile(securityFile));
         FileUtils.writeBinaryFile(securityFile, originalFile.getBytes());
         h.addProperty(Constants.BITARCHIVE_FILEDIR_PROPERTY, "${user.home}/bar");
         h.updateSecurityFile(securityFile);
         assertEquals("Should have added multi-line grant block",
                      originalFile +
-                     "grant {\n  permission java.io.FilePermission \"foo/filedir/-\", \"read\";"
-                     + "\n  permission java.io.FilePermission \"${user.home}/bar/filedir/-\", \"read\";\n};\n",
+                     "grant {\n  permission java.io.FilePermission \"foo${/}filedir${/}-\", \"read\";"
+                     + "\n  permission java.io.FilePermission \"${user.home}${/}bar${/}filedir${/}-\", \"read\";\n};\n",
                      FileUtils.readFile(securityFile));
     }
 }
