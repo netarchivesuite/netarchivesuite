@@ -97,7 +97,8 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                         + domainAsString + "</a>");
         pointer = pointer + 1;
     }
-    String aliasesString = StringUtils.conjoin(",&nbsp;", aliasLinks);
+    String aliasesString = "&nbsp;" + StringUtils.conjoin(
+    	",&nbsp;", aliasLinks);
 
     HTMLUtils.generateHeader(
             pageContext);
@@ -155,8 +156,10 @@ Display all the form information for this domain
 
     <%-- table for selecting/editing configurations --%>
     <table class="selection_table">
-        <th colspan="2"><fmt:message key="configurations"/></th>
-        <th colspan="1"><fmt:message key="default"/></th>
+    	<tr>
+        	<th colspan="2"><fmt:message key="configurations"/></th>
+        	<th colspan="1"><fmt:message key="default"/></th>
+        </tr>
         <%
             int rowcount = 0;
             for (DomainConfiguration conf: domain.getAllConfigurationsAsSortedList(loc)) {
@@ -204,7 +207,9 @@ Display all the form information for this domain
 
 <div id="SeedLists">
     <table class="selection_table">
+    <tr>
         <th colspan="2"><fmt:message key="seed.lists"/></th>
+    </tr>
         <%
             rowcount = 0;
             for (SeedList sl : domain.getAllSeedListsAsSortedList(loc)) {
