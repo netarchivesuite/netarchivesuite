@@ -49,6 +49,7 @@ public class DistributeArcrepositoryTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ARCLookupTester.class);
         suite.addTestSuite(TrivialArcRepositoryClientTester.class);
+        suite.addTestSuite(LocalArcRepositoryClientTester.class);
         suite.addTestSuite(BitarchiveRecordTester.class);
         suite.addTestSuite(LocationTester.class);
     }

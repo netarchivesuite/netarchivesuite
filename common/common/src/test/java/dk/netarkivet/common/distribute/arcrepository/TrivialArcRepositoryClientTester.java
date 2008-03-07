@@ -62,6 +62,7 @@ public class TrivialArcRepositoryClientTester extends TestCase {
         utrf.tearDown();
         rs.tearDown();
     }
+
     public void testStore() throws Exception {
         ArcRepositoryClient arcrep = new TrivialArcRepositoryClient();
 
