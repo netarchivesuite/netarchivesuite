@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.netarkivet.common.utils.SettingsStructure;
+import dk.netarkivet.common.utils.StringTree;
 
 /**
  * Settings common to the entire NetarchiveSuite.
@@ -56,6 +57,7 @@ public class Settings {
     public static final List<String> EXCLUDED_FIELDS = Arrays.asList(
             "DEFAULT_FILEPATH", "DEFAULT_XSD_FILEPATH",
             "HTTPREMOTEFILE_PORT_NUMBER");
+
     /**
      * Utility method. Provides static access to getter in settingsStructure.
      *
@@ -108,6 +110,15 @@ public class Settings {
      */
     public static int getEdition() {
         return SETTINGS_STRUCTURE.getEdition();
+    }
+
+    /** Get a tree view of a part of the settings.
+     *
+     * @param path Dotted path to a unique element in the tree.
+     * @return The part of the setting structure below the element given.
+     */
+    public static StringTree<String> getTree(String path) {
+        return SETTINGS_STRUCTURE.getTree(path);
     }
 
     /**
@@ -390,8 +401,8 @@ public class Settings {
      */
     public static final String HARVEST_CONTROLLER_SERVERDIR
             = "settings.harvester.harvesting.serverDir";
-    
-    
+
+
     /**
      * Check, that the serverdir has an adequate amount of bytes
      * available before accepting any harvest-jobs.
@@ -480,6 +491,10 @@ public class Settings {
     /** The URL path for this site section. */
     public static final String SITESECTION_DEPLOYPATH
             = "settings.common.webinterface.siteSection.deployPath";
+
+    /** The entire webinterface structure */
+    public static final String WEBINTERFACE_SUBTREE
+            = "settings.common.webinterface";
 
     /** A locale the website is available as. E.g. 'en_US' or 'da' */
     public static final String LANGUAGE_LOCALE

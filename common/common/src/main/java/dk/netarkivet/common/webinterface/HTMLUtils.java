@@ -36,6 +36,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Date;
 import java.util.Locale;
 
@@ -49,6 +50,7 @@ import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
@@ -196,19 +198,16 @@ public class HTMLUtils {
     private static void generateLanguageLinks(JspWriter out) throws
                                                              IOException {
         out.print("<div class=\"languagelinks\">");
-        String[] locales = Settings.getAll(Settings.LANGUAGE_LOCALE);
-        String[] languageNames = Settings.getAll(Settings.LANGUAGE_NAME);
-        if (locales.length != languageNames.length) {
-            throw new ArgumentNotValid(
-                    "Different number of locales and names for them. Locales: ["
-                    + StringUtils.conjoin(",", locales) + "]; Languages: ["
-                    + StringUtils.conjoin(",", languageNames) + "]");
-        }
-        for (int i = 0; i < locales.length; i++) {
+        List<StringTree<String>> languages =
+                Settings.getTree(Settings.WEBINTERFACE_SUBTREE).
+                getSubTrees("language");
+
+        for (StringTree<String> language : languages) {
             out.print("<a href=\"lang.jsp?locale="
-                      + escapeHtmlValues(encode(locales[i])) + "&amp;name="
-                      + escapeHtmlValues(encode(languageNames[i])) + "\">"
-                      + escapeHtmlValues(languageNames[i]) + "</a>&nbsp;");
+                      + escapeHtmlValues(encode(language.getValue("locale"))) + "&amp;name="
+                      + escapeHtmlValues(encode(language.getValue("name"))) + "\">"
+                      + escapeHtmlValues(language.getValue("name")) + "</a>&nbsp;");
+
         }
         out.print("</div>");
     }
@@ -279,8 +278,8 @@ public class HTMLUtils {
     /** Create a table header element containing the given string, escaping HTML
      * values in the process.
      *
-     * @param s An unescaped string.  Any HTML tags in this string will end up
-     * escaped away.
+     * @param contents An unescaped string.  Any HTML tags in this string will
+     * end up escaped away.
      * @return The same string escaped and enclosed in th tags.
      */
     public static String makeTableHeader(String contents) {

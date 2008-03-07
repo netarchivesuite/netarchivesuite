@@ -35,6 +35,7 @@ import org.dom4j.dom.DOMDocument;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.exceptions.IllegalState;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,7 +121,7 @@ public class SimpleXml {
 
         //ensure the key exists
         Element newNode = addParents(key.split("\\."));
-        
+
         //set values
         update(key, allValues.toArray(new String[]{}));
     }
@@ -308,6 +309,25 @@ public class SimpleXml {
         }
     }
 
+
+    /** Return a tree structure reflecting the XML and trimmed values.
+     * @param path Dotted path into the xml.
+     * @return A tree reflecting the xml at the given path.
+     * @throws UnknownID If the path does not exist in the tree or is ambiguous
+     */
+    public StringTree<String> getTree(String path) {
+        XPath xpath = getXPath(path);
+        List<Node> nodes = xpath.selectNodes(xmlDoc);
+        if (nodes == null || nodes.size() == 0) {
+            throw new UnknownID("No path '" + path + "' in XML document '"
+                                + source + "'");
+        } else if (nodes.size() > 1) {
+            throw new UnknownID("More than one candidate for path '" + path
+                                   + "' in XML document '" + source + "'");
+        }
+        return XmlTree.getStringTree(nodes.get(0));
+    }
+
     /** Get an XPath version of the given dotted path.  A dotted path
      * foo.bar.baz corresponds to the XML node &lt;foo&gt;&lt;bar&gt;&lt;baz&gt;
      *  &lt;/baz&gt;&lt;/bar&gt;&lt;/foo&gt;
@@ -335,4 +355,5 @@ public class SimpleXml {
         xpath.setNamespaceURIs(namespaceURIs);
         return xpath;
     }
+
 }

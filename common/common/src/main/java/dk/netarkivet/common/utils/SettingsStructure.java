@@ -364,4 +364,13 @@ public class SettingsStructure {
             }
         }
     }
+
+    /** Get a tree view of a part of the settings.
+     *
+     * @param path Dotted path to a unique element in the tree.
+     * @return The part of the setting structure below the element given.
+     */
+    public StringTree<String> getTree(String path) {
+        return settingsxml.getTree(path);
+    }
 }
