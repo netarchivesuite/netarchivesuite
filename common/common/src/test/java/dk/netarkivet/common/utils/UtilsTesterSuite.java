@@ -53,7 +53,7 @@ public class UtilsTesterSuite {
         //suite.addTestSuite(StreamUtilsTester.class);
         suite.addTestSuite(StringUtilsTester.class);
         suite.addTestSuite(SystemUtilsTester.class);
-        //suite.addTestSuite(XmlTreeTester.class);
+        suite.addTestSuite(XmlTreeTester.class);
         suite.addTestSuite(XmlUtilsTester.class);
         suite.addTestSuite(ZipUtilsTester.class);
     }
