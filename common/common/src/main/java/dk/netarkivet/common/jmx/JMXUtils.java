@@ -63,9 +63,10 @@ public class JMXUtils {
      */
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
         "java.naming.factory.initial";
+    
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
-     * or with the current setting (14) 16 seconds.
+     * or with the current setting ({@link #MAX_TRIES})  16 seconds.
      */
     public static final int MAX_TRIES = 14;
 
@@ -102,13 +103,16 @@ public class JMXUtils {
      * @param server The server that should be connected to using
      * the constructed URL.
      * @param jmxPort The number of the JMX port that should be connected to
-     * using the constructed URL
+     * using the constructed URL (may not be a negative number)
      * @param rmiPort The number of the RMI port that should be connected to
      * using the constructed URL, or -1 if the default RMI port should be used.
      * @return the constructed URL.
      */
     public static JMXServiceURL getUrl(String server,
             int jmxPort, int rmiPort) {
+        ArgumentNotValid.checkNotNullOrEmpty(server, "String server");
+        ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
+        
         String url;
         if (rmiPort != -1) {
             url = "service:jmx:rmi://" + server + ":" + rmiPort + "/jndi/rmi://"
@@ -167,6 +171,9 @@ public class JMXUtils {
     public static MBeanServerConnection getMBeanServerConnection(
             JMXServiceURL url,
             Map<String,String[]> credentials) {
+        ArgumentNotValid.checkNotNull(url, "JMXServiceURL url");
+        ArgumentNotValid.checkNotNull(credentials, 
+                "Map<String,String[]> credentials");
         try {
             ensureJndiInitialContext();
             return JMXConnectorFactory.connect(url, credentials)
@@ -188,6 +195,8 @@ public class JMXUtils {
      */
     public static Map<String,String[]> packageCredentials(
             String userName, String password) {
+        ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
+        ArgumentNotValid.checkNotNullOrEmpty(password, "String password");        
         Map<String,String[]> credentials = new HashMap<String,String[]>(1);
         credentials.put("jmx.remote.credentials",
                 new String[]{userName, password});
@@ -206,6 +215,12 @@ public class JMXUtils {
     public static Object executeCommand(MBeanServerConnection connection,
                                   String beanName, String command,
                                   String... arguments) {
+        ArgumentNotValid.checkNotNull(connection, 
+                "MBeanServerConnection connection");
+        ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
+        ArgumentNotValid.checkNotNullOrEmpty(command, "String command");
+        ArgumentNotValid.checkNotNull(arguments, "String... arguments");
+        
         log.debug("Preparing to execute " + command + " with args " +
                   Arrays.toString(arguments) + " on " + beanName);
         try {
@@ -251,6 +266,10 @@ public class JMXUtils {
      */
     public static Object getAttribute(String beanName, String attribute,
                                       MBeanServerConnection connection) {
+        ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
+        ArgumentNotValid.checkNotNullOrEmpty(attribute, "String attribute");
+        ArgumentNotValid.checkNotNull(connection, "MBeanServerConnection connection");
+        
         log.debug("Preparing to get attribute " + attribute
                  + " on " + beanName);
         try {
@@ -294,6 +313,7 @@ public class JMXUtils {
      * @return Object representing that bean name.
      */
     public static ObjectName getBeanName(String beanName) {
+        ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
         try {
             return new ObjectName(beanName);
         } catch (MalformedObjectNameException e) {
@@ -305,7 +325,7 @@ public class JMXUtils {
     /** Get a JMXConnector to a given host and port, using login and password.
      *
      * @param hostName The host to attempt to connect to.
-     * @param jmxPort The port on the host to connect to.
+     * @param jmxPort The port on the host to connect to (a non-negative number)
      * @param login The login name to authenticate as (typically "controlRole"
      * or "monitorRole".
      * @param password The password for JMX access
@@ -314,6 +334,11 @@ public class JMXUtils {
     public static JMXConnector getJMXConnector(String hostName,
                                                int jmxPort, final String login,
                                                final String password) {
+        ArgumentNotValid.checkNotNullOrEmpty(hostName, "String hostName");
+        ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
+        ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
+        ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
+        
         JMXServiceURL rmiurl = getUrl(hostName, jmxPort, -1);
         Map<String, ?> environment =
                 (Map<String, ?>) packageCredentials(login, password);
@@ -365,6 +390,11 @@ public class JMXUtils {
      */
     public static Object executeCommand(JMXConnector connector, String beanName,
                                   String command, String... arguments) {
+        ArgumentNotValid.checkNotNull(connector, "JMXConnector connector");
+        ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
+        ArgumentNotValid.checkNotNullOrEmpty(command, "String command");
+        ArgumentNotValid.checkNotNull(arguments, "String... arguments");
+
         MBeanServerConnection connection = null;
         try {
             connection = connector.getMBeanServerConnection();
@@ -394,6 +424,10 @@ public class JMXUtils {
      */
     public static Object getAttribute(JMXConnector connector, String beanName,
                                 String attribute) {
+        ArgumentNotValid.checkNotNull(connector, "JMXConnector connector");
+        ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
+        ArgumentNotValid.checkNotNullOrEmpty(attribute, "String attribute");
+        
         MBeanServerConnection connection = null;
         try {
             connection = connector.getMBeanServerConnection();

@@ -51,7 +51,9 @@ import org.archive.crawler.admin.CrawlJob;
 import org.archive.util.JmxUtils;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.jmx.JMXUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
@@ -59,28 +61,33 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 
-/** This implementation of the HeritrixController interface starts Heritrix
+/**
+ * This implementation of the HeritrixController interface starts Heritrix
  * as a separate process and uses JMX to communicate with it.  Each instance
- * executes exactly one process that runs exactly one crawl job.  */
+ * executes exactly one process that runs exactly one crawl job. 
+ */
 public class JMXHeritrixController implements HeritrixController {
     private Log log = LogFactory.getLog(getClass());
 
     /* Commands and attributes from org.archive.crawler.admin.CrawlJob.
-     * @see http://crawler.archive.org/apidocs/org/archive/crawler/admin/CrawlJob.html
+     * @see <A href="http://crawler.archive.org/xref/org/archive/crawler/admin/CrawlJob.html">
+     *  org.archive.crawler.admin.CrawlJob</A>
      */
     private static final String ADD_JOB_COMMAND = "addJob";
     private static final String PROGRESS_STATISTICS_COMMAND
             = "progressStatistics";
+    private static final String PROGRESS_STATISTICS_LEGEND_COMMAND
+            = "progressStatisticsLegend";
     private static final String CURRENT_KB_RATE_ATTRIBUTE = "CurrentKbRate";
     private static final String THREAD_COUNT_ATTRIBUTE = "ThreadCount";
     private static final String DISCOVERED_COUNT_ATTRIBUTE = "DiscoveredCount";
     private static final String DOWNLOADED_COUNT_ATTRIBUTE = "DownloadedCount";
     private static final String STATUS_ATTRIBUTE = "Status";
-    private static final String PROGRESS_STATISTICS_LEGEND_COMMAND =
-            "progressStatisticsLegend";
+    
 
     /* Commands and attributes from org.archive.crawler.Heritrix
-     * @see http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html
+     * @see <A href="http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html">
+     *  org.archive.crawler.Heritrix</A>
      */
     /* Note: The Heritrix JMX interface has two apparent ways to stop crawling:
      * stopCrawling and terminateCurrentJob.  stopCrawling merely makes Heritrix
@@ -89,15 +96,18 @@ public class JMXHeritrixController implements HeritrixController {
      * stop one job.
      */
     private static final String START_CRAWLING_COMMAND = "startCrawling";
-    /** Make the currently active (selected?) job stop */
+    /** Make the currently active (selected?) job stop. */
     private static final String TERMINATE_CURRENT_JOB_COMMAND
             = "terminateCurrentJob";
+    /** Command for returning list of pending jobs. */
     private static final String PENDING_JOBS_COMMAND = "pendingJobs";
+    /** Command for returning list of completed jobs. */
     private static final String COMPLETED_JOBS_COMMAND = "completedJobs";
+    /** Command for shutting down Heritrix.  */
     private static final String SHUTDOWN_COMMAND = "shutdown";
 
-    /** This is the prefix indicating a job has finished in one way or another
-     * in the string returned by Heritrix for the Status command.
+    /** This prefix of the string returned by Heritrix for the Status attribute
+     * indicates a job has finished in one way or another.
      */
     private static final String FINISHED_STATUS_PREFIX = "FINISHED";
 
@@ -112,38 +122,44 @@ public class JMXHeritrixController implements HeritrixController {
      */
     private static final String UID_PROPERTY = "uid";
 
+    /** Name of the JMX user that can control anything in Heritrix. */
+    private static final String JMX_ADMIN_NAME = "controlRole";
+    
+    /** File path Separator. Used to separate the jar-files in the classpath. */
+    private static final String FILE_PATH_SEPARATOR = ":";
+    
     /** The one-shot Heritrix process created in the constructor.  It will
      * only perform a single crawl before being shut down.
      */
     private final Process heritrixProcess;
 
     /** The shutdownHook that takes care of killing our process.  This is
-     *  be removed in cleanup() if the process dies.
+     *  removed in cleanup() when the process is shut down.
      */
     private Thread processKillerHook;
 
-    /** The threads used to collect process output. */
-    private Set<Thread> collectionThreads = new HashSet<Thread>(2);
+    /** The threads used to collect process output. 
+     * Only one thread used presently. 
+     */
+    private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
     /** The name that Heritrix gives to the job we ask it to create.  This
-     * is part of the name of the MBean for that job, but we can only find
+     * is part of the name of the MBean for that job, but we can only retrieve
      * the name after the MBean has been created. */
     private String jobName;
 
     /** The various files used by Heritrix. */
     private final HeritrixFiles files;
 
-    /** Name of the JMX user that can control anything in Heritrix. */
-    private static final String JMX_ADMIN_NAME = "controlRole";
-
-    /** The header line (legend) for the statistics report */
+    /** The header line (legend) for the statistics report. */
     private String progressStatisticsLegend;
 
-    /** Create a JMXHeritrixController object
+    /** Create a JMXHeritrixController object.
      *
      * @param files Files that are used to set up Heritrix.
      */
     public JMXHeritrixController(HeritrixFiles files) {
+        ArgumentNotValid.checkNotNull(files, "HeritrixFile files");
         this.files = files;
         SystemUtils.checkPortNotUsed(getGUIPort());
         SystemUtils.checkPortNotUsed(getJMXPort());
@@ -159,8 +175,12 @@ public class JMXHeritrixController implements HeritrixController {
             - set heritrix.out to heritrix_out.log
             - set java.protocol.handler.pkgs=org.archive.net
             - send processOutput & stderr into heritrix.out
-            - give -p <GUI port>
-
+            - let the Heritrix GUI-webserver listen on all available
+                network interfaces:
+                This is done with argument "--bind /" (default is 127.0.0.1)
+            - listen on a specific port using the port argument:
+              --port <GUI port>
+            
             We also need to output something like the following to heritrix.out:
             `date Starting heritrix
             uname -a
@@ -168,6 +188,8 @@ public class JMXHeritrixController implements HeritrixController {
             JAVA_OPTS
             ulimit -a
              */
+            File heritrixOutputFile = files.getHeritrixOutput();
+ 
             ProcessBuilder builder = new ProcessBuilder(
                     new File(new File(System.getProperty("java.home"),
                                       "bin"), "java").getAbsolutePath(),
@@ -179,7 +201,7 @@ public class JMXHeritrixController implements HeritrixController {
                     "-Dcom.sun.management.jmxremote.password.file="
                             + new File(Settings.get(Settings.JMX_PASSWORD_FILE))
                             .getAbsolutePath(),
-                    "-Dheritrix.out=" + getOutputFile().getAbsolutePath(),
+                    "-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath(),
                     "-Djava.protocol.handler.pkgs=org.archive.net",
                     "-Ddk.netarkivet.settings.file="
                             + Settings.getSettingsFile().getAbsolutePath(),
@@ -194,25 +216,29 @@ public class JMXHeritrixController implements HeritrixController {
                                     files.getCrawlDir());
             builder.directory(files.getCrawlDir());
             builder.redirectErrorStream(true);
-            writeSystemInfo(getOutputFile(), builder);
-            FileUtils.appendToFile(getOutputFile(), "Working directory: "
+            writeSystemInfo(heritrixOutputFile, builder);
+            FileUtils.appendToFile(heritrixOutputFile, "Working directory: "
                                                     + files.getCrawlDir());
             addProcessKillerHook();
             heritrixProcess = builder.start();
             ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(),
-                                            getOutputFile(),
-                                            collectionThreads);
+                    heritrixOutputFile,
+                    collectionThreads);
         } catch (IOException e) {
             throw new IOFailure("Error starting Heritrix process", e);
         }
     }
 
-    /** @see HeritrixController#initialize()  */
+    /**
+     * @throws IOFailure If Heritrix dies before initialization,
+     * or we encounter any problems during the initialization.
+     * @see HeritrixController#initialize()  */
     public void initialize() {
         if (processHasExited()) {
-            log.warn("Heritrix process of " + this
-                     + " died before initialization");
-            return;
+            String errMsg = "Heritrix process of " + this
+            + " died before initialization"; 
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
         // We want to be sure there are no jobs when starting, in case we got
         // an old Heritrix or somebody added jobs behind our back.
@@ -222,9 +248,11 @@ public class JMXHeritrixController implements HeritrixController {
                 (TabularData) executeHeritrixCommand(PENDING_JOBS_COMMAND);
         if (doneJobs != null && doneJobs.size() > 0 ||
             pendingJobs != null && pendingJobs.size() > 0) {
-            throw new IOFailure("This Heritrix is unclean!  Old done jobs are "
-                                + doneJobs + ", old pending jobs are "
-                                + pendingJobs);
+            throw new IllegalState(
+                    "This Heritrix instance is in a illegalState! "
+                    + "This instance has either old done jobs ("
+                                + doneJobs + "), or old pending jobs ("
+                                + pendingJobs + ").");
         }
         // From here on, we can assume there's only the one job we make.
         // We'll use the arc file prefix to name the job, since the prefix
@@ -237,7 +265,9 @@ public class JMXHeritrixController implements HeritrixController {
         initializeProgressStatisticsLegend();
     }
 
-    /** @see HeritrixController#requestCrawlStart()
+    /** 
+     * @throws IOFailure if unable to communicate with Heritrix
+     * @see HeritrixController#requestCrawlStart()
      */
     public void requestCrawlStart() {
         executeHeritrixCommand(START_CRAWLING_COMMAND);
@@ -248,7 +278,9 @@ public class JMXHeritrixController implements HeritrixController {
         return crawlIsEnded();
     }
 
-    /** @see HeritrixController#beginCrawlStop()  */
+    /**
+     * @throws IOFailure if unable to communicate with Heritrix 
+     * @see HeritrixController#beginCrawlStop() */
     public void beginCrawlStop() {
         executeHeritrixCommand(TERMINATE_CURRENT_JOB_COMMAND);
     }
@@ -275,7 +307,8 @@ public class JMXHeritrixController implements HeritrixController {
      * */
     public long getQueuedUriCount() {
         /* Implementation note:  This count is not as precise as what
-         * StatisticsTracker could provide, but it's used only for a warning.
+         * StatisticsTracker could provide, but it's presently only used in
+         * a warning in the HeritrixLauncher.doCrawlLoop() method.
          */
         Long discoveredUris
                 = (Long) getCrawlJobAttribute(DISCOVERED_COUNT_ATTRIBUTE);
@@ -324,7 +357,7 @@ public class JMXHeritrixController implements HeritrixController {
         return status + " " + progressStatistics;
     }
 
-    /** Store the statistics legend line (asynchronously) */
+    /** Store the statistics legend line (asynchronously). */
     private void initializeProgressStatisticsLegend() {
         new Thread() {
             public void run() {
@@ -342,17 +375,17 @@ public class JMXHeritrixController implements HeritrixController {
                status.equals(CrawlJob.STATUS_WAITING_FOR_PAUSE);
     }
 
-    /** Returns true if the crawl has ended, either because Heritrix finished
-     * or because we terminated it.
+    /** Check if the crawl has ended, either because Heritrix finished
+     * of its own, or because we terminated it.
      *
      * @return True if the crawl has ended, either because Heritrix finished
-     * or because we terminated it.
+     * or because we terminated it. Otherwise we return false.
      */
     public synchronized boolean crawlIsEnded() {
         // End of crawl can be seen in one of three ways:
         // 1) The Heritrix process has exited.
         // 2) The job has been moved to the completed jobs list in Heritrix.
-        // 3) The job is in one of the FINISHED statii.
+        // 3) The job is in one of the FINISHED states.
         if (processHasExited()) {
             return true;
         }
@@ -408,7 +441,7 @@ public class JMXHeritrixController implements HeritrixController {
             log.info("Heritrix process of " + this
                      + " exited with exit code " + exitValue);
         } else {
-            log.warn("Hertrix process of " + this
+            log.warn("Heritrix process of " + this
                      + " not dead after " + maxWait
                      + " millis, killing it");
             heritrixProcess.destroy();
@@ -424,6 +457,8 @@ public class JMXHeritrixController implements HeritrixController {
             }
         }
         Runtime.getRuntime().removeShutdownHook(processKillerHook);
+        // Wait until all collection threads are dead or until we have
+        // tried JMXUtils.MAX_TRIES times.
         int attempt = 0;
         do {
             boolean anyAlive = false;
@@ -443,13 +478,14 @@ public class JMXHeritrixController implements HeritrixController {
      *
      * At the moment, this involves the following:
      *
-     * Use Jar files from the lib/heritrix/lib dir.
+     * Prepend the Jar files from the lib/heritrix/lib dir to the classpath.
      * Make sure the Heritrix jar file is at the front.
      *
      * @param environment The environment from a process builder
+     * @throws IOFailure If a Heritrix jarfile is not found.
      */
     private static void updateEnvironment(Map<String, String> environment) {
-        List<String> pathParts = SystemUtils.getCurrentClasspath();
+        List<String> classPathParts = SystemUtils.getCurrentClasspath();
         File heritrixLibDir = new File("lib/heritrix/lib");
         File[] jars = heritrixLibDir.listFiles(new FilenameFilter() {
             public boolean accept(File file, String string) {
@@ -473,15 +509,16 @@ public class JMXHeritrixController implements HeritrixController {
                 // save it for later insertion at the head.
                 heritixJar = jarPath;
             } else {
-                pathParts.add(0, jarPath);
+                classPathParts.add(0, jarPath);
             }
         }
         if (heritixJar != null) {
-            pathParts.add(0, heritixJar);
+            classPathParts.add(0, heritixJar);
         } else {
             throw new IOFailure("Heritrix jar file not found");
         }
-        environment.put("CLASSPATH", StringUtils.conjoin(":",pathParts ));
+        environment.put("CLASSPATH",
+                StringUtils.conjoin(FILE_PATH_SEPARATOR, classPathParts ));
     }
 
     /** Write various info on the system we're using into the given file.
@@ -522,7 +559,7 @@ public class JMXHeritrixController implements HeritrixController {
     }
 
     /** Get a string that describes the current controller in terms of
-     * job ID, harvest ID and other usable information.
+     * job ID, harvest ID, and crawldir.
      *
      * @return A human-readable string describing this controller.
      */
@@ -542,7 +579,7 @@ public class JMXHeritrixController implements HeritrixController {
     /** Add a shutdown hook that kills the process we've created.  Since this
      * hook will be run only in case of JVM shutdown, it cannot expect that
      * the standard logging framework is still usable, and therefore writes
-     * to stdout insted.
+     * to stdout instead.
      */
     private void addProcessKillerHook() {
         // Make sure that the process gets killed at the very end, at least
@@ -588,12 +625,14 @@ public class JMXHeritrixController implements HeritrixController {
     }
 
     /** Get the name of the one job we let this Heritrix run.  The handling
-     * of done jobs depends on crawling not being started yet.  This call
+     * of done jobs depends on Heritrix not being in crawl.  This call
      * may take several seconds to finish.
      *
      * @return The name of the one job that Heritrix has.
      * @throws IOFailure if the job created failed to initialize or didn't
      * appear in time.
+     * @throws IllegalState if more than one job in done list,
+     *  or more than one pending job
      */
     private String getJobName() {
         /* This is called just after we've told Heritrix to create a job.
@@ -612,15 +651,16 @@ public class JMXHeritrixController implements HeritrixController {
                 break; // It's ready, we can move on.
             }
 
-            // If there's an error in setup, the job will be put in Heritrix'
+            // If there's an error in the job configuration, the job will be put in Heritrix'
             // completed jobs list.
             doneJobs = (TabularData) executeHeritrixCommand(
                     COMPLETED_JOBS_COMMAND);
             if (doneJobs != null && doneJobs.size() >= 1) {
-                // Since we haven't allowed starting crawls yet, the only
-                // way the job could have ended is by error.
+                // Since we haven't allowed Heritrix to start any crawls yet, the only
+                // way the job could have ended and then put into the list of completed jobs
+                // is by error.
                 if (doneJobs.size() > 1) {
-                    throw new IOFailure("Too many jobs in done list: "
+                    throw new IllegalState("More than one job in done list: "
                                         + doneJobs);
                 } else {
                     CompositeData job = JMXUtils.getOneCompositeData(doneJobs);
@@ -639,7 +679,7 @@ public class JMXHeritrixController implements HeritrixController {
                                 + (Math.pow(2, JMXUtils.MAX_TRIES) / 1000)
                                 + " seconds, giving up.");
         } else if (pendingJobs.size() > 1) {
-            throw new IOFailure("Too many jobs: " + pendingJobs);
+            throw new IllegalState("More than one pending job: " + pendingJobs);
         } else {
             // Note that we may actually get through to here even if the job
             // is malformed.  The job will then die as soon as we tell it to
@@ -647,7 +687,7 @@ public class JMXHeritrixController implements HeritrixController {
             CompositeData job = JMXUtils.getOneCompositeData(pendingJobs);
             String name = job.get(JmxUtils.NAME)
                           + "-" + job.get(UID_PROPERTY);
-            log.info("Heritrix created job with " + name);
+            log.info("Heritrix created a job with name " + name);
             return name;
         }
     }
@@ -696,7 +736,7 @@ public class JMXHeritrixController implements HeritrixController {
      * by getJMXAdminName().  This password can be set in a file pointed to
      * in settings.xml.  The file has a format defined by the JMX standard,
      * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>
-     *
+     * @throws IOFailure If no usable password found in the JMX password file.
      * @return Password for accessing Heritrix JMX
      */
     private String getJMXAdminPassword() {
@@ -712,15 +752,6 @@ public class JMXHeritrixController implements HeritrixController {
         }
         throw new IOFailure("No usable password found for '"
                             + getJMXAdminName() + "' in '" + filename + "'");
-    }
-
-    /** Get the file that stdout/stderr should be written to. Following
-     * Heritrix, this will be heritrix.out in the crawl dir.
-     *
-     * @return File to write output from the process to.
-     */
-    private File getOutputFile() {
-        return files.getHeritrixOutput();
     }
 
     /** Get the port to use for Heritrix JMX, as set in settings.xml.

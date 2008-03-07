@@ -49,6 +49,7 @@ import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * This class contains code for documenting a harvest.
@@ -632,7 +633,7 @@ public class HarvestDocumentation {
     private static String getHeritrixVersion(File orderXml) {
         Document doc = XmlUtils.getXmlDoc(orderXml);
         Node userAgentNode = doc.selectSingleNode(
-                HeritrixLauncher.USER_AGENT_XPATH);
+                HeritrixTemplate.HERITRIX_USER_AGENT_XPATH);
         String userAgent = userAgentNode.getText();
         //We expect to find this: Mozilla/5.0 (compatible;
         // heritrix/1.5.0-200506132127 +http://netarkivet.dk/website/info.html)

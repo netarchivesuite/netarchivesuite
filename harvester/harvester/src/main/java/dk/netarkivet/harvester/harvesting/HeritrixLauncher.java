@@ -123,20 +123,6 @@ public class HeritrixLauncher {
         + "/string[@name='seedsfile']";
 
     /**
-     * Xpath for the http "user-agent" header field in order.xml-documents.
-     */
-    public static final String USER_AGENT_XPATH =
-    	"//crawl-order/controller"
-        + "/map[@name='http-headers']"
-        + "/string[@name='user-agent']";
-    /**
-     * Xpath for the http "from" header field in order.xml-documents.
-     */
-    public static final String FROM_XPATH =	"//crawl-order/controller"
-                                            + "/map[@name='http-headers']"
-                                            + "/string[@name='from']";
-
-    /**
      * Private HeritrixLaucher constructor. Sets up the HeritrixLauncher from
      * the given order file and seedsfile.
      *
@@ -180,12 +166,13 @@ public class HeritrixLauncher {
     }
 
     /**
-     * This method launches heritrix in the following way: 1. copies the
-     * orderfile and the seedsfile to current working directory. 2. sets up the
-     * newly created copy of the orderfile 3. starts the crawler 4. stops
-     * crawler (Either when heritrix has finished crawling, or when heritrix is
+     * This method launches heritrix in the following way:</br> 
+     * 1. copies the orderfile and the seedsfile to current working directory. </br>
+     * 2. sets up the newly created copy of the orderfile </br>
+     * 3. starts the crawler </br>
+     * 4. stops the crawler (Either when heritrix has finished crawling, or when heritrix is
      * forcefully stopped due to inactivity).
-     *
+     * </p>
      * The exit from the while-loop depends on Heritrix calling the crawlEnded()
      * method, when the crawling is finished. This method is called from the
      * HarvestControllerServer.onDoOneCrawl() method.
@@ -200,7 +187,6 @@ public class HeritrixLauncher {
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController = new JMXHeritrixController(files);
-            //heritrixController = new DirectHeritrixController(files);
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();
@@ -284,24 +270,21 @@ public class HeritrixLauncher {
 
     /**
      * This method prepares the orderfile used by the Heritrix crawler.
-     *
+     * </p>
      * 1. alters the orderfile in the following-way: (overriding whatever is in
-     * the orderfile)
+     * the orderfile)</br>
+     * <ol>
+     *  <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
+     *  <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
+     *  <li>sets the prefix of the arcfiles to unique prefix defined in
+     *      HeritrixFiles</li>
+     *  <li>checks that the arcs-file dir is 'arcs' - to ensure that we know
+     *      where the arc-files are when crawl finishes</li>
      *
-     *   a. sets the disk-path to the outputdir specified in HeritrixFiles
-     *
-     *   b. sets the seedsfile to the seedsfile specified in HeritrixFiles.
-     *
-     *   c. sets the prefix of the arcfiles to unique prefix defined in
-     *      HeritrixFiles
-     *
-     *   d. checks that the arcs-file dir is 'arcs' - to ensure that we know
-     *      where the arc-files are when crawl finishes
-     *
-     *   e. if deduplication is enabled, sets the node pointing to index
-     *      directory for deduplication (see 3)
-     *
-     * 2. saves the orderfile back to disk
+     *  <li>if deduplication is enabled, sets the node pointing to index
+     *      directory for deduplication (see step 3)</li>
+     *</ol>
+     * 2. saves the orderfile back to disk</p>
      *
      * 3. if deduplication is enabled in order.xml; fetches lucene index over
      *    crawl.logs for jobs we use for deduplication from index server, and
@@ -337,6 +320,7 @@ public class HeritrixLauncher {
      * @return True if Deduplicator is enabled.
      */
     public static boolean isDeduplicationEnabled(Document doc) {
+        ArgumentNotValid.checkNotNull(doc, "Document doc");
         Node xpath_node = doc.selectSingleNode(DEDUPLICATOR_ENABLED);
         return xpath_node != null &&
                xpath_node.getText().trim().equals("true");
