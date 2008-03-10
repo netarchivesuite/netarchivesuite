@@ -73,9 +73,10 @@ public class JmxTester extends TestCase{
         }
         
         CachingLogHandler loghandler = new CachingLogHandler();
-        Set<Object> set = mbeanserver.queryMBeans(new ObjectName("dk.netarkivet.common.logging:*"), null);
-        assertTrue(set.size() > 0);
-        for (Object o: set) {
+        //Set<Object> set = mbeanserver.queryMBeans(new ObjectName("dk.netarkivet.common.logging:*"), null);
+        Set theSet = mbeanserver.queryMBeans(new ObjectName("dk.netarkivet.common.logging:*"), null);
+        assertTrue(theSet.size() > 0);
+        for (Object o: theSet) {
             System.out.println(o.getClass().getCanonicalName());
             ObjectInstance o1 = (ObjectInstance) o;
             System.out.println("objectname: " + o1.getObjectName().getCanonicalName());
