@@ -23,7 +23,7 @@
 package dk.netarkivet.archive;
 
 /**
- * Constants for the Archive module
+ * Constants for the Archive module.
  */
 public class Constants {
     /**

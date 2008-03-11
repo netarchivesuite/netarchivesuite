@@ -31,7 +31,6 @@ import junit.textui.TestRunner;
  * This class runs all the integrity tests.
  *
  */
-
 public class IntegrityTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTests.class);
@@ -53,7 +52,7 @@ public class IntegrityTesterSuite {
         return suite;
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", "dk.netarkivet.IntegrityTesterSuite"};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", "dk.netarkivet.IntegrityTesterSuite"};
         TestRunner.main(args2);
     }}

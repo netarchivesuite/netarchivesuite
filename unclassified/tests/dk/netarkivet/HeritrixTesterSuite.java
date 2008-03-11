@@ -32,9 +32,7 @@ import dk.netarkivet.externalsoftware.HeritrixTests;
 /**
  * This class runs all tests of Heritrix functionality.  Must be run as part
  * of heritrix upgrades.
- *
  */
-
 public class HeritrixTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(HeritrixTests.class);
@@ -49,7 +47,7 @@ public class HeritrixTesterSuite {
         return suite;
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", "dk.netarkivet.HeritrixTesterSuite"};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", "dk.netarkivet.HeritrixTesterSuite"};
         TestRunner.main(args2);
     }}

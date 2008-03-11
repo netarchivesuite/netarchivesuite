@@ -27,7 +27,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-
+/**
+ * The FullTesterSuite comprises all our three test-suites.
+ * - The UnitTesterSuite
+ * - The IntegrityTesterSuite
+ * - HeritrixTesterSuite
+ */
 public class FullTesterSuite {
     public static void addToSuite(TestSuite suite) {
         UnitTesterSuite.addToSuite(suite);
@@ -45,7 +50,7 @@ public class FullTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", "dk.netarkivet.FullTesterSuite"};
+        String[] args2 = {"-noloading", "dk.netarkivet.FullTesterSuite"};
         TestRunner.main(args2);
     }
 }

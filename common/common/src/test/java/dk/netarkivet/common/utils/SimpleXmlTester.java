@@ -150,7 +150,7 @@ public class SimpleXmlTester extends TestCase {
         }
 
         try {
-            simpleXml.add(key, null);
+            simpleXml.add(key, (String[]) null);
             fail("Should die on null value");
         } catch (ArgumentNotValid e) {
             //expected
