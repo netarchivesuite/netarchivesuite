@@ -23,6 +23,8 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -38,12 +40,13 @@ public interface ActiveBitPreservation {
     // General state
 
     /**
-     * Get details of the state of one file in the bitarchives and admin data.
-     *
-     * @return The details of one file if it exists in admin data, or null
-     * otherwise.
+     * Get details of the state of one or more files in the bitarchives
+     * and admin data.
+     * @param the list of filenames to investigate 
+     * @return a map with the preservationstate of all files in the list.
+     *  The preservationstate will be null, if it does not exist in admin data.
      */
-    FilePreservationState getFilePreservationState(String filename);
+    Map<String,FilePreservationState> getFilePreservationState(String... filenames);
 
     // Check state for bitarchives
 

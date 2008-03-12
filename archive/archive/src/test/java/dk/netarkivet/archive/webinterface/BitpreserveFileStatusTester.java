@@ -63,6 +63,7 @@ import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
@@ -84,6 +85,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessMissingRequest() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
         MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();

@@ -37,6 +37,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
@@ -55,6 +57,7 @@ import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
 /**
@@ -116,31 +119,68 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Retrieve the preservation status for the file with a given filename. This
-     * will ask for a fresh checksum from the bitarchives and admin data.
+     * Retrieve the preservation status for the files with the given filenames. 
+     * This will ask for a fresh checksum from the bitarchives and admin data.
      *
-     * @param filename a given filename
+     * @param filenames List of filenames
      *
-     * @return the preservation status for the file with a given filename, or
-     *         null if the file named does not exist in admin data.
+     * @return a map the preservation status for the files with a given filename.
+     * The preservationstate is null, if the file named does not exist in admin data.
      *
-     * @throws ArgumentNotValid if argument is null or the empty string
+     * @throws ArgumentNotValid if argument is null
      */
-    public FilePreservationState getFilePreservationState(String filename) {
-        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+    public Map<String,FilePreservationState> getFilePreservationState(String... filenames) {
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         // Start by retrieving the admin status
         admin.synchronize();
-        ArcRepositoryEntry ae = admin.getEntry(filename);
-
-        // create and return the preservation status
-        if (ae != null) {
-            return new FilePreservationState(filename, ae, getChecksumMap(
-                    filename));
-        } else {
-            // TODO: Will a file preservation status never make sense with no
-            // entry in admin data?
-            return null;
+        
+        Map<String,FilePreservationState> filepreservationStates 
+            = new HashMap<String,FilePreservationState>();
+        // temporary datastructures to hold admindata info
+        Map<String, ArcRepositoryEntry> adminInfo
+        = new HashMap<String,ArcRepositoryEntry>();
+        Set<String> missingInAdmindata = new HashSet<String>();
+        
+        for (String filename: filenames) {
+            ArcRepositoryEntry ae = admin.getEntry(filename);
+            if (ae != null){
+                adminInfo.put(filename, ae);
+            } else {
+                missingInAdmindata.add(filename);
+            }
         }
+        
+        // create and return the preservation status
+
+        // Add null-entries for the files absent from admindata. 
+        for (String missing: missingInAdmindata) {
+            filepreservationStates.put(missing, null);
+        }
+        if (missingInAdmindata.size() > 0) {
+            log.warn("The following " + missingInAdmindata.size()
+                    + " files are unknown to admindata: "
+                    + StringUtils.conjoin(",", missingInAdmindata));
+        }
+        
+        //TODO Only make one checksumjob
+        for (String filename: adminInfo.keySet()) {
+            filepreservationStates.put(filename, 
+                    new FilePreservationState(filename,
+                            adminInfo.get(filename), 
+                            getChecksumMap(filename)));
+        }
+               
+//        if (ae != null) {
+//            return new FilePreservationState(filename, ae, getChecksumMap(
+//                    filename));
+//        } else {
+//            // TODO: Will a file preservation status never make sense with no
+//            // entry in admin data?
+//            return null;
+//        }
+//        
+        
+        return filepreservationStates;
     }
 
     /**
@@ -583,24 +623,33 @@ public class FileBasedActiveBitPreservation
      * from reference location to this location.
      *
      * @param location The location to restore files to
-     * @param filename The names of the files.
+     * @param filenames The names of the files.
      *
-     * @throws IOFailure        if any file cannot be reestablished. All files
+     * TODO Decide whether or not to throw IllegalState
+     * @throw IllegalState  If one of the files is unknown
+     *    (Known files will be attempted though)
+     * @throws IOFailure    If some file cannot be reestablished. All files
      *                          will be attempted, though.
      */
-    public void uploadMissingFiles(Location location, String... filename) {
+    public void uploadMissingFiles(Location location, String... filenames) {
         ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         List<String> troubleNames = new ArrayList<String>();
-        for (String fn : filename) {
+        
+        Map<String,FilePreservationState> preservationStates
+            =  getFilePreservationState(filenames);
+        for (Map.Entry<String, FilePreservationState> entry
+                : preservationStates.entrySet()) {
+            String fn = entry.getKey();
+            FilePreservationState fps = entry.getValue();
             try {
-                FilePreservationState fps = getFilePreservationState(fn);
                 if (fps == null) {
                     throw new IllegalState("No state known about '" + fn + "'");
                 }
                 if (!fps.isAdminDataOk()) {
                     setAdminDataFailed(fn, location);
                     admin.synchronize();
-                    fps = getFilePreservationState(fn);
+                    fps = getFilePreservationState(fn).get(fn);
                     if (fps == null) {
                         throw new IllegalState("No state known about '" + fn + "'");
                     }
@@ -619,10 +668,12 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Reestablish a file missing in a bitarchive. The following pre-conditions
-     * for reestablishing the file are checked before changing anything: 1) the
-     * file is registered correctly in AdminData 2) the file is missing in the
-     * given bitarchive 3) the file is present in another bitarchive (the
-     * reference archive) 4) admin data and the reference archive agree on the
+     * for reestablishing the file are checked before changing anything:<p> 
+     * 1) the file is registered correctly in AdminData <br>
+     * 2) the file is missing in the given bitarchive <br>
+     * 3) the file is present in another bitarchive (the
+     * reference archive)<br> 
+     * 4) admin data and the reference archive agree on the
      * checksum of the file.
      *
      * @param fileName          name of the file to reestablish
@@ -822,7 +873,7 @@ public class FileBasedActiveBitPreservation
     public void changeStateForAdminData(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         admin.synchronize();
-        FilePreservationState fps = getFilePreservationState(filename);
+        FilePreservationState fps = getFilePreservationState(filename).get(filename);
         String checksum = fps.getReferenceCheckSum();
         if (checksum == null || checksum.equals("")) {
             throw new PermissionDenied("No correct checksum for '"

@@ -36,12 +36,11 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * users of this are required call synchronize() before major chunks of use to
  * ensure that the data are up to date.
  *
- * Implementation note: Two alternative synch strategies are
+ * Implementation note: Two alternative synch strategies are<p>
  * 1) Recreate ReadOnlyAdminData before every use -- this requires reading the
- *    entire file again (millions of lines).
+ *    entire file again (millions of lines).<br>
  * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires
  *    an expensive stat() call before every action, costly when iterating.
- *
  */
 
 public class ReadOnlyAdminData extends AdminData {
@@ -74,8 +73,8 @@ public class ReadOnlyAdminData extends AdminData {
         super.read();
     }
 
-    /** Make sure that the internal admin data set is synchronized to the file.
-     *
+    /**
+     * Make sure that the internal admin data set is synchronized to the file.
      */
     public void synchronize() {
         if (adminDataFile.lastModified() > lastModified) {

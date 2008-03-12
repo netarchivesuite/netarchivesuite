@@ -166,16 +166,14 @@ public class BitpreserveFileState {
                 }
             }
         }
-        Map<String, FilePreservationState> infoMap =
-                new HashMap<String, FilePreservationState>();
+        Map<String, FilePreservationState> infoMap;
         // Do this at the end so that the info reflects the current state.
         if (params.containsKey(Constants.GET_INFO_COMMAND)) {
             String[] getInfos = params.get(Constants.GET_INFO_COMMAND);
             //TODO: Run just one checksum job for these.
-            for (String filename : getInfos) {
-                infoMap.put(filename,
-                            preserve.getFilePreservationState(filename));
-            }
+            infoMap = preserve.getFilePreservationState(getInfos);
+        } else {
+            infoMap = new HashMap<String, FilePreservationState>();
         }
 
         return infoMap;
@@ -321,7 +319,8 @@ public class BitpreserveFileState {
                 }
             }
         }
-        return preserve.getFilePreservationState(filename);
+        // TODO Is this the right thing to do
+        return preserve.getFilePreservationState(filename).get(filename);
     }
 
     /**
