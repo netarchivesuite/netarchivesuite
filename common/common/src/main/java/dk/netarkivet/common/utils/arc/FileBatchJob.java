@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
@@ -42,6 +43,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * handled by finish().
  */
 public abstract class FileBatchJob implements Serializable {
+    
     /** Regular expression for the files to process with this job.
      * By default, all files are processed.  This pattern must match the
      * entire filename, but not the path (e.g. .*foo.* for any file with
@@ -49,9 +51,12 @@ public abstract class FileBatchJob implements Serializable {
      */
     private Pattern filesToProcess = Pattern.compile(".*");
 
-    // The total number of files processed (including any that generated errors
+    /** The total number of files processed (including any that 
+     * generated errors).
+     */
     protected int noOfFilesProcessed = 0;
-    // A Set of files which generated errors
+    
+    /** A Set of files which generated errors. */
     protected Set<File> filesFailed = new HashSet<File>();
 
     /**
@@ -82,7 +87,7 @@ public abstract class FileBatchJob implements Serializable {
      * override any previous setting of which files to process.
      *
      * @param specifiedFilenames A list of filenamess to process (without
-     * paths).  If null, all files will be processed.
+     * paths). If null, all files will be processed.
      */
     public void processOnlyFilesNamed(List<String> specifiedFilenames) {
         if (specifiedFilenames != null) {
@@ -104,6 +109,8 @@ public abstract class FileBatchJob implements Serializable {
      * be processed.  Should not include any path information.
      */
     public void processOnlyFileNamed(String specifiedFilename) {
+        ArgumentNotValid.checkNotNullOrEmpty(specifiedFilename, 
+            "specificedFilename");
         processOnlyFilesMatching(Pattern.quote(specifiedFilename));
     }
 
@@ -111,13 +118,15 @@ public abstract class FileBatchJob implements Serializable {
      * override any previous setting of which files to process.
      *
      * @param specifiedPatterns The patterns of file names that this job
-     * will operate on. These should not include any path information, but should
-     * match the entire filename (e.g. .*foo.* for any file with foo in the
-     * name).
+     * will operate on. These should not include any path information, but
+     * should match the entire filename (e.g. .*foo.* for any file with foo in
+     * the name).
      */
     public void processOnlyFilesMatching(List<String> specifiedPatterns) {
+        ArgumentNotValid.checkNotNull(specifiedPatterns,
+         "specifiedPatterns");
         processOnlyFilesMatching("("
-                        + StringUtils.conjoin("|",specifiedPatterns ) + ")");
+                        + StringUtils.conjoin("|", specifiedPatterns) + ")");
     }
 
     /** Set this job to match only a certain pattern.  This will
@@ -129,6 +138,8 @@ public abstract class FileBatchJob implements Serializable {
      * name).
      */
     public void processOnlyFilesMatching(String specifiedPattern) {
+        ArgumentNotValid.checkNotNullOrEmpty(specifiedPattern, 
+                "specificedPattern");
         filesToProcess = Pattern.compile(specifiedPattern);
     }
 
@@ -141,7 +152,8 @@ public abstract class FileBatchJob implements Serializable {
     }
 
     /**
-     * Returns the number of ARC-files processed in this job (at this bit archive application).
+     * Return the number of ARC-files processed in this job
+     * (at this bit archive application).
      *
      * @return the number of ARC-files processed in this job
      */
@@ -150,10 +162,11 @@ public abstract class FileBatchJob implements Serializable {
     }
 
     /**
-     * * Returns the list of names of ARC-files where processing (of one or more ARC records) failed
-     * or an empty list if none failed
+     * Return the list of names of ARC-files where processing
+     * (of one or more ARC records) failed or an empty list if none failed.
      *
-     * @return the possibly empty list of names of ARC-files where processing (of one or more ARC records) failed
+     * @return the possibly empty list of names of ARC-files where processing
+     * (of one or more ARC records) failed
      */
     public Collection<File> getFilesFailed() {
         return filesFailed;

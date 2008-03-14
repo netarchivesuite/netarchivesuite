@@ -23,9 +23,9 @@
 package dk.netarkivet.archive.webinterface;
 
 /**
- * lc forgot to comment this!
+ * Unittest for the class
+ * dk.netarkivet.archive.webinterface.BitpreserveFileState.
  */
-
 import javax.el.ELContext;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -68,7 +68,14 @@ import dk.netarkivet.testutils.TestUtils;
 public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
-
+    private static final String ADD_COMMAND 
+        = dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND;
+    private static final String GET_INFO_COMMAND
+        = dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND;
+    private static final String BITARCHIVE_NAME_PARAM 
+        = dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM;
+            
+    
     public BitpreserveFileStatusTester(String s) {
         super(s);
     }
@@ -90,7 +97,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         }
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
-        MockFileBasedActiveBitPreservation mockabp = new MockFileBasedActiveBitPreservation();
+        MockFileBasedActiveBitPreservation mockabp 
+            = new MockFileBasedActiveBitPreservation();
         MockHttpServletRequest request = new MockHttpServletRequest();
         String ba1 = "SB";
         String ba2 = "KB";
@@ -99,28 +107,28 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         Locale defaultLocale = new Locale("da");
         // First test a working set of params
         Map<String, String[]> args = new HashMap<String, String[]>();
-        args.put(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
+        args.put(ADD_COMMAND,
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
+        request.setupAddParameter(ADD_COMMAND,
                 new String[] {
                     ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        args.put(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
+        args.put(GET_INFO_COMMAND, new String[] { filename1 });
+        request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1 });
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
-                new String[] { filename1 });
-        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba1).getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba1).getName()});
+        args.put(BITARCHIVE_NAME_PARAM,
+                    new String[]{Location.get(ba1).getName()});
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
+                    new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector(args.keySet()).elements());
         Map<String, FilePreservationState> status =
                 BitpreserveFileState.processMissingRequest(getDummyPageContext(
                         defaultLocale, request),
                         new StringBuilder());
+        
         assertEquals("Should have one call to reestablish",
                 1, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have one call to getFilePreservationStatus",
@@ -131,9 +139,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
-        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+        args.put(BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba1).getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
@@ -151,23 +159,23 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         mockabp.calls.clear();
         request = new MockHttpServletRequest();
         args.clear();
-        args.put(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+        args.put(BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba2).getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
+        request.setupAddParameter(BITARCHIVE_NAME_PARAM,
                  new String[]{Location.get(ba2).getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
+        request.setupAddParameter(ADD_COMMAND,
                 new String[] {
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        args.put(dk.netarkivet.archive.webinterface.Constants.ADD_COMMAND,
+        args.put(ADD_COMMAND,
                 new String[] {
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
+        request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
-        args.put(dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND,
+        args.put(GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(getDummyPageContext(
@@ -203,19 +211,17 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                                    boolean b, int i, boolean b1)
                     throws IOException,
                     IllegalStateException, IllegalArgumentException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void release() {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public HttpSession getSession() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public Object getPage() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public ServletRequest getRequest() {
@@ -225,60 +231,52 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             public ServletResponse getResponse() {
                 return new ServletResponse() {
                     public String getCharacterEncoding() {
-                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                        return null;
                     }
 
                     public String getContentType() {
-                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                        return null;
                     }
 
                     public ServletOutputStream getOutputStream()
                             throws IOException {
-                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                        return null;
                     }
 
                     public PrintWriter getWriter() throws IOException {
-                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                        return null;
                     }
 
                     public void setCharacterEncoding(String string) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public void setContentLength(int i) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public void setContentType(String string) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public void setBufferSize(int i) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public int getBufferSize() {
-                        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                        return 0;
                     }
 
                     public void flushBuffer() throws IOException {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public void resetBuffer() {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public boolean isCommitted() {
-                        return false;  //To change body of implemented methods use File | Settings | File Templates.
+                        return false;
                     }
 
                     public void reset() {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public void setLocale(Locale locale) {
-                        //To change body of implemented methods use File | Settings | File Templates.
                     }
 
                     public Locale getLocale() {
@@ -288,97 +286,86 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             }
 
             public Exception getException() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public ServletConfig getServletConfig() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public ServletContext getServletContext() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public void forward(String string)
                     throws ServletException, IOException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void include(String string)
                     throws ServletException, IOException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void include(String string, boolean b)
                     throws ServletException, IOException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void handlePageException(Exception exception)
                     throws ServletException, IOException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void handlePageException(Throwable throwable)
                     throws ServletException, IOException {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void setAttribute(String string, Object object) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void setAttribute(String string, Object object, int i) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public Object getAttribute(String string) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public Object getAttribute(String string, int i) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public Object findAttribute(String string) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public void removeAttribute(String string) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void removeAttribute(String string, int i) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public int getAttributesScope(String string) {
-                return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                return 0;
             }
 
             public Enumeration<String> getAttributeNamesInScope(int i) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public JspWriter getOut() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public ExpressionEvaluator getExpressionEvaluator() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public VariableResolver getVariableResolver() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public ELContext getELContext() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
         };
     }
-
-
 
     /** A placeholder for ActiveBitPreservation that's easy to ask questions
      * of.

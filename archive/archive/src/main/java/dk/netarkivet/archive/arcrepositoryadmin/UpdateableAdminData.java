@@ -42,8 +42,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * Class for accessing and manipulating the administrative data for
  * the ArcRepository.
  * In the current implementation, it consists of a file with a number of lines
- * of the form: <filename> <checksum> <state> <timestamp-for-last-state-change>
-       [,<bitarchive> <storestatus> <timestamp-for-last-state-change>]*
+ * of the form: filename checksum state timestamp-for-last-state-change
+       [, bitarchive> storestatus timestamp-for-last-state-change]*
  *
  * If a line in the admin data file is corrupt, the entry is removed
  * from admindata.
@@ -71,7 +71,8 @@ public class UpdateableAdminData extends AdminData {
     private UpdateableAdminData() throws IOFailure {
         super();
         if (!adminDataFile.exists()) {
-            log.info("Creating new admin data file " + adminDataFile);
+            log.info("Creating new admin data file "
+                    + adminDataFile.getAbsolutePath());
         }
         // Always rewrite after read, as we're cutting out old entries
         // to shorten the file.
@@ -79,7 +80,7 @@ public class UpdateableAdminData extends AdminData {
         log.debug("AdminData created");
     }
 
-    /** Get the singletont instance.
+    /** Get the singleton instance.
      * @return The singleton
      * */
     public static UpdateableAdminData getInstance() {

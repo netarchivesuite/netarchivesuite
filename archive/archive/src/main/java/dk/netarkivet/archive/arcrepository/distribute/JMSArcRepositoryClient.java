@@ -74,7 +74,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     /** Connection to JMS-broker. */
     private JMSConnection conn;
 
-    /** The number of time to try sending a store message before giving up. */
+    /** The number of times to try sending a store message before giving up. */
     private long storeRetries;
 
     /** The length of time to wait for a store reply before giving up. */
@@ -84,12 +84,13 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     private long getTimeout;
 
     /**
-     * Adds this Synchronizer as listener en a jms connection.
+     * Adds this Synchronizer as listener on a jms connection.
      */
     protected JMSArcRepositoryClient() {
         storeRetries = Settings.getLong(Settings.ARCREPOSITORY_STORE_RETRIES);
         storeTimeout = Settings.getLong(Settings.ARCREPOSITORY_STORE_TIMEOUT);
         getTimeout = Settings.getLong(Settings.ARCREPOSITORY_GET_TIMEOUT);
+        
         log.info("JMSArcRepositoryClient will retry a store " + storeRetries
                    + " times and timeout on each try after " + storeTimeout
                    + " milliseconds, and timeout on each getrequest after "
@@ -100,7 +101,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         log.info("JMSArcRepository listens for replies on channel '"
                  + replyQ + "'");
     }
-
+    
     public static synchronized JMSArcRepositoryClient getInstance() {
         if (instance == null) {
             instance = new JMSArcRepositoryClient();
@@ -183,6 +184,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
         ArgumentNotValid.checkNotNull(location, "location");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
+        
         log.debug("Requesting get of file '" + arcfilename + "' from '"
                   + location + "'");
         GetFileMessage gfMsg = new GetFileMessage(Channels.getTheArcrepos(),
@@ -298,7 +300,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         }
     }
 
-
     /**
      * Sends a BatchMessage to the Arcrepos queue and waits for the
      * BatchReplyMessage reply before returning.
@@ -347,6 +348,10 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * */
     public void updateAdminData(String fileName, String bitarchiveName,
             BitArchiveStoreState newval) {
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
+        ArgumentNotValid.checkNotNull(newval, "newval");
+        
         String msg = "Requesting update of admin data for file '" + fileName
                      + "' bitarchive '" + bitarchiveName + "' to state "
                      + newval;
@@ -365,6 +370,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param checksum The new checksum for the file
      */
     public void updateAdminChecksum(String filename, String checksum) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
+        
         String msg = "Requesting update of admin data for file '" + filename
                      + "' to checksum '" + checksum;
         log.warn(msg);
@@ -383,9 +391,19 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param checksum The checksum of the deleted file
      * @param credentials The credentials used to delete the file
      * @return The file that was removed
+     * @throw ArgumentNotValid if arguments are null or
+     *  equal to the empty string
+     * @throw IOFailure if we could not delete the remote file, or 
+     * there was no response to our RemoveAndGetFileMessage within the allotted
+     * time defined by the {@link Settings.ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,
                                  String checksum, String credentials) {
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "filename");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
+        
         String msg = "Requesting remove of file '" + fileName
                      + "' with checksum '"
                      + checksum + "' from bitarchive '" + bitarchiveName + "'";

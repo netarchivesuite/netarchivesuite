@@ -170,7 +170,6 @@ public class BitpreserveFileState {
         // Do this at the end so that the info reflects the current state.
         if (params.containsKey(Constants.GET_INFO_COMMAND)) {
             String[] getInfos = params.get(Constants.GET_INFO_COMMAND);
-            //TODO: Run just one checksum job for these.
             infoMap = preserve.getFilePreservationState(getInfos);
         } else {
             infoMap = new HashMap<String, FilePreservationState>();
@@ -319,7 +318,11 @@ public class BitpreserveFileState {
                 }
             }
         }
-        // TODO Is this the right thing to do
+        // TODO Is this the right thing to do; maybe have two methods
+        // FilePreservationState getFilePreservationState(String filename)
+        // and
+        // Map<String, FilePreservationState> 
+        // getFilePreservationStates(String.. filenames)
         return preserve.getFilePreservationState(filename).get(filename);
     }
 

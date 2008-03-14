@@ -37,13 +37,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This class collects the available bit preservation information for a file.
- * This information is the following:
- * 1) admin information for the file for each bitarchive and
- * 2) the actual upload status
- *
+ * <br>This information is the following:
+ * <br>1) admin information for the file for each bitarchive and<br>
+ * <br>2) the actual upload status
  */
 public class FilePreservationState {
-    private static final Log log = LogFactory.getLog(FilePreservationState.class);
+    private static final Log log = LogFactory.getLog(
+            FilePreservationState.class);
 
     /** the name of the preserved file. */
     private String filename;
@@ -64,13 +64,16 @@ public class FilePreservationState {
      *
      * @param filename The filename to get status for
      * @param admindata The admin data for the file
-     * @param checksumMap
-     * @throws ArgumentNotValid if filename is null or empty string, or if admindata is null.
+     * @param checksumMap The map with the checksums for this file in 
+     *  all bitarchives
+     * @throws ArgumentNotValid if filename is null or empty string, 
+     *  or if admindata is null.
      */
     FilePreservationState(String filename, ArcRepositoryEntry admindata,
                            Map<Location, List<String>> checksumMap) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry admindata");
+        ArgumentNotValid.checkNotNull(admindata,
+                "ArcRepositoryEntry admindata");
         this.filename = filename;
         adminStatus = admindata;
         bitarchive2checksum = checksumMap;
@@ -83,6 +86,7 @@ public class FilePreservationState {
      * "" if it either is absent or an error occurred.
      */
     public List<String> getBitarchiveChecksum(Location bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         if (bitarchive2checksum.containsKey(bitarchive)) {
             return bitarchive2checksum.get(bitarchive);
         } else {
@@ -105,6 +109,7 @@ public class FilePreservationState {
      * @return Status that the admin data knows for this file in the bitarchive.
      */
     public String getAdminBitarchiveState(Location bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         return getAdminBitarchiveStoreState(bitarchive).toString();
     }
 
@@ -113,8 +118,9 @@ public class FilePreservationState {
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
-    public BitArchiveStoreState getAdminBitarchiveStoreState
-            (Location bitarchive) {
+    public BitArchiveStoreState getAdminBitarchiveStoreState(
+            Location bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
         String bamonname = bitarchive.getChannelID().getName();
         return adminStatus.getStoreState(bamonname);
     }
@@ -167,7 +173,7 @@ public class FilePreservationState {
     }
 
     /**
-     * Check if the file is missing from a bitarchive
+     * Check if the file is missing from a bitarchive.
      *
      * @param bitarchive the bitarchive to check
      * @return true if the file is missing from the bitarchive
@@ -186,7 +192,8 @@ public class FilePreservationState {
      * If no bitarchive exists with a correct version of the file null is
      * returned.
      *
-     * @return the name of the reference bitarchive or null if no reference exists
+     * @return the name of the reference bitarchive
+     *  or null if no reference exists
      */
     public Location getReferenceBitarchive() {
         String referenceCheckSum = getReferenceCheckSum();
@@ -218,6 +225,7 @@ public class FilePreservationState {
      *
      */
     public String getUniqueChecksum(Location l) {
+        ArgumentNotValid.checkNotNull(l, "Location l");
         List<String> checksums = bitarchive2checksum.get(l);
         String checksum = null;
         for (String s : checksums) {

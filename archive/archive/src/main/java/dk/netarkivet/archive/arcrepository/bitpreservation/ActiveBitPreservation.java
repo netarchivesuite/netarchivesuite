@@ -23,7 +23,6 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import dk.netarkivet.common.distribute.arcrepository.Location;
@@ -42,11 +41,12 @@ public interface ActiveBitPreservation {
     /**
      * Get details of the state of one or more files in the bitarchives
      * and admin data.
-     * @param the list of filenames to investigate 
+     * @param filenames the list of filenames to investigate 
      * @return a map with the preservationstate of all files in the list.
      *  The preservationstate will be null, if it does not exist in admin data.
      */
-    Map<String,FilePreservationState> getFilePreservationState(String... filenames);
+    Map<String,FilePreservationState> getFilePreservationState(
+            String... filenames);
 
     // Check state for bitarchives
 
@@ -155,13 +155,13 @@ public interface ActiveBitPreservation {
      * reference location to this location.
      *
      * @param location The location to restore files to
-     * @param filename The names of the files.
+     * @param filenames The names of the files.
      *
      * @throws IOFailure if any file cannot be reestablished, or if any file is
      * not in correct state. The process will be attempted for all files, even
      * if one causes this exception.
      */
-    void uploadMissingFiles(Location location, String... filename);
+    void uploadMissingFiles(Location location, String... filenames);
 
     /**
      * Check that the checksum of the file is indeed different to the value in
@@ -169,14 +169,15 @@ public interface ActiveBitPreservation {
      * it from reference location to this location.
      *
      * @param location The location to restore file to
-     * @param filename The name of the file.
+     * @param filename The name of the file
+     * @param credentials The credentials used to perform this replace operation
      * @param checksum  The known bad checksum. Only a file with this bad
      * checksum is attempted repaired.
      * @throws IOFailure if the file cannot be reestablished
      * @throws PermissionDenied if the file is not in correct state
      */
     void replaceChangedFile(Location location, String filename,
-                            String credentails, String checksum);
+                            String credentials, String checksum);
 
     // Check state for admin data
 
@@ -203,11 +204,11 @@ public interface ActiveBitPreservation {
     /**
      * Add files unknown in admin.data to admin.data.
      *
-     * @param filename The files to add.
+     * @param filenames The files to add.
      *
      * @throws PermissionDenied if the file is not in correct state
      */
-    void addMissingFilesToAdminData(String... filename);
+    void addMissingFilesToAdminData(String... filenames);
 
     /**
      * Reestablish admin data to match bitarchive states for file.

@@ -62,16 +62,19 @@ public class ChecksumJob extends FileBatchJob {
      * Errors during checksumming are logged and files on which checksumming
      * fails are stored in filesFailed.
      *
-     * @param file
+     * @param file The file to process.
+     * @param os The outputStream to write the result to
+     * @return false, if errors occurred while processing the file
      * @see FileBatchJob#processFile(File, OutputStream)
      */
     public boolean processFile(File file, OutputStream os) {
         ArgumentNotValid.checkNotNull(file, "file");
         try {
-            os.write((file.getName() + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR
+            os.write((file.getName()
+                    + dk.netarkivet.archive.arcrepository.bitpreservation
+                        .Constants.STRING_FILENAME_SEPARATOR
                     + MD5.generateMD5onFile(file) + "\n").getBytes());
         } catch (IOException e) {
-            //if (logger == null) logger = Logger.getLogger(getClass().getName());
             log.warn("Checksumming of file " + file.getName()
                     + " failed: ", e);
             return false;
@@ -101,7 +104,8 @@ public class ChecksumJob extends FileBatchJob {
 
     /** Parse a line of output into a key-value pair.
      *
-     * @param line The line to parse, of the <filename>##<checksum> form
+     * @param line The line to parse, of the form
+     *  <filename>##<checksum>
      * @return The filename->checksum mapping.
      * @throws ArgumentNotValid if the line is not on the correct form.
      */
@@ -115,22 +119,28 @@ public class ChecksumJob extends FileBatchJob {
         return new KeyValuePair<String, String>(parts[0], parts[1]);
     }
 
+    /**
+     * Write a human-readily description of this ChecksumJob object.
+     * Writes out the name of the ChecksumJob, the number of files processed,
+     * and the number of files that failed during processing.
+     * @return a human-readily description of this ChecksumJob object
+     */
     public String toString() {
-        int n_failed;
+        int noOfFailedFiles;
         if (filesFailed == null) {
-            n_failed = 0;
+            noOfFailedFiles = 0;
         } else {
-            n_failed = filesFailed.size();
+            noOfFailedFiles = filesFailed.size();
         }
         return ("Checksum job " + getClass().getName()
                 + ": [Files Processed = " + noOfFilesProcessed
-                + "; Files  failed = " + n_failed + "]");
+                + "; Files  failed = " + noOfFailedFiles + "]");
     }
 
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
-     * @param s the OutputStream
+     * @param s the InputStream
      */
     private void readObject(ObjectInputStream s) {
         try {

@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.arcrepositoryadmin;
 
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 import java.util.Date;
 
@@ -70,16 +71,23 @@ public class ArchiveStoreState {
      * @param lastchanged the lastchanged
      */
     public void setState(BitArchiveStoreState storestate, Date lastchanged) {
+        ArgumentNotValid.checkNotNull(storestate, 
+            "BitArchiveStoreState storestate");
+        ArgumentNotValid.checkNotNull(lastchanged, 
+            "Date lastchanged");
+    
         this.storestate = storestate;
         this.lastchanged = lastchanged;
     }
 
     /**
      * Sets the current BitarchiveStoreState.
-     * As a sideeffect sets lastchanged to NOW.
+     * As a sideeffect lastchanged is set to NOW.
      * @param storestate the BitarchiveStoreState
      */
     public void setState(BitArchiveStoreState storestate) {
+        ArgumentNotValid.checkNotNull(storestate, 
+                "BitArchiveStoreState storestate");
         this.storestate = storestate;
         this.lastchanged = new Date();
     }

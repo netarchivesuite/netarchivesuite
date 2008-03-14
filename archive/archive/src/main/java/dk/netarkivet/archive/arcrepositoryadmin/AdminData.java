@@ -59,9 +59,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  * This abstract class is overridden to give either a read/write or a readonly
  * version of this class.
  *
- *
  */
-
 public abstract class AdminData {
     private Log log = LogFactory.getLog(AdminData.class.getName());
 
@@ -85,6 +83,7 @@ public abstract class AdminData {
     /** The directory where the admin data resides, currently the directory:
      * Settings.DIRS_ARCREPOSITORY_ADMIN. */
     protected File adminDir;
+    
     /** The name of the admin file. */
     protected static final String ADMIN_FILE_NAME = "admin.data";
 
@@ -94,8 +93,6 @@ public abstract class AdminData {
      */
     protected List<String> knownBitArchives = new ArrayList<String>();
 
-    /** @deprecated */
-    static final String INVALID_ENTRY_STRING = "INVALID_ENTRY";
     /** The File object for the admin data file. */
     final File adminDataFile;
 
@@ -109,7 +106,8 @@ public abstract class AdminData {
         ApplicationUtils.dirMustExist(adminDir);
 
         adminDataFile = new File(adminDir, AdminData.ADMIN_FILE_NAME);
-        log.info("Using admin data file '" + adminDataFile + "'");
+        log.info("Using admin data file '" + adminDataFile.getAbsolutePath()
+                + "'");
 
         if (adminDataFile.exists()) {
             read(); // Load admindata into StoreEntries Map
@@ -144,19 +142,6 @@ public abstract class AdminData {
     public boolean hasEntry(String arcfileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         return storeEntries.containsKey(arcfileName);
-    }
-
-    /** Return true if a valid entry exists for the given filename.
-     *
-     * @param filename A file to check the entry for validity.
-     * @deprecated
-     *      This method is deprecated, because the we don't have
-     *      any invalid entries now.
-     *      Use hasEntry() instead.
-     * @return True if the entry exists and is valid.
-     */
-    public boolean isValidEntry(String filename) {
-        return hasEntry(filename);
     }
 
     /**
@@ -227,24 +212,6 @@ public abstract class AdminData {
     }
 
     /**
-     * Tells whether we have a registered checksum for the given arc file.
-     *
-     * @param arcfileName A file that someone wants to store.
-     * @deprecated use hasEntry(filename) instead of hasChecksum(filename).
-     *      If hasEntry(filename) is true, we have a recorded a
-     *      checksum for the filename as well.
-     * @return True, if there is a recorded checksum for a file of that name,
-     *         false otherwise.
-     */
-    public boolean hasChecksum(String arcfileName) {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        return storeEntries.containsKey(arcfileName)
-                && storeEntries.get(arcfileName).getChecksum() != null
-                && !storeEntries.get(arcfileName).
-                    getChecksum().equals(INVALID_ENTRY_STRING);
-    }
-
-    /**
      * Get Checksum for a given arcfile.
      * @param arcfileName Unique reference to file for which to
      *  retrieve checksum
@@ -253,7 +220,7 @@ public abstract class AdminData {
      * @throws UnknownID if the file is not registered
      */
     public String getCheckSum(String arcfileName) {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "fileID");
+        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         if (!hasEntry(arcfileName)) {
             throw new UnknownID("Don't know anything about file '"
                     + arcfileName + "'");
@@ -355,12 +322,6 @@ public abstract class AdminData {
                         }
                     } else {
                         StoreMessage replyInfo = null;
-
-                        // Assume general state = UPLOAD_STARTED
-                        // until we know more about the bitarchive states
-                        ArchiveStoreState ass =
-                            new ArchiveStoreState(
-                                    BitArchiveStoreState.UPLOAD_STARTED);
                         storeEntries.put(filename,
                                 new ArcRepositoryEntry(filename, checksum, replyInfo));
                     }
@@ -487,8 +448,9 @@ public abstract class AdminData {
                     BitArchiveStoreState.valueOf(stateString);
                 Long tempLong = Long.parseLong(timestampString);
                 Date timestampAsDate = new Date(tempLong);
-
-                if (hasEntry(filename)) { // Check, if we already have entry for this filename
+                
+                // Check, if we already have entry for this filename
+                if (hasEntry(filename)) { 
 
                     // check, if 'checksum' equals checksum-value in existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
@@ -504,15 +466,14 @@ public abstract class AdminData {
                 } else {
                     // Add new entry for filename:
                     StoreMessage replyInfo = null;
-                    ArchiveStoreState newGeneralState =
-                        new ArchiveStoreState(state, timestampAsDate);
                     storeEntries.put(filename,
                             new ArcRepositoryEntry(filename, checksumString,
                                     replyInfo));
                 }
 
                 // Parse the remaining parts[1..] array
-                // Expected format: <bitarchive> <storestatus> <timestamp-for-last-state-change>
+                // Expected format: 
+                // <bitarchive> <storestatus> <timestamp-for-last-state-change>
                 ArcRepositoryEntry entry = getEntry(filename);
                 for (int i = 1; i < parts.length; i++) {
                     String[] bitparts =  parts[i].split(GENERAL_DELIMITER);
@@ -563,11 +524,14 @@ public abstract class AdminData {
      * specific bitarchive in the repository.
      *
      * @param location the name of the BA
-     * @param state the state to look for, e.g. BitArchiveStoreState.STATE_COMPLETED
+     * @param state the state to look for, e.g.
+     *  BitArchiveStoreState.STATE_COMPLETED
      * @return the set of files in the repository with the given state
      */
     public Set<String> getAllFileNames(Location location,
                                        BitArchiveStoreState state) {
+        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(state, "BitArchiveStoreState state");
         String locationKey = location.getChannelID().getName();
         Set<String> completedFiles = new HashSet<String>();
         for (Map.Entry<String,ArcRepositoryEntry> entry

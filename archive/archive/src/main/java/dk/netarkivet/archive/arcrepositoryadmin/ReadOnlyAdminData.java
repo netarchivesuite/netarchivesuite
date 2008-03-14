@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 
 public class ReadOnlyAdminData extends AdminData {
     Log log = LogFactory.getLog(getClass().getName());
+    
     /** The time the underlying file (adminDataFile) was last read in.
      * If 0, we have never read admin data (the file doesn't exist).
      */
@@ -83,7 +84,8 @@ public class ReadOnlyAdminData extends AdminData {
             read();
         }
         if (lastModified == 0) {
-            String msg = "Admin data not created in time for reading.";
+            String msg = "Admin data (file: " + adminDataFile.getAbsolutePath() 
+                + ") not created in time for reading.";
             log.warn(msg);
             throw new IllegalState(msg);
         }
