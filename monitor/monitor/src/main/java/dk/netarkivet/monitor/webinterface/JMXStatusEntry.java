@@ -63,7 +63,7 @@ public class JMXStatusEntry implements StatusEntry {
     
     /**
      * Constructor for the JMXStatusEntry. 
-     * @param mBeanName The ObjectName to be assigned to the MBean representing 
+     * @param mBeanName The ObjectName to be assigned to the MBean representing
      * this JMXStatusEntry.
      */
     public JMXStatusEntry(ObjectName mBeanName) {
@@ -72,35 +72,41 @@ public class JMXStatusEntry implements StatusEntry {
     }
     
     /**
-     * @return the location designated by the key {@link JMXSummaryUtils#JMXLocationProperty}
+     * @return the location designated by the key 
+     *  {@link JMXSummaryUtils#JMXLocationProperty}
      */
     public String getLocation() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXLocationProperty);
     }
 
     /**
-     * @return the hostname designated by the key {@link JMXSummaryUtils#JMXHostnameProperty}
+     * @return the hostname designated by the key 
+     * {@link JMXSummaryUtils#JMXHostnameProperty}
      */
     public String getHostName() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHostnameProperty);
     }
     
     /**
-     * @return the http-port designated by the key {@link JMXSummaryUtils#JMXHttpportProperty}
+     * @return the http-port designated by the key 
+     * {@link JMXSummaryUtils#JMXHttpportProperty}
      */
     public String getHTTPPort() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHttpportProperty);
     }
 
     /**
-     * @return the application name designated by the key {@link JMXSummaryUtils#JMXApplicationnameProperty}
+     * @return the application name designated by the key 
+     * {@link JMXSummaryUtils#JMXApplicationnameProperty}
      */
     public String getApplicationName() {
-        return mBeanName.getKeyProperty(JMXSummaryUtils.JMXApplicationnameProperty);
+        return mBeanName.getKeyProperty(
+                JMXSummaryUtils.JMXApplicationnameProperty);
     }
 
     /**
-     * @return the index designated by the key {@link JMXSummaryUtils#JMXIndexProperty}
+     * @return the index designated by the key 
+     * {@link JMXSummaryUtils#JMXIndexProperty}
      */
     public String getIndex() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXIndexProperty);
@@ -125,24 +131,26 @@ public class JMXStatusEntry implements StatusEntry {
                     mBeanServer.getAttribute(mBeanName, JMXLogMessageAttribute);
             if (logMessage == null) {
                 return HTMLUtils.escapeHtmlValues(
-                        I18N.getString(l,
-                                       "errormsg;remote.host.returned.null.log.record"));
+                        I18N.getString(
+                                l,
+                                "errormsg;remote.host.returned.null.log.record")
+                                );
             } else {
                 return logMessage;
             }
         } catch (RuntimeMBeanException e) {
             return HTMLUtils.escapeHtmlValues(
-                    I18N.getString(l,
-                                   "errormsg;jmx.error.while.getting.log.recordrd")
+                    I18N.getString(
+                            l, "errormsg;jmx.error.while.getting.log.record")
                     + "\n" 
-                    + I18N.getString(l,
-                                     "errormsg;probably.host.is.not.respondingng")
+                    + I18N.getString(
+                            l, "errormsg;probably.host.is.not.responding")
                     + "\n" 
                     + ExceptionUtils.getStackTrace(e));
         } catch (Exception e) {
             return HTMLUtils.escapeHtmlValues(
-                    I18N.getString(l,
-                                   "errormsg;remote.jmx.bean.generated.exceptionon")
+                    I18N.getString(
+                            l, "errormsg;remote.jmx.bean.generated.exception")
                     + "\n" + ExceptionUtils.getStackTrace(e));
         }
     }
@@ -243,8 +251,8 @@ public class JMXStatusEntry implements StatusEntry {
                                    LOGGING_QUERY);
         // The "null" in this case is used to indicate no further filters on the
         // query.
-        Set<ObjectName> resultSet = (Set<ObjectName>) mBeanServer.queryNames
-                (new ObjectName(query), null);
+        Set<ObjectName> resultSet = (Set<ObjectName>) mBeanServer.queryNames(
+                new ObjectName(query), null);
         List<StatusEntry> entries = new ArrayList<StatusEntry>();
         for (ObjectName objectName : resultSet) {
             entries.add(new JMXStatusEntry(objectName));
