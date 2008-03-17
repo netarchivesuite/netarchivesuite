@@ -159,7 +159,7 @@ connect 'jdbc:derby:fullhddb;create=true';
 
   create table jobs
     (job_id bigint not null primary key, harvest_id bigint not null,
-     status int not null, priority int not null, forcemaxbytes int not null,
+     status int not null, priority int not null, forcemaxbytes bigint not null,
      forcemaxcount bigint, orderxml varchar(300) not null, orderxmldoc clob(64M) not null,
      seedlist clob(64M) not null, harvest_num int not null,
      harvest_errors varchar(300), harvest_error_details varchar(10000),
