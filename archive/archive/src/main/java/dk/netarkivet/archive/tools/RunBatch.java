@@ -1,7 +1,7 @@
-/* File:        $Id: GetRecord.java 79 2007-09-26 08:27:29Z kfc $
- * Revision:    $Revision: 79 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-09-26 10:27:29 +0200 (Wed, 26 Sep 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -29,7 +29,6 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
-import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
@@ -43,7 +42,7 @@ import java.util.Collection;
  * A command-line tool to run batch jobs in the bitarchive.
  *
  * Usage:
- * 	java dk.netarkivet.archive.tools.RunBatch \
+ *  java dk.netarkivet.archive.tools.RunBatch \
  *       classfile [regexp [location [outputfile]]
  *
  * where classfile is a file containing a FileBatchJob implementation
@@ -81,7 +80,9 @@ public class RunBatch extends ToolRunnerBase {
         instance.runTheTool(argv);
     }
 
-    /** Create an instance of the actual RunBatchTool. */
+    /** Create an instance of the actual RunBatchTool.
+     * @return an instance of RunBatchTool.
+     */
     protected SimpleCmdlineTool makeMyTool() {
         return new RunBatchTool();
     }
@@ -99,7 +100,7 @@ public class RunBatch extends ToolRunnerBase {
          *
          * @param args the arguments
          * @return true, if given arguments are valid
-         * 	returns false otherwise
+         *  returns false otherwise
          */
         public boolean checkArgs(String... args) {
             if (args.length < 1) {
@@ -123,15 +124,15 @@ public class RunBatch extends ToolRunnerBase {
                     return false;
                 }
             }
-            if (args.length > 2 &&
-                !Location.isKnownLocation(args[2])) {
+            if (args.length > 2
+                    && !Location.isKnownLocation(args[2])) {
                 System.err.println("Unknown location '" + args[2]
                                    + "', known location are "
                                    + Location.getKnown());
                 return false;
             }
-            if (args.length > 3 &&
-                !new File(args[3]).canWrite()) {
+            if (args.length > 3 
+                    && !new File(args[3]).canWrite()) {
                 System.err.println("Output file '" + args[3]
                                    + "' cannot be written to");
                 return false;

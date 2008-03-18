@@ -1,7 +1,7 @@
-/* File:        $Id: GetRecord.java 79 2007-09-26 08:27:29Z kfc $
- * Revision:    $Revision: 79 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2007-09-26 10:27:29 +0200 (Wed, 26 Sep 2007) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -38,7 +38,7 @@ import dk.netarkivet.common.tools.ToolRunnerBase;
  * A command-line tool to get ARC files from the bitarchive.
  *
  * Usage: 
- * 	java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
+ * java dk.netarkivet.archive.tools.GetFile arcfilename [destination-file]
  */
 
 public class GetFile extends ToolRunnerBase {
@@ -58,11 +58,16 @@ public class GetFile extends ToolRunnerBase {
         GetFile instance = new GetFile();
         instance.runTheTool(argv);
     }
-
+    
+    /**
+     * Create an instance of GetFileTool.
+     * @return an instance of GetFileTool.
+     */
     protected SimpleCmdlineTool makeMyTool() {
         return new GetFileTool();
     }
-
+    
+    /** The implementation of SimpleCmdlineTool for GetFile. */
     private static class GetFileTool implements SimpleCmdlineTool {
         /**
          * This instance is declared outside of run method to ensure reliable
@@ -80,7 +85,7 @@ public class GetFile extends ToolRunnerBase {
          *
          * @param args the arguments
          * @return true, if length of args list is 1 or 2; 
-         * 	returns false otherwise
+         *  returns false otherwise
          */
         public boolean checkArgs(String... args) {
             return (args.length > 0 && args.length < 3);
@@ -94,9 +99,8 @@ public class GetFile extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            myLocation = Location.get(Settings.get(
-            		Settings.ENVIRONMENT_THIS_LOCATION)
-            		);
+            myLocation = Location.get(Settings
+                    .get(Settings.ENVIRONMENT_THIS_LOCATION));
         }
 
         /**
@@ -122,23 +126,23 @@ public class GetFile extends ToolRunnerBase {
          */
         public void run(String... args) {
             try {
-            	String filename = args[0];
-            	File destfile;
-            	if (args.length != 2) {
-            		destfile = new File(filename);
-            	} else {
-            		destfile = new File(args[1]);
-            	}
-            	System.out.println("Retrieving file '" + filename
-            			+ "' from location '" + myLocation.getName()
-            			+ "' as file " + destfile.getAbsolutePath());
-            	arcrep.getFile(filename, myLocation, destfile);
-            	
+                String filename = args[0];
+                File destfile;
+                if (args.length != 2) {
+                    destfile = new File(filename);
+                } else {
+                    destfile = new File(args[1]);
+                }
+                System.out.println("Retrieving file '" + filename
+                        + "' from location '" + myLocation.getName()
+                        + "' as file " + destfile.getAbsolutePath());
+                arcrep.getFile(filename, myLocation, destfile);
+
             } catch (NetarkivetException e) {
-               System.out.println("Execution of arcrep.getFile(arcfilename, " +
-               		"location, toFile) failed).");
-               e.printStackTrace();
-               System.exit(1);
+                System.out.println("Execution of arcrep.getFile(arcfilename, "
+                        + "location, toFile) failed).");
+                e.printStackTrace();
+                System.exit(1);
             }
         }
 
