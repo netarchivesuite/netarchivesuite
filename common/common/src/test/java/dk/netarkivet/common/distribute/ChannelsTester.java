@@ -58,14 +58,14 @@ public class ChannelsTester extends TestCase {
     public void testReset() throws Exception {
         String env = Settings.get(Settings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
-                env+"_SB_THE_BAMON", Channels.getTheBamon().getName());
+                env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
         Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB", "KB");
         Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "KB");
         assertEquals("Channel name must not change just because setting does",
-                env+"_SB_THE_BAMON", Channels.getTheBamon().getName());
+                env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
         resetChannels();
         assertEquals("Channel name should change after resetting channels",
-                env+"_KB_THE_BAMON", Channels.getTheBamon().getName());
+                env + "_KB_THE_BAMON", Channels.getTheBamon().getName());
     }
 
     /** This test checks that changing settings and resetting
@@ -75,7 +75,8 @@ public class ChannelsTester extends TestCase {
     public void testBadLocation() throws Exception {
         String env = Settings.get(Settings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
-                env + "_" + Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)+ "_THE_BAMON", Channels.getTheBamon().getName());
+                env + "_" + Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)
+                + "_THE_BAMON", Channels.getTheBamon().getName());
         Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "NOWHERE");
         try {
             resetChannels();
@@ -101,12 +102,12 @@ public class ChannelsTester extends TestCase {
         ChannelID result5;
         if (priority2.equals(JobPriority.LOWPRIORITY.toString())) {
             result5 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (priority2.equals(JobPriority.HIGHPRIORITY.toString())) {
                 result5 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority2 + " is not a valid priority");
+            } else {
+                throw new UnknownID(priority2 + " is not a valid priority");
+            }
         }
         ChannelID anyHaco0 = result5;
         assertEquals("Channel should be low priority",
@@ -117,12 +118,13 @@ public class ChannelsTester extends TestCase {
         ChannelID result4;
         if ("HIGHPRIORITY".equals(JobPriority.LOWPRIORITY.toString())) {
             result4 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if ("HIGHPRIORITY".equals(JobPriority.HIGHPRIORITY.toString())) {
                 result4 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID("HIGHPRIORITY" + " is not a valid priority");
+            } else {
+                throw new UnknownID("HIGHPRIORITY"
+                        + " is not a valid priority");
+            }
         }
         ChannelID anyHaco1 = result4;
         assertEquals("Channel should be high priority",
@@ -136,12 +138,12 @@ public class ChannelsTester extends TestCase {
         ChannelID result3;
         if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
             result3 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (priority1.equals(JobPriority.HIGHPRIORITY.toString())) {
                 result3 = Channels.getAnyHighpriorityHaco();
-            } else
+            } else {
             throw new UnknownID(priority1 + " is not a valid priority");
+            }
         }
         ChannelID anyHaco2 = result3;
         assertEquals("Channel should be high priority",
@@ -152,12 +154,12 @@ public class ChannelsTester extends TestCase {
         ChannelID result2;
         if ("LOWPRIORITY".equals(JobPriority.LOWPRIORITY.toString())) {
             result2 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if ("LOWPRIORITY".equals(JobPriority.HIGHPRIORITY.toString())) {
                 result2 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID("LOWPRIORITY" + " is not a valid priority");
+            } else {
+                throw new UnknownID("LOWPRIORITY" + " is not a valid priority");
+            }
         }
         ChannelID anyHaco3 = result2;
         assertEquals("Channel should be low priority",
@@ -168,12 +170,13 @@ public class ChannelsTester extends TestCase {
         ChannelID result1;
         if ("HIGHPRIORITY".equals(JobPriority.LOWPRIORITY.toString())) {
             result1 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if ("HIGHPRIORITY".equals(JobPriority.HIGHPRIORITY.toString())) {
                 result1 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID("HIGHPRIORITY" + " is not a valid priority");
+            } else {
+                throw new UnknownID("HIGHPRIORITY"
+                        + " is not a valid priority");
+            }
         }
         ChannelID anyHaco4 = result1;
         assertEquals("Channel should be high priority",
@@ -185,12 +188,14 @@ public class ChannelsTester extends TestCase {
             ChannelID result;
             if ("ILLEGALPRIORITY".equals(JobPriority.LOWPRIORITY.toString())) {
                 result = Channels.getAnyLowpriorityHaco();
-            } else
-            {
-                if ("ILLEGALPRIORITY".equals(JobPriority.HIGHPRIORITY.toString())) {
+            } else {
+                if ("ILLEGALPRIORITY".equals(
+                        JobPriority.HIGHPRIORITY.toString())) {
                     result = Channels.getAnyHighpriorityHaco();
-                } else
-                throw new UnknownID("ILLEGALPRIORITY" + " is not a valid priority");
+                } else {
+                    throw new UnknownID("ILLEGALPRIORITY"
+                            + " is not a valid priority");
+                }
             }
             fail("Should throw exception on illegal priority");
         } catch (UnknownID e) {
@@ -201,16 +206,17 @@ public class ChannelsTester extends TestCase {
         Settings.set(Settings.HARVEST_CONTROLLER_PRIORITY, "ILLEGALPRIORITY");
         Channels.reset();
         try {
-            String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+            String priority
+                = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
             ChannelID result;
             if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
                 result = Channels.getAnyLowpriorityHaco();
-            } else
-            {
+            } else {
                 if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
                     result = Channels.getAnyHighpriorityHaco();
-                } else
+                } else {
                     throw new UnknownID(priority + " is not a valid priority");
+                }
             }
             fail("Should throw exception on illegal priority");
         } catch (UnknownID e) {
@@ -224,10 +230,10 @@ public class ChannelsTester extends TestCase {
     public void testGetBAMONForLocation() {
         ChannelID ch1 = Channels.getBaMonForLocation("KB");
         assertFalse("Should get channel for KB, not " + ch1.getName(),
-                ch1.getName().lastIndexOf("KB")==-1);
+                ch1.getName().lastIndexOf("KB") == -1);
         ChannelID ch2 = Channels.getBaMonForLocation("SB");
         assertFalse("Should get channel for SB, not " + ch2.getName(),
-                ch2.getName().lastIndexOf("SB")==-1);
+                ch2.getName().lastIndexOf("SB") == -1);
         try {
             ChannelID ch3 = Channels.getBaMonForLocation("AB");
             fail("Should throw exception, not return " + ch3.getName());
@@ -239,32 +245,35 @@ public class ChannelsTester extends TestCase {
         Channels.reset();
         ChannelID ch = Channels.getBaMonForLocation("SB");
         StringAsserts.assertStringContains(
-                "Should find channel even when environment contains underscores",
+                "Should find channel even when environment "
+                + "contains underscores",
                 "SB", ch.getName());
     }
 
-      
+
     /**
      * Verify that getting the JMS channel for the index server
      *  - does not throw an exception
-     *  - returns a non-null value
+     *  - returns a non-null value.
      */
     public void testGetThisIndexClient() {
-        assertNotNull("Should return a non-null ChannelID",Channels.getThisIndexClient());
+        assertNotNull("Should return a non-null ChannelID",
+                Channels.getThisIndexClient());
     }
     /**
      * Verify that getting the JMS channel for the local index client
      *  - does not throw an exception
-     *  - returns a non-null value
+     *  - returns a non-null value.
      */
     public void testGetTheIndexServer() {
-        assertNotNull("Should return a non-null ChannelID",Channels.getTheIndexServer());
+        assertNotNull("Should return a non-null ChannelID",
+                Channels.getTheIndexServer());
     }
-    
+
     /**
      * Test if static method Channels.isTopic(String name) works.
-     * Only names containing substring "ALL_BA" is considered a name 
-     * for a topic.  
+     * Only names containing substring "ALL_BA" is considered a name
+     * for a topic.
      */
     public void testIsTopic() {
         ChannelID[]queues = new ChannelID[]{
@@ -278,13 +287,13 @@ public class ChannelsTester extends TestCase {
                 Channels.getTheSched(),
                 Channels.getThisIndexClient()
         };
-        for (ChannelID queue: queues) {
+        for (ChannelID queue : queues) {
            String queueName = queue.getName();
-           assertFalse(queueName + " is not a topic", 
+           assertFalse(queueName + " is not a topic",
                    Channels.isTopic(queueName));
         }
-  
+
         String topicName = Channels.getAllBa().getName();
         assertTrue(topicName + " is a topic", Channels.isTopic(topicName));
-    }    
+    }
 }

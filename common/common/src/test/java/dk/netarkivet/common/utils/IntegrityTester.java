@@ -47,12 +47,12 @@ import dk.netarkivet.testutils.TestFileUtils;
  * Integrity tests for the package dk.netarkivet.common.utils.
  */
 public class IntegrityTester extends TestCase {
-    private final static File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
-    private final static File ORIGINALS = new File(BASE_DIR, "fileutils_data");
-    private final static File WORKING = new File(BASE_DIR, "working");
-    private final static File SUBDIR = new File(WORKING, "subdir");
-    private final static File SUBDIR2 = new File(WORKING, "subdir2");
-    private final static File SUBDIR3 = new File(WORKING, "subdir3");
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
+    private static final File ORIGINALS = new File(BASE_DIR, "fileutils_data");
+    private static final File WORKING = new File(BASE_DIR, "working");
+    private static final File SUBDIR = new File(WORKING, "subdir");
+    private static final File SUBDIR2 = new File(WORKING, "subdir2");
+    private static final File SUBDIR3 = new File(WORKING, "subdir3");
     private static final int BLOCKSIZE = 32768;
     private static final long LARGE =((long) Integer.MAX_VALUE) + 1L;
     public static final String LARGE_FILE = "largeFile";
@@ -118,7 +118,8 @@ public class IntegrityTester extends TestCase {
     public void testGzipLargeFile() throws IOException {
         byte[] block = new byte[BLOCKSIZE];
         File largeFile = new File(WORKING, LARGE_FILE);
-        OutputStream os = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(largeFile)));
+        OutputStream os = new GZIPOutputStream(
+                new BufferedOutputStream(new FileOutputStream(largeFile)));
         System.out.println("Creating " + 5 * LARGE + " bytes file "
                 + "- this will take a long time");
         block[1] = 'a';
@@ -128,18 +129,20 @@ public class IntegrityTester extends TestCase {
         }
         os.close();
 
-        InputStream is = new LargeFileGZIPInputStream(new BufferedInputStream(new FileInputStream(largeFile)));
+        InputStream is = new LargeFileGZIPInputStream(
+                new BufferedInputStream(new FileInputStream(largeFile)));
         System.out.println("Reading " + 5 * LARGE + " bytes file "
                 + "- this will take a long time");
         byte[] buf = new byte[BLOCKSIZE];
         for (long l = 0; l < 5 * LARGE / ((long) BLOCKSIZE) + 1L; l++) {
-            int totalRead=0;
-            int read=0;
-            while(totalRead != block.length && read != -1) {
-                read = is.read(buf, totalRead, buf.length-totalRead);
+            int totalRead = 0;
+            int read = 0;
+            while (totalRead != block.length && read != -1) {
+                read = is.read(buf, totalRead, buf.length - totalRead);
                 totalRead += read;
             }
-            assertEquals("Should have read full length of block " + l, block.length, totalRead);
+            assertEquals("Should have read full length of block " + l,
+                    block.length, totalRead);
             for (int i = 0; i < 8; i++) {
             assertEquals("Read block " + l + " should be equals at " + i,
                     block[i], buf[i]);

@@ -40,31 +40,34 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
- * Unit test for webarchive API
- * The logging of webarchive operations is tested
+ * Unit test for webarchive API.
+ * The logging of webarchive operations is tested.
  */
 public class ArcRepositoryTesterLog extends TestCase {
     protected final Logger log = Logger.getLogger(getClass().getName());
 
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
-    private static File CONTROLLER_LOG_FILE = new File("tests/testlogs/netarkivtest.log");
+    private static File CONTROLLER_LOG_FILE 
+    	= new File("tests/testlogs/netarkivtest.log");
 
     private static final File TEST_DIR =
             new File("tests/dk/netarkivet/archive/arcrepository/data");
 
     /**
-     * The directory storing the arcfiles in the already existing bitarchive - including credentials and admin-files
+     * The directory storing the arcfiles in the already existing bitarchive
+     * - including credentials and admin-files.
      */
     private static final File ORIGINALS_DIR =
             new File(new File(TEST_DIR, "logging"), "originals");
     /**
-     * The properties-file containg properties for logging in unit-tests
+     * The properties-file containing properties for logging in unit-tests
      */
     private static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
 
     /**
-     * List of files that can be used in the scripts (content of the ORIGINALS_DIR)
+     * List of files that can be used in the scripts 
+     * (content of the ORIGINALS_DIR).
      */
     private static final List FILES =
             Arrays.asList(new String[]{"logging1.ARC",
@@ -83,10 +86,11 @@ public class ArcRepositoryTesterLog extends TestCase {
      * The message put in the log when an arc file is not found.
      */
     private static final String ERROR_MESSAGE_ARCREPOSITORY_NO_ARCFILE =
-            "dk.netarkivet.archive.arcrepository.ArcRepository get\nWARNING: GET";
+            "dk.netarkivet.archive.arcrepository.ArcRepository get\n"
+    		+ "WARNING: GET";
 
     /**
-     * A Controller object
+     * A Controller object.
      */
     ArcRepository arcRepos;
 
@@ -97,7 +101,8 @@ public class ArcRepositoryTesterLog extends TestCase {
     protected void setUp() throws IOException {
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
-        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
+        FileInputStream fis = new FileInputStream(
+        		"tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().reset();
         FileUtils.removeRecursively(CONTROLLER_LOG_FILE);
         LogManager.getLogManager().readConfiguration(fis);
@@ -111,7 +116,7 @@ public class ArcRepositoryTesterLog extends TestCase {
     }
 
     /**
-     * Test logging of store command
+     * Test logging of store command.
      */
     public void testLogStore() throws Exception {
         String fileName = (String)FILES.get(0);

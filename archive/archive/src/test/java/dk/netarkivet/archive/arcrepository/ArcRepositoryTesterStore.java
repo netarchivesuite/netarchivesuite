@@ -69,7 +69,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                                                        "originals");
 
     /**
-     * The file that is uploaded during the test
+     * The file that is uploaded during the test.
      */
     private static final File STORABLE_FILE = new File(ORIGINALS_DIR,
                                                        "NetarchiveSuite-store1.arc");
@@ -90,7 +90,7 @@ public class ArcRepositoryTesterStore extends TestCase {
     }
 
     /**
-     * The directory used for controller admindata
+     * The directory used for controller admindata.
      */
     private static final File ADMINDATA_DIR = new File(TEST_DIR, "admindata");
 
@@ -100,7 +100,7 @@ public class ArcRepositoryTesterStore extends TestCase {
     static final File ARCHIVE_DIR = new File(TEST_DIR, "bitarchive");
 
     /**
-     * The directory used for storing temporary files
+     * The directory used for storing temporary files.
      */
     private static final File TEMP_DIR = new File(TEST_DIR, "tempdir");
 
@@ -153,7 +153,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * but the confirmation was lost, so that the harvester
      * will want to store the file again.
      *
-     * If the first store() was succesful, the second one
+     * If the first store() was successful, the second one
      * should be too (providing the file name and the MD5 is the same).
      *
      * @throws InterruptedException
@@ -285,8 +285,8 @@ public class ArcRepositoryTesterStore extends TestCase {
 
     /**
      * Tests that if we call store with a new file, a store message is sent to
-     * the bitarchives
-     * Also test that state is now upload started for all bitarchives
+     * the bitarchives.
+     * Also tests that state is now UPLOAD_STARTED for all bitarchives
      */
     public void testStoreNewFile() throws IOException {
         //Set listeners

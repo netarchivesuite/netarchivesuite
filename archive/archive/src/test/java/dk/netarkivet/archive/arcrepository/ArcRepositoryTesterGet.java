@@ -58,7 +58,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
 
     /**
-     * The test log directories for Controller and AdminData
+     * The test log directories for Controller and AdminData.
      */
     private static final File TEST_DIR = new File(
             "tests/dk/netarkivet/archive/arcrepository/data/get");
@@ -73,7 +73,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     private static final File SERVER_DIR = new File(WORKING_DIR, "server1");
 
     /**
-     * The test log directories for Controller and AdminData
+     * The test log directories for Controller and AdminData.
      */
     private static final File CLOG_DIR = new File(WORKING_DIR, "log/controller");
 
@@ -85,8 +85,8 @@ public class ArcRepositoryTesterGet extends TestCase {
      * List of files that can be used in the scripts (content of the
      * ORIGINALS_DIR)
      */
-    private static final List<String> GETTABLE_FILES = Arrays.asList(new String[] {
-            "get1.ARC", "get2.ARC" });
+    private static final List<String> GETTABLE_FILES
+    	= Arrays.asList(new String[] {"get1.ARC", "get2.ARC" });
 
     /** A bitarchive server to communicate with. */
     BitarchiveServer bitArchiveServer;
@@ -101,7 +101,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     PreservationArcRepositoryClient client;
 
     /**
-     * Set up the test
+     * Set up the test.
      */
     protected void setUp() {
         Settings.reload();
@@ -148,7 +148,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     }
 
     /**
-     * This tests the get()-method for a non-existing-file
+     * This tests the get()-method for a non-existing-file.
      */
     public void testGetNonExistingFile() {
         BitarchiveRecord bar = client.get("nosuchfile.arc", (long) 0);
@@ -156,7 +156,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     }
 
     /**
-     * this tests the get()-method for an existing file
+     * this tests the get()-method for an existing file.
      */
     public void testGetExistingFile() {
         BitarchiveRecord bar = client.get((String) GETTABLE_FILES.get(1),
@@ -172,12 +172,14 @@ public class ArcRepositoryTesterGet extends TestCase {
 
     /**
      * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord
+     * out of the BitarchiveRecord.
      */
     public void testGetFile() throws IOException {
         arcRepository.close();
-        DummyGetFileMessageReplyServer dServer = new DummyGetFileMessageReplyServer();
-        File result = new File(FileUtils.createUniqueTempDir(WORKING_DIR,"testGetFile"),(String)GETTABLE_FILES.get(1));
+        DummyGetFileMessageReplyServer dServer
+        	= new DummyGetFileMessageReplyServer();
+        File result = new File(FileUtils.createUniqueTempDir(
+        		WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
         Location location = Location.get(Settings
                 .get(Settings.ENVIRONMENT_THIS_LOCATION));
         client.getFile(GETTABLE_FILES.get(1), location, result);
@@ -193,18 +195,23 @@ public class ArcRepositoryTesterGet extends TestCase {
 
     /**
      * this tests get get()-method for an existing file - getting get File-name
-     * out of the BitarchiveRecord
+     * out of the BitarchiveRecord.
      */
     public void testRemoveAndGetFile() throws IOException {
         arcRepository.close();
         client.close();
         client = ArcRepositoryClientFactory.getPreservationInstance();
         new DummyRemoveAndGetFileMessageReplyServer();
+        final File bitarchiveFiledir = new File(
+        		Settings.get(Settings.BITARCHIVE_SERVER_FILEDIR),
+        		"filedir");
         client.removeAndGetFile((String) GETTABLE_FILES.get(1),
-                                Settings.get(Settings.ENVIRONMENT_THIS_LOCATION),
+                              Settings.get(Settings.ENVIRONMENT_THIS_LOCATION),
                                 "42",
-                                MD5.generateMD5onFile(new File(new File(Settings.get(Settings.BITARCHIVE_SERVER_FILEDIR),"filedir"),
-                                                      (String) GETTABLE_FILES.get(1))));
+                                MD5.generateMD5onFile(
+                                		new File(bitarchiveFiledir,
+                                        (String) GETTABLE_FILES.get(1)))
+                                        );
         File copyOfFile = new File(FileUtils.getTempDir(),
                                    (String) GETTABLE_FILES.get(1));
         assertTrue("Must have copied file to commontempdir",
@@ -224,7 +231,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     }
 
     /**
-     * this tests the getting of actual data (asuming that the length is not
+     * this tests the getting of actual data (assuming that the length is not
      * null) is the length of getData() > 0 the next test checks the first 55
      * chars !
      */
@@ -235,15 +242,18 @@ public class ArcRepositoryTesterGet extends TestCase {
         if (bar.getLength() == 0L) {
             fail("No data in BitarchiveRecord");
         } else {
-            // BitarchiveRecord.getData() now returns a InputStream instead of a byte[]
-            String data = new String(TestUtils.inputStreamToBytes(bar.getData(), (int) bar.getLength())).substring(0, 55);
+            // BitarchiveRecord.getData() now returns a InputStream 
+        	// instead of a byte[]
+            String data = new String(TestUtils.inputStreamToBytes(bar.getData(),
+            		(int) bar.getLength())).substring(0, 55);
             assertEquals("First 55 chars of data should be correct", data,
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    "<?xml version=\"1.0\" "
+            		+ "encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
     }
 
     /**
-     * Test for index out of bounds
+     * Test for index out of bounds.
      */
     public void testGetIndexOutOfBounds() {
         try {
@@ -257,7 +267,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     }
 
     /**
-     * Test for index not pointing on ARC-record
+     * Test for index not pointing on ARC-record.
      */
     public void testGetIllegalIndex() {
         try {
@@ -305,8 +315,8 @@ public class ArcRepositoryTesterGet extends TestCase {
         }
 
         public void onMessage(Message msg) {
-            RemoveAndGetFileMessage netMsg = (RemoveAndGetFileMessage) JMSConnection
-                    .unpack(msg);
+            RemoveAndGetFileMessage netMsg 
+            	= (RemoveAndGetFileMessage) JMSConnection.unpack(msg);
             netMsg.setFile(new File(new File(BITARCHIVE_DIR, "filedir"),
                     (String) GETTABLE_FILES.get(1)));
             conn.reply(netMsg);

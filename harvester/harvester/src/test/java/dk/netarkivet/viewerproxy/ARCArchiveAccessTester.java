@@ -1,7 +1,7 @@
-/* File:             $Id$
- * Revision:         $Revision$
- * Date:             $Date$
- * Author:           $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Date:        $Date$
+ * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -83,7 +83,7 @@ public class ARCArchiveAccessTester extends TestCase {
      */
     private static URI GIF_URL;
     /**
-     * The key listed for GIF_URL
+     * The key listed for GIF_URL.
      */
     private static final ARCKey GIF_URL_KEY =
             new ARCKey(
@@ -243,7 +243,7 @@ public class ARCArchiveAccessTester extends TestCase {
     }
 
     /**
-     * Test that looking up a known URI gives a positive response code
+     * Test that looking up a known URI gives a positive response code.
      *
      * @throws IOException
      * @throws InterruptedException

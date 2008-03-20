@@ -46,11 +46,11 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
 
 /**
- *
+ * Unit tests for the class ArcRepositoryServer.
  */
 public class ArcRepositoryServerTester extends TestCase {
     /**
-     * The test log directories for Controller and AdminData
+     * The test log directories for Controller and AdminData.
      */
     private static final File TEST_DIR = new File(
             "tests/dk/netarkivet/archive/arcrepository/data/get");
@@ -63,7 +63,7 @@ public class ArcRepositoryServerTester extends TestCase {
                                                         "bitarchive1");
 
     /**
-     * The test log directories for Controller and AdminData
+     * The test log directories for Controller and AdminData.
      */
     private static final File CLOG_DIR = new File(WORKING_DIR,
                                                   "log/controller");
@@ -80,8 +80,8 @@ public class ArcRepositoryServerTester extends TestCase {
      * The files that are uploaded during the tests and that must be removed
      * afterwards.
      */
-    private static final List STORABLE_FILES = Arrays.asList(new String[]{
-            "get1.ARC", "get2.ARC"});
+    private static final List<String> STORABLE_FILES = Arrays.asList(
+            new String[]{"get1.ARC", "get2.ARC"});
 
     private File file;
 
@@ -114,7 +114,7 @@ public class ArcRepositoryServerTester extends TestCase {
     }
 
     /**
-     * Test visit() StoreMessage methods arguments
+     * Test visit() StoreMessage methods arguments.
      */
     public void testVisitStoreMessageArgumentsNotNull() {
         file = new File(new File(BITARCHIVE_DIR, "filedir"),
@@ -135,7 +135,7 @@ public class ArcRepositoryServerTester extends TestCase {
     }
 
     /**
-     * Test visit() BatchMessage methods arguments
+     * Test visit() BatchMessage methods arguments.
      */
     public void testVisitBatchMessageArgumentsNotNull() {
         ArcRepository arc = ArcRepository.getInstance();
@@ -185,7 +185,8 @@ public class ArcRepositoryServerTester extends TestCase {
         ArcRepository arc = ArcRepository.getInstance();
         try {
             new StoreMessage(Channels.getError(), file);
-            fail("Should get error making a storemessage with non-existing file");
+            fail("Should get error making a storemessage with "
+                    + "non-existing file");
         } catch (ArgumentNotValid e) {
             //expected
         }
@@ -225,7 +226,7 @@ public class ArcRepositoryServerTester extends TestCase {
     }
 
     /**
-     * Test message is resent
+     * Test message is resent.
      */
     public void testGet() {
         file = new File(BITARCHIVE_DIR, STORABLE_FILES.get(0).toString());

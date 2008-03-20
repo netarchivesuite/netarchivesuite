@@ -28,23 +28,25 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
+ * TesterSuite for the classes in package 
+ * dk.netarkivet.archive.arcrepository.distribute.
  *
  */
-
 public class ArcrepositoryDistributeTesterSuite {
+    
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ArcrepositoryDistributeTesterSuite.class.getName());
+        suite = new TestSuite(
+                ArcrepositoryDistributeTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(JMSArcRepositoryClientTester.class);
@@ -52,8 +54,9 @@ public class ArcrepositoryDistributeTesterSuite {
         suite.addTestSuite(StoreMessageTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", ArcrepositoryDistributeTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading",
+                ArcrepositoryDistributeTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

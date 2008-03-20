@@ -30,17 +30,13 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.archive.arcrepositoryadmin.ArchiveStoreState;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
@@ -51,7 +47,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
- * Unittests for the ArcRepository class.
+ * Unit tests for the ArcRepository class.
  */
 public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
@@ -69,10 +65,13 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * The files that are uploaded during the tests and that must be removed
      * afterwards.
      */
-    private static final String[] STORABLE_FILES = new String[]{"NetarchiveSuite-store1.arc", "NetarchiveSuite-store2.arc"};
+    private static final String[] STORABLE_FILES
+    	= new String[]{
+    		"NetarchiveSuite-store1.arc", 
+    		"NetarchiveSuite-store2.arc"};
 
 
-    /* The bitarchive servers we need to communicate with */
+    /* The bitarchive servers we need to communicate with. */
     BitarchiveServer archiveServer1;
     BitarchiveServer archiveServer2;
 
@@ -96,7 +95,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
 
     /**
-     * Tests if the store operation generates and stores a valid checksum in the reference table (AdminData).
+     * Tests if the store operation generates and stores a valid checksum
+     * in the reference table (AdminData).
      */
     public void testStoreCompletedChecksum() {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
@@ -110,19 +110,23 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         StoreMessage msg = new StoreMessage(Channels.getError(), file);
         arcRepos.store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(file, this);
-        String refTableSum = UpdateableAdminData.getUpdateableInstance().getCheckSum(file.getName());
+        String refTableSum = UpdateableAdminData.getUpdateableInstance()
+        	.getCheckSum(file.getName());
         assertEquals(refTableSum, orgCheckSum);
     }
 
     /**
-     * Tests that Controller.getCheckSum() behaves as expected when using a reference to a non-stored file.
+     * Tests that Controller.getCheckSum() behaves as expected when using a
+     * reference to a non-stored file.
      */
     public void testGetChecksumNotStoredFile() {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
         // do nothing with file - e.g. not storing it
-        // thus checksum reference table should not contain an entry for the file, i.e. getCheckSum() should return null:
+        // thus checksum reference table should not contain an entry for
+        // the file, i.e. getCheckSum() should return null:
         try {
-            UpdateableAdminData.getUpdateableInstance().getCheckSum(file.getName());
+            UpdateableAdminData.getUpdateableInstance()
+            	.getCheckSum(file.getName());
             fail("Should throw UnknownID when getting non-existing checksum");
         } catch (UnknownID e) {
             //Expected
@@ -130,7 +134,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
     }
 
     /**
-     * Tests if an attempt to store an already uploaded/stored file produces the expected behavior: a PermissionDenied should be thrown,
+     * Tests if an attempt to store an already uploaded/stored file produces
+     * the expected behavior: a PermissionDenied should be thrown,
      * and the original entry in checksum reference table remains unaffected.
      */
     public void testStoreFailedAlreadyUploadedChecksum() {
@@ -145,32 +150,43 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                 e.printStackTrace();
                 fail("Unexpected IOException thrown at generateMD5onFile()");
             }
-            JMSConnection con = JMSConnectionFactory.getInstance();
+            //JMSConnection con = JMSConnectionFactory.getInstance();
             StoreMessage msg = new StoreMessage(Channels.getError(), file);
             arcRepos.store(msg.getRemoteFile(), msg);
             UploadWaiting.waitForUpload(file, this);
-            String refTableSum = UpdateableAdminData.getUpdateableInstance().getCheckSum(file.getName());
-            assertEquals("Stored checksum and reference checksum should be equal", refTableSum, orgCheckSum);
+            String refTableSum = UpdateableAdminData.getUpdateableInstance()
+            	.getCheckSum(file.getName());
+            assertEquals(
+            			"Stored checksum and reference checksum should be equal", 
+            			refTableSum, orgCheckSum);
             storedCheckSum = refTableSum;
             // attempting to upload/store the file again:
             msg = new StoreMessage(Channels.getError(), file);
             arcRepos.store(msg.getRemoteFile(), msg);
             UploadWaiting.waitForUpload(file, this);
         } catch (dk.netarkivet.common.exceptions.PermissionDenied e) {
-            String refTableSum = UpdateableAdminData.getUpdateableInstance().getCheckSum(file.getName());
-            // the checksum stored in reference table (during first store operation) should be unaffected
+            String refTableSum = UpdateableAdminData.getUpdateableInstance()
+            	.getCheckSum(file.getName());
+            // the checksum stored in reference table (during first store
+            // operation) should be unaffected
             // by this second attempt to store the file:
-            assertEquals("Stored checksum and reference checksum should be equal", refTableSum, storedCheckSum);
+            assertEquals(
+            		"Stored checksum and reference checksum should be equal", 
+            		refTableSum, storedCheckSum);
         } catch (IOFailure e) {
             e.printStackTrace();
-            fail("Unexpected IOException thrown while trying to re-upload file: " + e);
+            fail("Unexpected IOException thrown "
+            		+ "while trying to re-upload file: " + e);
         }
 
     }
 
     /** Check what happens if we're being sent a checksum while uploading.
      * Test for bug #410. */
-    public void testStoreChecksumWhileUploading() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+    public void testStoreChecksumWhileUploading() 
+    	throws NoSuchMethodException, IllegalAccessException, 
+    	InvocationTargetException, NoSuchFieldException {
+    	
         final String correctChecksum = "correct checksum";
         final String ba1Name = "ba1";
         final String ba2Name = "ba2";
@@ -178,7 +194,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
 
         String arcFileName = "store1a.ARC";
-        ArchiveStoreState generalState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState generalState 
+        //	= new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(arcFileName, null, correctChecksum);
         ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
         ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
@@ -224,9 +241,9 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                 Channels.getAllBa(), Channels.getAnyBa(),
                 Channels.getTheBamon()));
         // Have to use a real file here, as startUpload will grab the name
-        outstandingRemoteFiles.put(arcFileName, new TestRemoteFile(new File(ORIGINALS_DIR, STORABLE_FILES[1]),
-                                                                    false, false,
-                                                                    false));
+        outstandingRemoteFiles.put(arcFileName, new TestRemoteFile(
+        		new File(ORIGINALS_DIR, STORABLE_FILES[1]),
+                false, false,false));
         m.invoke(arcRepos, new Object[] { arcFileName,
                                           ba1Name,
                                           correctChecksum,

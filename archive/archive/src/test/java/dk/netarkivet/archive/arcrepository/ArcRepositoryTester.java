@@ -60,8 +60,10 @@ public class ArcRepositoryTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
+        TestFileUtils.copyDirectoryNonCVS(
+                TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
+                TestInfo.WORKING_DIR.getAbsolutePath());
     }
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
@@ -73,7 +75,7 @@ public class ArcRepositoryTester extends TestCase {
     }
 
     /**
-     * Test that BitarchiveMonitorServer is a singleton
+     * Test that BitarchiveMonitorServer is a singleton.
      */
     public void testIsSingleton() {
         ClassAsserts.assertSingleton(ArcRepository.class);
@@ -90,12 +92,12 @@ public class ArcRepositoryTester extends TestCase {
     }
 
     /**
-     * Test parameters
+     * Test parameters.
      */
     public void testGetBitarchiveClientFromLocationNameParameters() {
         ArcRepository a = ArcRepository.getInstance();
         /**
-         * test with null parameter
+         * test with null parameter.
          */
         try {
             a.getBitarchiveClientFromLocationName(null);
@@ -105,7 +107,7 @@ public class ArcRepositoryTester extends TestCase {
         }
 
         /**
-         * Test with invalid parameter
+         * Test with invalid parameter.
          */
         try {
             a.getBitarchiveClientFromLocationName("-1");
@@ -116,33 +118,32 @@ public class ArcRepositoryTester extends TestCase {
     }
 
     /**
-     * Test a valid BitarchiveClient is returned
+     * Test a valid BitarchiveClient is returned.
      */
     public void testGetBitarchiveClientFromLocationName() {
         ArcRepository a = ArcRepository.getInstance();
-        String locations[] = Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES);
-        for(int n=0; n<locations.length; n++) {
-            BitarchiveClient bc = a.getBitarchiveClientFromLocationName(locations[n]);
+        String[] locations = Settings.getAll(
+                Settings.ENVIRONMENT_LOCATION_NAMES);
+        for(int n = 0; n<locations.length; n++) {
+            BitarchiveClient bc = a.getBitarchiveClientFromLocationName(
+                    locations[n]);
             assertNotNull("Should return a valid BitarchiveClient", bc);
         }
     }
 
     /**
-     *
-     *
+     * Test that the readChecksum() method works as 
+     * required.
      */
-    public void testProcessDataUploaded() {
-
-    }
-
     public void testReadChecksum() throws Throwable {
         readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum",
-                new Class[] { File.class, String.class });
+                new Class[] {File.class, String.class });
         readChecksum.setAccessible(true);
 
         try {
             // Missing file
-            String result = (String)readChecksum.invoke(ArcRepository.getInstance(),
+            String result = (String) readChecksum.invoke(
+                    ArcRepository.getInstance(),
                     TestInfo.TMP_FILE, "foobar");
             fail("Should get failure on missing file, not " + result);
         } catch (InvocationTargetException e) {
@@ -201,7 +202,7 @@ public class ArcRepositoryTester extends TestCase {
             throws Throwable, InvocationTargetException {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
         try {
-            return (String)readChecksum.invoke(ArcRepository.getInstance(),
+            return (String) readChecksum.invoke(ArcRepository.getInstance(),
                     TestInfo.TMP_FILE, arcfilename);
         } catch (InvocationTargetException e) {
             throw e.getCause();

@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.arcrepositoryadmin;
-/**
- * lc forgot to comment this!
- */
 
 import junit.framework.TestCase;
 
@@ -32,7 +29,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
-
+/**
+ * Unit tests for the class ReadOnlyAdminData.
+ */
 public class ReadOnlyAdminDataTester extends TestCase {
     public ReadOnlyAdminDataTester(String s) {
         super(s);
@@ -85,7 +84,8 @@ public class ReadOnlyAdminDataTester extends TestCase {
         Thread.sleep(1000);
 
         // Also check that we clear the entries at update
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG,
+        TestFileUtils.copyDirectoryNonCVS(
+                TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG,
                 TestInfo.TEST_DIR);
         ad.synchronize();
         // Now the "foo" file should be gone.

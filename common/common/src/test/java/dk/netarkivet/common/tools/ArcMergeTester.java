@@ -41,10 +41,16 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
 
+/**
+ * Unit test for the ArcMerge tool.
+ */
 public class ArcMergeTester extends TestCase {
+    
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(
+            TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
+    
     public void setUp(){
         mtf.setUp();
         pss.setUp();
@@ -56,11 +62,14 @@ public class ArcMergeTester extends TestCase {
         mtf.tearDown();
     }
     public void testMain() throws IOException {
-        File arcFile = new File(TestInfo.WORKING_DIR,"output.arc");
+        File arcFile = new File(TestInfo.WORKING_DIR, "output.arc");
         PrintStream myOut = new PrintStream(new FileOutputStream(arcFile));
         try {
             System.setOut(myOut);
-            ArcMerge.main(new String[]{TestInfo.ARC1.getAbsolutePath(),TestInfo.ARC2.getAbsolutePath(),TestInfo.ARC3.getAbsolutePath()});
+            ArcMerge.main(new String[]{
+                    TestInfo.ARC1.getAbsolutePath(),
+                    TestInfo.ARC2.getAbsolutePath(),
+                    TestInfo.ARC3.getAbsolutePath()});
         } catch (SecurityException e) {
             assertEquals("Should have exited normally",
                          0, pse.getExitValue());
@@ -71,17 +80,23 @@ public class ArcMergeTester extends TestCase {
         Iterator<ArchiveRecord> it = r.iterator();
         it.next(); //Skip ARC file header
         //Read the three records, checking mime-type, uri and content.
-        assertMatches(it.next(),TestInfo.ARC1_URI,TestInfo.ARC1_MIME,TestInfo.ARC1_CONTENT);
-        assertMatches(it.next(),TestInfo.ARC2_URI,TestInfo.ARC2_MIME,TestInfo.ARC2_CONTENT);
-        assertMatches(it.next(),TestInfo.ARC3_URI,TestInfo.ARC3_MIME,TestInfo.ARC3_CONTENT);
+        assertMatches(it.next(),
+                TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
+        assertMatches(it.next(),
+                TestInfo.ARC2_URI, TestInfo.ARC2_MIME, TestInfo.ARC2_CONTENT);
+        assertMatches(it.next(),
+                TestInfo.ARC3_URI, TestInfo.ARC3_MIME, TestInfo.ARC3_CONTENT);
         //No more records, please.
-        assertFalse("Should only have the file header + given records",it.hasNext());
+        assertFalse("Should only have the file header + given records",
+                it.hasNext());
     }
 
     /**
-     * Asserts that the given ARCRecord has the specified uri, mimetype and content.
+     * Asserts that the given ARCRecord has the specified
+     * uri, mimetype and content.
      */
-    private static void assertMatches(ArchiveRecord record, String uri, String mime, String content) {
+    private static void assertMatches(
+            ArchiveRecord record, String uri, String mime, String content) {
         ARCRecord arcRecord = (ARCRecord) record;
         ARCRecordMetaData meta = arcRecord.getMetaData();
         assertEquals("Should record the object under the original URI",
@@ -90,6 +105,6 @@ public class ArcMergeTester extends TestCase {
                 mime, meta.getMimetype());
         String foundContent = ARCTestUtils.readARCRecord(arcRecord);
         assertEquals("Should copy content unchanged",
-                content,foundContent);
+                content, foundContent);
     }
 }

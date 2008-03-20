@@ -43,10 +43,15 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
 
+/**
+ * Unit test for the ArcWrap tool.
+ */
 public class ArcWrapTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(
+            TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
+    
     public void setUp(){
         mtf.setUp();
         pss.setUp();
@@ -58,18 +63,20 @@ public class ArcWrapTester extends TestCase {
         mtf.tearDown();
     }
     public void testMain() throws IOException {
-        File storeFile = new File("tests/dk/netarkivet/common/tools/ArcWrapTester.java");
+        File storeFile
+            = new File("tests/dk/netarkivet/common/tools/ArcWrapTester.java");
         String mime = "text/plain";
         String arcUri = "testdata://netarkivet.dk/test/code/ArcWrapTester.java";
-        File arcFile = new File(TestInfo.WORKING_DIR,"test.arc");
+        File arcFile = new File(TestInfo.WORKING_DIR, "test.arc");
         OutputStream myOut = new FileOutputStream(arcFile);
         System.setOut(new PrintStream(myOut));
         try {
-            ArcWrap.main(new String[]{storeFile.getAbsolutePath(),arcUri,mime});
+            ArcWrap.main(new String[]{storeFile.getAbsolutePath(),
+                    arcUri, mime});
         } catch (SecurityException e) {
             assertEquals("Should have exited normally",
                          0, pse.getExitValue());
-        }        
+        }
         myOut.close();
         //Put an ARCReader on top of the file.
         ARCReader r = ARCReaderFactory.get(arcFile);
@@ -79,11 +86,11 @@ public class ArcWrapTester extends TestCase {
         ARCRecord record = (ARCRecord) it.next();
         ARCRecordMetaData meta = record.getMetaData();
         assertEquals("Should record the object under the given URI",
-                arcUri,meta.getUrl());
+                arcUri, meta.getUrl());
         assertEquals("Should indicate the intended MIME type",
-                mime,meta.getMimetype());
+                mime, meta.getMimetype());
         String foundContent = ARCTestUtils.readARCRecord(record);
         assertEquals("Should store content unchanged",
-                FileUtils.readFile(storeFile),foundContent);
+                FileUtils.readFile(storeFile), foundContent);
     }
 }

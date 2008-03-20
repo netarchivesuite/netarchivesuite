@@ -34,13 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
-import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -55,9 +53,11 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
- * NB: Denne fil var tidligere ChecksumJobTester, men tester batch mere end
- * ChecksumJob.  Derfor flyttet hertil, men ikke rettet mere til. Specielt
- * ligger dens testdata stadig under bitperservation.
+ * NB: This class was formerly known as ChecksumJobTester, but it tests
+ * batch-functionality more than it tests the class ChecksumJob.
+ * Therefore it was moved to this package from ??, but some adjusting still
+ * needs to be done. Specifically,some of the test data for this class are still
+ * located in the bitpreservation package.
  */
 public class ArcRepositoryTesterBatch extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -123,7 +123,6 @@ public class ArcRepositoryTesterBatch extends TestCase {
      */
     protected void tearDown() throws Exception {
         super.tearDown();
-        //ServerSetUpBatch.tearDown();
         c.close(); //Close down ArcRepository controller
         bam_server.close();
         arClient.close();
@@ -135,7 +134,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
 
     /**
      * Tests that ordinary, non-failing execution of a batch job writes output
-     * back to reply message
+     * back to reply message.
      */
     public void testNoOfFilesProcessed() {
         assertTrue("Should have more than zero files in the test directory!",
@@ -145,14 +144,14 @@ public class ArcRepositoryTesterBatch extends TestCase {
                                                  Settings.get(
                                                          Settings.ENVIRONMENT_THIS_LOCATION));
         int processed = batchStatus.getNoOfFilesProcessed();
-        assertEquals("No of files processed: " + processed
+        assertEquals("Number of files processed: " + processed
                      + " does not equal number of given files",
                      testFiles.length, processed);
     }
 
     /**
      * Tests that a checkSum job can write output via a RemoteFile, one line of
-     * output per file
+     * output per file.
      */
     public void testOrdinaryRunRemoteOutput() {
         ChecksumJob jobTest = new ChecksumJob();
@@ -169,7 +168,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
     }
 
     /**
-     * Check that null arguments provoke exceptions
+     * Check that null arguments provoke exceptions.
      */
     public void testNullArgumentsToBatch() {
         try {
@@ -182,7 +181,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
     }
 
     /**
-     * Check that a batch job can be executed twice sequentially
+     * Check that a batch job can be executed twice sequentially.
      */
     public void testSequentialRuns() {
         ChecksumJob jobTest = new ChecksumJob();
@@ -209,14 +208,11 @@ public class ArcRepositoryTesterBatch extends TestCase {
 
     public void testGeneratedChecksum() throws IOException {
         ChecksumJob checkJob = new ChecksumJob();
-        ChannelID channelID = Channels.getAllBa();
-
-        //BatchStatus batchStatus = arcRepos.batch(checkJob, channelID, rf);
         BatchStatus batchStatus = arClient.batch(checkJob,
                                                  Settings.get(
                                                          Settings.ENVIRONMENT_THIS_LOCATION));
         batchStatus.getResultFile().copyTo(OUTPUT_FILE);
-        List jobChecksums = new ArrayList();
+        List<String> jobChecksums = new ArrayList<String>();
 
         assertTrue("Output file should exist", OUTPUT_FILE.exists());
         BufferedReader reader = new BufferedReader(
@@ -259,7 +255,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob job1 = new ChecksumJob();
         ChecksumJob job2 = null;
 
-        //We should probaly change state of job1 to something else than default state...
+        //We should probably change state of job1 to something else than default state...
 
         //Now serialize and deserialize the study object:
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

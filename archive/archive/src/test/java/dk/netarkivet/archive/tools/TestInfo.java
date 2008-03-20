@@ -27,19 +27,30 @@ package dk.netarkivet.archive.tools;
 import java.io.File;
 
 public class TestInfo {
-    static final File WORKING_DIR = new File("./tests/dk/netarkivet/archive/tools/working/");
-    static final File DATA_DIR = new File("./tests/dk/netarkivet/archive/tools/data/originals");
+    static final File WORKING_DIR 
+        = new File("./tests/dk/netarkivet/archive/tools/working/");
+    static final File DATA_DIR 
+        = new File("./tests/dk/netarkivet/archive/tools/data/originals");
 
     //Three ARC files with one record in each:
-    static final File ARC1 = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR,"test1.arc");
-    static final File ARC2 = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR,"test2.arc");
-    static final File ARC3 = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR,"test3.arc");
+    static final File ARC1 
+        = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
+              "test1.arc");
+    static final File ARC2 
+        = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
+                "test2.arc");
+    static final File ARC3 
+        = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
+                "test3.arc");
     //An index cache file:
-    static final File INDEX_DIR = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR,"2-3-cache");
+    static final File INDEX_DIR 
+        = new File(dk.netarkivet.archive.tools.TestInfo.WORKING_DIR, 
+                "2-3-cache");
     //A record listed in the index file:
     static final String TEST_ENTRY_URI
             = "http://www.kaarefc.dk/style.css";
 
-    static final String TEST_ENTRY_FILENAME = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+    static final String TEST_ENTRY_FILENAME 
+        = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
     static final long TEST_ENTRY_OFFSET = 8459;
 }

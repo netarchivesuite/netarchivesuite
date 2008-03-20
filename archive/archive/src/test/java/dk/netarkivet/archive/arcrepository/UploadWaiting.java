@@ -31,8 +31,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * Created by IntelliJ IDEA. User: csr Date: Mar 16, 2005 Time: 10:28:13 AM To
- * change this template use File | Settings | File Templates.
+ * Utility class to wait for some file to be uploaded to the bitarchive.
  */
 public class UploadWaiting {
 
@@ -40,8 +39,8 @@ public class UploadWaiting {
 
     /**
      * Assuming that someone asked the ArcRepository to store the given file,
-     * waits (but not forever) until all bitarchives are recorded has having
-     * completed (and verfied) their upload.
+     * waits (but not forever) until all bitarchives are recorded as having
+     * completed (and verified) their upload.
      *
      * @param file the file being uploaded
      * @param o    an object to synchronize with (for .wait()).

@@ -28,14 +28,11 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
- *
- * Created: Nov 5, 2004
+ * Test suite for the classes in 
+ * dk.netarkivet.archive.arcrepository.
  */
-
 public class ArcRepositoryTesterSuite {
-    public static Test suite()
-    {
+    public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(ArcRepositoryTesterSuite.class.getName());
 
@@ -53,9 +50,9 @@ public class ArcRepositoryTesterSuite {
         suite.addTestSuite(ArcRepositoryTesterBatch.class);
     }
 
-    public static void main(String args[])
-    {
-        String args2[] = {"-noloading", ArcRepositoryTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading",
+                ArcRepositoryTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

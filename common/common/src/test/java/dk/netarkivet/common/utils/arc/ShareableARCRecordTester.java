@@ -36,12 +36,13 @@ import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.common.utils.FileUtils;
 
-public class ShareableARCRecordTester extends TestCase
-{
+public class ShareableARCRecordTester extends TestCase {
+    
   //Reference to test file:
   private static final String ARC_DIR = "tests/dk/netarkivet/common/utils/arc/data/input/";
   private static final String ARC_FILE_NAME = "fyensdk.arc";
   private static final String RECORD_CONTENT_FILE_NAME = "last.obj";
+  
   //Describe the used test record:
   private static final long OFFSET = 643869;
   private static final String URL = "http://www.fyens.dk/picturecache/imageseries/getpicture.php?Width=100&pictureid=400";
@@ -50,123 +51,121 @@ public class ShareableARCRecordTester extends TestCase
   private static final String MIME_TYPE = "image/jpeg";
   private static final long LENGTH = 3837;
   private static byte[] correctContent;
+  
   //Our main instance of ShareableARCRecord:
   private ShareableARCRecord sar;
+  
   //Variables used for constructing sar:
   private File testFile;
   private ARCReader arcReader;
   private ARCRecord testRec;
 
-  public ShareableARCRecordTester() throws IOException{
+  public ShareableARCRecordTester() throws IOException {
   }
-  protected void setUp() throws IOException
-  {
-      correctContent = FileUtils.readBinaryFile(new File(ARC_DIR, RECORD_CONTENT_FILE_NAME));
-    testFile = new File(ARC_DIR, ARC_FILE_NAME);
-    arcReader = ARCReaderFactory.get(testFile);
-    testRec = (ARCRecord) (arcReader.get(OFFSET));
-    //TODO: Construction of sar should be put in each method? What if it fails?
-    sar = new ShareableARCRecord(testRec,testFile);
+
+  protected void setUp() throws IOException {
+      correctContent = FileUtils.readBinaryFile(
+              new File(ARC_DIR, RECORD_CONTENT_FILE_NAME));
+      testFile = new File(ARC_DIR, ARC_FILE_NAME);
+      arcReader = ARCReaderFactory.get(testFile);
+      testRec = (ARCRecord) (arcReader.get(OFFSET));
+      //TODO: Construction of sar should be put in each method? What if it fails?
+      sar = new ShareableARCRecord(testRec, testFile);
   }
+  
   protected void tearDown() throws IOException {
-    testRec.close();
-    arcReader.close();
+      testRec.close();
+      arcReader.close();
   }
+  
   /**
    * Verify that the constructor fails if it is given a null ARCRecord.
    * We allow a null File for flexibility.
    */
-  public void testConstructorWithNull()
-  {
-    ShareableARCRecord otherSar;
-    try{
-        otherSar = new ShareableARCRecord(testRec,null);
-        fail("Should not get a result with null parameter: " + sar);
-    } catch (Exception e)
-    {
+  public void testConstructorWithNull() {
+      ShareableARCRecord otherSar;
+      try {
+            otherSar = new ShareableARCRecord(testRec, null);
+            fail("Should not get a result with null parameter: " + sar);
+        } catch (Exception e) {
+            // Expected
+        }
+        try {
+            otherSar = new ShareableARCRecord(null, testFile);
+            fail("Should not get a result with null parameter: "
+                    + sar.toString());
+        } catch (Exception e) {
+            // Expected
+        }
+        try {
+            otherSar = new ShareableARCRecord(null, null);
+            fail("Should not get a result with null parameter: "
+                    + sar.toString());
+        } catch (Exception e) {
+            // Expected
+        }
     }
-    try{
-      otherSar = new ShareableARCRecord(null,testFile);
-      fail("Should not get a result with null parameter: " + sar.toString());
-    } catch (Exception e)
-    {
-      //This is correct.
-    }
-    try{
-      otherSar = new ShareableARCRecord(null,null);
-      fail("Should not get a result with null parameter: " + sar.toString());
-    } catch (Exception e)
-    {
-      //This is correct.
-    }
+  /**
+   * Verify that regular construction of a ShareableARCRecord succeeds.
+   */
+  public void testConstructor() {
+      try {
+          sar = new ShareableARCRecord(testRec, testFile);
+      } catch (Exception e) {
+          fail("Constructor should not throw an exception: " + e);
+      }
   }
   /**
-   * Verify that regular construction of a ShareableARCRecord suceeds.
+   * Verify that getFile() returns the same File
+   * that was given in the constructor.
    */
-  public void testConstructor()
-  {
-    try{
-      sar = new ShareableARCRecord(testRec,testFile);
-    } catch (Exception e)
-    {
-      fail(e.toString());
-    }
-    //This is correct.
+  public void testGetFile() {
+      File retFile = sar.getFile();
+      assertEquals(testFile, retFile);
   }
+  
   /**
-   * Verify that getFile() returns the same File that was given in the constructor.
+   * Verify that the returned metadata matches the metadata
+   * in the provided record.
    */
-  public void testGetFile()
-  {
-    File retFile = sar.getFile();
-    assertEquals(testFile,retFile);
-  }
-  /**
-   * Verify that the returned metadata matches the metadata in the provided record.
-   */
-  public void testGetMetadata()
-  {
+  public void testGetMetadata() {
     ARCRecordMetaData met = sar.getMetaData();
-    assertEquals(met.getUrl(),URL);
-    assertEquals(met.getIp(),IP);
-    assertEquals(met.getDate(),DATE_TIME);
-    assertEquals(met.getMimetype(),MIME_TYPE);
-    assertEquals(met.getLength(),LENGTH);
-    assertEquals(met.getOffset(),OFFSET);
+    assertEquals(met.getUrl(), URL);
+    assertEquals(met.getIp(), IP);
+    assertEquals(met.getDate(), DATE_TIME);
+    assertEquals(met.getMimetype(), MIME_TYPE);
+    assertEquals(met.getLength(), LENGTH);
+    assertEquals(met.getOffset(), OFFSET);
   }
   /**
-   * Verify that readAll() returns the given object in its entirity.
+   * Verify that readAll() returns the given object in its entirety.
    * Tests bug #11.
    */
   public void testReadAll(){
-    byte[] output = null;
-    try
-    {
-      output = sar.readAll();
-    }
-    catch (IOException e)
-    {
-      fail(e.toString());
-    };
-    assertEquals(LENGTH, output.length);
-    assertTrue(Arrays.equals(correctContent, output));
-  }
+      byte[] output = null;
+      try {
+          output = sar.readAll();
+      } catch (IOException e) {
+          fail(e.toString());
+      }
+      assertEquals(LENGTH, output.length);
+      assertTrue(Arrays.equals(correctContent, output));
+      }
   /**
    * Verify that getObjectAsInputStream() returns a stream that represents
-   * the given object in its entirity.
+   * the given object in its entirety.
    */
   public void testGetObjectAsInputStream() throws IOException {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try {
           InputStream is = sar.getObjectAsInputStream();
           int ch = is.read();
-          while(ch >=0){
+          while (ch >= 0) {
               baos.write(ch);
               ch = is.read();
           }
           is.close();
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
           fail(e.toString());
       }
       byte[] output = baos.toByteArray();
@@ -176,7 +175,7 @@ public class ShareableARCRecordTester extends TestCase
 
   }
 
-    public void testGetObjectAsInputStreamChunked() throws IOException {
+  public void testGetObjectAsInputStreamChunked() throws IOException {
         // Check that reading chunks also works
         testFile = new File(TestInfo.ORIGINALS_DIR, "2-metadata-1.arc");
         arcReader = ARCReaderFactory.get(testFile);
@@ -193,8 +192,7 @@ public class ShareableARCRecordTester extends TestCase
                // baos.write(buf);
             }
             is.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             fail(e.toString());
         }
         byte[] output = baos.toByteArray();
@@ -211,23 +209,18 @@ public class ShareableARCRecordTester extends TestCase
    * - in particular when position is changed in the InputStreams and
    *   the byte arrays are manipulated.
    */
-  public void testSharing()
-  {
-    try
-    {
+  public void testSharing() {
+    try {
       InputStream is = sar.getObjectAsInputStream();
       is.read();
       byte[] bar = sar.readAll();
-      for(int i=0;i<LENGTH;i++)
-      {
-        bar[i] = (byte)(i % 42);
+      for (int i = 0; i < LENGTH; i++) {
+        bar[i] = (byte) (i % 42);
       }
       is.close();
       testReadAll();
       testGetObjectAsInputStream();
-    }
-    catch (IOException e)
-    {
+    } catch (IOException e) {
       fail(e.toString());
     } catch (IndexOutOfBoundsException e) {
         fail("Shouldn't throw " + e);

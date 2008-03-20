@@ -88,9 +88,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // Ad. 1:
         try {
 
-            HarvestDefinition.createPartialHarvest(null, schedule,
-                                                   TestInfo.DEFAULT_HARVEST_NAME,
-                                                   TestInfo.DEFAULT_HARVEST_COMMENT);
+            HarvestDefinition.createPartialHarvest(
+                    null, schedule,
+                    TestInfo.DEFAULT_HARVEST_NAME,
+                    TestInfo.DEFAULT_HARVEST_COMMENT);
             fail("List of domainConfigurations must not be null");
         } catch (ArgumentNotValid e) {
             // expected
@@ -102,25 +103,28 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         try {
-            HarvestDefinition.createPartialHarvest(domainConfigs, null,
-                                                   TestInfo.DEFAULT_HARVEST_NAME,
-                                                   TestInfo.DEFAULT_HARVEST_COMMENT);
+            HarvestDefinition.createPartialHarvest(
+                    domainConfigs, null,
+                    TestInfo.DEFAULT_HARVEST_NAME,
+                    TestInfo.DEFAULT_HARVEST_COMMENT);
             fail("Null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
-        Schedule unknown_schedule
+        Schedule unknownSchedule
                 = Schedule.getInstance(null, null, new HourlyFrequency(1),
                                        "UnknownSchedule", "");
         try {
-            HarvestDefinition.createPartialHarvest(domainConfigs, unknown_schedule,
-                                                   TestInfo.DEFAULT_HARVEST_NAME,
-                                                   TestInfo.DEFAULT_HARVEST_COMMENT);
+            HarvestDefinition.createPartialHarvest(
+                    domainConfigs, unknownSchedule,
+                    TestInfo.DEFAULT_HARVEST_NAME,
+                    TestInfo.DEFAULT_HARVEST_COMMENT);
             fail("Unknown schedule");
         } catch (UnknownID e) {
             // expected
@@ -128,16 +132,20 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         // Ad. 3:
         try {
-            HarvestDefinition.createPartialHarvest(domainConfigs, schedule, null,
-                                                   TestInfo.DEFAULT_HARVEST_COMMENT);
+            HarvestDefinition.createPartialHarvest(
+                    domainConfigs, schedule,
+                    null,
+                    TestInfo.DEFAULT_HARVEST_COMMENT);
             fail("Null not a valid harvest definition name");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
         try {
-            HarvestDefinition.createPartialHarvest(domainConfigs, schedule, "",
-                                                   TestInfo.DEFAULT_HARVEST_COMMENT);
+            HarvestDefinition.createPartialHarvest(
+                    domainConfigs, schedule,
+                    "",
+                    TestInfo.DEFAULT_HARVEST_COMMENT);
             fail("Empty string not a valid harvest definition name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -145,8 +153,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         // Ad. 4:
         try {
-            HarvestDefinition.createPartialHarvest(domainConfigs, schedule,
-                                                   TestInfo.DEFAULT_HARVEST_NAME, null);
+            HarvestDefinition.createPartialHarvest(
+                    domainConfigs, schedule,
+                    TestInfo.DEFAULT_HARVEST_NAME, null);
             fail("Null not a valid harvest definition comment");
         } catch (ArgumentNotValid e) {
             // expected
@@ -165,9 +174,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs, schedule,
-                                                         TestInfo.DEFAULT_HARVEST_NAME,
-                                                         TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         try {
             harvestDef.setNextDate(null);
         } catch (ArgumentNotValid e) {
@@ -183,9 +193,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs, schedule,
-                                                         TestInfo.DEFAULT_HARVEST_NAME,
-                                                         TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         try {
             harvestDef.setNumEvents(-1);
             fail("Expected exception on negative numEvents");
@@ -217,8 +228,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Date before = new Date(System.currentTimeMillis() / 1000 * 1000);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs, schedule, TestInfo.DEFAULT_HARVEST_NAME,
-                                                         TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
 
         assertNotNull("A valid harvest definition expected", harvestDef);
 
@@ -236,9 +249,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                    + "), but happens at "
                    + firstEvent, firstEvent.compareTo(before) <= 0);
         assertTrue("The first event must be consistent with schedule",
-                   firstEvent.equals(schedule.getFirstEvent(before)) ||
-                   firstEvent.equals(schedule.getFirstEvent(after)) ||
-                   schedule.getFirstEvent(firstEvent).equals(firstEvent));
+                   firstEvent.equals(schedule.getFirstEvent(before))
+                   || firstEvent.equals(schedule.getFirstEvent(after))
+                   || schedule.getFirstEvent(firstEvent).equals(firstEvent));
 
         assertEquals("The new harvest definition must have run 0 times",
                      0, harvestDef.getNumEvents());
@@ -249,9 +262,12 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertEquals("Value from CTOR expected",
                      TestInfo.DEFAULT_HARVEST_NAME, harvestDef.getName());
         assertEquals("Value from CTOR expected",
-                     TestInfo.DEFAULT_HARVEST_COMMENT, harvestDef.getComments());
-        CollectionAsserts.assertIteratorEquals("Value from CTOR expected",
-                                               domainConfigs.iterator(), harvestDef.getDomainConfigurations());
+                     TestInfo.DEFAULT_HARVEST_COMMENT,
+                     harvestDef.getComments());
+        CollectionAsserts.assertIteratorEquals(
+                "Value from CTOR expected",
+                domainConfigs.iterator(),
+                harvestDef.getDomainConfigurations());
 
         //verify getters and setters
         Long id = new Long(42);
@@ -273,7 +289,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Check that we can set and get the DomainConfigurations
+     * Check that we can set and get the DomainConfigurations.
      */
     public void testSetConfigurations() {
         Domain d = TestInfo.getDefaultDomain();
@@ -281,12 +297,15 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         d.addConfiguration(cfg1);
         cfg1.setOrderXmlName(TestInfo.ORDER_XML_NAME);
 
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs 
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         schedule, TestInfo.DEFAULT_HARVEST_NAME, TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
 
         //Create two new DomainConfigurations
         DomainConfiguration cfg2 = TestInfo.getConfig(d, "config2");
@@ -308,19 +327,22 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Test that duplicate objects in the configuration list are removed
+     * Test that duplicate objects in the configuration list are removed.
      */
     public void testSetConfigurationsWithDuplicates() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
 
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         schedule, TestInfo.DEFAULT_HARVEST_NAME, TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
 
         //Create two new DomainConfigurations
         DomainConfiguration cfg2 = TestInfo.getConfig(d, "config2");
@@ -344,18 +366,21 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
 
     /**
-     * Test runNow for actually returning the correct boolean
+     * Test runNow for actually returning the correct boolean.
      */
     public void testRunNowPartialHarvest() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         schedule, TestInfo.DEFAULT_HARVEST_NAME, TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         Calendar cal = new GregorianCalendar(2005, Calendar.FEBRUARY, 21,
                                              12, 0, 0);
         Date testDate = cal.getTime();
@@ -376,7 +401,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
 
     /**
-     * Test runNow for actually returning the correct boolean
+     * Test runNow for actually returning the correct boolean.
      */
     public void testRunNowFullHarvest() {
         Domain d = TestInfo.getDefaultDomain();
@@ -384,8 +409,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         d.addConfiguration(cfg1);
 
         FullHarvest harvestDef
-                = HarvestDefinition.createFullHarvest(TestInfo.DEFAULT_HARVEST_NAME,
-                                                      TestInfo.DEFAULT_HARVEST_COMMENT, null, 10000, Constants.DEFAULT_MAX_BYTES);
+                = HarvestDefinition.createFullHarvest(
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT,
+                        null, 10000, Constants.DEFAULT_MAX_BYTES);
         Long id = new Long(42);
         harvestDef.setOid(id);
         harvestDef.setSubmissionDate(new Date());
@@ -395,8 +422,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         harvestDef.createJobs();
 
-        assertFalse("After all subsequent creations of jobs, runNow() should return false",
-                    harvestDef.runNow(new Date()));
+        assertFalse("After all subsequent creations of jobs, runNow() "
+                + "should return false",
+                harvestDef.runNow(new Date()));
 
         harvestDef.createJobs();
         assertFalse("After all subsequent creations of jobs, runNow() should return false",
@@ -404,7 +432,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Test createJobs updates numEvents and nextDate correctly on job creation
+     * Test createJobs updates numEvents and nextDate correctly on job creation.
      */
     public void testCreateJobsUpdatesEventFields() {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
@@ -418,31 +446,40 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         DomainDAO.getInstance().create(d);
 
         //A schedule that runs forever
-        Schedule sched0 = Schedule.getInstance(null, null, new DailyFrequency(1), "sched0", "");
+        Schedule sched0 = Schedule.getInstance(null, null,
+                new DailyFrequency(1), "sched0", "");
         ScheduleDAO.getInstance().create(sched0);
         //A schedule that ends _now_
-        Schedule sched1 = Schedule.getInstance(null, new Date(), new DailyFrequency(1), "sched1", "");
+        Schedule sched1 = Schedule.getInstance(null, new Date(),
+                new DailyFrequency(1), "sched1", "");
         ScheduleDAO.getInstance().create(sched1);
         //A schedule that ends after one harvest
-        Schedule sched2 = Schedule.getInstance(null, 1, new DailyFrequency(1), "sched2", "");
+        Schedule sched2 = Schedule.getInstance(null, 1,
+                new DailyFrequency(1), "sched2", "");
         ScheduleDAO.getInstance().create(sched2);
 
         PartialHarvest harvestDef0
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         sched0, TestInfo.DEFAULT_HARVEST_NAME + "1", TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, sched0,
+                        TestInfo.DEFAULT_HARVEST_NAME + "1",
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         harvestDef0.setSubmissionDate(new Date());
 
         PartialHarvest harvestDef1
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         sched1, TestInfo.DEFAULT_HARVEST_NAME + "2", TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, sched1,
+                        TestInfo.DEFAULT_HARVEST_NAME + "2",
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         //Hack - the schedule has already timed out at this point, but we want
         //there to be one event, so we force the first date to be set.
         harvestDef1.setNextDate(new Date());
         harvestDef1.setSubmissionDate(new Date());
 
         PartialHarvest harvestDef2
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         sched2, TestInfo.DEFAULT_HARVEST_NAME + "3", TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, sched2,
+                        TestInfo.DEFAULT_HARVEST_NAME + "3",
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
         harvestDef2.setSubmissionDate(new Date());
 
         dao.create(harvestDef0);
@@ -491,10 +528,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         //three hours ago
         final Domain defaultDomain = TestInfo.getDefaultDomain();
         DomainDAO.getInstance().create(defaultDomain);
-        List<DomainConfiguration> dc =
-                Collections.singletonList(defaultDomain.getDefaultConfiguration());
-        PartialHarvest hd = HarvestDefinition.createPartialHarvest(dc,
-                                                                   hourlySchedule, "hd", "");
+        List<DomainConfiguration> dc = Collections.singletonList(
+                defaultDomain.getDefaultConfiguration());
+        PartialHarvest hd = HarvestDefinition.createPartialHarvest(
+                dc, hourlySchedule, "hd", "");
         hd.setNextDate(threeHoursAgo.getTime());
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
@@ -514,7 +551,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         assertFalse("Should create no more jobs", hd.runNow(now));
     }
 
-    /** Tests that inactive harvestdefinitions return runNow=false
+    /** Tests that inactive harvestdefinitions return runNow=false.
      */
     public void testSkipInactive() {
         Calendar threeHoursAgo = GregorianCalendar.getInstance();
@@ -527,10 +564,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         //A harvest definition with an hourly schedule and next date set to
         //three hours ago
-        List<DomainConfiguration> dc =
-                Collections.singletonList(TestInfo.getDefaultDomain().getDefaultConfiguration());
-        PartialHarvest hd = HarvestDefinition.createPartialHarvest(dc,
-                                                                   hourlySchedule, "hd", "");
+        List<DomainConfiguration> dc = Collections.singletonList(
+                TestInfo.getDefaultDomain().getDefaultConfiguration());
+        PartialHarvest hd = HarvestDefinition.createPartialHarvest(
+                dc, hourlySchedule, "hd", "");
         hd.setNextDate(threeHoursAgo.getTime());
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO.getInstance().create(hd);
@@ -538,12 +575,14 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Date now = new Date();
 
         //The job should run now
-        assertTrue("Active definition expected (default value)", hd.getActive());
+        assertTrue("Active definition expected (default value)",
+                hd.getActive());
         assertTrue("Should be ready to create jobs", hd.runNow(now));
 
-        // Inactivate the definition
+        // disable the definition
         hd.setActive(false);
-        assertFalse("Inactive definition expected (default value)", hd.getActive());
+        assertFalse("Inactive definition expected (default value)",
+                hd.getActive());
         assertFalse("Inactive defintions shoud NOT be run", hd.runNow(now));
 
     }
@@ -552,7 +591,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         Date first = new GregorianCalendar(2100, 0, 0).getTime();
@@ -563,8 +603,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         ScheduleDAO.getInstance().create(schedule);
 
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs,
-                                                         schedule, TestInfo.DEFAULT_HARVEST_NAME, TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
 
         harvestDef.setNextDate(new Date());
         harvestDef.setNumEvents(99);
@@ -572,7 +614,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         harvestDef.reset();
 
         assertEquals("Numevents should be reset", 0, harvestDef.getNumEvents());
-        assertEquals("Date should be reset", first, schedule.getFirstEvent(new Date()));
+        assertEquals("Date should be reset", first,
+                schedule.getFirstEvent(new Date()));
     }
 
     /**
@@ -710,8 +753,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * @return snapshot harvest definition
      */
     public static HarvestDefinition getTestSnapShotHarvestDefinition() {
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("snapshot",
-                                                                   "test", null, 124, Constants.DEFAULT_MAX_BYTES);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "snapshot",
+                "test", null, 124, Constants.DEFAULT_MAX_BYTES);
         hd.setSubmissionDate(new Date());
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         dao.create(hd);
@@ -719,7 +763,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that a snapshot harvesdefinition creates jobs for all domains
+     * Verify that a snapshot harvesdefinition creates jobs for all domains.
      */
     public void testCreateSnapShot_allDomains() {
 
@@ -734,26 +778,28 @@ public class HarvestDefinitionTester extends DataModelTestCase {
             final Job job = (Job) createdJob;
             totalCountDomains += job.getCountDomains();
         }
-        assertEquals("Jobs should be created for all domains", totalCountDomains, countDomains);
+        assertEquals("Jobs should be created for all domains",
+                totalCountDomains, countDomains);
     }
 
     /**
-     * Verify that a snapshot harvestdefinition is set to start immediately
+     * Verify that a snapshot harvestdefinition is set to start immediately.
      */
 
     public void testCreateSnapShot_scheduleImmediately() {
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("snapshot", "test", null, 124,
-                                                                   Constants.DEFAULT_MAX_BYTES);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "snapshot", "test", null, 124,
+                Constants.DEFAULT_MAX_BYTES);
         assertTrue("The job should start immediately", hd.runNow(new Date()));
     }
 
     /**
-     * Verify that a inactive snapshot harvestdefinition is set not to start
+     * Verify that a inactive snapshot harvestdefinition is set not to start.
      */
 
     public void testCreateSnapShot_Inactive() {
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("snapshot", "test", null, 124,
-                                                                   Constants.DEFAULT_MAX_BYTES);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "snapshot", "test", null, 124, Constants.DEFAULT_MAX_BYTES);
         assertTrue("Active definition expected (default)", hd.getActive());
         assertTrue("The job should start immediately", hd.runNow(new Date()));
         // Inactivate and test again
@@ -763,19 +809,21 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that the constructor supplied harvest limits are used when snapshot harvest jobs are created
+     * Verify that the constructor supplied harvest limits are used
+     * when snapshot harvest jobs are created.
      */
     public void testCreateSnapShot_maxObjects() {
         HarvestDefinition hd = getTestSnapShotHarvestDefinition();
-        // verify that the harvestdefintion generates jobs for all domains
-        List createdJobs = createAndGetJobs(hd);
+        // verify that the harvestdefinition generates jobs for all domains
+        List<Job> createdJobs = createAndGetJobs(hd);
         for (Object createdJob : createdJobs) {
             final Job job = (Job) createdJob;
             assertEquals("Job should have been created by given HD",
                          hd.getOid(), job.getOrigHarvestDefinitionID());
-            // verify that the jobs created are set to max. harvest 124 objects per domain
-            assertEquals(
-                    "Harvestdefinition settings should override config settings",
+            // verify that the jobs created are set to max. harvest 124 objects
+            // per domain
+            assertEquals("Harvestdefinition settings should override"
+                    + "config settings",
                     124, job.getMaxObjectsPerDomain());
         }
     }
@@ -786,17 +834,20 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      */
     public void testCreateIncrementalSnapShot() {
         // Create a set fake historical data, marking one domain fully harvested
-        // two as stopped by size or object limit, and not marking the fourth domain.
+        // two as stopped by size or object limit, and
+        //   not marking the fourth domain.
         // Also some irrelevant data from other harvests is added.
         // A snapshot based on this info should return exactly 3 configurations,
         // namely one for each domain not marked as complete.
         DomainDAO dao = DomainDAO.getInstance();
 
-        assertEquals("There should be 4 domains. If more are added, update this unit test",
-                     4, dao.getCountDomains());
+        assertEquals("There should be 4 domains. If more are added,"
+                + "update this unit test",
+                4, dao.getCountDomains());
 
-        HarvestDefinition hd = HarvestDefinition.createFullHarvest("Full Harvest", "Test of full harvest", null, 2000,
-                                                                   Constants.DEFAULT_MAX_BYTES);
+        HarvestDefinition hd = HarvestDefinition.createFullHarvest(
+                "Full Harvest", "Test of full harvest", null, 2000,
+                 Constants.DEFAULT_MAX_BYTES);
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         hd.setSubmissionDate(new Date());
         hddao.create(hd);
@@ -815,12 +866,16 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         long time = System.currentTimeMillis()/1000*1000;
         //An older harvest info that should NOT be returned
         Date then = new Date(time);
-        HarvestInfo old_hi0 = new HarvestInfo(new Long(42L), domain0.getName(), config0.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo old_hi0 = new HarvestInfo(
+                new Long(42L), domain0.getName(), config0.getName(),
+                then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
         config0.addHarvestInfo(old_hi0);
         dao.update(domain0);
 
         //An older harvest info from the same hd that should NOT be returned
-        HarvestInfo old_hi1 = new HarvestInfo(hdOID, domain1.getName(), config1.getName(), then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
+        HarvestInfo old_hi1 = new HarvestInfo(
+                hdOID, domain1.getName(), config1.getName(),
+                then, 1L, 1L, StopReason.DOWNLOAD_COMPLETE);
         config1.addHarvestInfo(old_hi1);
         dao.update(domain1);
 
@@ -863,11 +918,12 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         hddao.update(hd);
 
         // Now create the incremental harvestdefinition
-        FullHarvest fh = HarvestDefinition.createFullHarvest("Test incremental",
-                                                             "Just a test",
-                                                             hd.getOid(),
-                                                             9999,
-                                                             Constants.DEFAULT_MAX_BYTES);
+        FullHarvest fh = HarvestDefinition.createFullHarvest(
+                "Test incremental",
+                "Just a test",
+                hd.getOid(),
+                9999,
+                Constants.DEFAULT_MAX_BYTES);
         fh.setSubmissionDate(new Date());
         hddao.create(fh);
 
@@ -886,13 +942,15 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         assertEquals("2 domains should be harvested", 2, domains.size());
         assertTrue("dr.dk should be harvested", domains.indexOf("dr.dk") >= 0);
-        assertTrue("netarkivet.dk should be harvested", domains.indexOf("netarkivet.dk") >= 0);
+        assertTrue("netarkivet.dk should be harvested",
+                domains.indexOf("netarkivet.dk") >= 0);
     }
 
     private static List<Job> createAndGetJobs(HarvestDefinition fh) {
         List<Job> oldJobs = IteratorUtils.toList(JobDAO.getInstance().getAll());
         fh.createJobs();
-        List<Job> createdJobs = IteratorUtils.toList(JobDAO.getInstance().getAll());
+        List<Job> createdJobs
+            = IteratorUtils.toList(JobDAO.getInstance().getAll());
         for (Iterator<Job> i = createdJobs.iterator(); i.hasNext(); ) {
             Job job = i.next();
             for (Job oldjob : oldJobs) {
@@ -904,12 +962,13 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         return createdJobs;
     }
 
-    /** Test that we can create a full harvest, even with prev being the same
+    /** Test that we can create a full harvest, even with prev being the same.
      */
     public void testCreateFullHarvest() {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
 
-        FullHarvest hd1 = new FullHarvest("foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES);
+        FullHarvest hd1 = new FullHarvest(
+                "foo", "bar", null, 2, Constants.DEFAULT_MAX_BYTES);
         hd1.setSubmissionDate(new Date());
         dao.create(hd1);
         FullHarvest hd1a = (FullHarvest) dao.read(hd1.getOid());
@@ -923,23 +982,27 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that it is possible to set and get the active state of a harvestDefinition
-     *
+     * Verify that it is possible to set and get
+     * the active state of a harvestDefinition.
      */
     public void testSetGetActive() {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
 
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         // create a definition to use for testing
         PartialHarvest harvestDef
-                = HarvestDefinition.createPartialHarvest(domainConfigs, schedule, TestInfo.DEFAULT_HARVEST_NAME,
-                                                         TestInfo.DEFAULT_HARVEST_COMMENT);
+                = HarvestDefinition.createPartialHarvest(
+                        domainConfigs, schedule,
+                        TestInfo.DEFAULT_HARVEST_NAME,
+                        TestInfo.DEFAULT_HARVEST_COMMENT);
 
-        assertTrue("Initially a definition is assumed active - to be backward compatible", harvestDef.getActive());
+        assertTrue("Initially a definition is assumed active "
+                + "- to be backward compatible", harvestDef.getActive());
         // Change the state and verify the changes
         harvestDef.setActive(true);
         assertTrue("Change should have an effect", harvestDef.getActive());
@@ -951,7 +1014,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
      * Check that ordering done by CompareConfigsDesc is in the order:
      * - template first
      * - byte limit second
-     * - expected number of objects third
+     * - expected number of objects third.
      */
     public void testCompareConfigsDesc() throws NoSuchFieldException,
                                                 IllegalAccessException,
@@ -961,40 +1024,35 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         //Make some configs to sort...(Note: Expected number of objects are in
         //this case the same...)
         Domain d = Domain.getDefaultDomain("adomain.dk");
-        List<SeedList> seedlists = Arrays.asList(new SeedList[]{d.getAllSeedLists().next()});
-        DomainConfiguration cfg1 = new DomainConfiguration("config1", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        List<SeedList> seedlists 
+            = Arrays.asList(new SeedList[]{d.getAllSeedLists().next()});
+        DomainConfiguration cfg1 = new DomainConfiguration(
+                "config1", d, seedlists, new ArrayList<Password>());
         cfg1.setMaxBytes(1000000);
         cfg1.setOrderXmlName("X");
         d.addConfiguration(cfg1);
-        DomainConfiguration cfg2 = new DomainConfiguration("config2", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        DomainConfiguration cfg2 = new DomainConfiguration(
+                "config2", d, seedlists, new ArrayList<Password>());
         cfg2.setMaxBytes(3000000);
         cfg2.setOrderXmlName("X");
         d.addConfiguration(cfg2);
-        DomainConfiguration cfg3 = new DomainConfiguration("config3", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        DomainConfiguration cfg3 = new DomainConfiguration(
+                "config3", d, seedlists, new ArrayList<Password>());
         cfg3.setMaxBytes(2000000);
         cfg3.setOrderXmlName("Y");
         d.addConfiguration(cfg3);
-        DomainConfiguration cfg4 = new DomainConfiguration("config4", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        DomainConfiguration cfg4 = new DomainConfiguration(
+                "config4", d, seedlists, new ArrayList<Password>());
         cfg4.setMaxBytes(2000000);
         cfg4.setOrderXmlName("X");
         d.addConfiguration(cfg4);
-        DomainConfiguration cfg5 = new DomainConfiguration("config5", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        DomainConfiguration cfg5 = new DomainConfiguration(
+                "config5", d, seedlists, new ArrayList<Password>());
         cfg5.setMaxBytes(1000000);
         cfg5.setOrderXmlName("Y");
         d.addConfiguration(cfg5);
-        DomainConfiguration cfg6 = new DomainConfiguration("config6", d,
-                                                           seedlists,
-                                                           new ArrayList<Password>());
+        DomainConfiguration cfg6 = new DomainConfiguration(
+                "config6", d, seedlists, new ArrayList<Password>());
         cfg6.setMaxBytes(3000000);
         cfg6.setOrderXmlName("Y");
         d.addConfiguration(cfg6);
@@ -1064,30 +1122,30 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                      cfg5, list.get(5));
 
         //Tweak expected number in the configurations by adding harvest info
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg2.getName(),
-                                                      new Date(), 1000000, 2000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg3.getName(),
-                                                      new Date(), 1000000, 3000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg4.getName(),
-                                                      new Date(), 1000000, 4000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg1.getName(),
-                                                      new Date(), 1000000, 1000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg5.getName(),
-                                                      new Date(), 1000000, 5000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
-        d.getHistory().addHarvestInfo(new HarvestInfo(42L, 1L, d.getName(),
-                                                      cfg6.getName(),
-                                                      new Date(), 1000000, 6000,
-                                                      StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg2.getName(), new Date(), 1000000, 2000,
+                StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg3.getName(), new Date(), 1000000, 3000,
+                StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg4.getName(), new Date(), 1000000, 4000,
+                StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg1.getName(), new Date(), 1000000, 1000,
+                StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg5.getName(), new Date(), 1000000, 5000,
+                StopReason.DOWNLOAD_COMPLETE));
+        d.getHistory().addHarvestInfo(new HarvestInfo(
+                42L, 1L, d.getName(),
+                cfg6.getName(), new Date(), 1000000, 6000,
+                StopReason.DOWNLOAD_COMPLETE));
 
         // Reset two config limits so we have equal limit and template in some
         // cases to make sure the expectation is the deciding factor

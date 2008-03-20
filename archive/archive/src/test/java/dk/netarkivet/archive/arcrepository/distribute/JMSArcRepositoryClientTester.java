@@ -166,7 +166,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /**
-     * Test get() methods arguments
+     * Test get() methods arguments.
      */
     public void testGetArgumentsNotNull() {
         /**
@@ -277,7 +277,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /**
-     * This tests the get()-method when it times out waiting for a reply
+     * This tests the get()-method when it times out waiting for a reply.
      */
     public void testGetTimeout() {
 
@@ -375,7 +375,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
     /**
-     * Test batch() methods arguments
+     * Test batch() methods arguments.
      */
     public void testBatchArgumentsNotNull() {
         FileBatchJob batchJob = new FileBatchJob() {

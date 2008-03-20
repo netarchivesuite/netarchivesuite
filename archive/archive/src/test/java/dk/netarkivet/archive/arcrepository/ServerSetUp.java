@@ -46,7 +46,7 @@ public class ServerSetUp {
     public static final File TEST_DIR =
             new File("tests/dk/netarkivet/archive/arcrepository/data/store");
 
-    /** The directory used for controller admindata */
+    /** The directory used for controller admindata. */
     private static final File ADMINDATA_DIR = new File(TEST_DIR, "admindata");
 
     /** The bitarchive directory to work on. */
@@ -55,12 +55,12 @@ public class ServerSetUp {
     /** The directory used for storing temporary files */
     private static final File TEMP_DIR = new File(TEST_DIR, "tempdir");
 
-    /** The bitarchive servers we need to communicate with */
+    /** The bitarchive servers we need to communicate with. */
     static BitarchiveServer bitarchive;
-    /** The bitarchive monitor we need to communicate with */
+    /** The bitarchive monitor we need to communicate with. */
     static BitarchiveMonitorServer bitarchiveMonitor;
 
-    /** The arc repository */
+    /** The arc repository. */
     private static ArcRepository arcRepos;
 
     protected static void setUp() {

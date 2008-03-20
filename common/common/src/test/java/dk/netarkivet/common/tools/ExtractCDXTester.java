@@ -40,7 +40,8 @@ import java.util.List;
 public class ExtractCDXTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams(true);
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
+    private MoveTestFiles mtf = new MoveTestFiles(
+            TestInfo.DATA_DIR, TestInfo.WORKING_DIR);
 
     public void setUp(){
         mtf.setUp();
@@ -60,26 +61,28 @@ public class ExtractCDXTester extends TestCase {
         File f = TestInfo.ARC1;
         ExtractCDX.main(new String[]{TestInfo.ARC1.getAbsolutePath()});
         List<CDXRecord> rList = getRecords();
-        assertEquals("Output CDX records should be 1-1 with input ARC file records",
-                1,rList.size());
-        assertMatches(rList,0,
-                TestInfo.ARC1_URI,TestInfo.ARC1_MIME,TestInfo.ARC1_CONTENT);
+        assertEquals(
+                "Output CDX records should be 1-1 with input ARC file records",
+                1, rList.size());
+        assertMatches(rList, 0,
+                TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
     }
 
     /**
-     * Verify that indexing more than one ARC file works as expected
+     * Verify that indexing more than one ARC file works as expected.
      */
     public void testMainSeveralFiles() {
         ExtractCDX.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
                 TestInfo.ARC2.getAbsolutePath()});
         List<CDXRecord> rList = getRecords();
-        assertEquals("Output CDX records should be 1-1 with input ARC file records",
-                2,rList.size());
-        assertMatches(rList,0,
-                TestInfo.ARC1_URI,TestInfo.ARC1_MIME,TestInfo.ARC1_CONTENT);
-        assertMatches(rList,1,
-                TestInfo.ARC2_URI,TestInfo.ARC2_MIME,TestInfo.ARC2_CONTENT);
+        assertEquals(
+                "Output CDX records should be 1-1 with input ARC file records",
+                2, rList.size());
+        assertMatches(rList, 0,
+                TestInfo.ARC1_URI, TestInfo.ARC1_MIME, TestInfo.ARC1_CONTENT);
+        assertMatches(rList, 1,
+                TestInfo.ARC2_URI, TestInfo.ARC2_MIME, TestInfo.ARC2_CONTENT);
     }
 
     /**
@@ -93,8 +96,9 @@ public class ExtractCDXTester extends TestCase {
             fail("Calling ExtractCDX with non-arc file should System.exit");
         } catch (SecurityException e) {
             //Expected
-            assertEquals("No output should be sent to stdout when ExtraqctCDX fails",
-                    "",pss.getOut());
+            assertEquals(
+                    "No output should be sent to stdout when ExtraqctCDX fails",
+                    "", pss.getOut());
         }
     }
 
@@ -107,8 +111,9 @@ public class ExtractCDXTester extends TestCase {
             fail("Calling ExtractCDX without arguments should System.exit");
         } catch (SecurityException e) {
             //Expected
-            assertEquals("No output should be sent to stdout when ExtraqctCDX fails",
-                    "",pss.getOut());
+            assertEquals(
+                    "No output should be sent to stdout when ExtraqctCDX fails",
+                    "", pss.getOut());
         }
     }
 
@@ -118,7 +123,7 @@ public class ExtractCDXTester extends TestCase {
      */
     private List<CDXRecord> getRecords() {
         List<CDXRecord> result = new ArrayList<CDXRecord>();
-        for(String cdxLine : pss.getOut().split("\n")) {
+        for (String cdxLine : pss.getOut().split("\n")) {
             result.add(new CDXRecord(cdxLine.split("\\s+")));
         }
         return result;
@@ -137,11 +142,14 @@ public class ExtractCDXTester extends TestCase {
             String mime,
             String content) {
         CDXRecord rec = rList.get(index);
-        assertEquals("Output CDX records should be 1-1 with input ARC file records",
-                uri,rec.getURL());
-        assertEquals("Output CDX records should be 1-1 with input ARC file records",
-                mime,rec.getMimetype());
-        assertEquals("Output CDX records should be 1-1 with input ARC file records",
-                content.length(),rec.getLength());
+        assertEquals(
+                "Output CDX records should be 1-1 with input ARC file records",
+                uri, rec.getURL());
+        assertEquals(
+                "Output CDX records should be 1-1 with input ARC file records",
+                mime, rec.getMimetype());
+        assertEquals(
+                "Output CDX records should be 1-1 with input ARC file records",
+                content.length(), rec.getLength());
     }
 }

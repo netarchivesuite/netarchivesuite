@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Performs unit tests of the ARCFilenameCDXRecordFilter Implicits tests both
+ * Performs unit tests of the ARCFilenameCDXRecordFilter. Implicitly tests both
  * SimpleCDXRecordFilter and CDXRecordFilter
  */
 public class ARCFilenameCDXRecordFilterTester extends TestCase {

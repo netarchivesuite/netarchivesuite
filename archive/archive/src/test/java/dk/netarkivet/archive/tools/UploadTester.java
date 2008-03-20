@@ -36,6 +36,9 @@ import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ * Unit test for the archive upload tool.
+ */
 public class UploadTester extends TestCase {
     private UseTestRemoteFile ulrf = new UseTestRemoteFile();
     private PreventSystemExit pse = new PreventSystemExit();
@@ -43,6 +46,11 @@ public class UploadTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupArcRepositoryClient marc = new MockupArcRepositoryClient();
+
+    /** Max number of store retries.*/
+    private final int storeRetries = Integer.parseInt(Settings.get(
+            Settings.ARCREPOSITORY_STORE_RETRIES));
+
 
     public void setUp(){
         ulrf.setUp();
@@ -71,8 +79,8 @@ public class UploadTester extends TestCase {
      */
     public void testMainOneFile() {
         Upload.main(new String[]{TestInfo.ARC1.getAbsolutePath()});
-        assertMsgCount(1,0);
-        assertStoreStatus(0,TestInfo.ARC1,true);
+        assertMsgCount(1, 0);
+        assertStoreStatus(0, TestInfo.ARC1, true);
     }
 
     /**
@@ -83,13 +91,13 @@ public class UploadTester extends TestCase {
         Upload.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
                 TestInfo.ARC2.getAbsolutePath()});
-        assertMsgCount(2,0);
-        assertStoreStatus(0,TestInfo.ARC1,true);
-        assertStoreStatus(1,TestInfo.ARC2,true);
+        assertMsgCount(2, 0);
+        assertStoreStatus(0, TestInfo.ARC1, true);
+        assertStoreStatus(1, TestInfo.ARC2, true);
     }
     /**
      * Verify that non-ARC files are rejected and execution fails.
-     * Also verfies that nothing is stored in that case.
+     * Also verifies that nothing is stored in that case.
      */
     public void testMainNonArc() {
         try {
@@ -99,7 +107,7 @@ public class UploadTester extends TestCase {
             fail("Calling Upload with non-arc file should System.exit");
         } catch (SecurityException e) {
             //Expected
-            assertMsgCount(0,0);
+            assertMsgCount(0, 0);
         }
     }
 
@@ -109,20 +117,20 @@ public class UploadTester extends TestCase {
      */
     public void testMainStoreFails1() {
         marc.failOnFile(TestInfo.ARC1.getName());
-        int retries = Integer.parseInt(Settings.get(Settings.ARCREPOSITORY_STORE_RETRIES));
+       
         Upload.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
                 TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
-        assertMsgCount(2,1);
+        assertMsgCount(2, 1);
         int index = 0;
-        for(int i = 0 ; i < retries ; i++) {
-            assertStoreStatus(index,TestInfo.ARC1,false);
+        for (int i = 0; i < storeRetries; i++) {
+            assertStoreStatus(index, TestInfo.ARC1, false);
             index++;
         }
-        assertStoreStatus(index,TestInfo.ARC2,true);
+        assertStoreStatus(index, TestInfo.ARC2, true);
         index++;
-        assertStoreStatus(index,TestInfo.ARC3,true);
+        assertStoreStatus(index, TestInfo.ARC3, true);
     }
 
     /**
@@ -131,20 +139,20 @@ public class UploadTester extends TestCase {
      */
     public void testMainStoreFails2() {
         marc.failOnFile(TestInfo.ARC2.getName());
-        int retries = Integer.parseInt(Settings.get(Settings.ARCREPOSITORY_STORE_RETRIES));
+        
         Upload.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
                 TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
-        assertMsgCount(2,1);
+        assertMsgCount(2, 1);
         int index = 0;
-        assertStoreStatus(index,TestInfo.ARC1,true);
+        assertStoreStatus(index, TestInfo.ARC1, true);
         index++;
-        for(int i = 0 ; i < retries ; i++) {
-            assertStoreStatus(index,TestInfo.ARC2,false);
+        for (int i = 0; i < storeRetries; i++) {
+            assertStoreStatus(index, TestInfo.ARC2, false);
             index++;
         }
-        assertStoreStatus(index,TestInfo.ARC3,true);
+        assertStoreStatus(index, TestInfo.ARC3, true);
     }
 
     /**
@@ -153,26 +161,26 @@ public class UploadTester extends TestCase {
      */
     public void testMainStoreFails3() {
         marc.failOnFile(TestInfo.ARC3.getName());
-        int retries = Integer.parseInt(Settings.get(Settings.ARCREPOSITORY_STORE_RETRIES));
+        
         Upload.main(new String[]{
                 TestInfo.ARC1.getAbsolutePath(),
                 TestInfo.ARC2.getAbsolutePath(),
                 TestInfo.ARC3.getAbsolutePath()});
-        assertMsgCount(2,1);
+        assertMsgCount(2, 1);
         int index = 0;
-        assertStoreStatus(index,TestInfo.ARC1,true);
+        assertStoreStatus(index, TestInfo.ARC1, true);
         index++;
-        assertStoreStatus(index,TestInfo.ARC2,true);
+        assertStoreStatus(index, TestInfo.ARC2, true);
         index++;
-        for(int i = 0 ; i < retries ; i++) {
-            assertStoreStatus(index,TestInfo.ARC3,false);
+        for (int i = 0; i < storeRetries; i++) {
+            assertStoreStatus(index, TestInfo.ARC3, false);
             index++;
         }
     }
 
     /**
      * Verifies that calling Upload without arguments fails.
-     * Also verfies that nothing is stored in that case.
+     * Also verifies that nothing is stored in that case.
      */
     public void testNoArguments() {
         try {
@@ -180,39 +188,40 @@ public class UploadTester extends TestCase {
             fail("Calling Upload without arguments should System.exit");
         } catch (SecurityException e) {
             //Expected
-            assertMsgCount(0,0);
+            assertMsgCount(0, 0);
         }
     }
 
     /**
-     * Asserts that we got the expected number of StoreMessages.     * @param succeeded
+     * Asserts that we got the expected number of StoreMessages.
      * @param succeeded Number of files successfully stored
      * @param failed Number of files that never got stored
      */
     private void assertMsgCount(int succeeded, int failed) {
-        int retries = Integer.parseInt(Settings.get(Settings.ARCREPOSITORY_STORE_RETRIES));
-        int expected = succeeded + failed * retries;
-        assertEquals("Upload should generate exactly 1 StoreMessage per succeeded arc file and "
-                + retries + " per failed store",
-                expected,marc.getMsgCount());
+        int expected = succeeded + failed * storeRetries;
+        assertEquals("Upload should generate exactly 1 StoreMessage "
+                + "per succeeded arc file and "
+                + storeRetries + " per failed store",
+                expected, marc.getMsgCount());
     }
     /**
      * Asserts that the nth StoreMessage is regarding the given arc file
-     * and that the arc file is delete if and only if store suceeded.
+     * and that the arc file is delete if and only if store succeeded.
      * @param n The relevant index to marc.getStoreMsgs()
      * @param arcFile The arc file that was stored
-     * @param shouldSuceed Whether store was supposed to succeed
+     * @param shouldSucceed Whether store was supposed to succeed
      */
-    private void assertStoreStatus(int n, File arcFile, boolean shouldSuceed) {
+    private void assertStoreStatus(
+            int n, File arcFile, boolean shouldSucceed) {
         StoreMessage sm = marc.getStoreMsgs().get(n);
         assertEquals("Upload should attempt to upload the specified files",
-                arcFile.getName(),sm.getArcfileName());
-        if(shouldSuceed) {
+                arcFile.getName(), sm.getArcfileName());
+        if (shouldSucceed) {
             assertFalse("Upload should delete a properly uploaded file",
                 arcFile.exists());
         } else {
-            assertTrue("Upload should not delete a file that wasn't properly uploaded",
-                    arcFile.exists());
+            assertTrue("Upload should not delete a file that wasn't "
+                    + " properly uploaded", arcFile.exists());
         }
     }
 }

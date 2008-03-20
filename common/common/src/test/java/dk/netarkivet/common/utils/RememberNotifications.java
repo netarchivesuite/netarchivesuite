@@ -47,7 +47,7 @@ public class RememberNotifications extends Notifications {
      * Remember the variables, and print a message to stdout.
      *
      * @param errorMessage The error message to remember.
-     * @param exception The exception to rmeember.
+     * @param exception The exception to remember.
      */
     public void errorEvent(String errorMessage, Throwable exception) {
         this.message = errorMessage;

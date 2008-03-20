@@ -38,17 +38,23 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
+ * Unit tests for the class ARCBatchJob.
  */
 public class ARCBatchJobTester extends TestCase {
     //Reference to test files:
-    private static final File ARC_DIR = new File("tests/dk/netarkivet/common/utils/arc/data/working/");
-    private static final File ORIGINALS = new File("tests/dk/netarkivet/common/utils/arc/data/input/");
+    private static final File ARC_DIR = new File(
+            "tests/dk/netarkivet/common/utils/arc/data/working/");
+    private static final File ORIGINALS = new File(
+            "tests/dk/netarkivet/common/utils/arc/data/input/");
     private static final File ARC_FILE = new File(ARC_DIR, "fyensdk.arc");
-    private static final File ARC_GZ_FILE = new File(ARC_DIR, "NetarchiveSuite-netarkivet.arc.gz");
-    private static final File NON_EXISTENT_FILE = new File(ARC_DIR, "no_such_file.arc");
+    private static final File ARC_GZ_FILE = new File(ARC_DIR, 
+            "NetarchiveSuite-netarkivet.arc.gz");
+    private static final File NON_EXISTENT_FILE
+        = new File(ARC_DIR, "no_such_file.arc");
 
-    //Feature of the last record of fyendsdk.arc:
-    private static final String LAST_URL = "http://www.fyens.dk/picturecache/imageseries/getpicture.php?Width=100&pictureid=400";
+    //Feature of the last record of fyensdk.arc:
+    private static final String LAST_URL = "http://www.fyens.dk/picturecache"
+        + "/imageseries/getpicture.php?Width=100&pictureid=400";
 
     //Method call counters:
     private int processed;
@@ -98,8 +104,10 @@ public class ARCBatchJobTester extends TestCase {
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
         Exception[] es = job.getExceptions();
         printExceptions(es);
-        assertEquals("Should have processed 190 entries in normal run", TOTAL_RECORDS, processed);
-        assertEquals("Should not have seen any exceptions in normal run", 0, es.length);
+        assertEquals("Should have processed 190 entries in normal run",
+                TOTAL_RECORDS, processed);
+        assertEquals("Should not have seen any exceptions in normal run",
+                0, es.length);
     }
 
     /**
@@ -108,19 +116,22 @@ public class ARCBatchJobTester extends TestCase {
     public void testContent() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
-        assertEquals("Should get the expected record last", LAST_URL, lastSeenURL);
+        assertEquals("Should get the expected record last",
+                LAST_URL, lastSeenURL);
     }
 
     /**
-     * Verfies that thrown Exceptions in process get collected
-     * TODO: Check more error conditions -- the exception handling is tricky!
+     * Verifies that thrown Exceptions in process get collected
+     * TODO Check more error conditions -- the exception handling is tricky!
      */
     public void testOneJob_ExceptionInProcess() {
         ARCBatchJob job = new TestARCBatchJob() {
                 public void processRecord(ARCRecord record, OutputStream os) {
                     super.processRecord(record, new ByteArrayOutputStream());
-                    if (!((processed - 1) < RECORDS_PROCESSED_BEFORE_EXCEPTION)) {
-                        throw new ArgumentNotValid("testOneJob_ExceptionInProcess");
+                    if (!((processed - 1) 
+                            < RECORDS_PROCESSED_BEFORE_EXCEPTION)) {
+                        throw new ArgumentNotValid(
+                                "testOneJob_ExceptionInProcess");
                     }
                 }
             };
@@ -128,7 +139,8 @@ public class ARCBatchJobTester extends TestCase {
         Exception[] es = job.getExceptions();
         assertEquals("Should have gotten through all records",
                 TOTAL_RECORDS, processed);
-        final int numExceptions = TOTAL_RECORDS - RECORDS_PROCESSED_BEFORE_EXCEPTION;
+        final int numExceptions = TOTAL_RECORDS
+            - RECORDS_PROCESSED_BEFORE_EXCEPTION;
         if (numExceptions != es.length) {
             printExceptions(es);
         }
@@ -154,8 +166,10 @@ public class ARCBatchJobTester extends TestCase {
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
         Exception[] es = job.getExceptions();
         printExceptions(es);
-        assertEquals("Should have processed all but one records", TOTAL_RECORDS - 1, processed);
-        assertEquals("Filtered batch should not throw any exceptions", 0, es.length);
+        assertEquals("Should have processed all but one records",
+                TOTAL_RECORDS - 1, processed);
+        assertEquals("Filtered batch should not throw any exceptions",
+                0, es.length);
     }
     public void testSequentialRuns() {
         testOrdinaryRun();
@@ -183,7 +197,8 @@ public class ARCBatchJobTester extends TestCase {
             ous.writeObject(job1);
             ous.close();
             baos.close();
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
+            ObjectInputStream ois = new ObjectInputStream(
+                    new ByteArrayInputStream(
                         baos.toByteArray()));
             job1 = (SerializableARCBatchJob) ois.readObject();
         } catch (IOException e) {
@@ -200,9 +215,10 @@ public class ARCBatchJobTester extends TestCase {
         //Finally, compare their visible states:
         Exception[] state1 = job1.getExceptions();
         Exception[] state2 = job2.getExceptions();
-        assertEquals("The two jobs should have the same number of registered exceptions.",
-          state1.length,state2.length);
-        for(int i = 0; i < state1.length ; i++){
+        assertEquals("The two jobs should have the same number of "
+                + "registered exceptions.",
+          state1.length, state2.length);
+        for(int i = 0; i < state1.length; i++){
           assertEquals("Found differing registered exceptions: "
               + state1[i].toString() + state2[i].toString(),
             state1[i].toString(),
@@ -210,8 +226,8 @@ public class ARCBatchJobTester extends TestCase {
         }
     }
     /**
-    * Makes the given job proces a few null records and handle an Exception.
-    * @param job
+    * Makes the given job process a few null records and handle an Exception.
+    * @param job the given job
     */
     private void doStuff(SerializableARCBatchJob job) {
         job.processRecord(null, new ByteArrayOutputStream());
@@ -226,20 +242,22 @@ public class ARCBatchJobTester extends TestCase {
         job.processFile(ARC_GZ_FILE, new ByteArrayOutputStream());
         Exception[] es = job.getExceptions();
         printExceptions(es);
-        assertEquals("Batching compressed file should give expected number of records",
+        assertEquals("Batching compressed file should give expected "
+                + "number of records",
                 66, processed);
         assertEquals("Batching compressed file should not throw exceptions",
                 0, es.length);
     }
 
     /**
-     *  Test failure mode when file does not exist
+     *  Test failure mode when file does not exist.
      */
     public void testNonExistentFile() {
         TestARCBatchJob job = new TestARCBatchJob();
         boolean success =
                 job.processFile(NON_EXISTENT_FILE, new ByteArrayOutputStream());
-        assertEquals("Should record exactly one exception", job.getExceptions().length, 1);
+        assertEquals("Should record exactly one exception",
+                job.getExceptions().length, 1);
         assertFalse("Should fail on missing file", success);
     }
 
@@ -292,7 +310,7 @@ public class ARCBatchJobTester extends TestCase {
         }
 
         /**
-         * Does nothing
+         * Does nothing.
           */
         public void initialize(OutputStream os) {
         }
@@ -302,7 +320,7 @@ public class ARCBatchJobTester extends TestCase {
         public void finish(OutputStream os) {
         }
         /**
-         * Does nothing,
+         * Does nothing.
          */
         public void processRecord(ARCRecord record, OutputStream os) {
         }

@@ -46,6 +46,10 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
+/**
+ * Unit test for the GetRecord tool.
+ *
+ */
 public class GetRecordTester extends TestCase {
     private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
@@ -57,8 +61,11 @@ public class GetRecordTester extends TestCase {
 
     public void setUp(){
         mjms.setUp();
-        listener = new GetListener(TestInfo.TEST_ENTRY_FILENAME,TestInfo.TEST_ENTRY_OFFSET);
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), listener);
+        listener = new GetListener(
+                TestInfo.TEST_ENTRY_FILENAME,
+                TestInfo.TEST_ENTRY_OFFSET);
+        JMSConnectionFactory.getInstance().setListener(
+                Channels.getTheArcrepos(), listener);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -67,7 +74,8 @@ public class GetRecordTester extends TestCase {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
-        JMSConnectionFactory.getInstance().removeListener(Channels.getTheArcrepos(), listener);
+        JMSConnectionFactory.getInstance().removeListener(
+                Channels.getTheArcrepos(), listener);
         mjms.tearDown();
     }
 
@@ -83,16 +91,16 @@ public class GetRecordTester extends TestCase {
                          0, pse.getExitValue());
         }
         System.out.flush();
-        String returnedContent = new String(baos.toByteArray());        
+        String returnedContent = new String(baos.toByteArray());
         assertEquals("Should return content unchanged, but was: "
-                + returnedContent,CONTENT,returnedContent);
+                + returnedContent, CONTENT, returnedContent);
     }
 
     /**
      * This class is a MessageListener that responds to GetMessage,
      * simulating an ArcRepository. It sends a constant response
      * if the GetMessage matches the values given to GetListener's constructor,
-     * othrwise it sends a null record as response.
+     * otherwise it sends a null record as response.
      */
     private static class GetListener extends TestMessageListener {
         private String arcFileName;
@@ -103,14 +111,16 @@ public class GetRecordTester extends TestCase {
             this.offset = offset;
             try {
                 HashMap<String,Object> map = new HashMap<String,Object>();
-                for(Object o : ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
-                    //Some pieces of code check the length field, so make sure this has right value and foo the rest:
-                    map.put((String)o,Integer.toString(CONTENT.length()));
+                for (Object o : ARCConstants.REQUIRED_VERSION_1_HEADER_FIELDS) {
+                    //Some pieces of code check the length field, so make sure
+                    // this has right value and foo the rest:
+                    map.put((String) o, Integer.toString(CONTENT.length()));
                 }
-                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(0L)); //insert dummy offset
-                ARCRecordMetaData meta = new ARCRecordMetaData("foo",map);
+                //insert dummy offset
+                map.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(0L));
+                ARCRecordMetaData meta = new ARCRecordMetaData("foo", map);
                 InputStream is = new ByteArrayInputStream(CONTENT.getBytes());
-                myRec = new ARCRecord(is,meta,0,false,false,false);
+                myRec = new ARCRecord(is, meta, 0, false, false, false);
             } catch (IOException e) {
                 myRec = null;
             }
@@ -121,7 +131,8 @@ public class GetRecordTester extends TestCase {
                    received.get(received.size() - 1);
             if (nmsg instanceof GetMessage) {
                 GetMessage m = (GetMessage) nmsg;
-                if((arcFileName.equals(m.getArcFile())) && (offset == m.getIndex())) {
+                if ((arcFileName.equals(m.getArcFile()))
+                        && (offset == m.getIndex())) {
                     m.setRecord(new BitarchiveRecord(myRec));
                 } else {
                     m.setRecord(new BitarchiveRecord(null));
