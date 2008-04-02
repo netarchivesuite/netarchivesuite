@@ -61,7 +61,7 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
         ArcRepositoryClient {
-    /** the one and only JMSACRepository instance. */
+    /** the one and only JMSArcRepositoryClient instance. */
     private static JMSArcRepositoryClient instance;
 
     /**
@@ -102,6 +102,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                  + replyQ + "'");
     }
     
+    /**
+     * Get an JMSArcRepositoryClient instance.
+     * This is guaranteed to be a singleton. 
+     * @return an JMSArcRepositoryClient instance.
+     */
     public static synchronized JMSArcRepositoryClient getInstance() {
         if (instance == null) {
             instance = new JMSArcRepositoryClient();
@@ -339,7 +344,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** Request update of admin data to specific state.
      *
-     * TODO: Currently ignores reply
+     * TODO Don't ignore reply!
      *
      * @param fileName The file for which admin data should be updated.
      * @param bitarchiveName The bitarchive for which admin data should be
@@ -364,7 +369,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** Request update of admin data to specific checksum.
      *
-     * TODO: Currently ignores reply
+     * TODO Don't ignore reply!
      *
      * @param filename The file for which admin data should be updated.
      * @param checksum The new checksum for the file
@@ -390,12 +395,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * (SB or KB)
      * @param checksum The checksum of the deleted file
      * @param credentials The credentials used to delete the file
-     * @return The file that was removed
-     * @throw ArgumentNotValid if arguments are null or
+     * @throws ArgumentNotValid if arguments are null or
      *  equal to the empty string
-     * @throw IOFailure if we could not delete the remote file, or 
+     * @throws IOFailure if we could not delete the remote file, or 
      * there was no response to our RemoveAndGetFileMessage within the allotted
-     * time defined by the {@link Settings.ARCREPOSITORY_STORE_TIMEOUT}.
+     * time defined by the setting {@link Settings.ARCREPOSITORY_STORE_TIMEOUT}.
+     * @return The file that was removed
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,
                                  String checksum, String credentials) {
