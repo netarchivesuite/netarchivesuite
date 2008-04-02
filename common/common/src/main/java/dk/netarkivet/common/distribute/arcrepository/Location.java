@@ -64,8 +64,8 @@ public class Location {
     private static void initializeKnownList() {
         if (known == null) {
             known = new HashMap<String, Location>(2);
-            for (String location :
-                    Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES)) {
+            for (String location
+                    : Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES)) {
                 known.put(location, new Location(location));
             }
         }
@@ -112,14 +112,14 @@ public class Location {
      * @return all known locations as names
      */
     public static String[] getKnownNames() {
-    	initializeKnownList();
-    	String[] knownNames = new String[known.keySet().size()];
-    	int index=0;
-    	for (String s: known.keySet()) {
-    		knownNames[index] = s;
-    		index++;
-    	}
-    	return knownNames;
+        initializeKnownList();
+        String[] knownNames = new String[known.keySet().size()];
+        int index = 0;
+        for (String s : known.keySet()) {
+            knownNames[index] = s;
+            index++;
+        }
+        return knownNames;
     }
 
     /** Get the name of an location.
@@ -132,7 +132,8 @@ public class Location {
 
     /** Get the BaMon channel id that corresponds to this location.
      *
-     * @return The BaMon ChannelID of this location.  Please do not parse its name!
+     * @return The BaMon ChannelID of this location.
+     * Please do not parse its name!
      */
     public ChannelID getChannelID() {
         return Channels.getBaMonForLocation(name);

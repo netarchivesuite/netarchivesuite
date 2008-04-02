@@ -1,7 +1,7 @@
-/* File:             $Id$
-* Revision:         $Revision$
-* Author:           $Author$
-* Date:             $Date$
+/* File:    $Id$
+* Revision: $Revision$
+* Author:   $Author$
+* Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -25,15 +25,18 @@ package dk.netarkivet.common.distribute.arcrepository;
 /**
  * This class encapsulates the different upload states, while storing a file
  * in the bitarchive.
- * Used by the classes {@link ArcRepository}, {@link AdminData}, 
- * and {@link ArcRepositoryEntry}.
+ * Used by the classes ArcRepository, AdminData, and ArcRepositoryEntry.
+ * @see dk.netarkivet.archive.arcrepository.ArcRepository
+ * @see dk.netarkivet.archive.arcrepositoryadmin.AdminData
+ * @see dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry
  */
 public enum BitArchiveStoreState {
     /** Upload to a bitarchive has started. */
     UPLOAD_STARTED, 
     /** Data has been successfully uploaded to a bitarchive. */
     DATA_UPLOADED, 
-    /** Upload to bitarchive completed, i.e. verified by a checksumJob. */
+    /** Upload to bitarchive completed, which means that it has been verified
+     * by a checksumJob. */
     UPLOAD_COMPLETED, 
     /** Upload to bitarchive has failed. */
     UPLOAD_FAILED;
