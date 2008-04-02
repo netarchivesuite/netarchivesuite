@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -71,7 +72,8 @@ public class HarvestScheduler implements CleanupIF {
     private static HarvestScheduler instance;
 
     /** The period between checking if new jobs should be generated.
-     * This is one minute because that's the finest we can define in a harvest definition.
+     * This is one minute because that's the finest we can define in a harvest
+     * definition.
      */
     private static final int GENERATE_JOBS_PERIOD = 60*1000;
 
@@ -79,6 +81,9 @@ public class HarvestScheduler implements CleanupIF {
      * that allows the next timer tasks to drop out if one is still running.
      */
     private boolean running;
+    /**
+     * Listener after responses from submitted Harvest jobs.
+     */
     private static HarvestSchedulerMonitorServer hsmon;
 
     /**
@@ -96,7 +101,9 @@ public class HarvestScheduler implements CleanupIF {
         hsmon = HarvestSchedulerMonitorServer.getInstance();
         backupInitHour = Settings.getInt(Settings.DB_BACKUP_INIT_HOUR);
         if (backupInitHour < 0 || backupInitHour > 23) {
-            log.warn("Illegal value for backupHour (Settting = DB_BACKUP_INIT_HOUR) found: " + backupInitHour);
+            log.warn("Illegal value for backupHour "
+                    + "(Settting = DB_BACKUP_INIT_HOUR) found: "
+                    + backupInitHour);
             log.info("BackupHour set to 0");
             backupInitHour = 0;
         } else {
@@ -147,23 +154,28 @@ public class HarvestScheduler implements CleanupIF {
             // presently one minut.
             scheduleJobs();
             timer = new Timer(true);
-            timer.scheduleAtFixedRate(task, cal.getTime(), GENERATE_JOBS_PERIOD);
+            timer.scheduleAtFixedRate(task, cal.getTime(),
+                    GENERATE_JOBS_PERIOD);
         } catch (Throwable t) {
             log.warn("Scheduling terminated due to exception",
                        t);
             t.printStackTrace();
         }
     }
-
+    /**
+     * Reschedule all jobs with JobStatus SUBMITTED.
+     */
     private void rescheduleJobs() {
         // In case we were shut down without JMS queues being cleaned, remove
         // those messages left
-        //TODO: Implementation fails
-//        List<Message> loprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+        //TODO Implementation fails
+//        List<Message> loprimsgs 
+//            = JMSConnectionFactory.getInstance().removeAllMessages
 //            (Channels.getAnyLowpriorityHaco());
-//        List<Message> hiprimsgs = JMSConnectionFactory.getInstance().removeAllMessages
+//        List<Message> hiprimsgs 
+//        = JMSConnectionFactory.getInstance().removeAllMessages
 //            (Channels.getAnyHighpriorityHaco());
-        // TODO: Resubmit those just taken out with same ID, as we know no
+        // TODO Resubmit those just taken out with same ID, as we know no
         // harvester is using them.
         final JobDAO dao = JobDAO.getInstance();
         final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.SUBMITTED);
@@ -195,7 +207,11 @@ public class HarvestScheduler implements CleanupIF {
                 DBSpecifics.getInstance().backupDatabase(backupDir);
                 lastBackupDate = new Date();
             } catch (SQLException e) {
-                log.warn("Unable to backup database to dir: " + backupDir, e);
+                String errMsg = "Unable to backup database to dir: " 
+                    + backupDir; 
+                log.warn(errMsg, e);
+                NotificationsFactory.getInstance().errorEvent(
+                        errMsg, e); 
             }
         }
 
@@ -223,7 +239,8 @@ public class HarvestScheduler implements CleanupIF {
             return false;
         }
         Calendar cal = Calendar.getInstance();
-        boolean isBackupHour = (cal.get(Calendar.HOUR_OF_DAY) == backupInitHour);
+        boolean isBackupHour = (cal.get(Calendar.HOUR_OF_DAY)
+                == backupInitHour);
         if (lastBackupDate != null) {
             int hoursPassed = getHoursPassedSince(lastBackupDate);
             if (hoursPassed < 1) {
@@ -241,7 +258,7 @@ public class HarvestScheduler implements CleanupIF {
      * @param theDate the date compared to current time.
      * @return the number of hours passed since argument theDate
      */
-    private int getHoursPassedSince (Date theDate){
+    private int getHoursPassedSince(Date theDate){
         Calendar currentCal = Calendar.getInstance();
         Calendar theDateCal = Calendar.getInstance();
         theDateCal.setTime(theDate);
