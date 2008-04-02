@@ -24,17 +24,18 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 /**
- * Constants used in bit preservation
+ * Constants used in bit preservation.
  *
  */
-
 public class Constants {
 
-    // characters used for separating file identifier from checksum in output
+    /** Characters used for separating a file identifier 
+     * from the checksum in the output from a checksum job.
+     */
     public static final String STRING_FILENAME_SEPARATOR = "##";
 
     /**
-     * Not to be instantiated
+     * Not to be instantiated.
      */
     private Constants(){
     }

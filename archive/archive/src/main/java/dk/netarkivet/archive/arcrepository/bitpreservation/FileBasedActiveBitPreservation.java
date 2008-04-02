@@ -621,8 +621,8 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Get the dat for last time checksum information was updated for
-     * thisis location.
+     * Get the date for last time the checksum information was updated for
+     * this location.
      * @param location The location to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
      */
@@ -632,7 +632,7 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Get the dat for last time missing files information was updated for
+     * Get the date for last time the missing files information was updated for
      * this location.
      * @param location The location to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
@@ -652,7 +652,7 @@ public class FileBasedActiveBitPreservation
      * @param filenames The names of the files.
      *
      * TODO Decide whether or not to throw IllegalState
-     * @throw IllegalState  If one of the files is unknown
+     * @throws IllegalState  If one of the files is unknown
      *    (Known files will be attempted though)
      * @throws IOFailure    If some file cannot be reestablished. All files
      *                          will be attempted, though.
@@ -753,11 +753,13 @@ public class FileBasedActiveBitPreservation
     /**
      * Checks the conditions that must be true before reestablishing a missing
      * file. Returns true if and only if all of the below are true; returns
-     * false otherwise.
+     * false otherwise.<p>
      *
-     * 1) the file is registered correctly in AdminData 2) the file is missing
-     * in the given bitarchive 3) the file is present in another bitarchive (the
-     * reference archive) 4) admin data and the reference archive agree on the
+     * 1) the file is registered correctly in AdminData 
+     * <br>2) the file is missing in the given bitarchive 
+     * <br>3) the file is present in another bitarchive (the
+     * reference archive) 
+     * <br>4) admin data and the reference archive agree on the
      * checksum
      *
      * @param state            the status for one file in the bitarchives
@@ -826,8 +828,8 @@ public class FileBasedActiveBitPreservation
                                    String credentials, String checksum) {
         ArgumentNotValid.checkNotNull(location, "Location location");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
-        ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
         removeAndGetFile(filename, location, checksum, credentials);
         uploadMissingFiles(location, filename);
     }
