@@ -71,7 +71,7 @@ public class Host {
      */
     private final String location;
 
-    /** Enumeration of the allowable types of hosts (including service hosts)
+    /** Enumeration of the allowable types of hosts (including service hosts).
      */
     public static enum Type {
         admin, bitarchive, harvesters, access, ftp, jms, mail, indexserver
@@ -177,6 +177,7 @@ public class Host {
      * (though in arbitrary case).
      */
     public void setOS(String value) {
+        ArgumentNotValid.checkNotNullOrEmpty(value, "String value");
         os = OS.valueOf(value.toUpperCase());
     }
 
@@ -190,12 +191,20 @@ public class Host {
 
     /**
      * Add another type to the host.
+     * @param type another type
      */
     public void addType(Type type) {
+        ArgumentNotValid.checkNotNull(type, "Type type");
         types.add(type);
     }
 
+    /**
+     * Check, if this host is of the given type.
+     * @param type a given type
+     * @return true, if this host is of the given type; otherwise, false
+     */
     public boolean isType(Type type) {
+        ArgumentNotValid.checkNotNull(type, "Type type");
         return types.contains(type);
     }
 
@@ -223,6 +232,8 @@ public class Host {
      * @param theInstallDir the directory to install the application to.
      */
     public void setInstallDir(String theInstallDir) {
+        ArgumentNotValid.checkNotNullOrEmpty(theInstallDir,
+                "String theInstallDir");
         installDir = theInstallDir;
     }
 
@@ -241,6 +252,7 @@ public class Host {
      * @param theDir the windows directory to install to.
      */
     public void setInstallDirWindows(String theDir) {
+        ArgumentNotValid.checkNotNullOrEmpty(theDir, "String theDir");
         installDirWindows = theDir;
     }
 
@@ -267,9 +279,10 @@ public class Host {
     /**
      * Define the settings xml used by the host.
      *
-     * @param theXml
+     * @param theXml the SimpleXml object for this host.
      */
     public void setSettingsXml(SimpleXml theXml) {
+        ArgumentNotValid.checkNotNull(theXml, "SimpleXml theXml");
         settingsXml = theXml;
     }
 
@@ -289,6 +302,8 @@ public class Host {
     public void overrideSettingsXmlDefaults(String environmentName,
                                             Host ftpHost,
                                             Host mailHost, Host jmsHost) {
+        ArgumentNotValid.checkNotNullOrEmpty(environmentName,
+                "String environmentName");
 
         if (jmsHost != null) {
             overrideSetting(Settings.JMS_BROKER_HOST, jmsHost.getName());
@@ -360,7 +375,7 @@ public class Host {
     /**
      * Get list of additional properties.
      *
-     * @return The list of aditional properties in a map from String to list of
+     * @return The list of additional properties in a map from String to list of
      *         Strings.
      */
     public Map<String, List<String>> getProperties() {
@@ -387,11 +402,13 @@ public class Host {
     }
 
     /**
-     * Sets the default logging properties filename.
+     * Sets the default contents of the logging properties file.
      *
-     * @param logProperties
+     * @param logProperties contents of the logging properties file.
      */
     public void setLogProperties(String logProperties) {
+        ArgumentNotValid.checkNotNullOrEmpty(logProperties,
+                "String logProperties");
         this.logProperties = logProperties;
     }
 
@@ -401,6 +418,8 @@ public class Host {
      * substituted for placeholders.
      */
     public void setJmxPasswordFileContents(String passwordFileContents) {
+        ArgumentNotValid.checkNotNullOrEmpty(passwordFileContents,
+                "String passwordFileContents");
         jmxPasswordFileContents = passwordFileContents;
     }
 
@@ -412,6 +431,9 @@ public class Host {
      * be monitors for.
      */
     public void writeStartAdminApps(File dir, List<String> locations) {
+        ArgumentNotValid.checkNotNull(dir, "File dir");
+        ArgumentNotValid.checkNotNull(locations, "List<String> locations");
+        
         File res = new File(dir, "start_harvestdefinition.sh");
         writeStandardStart(res,
                            GUIApplication.class.getName());
@@ -437,6 +459,7 @@ public class Host {
      * @param dir the directory to store the script in
      */
     public void writeStartBitarchiveApps(File dir) {
+        ArgumentNotValid.checkNotNull(dir, "File dir");
         File res = new File(dir, "start_bitarchive.sh");
         if (getOS().equals(OS.WINDOWS)) {
             writeStartBat(dir, BitarchiveApplication.class.getName());
@@ -459,6 +482,9 @@ public class Host {
      * @param setfn the name of the settings file to use.
      */
     public void writeStartHarvesterApps(File res, String setfn) {
+        ArgumentNotValid.checkNotNull(res, "File res");
+        ArgumentNotValid.checkNotNullOrEmpty(setfn, "String setfn");
+        
         File logdir = new File(installDir + "/conf/");
         String settingsfn = installDir + "/" + setfn;
 
@@ -487,6 +513,9 @@ public class Host {
      * @param setfn the name of the settings file to use
      */
     public void writeStartAccessApps(File res, String setfn) {
+        ArgumentNotValid.checkNotNull(res, "File res");
+        ArgumentNotValid.checkNotNullOrEmpty(setfn, "String setfn");
+        
         File logdir = new File(installDir + "/conf/");
         String settingsfn = installDir + "/" + setfn;
 
@@ -501,6 +530,9 @@ public class Host {
      * @param setfn the name of the settings file to use.
      */
     public void writeStartIndexApp(File res, String setfn) {
+        ArgumentNotValid.checkNotNull(res, "File res");
+        ArgumentNotValid.checkNotNullOrEmpty(setfn, "String setfn");
+        
         File logdir = new File(installDir + "/conf/");
         String settingsfn = installDir + "/" + setfn;
 
@@ -574,10 +606,11 @@ public class Host {
                 String SETTINGSFILE = "-D" + Settings
                         .SETTINGS_FILE_NAME_PROPERTY
                                       + "=" + settingsfn;
-                String LOGFILE = "-Dorg.apache.commons.logging.Log="
-                                 + "org.apache.commons.logging.impl.Jdk14Logger "
-                                 + "-Djava.util.logging.config.file=" + logfn;
-                //TODO: The JMX and httptransfer settings should really be
+                String LOGFILE
+                    = "-Dorg.apache.commons.logging.Log="
+                        + "org.apache.commons.logging.impl.Jdk14Logger "
+                        + "-Djava.util.logging.config.file=" + logfn;
+                //TODO The JMX and httptransfer settings should really be
                 // merged into settings.xml. These settings override JMX
                 // settings from there
                 File JMXPasswordFile = new File(installDir + "/conf/",
@@ -598,8 +631,8 @@ public class Host {
                                                      securityArgs,
                                                      httpFileTransferArgs);
                 pw.println("#!/bin/bash");
-                pw.println("export CLASSPATH=" +
-                        StringUtils.surjoin(getJarFiles(appName),
+                pw.println("export CLASSPATH="
+                        + StringUtils.surjoin(getJarFiles(appName),
                                 installDir + "/lib/", ":") +"$CLASSPATH;");
                 pw.println("cd " + installDir);
                 pw.println("java " + JVMARGS + " " + OPTIONS + " " + appName
@@ -623,9 +656,11 @@ public class Host {
                 pw2.println("    kill -9 $PIDS");
                 pw2.println("fi");
 
-                if (HarvestControllerApplication.class.getName().equals(appName)) {
+                if (HarvestControllerApplication.class.getName().equals(
+                        appName)) {
                     // Write script code to kill Heritrix
-                    pw2.println("PIDS=$(ps -wwfe | grep " + Heritrix.class.getName()
+                    pw2.println("PIDS=$(ps -wwfe | grep "
+                                + Heritrix.class.getName()
                                 + " | grep -v grep | grep " + settingsfn
                                 + " | awk \"{print \\$2}\")");
                     pw2.println("if [ -n \"$PIDS\" ] ; then");
@@ -644,7 +679,8 @@ public class Host {
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Could not create:" + res + " for:" + appName, e);
+            throw new IOFailure("Could not create:" + res + " for:"
+                    + appName, e);
         }
 
     }
@@ -693,18 +729,20 @@ public class Host {
                 pwVbs = new PrintWriter(new FileWriter(vbs));
 
                 pwBat.println("cd " + "\"" + installDirWindows + "\"");
-                pwBat.println("set CLASSPATH=" +
-                              StringUtils.surjoin(getJarFiles(appName),
-                                                  installDirWindows + "\\lib\\", ";"));
+                pwBat.println("set CLASSPATH="
+                              + StringUtils.surjoin(
+                                      getJarFiles(appName),
+                                      installDirWindows + "\\lib\\", ";"));
 
                 String settingsFile = "-D"
                                       + Settings.SETTINGS_FILE_NAME_PROPERTY
                                       + "=\"" + settingsfn + "\"";
-                String logFile = "-Dorg.apache.commons.logging.Log="
-                                 + "org.apache.commons.logging.impl.Jdk14Logger "
-                                 + "-Djava.util.logging.config.file=" + "\""
-                                 + logfn + "\"";
-                //TODO: The JMX and httptransfer settings should really be
+                String logFile 
+                    = "-Dorg.apache.commons.logging.Log="
+                        + "org.apache.commons.logging.impl.Jdk14Logger "
+                        + "-Djava.util.logging.config.file=" + "\""
+                        + logfn + "\"";
+                //TODO The JMX and httptransfer settings should really be
                 // merged into settings.xml. These settings override JMX
                 // settings from there
                 String jmxPasswordFile = installDirWindows + "\\conf\\"
@@ -713,8 +751,8 @@ public class Host {
                         + " -Dsettings.common.jmx.passwordFile=\""
                         + jmxPasswordFile + "\"";
                 String httpTransferPortArgs = getHttpFileTransferArgs();
-                String jmvArgs = "-Xmx1150m -classpath \"" +
-                        StringUtils.surjoin(getJarFiles(appName),
+                String jmvArgs = "-Xmx1150m -classpath \""
+                        + StringUtils.surjoin(getJarFiles(appName),
                                 installDirWindows + "\\lib\\", ";") + "\"";
                 String securityArgs = "-Djava.security.manager "
                                       + "-Djava.security.policy=\""
@@ -773,15 +811,16 @@ public class Host {
      * @return The above mentioned String
      */
     private String getStartAllBat() {
-        String res = "cd \"" + installDirWindows + "\\conf\\\"\n";
-        res = res
-              + "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=\"";
+        StringBuilder res = new StringBuilder(
+                "cd \"" + installDirWindows + "\\conf\\\"\n");
+        res.append(
+                "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=\"");
         for (String appName : appsToStart) {
             if (appName.endsWith(".bat")) {
-                res = res + appName + "\" \n";
+                res.append(appName + "\" \n");
             }
         }
-        return res;
+        return res.toString();
     }
 
     /**
@@ -791,20 +830,21 @@ public class Host {
      * @return the above mentioned string
      */
     public String getStartAll(String ext) {
+        ArgumentNotValid.checkNotNullOrEmpty(ext, "String ext");
         if (ext.equals(".bat")) {
             return getStartAllBat();
         }
 
-        String res = "#!/bin/bash\n";
-        res = res + "cd " + installDir + "/conf\n";
+        StringBuilder res = new StringBuilder("#!/bin/bash\n");
+        res.append("cd " + installDir + "/conf\n");
         for (String appName : appsToStart) {
             if (appName.endsWith(ext)) {
-                res += "if [ -e ./" + appName + " ]; then\n";
-                res += "    ./" + appName + " \n";
-                res += "fi\n";
+                res.append("if [ -e ./" + appName + " ]; then\n");
+                res.append("    ./" + appName + " \n");
+                res.append("fi\n");
             }
         }
-        return res;
+        return res.toString();
     }
 
     /** For a given application, return the jar files it requires.  This also
@@ -821,7 +861,8 @@ public class Host {
         if (appName.startsWith(HarvestControllerApplication.class.getName())
                 || appName.startsWith(GUIApplication.class.getName())
                 || appName.startsWith(SideKick.class.getName())
-                || appName.startsWith(HarvestControllerServerMonitorHook.class.getName())) {
+                || appName.startsWith(
+                        HarvestControllerServerMonitorHook.class.getName())) {
             return Arrays.asList("dk.netarkivet.harvester.jar",
                                  "dk.netarkivet.archive.jar",
                                  "dk.netarkivet.viewerproxy.jar",
@@ -829,7 +870,8 @@ public class Host {
         }
         if (appName.startsWith(BitarchiveApplication.class.getName())
                 || appName.startsWith(ArcRepositoryApplication.class.getName())
-                || appName.startsWith(BitarchiveMonitorApplication.class.getName())
+                || appName.startsWith(
+                        BitarchiveMonitorApplication.class.getName())
                 || appName.startsWith(IndexServerApplication.class.getName())) {
             return  Arrays.asList("dk.netarkivet.archive.jar",
                                   "dk.netarkivet.viewerproxy.jar",
@@ -855,7 +897,8 @@ public class Host {
      * file.
      */
     private String getJMXPortParameter() {
-        List<String> available = getProperties().get(Constants.JMXPORT_PROPERTY);
+        List<String> available = getProperties().get(
+                Constants.JMXPORT_PROPERTY);
         if (available == null || available.isEmpty()) {
             throw new IllegalState("No more JMX ports for " + this);
         }
@@ -942,15 +985,15 @@ public class Host {
      * @return a string representation of this object.
      */
     public String toString() {
-        String res = "Host:" + name + ";\n"
+        StringBuilder res = new StringBuilder("Host:" + name + ";\n"
                      + "at:" + location + ";\n"
-                     + "is:" + types + ";\n";
+                     + "is:" + types + ";\n");
         for (Map.Entry<String, List<String>> p : properties.entrySet()) {
             for (String value : p.getValue()) {
-                res = res + "property:" + p.getKey() + "=" + value + "\n";
+                res.append("property:" + p.getKey() + "=" + value + "\n");
             }
         }
-        return res;
+        return res.toString();
 
     }
 
@@ -964,7 +1007,8 @@ public class Host {
         ArgumentNotValid.checkTrue(confDir.isDirectory(),
                 "conf dir must exist");
         File passwordFile = new File(confDir, Constants.JMX_PASSWORD_FILENAME);
-        FileUtils.writeBinaryFile(passwordFile, jmxPasswordFileContents.getBytes());
+        FileUtils.writeBinaryFile(passwordFile,
+                jmxPasswordFileContents.getBytes());
     }
 
     /** Get a single-valued property out of this host.
@@ -978,8 +1022,8 @@ public class Host {
     String getProperty(String key) {
         List<String> properties = getProperties().get(key);
         if (properties == null) {
-        	throw new UnknownID("No property is associated with key '"
-        			+ key + "'.");
+            throw new UnknownID("No property is associated with key '"
+                    + key + "'.");
         }
 
         if (properties.size() != 1) {
@@ -1010,7 +1054,8 @@ public class Host {
      * Known code already has permission to do anything, while third-party code
      * (submitted for batch) must be allowed to read bitarchive files.
      *
-     * @see http://java.sun.com/j2se/1.5.0/docs/guide/security/PolicyFiles.html
+     * @see <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/PolicyFiles.html">
+     * http://java.sun.com/j2se/1.5.0/docs/guide/security/PolicyFiles.html</A>
      * @param securityFile File to add permissions to.
      */
     public void updateSecurityFile(File securityFile) {

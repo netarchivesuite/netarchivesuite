@@ -1,7 +1,7 @@
-/* $Id: ItConfigParser.java 27 2007-07-30 08:38:07Z lars $
- * $Revision: 27 $
- * $Date: 2007-07-30 10:38:07 +0200 (Mon, 30 Jul 2007) $
- * $Author: lars $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
