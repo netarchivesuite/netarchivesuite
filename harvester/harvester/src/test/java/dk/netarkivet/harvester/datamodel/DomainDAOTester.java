@@ -717,7 +717,7 @@ public class DomainDAOTester extends DataModelTestCase {
         dao.update(d2);
 
         Domain d3 = dao.read(d.getName());
-        info = d2.getAllDomainOwnerInfo();
+        info = d3.getAllDomainOwnerInfo();
         assertEquals("Should have two ownerinfo after insertion",
                      2, info.length);
     }
@@ -729,7 +729,6 @@ public class DomainDAOTester extends DataModelTestCase {
         Domain d = dao.read(domainName);
         assertEquals("Domain should not have passwords before insertion",
                      0, IteratorUtils.toList(d.getAllPasswords()).size());
-        final Date now = new Date();
         d.addPassword(new Password("foo", "bar", "baz", "qux", "quux", "quuux"));
         dao.update(d);
         Domain d2 = dao.read(d.getName());
