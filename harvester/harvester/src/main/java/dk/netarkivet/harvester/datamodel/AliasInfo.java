@@ -35,11 +35,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class AliasInfo {
 
     /** the domain. */
-    final private String domain;
+    private final String domain;
     /** the domain which this domain is an alias of. */
-    final private String aliasOf;
+    private final String aliasOf;
     /** the domain was (re)registered as an alias on this date. */
-    final private Date lastChange;
+    private final Date lastChange;
 
     /**
      * Constructor for the AliasInfo class.
@@ -47,7 +47,7 @@ public class AliasInfo {
      * @param domain a given domain
      * @param aliasOf the given domain is an alias of this domain
      * @param lastChange the alias was (re-)registered on this date.
-     * @throws dk.netarkivet.common.exceptions.ArgumentNotValid in the following cases:
+     * @throws ArgumentNotValid in the following cases:
      *     1. domain is null or empty
      *     2. aliasOf is null or empty
      *     3. lastChange is null
@@ -89,10 +89,10 @@ public class AliasInfo {
         return (Date) lastChange.clone();
     }
 
-
     /**
      * Is this alias expired?
-     * This method depends upon the Constant: dk.netarkivet.harvester.webinterface.Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
+     * This method depends upon the Constant:
+     * dk.netarkivet.harvester.webinterface.Constants.ALIAS_TIMEOUT_IN_MILLISECONDS
      * @return true, if alias is expired
      */
     public boolean isExpired() {
@@ -101,14 +101,14 @@ public class AliasInfo {
         return aliasTimeoutDate.before(now);
     }
 
-    /** The date when this alias will expire (or has expired)
+    /** The date when this alias will expire (or has expired).
      *
      * @return The expiration date for this alias.  May be in the past or
      * in the future.
      */
     public Date getExpirationDate() {
-        Date aliasTimeoutDate = new Date (this.lastChange.getTime() +
-                Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
+        Date aliasTimeoutDate = new Date(this.lastChange.getTime()
+                + Constants.ALIAS_TIMEOUT_IN_MILLISECONDS);
         return aliasTimeoutDate;
     }
 
