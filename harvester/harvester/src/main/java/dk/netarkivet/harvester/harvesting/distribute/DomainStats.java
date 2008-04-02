@@ -47,9 +47,10 @@ public class DomainStats implements Serializable {
      * @throws ArgumentNotValid If initObjectCount < 0, initByteCount < 0, or
      *          defaultStopReason is null.
      */
-    public DomainStats(long initObjectCount, long initByteCount, StopReason defaultStopReason) {
+    public DomainStats(long initObjectCount, long initByteCount,
+            StopReason defaultStopReason) {
+        ArgumentNotValid.checkNotNegative(initObjectCount, "initObjectCount");
         ArgumentNotValid.checkNotNegative(initByteCount, "initByteCount");
-        ArgumentNotValid.checkNotNegative(objectCount, "objectCount");
         ArgumentNotValid.checkNotNull(defaultStopReason, "defaultStopReason");
         this.objectCount = initObjectCount;
         this.byteCount = initByteCount;
@@ -63,7 +64,6 @@ public class DomainStats implements Serializable {
         return byteCount;
     }
 
-
     /**
      * @param byteCount The byteCount to set.
      * @throws ArgumentNotValid If byteCount is a negative number.
@@ -73,7 +73,6 @@ public class DomainStats implements Serializable {
         this.byteCount = byteCount;
     }
 
-
     /**
      * @return the objectCount.
      */
@@ -81,8 +80,8 @@ public class DomainStats implements Serializable {
         return objectCount;
     }
 
-
     /**
+     * Set objectcount to something new.
      * @param objectCount The objectCount to set.
      * @throws ArgumentNotValid If objectCount is a negative number.
      */
@@ -91,7 +90,6 @@ public class DomainStats implements Serializable {
         this.objectCount = objectCount;
     }
 
-
     /**
      * @return the stopReason.
      */
@@ -99,10 +97,10 @@ public class DomainStats implements Serializable {
         return stopReason;
     }
 
-
     /**
+     * Set stopreason to something new.
      * @param stopReason The stopReason to set.
-     * @throws dk.netarkivet.common.exceptions.ArgumentNotValid If argument is null
+     * @throws ArgumentNotValid If argument is null
      */
     public void setStopReason(StopReason stopReason) {
         ArgumentNotValid.checkNotNull(stopReason, "stopReason");
