@@ -74,6 +74,13 @@ public class HeritrixTemplate {
             + "[@class='" + DecidingScope.class.getName()
             + "']";
     
+    /** Xpath to check, that all templates use the same archiver path,
+     * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
+     */
+    public static final String ARCHIVER_PATH_XPATH =
+        "/crawl-order/controller/map[@name='write-processors']/"
+        + "newObject[@name='Archiver']/stringList[@name='path']/string";
+    
     /** Map from required xpaths to a regular expression describing
      * legal content for the path text. */
     private static final Map<String, Pattern> requiredXpaths
@@ -118,6 +125,10 @@ public class HeritrixTemplate {
         requiredXpaths.put(HERITRIX_USER_AGENT_XPATH,
                            Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
+      
+        //Required that Heritrix write its arcfiles to relative dir "arcs"
+        requiredXpaths.put(ARCHIVER_PATH_XPATH, Pattern.compile(
+                dk.netarkivet.common.Constants.ARCDIRECTORY_NAME));
     }
 
     /** Constructor for HeritrixTemplate class.

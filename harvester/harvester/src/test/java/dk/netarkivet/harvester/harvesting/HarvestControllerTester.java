@@ -21,10 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.harvesting;
-/**
- * Tests for the HarvestController class (which was extracted from
- * HarvestControllerServer).
- */
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +37,6 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
-import org.dom4j.Document;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.Settings;
@@ -63,7 +58,10 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-
+/**
+ * Tests for the HarvestController class (which was extracted from
+ * HarvestControllerServer).
+ */
 public class HarvestControllerTester extends TestCase {
     HarvestController hc;
 
@@ -71,8 +69,8 @@ public class HarvestControllerTester extends TestCase {
         super(s);
     }
 
-    MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR,
-            "dedupcache"));
+    MockupIndexServer mis = new MockupIndexServer(
+            new File(TestInfo.ORIGINALS_DIR, "dedupcache"));
     UseTestRemoteFile rf = new UseTestRemoteFile();
 
     public void setUp()
@@ -84,7 +82,8 @@ public class HarvestControllerTester extends TestCase {
                                           TestInfo.WORKING_DIR);
         rf.setUp();
         Settings.set(Settings.ARCREPOSITORY_STORE_RETRIES, "1");
-        Settings.set(Settings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
+        Settings.set(Settings.CACHE_DIR, new File(
+                TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
         Settings.set(Settings.DIR_COMMONTEMPDIR,
                 new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
         mis.setUp();
@@ -115,8 +114,6 @@ public class HarvestControllerTester extends TestCase {
             //expected
         }
     }
-
-
 
     /** Tests the writeHarvestFiles method.
      *
@@ -175,9 +172,8 @@ public class HarvestControllerTester extends TestCase {
         FileAsserts.assertFileContains("Should have correct order.xml file",
                                        "OneLevel-order", orderXml);
         
-        // Verify that order.xml is valid HeritrixTemplate
-        Document order = XmlUtils.getXmlDoc(orderXml);
-        HeritrixTemplate template = new HeritrixTemplate(order, true);
+        // Verify that order.xml is a valid HeritrixTemplate
+        new HeritrixTemplate(XmlUtils.getXmlDoc(orderXml), true);
         
         FileAsserts.assertFileContains("Should have correct seeds.txt file",
                                        j.getSeedListAsString(), seedsTxt);
@@ -200,6 +196,11 @@ public class HarvestControllerTester extends TestCase {
         //There are three files in the zip file replied
         assertEquals("Index directory should contain unzipped files",
                      3, files.getIndexDir().listFiles().length);
+        
+        /** Check, that arcsdir is created in the this method. 
+         * Part of fixing bug #924. */
+        assertTrue("ArcsDir should exist prior to crawl-start",
+                files.getArcsDir().isDirectory());
     }
 
     /**

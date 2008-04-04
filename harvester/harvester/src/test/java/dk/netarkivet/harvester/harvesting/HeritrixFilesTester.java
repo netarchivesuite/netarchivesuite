@@ -21,28 +21,22 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.harvesting;
-/**
- * lc forgot to comment this!
- */
-
 import java.io.File;
-import java.io.IOException;
 
-import is.hi.bok.deduplicator.CrawlLogIterator;
-import is.hi.bok.deduplicator.DigestIndexer;
 import junit.framework.TestCase;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 
-
+/**
+ * Unittests for the class HeritrixFiles.
+ */
 public class HeritrixFilesTester extends TestCase {
 
     private MockupJMS mjms = new MockupJMS();
@@ -99,37 +93,32 @@ public class HeritrixFilesTester extends TestCase {
      * Bug 871 caused this test to be written.
      */
     public void testWriteOrderXml(){
-       TestInfo.HERITRIX_TEMP_DIR.mkdir();
-       HeritrixFiles hf =
-           new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
-       try {
-           hf.writeOrderXml(null);
-           fail("ArgumentNotValid exception with null Document");
-       } catch (ArgumentNotValid e) {
-           //Expected
-       }
-       DocumentFactory docFactory = DocumentFactory.getInstance();
-       try {
-           hf.writeOrderXml(docFactory.createDocument());
-           fail("ArgumentNotValid exception with Document with no contents");
-       } catch (ArgumentNotValid e) {
-           //Expected
-       }
+        TestInfo.HERITRIX_TEMP_DIR.mkdir();
+        HeritrixFiles hf =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
+        try {
+            hf.writeOrderXml(null);
+            fail("ArgumentNotValid exception with null Document");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+        DocumentFactory docFactory = DocumentFactory.getInstance();
+        try {
+            hf.writeOrderXml(docFactory.createDocument());
+            fail("ArgumentNotValid exception with Document with no contents");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
 
-       // test, that order xml is written, if argument is valid
+        // test, that order xml is written, if argument is valid
 
-       Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
-       try {
-           hf.writeOrderXml(doc);
-       } catch (Exception e) {
-           fail("Exception not expected: " + e);
-       }
-
-
-
-
-
-   }
+        Document doc = XmlUtils.getXmlDoc(TestInfo.ORDER_FILE);
+        try {
+            hf.writeOrderXml(doc);
+        } catch (Exception e) {
+            fail("Exception not expected: " + e);
+        }
+    }
     /**
      * Test, that writeSeedsTxt fails correctly with bad arguments:
      * - null argument
@@ -138,86 +127,38 @@ public class HeritrixFilesTester extends TestCase {
      * Bug 871 caused this test to be written.
      */
     public void testWriteSeedsTxt() {
-       TestInfo.HERITRIX_TEMP_DIR.mkdir();
-       HeritrixFiles hf =
-           new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
-       try {
-           hf.writeSeedsTxt(null);
-           fail("ArgumentNotValid exception with null seeds");
-       } catch (ArgumentNotValid e) {
-           //Expected
-       }
-
-       try {
-           hf.writeSeedsTxt("");
-           fail("ArgumentNotValid exception with seeds equal to empty string");
-       } catch (ArgumentNotValid e) {
-           //Expected
-       }
-
-       try {
-           hf.writeSeedsTxt("www.netarkivet.dk\nwww.sulnudu.dk");
-       } catch (Exception e) {
-           fail("Exception not expected with seeds equal to valid non-empty String object" + e);
-       }
-   }
-
-
-    private void generateIndex(File CrawlLog, File indexDir) {
+        TestInfo.HERITRIX_TEMP_DIR.mkdir();
+        HeritrixFiles hf =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
         try {
-            // Setup Lucene for indexing our crawllogs
-            final boolean optimizeIndex = true;
-            String indexLocation = indexDir.getAbsolutePath();
-            // MODE_BOTH: Both URL's and Hash are indexed: Alternatives:
-            // DigestIndexer.MODE_HASH or DigestIndexer.MODE_URL
-            String indexingMode = DigestIndexer.MODE_BOTH;
-            boolean includeNormalizedURL = false; // used to be 'equivalent' setting
-            boolean includeTimestamp = true;     // used to be 'timestamp' setting
-            boolean includeEtag = true;           // used to be 'etag' setting
-            boolean addToExistingIndex = false;
-            DigestIndexer indexer =
-                new DigestIndexer(indexLocation,
-                                  indexingMode,
-                                  includeNormalizedURL,
-                                  includeTimestamp,
-                                  includeEtag,
-                                  addToExistingIndex);
+            hf.writeSeedsTxt(null);
+            fail("ArgumentNotValid exception with null seeds");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
 
-            /** the blacklist set to true results in docs matching the mimefilter being ignored. */
-            boolean blacklist = true;
-            final String mimefilter = "^text/.*";
-            final boolean verbose = false; //Avoids System.out.println's
-            String defaultOrigin = "defaultOrigin";
-                CrawlLogIterator reader = null;
-                try {
-                    reader = new CrawlLogIterator(CrawlLog.getAbsolutePath());
-                    indexer.writeToIndex(reader, mimefilter, blacklist, defaultOrigin, verbose);
-                } finally {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                }
-            indexer.close(optimizeIndex);
-        } catch (IOException e) {
-            throw new IOFailure("Error setting up craw.log index framework for "
-                                + indexDir, e);
+        try {
+            hf.writeSeedsTxt("");
+            fail("ArgumentNotValid exception with seeds equal to empty string");
+        } catch (ArgumentNotValid e) {
+            //Expected
+        }
+
+        try {
+            hf.writeSeedsTxt("www.netarkivet.dk\nwww.sulnudu.dk");
+        } catch (Exception e) {
+            fail("Exception not expected with seeds equal to valid non-empty String object" + e);
         }
     }
-    /**
-     * Create Dummy Lucene index.
-     * uses an empty file as basis for the lucene-index.
-     *
-     * @return location of Dummy Lucene index
-     * @throws IOFailure
-     */
-    private File getDummyIndex() throws IOFailure  {
-            try {
-            // use empty crawl.log to generate default lucene index
-            File tempDir = TestFileUtils.createTempDir("index", ".scratch", TestInfo.WORKING_DIR);
-            generateIndex(TestInfo.EMPTY_CRAWLLOG_FILE, tempDir);
-            return tempDir;
-            } catch (IOException e) {
-                throw new IOFailure("Unable to create dummy lucene index", e);
-            }
-        }
+    
+    /** Check, that the getArcsDir method works.*/
+    public void testGetArcsDir() {
+        TestInfo.HERITRIX_TEMP_DIR.mkdir();
+        HeritrixFiles hf =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
+        File arcsdir = hf.getArcsDir();
+        assertEquals("Wrong arcsdir", new File(TestInfo.HERITRIX_TEMP_DIR,
+                        dk.netarkivet.common.Constants.ARCDIRECTORY_NAME),
+                        arcsdir);
+    }
 }

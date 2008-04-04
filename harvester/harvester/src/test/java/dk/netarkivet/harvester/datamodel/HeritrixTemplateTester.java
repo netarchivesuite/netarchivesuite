@@ -23,18 +23,17 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
+import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.archive.crawler.deciderules.DecidingScope;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
+import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
-
-import junit.framework.TestCase;
-import java.util.List;
-import org.dom4j.Node;
-
 
 /** Testclass for class HeritrixTemplate. */
 public class HeritrixTemplateTester extends TestCase {
@@ -150,6 +149,17 @@ public class HeritrixTemplateTester extends TestCase {
         checkIllegalValues("The value should be illegal for heritrixFromXpath",
                            doc, HeritrixTemplate.HERITRIX_FROM_XPATH,
                            "@bar.com", "foO@bar", "bar.com");
+        
+        // Check validation of HeritrixTemplate.ARCHIVER_PATH_XPATH
+        // Make sure that Heritrix writes the arcfiles to the correct dir.
+        doc = XmlUtils.getXmlDoc(f);
+        checkLegalValues("The value should be legal for ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.ARCHIVER_PATH_XPATH,
+                dk.netarkivet.common.Constants.ARCDIRECTORY_NAME);
+        
+        checkIllegalValues("The value should be illegal for ARCHIVER_PATH_XPATH",
+                doc, HeritrixTemplate.ARCHIVER_PATH_XPATH,
+                "*", "", "bar.com");
    }
 
     private void checkIllegalValues(String msg, Document doc,

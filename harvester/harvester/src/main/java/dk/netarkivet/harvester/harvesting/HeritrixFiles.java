@@ -36,13 +36,12 @@ import org.dom4j.Document;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.Constants;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,
  * and all files we read from Heritrix.
- *
  */
-
 public class HeritrixFiles {
     /** The directory that crawls are performed in. */
     private final File crawlDir;
@@ -326,5 +325,13 @@ public class HeritrixFiles {
             //Log harmless trouble
             log.debug("Couldn't delete progress statistics log file.", e);
         }
+    }
+    
+    /**
+     * Return the directory, where Heritrix writes its arcfiles.
+     * @return the directory, where Heritrix writes its arcfiles.
+     */
+    public File getArcsDir() {
+        return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
     }
 }

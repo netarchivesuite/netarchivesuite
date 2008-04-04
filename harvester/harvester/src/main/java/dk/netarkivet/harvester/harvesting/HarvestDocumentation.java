@@ -350,10 +350,12 @@ public class HarvestDocumentation {
             if (foundJobID != jobID) {
                 File arcsDir;
                 if (foundJobID == -1) {
-                    arcsDir = new File(unknownJobDir, "arcs");
+                    arcsDir = new File(unknownJobDir,
+                            Constants.ARCDIRECTORY_NAME);
                 } else {
                     arcsDir = new File(oldJobsDir,
-                                foundJobID + "-lost-files/arcs");
+                                foundJobID + "-lost-files/"
+                                + Constants.ARCDIRECTORY_NAME);
                 }
                 try {
                     FileUtils.createDir(arcsDir);
