@@ -73,9 +73,7 @@ import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
@@ -85,21 +83,21 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * User: larsrc
  * Date: Dec 2, 2004
  * Time: 11:55:51 AM
- * To change this template use File | Settings | File Templates.
  */
 public class HeritrixTests extends TestCase {
 
-    protected final static String WRITE_PROCESSORS_XPATH = "/crawl-order/controller/map[@name='write-processors']";
+    protected final static String WRITE_PROCESSORS_XPATH 
+        = "/crawl-order/controller/map[@name='write-processors']";
     protected final static String DEDUPLICATOR_XPATH = WRITE_PROCESSORS_XPATH
         + "/newObject[@name='DeDuplicator']";
 
-    protected final static String DEDUPLICATOR_INDEX_LOCATION_XPATH  = DEDUPLICATOR_XPATH
-    + "/string[@name='index-location']";
-    protected final static String DEDUPLICATOR_MATCHING_METHOD_XPATH  = DEDUPLICATOR_XPATH
-    + "/string[@name='matching-method']";
+    protected final static String DEDUPLICATOR_INDEX_LOCATION_XPATH
+        = DEDUPLICATOR_XPATH + "/string[@name='index-location']";
+    protected final static String DEDUPLICATOR_MATCHING_METHOD_XPATH
+        = DEDUPLICATOR_XPATH + "/string[@name='matching-method']";
 
-    protected final static String DEDUPLICATOR_ORIGIN_HANDLING_XPATH = DEDUPLICATOR_XPATH
-    + "/string[@name='origin-handling']";
+    protected final static String DEDUPLICATOR_ORIGIN_HANDLING_XPATH
+        = DEDUPLICATOR_XPATH + "/string[@name='origin-handling']";
 
     private HeritrixLauncher hl;
     private MoveTestFiles mtf;
@@ -107,7 +105,6 @@ public class HeritrixTests extends TestCase {
     public HeritrixTests() {
         mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
     }
-
 
     public void setUp() throws Exception{
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -127,7 +124,8 @@ public class HeritrixTests extends TestCase {
         //  org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,
         //  dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy
 
-        if (!System.getProperties().containsKey("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy")) {
+        if (!System.getProperties().containsKey(
+                "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy")) {
             fail ("org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy is not defined!!");
         }
      }
@@ -214,7 +212,8 @@ public class HeritrixTests extends TestCase {
      * @param index the lucene-index
      * @throws IOException
      */
-    protected void runHeritrix(File order, File seeds, File index) throws IOException {
+    protected void runHeritrix(File order, File seeds, File index)
+    throws IOException {
 
         hl = getHeritrixLauncher(order, seeds, index);
         hl.doCrawl();
@@ -248,7 +247,8 @@ public class HeritrixTests extends TestCase {
      * found.
      *
      * @param urls An array of url strings
-     * @throws IOException If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found or is unreadable
+     * @throws IOException If TestInfo.HERITRIX_CRAWL_LOG_FILE is not found
+     * or is unreadable
      */
     protected void assertNoUrlsInCrawlLog(String[] urls) throws IOException {
         String crawlLog = "";
@@ -285,7 +285,8 @@ public class HeritrixTests extends TestCase {
 
 
     /**
-     * Test that the launcher actually launches Heritrix and generates at least one arcfile
+     * Test that the launcher actually launches Heritrix and generates
+     * at least one arcfile.
      * @throws IOException
      */
     public void testLaunch() throws IOException {
@@ -302,14 +303,16 @@ public class HeritrixTests extends TestCase {
 
         // test that progress-statistics.log has reported CRAWL ENDED
         StringAsserts.assertStringContains(
-                "progress-statistics.log skal melde hostningen fardig",
+                "progress-statistics.log should have reported that the crawl is ended",
                 "CRAWL ENDED", progressLog);
 
-        // test that both the heritrix-temp-dir and the bitarchive has at least one file - and has the same file !!
+        // test that both the heritrix-temp-dir and the bitarchive
+        // has at least one file - and has the same file !!
         File[] files = TestInfo.HERITRIX_ARCS_DIR.listFiles(FileUtils.ARCS_FILTER);
         File first_arcfile = files[0];
         if (first_arcfile == null) {
-            fail("'" + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath() + "' har ingen arcfiler !");
+            fail("Directory '" + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath()
+                    + "'  contains no arcfiles !");
         }
     }
 
@@ -324,10 +327,12 @@ public class HeritrixTests extends TestCase {
         validateOrder(TestInfo.ORDER_FILE_MAX_OBJECTS);
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
-        runHeritrix(TestInfo.ORDER_FILE_MAX_OBJECTS, TestInfo.SEEDS_FILE_MAX_OBJECTS, tempDir);
+        runHeritrix(TestInfo.ORDER_FILE_MAX_OBJECTS,
+                    TestInfo.SEEDS_FILE_MAX_OBJECTS, tempDir);
 
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(hostReportFile, StopReason.DOWNLOAD_COMPLETE);
+        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
+                hostReportFile, StopReason.DOWNLOAD_COMPLETE);
         Long tv2_objects = hhr.getObjectCount("tv2.dk");
         Long netarkivet_objects = hhr.getObjectCount("netarkivet.dk");
         //int netarkivetHosts = GetHostsForDomain(hostReportFile, "netarkivet.dk");
@@ -344,7 +349,8 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that the main method works and generates output from known working crawl
+     * Test that the main method works and generates output
+     * from known working crawl.
      * @throws IOException
      */
     public void testLaunchMain() throws IOException {
@@ -367,12 +373,12 @@ public class HeritrixTests extends TestCase {
 
         // test that progress-statistics.log has reported CRAWL ENDED
         StringAsserts.assertStringContains(
-                "progress-statistics.log skulle have meldt hostningen fardig",
+                "progress-statistics.log should have reported that the crawl is ended",
                 "CRAWL ENDED", progressLog);
 
         // test that both the heritrix-temp-dir has at least one file
-        assertTrue("'" + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath()
-                + "' har ingen arcfiler !",
+        assertTrue("Directory '" + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath()
+                + "' contains no arcfiles !",
                 TestInfo.HERITRIX_ARCS_DIR.listFiles(FileUtils.ARCS_FILTER).length >= 1);
 
     }
@@ -407,7 +413,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can limit the number of objects harvested pr. domain
+     * Test that Heritrix can limit the number of objects harvested pr. domain.
      * This tests requirement #7.
      * @throws IOException
      */
@@ -415,10 +421,12 @@ public class HeritrixTests extends TestCase {
         validateOrder(TestInfo.MAX_OBJECTS_ORDER_FILE);
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
-        runHeritrix(TestInfo.MAX_OBJECTS_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir);
+        runHeritrix(TestInfo.MAX_OBJECTS_ORDER_FILE, 
+                    TestInfo.SEEDS_FILE, tempDir);
 
         int num_harvested = 0;
-        BufferedReader in = new BufferedReader(new FileReader(TestInfo.HERITRIX_CRAWL_LOG_FILE));
+        BufferedReader in = new BufferedReader(new FileReader(
+                TestInfo.HERITRIX_CRAWL_LOG_FILE));
         while (in.readLine() != null) {
             num_harvested++;
         }
@@ -446,7 +454,8 @@ public class HeritrixTests extends TestCase {
                 progressStatistics);
 
         int num_harvested = 0;
-        BufferedReader in = new BufferedReader(new FileReader(TestInfo.HERITRIX_CRAWL_LOG_FILE));
+        BufferedReader in = new BufferedReader(new FileReader(
+                TestInfo.HERITRIX_CRAWL_LOG_FILE));
         while (in.readLine() != null) {
             num_harvested++;
         }
@@ -562,7 +571,8 @@ public class HeritrixTests extends TestCase {
         LuceneUtils.makeDummyIndex(tempDir);
         runHeritrix(MaxbytesOrderFile, TestInfo.SEEDS_DEFAULT, tempDir);
         File hostReportFile = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
-        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(hostReportFile, StopReason.DOWNLOAD_COMPLETE);
+        DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
+                hostReportFile, StopReason.DOWNLOAD_COMPLETE);
         Long netarkivet_bytes = hhr.getByteCount("netarkivet.dk");
         long lastNetarkivetBytes = getLastFetchedBytesForDomain("netarkivet.dk");
         //System.out.println("last netarkivet bytes: " + lastNetarkivetBytes);
@@ -663,47 +673,6 @@ public class HeritrixTests extends TestCase {
         } catch (NullPointerException e) {
             // Expected
         }
-    }
-
-    /**
-     * Test we can use the DeDupFetch fetch-processors.
-     * @throws Exception
-     */
-    public void testDedupfetchOrderXml() throws Exception {
-        if (!TestUtils.runningAs("LC")) {
-            return; // This is excluded until we have a working DedupFetch
-                    // and a proper test for it.
-        }
-        validateOrder(TestInfo.DEDUPFETCH_ORDERXML_FILE);
-        Document d = XmlUtils.getXmlDoc(TestInfo.DEDUPFETCH_ORDERXML_FILE);
-        String INDEX_LOCATION_PATH =  "/crawl-order/controller/map[@name='fetch-processors']"
-            + "/newObject[@name='HTTP']"
-            + "/string[@name='index-location']";
-        Node indexLocationNode = d.selectSingleNode(INDEX_LOCATION_PATH);
-        File indexDir = mtf.newTmpDir();
-  
-        LuceneUtils.generateIndex(new File(TestInfo.TEST_LAUNCH_HARVEST_DIR,
-                    "logs/sorted-crawl.log"),
-                getCXDReaderForArc(new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, 
-                        "arcs/42-23-20060726143926-00000-udvikling.kb.dk.arc.gz")),
-                indexDir);
-        if (indexLocationNode != null) {
-            // Divide by 1024 since Heritrix uses KB rather than bytes,
-            // and add 1 to avoid to low limit due to rounding.
-           indexLocationNode.setText(new File(TestInfo.HERITRIX_TEMP_DIR, "index").getAbsolutePath());
-        } else {
-            fail ("IndexLocation node not found in order.xml");
-        }
-        File modifiedOrderFile = File.createTempFile("dedup_order","xml");
-
-        OutputStream os = new FileOutputStream(modifiedOrderFile);
-        XMLWriter writer = new XMLWriter(os);
-        writer.write(d);
-
-        runHeritrix(modifiedOrderFile, TestInfo.SEEDS_FILE2, indexDir);
-        FileAsserts.assertFileMatches("Must have done some dedup",
-                "Duplicates found:  [^0]",
-                new File(TestInfo.HERITRIX_TEMP_DIR, "processors-report.txt"));
     }
 
     /**
