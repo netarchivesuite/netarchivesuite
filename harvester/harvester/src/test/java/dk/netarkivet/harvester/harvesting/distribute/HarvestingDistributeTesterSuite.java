@@ -26,6 +26,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+/**
+ * Unit testersuite for the dk.netarkivet.harvester.harvesting.distribute
+ * package.
+ */
 public class HarvestingDistributeTesterSuite {
     
     public static Test suite() {
@@ -37,7 +41,7 @@ public class HarvestingDistributeTesterSuite {
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(CrawlStatusMessageTester.class);
-        suite.addTestSuite(DomainStats.class);
+        suite.addTestSuite(DomainStatsTester.class);
         suite.addTestSuite(DoOneCrawlMessageTester.class);
         suite.addTestSuite(HarvestControllerServerTester.class);
         suite.addTestSuite(HarvestControllerClientTester.class);
