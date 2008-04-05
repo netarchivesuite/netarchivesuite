@@ -75,6 +75,7 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -270,7 +271,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         Method runChecksumJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class, "runChecksumJob", Location.class);
 
-        DummyBatchMessageReplyServer dummy = new DummyBatchMessageReplyServer();
+        //DummyBatchMessageReplyServer dummy = new DummyBatchMessageReplyServer();
 
         FileBasedActiveBitPreservation acp = FileBasedActiveBitPreservation.getInstance();
 
@@ -484,6 +485,9 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     }
 
     public void testGetBitarchiveChecksum() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
         final Map<Location, String> results = new HashMap<Location, String>();
@@ -512,10 +516,16 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         FilePreservationState fps 
             = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar").get("foobar");
+        
+        assertFalse("Should have received result non-null result for SB",
+                fps.getBitarchiveChecksum(SB) == null);        
         assertEquals("Should have expected size for SB",
                 1, fps.getBitarchiveChecksum(SB).size());
         assertEquals("Should have expected value for SB",
                 "md5-1", fps.getBitarchiveChecksum(SB).get(0));
+        
+        assertFalse("Should have received result non-null result for KB",
+                fps.getBitarchiveChecksum(KB) == null);
         assertEquals("Should have expected size for KB",
                 1, fps.getBitarchiveChecksum(KB).size());
         assertEquals("Should have expected value for KB",
@@ -595,7 +605,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                         batch(bMsg.getJob(), bMsg.getLocationName(), null);
                 conn.reply(
                         new BatchReplyMessage(bMsg.getTo(), bMsg.getReplyTo(),
-                                              bMsg.getID(), 4, new ArrayList(),
+                                              bMsg.getID(), 4, 
+                                              new ArrayList<File>(),
                                               lbs.getResultFile()));
             } catch (IOFailure e) {
                 e.printStackTrace();

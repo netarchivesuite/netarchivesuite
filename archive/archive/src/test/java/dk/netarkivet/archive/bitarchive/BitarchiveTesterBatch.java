@@ -127,7 +127,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
     /**
-     * est that the batch code actually runs, that it enters each of the
+     * Test that the batch code actually runs, that it enters each of the
      * initialize() and finish() methods, and that process() is called at least
      * once.
      */
@@ -173,6 +173,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
                 ARCHIVE_SIZE, job.processedFileList.size());
     }
 
+    /** Test that filters work in BatchJobs. */
     public void testBatchCodeFiltersWork() {
         TestFileBatchJob job = new TestFileBatchJob();
         assertBatchJobProcessesCorrectly("No filter", job,
@@ -267,6 +268,10 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
                                        fyensdk,
                                        new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
     }
+    
+    /** Method that checks, if a BatchJob have processed the correct files,
+     * and the correct number of files.
+     */ 
     private BatchStatus assertBatchJobProcessesCorrectly(String message,
                                                          TestFileBatchJob job,
                                                          String... files) {
@@ -283,7 +288,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     }
 
 
-
+    /**
+     * Subclass of FileBatchJob used locally for test purposes.
+     */
     class TestFileBatchJob extends FileBatchJob {
         boolean initialized;
         boolean finished;

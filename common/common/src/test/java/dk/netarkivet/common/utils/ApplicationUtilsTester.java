@@ -38,10 +38,9 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
 
 /**
- * csr forgot to comment this!
- *
+ * Unit tests for methods of the utility class
+ * ApplicationUtils. 
  */
-
 public class ApplicationUtilsTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
 
@@ -93,7 +92,7 @@ public class ApplicationUtilsTester extends TestCase {
                                        "WARNING", TestInfo.LOG_FILE);
     }
 
-    /** Test that startApp checks the required things */
+    /** Test that startApp checks the required things. */
     public void testStartApp() throws InterruptedException {
         // Check that no args are allowed.
         try {
@@ -113,7 +112,8 @@ public class ApplicationUtilsTester extends TestCase {
             fail("Should have died starting an app with no factory method");
         } catch (SecurityException e) {
             // Expected System.exit to happen
-            assertEquals("Should have exit value NO_FACTORY_METHOD", 2, pse.getExitValue());
+            assertEquals("Should have exit value NO_FACTORY_METHOD",
+                    ApplicationUtils.NO_FACTORY_METHOD, pse.getExitValue());
         }
 
         // Check that throwing factory method is checked
@@ -123,7 +123,8 @@ public class ApplicationUtilsTester extends TestCase {
         } catch (SecurityException e) {
             // Expected System.exit to happen
             assertEquals("Should have exit value EXCEPTION_WHILE_INSTANTIATING",
-                         3, pse.getExitValue());
+                         ApplicationUtils.EXCEPTION_WHILE_INSTANTIATING, 
+                         pse.getExitValue());
         }
 
         pse.reset();
@@ -135,21 +136,26 @@ public class ApplicationUtilsTester extends TestCase {
         } catch (SecurityException e) {
             // Expected System.exit to happen
             assertEquals("Should have exit value EXCEPTION_WHILE_INSTANTIATING",
-                         3, pse.getExitValue());
+                        ApplicationUtils.EXCEPTION_WHILE_INSTANTIATING,
+                        pse.getExitValue());
         }
 
         // Check that successfull start logs and makes tmpdir
         File tempdir = new File(TestInfo.TEMPDIR, "new_temp_dir");
         Settings.set(Settings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
         assertFalse("Should not have tempdir before start", tempdir.exists());
-        FileAsserts.assertFileNotContains("Should not have shutdown hook mentioned in log",
-                                          TestInfo.LOG_FILE, "Added shutdown hook");
+        FileAsserts.assertFileNotContains(
+                "Should not have shutdown hook mentioned in log",
+                TestInfo.LOG_FILE, "Added shutdown hook");
         ApplicationUtils.startApp(App3.class, new String[0]);
         assertEquals("Should have correct appName",
-                     "dk.netarkivet.common.utils.App3", Settings.get(Settings.APPLICATIONNAME));
+                     "dk.netarkivet.common.utils.App3",
+                     Settings.get(Settings.APPLICATIONNAME));
         LogUtils.flushLogs(ApplicationUtils.class.getName());
-        FileAsserts.assertFileContains("Should have shutdown hook mentioned in log",
-                                       "Added shutdown hook for dk.netarkivet.common.utils.App3", TestInfo.LOG_FILE);
+        FileAsserts.assertFileContains(
+                "Should have shutdown hook mentioned in log",
+                "Added shutdown hook for dk.netarkivet.common.utils.App3",
+                TestInfo.LOG_FILE);
         assertTrue("Should have tempdir after start", tempdir.exists());
     }
 }

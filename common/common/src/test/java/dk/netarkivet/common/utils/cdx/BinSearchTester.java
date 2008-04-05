@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.common.utils.cdx;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -38,7 +34,9 @@ import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestUtils;
 
-
+/**
+ * Unit test for the BinSearch class.
+ */
 public class BinSearchTester extends TestCase {
     public BinSearchTester(String s) {
         super(s);
@@ -123,8 +121,8 @@ public class BinSearchTester extends TestCase {
                 1, danishSearch.size());
     }
 
-    /** Wrapper around getLinesInFile that turns them into a List */
-    public static List<String> findLinesInFile(File file, String find) {
+    /** Wrapper around getLinesInFile that turns them into a List. */
+    private static List<String> findLinesInFile(File file, String find) {
         return IteratorUtils.toList(BinSearch.getLinesInFile(file, find).iterator());
     }
 
@@ -157,8 +155,8 @@ public class BinSearchTester extends TestCase {
                 l.longValue(), f.getFilePointer());
     }
 
-    /** Test that findMiddleLine can actually find the right middle line
-     *
+    /**
+     * Test that findMiddleLine can actually find the right middle line.
      */
     public void testFindMiddleLine() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(BinSearch.class,

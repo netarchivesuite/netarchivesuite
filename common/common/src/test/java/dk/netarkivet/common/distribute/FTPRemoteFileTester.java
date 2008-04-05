@@ -22,10 +22,6 @@
  */
 package dk.netarkivet.common.distribute;
 
-/**
- * Class testing the FTPRemoteFile class.
- */
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,13 +38,16 @@ import dk.netarkivet.common.utils.TestInfo;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
+/**
+ * Class testing the FTPRemoteFile class.
+ */
 public class FTPRemoteFileTester extends TestCase {
     private static final File TESTLOGPROP = new File(
             "tests/dk/netarkivet/testlog.prop");
     private static final File LOGFILE =
             new File("tests/testlogs/netarkivettest.log");
 
-    /** testFile1-3 represents duplicates of TestInfo.TESTXML */
+    /** testFile1-3 represents duplicates of TestInfo.TESTXML. */
     private File testFile1;
     private File testFile2;
 
@@ -90,14 +89,13 @@ public class FTPRemoteFileTester extends TestCase {
     }
 
     public void tearDown() throws IOException {
-        FileUtils.removeRecursively(dk.netarkivet.common.utils.TestInfo.TEMPDIR);
+        FileUtils.removeRecursively(
+                dk.netarkivet.common.utils.TestInfo.TEMPDIR);
         Settings.reload();
     }
 
-
-
     /**
-     * Test that we can set and reset test-behaviour to get a TestRemoteFile
+     * Test that we can set and reset test-behaviour to get a TestRemoteFile.
      */
     public void testSetTest() {
         RemoteFile rf;
@@ -108,7 +106,8 @@ public class FTPRemoteFileTester extends TestCase {
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
             // Expected -- TestRemoteFile must have an existing file
-            StringAsserts.assertStringContains("Should have gotten error message from TestRemoteFile",
+            StringAsserts.assertStringContains(
+                    "Should have gotten error message from TestRemoteFile",
                     "is not a readable file", e.getCause().getMessage());
         }
 
@@ -120,7 +119,8 @@ public class FTPRemoteFileTester extends TestCase {
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
             // Expected -- FTPRemoteFile must have an existing file
-            StringAsserts.assertStringContains("Should have gotten error message from TestRemoteFile",
+            StringAsserts.assertStringContains(
+                    "Should have gotten error message from TestRemoteFile",
                     "is not a readable file", e.getCause().getMessage());
         }
 
