@@ -28,10 +28,9 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
+ * Unit testersuite for the bitpreservation package.
  *
  */
-
 public class BitPreservationTesterSuite {
     /**
      * Create a test suite just for these tests.
@@ -44,17 +43,17 @@ public class BitPreservationTesterSuite {
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        //suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
+        suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(ChecksumJobTester.class);
         suite.addTestSuite(FileListJobTester.class);
         suite.addTestSuite(WorkFilesTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", BitPreservationTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", BitPreservationTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }
