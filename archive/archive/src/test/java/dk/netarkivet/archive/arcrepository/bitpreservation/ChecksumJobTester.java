@@ -1,6 +1,6 @@
-/* File:                 $Id$
- * Revision:         $Revision$
- * Author:                $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -21,9 +21,6 @@
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
-/**
- * lc forgot to comment this!
- */
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +37,9 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.testutils.TestFileUtils;
 
-
+/**
+ * Unit tests for the class ChecksumJob.
+ */
 public class ChecksumJobTester extends TestCase {
     public ChecksumJobTester(String s) {
         super(s);

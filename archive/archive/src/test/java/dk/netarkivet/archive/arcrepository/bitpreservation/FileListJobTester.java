@@ -35,10 +35,9 @@ import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * csr forgot to comment this!
- *
+ * Unit tests for the abstract class FileBatchJob, and its subclass
+ * FileListJob.
  */
-
 public class FileListJobTester extends TestCase {
 
      public void setUp() {
@@ -51,7 +50,7 @@ public class FileListJobTester extends TestCase {
     }
 
     /**
-     * Test that FileBatchJob outputs the right data
+     * Test that FileBatchJob outputs the right data.
      */
     public void testJobRuns() {
         File bitarchive = new File(TestInfo.WORKING_DIR, "bitarchive1");

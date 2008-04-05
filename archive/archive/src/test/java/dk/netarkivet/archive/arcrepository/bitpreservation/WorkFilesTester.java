@@ -22,14 +22,6 @@
 */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
-/**
- * Created by IntelliJ IDEA.
- * User: larsrc
- * Date: Dec 23, 2005
- * Time: 1:01:42 PM
- * To change this template use File | Settings | File Templates.
- */
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,6 +34,10 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
+/**
+ * Unittest for the class WorkFiles.
+ *
+ */
 public class WorkFilesTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
