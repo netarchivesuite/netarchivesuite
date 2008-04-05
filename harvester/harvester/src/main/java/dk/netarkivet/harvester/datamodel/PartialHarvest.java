@@ -37,6 +37,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
@@ -136,16 +137,16 @@ public class PartialHarvest extends HarvestDefinition {
      * Multiple jobs are generated if different order.xml-templates are used,
      * or if the size of the job is inappropriate.
      *
-     * The following values are used:
-     * dk.netarkivet.datamodel.jobs.maxRelativeSizeDifference:
+     * The following settings are used:
+     * {@link Settings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}:
      * The maximum relative difference between the smallest and largest
      * number of objects expected in a job
      * <p/>
-     * dk.netarkivet.datamodel.jobs.minAbsolutSizeDifference
+     * {@link Settings#JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE}: 
      * Size differences below this threshold are ignored even if
-     * the relative difference exceeds maxRelativeSizeDifference
+     * the relative difference exceeds {@link Settings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}
      * <p/>
-     * dk.netarkivet.datamodel.jobs.maxTotalSize
+     * {@link Settings#JOBS_MAX_TOTAL_JOBSIZE}:
      * The upper limit on the total number of objects that a job may
      * retrieve
      *
@@ -164,7 +165,7 @@ public class PartialHarvest extends HarvestDefinition {
         Date nextEvent = schedule.getNextEvent(getNextDate(), getNumEvents());
 
         //Refuse to schedule event in the past
-        if (nextEvent!= null && nextEvent.before(now)) {
+        if (nextEvent != null && nextEvent.before(now)) {
             int eventsSkipped = 0;
             while (nextEvent != null && nextEvent.before(now)) {
                 nextEvent = schedule.getNextEvent(nextEvent, getNumEvents());
