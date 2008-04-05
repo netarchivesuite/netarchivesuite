@@ -1,6 +1,6 @@
-/* File:                 $Id$
-* Revision:         $Revision$
-* Author:                $Author$
+/* File:    $Id$
+* Revision: $Revision$
+* Author:   $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -84,10 +84,9 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
 
 
     /**
-     * Test null arguments
+     * Test null arguments.
      */
     public void testBatchNoCode() {
-        TestFileBatchJob job = new TestFileBatchJob();
         try {
             archive.batch(TestInfo.baAppId, null);
             fail("Null batch process should raise ArgumentNotValid");
@@ -227,6 +226,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         String fyensdk = FileUtils.readFile(new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
         // A class that gets loaded from outside our normal area.
         final File evilClassFile = new File(TestInfo.WORKING_DIR, "EvilBatch.class");
+        // This fails, if we don't have a classes dir
+        // TODO Couldn't we just add EvilBatchClass to the classpath
         FileUtils.copyFile(new File("classes/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
                            evilClassFile);
         InputStream in = new FileInputStream(evilClassFile);
