@@ -90,7 +90,7 @@ public class PartialHarvest extends HarvestDefinition {
     private Map<ConfigKey, DomainConfiguration> domainConfigurations
             = new HashMap<ConfigKey, DomainConfiguration>();
 
-
+    /** The schedule used by this PartialHarvest. */
     private Schedule schedule;
 
     /**
