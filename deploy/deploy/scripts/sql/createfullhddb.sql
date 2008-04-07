@@ -1,8 +1,31 @@
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+ 
 -- This script will create, but not populate, a Derby database for the
 -- web archiving system.  The database will be created in the current
 -- directory under the name 'fullhddb'.
 
--- To run this, execute java org.apache.derby.tools.ij createfullhddb.sql
+-- To run this, execute java org.apache.derby.tools.ij < createfullhddb.sql
 -- with derbytools.jar and derby.jar in your classpath.
 
 -- Whenever a table schema is changed, the version in the schemaversions table
@@ -12,13 +35,9 @@
 
 connect 'jdbc:derby:fullhddb;create=true';
 
-
-
  -- First create the metadata table that defines versions to allow updates
 
  create table schemaversions ( tablename varchar(100) not null, version int not null );
-
-
 
 -- The following Derby statements were used to create the domain-related tables:
 
@@ -32,7 +51,7 @@ connect 'jdbc:derby:fullhddb;create=true';
     (config_id bigint not null generated always as identity primary key,
      name varchar(300) not null, comments varchar(30000),
      domain_id bigint not null, template_id bigint not null, maxobjects int,
-     maxrate int, overridelimits int, maxbytes bigint not null );
+     maxrate int, overridelimits int, maxbytes bigint not null default -1);
  create table config_passwords
     (config_id bigint not null, password_id int not null,
      primary key (config_id, password_id) );
@@ -62,11 +81,15 @@ connect 'jdbc:derby:fullhddb;create=true';
 -- Index automatically generated when a column is unique.
 -- create index domainname on domains(name);
  create index domainnameid on domains(domain_id, name);
+ create index aliasindex on domains(alias);
+ 
  create index configurationname on configurations(name);
  create index configurationmaxbytes on configurations(maxbytes);
  create index configdomain on configurations(domain_id);
+ 
  create index seedlistname on seedlists(name);
  create index seedlistdomain on seedlists(domain_id);
+ 
  create index passwordname on passwords(name);
  create index passworddomain on passwords(domain_id);
  create index ownerinfodomain on ownerinfo(domain_id);
@@ -88,8 +111,6 @@ connect 'jdbc:derby:fullhddb;create=true';
  insert into schemaversions ( tablename, version ) values ( 'historyinfo', 2);
  insert into schemaversions ( tablename, version ) values ( 'config_passwords', 1);
  insert into schemaversions ( tablename, version ) values ( 'config_seedlists', 1);
-
-
 
 
  -- The tables used for the HD DAO can be created in derby with these statements;
@@ -122,9 +143,6 @@ connect 'jdbc:derby:fullhddb;create=true';
  insert into schemaversions ( tablename, version ) values ( 'harvest_configs', 1);
 
 
-
-
-
 -- The following commands will create the table required for schedules;
 
  create table schedules
@@ -139,9 +157,6 @@ connect 'jdbc:derby:fullhddb;create=true';
 
  insert into schemaversions ( tablename, version ) values ( 'schedules', 1);
 
-
-
-
 -- Derby statements to create the template table:
 
  create table ordertemplates (
@@ -153,13 +168,11 @@ connect 'jdbc:derby:fullhddb;create=true';
 
  insert into schemaversions ( tablename, version ) values ( 'ordertemplates', 1);
 
-
-
  -- Derby statements to create the job-related tables:
 
   create table jobs
     (job_id bigint not null primary key, harvest_id bigint not null,
-     status int not null, priority int not null, forcemaxbytes bigint not null,
+     status int not null, priority int not null, forcemaxbytes bigint not null default -1,
      forcemaxcount bigint, orderxml varchar(300) not null, orderxmldoc clob(64M) not null,
      seedlist clob(64M) not null, harvest_num int not null,
      harvest_errors varchar(300), harvest_error_details varchar(10000),
@@ -178,5 +191,3 @@ connect 'jdbc:derby:fullhddb;create=true';
 
  insert into schemaversions ( tablename, version ) values ( 'jobs', 3);
  insert into schemaversions ( tablename, version ) values ( 'job_configs', 1);
-
--- We should now be ready to migrate into this database.
