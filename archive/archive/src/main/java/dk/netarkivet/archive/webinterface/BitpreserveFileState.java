@@ -170,7 +170,7 @@ public class BitpreserveFileState {
         // Do this at the end so that the info reflects the current state.
         if (params.containsKey(Constants.GET_INFO_COMMAND)) {
             String[] getInfos = params.get(Constants.GET_INFO_COMMAND);
-            infoMap = preserve.getFilePreservationState(getInfos);
+            infoMap = preserve.getFilePreservationStateMap(getInfos);
         } else {
             infoMap = new HashMap<String, FilePreservationState>();
         }
@@ -318,12 +318,8 @@ public class BitpreserveFileState {
                 }
             }
         }
-        // TODO Is this the right thing to do; maybe have two methods
-        // FilePreservationState getFilePreservationState(String filename)
-        // and
-        // Map<String, FilePreservationState> 
-        // getFilePreservationStates(String.. filenames)
-        return preserve.getFilePreservationState(filename).get(filename);
+        
+        return preserve.getFilePreservationState(filename);
     }
 
     /**

@@ -29,7 +29,6 @@ import dk.netarkivet.common.webinterface.SiteSection;
 /**
  * Site section that creates the menu for bit preservation.
  */
-
 public class BitPreservationSiteSection extends SiteSection {
     /**
      * Create a new bit preservation SiteSection object.

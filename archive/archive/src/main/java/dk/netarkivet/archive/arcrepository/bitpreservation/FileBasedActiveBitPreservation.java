@@ -88,16 +88,16 @@ public class FileBasedActiveBitPreservation
      * File preservation is done in a singleton, which means that any user using
      * the file preservation interface will update the same state.
      *
-     * Nothing breaks by two users simultanously do bit preservation actions,
-     * but it may have undesirable consequences, such as two users simultanously
-     * starting checksum jobs of the full archive.
+     * Nothing breaks by two users simultaneously do bit preservation actions,
+     * but it may have undesirable consequences, such as two users
+     * simultaneously starting checksum jobs of the full archive.
      */
     private static FileBasedActiveBitPreservation instance;
 
     /** Hook to close down application. */
     private CleanupHook closeHook;
 
-    /** Initalises a FileBasedActiveBitPreservation instance. */
+    /** Initialises a FileBasedActiveBitPreservation instance. */
     protected FileBasedActiveBitPreservation() {
         this.admin = AdminData.getReadOnlyInstance();
         this.closeHook = new CleanupHook(this);
@@ -128,7 +128,7 @@ public class FileBasedActiveBitPreservation
      *
      * @throws ArgumentNotValid if argument is null
      */
-    public Map<String, FilePreservationState> getFilePreservationState(
+    public Map<String, FilePreservationState> getFilePreservationStateMap(
             String... filenames) {
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         // Start by retrieving the admin status
@@ -176,6 +176,22 @@ public class FileBasedActiveBitPreservation
         }
         return filepreservationStates;
     }
+    
+    /**
+     * Get FilePreservationState for the given file in the bitarchives
+     * and admin data.
+     * @param filename A given file
+     * @return the FilePreservationState for the given file. This will be null,
+     * if the filename is not found in admin data.
+     */
+    public FilePreservationState getFilePreservationState(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        Map<String, FilePreservationState> filepreservationStates
+            = getFilePreservationStateMap(filename);
+        
+        return filepreservationStates.get(filename);
+    }
+    
     
     /**
      * Generate a map of checksums for these file in the bitarchives.
@@ -663,7 +679,7 @@ public class FileBasedActiveBitPreservation
         List<String> troubleNames = new ArrayList<String>();
         
         Map<String,FilePreservationState> preservationStates
-            =  getFilePreservationState(filenames);
+            =  getFilePreservationStateMap(filenames);
         for (Map.Entry<String, FilePreservationState> entry
                 : preservationStates.entrySet()) {
             String fn = entry.getKey();
@@ -675,7 +691,7 @@ public class FileBasedActiveBitPreservation
                 if (!fps.isAdminDataOk()) {
                     setAdminDataFailed(fn, location);
                     admin.synchronize();
-                    fps = getFilePreservationState(fn).get(fn);
+                    fps = getFilePreservationState(fn);
                     if (fps == null) {
                         throw new IllegalState("No state known about '"
                                 + fn + "'");
@@ -904,7 +920,7 @@ public class FileBasedActiveBitPreservation
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         admin.synchronize();
         FilePreservationState fps 
-            = getFilePreservationState(filename).get(filename);
+            = getFilePreservationState(filename);
         String checksum = fps.getReferenceCheckSum();
         if (checksum == null || checksum.equals("")) {
             throw new PermissionDenied("No correct checksum for '"
