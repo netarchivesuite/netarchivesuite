@@ -535,6 +535,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
+        assertFalse("Should have received result non-null result for SB",
+                fps.getBitarchiveChecksum(SB) == null);
         assertEquals("Should have expected size for SB",
                 0, fps.getBitarchiveChecksum(SB).size());
         assertEquals("Should have expected size for KB",

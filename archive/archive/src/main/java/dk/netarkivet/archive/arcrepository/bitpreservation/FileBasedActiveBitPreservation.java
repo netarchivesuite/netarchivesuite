@@ -122,8 +122,8 @@ public class FileBasedActiveBitPreservation
      *
      * @param filenames List of filenames
      *
-     * @return a map the preservation status for the files with a given
-     * filename. The preservationstate is null, if the file named does
+     * @return a map of the preservation status for the given files.
+     * The preservationstate is null, if the file named does
      * not exist in admin data.
      *
      * @throws ArgumentNotValid if argument is null
@@ -133,10 +133,7 @@ public class FileBasedActiveBitPreservation
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         // Start by retrieving the admin status
         admin.synchronize();
-        
-        Map<String, FilePreservationState> filepreservationStates 
-            = new HashMap<String, FilePreservationState>();
-        
+            
         // temporary datastructures to hold admindata info
         Map<String, ArcRepositoryEntry> adminInfo
         = new HashMap<String, ArcRepositoryEntry>();
@@ -153,6 +150,9 @@ public class FileBasedActiveBitPreservation
         
         // create and return the preservation status
 
+        Map<String, FilePreservationState> filepreservationStates 
+            = new HashMap<String, FilePreservationState>();
+        
         // Add null-entries for the files absent from admindata. 
         for (String missing: missingInAdmindata) {
             filepreservationStates.put(missing, null);
@@ -162,10 +162,14 @@ public class FileBasedActiveBitPreservation
                     + " files are unknown to admindata: "
                     + StringUtils.conjoin(",", missingInAdmindata));
         }
-        
+        // For every filename present in admin data,
+        // get a Map that maps from location -> checksums
+        // This takes a long time.
         Map<String, Map<Location, List<String>>> checksumMaps 
             = getChecksumMaps(adminInfo.keySet());
         
+        // construct FilePreservationState objects for all filenames in
+        // admin data
         for (String filename: adminInfo.keySet()) {
             filepreservationStates.put(filename, 
                     new FilePreservationState(filename,
@@ -194,7 +198,7 @@ public class FileBasedActiveBitPreservation
     
     
     /**
-     * Generate a map of checksums for these file in the bitarchives.
+     * Generate a map of checksums for these filenames in the bitarchives.
      *
      * @param filenames The filenames to get the checksums for.
      *
@@ -202,15 +206,17 @@ public class FileBasedActiveBitPreservation
      */
     private Map<String, Map<Location, List<String>>>
     getChecksumMaps(Set<String> filenames) {
-        // get the checksum information
+     
         Map<String, Map<Location, List<String>>> checksummaps =
                 new HashMap<String, Map<Location, List<String>>>();
         
         //Only make one checksum job for each location
-        for (Location ba : Location.getKnown()) {            
+        for (Location ba : Location.getKnown()) {
+            // get the checksum information
             Map<String, List<String>> checksums = getChecksums(ba, filenames);
-            log.debug("Putting checksums '" + checksums + "' in for location '"
-                      + ba + "'");
+            log.debug("Adding checksums for location '"
+                      + ba + "' for filenames: "
+                      + StringUtils.conjoin(",", filenames));
             for (String filename : filenames) {
                 // update checksummaps
                 Map<Location, List<String>> locationMap;
@@ -220,7 +226,13 @@ public class FileBasedActiveBitPreservation
                     locationMap = new HashMap<Location, List<String>>();
                     checksummaps.put(filename, locationMap);
                 }
-                locationMap.put(ba, checksums.get(filename));
+                
+                List<String> checksumsForFileOnBa = checksums.get(filename);
+                if (checksumsForFileOnBa == null) {
+                    // Checksum for file not available on location ba
+                    checksumsForFileOnBa = new ArrayList<String>();
+                }
+                locationMap.put(ba, checksumsForFileOnBa);
             }
         }
         return checksummaps;
@@ -269,7 +281,7 @@ public class FileBasedActiveBitPreservation
             // TODO Shouldn't we rather throw an exception here?
             log.warn("Error asking location '" + ba + "' for checksums", e);
             return Collections.emptyMap();
-        } 
+        }
         
         Map<String, List<String>> filesAndChecksums
             = new HashMap<String, List<String>>();
@@ -278,21 +290,29 @@ public class FileBasedActiveBitPreservation
         // parse the batchResult
         if (batchResult.length() > 0) {
             String[] lines = batchResult.split("\n");
-            List<String> checksums = new ArrayList<String>();
                 for (String s : lines) {
                     try {
                         KeyValuePair<String, String> fileChecksum
                                 = ChecksumJob.parseLine(s);
-                        
-                        if (!filenames.contains(fileChecksum.getKey())) {
+                        final String filename = fileChecksum.getKey();
+                        final String checksum = fileChecksum.getValue();
+                        if (!filenames.contains(filename)) {
                             log.debug(
                                     "Got checksum for unexpected file '"
-                                    + fileChecksum.getKey() + " while asking "
+                                    + filename + " while asking "
                                     + "location '" + ba
                                     + "' for checksum of the following files: '"
                                     + filenames + "'");
                         } else {
-                            checksums.add(fileChecksum.getValue());
+                            // Add checksum to list associated with filename
+                            List<String> checksums;
+                             if (filesAndChecksums.containsKey(filename)) {
+                                 checksums = filesAndChecksums.get(filename); 
+                             } else {
+                                 checksums = new ArrayList<String>();
+                                 filesAndChecksums.put(filename, checksums);
+                             }
+                             checksums.add(checksum);
                         }
                     } catch (ArgumentNotValid e) {
                         log.warn("Got malformed checksum '" + s
@@ -304,7 +324,7 @@ public class FileBasedActiveBitPreservation
         } else {
             log.debug("Empty result returned from ChecksumJob " + checksumJob);
         }
-
+                
         return filesAndChecksums;
     }
     

@@ -180,7 +180,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status DONE: ", JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertEquals("Unexpected number of objects retireved", 22, dh.getCountObjectRetrieved());
@@ -190,7 +190,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
     /**
      * Tests what happens if a FAILED message arrives with a crawl report. The
-     * behavioour should be identical to the case with a DONE message.
+     * behavior should be identical to the case with a DONE message.
      */
     public void testOnMessageFailedJobWithReport() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -221,7 +221,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status FAILED: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertEquals("Unexpected number of objects retireved", 
@@ -267,7 +267,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
 
     //
     // Out of sequence message tests:
-    // Make it a contractural requirement that status must be set to
+    // Make it a contractual requirement that status must be set to
     // SUBMITTED before the job is sent so any message received for a
     // job while it still has status NEW should throw an exception.
     //
@@ -337,7 +337,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status DONE: ", JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertEquals("Unexpected number of objects retrieved", 22, dh.getCountObjectRetrieved());
@@ -388,7 +388,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertEquals("Unexpected number of objects retrieved", 22, dh.getCountObjectRetrieved());
@@ -396,7 +396,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     }
 
     /**
-     * If FAILED arrives after DONE, the jobis marked as FAILED.
+     * If FAILED arrives after DONE, the job is marked as FAILED.
      */
     public void testFailedAfterDone() {
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -431,7 +431,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
@@ -480,7 +480,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
@@ -516,7 +516,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         assertEquals("Job should have status DONE: ", JobStatus.DONE, j1.getStatus());
         //Look for the domain persistence
         Domain nk_domain = DomainDAO.getInstance().read("netarkivet.dk");
-        Iterator hist = nk_domain.getHistory().getHarvestInfo();
+        Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());

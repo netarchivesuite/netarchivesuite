@@ -58,9 +58,7 @@ public class FilePreservationState {
     private Map<Location, List<String>> bitarchive2checksum;
 
     /**
-     * Create new instance of the preservation status for a file.  Note that
-     * this involves calls to both bitarchives, and so should not be lightly
-     * undertaken.
+     * Create new instance of the preservation status for a file.
      *
      * @param filename The filename to get status for
      * @param admindata The admin data for the file
