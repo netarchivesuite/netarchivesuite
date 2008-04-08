@@ -308,4 +308,13 @@ public class FilePreservationState {
         }
         return res;
     }
+
+    /**
+     * Get the filename, this FilePreservationState is about.
+     * @return the filename
+     */
+    public String getFilename() {
+        return filename;
+    }
+    
 }

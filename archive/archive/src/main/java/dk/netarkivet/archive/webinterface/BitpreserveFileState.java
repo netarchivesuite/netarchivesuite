@@ -564,22 +564,25 @@ public class BitpreserveFileState {
      * Print a table row with current state of a file in a given bitarchive.
      *
      * @param out    The stream to print state to.
-     * @param l      The location of the files.
+     * @param baLocation The location of the files.
      * @param fs     The file preservation state for that file.
      * @param locale Locale of the labels.
      *
      * @throws IOException
      */
-    private static void printFileStateForBitarchive(JspWriter out, Location l,
-                                                     FilePreservationState fs,
-                                                     Locale locale)
-            throws IOException {
-        String baLocation = l.getName();
+    private static void printFileStateForBitarchive(
+            JspWriter out, Location baLocation,
+            FilePreservationState fs, Locale locale) throws IOException {
+        log.debug("Printing filestate for bitarchive '"
+                +  baLocation.getName() + "'");
+        if (fs.getBitarchiveChecksum(baLocation) == null){
+            log.fatal("Checksum is null for " + baLocation);
+        }
         out.print(HTMLUtils.makeTableRow(
-                HTMLUtils.makeTableElement(baLocation),
-                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(l)),
+                HTMLUtils.makeTableElement(baLocation.getName()),
+                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(baLocation)),
                 HTMLUtils.makeTableElement(presentChecksum(
-                    fs.getBitarchiveChecksum(l), locale))));
+                    fs.getBitarchiveChecksum(baLocation), locale))));
     }
 
     /**
@@ -655,9 +658,11 @@ public class BitpreserveFileState {
 
     /**
      * Present a list of checksums in a human-readable form.
-     *
+     * If size of list is 0, it returns "No checksum".
+     * If size of list is 1, it returns the one available checksum.
+     * Otherwise, it returns toString of the list. 
      * @param csum   List of checksum strings
-     * @param locale
+     * @param locale The given locale.
      *
      * @return String presenting the checksums.
      */
