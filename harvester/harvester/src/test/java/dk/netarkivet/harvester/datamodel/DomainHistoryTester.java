@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +31,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-
+/**
+ * Unit tests for the DomainHistory class.
+ */
 public class DomainHistoryTester extends TestCase {
     public DomainHistoryTester(String s) {
         super(s);
@@ -46,7 +44,10 @@ public class DomainHistoryTester extends TestCase {
 
     public void tearDown() {
     }
-
+    
+    /**
+     * Tests the getmostRecentHarvestInfo() method.
+     */
     public void testGetMostRecentHarvestInfo() {
         DomainHistory h = setupHarvestInfos();
         assertEquals("Most recent harvest info for bar must be #2",
@@ -54,12 +55,14 @@ public class DomainHistoryTester extends TestCase {
         HarvestInfo hi = h.getMostRecentHarvestInfo("baz");
         assertNull("Must not get non-existing harvest info", hi);
     }
-
+    /**
+     * Tests the getHarvestInfo() method.
+     */
     public void testGetHarvestInfo() {
         DomainHistory h = setupHarvestInfos();
-        List readhislist = new ArrayList();
+        List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for(Iterator i = h.getHarvestInfo(); i.hasNext(); ) {
+        for(Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext(); ) {
             readhislist.add(i.next());
         }
 
@@ -73,7 +76,7 @@ public class DomainHistoryTester extends TestCase {
     }
 
     /** Tests that two harvests on the same date of the same domain but
-     * different cifgurations and/or harvest definitions can be recorded
+     * different configurations and/or harvest definitions can be recorded
      * in harvest info.
      */
     public void testMultipleHarvestInfoOnSameDate() throws Exception {
@@ -82,17 +85,17 @@ public class DomainHistoryTester extends TestCase {
         h.addHarvestInfo(new HarvestInfo(new Long(2L), "foo", "bar", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
         h.addHarvestInfo(new HarvestInfo(new Long(2L), "foo", "foo", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
         h.addHarvestInfo(new HarvestInfo(new Long(3L), "foo", "baz", new Date(1L), 1L, 1L, StopReason.DOWNLOAD_COMPLETE));
-        List readhislist = new ArrayList();
+        List<HarvestInfo> readhislist = new ArrayList<HarvestInfo>();
 
-        for(Iterator i = h.getHarvestInfo(); i.hasNext(); ) {
+        for(Iterator<HarvestInfo> i = h.getHarvestInfo(); i.hasNext(); ) {
             readhislist.add(i.next());
         }
 
         HarvestInfo[] his
                 = (HarvestInfo[]) readhislist.toArray(new HarvestInfo[0]);
         assertEquals("Must have 4 harvest infos after adding them", 4, his.length);
-        Map hdOids = new HashMap();
-        Map configNames = new HashMap();
+        Map<Long,Integer> hdOids = new HashMap<Long,Integer>();
+        Map<String, Integer> configNames = new HashMap<String, Integer>();
         for (int i=0; i<his.length; i++) {
             Integer oidcount = (Integer) hdOids.get(his[i].getHarvestID());
             if (oidcount == null) {

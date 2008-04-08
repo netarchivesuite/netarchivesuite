@@ -151,8 +151,8 @@ public class ScheduleDAOTester extends DataModelTestCase {
         // Retrieve all schedules and count schedules already present = 2
 
         int original_count = 0;
-        Iterator original_slw = scheduledao.getAllSchedules();
-        List original_schedules = new ArrayList();
+        Iterator<Schedule>  original_slw = scheduledao.getAllSchedules();
+        List<Schedule> original_schedules = new ArrayList<Schedule> ();
         while (original_slw.hasNext()) {
             original_schedules.add(original_slw.next());
             ++original_count;
@@ -162,15 +162,16 @@ public class ScheduleDAOTester extends DataModelTestCase {
         scheduledao.create(TestInfo.HERE_AND_NOW_SCHEDULE);
 
         int count = 0;
-        Iterator slw = scheduledao.getAllSchedules();
-        List schedules = new ArrayList();
+        Iterator<Schedule> slw = scheduledao.getAllSchedules();
+        List<Schedule> schedules = new ArrayList<Schedule>();
         while (slw.hasNext()) {
             schedules.add(slw.next());
             ++count;
         }
         // not the most stringent test but probably sufficient
         int added_schedules = count - original_count;
-        assertEquals("1 schedule added, 1 schedule expected, but got " + schedules, 1, added_schedules);
+        assertEquals("1 schedule added, 1 schedule expected, but got "
+                + schedules, 1, added_schedules);
     }
 
     /** Check that updating an entry that has already been modified

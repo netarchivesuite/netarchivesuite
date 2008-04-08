@@ -238,7 +238,7 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainDAO dao = DomainDAO.getInstance();
 
         // count domains already present
-        Iterator dwl = dao.getAllDomains();
+        Iterator<Domain> dwl = dao.getAllDomains();
 
         List<Domain> domains = new ArrayList<Domain>();
         while (dwl.hasNext()) {
@@ -323,7 +323,7 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Default configuration should be correct",
                      "fuld_dybde", d.getDefaultConfiguration().getName());
         int count = 0;
-        for (Iterator i = d.getAllConfigurations(); i.hasNext(); i.next(), count++) {
+        for (Iterator<DomainConfiguration> i = d.getAllConfigurations(); i.hasNext(); i.next(), count++) {
         }
         assertEquals("Number of configurations should be 1", 1, count);
         assertFalse("Number of password entries should be 0",
@@ -331,7 +331,7 @@ public class DomainDAOTester extends DataModelTestCase {
         assertEquals("Amount of domain owner info should be correct",
                      1, d.getAllDomainOwnerInfo().length);
         count = 0;
-        for (Iterator i = d.getAllSeedLists(); i.hasNext(); i.next(), count++) {
+        for (Iterator<SeedList> i = d.getAllSeedLists(); i.hasNext(); i.next(), count++) {
         }
         assertEquals("Number of seedlists should be 1", 1, count);
         assertEquals("Amount of owner info should be 1",
@@ -524,12 +524,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
     public void testGetDomainHarvestInfo() throws Exception {
         DomainDAO dao = DomainDAO.getInstance();
-        // Migrate
-        TemplateDAO tdao = TemplateDAO.getInstance();
-        ScheduleDAO sdao = ScheduleDAO.getInstance();
-        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        JobDAO jdao = JobDAO.getInstance();
-
+        
         List<DomainHarvestInfo> info = dao.getDomainHarvestInfo("dr.dk");
         assertEquals("Should have no info for unharvested domain", 0, info.size());
 
@@ -805,7 +800,7 @@ public class DomainDAOTester extends DataModelTestCase {
         d4.getDefaultConfiguration().setMaxBytes(2000000);
         dao.update(d4);
 
-        Iterator i = DomainDAO.getInstance().getAllDomainsInSnapshotHarvestOrder();
+        Iterator<Domain> i = DomainDAO.getInstance().getAllDomainsInSnapshotHarvestOrder();
         Domain reference = (Domain) i.next();
         while (i.hasNext()) {
             Domain next = (Domain) i.next();
