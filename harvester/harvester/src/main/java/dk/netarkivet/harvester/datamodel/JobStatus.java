@@ -33,7 +33,35 @@ import dk.netarkivet.common.utils.I18n;
  *
  */
 public enum JobStatus {
-    NEW, SUBMITTED, STARTED, DONE, FAILED, RESUBMITTED;
+    /**
+     * Job status new is used for a job that has been created but not yet 
+     * sent to a JMS queue
+     */    
+	NEW,
+    /**
+     * Job status submitted is used for a job that has been sent to a JMS 
+     * queue, but not yet picked up by a harvester 
+     */    
+    SUBMITTED,
+    /**
+     * Job status started is used for a job that a harvester has started 
+     * executing of
+     */    
+    STARTED,
+    /**
+     * Job status done is used for a job that a harvester has successfully 
+     * finished 
+     */    
+    DONE,
+    /**
+     * Job status failed is used for a job that has failed to execute correctly
+     */    
+    FAILED,
+    /**
+     * Job status resubmitted is used for a job that had failed and a new job
+     * with this jobs data has been submitted
+     */    
+    RESUBMITTED;
 
     /** Internationalisation object. */
     private static final I18n I18N

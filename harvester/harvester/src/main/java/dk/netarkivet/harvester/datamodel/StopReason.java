@@ -49,24 +49,30 @@ import dk.netarkivet.common.utils.I18n;
  *
  */
 public enum StopReason {
-    /** We have now harvested the whole domain. */
+    /** 
+     * Stop reason is download complete, when all pages within the scope of the
+     * harvest template have been downloaded
+     */
     DOWNLOAD_COMPLETE,
     /**
-     * We have now harvested the number of objects allowed from this domain
-     *  in this harvest.
+     * Stop reason is object limit reached, when the domain reached the maximum
+     * number of objects allowed by the harvest.
      */
     OBJECT_LIMIT,
     /**
-     * We have now harvested the the number of bytes allowed from this domain
-     *  in this harvest.
+     * Stop reason is size limit reached, when the domain reached the maximum 
+     * number of bytes allowed by the harvest.
      */
     SIZE_LIMIT,
     /**
-     *  We stopped harvesting because we hit the per-configuration limit.
+     * Stop reason is configuration size limit reached, when the domain 
+     * reached the maxumum number of bytes allowed by the configuration 
      */
     CONFIG_SIZE_LIMIT,
-    /** We don't know whether or not the harvesting is completed,
-     *  because the crawler did not finish in an orderly way.
+    /** 
+     * Stop reason is size download unfinished, when the we don't know whether
+     * or not the harvesting is completed, because the crawler did not finish 
+     * in an orderly way.
      */
     DOWNLOAD_UNFINISHED;
 

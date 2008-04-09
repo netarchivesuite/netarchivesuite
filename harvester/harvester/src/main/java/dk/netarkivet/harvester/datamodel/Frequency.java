@@ -34,13 +34,44 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 
 public abstract class Frequency {
+	
     /** How many units of time between each event? */
     private int numUnits;
 
     /** If this Frequency happens any time rather than at a specified time. */
     private boolean isAnytime;
 
-    /** Initialise a frequency with information about how many periods between
+	private enum TimeUnit {
+	    /** 'No time unit' is not used */    
+		NOTIMEUNIT,
+	    /** Hourly, the onhour, ondayofweek & ondayofmonth fields are unused */
+	    HOURLY,
+	    /** Daily, the ondayofweek and ondayofmonth fields are unused */
+	    DAILY,
+	    /** Weekly, the ondayofmonth field is unused */
+	    WEEKLY,
+	    /** Monthly, the ondayofweek field is unused */
+	    MONTHLY;
+
+	    /** Helper method that gives a proper object from e.g. a DB-stored value.
+	     *
+	     * @param tu a certain integer for a timeunit
+	     * @return the TimeUnit related to a certain integer
+	     * @throws ArgumentNotValid
+	     */
+	    public static TimeUnit fromOrdinal(int tu) {
+	        switch (tu) {
+	            case 0: return NOTIMEUNIT;
+	            case 1: return HOURLY;
+	            case 2: return DAILY;
+	            case 3: return WEEKLY;
+	            case 4: return MONTHLY;
+	            default: throw new ArgumentNotValid("Invalid time unit " + tu);
+	        }
+	    } 
+	}
+
+	/** Initialise a frequency with information about how many periods between
      * events, and whether it's at a specified time in the period.
      *
      * The actual length of the period is defined by subclasses
@@ -164,22 +195,24 @@ public abstract class Frequency {
                                                Integer dayofweek,
                                                Integer dayofmonth) {
         Frequency freq;
-        switch (timeunit) {
-            case 1:
+    	TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
+    	
+        switch (tu) {
+            case HOURLY:
                 if (anytime) {
                     freq = new HourlyFrequency(numtimeunits);
                 } else {
                     freq = new HourlyFrequency(numtimeunits, minute);
                 }
                 break;
-            case 2:
+            case DAILY:
                 if (anytime) {
                     freq = new DailyFrequency(numtimeunits);
                 } else {
                     freq = new DailyFrequency(numtimeunits, hour, minute);
                 }
                 break;
-            case 3:
+            case WEEKLY:
                 if (anytime) {
                     freq = new WeeklyFrequency(numtimeunits);
                 } else {
@@ -187,7 +220,7 @@ public abstract class Frequency {
                             hour, minute);
                 }
                 break;
-            case 4:
+            case MONTHLY:
                 if (anytime) {
                     freq = new MonthlyFrequency(numtimeunits);
                 } else {
