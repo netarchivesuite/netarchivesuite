@@ -32,9 +32,9 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.management.remote.JMXConnector;
 import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -66,9 +66,9 @@ public class JMXUtils {
     
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
-     * or with the current setting ({@link #MAX_TRIES})  16 seconds.
+     * or with the current setting ({@link #MAX_TRIES})  131 seconds.
      */
-    public static final int MAX_TRIES = 14;
+    public static final int MAX_TRIES = 17;
 
     /**
      * If no initial JNDI context has been configured,
