@@ -66,7 +66,7 @@ public class JMXUtils {
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
      * or with the current setting (14) 16 seconds.
      */
-    public static final int MAX_TRIES = 14;
+    public static final int MAX_TRIES = 17;
 
     /**
      * If no initial JNDI context has been configured,
