@@ -33,9 +33,15 @@ import java.util.HashMap;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Class encapsulating the Heritrix order.xml.
+ * Class encapsulating the Heritrix order.xml. 
  * Enables verification that dom4j Document obey the constraints
  * required by our software, specifically the Job class.
+ * 
+ * The class assumes the type of order.xml used in configuring Heritrix
+ * version 1.10+.
+ * Information about the Heritrix crawler, and its processes and modules
+ * can be found in the Heritrix developer and user manuals found on
+ * <a href="http://crawler.archive.org">http://crawler.archive.org<a/>
  */
 public class HeritrixTemplate {
     /** the dom4j Document hiding behind this instance of HeritrixTemplate. */
@@ -76,6 +82,8 @@ public class HeritrixTemplate {
     
     /** Xpath to check, that all templates use the same archiver path,
      * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
+     * The archive path tells Heritrix to which directory it shall write
+     * its arc files.
      */
     public static final String ARCHIVER_PATH_XPATH =
         "/crawl-order/controller/map[@name='write-processors']/"
@@ -126,7 +134,9 @@ public class HeritrixTemplate {
                            Pattern.compile(USER_AGENT_REGEXP, Pattern.DOTALL));
         requiredXpaths.put(HERITRIX_FROM_XPATH, Pattern.compile(FROM_REGEXP));
       
-        //Required that Heritrix write its arcfiles to relative dir "arcs"
+        //Required that Heritrix write its arcfiles to the correct dir
+        // relative to the crawldir. This dir is defined by the constant: 
+        //dk.netarkivet.common.Constants.ARCDIRECTORY_NAME.
         requiredXpaths.put(ARCHIVER_PATH_XPATH, Pattern.compile(
                 dk.netarkivet.common.Constants.ARCDIRECTORY_NAME));
     }
@@ -172,6 +182,7 @@ public class HeritrixTemplate {
     }
 
     /**
+     * return the template.
      * @return the template
      */
     public Document getTemplate() {

@@ -55,23 +55,20 @@ import dk.netarkivet.harvester.harvesting.distribute.PersistentJobData;
  * directly related either to launching Heritrix or to handling JMS messages.
  *
  */
-
 public class HarvestController {
     /**
-     * The singleton instance of this class.  Calling close() on the instance
+     * The singleton instance of this class.  Calling cleanup() on the instance
      * will null this field.
      */
     private static HarvestController instance;
     private Log log
             = LogFactory.getLog(HarvestController.class);
-
     /**
      * String in crawl.log, that Heritrix writes
      *  as the last entry in the progress-statistics.log.
      */
     private static final String HERITRIX_ORDERLY_FINISH_STRING =
         "CRAWL ENDED";
-
 
     /**
      * The max time to wait for heritrix to close last ARC files (in secs).
@@ -118,6 +115,8 @@ public class HarvestController {
 
     /**
      * Writes the files involved with a harvests.
+     * Creates the Heritrix arcs directory to ensure that this
+     * directory exists in advance.
      *
      * @param crawldir        The directory that the crawl should take place
      *                        in.
@@ -148,6 +147,9 @@ public class HarvestController {
         files.writeOrderXml(job.getOrderXMLdoc());
 
         files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
+        
+        // Create Heritrix arcs directory before starting Heritrix to ensure
+        // the arcs directory exists in advance.
         boolean created = files.getArcsDir().mkdir();
         if (!created) {
             log.warn("Unable to create arcsdir: " + files.getArcsDir());
@@ -349,9 +351,10 @@ public class HarvestController {
                 String[] longs = s.split(",");
                 for (String stringLong : longs) {
                     try {
-                        result.add(new Long(Long.parseLong(stringLong)));
+                        result.add(
+                                Long.valueOf(Long.parseLong(stringLong)));
                     } catch (NumberFormatException e) {
-                        log.warn("Unable convert String '" + stringLong
+                        log.warn("Unable to convert String '" + stringLong
                                  + "' in duplicate reduction jobid list"
                                  + " metadataEntry '" + s
                                  + "' to a jobID. Ignoring.",

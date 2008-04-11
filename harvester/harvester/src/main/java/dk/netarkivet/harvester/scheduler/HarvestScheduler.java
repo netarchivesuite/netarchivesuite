@@ -60,12 +60,15 @@ import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
  * This class is not Threadsafe.
  */
 public class HarvestScheduler implements CleanupIF {
+    
     /** The logger to use.    */
     protected static final Log log = LogFactory.getLog(
             HarvestScheduler.class.getName());
 
     /** The Client to use for communicating with the known servers.   */
     private HarvestControllerClient hcc;
+    
+    /** The timer used to control how frequently, jobs are scheduled. */
     private Timer timer;
 
     /** The unique instance of this class. */
@@ -125,7 +128,6 @@ public class HarvestScheduler implements CleanupIF {
         return instance;
     }
 
-
     /**
      * Start scheduling of harvest definitions.
      * The location of the harvestdefinition data is retrieved from:
@@ -162,6 +164,7 @@ public class HarvestScheduler implements CleanupIF {
             t.printStackTrace();
         }
     }
+    
     /**
      * Reschedule all jobs with JobStatus SUBMITTED.
      */
