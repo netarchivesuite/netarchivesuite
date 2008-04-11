@@ -56,7 +56,7 @@ create table schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 3);
+    values ( 'configurations', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -74,7 +74,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'fullharvests', 2);
+    values ( 'fullharvests', 3);
 insert into schemaversions ( tablename, version ) 
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version ) 
@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'jobs', 3);
+    values ( 'jobs', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'job_configs', 1);
 
@@ -144,6 +144,9 @@ create table configurations (
 -------------------------------------------------------------------------------
 -- Name:    config_passwords
 -- Descr.:  This table contains relations between configurations and passwords
+--          Note that even though it is possible to make many-to-may relations
+--          there are in reality a one (configuration) to many (passwords)
+--          relation
 create table config_passwords (
     config_id bigint not null, -- Reference to table configurations
     password_id int not null,  -- Reference to table passwords
@@ -153,6 +156,9 @@ create table config_passwords (
 -------------------------------------------------------------------------------
 -- Name:    config_seedlists
 -- Descr.:  This table contains relations between configurations and seed lists
+--          Note that even though it is possible to make many-to-may relations
+--          there are in reality a one (configuration) to many (seedlists)
+--          relation
 create table config_seedlists (
     config_id bigint not null, -- Reference to table configurations
     seedlist_id int not null,  -- Reference to table seedlists
@@ -221,7 +227,8 @@ create table historyinfo (
     bytecount bigint not null,      -- Count of collected bytes
     config_id bigint not null,      -- Configuration for the harvest
     harvest_id bigint not null,     -- Identification of harvest the
-                                    --  information origins from
+                                    --  information origins from - must be the 
+                                    --  same as the one given via the jobs table
     job_id bigint,                  -- Identification of job the information
                                     --  origins from
     harvest_time timestamp not null -- Time when the harvest was done 
@@ -261,7 +268,7 @@ create table harvestdefinitions (
                                 --  interface
 );
  
-create index harvestdefinitionssubmitdate ON harvestdefinitions (submitted);
+create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
 
 -------------------------------------------------------------------------------
 -- Name:    fullharvests
@@ -269,8 +276,8 @@ create index harvestdefinitionssubmitdate ON harvestdefinitions (submitted);
 create table fullharvests (
     harvest_id bigint not null primary key, -- Unique id for harvest definition
     maxobjects bigint not null,             -- Count of max objects per domain
-    previoushd bigint,    -- Harvest that this snapshot harvest is based on
-    maxbytes bigint       -- Maximum number of bytes to harvest per domain
+    previoushd bigint,        -- Harvest that this snapshot harvest is based on
+    maxbytes bigint default -1 -- Maximum number of bytes to harvest per domain
 );
 
 -------------------------------------------------------------------------------
@@ -290,7 +297,10 @@ create index partialharvestsnextdate ON partialharvests (nextdate);
 -------------------------------------------------------------------------------
 -- Name:    harvest_configs
 -- Descr.:  This table contains relations between harvest definitions and 
---          configurations
+--          configurations.
+--          Note that even though it is possible to make many-to-may relations
+--          there are in reality a one (harvestdefinition) to many 
+--          (configutrations) relation
 create table harvest_configs (
     harvest_id bigint not null, -- Reference to table harvestdefinitions
     config_id bigint not null,  -- Reference to table configurations
@@ -390,12 +400,13 @@ create table jobs (
                                     --  upload, if any
     upload_error_details varchar(10000), -- Details of all errors from upload,
                                          --  if any
-    startdate timestamp,      -- The time when a crawler started executing this
-                              --  job
-    enddate timestamp,        -- The time when this job was reported done or 
-                              --  failed
-    num_configs int not null, -- Number of configurations in the job, 
-                              --  autocreated for optimization purposes
+    startdate timestamp,                 -- The time when a crawler started 
+                                         --  executing this job
+    enddate timestamp,                   -- The time when this job was reported 
+                                         --  done or failed
+    num_configs int not null default 0,  -- Number of configurations in the
+                                         --  job, autocreated for optimization
+                                         --  purposes
     edition bigint not null   -- Marker for optimistic locking by web interface
 );
 
