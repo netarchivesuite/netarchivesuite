@@ -22,8 +22,8 @@ connect fullhddb;
 # Note: "generated always as identity" is replaced by AUTO_INCREMENT
 # mediumtext replaces "clob(8m)"
 # longtext replaces "clob(64m)"
-# Note: We are using 'datetime' instead of 'timestamp', because we often want to
-# use null-values for these fields. 
+# Note: We are using 'datetime' instead of 'timestamp', because we often want 
+# to use null-values for these fields. 
 # Type 'datetime' can hold the same information as 'timestamp'    
 # Note also that (as for Derby) indexes are  automatically generated when a 
 # column is unique.
@@ -42,7 +42,7 @@ create table IF NOT EXISTS schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 3);
+    values ( 'configurations', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -60,7 +60,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'fullharvests', 2);
+    values ( 'fullharvests', 3);
 insert into schemaversions ( tablename, version )
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version )
@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 3);
+    values ( 'jobs', 4);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 
@@ -184,9 +184,12 @@ create index historyinfojob on historyinfo(job_id);
 
 # -----------------------------------------------------------------------------
 create table harvestdefinitions (
-     harvest_id bigint not null primary key, name varchar(300) not null unique,
-     comments varchar(30000), numevents int not null,
-     submitted datetime not null, isactive int not null,
+     harvest_id bigint not null primary key, 
+     name varchar(300) not null unique,
+     comments varchar(30000), 
+     numevents int not null,
+     submitted datetime not null, 
+     isactive int not null,
      edition bigint not null 
 );
 
