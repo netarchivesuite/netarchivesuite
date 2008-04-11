@@ -32,26 +32,26 @@ import dk.netarkivet.common.utils.I18n;
 
 /**
  * Class for containing a reason for stopping the harvesting of a domain.
- * There are five possible reasons:
- *  1) We have now harvested the whole domain (DOWNLOAD_COMPLETE)
- *  2)  We have now harvested the number of objects allowed from this domain
- *      in this iteration (OBJECT_LIMIT)
+ * There are five possible reasons:<br>
+ *  1) We have now harvested the whole domain (DOWNLOAD_COMPLETE) <br>
+ *  2) We have now harvested the number of objects allowed from this domain
+ *     in this iteration (OBJECT_LIMIT) <br>
  *  3) We have now harvested the the number of bytes allowed from this domain
- *      in this iteration (SIZE_LIMIT)
+ *     in this iteration (SIZE_LIMIT) <br>
  *  4) We stopped harvesting because we hit the per-configuration limit
- *      (CONFIG_SIZE_LIMIT)
+ *     (CONFIG_SIZE_LIMIT) <br>
  *  5) We don't know whether or not the harvesting is completed,
- *     because the crawler did not finish in an orderly way (DOWNLOAD_UNFINISHED)
+ *     because the crawler did not finish in an orderly way 
+ *     (DOWNLOAD_UNFINISHED) <br>
  *
- * Note: This enum is serialized to database using the order in which these
+ * Note: This enum is serialized to the database using the order in which these
  * are defined. Thus the order of stop reasons MUST NOT BE CHANGED!
- *
  *
  */
 public enum StopReason {
     /** 
      * Stop reason is download complete, when all pages within the scope of the
-     * harvest template have been downloaded
+     * harvest template have been downloaded.
      */
     DOWNLOAD_COMPLETE,
     /**
@@ -66,13 +66,13 @@ public enum StopReason {
     SIZE_LIMIT,
     /**
      * Stop reason is configuration size limit reached, when the domain 
-     * reached the maxumum number of bytes allowed by the configuration 
+     * reached the maxumum number of bytes allowed by the configuration. 
      */
     CONFIG_SIZE_LIMIT,
     /** 
-     * Stop reason is size download unfinished, when the we don't know whether
-     * or not the harvesting is completed, because the crawler did not finish 
-     * in an orderly way.
+     * Stop reason is download unfinished, when we don't know whether or not
+     * the harvesting is completed, because the crawler did not finish in an 
+     * orderly way.
      */
     DOWNLOAD_UNFINISHED;
 

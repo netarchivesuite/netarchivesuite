@@ -29,37 +29,37 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 
 /**
- * Enum of the possible statuses (alt.: status) a Job can be in.
+ * Enumeration of the possible states (alt.: status) a Job can be in.
  *
  */
 public enum JobStatus {
     /**
      * Job status new is used for a job that has been created but not yet 
-     * sent to a JMS queue
+     * sent to a JMS queue.
      */    
 	NEW,
     /**
      * Job status submitted is used for a job that has been sent to a JMS 
-     * queue, but not yet picked up by a harvester 
+     * queue, but not yet picked up by a harvester.
      */    
     SUBMITTED,
     /**
-     * Job status started is used for a job that a harvester has started 
-     * executing of
+     * Job status started is used for a job that a harvester has started.
      */    
     STARTED,
     /**
      * Job status done is used for a job that a harvester has successfully 
-     * finished 
+     * finished.
      */    
     DONE,
     /**
-     * Job status failed is used for a job that has failed to execute correctly
+     * Job status failed is used for a job that has failed to execute 
+     * correctly.
      */    
     FAILED,
     /**
      * Job status resubmitted is used for a job that had failed and a new job
-     * with this jobs data has been submitted
+     * with this jobs data has been submitted.
      */    
     RESUBMITTED;
 
