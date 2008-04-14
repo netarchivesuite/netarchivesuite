@@ -31,31 +31,31 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public enum TimeUnit {
     /** 
      * 'No time unit' is only included for historic reasons, since 0 did not 
-     *  denote a timeunit 
+     *  denote a timeunit.
      **/    
 	NOTIMEUNIT,
     /** 
      * Hourly time unit will result in a frequency where only "on minute" will
      * be set, i.e. "on hour", "on day of week" and "on day of month" are 
-     * unused 
+     * unused.
      **/
     HOURLY,
     /** 
      * Daily time unit will result in a frequency where only "on minute" and 
      * "on hour" will be set, i.e. "on day of week" and "on day of month" 
-     * are unused
+     * are unused.
      **/
     DAILY,
     /** 
      * Weekly time unit will result in a frequency where only "on minute",
      * "on hour" and "on day of week" will be set, i.e. "on day of month" 
-     * are unused
+     * are unused.
      **/
     WEEKLY,
     /** 
      * Monthly time unit will result in a frequency where only "on minute",
      * "on hour" and "on day of month" will be set, i.e. "on day of week" 
-     * are unused
+     * are unused.
      **/
     MONTHLY;
 
