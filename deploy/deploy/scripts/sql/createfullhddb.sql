@@ -144,9 +144,13 @@ create table configurations (
 -------------------------------------------------------------------------------
 -- Name:    config_passwords
 -- Descr.:  This table contains relations between configurations and passwords
---          Note that even though it is possible to make many-to-may relations
---          there are in reality a one (configuration) to many (passwords)
---          relation
+--          Note the following:
+--          1. the domain relation in the referenced configuration must be the
+--             same as the domain relation in the referenced password.
+--          2. Not all passwords belongs to a configuration 
+--          3. Even though it is possible to make many-to-may relations there
+--             are in reality a one (configuration) to many (passwords) 
+--             relation
 create table config_passwords (
     config_id bigint not null, -- Reference to table configurations
     password_id int not null,  -- Reference to table passwords
@@ -156,9 +160,13 @@ create table config_passwords (
 -------------------------------------------------------------------------------
 -- Name:    config_seedlists
 -- Descr.:  This table contains relations between configurations and seed lists
---          Note that even though it is possible to make many-to-may relations
---          there are in reality a one (configuration) to many (seedlists)
---          relation
+--          Note the following:
+--          1. the domain relation in the referenced configuration must be the
+--             same as the domain relation in the referenced seedlist.
+--          2. Not all seedlists belongs to a configuration 
+--          3. Even though it is possible to make many-to-may relations there
+--             are in reality a one (configuration) to many (seedlists) 
+--             relation
 create table config_seedlists (
     config_id bigint not null, -- Reference to table configurations
     seedlist_id int not null,  -- Reference to table seedlists
@@ -331,12 +339,12 @@ create table schedules (
      timeunit int not null,        -- Time unit used for time measure between 
                                    --  repetitions. It indicates whether it is
                                    --  hours, days, weeks or moths. possible
-                                   --  values are defined in Frequency.java
+                                   --  values are defined in TimeUnit.java
      numtimeunits bigint not null, -- Count of time unit, for time of next 
                                    --  repetition
      anytime int not null,   -- True, if this is an anytime frequency, i.e. 
                              --  onminute, onhour, ondayofweek and dayofmonth
-                             --  has no meaning
+                             --  has no meaning.
      onminute int,           -- Which minute is it about to run 
      onhour int,             -- Which hour is it about to run
      ondayofweek int,        -- Which day of week is it about to run
