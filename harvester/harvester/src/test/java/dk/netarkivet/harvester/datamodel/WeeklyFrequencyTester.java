@@ -47,6 +47,21 @@ public class WeeklyFrequencyTester extends TestCase {
 
     }
 
+    /** 
+     * Test value is weekly
+     */
+    public void testTimeunitIsWeekly() {
+    	WeeklyFrequency freq = new WeeklyFrequency(20);
+        assertEquals("Timeunit must be weekly.", 
+        		     freq.ordinal(), 
+        		     TimeUnit.WEEKLY.ordinal()
+        );
+        assertEquals("Check TimeUnit Weekly", 
+        		      TimeUnit.WEEKLY, 
+        		      TimeUnit.fromOrdinal(TimeUnit.WEEKLY.ordinal())
+        );
+    }
+    
     /** Given a frequency that can start any time, check that first event is
      * immediate
      * @throws Exception

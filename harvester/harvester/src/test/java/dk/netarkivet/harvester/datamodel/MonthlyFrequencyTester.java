@@ -45,6 +45,21 @@ public class MonthlyFrequencyTester extends TestCase {
     public void tearDown() {
     }
 
+    /** 
+     * Test value is monthly
+     */
+    public void testTimeunitIsMonthly() {
+    	MonthlyFrequency freq = new MonthlyFrequency(20);
+        assertEquals("Timeunit must be monthly.", 
+        		     freq.ordinal(), 
+        		     TimeUnit.MONTHLY.ordinal()
+        );
+        assertEquals("Check TimeUnit monthly", 
+        		      TimeUnit.MONTHLY, 
+        		      TimeUnit.fromOrdinal(TimeUnit.MONTHLY.ordinal())
+        );
+    }
+    
     /** Given a frequency that can start any time, check that first event is
      * immediate
      * @throws Exception

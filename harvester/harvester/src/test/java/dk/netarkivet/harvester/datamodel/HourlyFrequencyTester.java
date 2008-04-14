@@ -46,6 +46,21 @@ public class HourlyFrequencyTester extends TestCase {
 
     }
 
+    /** 
+     * Test value is hourly
+     */
+    public void testTimeunitIsHourly() {
+    	HourlyFrequency freq = new HourlyFrequency(20);
+        assertEquals("Timeunit must be hourly.", 
+        		     freq.ordinal(), 
+        		     TimeUnit.HOURLY.ordinal()
+        );
+        assertEquals("Check TimeUnit hourly", 
+        		      TimeUnit.HOURLY, 
+        		      TimeUnit.fromOrdinal(TimeUnit.HOURLY.ordinal())
+        );
+    }
+
     /** Given a frequency that can start any time, check that first event is
      * immediate.
      * @throws Exception

@@ -262,7 +262,7 @@ public class MonthlyFrequency extends Frequency {
      * @return an integer that can be used to identify the kind of frequency
      */
     public int ordinal() {
-        return 4;
+        return TimeUnit.MONTHLY.ordinal();
     }
 
     /** Human readable represenation of this object.

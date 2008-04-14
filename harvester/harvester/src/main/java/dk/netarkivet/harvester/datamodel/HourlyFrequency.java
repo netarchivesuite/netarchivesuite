@@ -202,7 +202,7 @@ public class HourlyFrequency extends Frequency {
      * @return an integer that can be used to identify the kind of frequency
      */
     public int ordinal() {
-        return 1;
+        return TimeUnit.HOURLY.ordinal();
     }
 
     /** Human readable represenation of this object.

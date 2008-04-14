@@ -228,7 +228,7 @@ public class DailyFrequency extends Frequency {
      * @return an integer that can be used to identify the kind of freqency
      */
     public int ordinal() {
-        return 2;
+        return TimeUnit.DAILY.ordinal();
     }
 
     /** Human readable represenation of this object.

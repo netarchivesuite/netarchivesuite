@@ -253,7 +253,7 @@ public class WeeklyFrequency extends Frequency {
      * @return an integer that can be used to identify the kind of frequency
      */
     public int ordinal() {
-        return 3;
+        return TimeUnit.WEEKLY.ordinal();
     }
 
     /** Human readable represenation of this object.

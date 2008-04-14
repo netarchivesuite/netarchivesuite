@@ -47,6 +47,21 @@ public class DailyFrequencyTester extends TestCase {
 
     }
 
+    /** 
+     * Test value is daily
+     */
+    public void testTimeunitIsDaily() {
+    	DailyFrequency freq = new DailyFrequency(20);
+        assertEquals("Timeunit must be daily.", 
+        		     freq.ordinal(), 
+        		     TimeUnit.DAILY.ordinal()
+        );
+        assertEquals("Check TimeUnit daily", 
+        		      TimeUnit.DAILY, 
+        		      TimeUnit.fromOrdinal(TimeUnit.DAILY.ordinal())
+        );
+    }
+
     /** Given a frequency that can start any time, check that first event is
      * immediate
      * @throws Exception
