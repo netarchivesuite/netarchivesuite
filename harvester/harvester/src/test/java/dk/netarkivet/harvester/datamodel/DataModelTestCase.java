@@ -51,7 +51,7 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * sets up the various DAOs etc.
  */
 public class DataModelTestCase extends TestCase {
-    //TestInfo info = new TestInfo();
+    
     SetSystemProperty derbyLog
             = new SetSystemProperty("derby.stream.error.file",
                                     new File(TestInfo.TEMPDIR, "derby.log").getAbsolutePath());
@@ -68,7 +68,7 @@ public class DataModelTestCase extends TestCase {
         Settings.set(Settings.DB_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
         Settings.set(Settings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
-        TestUtils.resetDAOs();
+        //TestUtils.resetDAOs();
 
         Connection c = DBUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
         if (c == null) {
@@ -92,7 +92,7 @@ public class DataModelTestCase extends TestCase {
 
     /** Creates the following jobs and hds:
      * HDs:
-     * HD#1: selektiv
+     * HD#1: selective
      * HD#2: full; no previous
      * HD#3: full; previous: HD#2
      * HD#4: full; no previous, later than HD#1, HD#2

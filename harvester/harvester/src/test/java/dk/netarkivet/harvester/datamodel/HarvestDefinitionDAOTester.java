@@ -797,12 +797,13 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     public void testGetSparseFullHarvest() throws Exception {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        SparseFullHarvest sph = hddao.getSparseFullHarvest("Tværhøstning");
+        final String harvestName = "Tværhøstning";
+        SparseFullHarvest sph = hddao.getSparseFullHarvest(harvestName);
         assertTrue("Should find a SparseFullHarvest for harvestname: "
-                   + "Tværhøstning", sph != null);
+                   + harvestName, sph != null);
         assertEquals("Should be the right partial harvest", new Long(43L), sph
                 .getOid());
-        assertEquals("Should be the right partial harvest", "Tværhøstning",
+        assertEquals("Should be the right partial harvest", harvestName,
                      sph.getName());
         assertEquals("Should be the right partial harvest", true, sph
                 .isActive());
@@ -816,7 +817,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                      Constants.DEFAULT_MAX_BYTES, sph.getMaxBytes());
         assertEquals("Should be the right previous harvest", null, sph
                 .getPreviousHarvestDefinitionOid());
-        assertNull("Should be null on unknown", hddao
+        assertNull("Should be null on unknown harvestdefinition", hddao
                 .getSparseFullHarvest("Fnord"));
     }
 

@@ -59,7 +59,7 @@ import dk.netarkivet.testutils.TestMessageListener;
 /**
  * Test bitarchive client and server
  * As a number of tests only succeed if both the client and server
- * both operate correctly, both are tested together
+ * both operate correctly, both are tested together.
  */
 public class IntegrityTests extends TestCase {
     private static final String ARC_FILE_NAME = "Upload5.ARC";
@@ -124,7 +124,7 @@ public class IntegrityTests extends TestCase {
             TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR,
                     TestInfo.UPLOADMESSAGE_TEMP_DIR);
 
-            /** enable logging as defined in testlog.prop file*/
+            /** Enable logging as defined in testlog.prop file. */
             try {
                 FileInputStream fis = new FileInputStream(TESTLOGPROP);
                 LogManager.getLogManager().readConfiguration();
@@ -136,14 +136,14 @@ public class IntegrityTests extends TestCase {
             fail("Could not setup configuration:" + e);
         }
 
-        /** Read ftp-related settings from settings.xml */
+        /** Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(Settings.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
                 Settings.FTP_SERVER_PORT));
         final String ftpUserName = Settings.get(Settings.FTP_USER_NAME);
         final String ftpUserPassword = Settings.get(Settings.FTP_USER_PASSWORD);
 
-        /** Connect to test ftp-server */
+        /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();
 
         /* try {
@@ -188,8 +188,8 @@ public class IntegrityTests extends TestCase {
     public void tearDown() {
 
         FileUtils.removeRecursively(WORKING);
-        /** delete all uploaded files on ftp-server and then disconnect */
-        Iterator fileIterator = upLoadedFiles.iterator();
+        /** delete all uploaded files on ftp-server and then disconnect. */
+        Iterator<String> fileIterator = upLoadedFiles.iterator();
 
         try {
             while (fileIterator.hasNext()) {
@@ -227,7 +227,7 @@ public class IntegrityTests extends TestCase {
 
      /**
      * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile
+     * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
      */
     public void testBatchEndedMessageAggregation() throws InterruptedException {
          Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
@@ -294,8 +294,8 @@ public class IntegrityTests extends TestCase {
          //monitor should have written the data to a remote file we can collect
          assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
-         List received = listener.getAllReceived();
-         for (Iterator i = received.iterator(); i.hasNext(); ) {
+         List<NetarkivetMessage> received = listener.getAllReceived();
+         for (Iterator<NetarkivetMessage> i = received.iterator(); i.hasNext(); ) {
              Object o = i.next();
              if (o instanceof BatchReplyMessage) {
                  ((BatchReplyMessage)o).getResultFile().copyTo(output_file);
@@ -335,7 +335,7 @@ public class IntegrityTests extends TestCase {
     }
 
     /**
-     * Verify that multiple messages sent almost simultaneously works
+     * Verify that multiple messages sent almost simultaneously works.
      */
     public void testLotsOfMessages() {
         MessageTestHandler handler = new MessageTestHandler();
@@ -447,7 +447,7 @@ public class IntegrityTests extends TestCase {
     }
 
     /**
-     * Test construction of UploadMessage
+     * Test construction of UploadMessage.
      */
     public void testConstruction() {
         ChannelID to = Channels.getAllBa();
@@ -456,7 +456,7 @@ public class IntegrityTests extends TestCase {
         long fileSize = testARCFile.length();
 
         try {
-            /** Upload testfile to ftp-server */
+            /** Upload testfile to ftp-server. */
             InputStream in = new FileInputStream(testARCFile);
             assertTrue("Store operation failed",
                     theFTPClient.storeFile(testARCFile.getName(), in));

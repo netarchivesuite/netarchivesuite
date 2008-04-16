@@ -93,7 +93,7 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Test setters with incorrect parameters
+     * Test setters with incorrect parameters.
      */
     public void testSetAndGetArgumentNotValid() {
         try {
@@ -102,8 +102,6 @@ public class DomainTester extends DataModelTestCase {
         } catch (ArgumentNotValid e) {
             // expected
         }
-
-
 
         try {
             Domain.getDefaultDomain(null);
@@ -192,7 +190,8 @@ public class DomainTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that configurations with unknown seedlists are rejected by Domain
+     * Verify that configurations with unknown seedlists
+     * are rejected by Domain.
      *
      * author: SSC
      */

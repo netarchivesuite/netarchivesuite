@@ -71,6 +71,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
 /**
+ * Unit tests for the BitarchiveMonitorServer class. 
  */
 public class BitarchiveMonitorServerTester extends TestCase {
 
@@ -134,7 +135,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 = new MockupBitarchiveBatch("EnesteBitarkiv");
         final BlockingRF brf = new BlockingRF();
 
-        // Make sure the bamon nows about our mockup bitarchive by sending a
+        // Make sure the bamon knows about our mockup bitarchive by sending a
         // heartbeat
         mockupBitarchiveBatch.heartBeat(bam_server);
 
@@ -203,7 +204,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
     /**
      * Assert that the index'th message in client is a BatchReply to a message
-     * of id=replyOf and with content=expectedResult
+     * of id=replyOf and with content=expectedResult.
      */
     private void assertBatchResultIs(
             TestMessageListener client,
@@ -224,7 +225,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     }
 
     /**
-     * Test that BitarchiveMonitorServer is a singleton
+     * Test that BitarchiveMonitorServer is a singleton.
      */
     public void testSingletonicity() {
         ClassAsserts.assertSingleton(BitarchiveMonitorServer.class);
@@ -232,7 +233,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
 
     /**
-     * Verify that the BA monitor can receive a BatchMessage (ont the THE_BAMON
+     * Verify that the BA monitor can receive a BatchMessage (on the THE_BAMON
      * queue) and forward it to the ALL_BA topic.
      */
     public void testBatchReceive() {
@@ -248,7 +249,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         con.send(message);
         con.waitForConcurrentTasksToFinish();
 
-        List receivedBatchMsgs
+        List<BatchMessage> receivedBatchMsgs
                 = ((TestBitarchiveMonitorServer) bam_server).getBatchMsg();
 
         assertTrue(
@@ -275,7 +276,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         TestListener arcrepos = new TestListener();
         con.addListener(Channels.getTheArcrepos(), arcrepos);
 
-        // send a hearbeat to let monitor know that ba_App_Id is alive
+        // send a heartbeat to let monitor know that ba_App_Id is alive
         HeartBeatMessage hbm = new HeartBeatMessage(Channels.getTheBamon(),
                                                     ba_App_Id);
         con.send(hbm);
@@ -335,7 +336,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         con.send(message);
         con.waitForConcurrentTasksToFinish();
 
-        List receivedHeartBeatMsgs
+        List<HeartBeatMessage> receivedHeartBeatMsgs
                 = ((TestBitarchiveMonitorServer) bam_server).getHeartBeatMsg();
         assertTrue(
                 "BA Monitor server was expected to contain the HeartBeatMessage: "
@@ -348,7 +349,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     }
 
     /**
-     * Test that listener is registered and deregistered properly.
+     * Test that listener is registered and unregistered properly.
      */
     public void testListening() {
         testListeningPerLocation("SB", "KB");
@@ -562,7 +563,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 + batchEndedMsg.size() + " Received:" + batchEndedCount,
                 batchEndedMsg.size() == batchEndedCount);
 
-        // Sleeping for a few millis gives the BAMon time to reply.
+        // Sleeping for a few milliseconds gives the BAMon time to reply.
         int retries = 10;
         int tries = 0;
         while (tries < retries && batchReplyListener.batchReplyMsg == null) {
@@ -589,7 +590,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
     /**
      * Test that monitor can receive and aggregate data from more than one
-     * BitarchiveServer and aggregate the data and upload
+     * BitarchiveServer and aggregate the data and upload.
      *
      * @throws ArgumentNotValid
      * @throws UnknownID

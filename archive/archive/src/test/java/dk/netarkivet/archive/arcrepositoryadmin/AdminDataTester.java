@@ -136,7 +136,6 @@ public class AdminDataTester extends TestCase {
     /**
      * Verifies that setChecksum(), getChecksum()
      * work as expected.
-     * Note: hasCheckSum is now deprecated, and will shortly be removed
      */
     public void testChecksumOperations() {
         ad = UpdateableAdminData.getUpdateableInstance();

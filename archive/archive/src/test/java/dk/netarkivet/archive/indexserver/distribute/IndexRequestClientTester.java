@@ -227,7 +227,7 @@ public class IndexRequestClientTester extends TestCase {
         mis.resetMsgList();
         mis.setResponseSuccessfull(true);
         //mis.setMultiFile(true);
-        Set<Long> jobSet2 = new HashSet();
+        Set<Long> jobSet2 = new HashSet<Long>();
         jobSet2.addAll(jobSet);
         jobSet2.add(6L);
         List<IndexRequestMessage> sent = mis.getMsgList();

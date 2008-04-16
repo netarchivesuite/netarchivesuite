@@ -315,7 +315,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         l1.add(cfg2);
         l1.add(cfg3);
         harvestDef.setDomainConfigurations(l1);
-        Iterator l2 = harvestDef.getDomainConfigurations();
+        Iterator<DomainConfiguration> l2 = harvestDef.getDomainConfigurations();
         assertTrue("Should get at least one element", l2.hasNext());
         Object o1 = l2.next();
         // Check that we get two elements out
@@ -353,7 +353,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         l1.add(cfg3);
         l1.add(cfg3);
         harvestDef.setDomainConfigurations(l1);
-        Iterator l2 = harvestDef.getDomainConfigurations();
+        Iterator<DomainConfiguration> l2 = harvestDef.getDomainConfigurations();
         assertTrue("Should get at least one element", l2.hasNext());
         Object o1 = l2.next();
         // Check that we get two elements out
@@ -769,13 +769,13 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         HarvestDefinition hd = getTestSnapShotHarvestDefinition();
         // verify that the harvestdefintion generates jobs for all domains
-        List createdJobs = createAndGetJobs(hd);
+        List<Job> createdJobs = createAndGetJobs(hd);
         DomainDAO dao = DomainDAO.getInstance();
         int countDomains = dao.getCountDomains();
         // count the number of domains jobs are created for
         int totalCountDomains = 0;
-        for (Object createdJob : createdJobs) {
-            final Job job = (Job) createdJob;
+        for (Job createdJob : createdJobs) {
+            final Job job = createdJob;
             totalCountDomains += job.getCountDomains();
         }
         assertEquals("Jobs should be created for all domains",

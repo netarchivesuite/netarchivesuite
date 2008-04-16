@@ -34,9 +34,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 
 /**
- * @version $Id$
- *          <p/>
- *          Tests running a web server.
+ * Tests running a web server, represented by the GUIWebServer() class.
  */
 public class GUIWebServerTester extends TestCase {
     TestInfo info = new TestInfo();
@@ -67,14 +65,13 @@ public class GUIWebServerTester extends TestCase {
             new Socket(InetAddress.getLocalHost(),
                        TestInfo.GUI_WEB_SERVER_PORT);
         } catch (IOException e) {
-            fail("Port not in use after starting server!");
+            fail("Port not in use after starting server due to error: " + e);
         }
     }
 
     public void testExpectedExceptionsWhenStartingServer() throws IOException {
         Settings.set(Settings.HTTP_PORT_NUMBER,
                      Long.toString(65536L));
-
 
         //arguments not in range
         try {
@@ -122,7 +119,7 @@ public class GUIWebServerTester extends TestCase {
     public void testExpectedExceptionsWhenAddingContext() throws IOException {
         //wrong arguments when adding context
         Settings.set(Settings.SITESECTION_WEBAPPLICATION,
-                     "/not_found_bescause_it_doesnt_exist");
+                     "/not_found_because_it_doesnt_exist");
         try {
             server = new GUIWebServer();
             server.startServer();
@@ -139,7 +136,7 @@ public class GUIWebServerTester extends TestCase {
             new Socket(InetAddress.getLocalHost(),
                        TestInfo.GUI_WEB_SERVER_PORT);
         } catch (IOException e) {
-            fail("Port not in use after starting server!");
+            fail("Port not in use after starting server due to error: " + e);
         }
         server.cleanup();
         try {

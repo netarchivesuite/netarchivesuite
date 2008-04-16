@@ -64,12 +64,14 @@ public class ChecksumJobTester extends TestCase {
         ChecksumJob job = new ChecksumJob();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         job.initialize(out);
-        File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir").listFiles(TestFileUtils.NON_CVS_DIRS_FILTER);
-        Map ourChecksums = new HashMap();
+        File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir")
+            .listFiles(TestFileUtils.NON_CVS_DIRS_FILTER);
+        Map<String,String> ourChecksums = new HashMap<String,String>();
         for (int i = 0; i < inputfiles.length; i++) {
             job.processFile(inputfiles[i], out);
             try {
-                ourChecksums.put(inputfiles[i].getName(), MD5.generateMD5onFile(inputfiles[i]));
+                ourChecksums.put(inputfiles[i].getName(),
+                        MD5.generateMD5onFile(inputfiles[i]));
             } catch(Exception e) {
                 //okay, should just be a failed file
             }
@@ -85,8 +87,10 @@ public class ChecksumJobTester extends TestCase {
         assertEquals("Must have as many lines in result as files processed",
                 ourChecksums.size(), result_parts.length);
         for (int i = 0; i < result_parts.length; i++) {
-            String[] line_parts = result_parts[i].split(dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-            assertEquals("Line " + i + " in the checksum result must have two parts split by " + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR,
+            String[] line_parts = result_parts[i].split(
+                    dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
+            assertEquals("Line " + i + " in the checksum result must have two parts split by "
+                    + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR,
                     2, line_parts.length);
             assertTrue("File '" + line_parts[0] + "' must be in our checksum table",
                     ourChecksums.containsKey(line_parts[0]));
@@ -101,9 +105,9 @@ public class ChecksumJobTester extends TestCase {
         ChecksumJob job = new ChecksumJob();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         job.initialize(out);
-        File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir").listFiles(
-                TestFileUtils.NON_CVS_DIRS_FILTER);
-        Map ourChecksums = new HashMap();
+        File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir")
+            .listFiles(TestFileUtils.NON_CVS_DIRS_FILTER);
+        Map<String,String> ourChecksums = new HashMap<String,String>();
         for (int i = 0; i < inputfiles.length; i++) {
             job.processFile(inputfiles[i], out);
             ourChecksums.put(inputfiles[i].getName(), MD5.generateMD5onFile(
