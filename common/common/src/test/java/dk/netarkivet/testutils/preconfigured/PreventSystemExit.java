@@ -5,8 +5,7 @@ import java.security.Permission;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- *
- * Configures the test environemt to block calls to System.exit(),
+ * Configures the test environment to block calls to System.exit(),
  * throwing a PermissionDenied instead.
  */
 public class PreventSystemExit implements TestConfigurationIF {
@@ -67,9 +66,10 @@ public class PreventSystemExit implements TestConfigurationIF {
             super.checkExit(status);
         }
         public void checkPermission(Permission perm) {
-            if (perm.getName().equals("exitVM")) {
+            if (perm.getName().startsWith("exitVM")) { // represents exitVM, exitVM.*
                 throw new SecurityException("System.exit() disallowed during this unit test.");
             }
+            
         }
     }
 }

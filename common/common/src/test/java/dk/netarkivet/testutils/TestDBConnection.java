@@ -23,15 +23,23 @@
 
 package dk.netarkivet.testutils;
 
+import java.sql.Array;
+import java.sql.Blob;
 import java.sql.CallableStatement;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.sql.Struct;
+import java.util.Properties;
 import java.util.Stack;
 
 /**
@@ -41,7 +49,6 @@ import java.util.Stack;
  * 2) prepareStatement calls keep their string available
  *
  */
-
 public class TestDBConnection implements Connection {
     /** The connection that most calls are forwarded to */
     private Connection conn;
@@ -914,6 +921,75 @@ public class TestDBConnection implements Connection {
 
     public String toString() {
         return conn.toString() + " with last statement: \n" + lastStatement;
+    }
+
+    public Array createArrayOf(String typeName, Object[] elements)
+            throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Blob createBlob() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Clob createClob() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public NClob createNClob() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public SQLXML createSQLXML() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Struct createStruct(String typeName, Object[] attributes)
+            throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Properties getClientInfo() throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getClientInfo(String name) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public boolean isValid(int timeout) throws SQLException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void setClientInfo(Properties properties)
+            throws SQLClientInfoException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setClientInfo(String name, String value)
+            throws SQLClientInfoException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
