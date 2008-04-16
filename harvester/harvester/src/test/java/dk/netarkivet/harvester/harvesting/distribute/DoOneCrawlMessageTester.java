@@ -38,9 +38,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
 import dk.netarkivet.harvester.datamodel.Job;
-import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
 import dk.netarkivet.testutils.TestFileUtils;
 
 
@@ -51,7 +49,7 @@ public class DoOneCrawlMessageTester extends TestCase {
 
     TestInfo info = new TestInfo();
     /**
-     We use (arbitrarily) THE_PRES as channel for testing.
+     We use (arbitrarily) THIS_HACO as channel for testing.
      */
     private static final ChannelID CHAN1 = Channels.getThisHaco();
 
@@ -60,7 +58,7 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
 
     /**
-     *
+     * Setup method common to all unittests.
      */
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
@@ -73,20 +71,16 @@ public class DoOneCrawlMessageTester extends TestCase {
     }
 
     /**
-     *
+     * Teardown method common to all unittests.
      */
     public void tearDown()
             throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         Settings.reload();
         ChannelsTester.resetChannels();
-        DomainDAOTester.resetDomainDAO();
-        TemplateDAOTester.resetTemplateDAO();
     }
 
-    /**
-     * test of constructor
-     */
+    /** Test one of constructor. */
     public void testCTOR1() {
         try {
             new DoOneCrawlMessage(null, CHAN1, TestInfo.emptyMetadata);
@@ -95,7 +89,8 @@ public class DoOneCrawlMessageTester extends TestCase {
             //expected case
         }
     }
-
+    
+    /** Test two of constructor. */
     public void testCTOR2() {
         try {
             new DoOneCrawlMessage(TestInfo.getJob(), null, TestInfo.emptyMetadata);
@@ -105,6 +100,7 @@ public class DoOneCrawlMessageTester extends TestCase {
         }
     }
 
+    /** Test three of constructor. */
     public void testCTOR3() {
         try {
             new DoOneCrawlMessage(TestInfo.getJob(),
@@ -114,25 +110,32 @@ public class DoOneCrawlMessageTester extends TestCase {
             //expected case
         }
     }
-
+    
+    /** Test four of constructor. */
     public void testCTOR4() {
         try {
-            new DoOneCrawlMessage(TestInfo.getJob(),
-                                                                             CHAN1, TestInfo.emptyMetadata);
+            new DoOneCrawlMessage(TestInfo.getJob(), CHAN1,
+                    TestInfo.emptyMetadata);
         } catch (ArgumentNotValid e) {
             fail("Calling CTOR with valid arguments should not throw exception !");
         }
     }
+    
+    /** Test the getJob() method. */
     public void testGetJob() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, TestInfo.emptyMetadata);
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1,
+                TestInfo.emptyMetadata);
         assertSame("Job is not the same object", j, docm.getJob());
     }
-
+    
+    /** Test the getMetadata() method. */
     public void testGetMetadata() {
         Job j = TestInfo.getJob();
-        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1, TestInfo.emptyMetadata);
-        assertEquals("metadata is not the same object", TestInfo.emptyMetadata, docm.getMetadata());
+        DoOneCrawlMessage docm = new DoOneCrawlMessage(j, CHAN1,
+                TestInfo.emptyMetadata);
+        assertEquals("metadata is not the same object", TestInfo.emptyMetadata,
+                docm.getMetadata());
     }
 
     /**
@@ -159,7 +162,8 @@ public class DoOneCrawlMessageTester extends TestCase {
             ous.writeObject(docm1);
             ous.close();
             baos.close();
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            ObjectInputStream ois = new ObjectInputStream(
+                    new ByteArrayInputStream(baos.toByteArray()));
             docm1 = (DoOneCrawlMessage) ois.readObject();
         } catch (IOException e) {
             fail(e.toString());

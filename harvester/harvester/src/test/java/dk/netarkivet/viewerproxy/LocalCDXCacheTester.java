@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -62,7 +59,9 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-
+/**
+ * Unit tests for the LocalCDXCache class.
+ */
 public class LocalCDXCacheTester extends TestCase {
     // Whether the batch call must throw exception if called
     private boolean batchMustDie;
@@ -79,8 +78,10 @@ public class LocalCDXCacheTester extends TestCase {
 
     public void setUp() {
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(Settings.VIEWERPROXY_DIR, TestInfo.WORKING_DIR.getAbsolutePath());
+        TestFileUtils.copyDirectoryNonCVS(
+                TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+        Settings.set(Settings.VIEWERPROXY_DIR, 
+                TestInfo.WORKING_DIR.getAbsolutePath());
         utrf.setUp();
         batchMustDie = false;
         batchPauseMilliseconds = 0;
@@ -91,16 +92,18 @@ public class LocalCDXCacheTester extends TestCase {
         ArcRepositoryClientFactory.getViewerInstance().close();
         utrf.tearDown();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        Field dirField = ReflectUtils.getPrivateField(LocalCDXCache.class, "CACHE_DIR");
-        FileUtils.removeRecursively((File)dirField.get(null));
+        Field dirField = ReflectUtils.getPrivateField(
+                LocalCDXCache.class, "CACHE_DIR");
+        FileUtils.removeRecursively((File) dirField.get(null));
         JMSConnectionTestMQ.clearTestQueues();
         Settings.reload();
     }
 
     public void testGetIndexFile() throws Exception {
-        LocalCDXCache cache = new LocalCDXCache(ArcRepositoryClientFactory.getViewerInstance());
-        Method getIndexFile = ReflectUtils.getPrivateMethod(LocalCDXCache.class,
-                                                            "getIndexFile", Set.class);
+        LocalCDXCache cache = new LocalCDXCache(
+                ArcRepositoryClientFactory.getViewerInstance());
+        Method getIndexFile = ReflectUtils.getPrivateMethod(
+                LocalCDXCache.class, "getIndexFile", Set.class);
         // Test that we get a simple filename for a simple ID.
         File f = (File) getIndexFile.invoke(cache, set(1L));
         assertNotNull("Should get a file object back", f);
@@ -141,24 +144,24 @@ public class LocalCDXCacheTester extends TestCase {
         final LocalCDXCache cache = setupCache();
 
         // Check that an index file with correct content is created
-        List<String> expectedData = FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                                        "2-metadata-1.arc-contents"));
+        List<String> expectedData = FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
         Collections.sort(expectedData);
         File realData = cache.getIndex(set(2L));
         assertEquals("Returned data should be the same as expected (sorted) data",
                      listToString(expectedData),
                      FileUtils.readFile(realData));
 
-        expectedData.addAll(FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                                "4-metadata-1.arc-contents")));
+        expectedData.addAll(FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "4-metadata-1.arc-contents")));
         Collections.sort(expectedData);
         realData = cache.getIndex(set(2L, 4L));
         assertEquals("Returned data should be the same as expected (sorted) data"
                      + " with multiple files",
                      listToString(expectedData), FileUtils.readFile(realData));
 
-        expectedData.addAll(FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                                "70-metadata-1.arc-contents")));
+        expectedData.addAll(FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "70-metadata-1.arc-contents")));
         Collections.sort(expectedData);
         realData = cache.getIndex(set(2L, 1L, 4L, 70L, 3L));
         assertEquals("Returned data should be the same as expected (sorted)"
@@ -189,8 +192,8 @@ public class LocalCDXCacheTester extends TestCase {
                      0, f.length());
 
         realData = cache.getIndex(set(-1L, 2L));
-        expectedData = FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                           "2-metadata-1.arc-contents"));
+        expectedData = FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
         Collections.sort(expectedData);
         assertEquals("Errors should not prevent working data from being returned",
                      listToString(expectedData),
@@ -242,10 +245,10 @@ public class LocalCDXCacheTester extends TestCase {
 
         assertEquals("Should have exactly one call to batch()",
                      1, batchCounter);
-        expectedData = FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                           "4-metadata-1.arc-contents"));
-        expectedData.addAll(FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR,
-                                                                "70-metadata-1.arc-contents")));
+        expectedData = FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "4-metadata-1.arc-contents"));
+        expectedData.addAll(FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "70-metadata-1.arc-contents")));
         Collections.sort(expectedData);
         assertEquals("Should have the correct output",
                      listToString(expectedData), FileUtils.readFile(realData));
@@ -256,21 +259,26 @@ public class LocalCDXCacheTester extends TestCase {
 
     public void testRetrieveIndex() throws Exception {
         LocalCDXCache cache = setupCache();
-        Method retrieveIndex = ReflectUtils.getPrivateMethod(LocalCDXCache.class,
-                                                             "retrieveIndex", Set.class, OutputStream.class);
+        Method retrieveIndex = ReflectUtils.getPrivateMethod(
+                LocalCDXCache.class,
+                "retrieveIndex", Set.class, OutputStream.class);
 
-        String cdxData = FileUtils.readFile(new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
+        String cdxData = FileUtils.readFile(
+                new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
 
         // Check normal operation
         ByteArrayOutputStream sink = new ByteArrayOutputStream();
-        DigestOutputStream md5 = new DigestOutputStream(sink, MD5.getMessageDigestInstance());
+        DigestOutputStream md5 = new DigestOutputStream(
+                sink, MD5.getMessageDigestInstance());
         md5.getMessageDigest().reset();
         retrieveIndex.invoke(cache, set(2L), md5);
         assertEquals("Normal file should show right contents",
                      cdxData, sink.toString());
 
-        List<String> cdxData2 = FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR, "4-metadata-1.arc-contents"));
-        cdxData2.addAll(FileUtils.readListFromFile(new File(TestInfo.WORKING_DIR, "70-metadata-1.arc-contents")));
+        List<String> cdxData2 = FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "4-metadata-1.arc-contents"));
+        cdxData2.addAll(FileUtils.readListFromFile(
+                new File(TestInfo.WORKING_DIR, "70-metadata-1.arc-contents")));
         Collections.sort(cdxData2);
 
         sink.reset();
@@ -297,9 +305,10 @@ public class LocalCDXCacheTester extends TestCase {
                      listToString(cdxRead));
 
         LogUtils.flushLogs(LocalCDXCache.class.getName());
-        FileAsserts.assertFileContains("Should have a message about failed files in the log",
-                                       "INFO: Only found 2 files when asking for jobs [4, 70, 1]",
-                                       TestInfo.LOG_FILE);
+        FileAsserts.assertFileContains(
+                "Should have a message about failed files in the log",
+                "INFO: Only found 2 files when asking for jobs [4, 70, 1]",
+                TestInfo.LOG_FILE);
 
         sink.reset();
         // Force a null RemoteFile by blocking tmpfile
@@ -310,7 +319,7 @@ public class LocalCDXCacheTester extends TestCase {
         retrieveIndex.invoke(cache, set(1L, 70L, 4L), sink);
     }
 
-    /** Set up a CDXCache with a fake arcrepositoryclient
+    /** Set up a CDXCache with a fake arcrepositoryclient.
      *
      * @return Cache object that reads files from WORKING_DIR, placing working
      * copies in the tmp dir so they can be removed without disturbing the next
@@ -320,7 +329,8 @@ public class LocalCDXCacheTester extends TestCase {
      */
     private LocalCDXCache setupCache() throws NoSuchFieldException,
                                               IllegalAccessException {
-        LocalCDXCache cache = new LocalCDXCache(ArcRepositoryClientFactory.getViewerInstance());
+        LocalCDXCache cache = new LocalCDXCache(
+                ArcRepositoryClientFactory.getViewerInstance());
         final File tmpDir = new File(TestInfo.WORKING_DIR, "tmp");
         FileUtils.createDir(tmpDir);
 
@@ -359,7 +369,7 @@ public class LocalCDXCacheTester extends TestCase {
                 List<File> failures = new ArrayList<File>();
                 for (File f1 : files) {
                     if (job.getFilenamePattern().matcher(f1.getName()).matches()) {
-                        processed ++;
+                        processed++;
                         if (!job.processFile(f1, os)) {
                             failures.add(f1);
                         }
@@ -372,13 +382,15 @@ public class LocalCDXCacheTester extends TestCase {
                     fail("Error in close: " + e);
                 }
                 return new BatchStatus(locationName,
-                                       failures, processed, new TestRemoteFile(f,
-                                                                                batchMustDie,
-                                                                                batchMustDie,
-                                                                                batchMustDie));
+                                       failures, processed, 
+                                       new TestRemoteFile(f,
+                                               batchMustDie,
+                                               batchMustDie,
+                                               batchMustDie));
             }
         };
-        Field arcField = ReflectUtils.getPrivateField(LocalCDXCache.class, "arcRepos");
+        Field arcField = ReflectUtils.getPrivateField(LocalCDXCache.class,
+                "arcRepos");
         arcField.set(cache, dummyARC);
         return cache;
     }
@@ -390,10 +402,10 @@ public class LocalCDXCacheTester extends TestCase {
     /** Turn a list of strings into a single string, newline-terminating
      * each string.
      *
-     * @param objects
+     * @param objects a list of strings
      * @return Newline separated list
      */
     public static String listToString(List<String> objects) {
-        return StringUtils.conjoin("\n",objects ) + "\n";
+        return StringUtils.conjoin("\n", objects) + "\n";
     }
 }

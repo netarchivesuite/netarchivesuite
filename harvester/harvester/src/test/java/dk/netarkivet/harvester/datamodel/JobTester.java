@@ -58,6 +58,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.TestFileUtils;
 
 /**
  * Test class for the Job class.
@@ -117,8 +118,8 @@ public class JobTester extends DataModelTestCase {
             "http://www.uden.dk/enpølse",
             "http://www.xn--plse-gra.dk:8080/port",
             "http://www.xn--plse-gra.dk:8090",
-            "\nwww.xn--plse-gra.dk:8091",
-            "\nwww.xn--plse-gra.dk/andenfil"
+            "www.xn--plse-gra.dk:8091",
+            "www.xn--plse-gra.dk/andenfil"
         } ) {
             assertTrue("Should contain URL '" + s + "' in '" + seedList + "'",
                     seedList.contains(s));
@@ -585,17 +586,24 @@ public class JobTester extends DataModelTestCase {
 
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
 
-        Job job2;
-        job2 = (Job) ois.readObject();
+        Job job2 = (Job) ois.readObject();
+        
         //Finally, compare their visible states:
-        assertEquals("After serialization the states differed:\n"
-                + relevantState(job) + "\n"
-                + relevantState(job2),
+        
+        // This requires, that class Job needs to override methods hashCode, and equals.
+        //assertTrue("Job2 should equal job1", job.equals(job2));
+        
+        assertEquals("After serialization the states differed:\n" 
+                + TestFileUtils.getDifferences(
+                        relevantState(job), relevantState(job2)),
                 relevantState(job), relevantState(job2));
-
+        
+        assertTrue(job.getSortedSeedList().equals(job2.getSortedSeedList()));
+        
+        
         //Call a method that logs - this will fail if the transient logger
         //has not been reinitialised
-        job2.setJobID(new Long(23));
+        job2.setSeedList("www.netarkivet.dk");
     }
 
     /**
@@ -684,9 +692,11 @@ public class JobTester extends DataModelTestCase {
                 + "\nStatus: " + job.getStatus().toString()
                 + "\nEdition" + job.getEdition()
                 + "\nDomain->Configuration map" + job.getDomainConfigurationMap()
-                + "\nExpected max: " + job.getMaxObjectsPerDomain()
-                + "\nForced max: " + job.getForceMaxObjectsPerDomain()
-                + "\nSeedlist: " + job.getSeedListAsString()
+                + "\nExpected maxObjects: " + job.getMaxObjectsPerDomain()
+                + "\nForced maxObjects: " + job.getForceMaxObjectsPerDomain()
+                + "\nExpected maxBytes: " + job.getMaxBytesPerDomain()
+                // Checked outside this method, because order of seeds is random
+                //+ "\nSeedlist: " + job.getSeedListAsString()
                 + "\nActual Start: " + job.getActualStart()
                 + "\nActual Stop: " + job.getActualStop()
                 + "\nPriority: " + job.getPriority().toString();
@@ -798,15 +808,15 @@ public class JobTester extends DataModelTestCase {
             TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         defaultConfig.setMaxBytes(-1);
         Job j = Job.createSnapShotJob(
-                    TestInfo.HARVESTID,
-                    defaultConfig,
-                    42, //maxObjectsPerDomain
-                    -1, //maxBytesPerDomain
-                    0   //harvestNum
+                TestInfo.HARVESTID,
+                defaultConfig,
+                42, //maxObjectsPerDomain
+                -1, //maxBytesPerDomain
+                0   //harvestNum
         );
         // test default value of forceMaxObjectsPerDomain:
         assertEquals("No limit of value of forceMaxObjectsPerDomain expected",
-            -1, j.getMaxBytesPerDomain());
+                -1, j.getMaxBytesPerDomain());
         JobDAO jDao = JobDAO.getInstance();
         jDao.create(j); // save job in Database.
         Iterator<Job> jobIterator = jDao.getAll();
@@ -816,7 +826,7 @@ public class JobTester extends DataModelTestCase {
                 fail ("Maxbytes (-1) stored as (1)");
             }
         }
-        }
+    }
 
     /**
      * test the method public static List<AliasInfo> Job.getJobAliasInfo(Job job);

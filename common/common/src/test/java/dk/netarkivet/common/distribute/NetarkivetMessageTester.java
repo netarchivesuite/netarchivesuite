@@ -1,6 +1,6 @@
-/* File:                 $Id$
- * Revision:         $Revision$
- * Author:                $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -39,7 +39,7 @@ public class NetarkivetMessageTester extends TestCase {
     private static final ChannelID toQ = Channels.getAnyBa();
     private static final ChannelID replyToQ = Channels.getError();
     private static final ChannelID aTopic = Channels.getAllBa();
-    private static final String PREFIX = "<a prefix for tests>";
+    //private static final String PREFIX = "<a prefix for tests>";
     private static final String ERR_MSG = "<an error message for tests>";
 
     public void setUp() {
@@ -54,12 +54,13 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testConstructor() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
+        assertNotNull("Should not be null", m);
     }
 
     /**
-     * Verify that constructor fails when "to" equals "replyTo" (this is disallowed
-     * in the current design because it is error-prone. Remove this unit test if
-     * the design changes on this point.
+     * Verify that constructor fails when "to" equals "replyTo" (this is
+     * disallowed in the current design because it is error-prone. Remove
+     * this unit test if the design changes on this point.
      */
     public void testConstructorSameQueue() {
         try {
@@ -103,8 +104,9 @@ public class NetarkivetMessageTester extends TestCase {
         String id = m.getID();
         //should not update ID - id already set
         JMSConnectionTestMQ.updateMsgID(m, "TESTMSGID6");
-        assertEquals("Method getId() returned different values on same message.",
-                     id, m.getID());
+        assertEquals(
+                "Method getId() returned different values on same message.",
+                id, m.getID());
     }
 
     /**
@@ -121,30 +123,34 @@ public class NetarkivetMessageTester extends TestCase {
     }
 
     /**
-     * Verify that getTo() returns the ChannelID given to constructor()
+     * Verify that getTo() returns the ChannelID given to constructor().
      */
     public void testGetTo() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
-        assertEquals("Expected to-queue to be '" + toQ.getName() + "' but was '" + m.getTo() + "'",
+        assertEquals("Expected to-queue to be '" + toQ.getName() 
+                + "' but was '" + m.getTo() + "'",
                 toQ.getName(), m.getTo().getName());
     }
 
     /**
-     * Verify that getTo() returns the ChannelID given to contructor()
+     * Verify that getTo() returns the ChannelID given to contructor().
      */
     public void testReplyTo() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
-        assertEquals("Expected to-queue to be '" + replyToQ.getName() + "' but was '" + m.getReplyTo().getName() + "'",
+        assertEquals("Expected to-queue to be '" + replyToQ.getName()
+                + "' but was '" + m.getReplyTo().getName() + "'",
                 replyToQ.getName(), m.getReplyTo().getName());
     }
 
     /**
-     * Verify that getErrorMsg() returns the given error message, if one was given.
+     * Verify that getErrorMsg() returns the given error message,
+     * if one was given.
      */
     public void testErrMsgText() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
-        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG, m.getErrMsg());
+        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG,
+                m.getErrMsg());
     }
 
     /**
@@ -178,23 +184,25 @@ public class NetarkivetMessageTester extends TestCase {
     }
 
     /**
-     * Verify that several calls to isNotOk() results in appended error messages.
+     * Verify that several calls to isNotOk() results in appended
+     * error messages.
      */
     public void testMultipleErrMsgs() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
         m.setNotOk(ERR_MSG);
         m.setNotOk(ERR_MSG);
-        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG +
-                NetarkivetMessage.ERROR_DELIMITTER + ERR_MSG, m.getErrMsg());
+        assertEquals("Wrong error message: " + m.getErrMsg(), ERR_MSG
+                + NetarkivetMessage.ERROR_DELIMITTER + ERR_MSG, m.getErrMsg());
     }
 
     /**
-     * Test that a message replies to a queue, not a topic
+     * Test that a message replies to a queue, not a topic.
      */
     public void testNoTopicReply() {
         try {
             NetarkivetMessage m = new TestMessage(toQ, aTopic);
-            fail("Reply channel must be a Queue but " + aTopic.toString() + " is a Topic.");
+            fail("Reply channel must be a Queue but " + aTopic.toString()
+                    + " is a Topic.");
         } catch (ArgumentNotValid e) {
             //expected
         }
@@ -215,21 +223,26 @@ public class NetarkivetMessageTester extends TestCase {
         ous.writeObject(m1);
         ous.close();
         baos.close();
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+        ObjectInputStream ois = new ObjectInputStream(
+                new ByteArrayInputStream(baos.toByteArray()));
         NetarkivetMessage m2;
         m2 = (NetarkivetMessage) ois.readObject();
         //Finally, compare their visible states:
-        assertEquals("After serialization the states differed:\n" + relevantState(m1) + "\n" + relevantState(m2), relevantState(m1), relevantState(m2));
+        assertEquals("After serialization the states differed:\n" 
+                + relevantState(m1) + "\n" + relevantState(m2), 
+                relevantState(m1), relevantState(m2));
     }
 
     /**
-     * Returns the relevant state of a NetarkivetMessage instance, encoded as a String.
+     * Returns the relevant state of a NetarkivetMessage instance,
+     * encoded as a String.
      *
      * @param m The message that should be investigated.
      * @return Its relevant state, as a String.
      */
     private String relevantState(NetarkivetMessage m) {
-        return m.getID() + "(" + m.getTo().getName() + "," + m.getReplyTo().getName() + "," + m.getReplyTo().isTopic()
+        return m.getID() + "(" + m.getTo().getName() + ","
+            + m.getReplyTo().getName() + "," + m.getReplyTo().isTopic()
                 + ")" + ":" + m.isOk() + (m.isOk() ? "" : m.getErrMsg());
     }
 

@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.BatchFilter;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
@@ -227,9 +228,22 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         String fyensdk = FileUtils.readFile(new File(TestInfo.WORKING_DIR, "fyensdk.arc"));
         // A class that gets loaded from outside our normal area.
         final File evilClassFile = new File(TestInfo.WORKING_DIR, "EvilBatch.class");
-        // This fails, if we don't have a classes dir
-        // TODO Couldn't we just add EvilBatchClass to the classpath
-        FileUtils.copyFile(new File("classes/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
+        
+        List<String> classpathAslist = SystemUtils.getCurrentClasspath();
+        // Remove from the list all the jars mentioned
+        List<String> nonjarElements = new ArrayList<String>();
+        for (String part: classpathAslist) {
+            if (!part.endsWith("jar")) {
+                nonjarElements.add(part);
+            }
+        }
+        assertTrue("Number of non jar elements should only be one",
+                nonjarElements.size() == 1);
+        File validClasspathDir = new File(nonjarElements.get(0));
+        
+        // Copy evilBatchClass to valid classPathDir.
+        FileUtils.copyFile(new File(validClasspathDir,
+                "/dk/netarkivet/archive/bitarchive/EvilBatch.class"),
                            evilClassFile);
         InputStream in = new FileInputStream(evilClassFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream((int) evilClassFile.length());

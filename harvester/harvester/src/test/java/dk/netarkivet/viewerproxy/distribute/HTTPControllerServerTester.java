@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy.distribute;
-/**
- * kfc forgot to comment this!
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -57,6 +54,10 @@ import dk.netarkivet.viewerproxy.Request;
 import dk.netarkivet.viewerproxy.Response;
 import dk.netarkivet.viewerproxy.URIResolver;
 
+/**
+ * Unit tests for the HTTPControllerServer class. 
+ *
+ */
 public class HTTPControllerServerTester extends TestCase {
     private TestDelegatingController c;
     private TestURIResolver ur;
@@ -340,10 +341,14 @@ public class HTTPControllerServerTester extends TestCase {
                      "http://foo.bar", response.headerFields.get(0).getValue());
         assertEquals("Should have received two job ids",
                      2, c.changeIndexJobListArgument.size());
-        assertEquals("Should have received job id '1'",
-                     new Long(1L), c.changeIndexJobListArgument.toArray()[1]);
-        assertEquals("Should have received job id '8'",
-                     new Long(8L), c.changeIndexJobListArgument.toArray()[0]);
+ 
+        // Check, that the set of expected Job ids is {1L,8L}
+        Set<Long> setOfExpectedJobIds = new HashSet<Long>();
+        setOfExpectedJobIds.add(new Long(1L));
+        setOfExpectedJobIds.add(new Long(8L));
+        assertTrue("Should have received job ids '1' and '8'",
+                setOfExpectedJobIds.containsAll(c.changeIndexJobListArgument));
+
         assertEquals("Should have received label", "myTestLabel",
                      c.changeIndexLabelParameter);
 
@@ -568,4 +573,3 @@ public class HTTPControllerServerTester extends TestCase {
         }
     }
 }
-

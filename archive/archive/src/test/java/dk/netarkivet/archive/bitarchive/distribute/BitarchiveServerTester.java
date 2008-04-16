@@ -57,6 +57,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
+ * Unit tests for the BitarchiveServer class.
  */
 public class BitarchiveServerTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
@@ -81,7 +82,8 @@ public class BitarchiveServerTester extends TestCase {
         fis.close();
         utrf.setUp();
         FileUtils.removeRecursively(WORKING);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
+        TestFileUtils.copyDirectoryNonCVS(
+                TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
         Settings.set(Settings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
@@ -102,7 +104,7 @@ public class BitarchiveServerTester extends TestCase {
     }
 
     /**
-     * Test that BitarchiveServer is a singleton
+     * Test that BitarchiveServer is a singleton.
      */
     public void testSingletonicity() {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
@@ -144,13 +146,13 @@ public class BitarchiveServerTester extends TestCase {
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        assertEquals("We should not listen to " + anyBa + " if we are out of space",
+        assertEquals("We should not listen to " + anyBa
+                + " if we are out of space",
                 0, conn.getListeners(anyBa).size());
         LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log file should have warning about " +
-                "having no space",
+        FileAsserts.assertFileContains("Log file should have warning about "
+                + "having no space",
                 "WARNING", TestInfo.LOG_FILE);
-
     }
 
     /**
@@ -178,33 +180,37 @@ public class BitarchiveServerTester extends TestCase {
         conn.setListener(arcReposQ, listener);
 
         // Check if BitarchiveServer bas1 is removed as listener on ANY_BA queue:
-
-        assertEquals("Number of listeners on queue " + anyBa + " should be 1 before upload.",
-                1, conn.getListeners(anyBa).size());
+        int expectedListeners = 1;
+        assertEquals("Number of listeners on queue " + anyBa + " should be "
+                + expectedListeners + " before upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         File testFile = TestInfo.UPLOADMESSAGE_TESTFILE_1;
-        RemoteFile rf = RemoteFileFactory.getInstance(testFile, false, false, true);
+        RemoteFile rf = RemoteFileFactory.getInstance(
+                testFile, false, false, true);
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
-
-        assertEquals("Number of listeners on queue " + anyBa + " should be zero after upload.",
-                0, conn.getListeners(anyBa).size());
+        expectedListeners = 0;
+        assertEquals("Number of listeners on queue " + anyBa
+                + " should be " + expectedListeners + " after upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         // Check that UploadMessage has been replied to arcrepos queue.
         // It should have been received by GenericMessageListener:
         assertTrue("Should have received at least one message on arcRepos q",
                 listener.messagesReceived.size() >= 1);
 
-        assertEquals("Reposted message should be identical to original UploadMessage.",
+        assertEquals("Reposted message should be identical to original "
+                + "UploadMessage.",
                 msg, listener.messagesReceived.get(0));
 
     }
 
     /**
      * Test that a BitarchiveServer is removed as listener of the ANY_BA queue
-     * when a directory disappears
+     * when a directory disappears.
      *
      * We currently don't resend the message, but just reply.
      */
@@ -224,20 +230,22 @@ public class BitarchiveServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         conn.setListener(arcReposQ, listener);
 
-        // Check if BitarchiveServer bas1 is removed as listener on ANY_BA queue:
-
-        assertEquals("Number of listeners on queue " + anyBa + " should be 1 before upload.",
-                1, conn.getListeners(anyBa).size());
+        int expectedListeners = 1;
+        assertEquals("Number of listeners on queue " + anyBa + " should be " 
+                + expectedListeners + " before upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         File testFile = TestInfo.UPLOADMESSAGE_TESTFILE_1;
-        RemoteFile rf = TestRemoteFile.getInstance(testFile, false, false, true);
+        RemoteFile rf = TestRemoteFile.getInstance(
+                testFile, false, false, true);
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
-
-        assertEquals("Number of listeners on queue " + anyBa + " should still be 1 after upload.",
-                1, conn.getListeners(anyBa).size());
+        expectedListeners = 1;
+        assertEquals("Number of listeners on queue " + anyBa
+                + " should still be " + expectedListeners + " after upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         // Check that UploadMessage has been replied to arcrepos queue.
         // It should have been received by GenericMessageListener:
@@ -249,9 +257,10 @@ public class BitarchiveServerTester extends TestCase {
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
-
-        assertEquals("Number of listeners on queue " + anyBa + " should be zero after upload fail.",
-                0, conn.getListeners(anyBa).size());
+        expectedListeners = 0;
+        assertEquals("Number of listeners on queue " + anyBa + " should be "
+                + expectedListeners + " after upload fail.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         // Check that UploadMessage has been replied to arcrepos queue.
         // It should have been received by GenericMessageListener:
@@ -269,21 +278,23 @@ public class BitarchiveServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         conn.setListener(arcReposQ, listener);
 
-        // Check if BitarchiveServer bas1 is removed as listener on ANY_BA queue:
-
-        assertEquals("Number of listeners on queue " + anyBa + " should be 1 before upload.",
-                1, conn.getListeners(anyBa).size());
+        int expectedListeners = 1;
+        assertEquals("Number of listeners on queue " + anyBa 
+                + " should be " + expectedListeners + " before upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         File testFile = TestInfo.UPLOADMESSAGE_TESTFILE_1;
-        RemoteFile rf = TestRemoteFile.getInstance(testFile, false, false, true);
+        RemoteFile rf = TestRemoteFile.getInstance(
+                testFile, false, false, true);
         ((TestRemoteFile) rf).failsOnCopy = true;
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
 
-        assertEquals("Number of listeners on queue " + anyBa + " should still be one after upload.",
-                1, conn.getListeners(anyBa).size());
+        assertEquals("Number of listeners on queue " + anyBa
+                + " should still be " + expectedListeners + " after upload.",
+                expectedListeners, conn.getListeners(anyBa).size());
 
         // Check that UploadMessage has been replied to arcrepos queue.
         // It should have been received by GenericMessageListener:
@@ -294,12 +305,13 @@ public class BitarchiveServerTester extends TestCase {
                 msg, listener.messagesReceived.get(0));
 
         assertFalse("The message reposted should not be okay",
-                   ((NetarkivetMessage)listener.messagesReceived.get(0)).isOk());
+                   ((NetarkivetMessage) 
+                           listener.messagesReceived.get(0)).isOk());
     }
 
 
     /**
-     * Test the normal operation of getting a record of a file which is present
+     * Test the normal operation of getting a record of a file which is present.
      */
     public void testVisitGetMessage() {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
@@ -329,7 +341,7 @@ public class BitarchiveServerTester extends TestCase {
 
     /**
      * Test the normal operation of trying to get a record of a file which is
-     * not present on this bitarchive
+     * not present on this bitarchive.
      */
     public void testVisitGetMessageNoSuchFile() {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
@@ -355,7 +367,7 @@ public class BitarchiveServerTester extends TestCase {
 
     /**
      * Test getting an arcrecord of a file which exists but a record which does
-     * not
+     * not.
      */
     public void testVisitGetMessageNoSuchRecord() {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
@@ -384,7 +396,7 @@ public class BitarchiveServerTester extends TestCase {
 
     /**
      * Pass a batch message to BitarchiveServer and test that it replies with an
-     * appropriate BatchEndedMessage
+     * appropriate BatchEndedMessage.
      */
     public void testVisitBatchMessage() throws InterruptedException {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
@@ -400,7 +412,8 @@ public class BitarchiveServerTester extends TestCase {
         //the Bitarchive
         BatchMessage bm =
                 new BatchMessage(Channels.getTheBamon(),
-                        new ChecksumJob(), Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                        new ChecksumJob(), Settings.get(
+                                Settings.ENVIRONMENT_THIS_LOCATION));
 
         JMSConnectionTestMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -428,8 +441,8 @@ public class BitarchiveServerTester extends TestCase {
         while (i.hasNext()) {
             Object o = i.next();
             if (o instanceof BatchEndedMessage) {
-                assertNull("Found two BatchEndedMessages:\n" + bem + "\nand\n" +
-                        o.toString(), bem);
+                assertNull("Found two BatchEndedMessages:\n" + bem + "\nand\n"
+                        + o.toString(), bem);
                 bem = (BatchEndedMessage) o;
             }
         }
@@ -442,7 +455,7 @@ public class BitarchiveServerTester extends TestCase {
                 rf.getFile(), 2);
     }
 
-    /** Test that batch messages can run concurrently */
+    /** Test that batch messages can run concurrently. */
     public void testVisitBatchMessageThreaded() throws IOException {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
                 BITARCHIVE1.getAbsolutePath());
@@ -477,14 +490,15 @@ public class BitarchiveServerTester extends TestCase {
                         }, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
         BatchMessage bm2 =
                 new BatchMessage(Channels.getTheBamon(),
-                        new TimedChecksumJob(), Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                        new TimedChecksumJob(), Settings.get(
+                                Settings.ENVIRONMENT_THIS_LOCATION));
 
         JMSConnectionTestMQ.updateMsgID(bm1, "ID45");
         JMSConnectionTestMQ.updateMsgID(bm2, "ID46");
         int beforeCount = Thread.activeCount();
         bas.visit(bm1);
         bas.visit(bm2);
-        boolean keep_going = false;
+        boolean keepGoing = false;
         do {
             try {
                 Thread.sleep(100);
@@ -498,11 +512,11 @@ public class BitarchiveServerTester extends TestCase {
             Thread.enumerate(threads);
             for (Thread t : threads) {
                 if (t.getName().startsWith("Batch-")) {
-                    keep_going = true;
+                    keepGoing = true;
                     break;
                 }
             }
-        } while (keep_going);
+        } while (keepGoing);
 
         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
 
@@ -516,7 +530,9 @@ public class BitarchiveServerTester extends TestCase {
             if (m instanceof BatchEndedMessage) {
                 BatchEndedMessage bem = (BatchEndedMessage) m;
                 String fileContents =
-                        FileUtils.readFile(((TestRemoteFile) bem.getRemoteFile()).getFile());
+                        FileUtils.readFile(
+                                ((TestRemoteFile)
+                                        bem.getRemoteFile()).getFile());
                 long time = Long.parseLong(fileContents.trim());
                 if (bem.getOriginatingBatchMsgID().equals("ID45")) {
                     time45 = time;
@@ -539,7 +555,8 @@ public class BitarchiveServerTester extends TestCase {
         String arcFile = TestInfo.BA1_FILENAME;
         String dummyLocation = "KB";
         String checksum = TestInfo.BA1_CHECKSUM;
-        String credentials = Settings.get(Settings.ENVIRONMENT_THIS_CREDENTIALS);
+        String credentials = Settings.get(
+                Settings.ENVIRONMENT_THIS_CREDENTIALS);
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
                 BITARCHIVE1.getAbsolutePath());
         Settings.set(Settings.DIR_COMMONTEMPDIR,
@@ -629,17 +646,18 @@ public class BitarchiveServerTester extends TestCase {
 
     /**
      * A generic message listener class which just stores a list of all
-     * messages it receives
+     * messages it receives.
      */
     public static class GenericMessageListener implements MessageListener {
         /**
-         *
+         * List of messages received.
          */
         public ArrayList<NetarkivetMessage> messagesReceived =
                 new ArrayList<NetarkivetMessage>();
 
         /**
-         * @param message
+         * Handle the message.
+         * @param message the given message
          */
         public void onMessage(Message message) {
             NetarkivetMessage naMsg = JMSConnection.unpack(message);

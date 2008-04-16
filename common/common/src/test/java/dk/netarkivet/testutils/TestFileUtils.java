@@ -204,13 +204,12 @@ public class TestFileUtils {
 
 
     /**
-     * Return textual description of the differences between two strings
-     *
+     * Return textual description of the differences between two strings.
      * @param s1 strings to compare
-     * @param s2
+     * @param s2 strings to compare
      * @return first line of text that differs
      */
-    private static String getDifferences(String s1, String s2) {
+    public static String getDifferences(String s1, String s2) {
         String[] startStrings = s1.split("\n");
         String[] endStrings = s2.split("\n");
         List<Difference> differences =
