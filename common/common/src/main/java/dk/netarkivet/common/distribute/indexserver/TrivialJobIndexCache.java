@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StringUtils;
 
@@ -51,6 +52,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      * this method.
      */
     public TrivialJobIndexCache(RequestType t) {
+        ArgumentNotValid.checkNotNull(t, "RequestType t");
         requestType = t;
         FileUtils.createDir(dir);
     }
@@ -66,9 +68,15 @@ public class TrivialJobIndexCache implements JobIndexCache {
      *         deleted, since it is part of the cache of data.
      */
     public File getIndex(Set<Long> jobIDs) {
+        ArgumentNotValid.checkNotNull(jobIDs, "jobIds");
         File cacheFile = new File(dir,
                 StringUtils.conjoin("-",jobIDs ) + "-" +
-                        requestType + "-cache");
+                requestType + "-cache");
+        // If the list of jobids is empty, prepend 0 to the cache-dir
+        if (jobIDs.isEmpty()) {
+            cacheFile = new File(dir, "0-" + requestType + "-cache");
+        }
+
         if (!cacheFile.exists()) {
             log.warn("The cache does not contain '" + cacheFile + "' for "
                     + jobIDs);
