@@ -31,12 +31,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
- * Derby-specific implementation of DB methods
+ * Derby-specific implementation of DB methods.
  *
- * @author lc
- * @since Mar 5, 2007
  */
 public abstract class DerbySpecifics extends DBSpecifics {
     Log log = LogFactory.getLog(DBSpecifics.class);
@@ -90,5 +90,113 @@ public abstract class DerbySpecifics extends DBSpecifics {
             DBConnect.closeStatementIfOpen(s);
         }
     }
+    
+    /** Update the database tables to the current versions.
+     * @param tableName the name of the table to update
+     * @param toVersion the required version of the table
+     */
+    public void updateTable(String tableName, int toVersion) {
+        ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
+        ArgumentNotValid.checkPositive(toVersion, "int toVersion");
+        
+        int currentVersion = DBConnect.getTableVersion(tableName);
+        if (currentVersion == toVersion) {
+          // Nothing to do. Version of table is already correct.
+          return;
+        }
+        
+        if (tableName.equals("jobs")) {
+            if (currentVersion < 3 || currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: " 
+                        + "The current version of table '"
+                        + tableName + "' is not acceptable. ");
 
+            }
+ 
+            // Migrate 'jobs' from version 3 to version 4.            
+            // Change field forcemaxbytes from int to bigint
+            String[] SqlStatements = {
+                    // create backup for jobs
+                    "CREATE TABLE backup (job_id BIGINT "
+                    + "NOT NULL PRIMARY KEY, " +
+                            "harvest_id BIGINT NOT NULL, " +
+                            "status int NOT NULL, " +
+                            "priority int NOT NULL, " +
+                            "forcemaxbytes BIGINT NOT NULL DEFAULT -1, " +
+                            "forcemaxcount BIGINT, " +
+                            "orderxml varchar(300) NOT NULL, " +
+                            "orderxmldoc clob(64M), " +
+                            "seedlist clob(64M) not null, " +
+                            "harvest_num int not null, " +
+                            "harvest_errors varchar(300), " +
+                            "harvest_error_details varchar(10000), " +
+                            "upload_errors varchar(300), " +
+                            "upload_error_details varchar(10000), " +
+                            "startdate timestamp, " +
+                            "enddate timestamp, " +
+                            "num_configs int not null default 0, " +
+                            "edition bigint not null" +
+                            ")",
+                    // Copy all entries of jobs into jobsBackup          
+                     "INSERT INTO backup ( job_id, harvest_id, status, priority, forcemaxbytes," +
+                     " forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, harvest_errors, harvest_error_details," +
+                     " upload_errors, upload_error_details, startdate, enddate, num_configs, edition)"
+                    + " SELECT jobs.job_id, jobs.harvest_id, jobs.status, jobs.priority, jobs.forcemaxbytes," +
+                     " jobs.forcemaxcount, jobs.orderxml, jobs.orderxmldoc, jobs.seedlist, jobs.harvest_num, jobs.harvest_errors, jobs.harvest_error_details," +
+                     " jobs.upload_errors, jobs.upload_error_details, jobs.startdate, jobs.enddate, jobs.num_configs, jobs.edition " 
+                    + " FROM jobs",
+                    
+                    "DROP TABLE JOBS",
+                    // Create jobs table anew
+                    
+                    "CREATE TABLE jobs (job_id BIGINT "
+                    + "NOT NULL PRIMARY KEY, " +
+                            "harvest_id BIGINT NOT NULL, " +
+                            "status int NOT NULL, " +
+                            "priority int NOT NULL, " +
+                            "forcemaxbytes BIGINT NOT NULL DEFAULT -1, " +
+                            "forcemaxcount BIGINT, " +
+                            "orderxml varchar(300) NOT NULL, " +
+                            "orderxmldoc clob(64M), " +
+                            "seedlist clob(64M) not null, " +
+                            "harvest_num int not null, " +
+                            "harvest_errors varchar(300), " +
+                            "harvest_error_details varchar(10000), " +
+                            "upload_errors varchar(300), " +
+                            "upload_error_details varchar(10000), " +
+                            "startdate timestamp, " +
+                            "enddate timestamp, " +
+                            "num_configs int not null default 0, " +
+                            "edition bigint not null" +
+                            ")",
+                   // create indices again:
+                   "create index jobstatus on jobs(status)",
+                   "create index jobharvestid on jobs(harvest_id)",
+                    // Insert data from jobsBackup to jobs:
+                   "INSERT INTO jobs ( job_id, harvest_id, status, priority, forcemaxbytes," +
+                   " forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, harvest_errors, harvest_error_details," +
+                   " upload_errors, upload_error_details, startdate, enddate, num_configs, edition)"
+                  + " SELECT backup.job_id, backup.harvest_id, backup.status, backup.priority, backup.forcemaxbytes," +
+                   " backup.forcemaxcount, backup.orderxml, backup.orderxmldoc, backup.seedlist, backup.harvest_num, backup.harvest_errors, backup.harvest_error_details," +
+                   " backup.upload_errors, backup.upload_error_details, backup.startdate, backup.enddate, backup.num_configs, backup.edition " 
+                  + " FROM backup",
+                  "DROP table backup"
+                    
+//                    "ALTER TABLE jobs DROP COLUMN forcemaxbytes RESTRICT",
+//                    "ALTER TABLE jobs ADD COLUMN forcemaxbytes BIGINT NOT NULL "
+//                    + "DEFAULT -1",
+//                    "UPDATE TABLE jobs SET forcemaxbytes = "
+//                    + "(SELECT forcemaxbytesvalues.forcemaxbytes FROM "
+//                    + "forcemaxbytesvalues WHERE jobs.job_id " 
+//                    + "= forcemaxbytesvalues.job_id)",
+//                    "Delete table forcemaxbytevalues;"
+//            
+            };
+            DBConnect.updateTable(tableName, toVersion, SqlStatements);
+            
+        } else {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    +  tableName + "' to version " + toVersion);
+        }
+    }
 }

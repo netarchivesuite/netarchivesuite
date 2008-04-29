@@ -62,7 +62,14 @@ public class JobDBDAO extends JobDAO {
     /** Create a new JobDAO implemented using database.
      */
     protected JobDBDAO() {
-        DBConnect.checkTableVersion("jobs", 3);
+        
+        int jobVersion = DBConnect.getTableVersion("jobs");
+        if (jobVersion == 3) {
+            log.info("Migrate tabel 'jobs' to version 4");
+            DBSpecifics.getInstance().updateTable("jobs", 4);
+        }
+        
+        DBConnect.checkTableVersion("jobs", 4);
         DBConnect.checkTableVersion("job_configs", 1);
     }
 

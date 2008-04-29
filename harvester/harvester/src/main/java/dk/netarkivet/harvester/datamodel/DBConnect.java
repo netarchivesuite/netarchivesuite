@@ -813,14 +813,12 @@ public class DBConnect {
     protected static void updateTable(final String table,
                                       final int newVersion,
                                       final String... updates) {
-        if (true) {
-            throw new IllegalStateException("Should have updated table");
-        }
         Connection c = getDBConnection();
         PreparedStatement s = null;
         try {
             c.setAutoCommit(false);
             for (String update : updates) {
+                log.info("Executing SQL: " + update);
                 s = prepareStatement(c, update);
                 s.executeUpdate();
                 s.close();

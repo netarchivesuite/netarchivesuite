@@ -63,10 +63,12 @@ public class SystemUtilsTester extends TestCase {
 
     public void testGetCurrentClasspath() throws Exception {
         List<String> classpath = SystemUtils.getCurrentClasspath();
-        String[] systemClassPath = System.getProperty("java.class.path").split(":");
+        String[] systemClassPath
+            = System.getProperty("java.class.path").split(":");
         CollectionAsserts.assertListEquals("Should return the system"
                                            + " class path as a list",
-                                           classpath, systemClassPath);
+                                           classpath,
+                                           (Object[]) systemClassPath);
         // Test that some version of the standard libraries are in there
         JARS: for (String jar : new String[] {
                 "commons-fileupload.*\\.jar$",

@@ -25,6 +25,7 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.Socket;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
@@ -106,6 +107,14 @@ public class ApplicationUtilsTester extends TestCase {
                          ApplicationUtils.WRONG_ARGUMENTS, pse.getExitValue());
         }
 
+        
+        // Check first, that the JMX-RMI ports are available.
+        int JmxPort = Settings.getInt(Settings.JMX_PORT);
+        checkPortAvailable("JMX port '" + JmxPort + "' not free", JmxPort);
+        int rmiPort = Settings.getInt(Settings.JMX_RMI_PORT);
+        checkPortAvailable("RMI port '" + rmiPort + "' not free", rmiPort);
+ 
+        
         // Check that missing factory method is checked
         try {
             ApplicationUtils.startApp(this.getClass(), new String[0]);
@@ -157,6 +166,16 @@ public class ApplicationUtilsTester extends TestCase {
                 "Added shutdown hook for dk.netarkivet.common.utils.App3",
                 TestInfo.LOG_FILE);
         assertTrue("Should have tempdir after start", tempdir.exists());
+    }
+
+    private void checkPortAvailable(final String errMsg, final int portToCheck) {
+        try {
+            Socket socket = new Socket("localhost", portToCheck);
+            socket.bind(null);
+            socket.close();
+        } catch (Exception e) {
+            fail(errMsg + " due to error: " + e);
+        }  
     }
 }
 

@@ -31,6 +31,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * MySQL-specific implementation of DB methods.
@@ -129,4 +131,40 @@ public class MySQLSpecifics extends DBSpecifics {
     public String getDriverClassName() {
         return "com.mysql.jdbc.Driver";
     }
+    
+    /** Update the database tables to the current versions.
+     * @param tableName the name of the table to update
+     * @param toVersion the required version of the table
+     */
+    public void updateTable(String tableName, int toVersion) {
+        ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
+        ArgumentNotValid.checkPositive(toVersion, "int toVersion");
+        
+        int currentVersion = DBConnect.getTableVersion(tableName);
+        if (currentVersion == toVersion) {
+          // Nothing to do. Version of table is already correct.
+          return;
+        }
+        
+        if (tableName.equals("jobs")) {
+            if (currentVersion < 3 || currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: " 
+                        + "The current version of table '"
+                        + tableName + "' is not acceptable. ");
+
+            }
+            // Migrate 'jobs' to version 4.
+            // Change field jobs.forcemaxbytes from int to bigint
+            // and set its default to -1
+            String[] SqlStatements = {
+                    "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
+                    + " BIGINT NOT NULL DEFAULT -1"};
+
+            DBConnect.updateTable(tableName, toVersion, SqlStatements);
+        } else {
+            throw new NotImplementedException("No method exists for migrating table '"
+                    +  tableName + "' to version " + toVersion);
+        }
+    }
+    
 }
