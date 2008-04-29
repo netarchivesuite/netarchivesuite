@@ -216,7 +216,7 @@ public class HeritrixFiles {
     public void setIndexDir(File indexDir) {
         ArgumentNotValid.checkNotNull(indexDir, "File indexDir");
         ArgumentNotValid.checkTrue(indexDir.isDirectory(),
-                "indexDir should be a directory");
+                "indexDir '" + indexDir + "' should be a directory");
         this.indexDir = indexDir;
         log.debug("Setting deduplication index dir '" + indexDir + "'");
     }
