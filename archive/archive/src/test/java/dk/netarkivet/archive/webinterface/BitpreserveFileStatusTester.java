@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.archive.webinterface;
 
-/**
- * Unittest for the class
- * dk.netarkivet.archive.webinterface.BitpreserveFileState.
- */
 import javax.el.ELContext;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -56,6 +52,7 @@ import com.mockobjects.servlet.MockHttpServletRequest;
 import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.Location;
@@ -65,6 +62,10 @@ import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestUtils;
 
+/**
+ * Unittest for the class
+ * dk.netarkivet.archive.webinterface.BitpreserveFileState.
+ */
 public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
@@ -97,6 +98,16 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         }
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
+                TestInfo.WORKING_DIR.getAbsolutePath());
+        
+        //Settings.set(Settings.JMS_BROKER_CLASS, JMSConnectionTestMQ.class.getName());
+        
+        // Ensure that a admin data exists before we start.
+        //AdminData a =  AdminData.getUpdateableInstance();
+
+        //System.out.println("Finished setup");
+  
         MockFileBasedActiveBitPreservation mockabp 
             = new MockFileBasedActiveBitPreservation();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -135,6 +146,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                 1, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have one info element (with mock results)",
                 null, status.get(filename1));
+        
+        System.out.println("Finished #1 call");
+        
         // Check that we can call without any params
         mockabp.calls.clear();
         request = new MockHttpServletRequest();

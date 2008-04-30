@@ -45,8 +45,6 @@ import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.archive.arcrepositoryadmin.MyArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.BitarchiveAdmin;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
@@ -89,14 +87,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
     static boolean to_fail;
     FileBasedActiveBitPreservation abp;
-    private static final File REFERENCE_DIR = new File(TestInfo.ORIGINALS_DIR,
-                                                       "referenceFiles");
-    // Dummy value to test, that constructor for FilePreservationStatus
-    // does not allow null arguments, so the null second argument to DummyFPS
-    // is replaced by fooAdmindatum.
-    private ArcRepositoryEntry fooAdmindatum
-        = new MyArcRepositoryEntry("filename", "md5", null);
-
+    
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                                   TestInfo.WORKING_DIR);
     private ReloadSettings rs = new ReloadSettings();
@@ -135,7 +126,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         if (abp != null) {
             abp.close();
         }
-
+        
         MockupArcRepositoryClient.instance = null;
 
         rf.tearDown();
@@ -155,8 +146,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
      * @throws IOException
      */
     public void testFindChangedFiles() throws IOException {
-        File dir = REFERENCE_DIR;
-
+        
         // We check the following four cases:
         // integrity1 is marked as failed, but is correct in bitarchives
         // integrity2 is missing from admin data, but exists in bitarchives
@@ -271,8 +261,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         Method runChecksumJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class, "runChecksumJob", Location.class);
 
-        //DummyBatchMessageReplyServer dummy = new DummyBatchMessageReplyServer();
-
         FileBasedActiveBitPreservation acp = FileBasedActiveBitPreservation.getInstance();
 
         // Test valid parameters:
@@ -333,7 +321,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 "runBatchJob",
                 FileBatchJob.class, Location.class, List.class, File.class);
 
-        DummyBatchMessageReplyServer dummy = new DummyBatchMessageReplyServer();
         abp = FileBasedActiveBitPreservation.getInstance();
         FileListJob job = new FileListJob();
         File outputFile = new File(TestInfo.WORKING_DIR, "outputFile");
@@ -358,8 +345,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
     public void testGetFilePreservationStatus()
             throws NoSuchFieldException, IllegalAccessException {
-        // Must be able to get replies, even though we don't use them
-        DummyBatchMessageReplyServer dummy = new DummyBatchMessageReplyServer();
+
         FileUtils.copyFile(TestInfo.CORRECT_ADMIN_DATA, TestInfo.ADMIN_DATA);
         // Ensure that the admin data are read from the file
         AdminData dummyad = AdminData.getUpdateableInstance();
@@ -368,11 +354,9 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 = abp.getFilePreservationState(TestInfo.FILE_IN_ADMIN_DATA);
         assertNotNull("Should get FilePreservationStatus for existing file",
                 fps);
-        Field fpsFilename = ReflectUtils.getPrivateField(
-                FilePreservationState.class,
-                "filename");
+
         assertEquals("Should get FPS for correct file",
-                TestInfo.FILE_IN_ADMIN_DATA, fpsFilename.get(fps));
+                TestInfo.FILE_IN_ADMIN_DATA, fps.getFilename());
 
         fps = abp.getFilePreservationState(TestInfo.FILE_NOT_IN_ADMIN_DATA);
         assertNull("Should get null for non-existing file", fps);
@@ -514,7 +498,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         FilePreservationState fps 
             = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
-        
         assertFalse("Should have received result non-null result for SB",
                 fps.getBitarchiveChecksum(SB) == null);        
         assertEquals("Should have expected size for SB",
@@ -535,6 +518,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
+        
         assertFalse("Should have received result non-null result for SB",
                 fps.getBitarchiveChecksum(SB) == null);
         assertEquals("Should have expected size for SB",

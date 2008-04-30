@@ -309,6 +309,8 @@ public class FilePreservationState {
 
     /**
      * Get the filename, this FilePreservationState is about.
+     * Needed to get at the filename given to constructor, and allow for
+     * a better datastructure.
      * @return the filename
      */
     public String getFilename() {
