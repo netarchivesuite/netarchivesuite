@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import dk.netarkivet.common.utils.SettingsStructure;
+import dk.netarkivet.common.utils.StringTree;
 
 /**
  * Provides access to monitor settings.
@@ -107,6 +108,14 @@ public class Settings {
      */
     public static int getEdition() {
         return SETTINGS_STRUCTURE.getEdition();
+    }
+
+    /** Utility method. Provides static access to getter in settingsStructure.
+     *
+     * @see SettingsStructure#getTree(String)
+     */
+    public static StringTree<String> getTree(String path) {
+        return SETTINGS_STRUCTURE.getTree(path);
     }
 
     /**

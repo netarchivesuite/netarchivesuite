@@ -22,15 +22,16 @@
  */
 package dk.netarkivet.common.utils;
 
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.dom4j.Node;
-import org.dom4j.Element;
+
 import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -211,8 +212,8 @@ public class XmlTree<T> implements StringTree<T> {
      *
      * @return The single subtree with the given name.
      *
-     * @throws ArgumentNotValid if this object is a leaf, or there is more than
-     *                          one subtree with the given name.
+     * @throws ArgumentNotValid if this object is a leaf, or there is not
+     * exactly one subtree with the given name.
      */
     public StringTree<T> getSubTree(String name) {
         ArgumentNotValid.checkTrue(!isLeaf(), "Cannot find subtrees in a leaf");

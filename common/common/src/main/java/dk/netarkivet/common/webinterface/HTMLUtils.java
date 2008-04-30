@@ -36,7 +36,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Date;
 import java.util.Locale;
 
@@ -51,7 +50,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.StringTree;
-import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * This is a utility class containing methods for use in the GUI for
@@ -198,16 +196,21 @@ public class HTMLUtils {
     private static void generateLanguageLinks(JspWriter out) throws
                                                              IOException {
         out.print("<div class=\"languagelinks\">");
-        List<StringTree<String>> languages =
-                Settings.getTree(Settings.WEBINTERFACE_SUBTREE).
-                getSubTrees("language");
+        StringTree<String> webinterfaceSettings = Settings.getTree(
+                Settings.WEBINTERFACE_SETTINGS);
 
-        for (StringTree<String> language : languages) {
-            out.print("<a href=\"lang.jsp?locale="
-                      + escapeHtmlValues(encode(language.getValue("locale"))) + "&amp;name="
-                      + escapeHtmlValues(encode(language.getValue("name"))) + "\">"
-                      + escapeHtmlValues(language.getValue("name")) + "</a>&nbsp;");
-
+        for (StringTree<String> language
+                : webinterfaceSettings.getSubTrees(
+                Constants.WEBINTERFACE_LANGUAGE)) {
+            out.print(String.format(
+                    "<a href=\"lang.jsp?locale=%s&amp;name=%s\">%s</a>&nbsp;",
+                    escapeHtmlValues(encode(language.getValue(
+                            Constants.WEBINTERFACE_LANGUAGE_LOCALE))),
+                    escapeHtmlValues(encode(language.getValue(
+                            Constants.WEBINTERFACE_LANGUAGE_NAME))),
+                    escapeHtmlValues(language.getValue(
+                            Constants.WEBINTERFACE_LANGUAGE_NAME)))
+            );
         }
         out.print("</div>");
     }

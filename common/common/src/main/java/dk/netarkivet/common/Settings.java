@@ -112,10 +112,9 @@ public class Settings {
         return SETTINGS_STRUCTURE.getEdition();
     }
 
-    /** Get a tree view of a part of the settings.
+    /** Utility method. Provides static access to getter in settingsStructure.
      *
-     * @param path Dotted path to a unique element in the tree.
-     * @return The part of the setting structure below the element given.
+     * @see SettingsStructure#getTree(String)
      */
     public static StringTree<String> getTree(String path) {
         return SETTINGS_STRUCTURE.getTree(path);
@@ -493,7 +492,7 @@ public class Settings {
             = "settings.common.webinterface.siteSection.deployPath";
 
     /** The entire webinterface structure */
-    public static final String WEBINTERFACE_SUBTREE
+    public static final String WEBINTERFACE_SETTINGS
             = "settings.common.webinterface";
 
     /** A locale the website is available as. E.g. 'en_US' or 'da' */

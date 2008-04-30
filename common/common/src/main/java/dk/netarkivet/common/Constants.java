@@ -59,6 +59,9 @@ public class Constants {
             = "-metadata-[0-9]+.arc";
     public static final String CDX_MIME_TYPE =
         "application/x-cdx";
+    public static final String WEBINTERFACE_LANGUAGE = "language";
+    public static final String WEBINTERFACE_LANGUAGE_LOCALE = "locale";
+    public static final String WEBINTERFACE_LANGUAGE_NAME = "name";
 
     /** Possible states of code. */
     private static enum CodeStatus {RELEASE, CODEFREEZE, UNSTABLE}
