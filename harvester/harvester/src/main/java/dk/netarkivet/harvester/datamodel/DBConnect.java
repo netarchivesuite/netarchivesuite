@@ -842,6 +842,42 @@ public class DBConnect {
         }
     }
 
+    /** Update a database by executing all the statements in
+     *  the updates String array.
+     *  NOTE: this must NOT be used for tables under version control
+     *  It must only be used in connection with temporary tables e.g. used
+     *  for backup.
+     *
+     * @param updates The SQL update statements that makes the necessary
+     * updates.
+     */
+    protected static void updateDatabase(final String... updates) {
+        Connection c = getDBConnection();
+        PreparedStatement st = null;
+        String s = "";
+        
+        try {
+            c.setAutoCommit(false);
+            for (String update : updates) {
+            	s = update;
+                log.info("Executing SQL: " + update);
+                st = prepareStatement(c, update);
+                st.executeUpdate();
+                st.close();
+            }
+            c.setAutoCommit(true);
+            log.info("Updated database using updates '" 
+            		 + StringUtils.conjoin(";", updates) + "'.");
+        } catch (SQLException e) {
+            String msg = "SQL error updating database with sql: " + s; 
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } finally {
+            rollbackIfNeeded(c, "updating table with SQL: ", StringUtils.conjoin(";", updates) + "'.");
+            closeStatementIfOpen(st);
+        }
+    }
+
     /** Translate a "normal" glob (with * and .) into SQL syntax.
      *
      * @param glob A shell-like glob string

@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -31,8 +32,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.Notifications;
+import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -95,108 +99,226 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * @param tableName the name of the table to update
      * @param toVersion the required version of the table
      */
-    public void updateTable(String tableName, int toVersion) {
+    public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
         
         int currentVersion = DBConnect.getTableVersion(tableName);
+        
         if (currentVersion == toVersion) {
           // Nothing to do. Version of table is already correct.
           return;
         }
+
+        if (currentVersion > toVersion) {
+            throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version of table '"
+                    + tableName + "' is not acceptable "
+                    + "(current version is greater than requested version).");
+        }
+        
         
         if (tableName.equals("jobs")) {
-            if (currentVersion < 3 || currentVersion > 4) {
+            if (currentVersion < 3) {
                 throw new IllegalState("Database is in an illegalState: " 
-                        + "The current version of table '"
-                        + tableName + "' is not acceptable. ");
-
+                    + "The current version of table '"
+                    + tableName + "' is not acceptable. "
+                    + "(current version is less than open source version).");
             }
- 
-            // Migrate 'jobs' from version 3 to version 4.            
-            // Change field forcemaxbytes from int to bigint
-            String[] SqlStatements = {
-                    // create backup for jobs
-                    "CREATE TABLE backup (job_id BIGINT "
-                    + "NOT NULL PRIMARY KEY, " +
-                            "harvest_id BIGINT NOT NULL, " +
-                            "status int NOT NULL, " +
-                            "priority int NOT NULL, " +
-                            "forcemaxbytes BIGINT NOT NULL DEFAULT -1, " +
-                            "forcemaxcount BIGINT, " +
-                            "orderxml varchar(300) NOT NULL, " +
-                            "orderxmldoc clob(64M), " +
-                            "seedlist clob(64M) not null, " +
-                            "harvest_num int not null, " +
-                            "harvest_errors varchar(300), " +
-                            "harvest_error_details varchar(10000), " +
-                            "upload_errors varchar(300), " +
-                            "upload_error_details varchar(10000), " +
-                            "startdate timestamp, " +
-                            "enddate timestamp, " +
-                            "num_configs int not null default 0, " +
-                            "edition bigint not null" +
-                            ")",
-                    // Copy all entries of jobs into jobsBackup          
-                     "INSERT INTO backup ( job_id, harvest_id, status, priority, forcemaxbytes," +
-                     " forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, harvest_errors, harvest_error_details," +
-                     " upload_errors, upload_error_details, startdate, enddate, num_configs, edition)"
-                    + " SELECT jobs.job_id, jobs.harvest_id, jobs.status, jobs.priority, jobs.forcemaxbytes," +
-                     " jobs.forcemaxcount, jobs.orderxml, jobs.orderxmldoc, jobs.seedlist, jobs.harvest_num, jobs.harvest_errors, jobs.harvest_error_details," +
-                     " jobs.upload_errors, jobs.upload_error_details, jobs.startdate, jobs.enddate, jobs.num_configs, jobs.edition " 
-                    + " FROM jobs",
-                    
-                    "DROP TABLE JOBS",
-                    // Create jobs table anew
-                    
-                    "CREATE TABLE jobs (job_id BIGINT "
-                    + "NOT NULL PRIMARY KEY, " +
-                            "harvest_id BIGINT NOT NULL, " +
-                            "status int NOT NULL, " +
-                            "priority int NOT NULL, " +
-                            "forcemaxbytes BIGINT NOT NULL DEFAULT -1, " +
-                            "forcemaxcount BIGINT, " +
-                            "orderxml varchar(300) NOT NULL, " +
-                            "orderxmldoc clob(64M), " +
-                            "seedlist clob(64M) not null, " +
-                            "harvest_num int not null, " +
-                            "harvest_errors varchar(300), " +
-                            "harvest_error_details varchar(10000), " +
-                            "upload_errors varchar(300), " +
-                            "upload_error_details varchar(10000), " +
-                            "startdate timestamp, " +
-                            "enddate timestamp, " +
-                            "num_configs int not null default 0, " +
-                            "edition bigint not null" +
-                            ")",
-                   // create indices again:
-                   "create index jobstatus on jobs(status)",
-                   "create index jobharvestid on jobs(harvest_id)",
-                    // Insert data from jobsBackup to jobs:
-                   "INSERT INTO jobs ( job_id, harvest_id, status, priority, forcemaxbytes," +
-                   " forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, harvest_errors, harvest_error_details," +
-                   " upload_errors, upload_error_details, startdate, enddate, num_configs, edition)"
-                  + " SELECT backup.job_id, backup.harvest_id, backup.status, backup.priority, backup.forcemaxbytes," +
-                   " backup.forcemaxcount, backup.orderxml, backup.orderxmldoc, backup.seedlist, backup.harvest_num, backup.harvest_errors, backup.harvest_error_details," +
-                   " backup.upload_errors, backup.upload_error_details, backup.startdate, backup.enddate, backup.num_configs, backup.edition " 
-                  + " FROM backup",
-                  "DROP table backup"
-                    
-//                    "ALTER TABLE jobs DROP COLUMN forcemaxbytes RESTRICT",
-//                    "ALTER TABLE jobs ADD COLUMN forcemaxbytes BIGINT NOT NULL "
-//                    + "DEFAULT -1",
-//                    "UPDATE TABLE jobs SET forcemaxbytes = "
-//                    + "(SELECT forcemaxbytesvalues.forcemaxbytes FROM "
-//                    + "forcemaxbytesvalues WHERE jobs.job_id " 
-//                    + "= forcemaxbytesvalues.job_id)",
-//                    "Delete table forcemaxbytevalues;"
-//            
-            };
-            DBConnect.updateTable(tableName, toVersion, SqlStatements);
+            
+            if (currentVersion == 3 && toVersion >= 4) {
+            	migrateJobsv3tov4();
+            }
+            
+            if (currentVersion == 4) {
+            	if (toVersion > 4) {
+                    throw new NotImplementedException(
+                    		"No method exists for migrating table '"
+                            +  tableName + "' to version " + toVersion);
+            	}
+            }            
+
+            if (currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version of table '"
+                    + tableName + "' is not acceptable. "
+                    + "(current version is an unknown version).");
+            }
+
+        //} else if tableName.equals("xxx") {   
             
         } else {
-            throw new NotImplementedException("No method exists for migrating table '"
+        	// This includes cases where currentVersion < toVersion
+        	// for all tables that does not have migartion functions yet
+            throw new NotImplementedException(
+            		"No method exists for migrating table '"
                     +  tableName + "' to version " + toVersion);
         }
     }
+
+    private void migrateJobsv3tov4() {
+        // Migrate 'jobs' from version 3 to version 4.            
+        // Change field forcemaxbytes from int to bigint
+    	//
+    	// Due to use of old version of Derby, it is not possible to use ALTER
+    	// table for the migration. Thus the migration is done by full backup
+    	// table of the jobs table.
+    	//TODO rewrite to simpler SQL when upgrading Derby version:
+    	// <copy values of jobs.forcemaxbytes and jobs.jobid into backup table>
+        // ALTER TABLE jobs DROP COLUMN forcemaxbytes RESTRICT
+        // ALTER TABLE jobs ADD COLUMN forcemaxbytes BIGINT NOT NULL DEFAULT -1
+        // UPDATE TABLE jobs SET forcemaxbytes = 
+    	//   (SELECT forcemaxbytes FROM backupjobcolv3tov4 
+    	//    WHERE jobs.job_id = forcemaxbytesvalues.job_id)
+        // DELETE table backupjobcolv3tov4;
+    	String sql;
+        int cntJobs = -1;
+        int cntBu = -1;
+        String table = "jobs"; 
+        String tmptable = "backupJobs3to4"; 
+
+    	
+    	//Check that temporary table from earlier tries does exist
+        //drop backup table
+    	try {
+            cntBu = DBConnect.selectIntValue("select count(*) from " + tmptable);
+    	} catch (IOFailure e){
+    		//expected, otherwise the backupJobs3to4 table exists
+    		cntBu = -1;
+    	}
+        if  (cntBu >=0) {
+        	try {
+        		cntJobs = DBConnect.selectIntValue("select count(*) from " + table);
+        	} catch (IOFailure e){
+        		//close to worst case, but data can still be found in back-up table
+        		String errMsg = "Earlier migration of table " + table + " seems to have failed. " +
+        				table + " table is missing, but a temporary table named " + tmptable +
+        				" seem to still contain the data. Please check, - make a new " + table +
+        				" table, and insert data from the temporary table.";
+        		NotificationsFactory.getInstance().errorEvent(errMsg, e);
+        		throw new IOFailure(errMsg);
+        	}
+        	if (cntBu > cntJobs) {
+        		//close to worst case, but data can maybe still be found in back-up table
+        		String errMsg = "Earlier migration of table " + table + " seems to have failed. " +
+				"Some data from the jobs table is missing, but a temporary table named " + tmptable +
+				"seem to still contain the extra data. Please check, - " +
+				" and insert missing data in " + table + " table data from the temporary table.";
+				NotificationsFactory.getInstance().errorEvent(errMsg);
+				throw new IOFailure(errMsg);
+        	} else {
+                sql = "DROP TABLE "  + tmptable; 
+                DBConnect.updateDatabase(sql); //only temporary updates!
+        	}
+    	}
+    	
+    	//create backup table for jobs table
+    	sql = "CREATE TABLE " + tmptable + " ("
+    		+ "job_id bigint not null primary key, "
+            + "harvest_id bigint not null, "
+            + "status int not null, " 
+            + "priority int not null, " 
+            + "forcemaxbytes bigint not null default -1, " 
+            + "forcemaxcount bigint, " 
+            + "orderxml varchar(300) not null, " 
+            + "orderxmldoc clob(64M) not null, " 
+            + "seedlist clob(64M) not null, " 
+            + "harvest_num int not null, " 
+            + "harvest_errors varchar(300), " 
+            + "harvest_error_details varchar(10000), " 
+            + "upload_errors varchar(300), " 
+            + "upload_error_details varchar(10000), " 
+            + "startdate timestamp, " 
+            + "enddate timestamp, " 
+            + "num_configs int not null default 0, " 
+            + "edition bigint not null" 
+            + ")" ;
+        DBConnect.updateDatabase(sql); //only temporary updates!  
+
+        // copy contents of jobs table into backup table
+        sql = "INSERT INTO " + tmptable + " ( " 
+        	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
+        	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
+        	+  "harvest_errors, harvest_error_details, upload_errors, "
+        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+ ") "
+            + "SELECT " 
+        	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
+        	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
+        	+  "harvest_errors, harvest_error_details, upload_errors, "
+        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+            + "FROM " + table ;
+        DBConnect.updateDatabase(sql); //only temporary updates!  
+        
+        //check everything looks okey
+        cntJobs = DBConnect.selectIntValue("select count(*) from " + table);
+        cntBu = DBConnect.selectIntValue("select count(*) from " + tmptable);
+		if (cntBu != cntJobs) {
+			throw new IOFailure("Unexpected inconsistency: the number of " +
+					"backed up entries from " + table + "does not correspond " +
+					"to the number of entries in " + table );
+		}
+        
+        //Update jobs table to version 4
+    	String[] SqlStatements = {
+		    // drop jobs table (are baked up in backupJobs3to4)
+            "DROP TABLE " + table,
+
+            // create jobs table again
+            "CREATE TABLE " + table + " ("
+    		+ "job_id bigint not null primary key, "
+            + "harvest_id bigint not null, "
+            + "status int not null, " 
+            + "priority int not null, " 
+            + "forcemaxbytes bigint not null default -1, " 
+            + "forcemaxcount bigint, " 
+            + "orderxml varchar(300) not null, " 
+            + "orderxmldoc clob(64M) not null, " 
+            + "seedlist clob(64M) not null, " 
+            + "harvest_num int not null, " 
+            + "harvest_errors varchar(300), " 
+            + "harvest_error_details varchar(10000), " 
+            + "upload_errors varchar(300), " 
+            + "upload_error_details varchar(10000), " 
+            + "startdate timestamp, " 
+            + "enddate timestamp, " 
+            + "num_configs int not null default 0, " 
+            + "edition bigint not null" 
+            + ")",
+
+            // create indices again:
+            "create index jobstatus on " + table + "(status)",
+            "create index jobharvestid on " + table + "(harvest_id)",
+            
+            // insert data from backup table to jobs table:
+            "INSERT INTO " + table + " ( "
+        	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
+        	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
+        	+  "harvest_errors, harvest_error_details, upload_errors, "
+        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+ ") "
+            + "SELECT " 
+        	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
+        	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
+        	+  "harvest_errors, harvest_error_details, upload_errors, "
+        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+            + "FROM " + tmptable
+    	};
+        DBConnect.updateTable("jobs", 4, SqlStatements);   
+
+        //check everything looks okey
+        cntJobs = DBConnect.selectIntValue("select count(*) from " + table);
+        cntBu = DBConnect.selectIntValue("select count(*) from " + tmptable);
+		if (cntBu != cntJobs) {
+			throw new IOFailure("Unexpected inconsistency: the number of " +
+					"backed up entries from " + table + "does not correspond " +
+					"to the number of entries in " + table + "allthough no " +
+					"exception has arised" );
+		}
+		
+        //drop backup table
+        sql = "DROP TABLE backupJobs3to4"; 
+        DBConnect.updateDatabase(sql); //only temporary updates!  
+    }
+
 }
