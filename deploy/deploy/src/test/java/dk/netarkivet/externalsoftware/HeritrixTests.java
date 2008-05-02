@@ -666,13 +666,16 @@ public class HeritrixTests extends TestCase {
         } catch (NullPointerException e) {
             fail("Should not throw an NullPointerException here: " + e);
         }
-
-        try {
-            new UURI(troublesomeURL, false).getReferencedHost();
-            fail("Bug 820 seems to be solved now. We can now remove FixedUURI");
-        } catch (NullPointerException e) {
-            // Expected
-        }
+        
+//      FIXME: The constructor - org.archive.net.UURI(String,boolean) - 
+//        is no longer visible in Heritrix 1.14.0
+        
+//        try {
+//            new UURI(troublesomeURL, false).getReferencedHost();
+//            fail("Bug 820 seems to be solved now. We can now remove FixedUURI");
+//        } catch (NullPointerException e) {
+//            // Expected
+//        }
     }
 
     /**

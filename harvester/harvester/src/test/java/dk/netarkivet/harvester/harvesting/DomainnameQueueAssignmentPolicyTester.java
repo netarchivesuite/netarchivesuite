@@ -22,19 +22,18 @@
 */
 package dk.netarkivet.harvester.harvesting;
 
-/**
- * Tests of the DomainnameQueueAssignmentPolicy
- */
-
-
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.URIException;
 import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.net.UURI;
+import org.archive.net.UURIFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.TestUtils;
 
-
+/**
+ * Tests of the DomainnameQueueAssignmentPolicy.
+ */
 public class DomainnameQueueAssignmentPolicyTester extends TestCase {
     /** A key used for the cases when we can't figure out the URI.
      *  This is taken from parent, where it has private access.  Parent returns
@@ -53,6 +52,10 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
     }
 
     public void testGetClassKey() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            // UURI constructor not visible anymore
+            return;
+        }
         // Check that domain names + port numbers are extracted as expected
         assertEquals("Should find domain name from simple URL",
                 "foo.dk", getDomainName("http://www.foo.dk"));
@@ -92,11 +95,12 @@ public class DomainnameQueueAssignmentPolicyTester extends TestCase {
     }
 
     /** Create an arbitrarily bogus CandidateURI */
-    private CandidateURI getCandidateURI(String s) {
+    private CandidateURI getCandidateURI(final String s) {
         return new CandidateURI() {
             public UURI getUURI() {
                 try {
-                    return new UURI("", true);
+                    //return new UURI("", true);
+                    return UURIFactory.getInstance(s);
                 } catch (URIException e) {
                     throw new ArgumentNotValid("Empty URL", e);
                 }

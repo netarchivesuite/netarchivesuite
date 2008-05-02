@@ -22,11 +22,6 @@
 */
 package dk.netarkivet.common;
 
-/**
- * Unitests for methods in class dk.netarkivet.common.Constants
- */
-
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +30,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+/**
+ * Unitests for methods in class dk.netarkivet.common.Constants.
+ */
 public class ConstantsTester extends TestCase {
     public ConstantsTester(String s) {
         super(s);
@@ -47,8 +45,11 @@ public class ConstantsTester extends TestCase {
     }
 
     public void testgetHeritrixVersionString() {
-        assertEquals("HeritrixVersionString is wrong",
-                "1.12.1b",
+        final String HeritrixVersionExpected = "1.14.0";
+        assertEquals("HeritrixVersionString is wrong. We expected '"
+                + HeritrixVersionExpected 
+                + "' but got '" + Constants.getHeritrixVersionString() + "'.",
+                HeritrixVersionExpected,
                 Constants.getHeritrixVersionString()
                 );
     }

@@ -35,12 +35,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     commons-fileupload-1.0.jar
     commons-net-1.4.1.jar
     dom4j-1.5.2.jar
-    heritrix/lib/heritrix-1.12.1b.jar
+    heritrix/lib/heritrix-1.14.0.jar
     heritrix-dependencies/commons-codec-1.3.jar
     heritrix-dependencies/fastutil-5.0.3-heritrix-subset-1.0.jar
-    heritrix-dependencies/je-3.2.23.jar
+    heritrix-dependencies/je-3.2.74.jar
     heritrix-dependencies/mg4j-1.0.1.jar
-    commons-httpclient-3.0.1.jar
+    commons-httpclient-3.1.jar
     commons-logging-1.0.4.jar
     httpunit-1.6.jar
     jaxen-1.1.jar
@@ -59,7 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     mail-dependencies/activation-1.1.jar
     libidn-0.5.9.jar
     lucene-core-2.0.0.jar
-    deduplicator-0.3.0-20061218b.jar
+    deduplicator-0.3.0-20080502.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
     <path id="jars.path">
@@ -71,12 +71,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="commons-fileupload-1.0.jar"/>
                 <include name="commons-net-1.4.1.jar"/>
                 <include name="dom4j-1.5.2.jar"/>
-                <include name="heritrix/lib/heritrix-1.12.1b.jar"/>
+                <include name="heritrix/lib/heritrix-1.14.0.jar"/>
                 <include name="heritrix-dependencies/commons-codec-1.3.jar"/>
                 <include name="heritrix-dependencies/fastutil-5.0.3-heritrix-subset-1.0.jar"/>
-                <include name="heritrix-dependencies/je-3.2.23.jar"/>
+                <include name="heritrix-dependencies/je-3.2.74.jar"/>
                 <include name="heritrix-dependencies/mg4j-1.0.1.jar"/>
-                <include name="commons-httpclient-3.0.1.jar"/>
+                <include name="commons-httpclient-3.1.jar"/>
                 <include name="commons-logging-1.0.4.jar"/>
                 <include name="junit-3.8.2.jar"/>
                 <include name="jaxen-1.1.jar"/>
@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="mail-dependencies/activation-1.1.jar"/>
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-2.0.0.jar"/>
-                <include name="deduplicator-0.3.0-20061218b.jar"/>
+                <include name="deduplicator-0.3.0-20080502.jar"/>
             </patternset>
         </fileset>
     </path>

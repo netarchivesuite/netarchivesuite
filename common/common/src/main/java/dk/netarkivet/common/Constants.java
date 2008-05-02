@@ -81,7 +81,7 @@ public class Constants {
     private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
 
     /** Current version of Heritrix used by netarkivet-code. */
-    private static final String HERITRIX_VERSION = "1.12.1b";
+    private static final String HERITRIX_VERSION = "1.14.0";
 
     /** Read this much data when copying data from a file channel.
      * Note that due to a bug in java, this should never be set larger
