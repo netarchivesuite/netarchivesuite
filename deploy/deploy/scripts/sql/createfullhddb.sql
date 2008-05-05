@@ -56,7 +56,7 @@ create table schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 4);
+    values ( 'configurations', 3);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -74,7 +74,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'fullharvests', 3);
+    values ( 'fullharvests', 2);
 insert into schemaversions ( tablename, version ) 
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version ) 
