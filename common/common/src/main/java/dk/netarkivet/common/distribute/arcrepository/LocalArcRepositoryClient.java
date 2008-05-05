@@ -43,7 +43,11 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.arc.BatchLocalFiles;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
@@ -53,18 +57,24 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  * credentials checks or checksum storing.
  */
 public class LocalArcRepositoryClient implements ArcRepositoryClient {
+    /** The logger for this class. */
     private Log log = LogFactory.getLog(getClass());
-    /** List of the directories that we store files in */
+    /** List of the directories that we store files in. Non-absolute dirs are
+     * relative to the current directory. */
     private final List<File> storageDirs = new ArrayList<File>(1);
     /** If no directories are specified in the settings file, use a single
      * directory with this name
      */
     private static final String DEFAULT_DIR_NAME = "ArcRepository";
+    private static final String FILE_DIRS
+            = "settings.common.arcrepositoryClient.fileDir";
+    private static final String CREDENTIALS_SETTING
+            = "settings.archive.bitarchive.thisCredentials";
 
     /** Create a new LocalArcRepositoryClient based on current settings. */
     public LocalArcRepositoryClient() {
         List<String> fileDirs =
-                Arrays.asList(Settings.getAll("settings.common.arcrepositoryClient.fileDir"));
+                Arrays.asList(Settings.getAll(FILE_DIRS));
         if (fileDirs.size() == 0) {
             fileDirs.add(DEFAULT_DIR_NAME);
         }
@@ -86,6 +96,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param file A file to be stored. Must exist.
      * @throws IOFailure thrown if store is unsuccesful, or failed to clean
      * up files after the store operation.
+     * @throws IllegalState if file already exists.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
      */
@@ -94,13 +105,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         ArgumentNotValid.checkTrue(file.exists(), "File '" + file
                                                   + "' does not exist");
         if (findFile(file.getName()) != null) {
-            throw new ArgumentNotValid("A file with the name '"
+            throw new IllegalState("A file with the name '"
                                        + file.getName() + " is already stored");
         }
         for (File dir : storageDirs) {
             if (dir.canWrite() && FileUtils.getBytesFree(dir) > file.length()) {
-                FileUtils.copyFile(file, new File(dir, file.getName()));
-                FileUtils.remove(file);
+                FileUtils.moveFile(file, new File(dir, file.getName()));
                 return;
             }
         }
@@ -115,7 +125,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param index   The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
-     * @exception ArgumentNotValid If the get operation failed.
+     * @throws ArgumentNotValid on null or empty filenames, or if index is
+     * negative.
+     * @throws UnknownID If the file cannot be found.
+     * @throws IOFailure If the get operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid {
@@ -123,7 +136,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         ArgumentNotValid.checkNotNegative(index, "long index");
         File f = findFile(arcfile);
         if (f == null) {
-            throw new ArgumentNotValid("File '" + arcfile + "' does not exist");
+            throw new UnknownID("File '" + arcfile + "' does not exist");
         }
         ARCReader reader = null;
         ARCRecord record = null;
@@ -132,21 +145,21 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             record = (ARCRecord) reader.get();
             return new BitarchiveRecord(record);
         } catch (IOException e) {
-            throw new ArgumentNotValid("Error reading record from '"
+            throw new IOFailure("Error reading record from '"
                     + arcfile + "' offset " + index, e);
         } finally {
             if (record != null) {
                 try {
                     record.close();
                 } catch (IOException e) {
-                    log.info("Error closing ARC record '" + record + "'", e);
+                    log.warn("Error closing ARC record '" + record + "'", e);
                 }
             }
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    log.info("Error closing ARC reader '" + reader + "'", e);
+                    log.warn("Error closing ARC reader '" + reader + "'", e);
                 }
             }
         }
@@ -154,22 +167,24 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
     /**
      * Retrieves a file from an ArcRepository and places it in a local file.
-
-     * @param arcfilename Name of the arcfile to retrieve.
+     *
+     * @param arcfilename Name of the arcfile to retrieve. Ignored in this
+     * implementaiton. May be null.
      * @param location The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
-     * @throws IOFailure if there are problems getting a reply or the file
-     * could not be found.
+     * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is
+     * null
+     * @throws IOFailure if there are problems reading or wrting file
+     * @throws UnknownID if the file could not be found.
      */
     public void getFile(String arcfilename, Location location, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
-        ArgumentNotValid.checkNotNull(location, "location");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         File f = findFile(arcfilename);
         if (f != null) {
             FileUtils.copyFile(f, toFile);
         } else {
-            throw new IOFailure("File '" + arcfilename + "' does not exist");
+            throw new UnknownID("File '" + arcfilename + "' does not exist");
         }
     }
 
@@ -180,26 +195,24 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *  initialize() method will be called before processing and the finish()
      *  method will be called afterwards. The process() method will be called
      *  with each File entry.
-     *
      * @param locationName The archive to execute the job on.
      * @return The status of the batch job after it ended.
+     *
      */
     public BatchStatus batch(final FileBatchJob job, String locationName) {
         OutputStream os = null;
+        File resultFile;
         try {
-            File resultFile =  File.createTempFile("batch", locationName,
+            resultFile = File.createTempFile("batch", locationName,
                     FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
             List<File> files = new ArrayList<File>();
             final FilenameFilter filenameFilter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     Pattern filenamePattern = job.getFilenamePattern();
-                    if (filenamePattern != null &&
-                        new File(dir, name).isFile()) {
-                        return filenamePattern.matcher(name).matches();
-                    } else {
-                        return true;
-                    }
+                    return new File(dir, name).isFile() && (
+                            filenamePattern == null
+                            || filenamePattern.matcher(name).matches());
                 }
             };
             for (File dir : storageDirs) {
@@ -209,11 +222,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 }
             }
             BatchLocalFiles batcher
-                    = new BatchLocalFiles(files.toArray(new File[0]));
+                    = new BatchLocalFiles(files.toArray(new File[files.size()]));
             batcher.run(job, os);
-            return new BatchStatus(locationName, job.getFilesFailed(),
-                    job.getNoOfFilesProcessed(),
-                    RemoteFileFactory.getMovefileInstance(resultFile));
         } catch (IOException e) {
             throw new IOFailure("Cannot perform batch '" + job + "'", e);
         } finally {
@@ -221,11 +231,14 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    log.info("Error closing batch output stream '" + os + "'",
+                    log.warn("Error closing batch output stream '" + os + "'",
                             e);
                 }
             }
         }
+        return new BatchStatus(locationName, job.getFilesFailed(),
+                job.getNoOfFilesProcessed(),
+                RemoteFileFactory.getMovefileInstance(resultFile));
     }
 
     /** Updates the administrative data in the ArcRepository for a given
@@ -256,17 +269,38 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *
      * @param fileName The name of the file to remove.
      * @param bitarchiveName The location from which to remove the file.
+     * Not used in this implementation, may be null.
      * @param checksum The checksum of the file to be removed.
      * @param credentials A string that shows that the user is allowed to
      * perform this operation.
      * @return A local copy of the file removed.
+     * @throws ArgumentNotValid On null or empty parameters for fileName,
+     * checksum or credentials.
+     * @throws IOFailure On IO trouble.
+     * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,
                                  String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
         File file = findFile(fileName);
         if (file == null) {
             throw new IOFailure("Cannot find file '" + fileName + "'");
+        }
+        try {
+            if (!MD5.generateMD5onFile(file).equals(checksum)) {
+                throw new PermissionDenied("Wrong checksum for removing file '"
+                                       + fileName + "'");
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to check md5 on file '" + file + "'",
+                                e);
+        }
+        if (!credentials.equals(Settings.get(CREDENTIALS_SETTING))) {
+            throw new PermissionDenied("Wrong credentials for removing file '" 
+                                   + fileName + "'");
         }
         File copiedTo = null;
         try {
@@ -275,8 +309,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             throw new IOFailure("Cannot make temp file to copy '"
                     + fileName + "' into", e);
         }
-        FileUtils.copyFile(file, copiedTo);
-        FileUtils.remove(file);
+        FileUtils.moveFile(file, copiedTo);
         return copiedTo;
     }
 
@@ -289,7 +322,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     private File findFile(String filename) {
         for (File dir : storageDirs) {
             final File file = new File(dir, filename);
-            if (file.exists()) {
+            if (file.isFile()) {
                 return file;
             }
         }

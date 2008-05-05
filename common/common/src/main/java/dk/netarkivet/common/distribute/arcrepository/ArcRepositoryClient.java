@@ -48,7 +48,7 @@ public interface ArcRepositoryClient extends
      * @param index   The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
-     * @exception ArgumentNotValid If the get operation failed.
+     * @throws ArgumentNotValid If the get operation failed.
      */
     BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid;
 
@@ -56,7 +56,8 @@ public interface ArcRepositoryClient extends
      * Retrieves a file from an ArcRepository and places it in a local file.
 
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param location The bitarchive to retrieve the data from.
+     * @param location The bitarchive to retrieve the data from. On
+     * implementations with only one location, null may be used.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file
      * could not be found.

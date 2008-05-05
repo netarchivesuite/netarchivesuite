@@ -144,28 +144,23 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      */
     public BatchStatus batch(final FileBatchJob job, String locationName) {
         OutputStream os = null;
+        File resultFile;
         try {
             List<File> filesFailed = new ArrayList<File>();
             int filesProcessed = 0;
-            File resultFile =  File.createTempFile("batch", locationName,
+            resultFile = File.createTempFile("batch", locationName,
                     FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
             File[] files = dir.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     Pattern filenamePattern = job.getFilenamePattern();
-                    if (filenamePattern != null &&
-                            new File(dir, name).isFile()) {
-                        return filenamePattern.matcher(name).matches();
-                    } else {
-                        return true;
-                    }
+                    return new File(dir, name).isFile() && (
+                            filenamePattern == null
+                            || filenamePattern.matcher(name).matches());
                 }
             });
             BatchLocalFiles batcher = new BatchLocalFiles(files);
             batcher.run(job, os);
-            return new BatchStatus(locationName, job.getFilesFailed(),
-                    job.getNoOfFilesProcessed(),
-                    RemoteFileFactory.getMovefileInstance(resultFile));
         } catch (IOException e) {
             throw new IOFailure("Cannot perform batch '" + job + "'", e);
         } finally {
@@ -178,6 +173,9 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
                 }
             }
         }
+        return new BatchStatus(locationName, job.getFilesFailed(),
+                job.getNoOfFilesProcessed(),
+                RemoteFileFactory.getMovefileInstance(resultFile));
     }
 
     /** Updates the administrative data in the ArcRepository for a given
