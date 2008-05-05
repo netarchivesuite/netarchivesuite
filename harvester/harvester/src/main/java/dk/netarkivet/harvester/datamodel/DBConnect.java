@@ -809,6 +809,7 @@ public class DBConnect {
      * @param newVersion The version that the table should end up at
      * @param updates The SQL update statements that makes the necessary
      * updates.
+     * @throws IOFaillure in case of problems in interacting with the database
      */
     protected static void updateTable(final String table,
                                       final int newVersion,
@@ -850,6 +851,7 @@ public class DBConnect {
      *
      * @param updates The SQL update statements that makes the necessary
      * updates.
+     * @throws IOFaillure in case of problems in interacting with the databse
      */
     protected static void updateDatabase(final String... updates) {
         Connection c = getDBConnection();

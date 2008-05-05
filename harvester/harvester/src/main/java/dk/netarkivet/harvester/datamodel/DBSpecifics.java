@@ -28,6 +28,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.SettingsFactory;
 
@@ -105,8 +106,13 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *
      * @param tableName The table to update
      * @param toVersion The version to update the table to.
+     * @throws IllegalState if there are inconsistencies with toVersion and/or
+     *         the current version read from the database
+     * @throws NotImplementedException if there are table-specific updates 
+     *         specified from current version to given toVersion
+     * @throws IOFaillure in case of problems in interacting with the database
      */
-    public void updateTable(String tableName, int toVersion) {
+    public synchronized void updateTable(String tableName, int toVersion) {
 
     }
 

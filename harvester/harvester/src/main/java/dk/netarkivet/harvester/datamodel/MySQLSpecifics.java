@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
@@ -135,8 +136,13 @@ public class MySQLSpecifics extends DBSpecifics {
     /** Update the database tables to the current versions.
      * @param tableName the name of the table to update
      * @param toVersion the required version of the table
+     * @throws IllegalState if there are inconsistencies with toVersion and/or
+     *         the current version read from the database
+     * @throws NotImplementedException if there are table-specific updates 
+     *         specified from current version to given toVersion
+     * @throws IOFaillure in case of problems in interacting with the database
      */
-    public void updateTable(String tableName, int toVersion) {
+    public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
         
@@ -147,24 +153,53 @@ public class MySQLSpecifics extends DBSpecifics {
         }
         
         if (tableName.equals("jobs")) {
-            if (currentVersion < 3 || currentVersion > 4) {
+            if (currentVersion < 3) {
                 throw new IllegalState("Database is in an illegalState: " 
                         + "The current version of table '"
-                        + tableName + "' is not acceptable. ");
-
+                        + tableName + "' is not acceptable. "
+                        + "(current version is less than open source version).");
             }
-            // Migrate 'jobs' to version 4.
-            // Change field jobs.forcemaxbytes from int to bigint
-            // and set its default to -1
-            String[] SqlStatements = {
-                    "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
-                    + " BIGINT NOT NULL DEFAULT -1"};
-
-            DBConnect.updateTable(tableName, toVersion, SqlStatements);
+            if (currentVersion == 3 && toVersion >= 4) {
+            	migrateJobsv3tov4();
+            }
+            if (currentVersion == 4) {
+            	if (toVersion > 4) {
+                    throw new NotImplementedException(
+                    		"No method exists for migrating table '"
+                            +  tableName + "' to version " + toVersion);
+            	}
+            }            
+            if (currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version of table '"
+                    + tableName + "' is not acceptable. "
+                    + "(current version is an unknown version).");
+            }
+            //} else if tableName.equals("xxx") {   
         } else {
-            throw new NotImplementedException("No method exists for migrating table '"
+        	// This includes cases where currentVersion < toVersion
+        	// for all tables that does not have migartion functions yet
+            throw new NotImplementedException(
+            		"No method exists for migrating table '"
                     +  tableName + "' to version " + toVersion);
         }
     }
+    
+    /** Migrates the 'jobs' table from version 3 to version 4
+     * consisting in change of field forcemaxbytes from int to bigint and set
+     * its default to -1. Furthermore the default value for field num_configs 
+     * is set to 0.
+     * @throws IOFaillure in case of problems in interacting with the database
+     */
+    private void migrateJobsv3tov4() {
+        String[] SqlStatements = {
+            "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
+            + " bigint not null default -1",
+            "ALTER TABLE jobs CHANGE COLUMN num_configs num_configs"
+            + " int not null default 0"
+        };
+        DBConnect.updateTable("jobs", 4, SqlStatements);
+    }
+    
     
 }

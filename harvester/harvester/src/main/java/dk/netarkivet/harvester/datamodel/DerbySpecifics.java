@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.utils.Notifications;
 import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
@@ -98,6 +96,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
     /** Update the database tables to the current versions.
      * @param tableName the name of the table to update
      * @param toVersion the required version of the table
+     * @throws IllegalState if there are inconsistencies with toVersion and/or
+     *         the current version read from the database
+     * @throws NotImplementedException if there are table-specific updates 
+     *         specified from current version to given toVersion
+     * @throws IOFaillure in case of problems in interacting with the database
      */
     public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
@@ -125,11 +128,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
                     + tableName + "' is not acceptable. "
                     + "(current version is less than open source version).");
             }
-            
             if (currentVersion == 3 && toVersion >= 4) {
             	migrateJobsv3tov4();
             }
-            
             if (currentVersion == 4) {
             	if (toVersion > 4) {
                     throw new NotImplementedException(
@@ -137,16 +138,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
                             +  tableName + "' to version " + toVersion);
             	}
             }            
-
             if (currentVersion > 4) {
                 throw new IllegalState("Database is in an illegalState: " 
                     + "The current version of table '"
                     + tableName + "' is not acceptable. "
                     + "(current version is an unknown version).");
             }
-
         //} else if tableName.equals("xxx") {   
-            
         } else {
         	// This includes cases where currentVersion < toVersion
         	// for all tables that does not have migartion functions yet
@@ -156,10 +154,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         }
     }
 
+    /** Migrates the 'jobs' table from version 3 to version 4
+     * consisting in change of field forcemaxbytes from int to bigint and set 
+     * its default to -1. Furthermore the default value for field num_configs 
+     * is set to 0.
+     * @throws IOFaillure in case of problems in interacting with the database
+     */
     private void migrateJobsv3tov4() {
-        // Migrate 'jobs' from version 3 to version 4.            
-        // Change field forcemaxbytes from int to bigint
-    	//
     	// Due to use of old version of Derby, it is not possible to use ALTER
     	// table for the migration. Thus the migration is done by full backup
     	// table of the jobs table.
@@ -177,7 +178,6 @@ public abstract class DerbySpecifics extends DBSpecifics {
         String table = "jobs"; 
         String tmptable = "backupJobs3to4"; 
 
-    	
     	//Check that temporary table from earlier tries does exist
         //drop backup table
     	try {
@@ -231,7 +231,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "startdate timestamp, " 
             + "enddate timestamp, " 
             + "num_configs int not null default 0, " 
-            + "edition bigint not null" 
+            + "edition bigint not null " 
             + ")" ;
         DBConnect.updateDatabase(sql); //only temporary updates!  
 
@@ -240,13 +240,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
         	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
         	+  "harvest_errors, harvest_error_details, upload_errors, "
-        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+  "upload_error_details, startdate, enddate, num_configs, edition " 
         	+ ") "
             + "SELECT " 
         	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
         	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
         	+  "harvest_errors, harvest_error_details, upload_errors, "
-        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+  "upload_error_details, startdate, enddate, num_configs, edition " 
             + "FROM " + table ;
         DBConnect.updateDatabase(sql); //only temporary updates!  
         
@@ -283,7 +283,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + "startdate timestamp, " 
             + "enddate timestamp, " 
             + "num_configs int not null default 0, " 
-            + "edition bigint not null" 
+            + "edition bigint not null " 
             + ")",
 
             // create indices again:
@@ -295,13 +295,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
         	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
         	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
         	+  "harvest_errors, harvest_error_details, upload_errors, "
-        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+  "upload_error_details, startdate, enddate, num_configs, edition " 
         	+ ") "
             + "SELECT " 
         	+  "job_id, harvest_id, status, priority, forcemaxbytes, " 
         	+  "forcemaxcount, orderxml, orderxmldoc, seedlist, harvest_num, " 
         	+  "harvest_errors, harvest_error_details, upload_errors, "
-        	+  "upload_error_details, startdate, enddate, num_configs, edition" 
+        	+  "upload_error_details, startdate, enddate, num_configs, edition " 
             + "FROM " + tmptable
     	};
         DBConnect.updateTable("jobs", 4, SqlStatements);   
