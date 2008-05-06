@@ -59,6 +59,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** Create a new HarvestDefinitionDAO using database.
      */
     HarvestDefinitionDBDAO() {
+    	DBConnect.checkTableVersion("harvestdefinitions", 2);
         DBConnect.checkTableVersion("fullharvests", 2);
         DBConnect.checkTableVersion("partialharvests", 1);
         DBConnect.checkTableVersion("harvest_configs", 1);
