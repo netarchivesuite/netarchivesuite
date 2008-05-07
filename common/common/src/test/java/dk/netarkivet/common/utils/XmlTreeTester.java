@@ -22,18 +22,19 @@
  */
 package dk.netarkivet.common.utils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestCase;
 import org.dom4j.Document;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class XmlTreeTester extends TestCase {
@@ -55,9 +56,6 @@ public class XmlTreeTester extends TestCase {
     }
 
     public void testGetStringTree() {
-        if (!TestUtils.runningAs("lc")) {
-            return;
-        }
         StringTree<String> tree1 = getTree();
         assertNotNull("Should get non-null tree", tree1);
         assertEquals("Should have node from backing XML",
@@ -86,24 +84,22 @@ public class XmlTreeTester extends TestCase {
         // Test dotted paths
         assertNotNull("Should have non-null dotted subtree",
                       tree1.getSubTree("dk.heroes.hero"));
-        try {
-            tree1.getSubTree("dk.netarkivet.test");
-            fail("Should not be able to resolve multiple paths");
-        } catch (ArgumentNotValid e) {
-            // Expected
-        }
+        // Test it can find the right way to the subtree
+        assertNotNull("Should have non-null dotted subtree",
+                      tree1.getSubTree("dk.netarkivet.test"));
+
 
         tree1 = tree1.getSubTree("dk");
         try {
             tree1.getSubTree("netarkivet");
             fail("Should die on multiple subtrees");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // expected
         }
         try {
             tree1.getSubTree("netarkvet");
             fail("Should die on no subtrees");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // expected
         }
     }
@@ -118,15 +114,15 @@ public class XmlTreeTester extends TestCase {
         tree1 = getTree();
         try {
             tree1.getValue();
-            fail("Should throw ArgumentNotValid when getValue()ing a root");
-        } catch (ArgumentNotValid e) {
+            fail("Should throw IllegalState when getValue()ing a root");
+        } catch (IllegalState e) {
             // expected
         }
         tree1 = tree1.getSubTree("dk");
         try {
             tree1.getValue();
-            fail("Should throw ArgumentNotValid when getValue()ing a node");
-        } catch (ArgumentNotValid e) {
+            fail("Should throw IllegalState when getValue()ing a node");
+        } catch (IllegalState e) {
             // expected
         }
 
@@ -134,7 +130,7 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getValue("dk");
             fail("Should die when the named node is the root");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
@@ -145,21 +141,21 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getValue("dk.netarkivet.answer");
             fail("Should fail due to multiple subtrees");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
         try {
             tree1.getValue("dk.heroes");
             fail("Should fail due to non-leafness");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
         try {
             tree1.getValue("dk.heroes.bystander");
             fail("Should fail due to missing leaf");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
@@ -171,19 +167,19 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getValue("test");
             fail("Should die when the named node is not a leaf");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         try {
             tree1.getValue("foobar");
             fail("Should die when the named node does not exist");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         try {
             tree1.getSubTree("test").getValue("list1");
             fail("Should die when the named node has multiple candidates");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
@@ -229,8 +225,8 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getSubTree("dk").getSubTrees("netarkivet").get(0)
                     .getSubTree("answer").getSubTrees("foo");
-            fail("Should throw ArgumentNotValid on asking for subtree in leaf");
-        } catch (ArgumentNotValid e) {
+            fail("Should throw IllegalState on asking for subtree in leaf");
+        } catch (IllegalState e) {
             // expected
         }
 
@@ -289,7 +285,7 @@ public class XmlTreeTester extends TestCase {
         try {
             children.get("q").get(0).getChildMultimap();
             fail("Should have thrown error on leaf");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // expected
         }
     }
@@ -299,14 +295,14 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getLeafMultimap();
             fail("Should get error when no children are leafs");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0);
         try {
             tree1.getLeafMultimap();
             fail("Should get error when some children are not leafs");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         tree1 = tree1.getSubTree("test");
@@ -327,7 +323,7 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getLeafMultimap();
             fail("Should fail when there are no children");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
     }
@@ -347,7 +343,7 @@ public class XmlTreeTester extends TestCase {
                     tree1.getChildMap();
             fail("Should not be allowed to get childmap of node with "
                  + "several of the same subnode.");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         StringTree<String> tree2 = tree1.getSubTrees("netarkivet").get(0);
@@ -361,28 +357,24 @@ public class XmlTreeTester extends TestCase {
         try {
             children.get("answer").getChildMap();
             fail("Should have thrown error on leaf");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // expected
         }
     }
 
     public void testGetLeafMap() {
-        if (!TestUtils.runningAs("lc")) {
-            return;
-        }
-
         StringTree<String> tree1 = getTree();
         try {
             tree1.getLeafMap();
             fail("Should get error when no children are leafs");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         tree1 = tree1.getSubTree("dk").getSubTrees("netarkivet").get(0);
         try {
             tree1.getLeafMap();
             fail("Should get error when some children are not leafs");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
 
@@ -398,7 +390,7 @@ public class XmlTreeTester extends TestCase {
         try {
             tree1.getLeafMap();
             fail("Should fail when there are no children");
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
         tree1 = getTree();
