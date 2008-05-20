@@ -112,7 +112,7 @@
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
-                <webapplication>data/working/webpages/HarvestDefinition.war</webapplication>
+                <webapplication>../../webpages/HarvestDefinition.war</webapplication>
                 <!-- The URL path for this section of the web interface. -->
                 <deployPath>/HarvestDefinition</deployPath>
             </siteSection>
@@ -122,7 +122,7 @@
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
-                <webapplication>data/working/webpages/History.war</webapplication>
+                <webapplication>../../webpages/History.war</webapplication>
                 <!-- The URL path for this section of the web interface. -->
                 <deployPath>/History</deployPath>
             </siteSection>
@@ -132,7 +132,7 @@
                 <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
-                <webapplication>data/working/webpages/BitPreservation.war</webapplication>
+                <webapplication>../../webpages/BitPreservation.war</webapplication>
                 <!-- The URL path for this section of the web interface. -->
                 <deployPath>/BitPreservation</deployPath>
             </siteSection>
@@ -142,7 +142,7 @@
                 <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
-                <webapplication>data/working/webpages/QA.war</webapplication>
+                <webapplication>../../webpages/QA.war</webapplication>
                 <!-- The URL path for this section of the web interface. -->
                 <deployPath>/QA</deployPath>
             </siteSection>
@@ -152,7 +152,7 @@
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
-                <webapplication>data/working/webpages/Status.war</webapplication>
+                <webapplication>../../webpages/Status.war</webapplication>
                 <!-- The URL path for this section of the web interface. -->
                 <deployPath>/Status</deployPath>
             </siteSection>

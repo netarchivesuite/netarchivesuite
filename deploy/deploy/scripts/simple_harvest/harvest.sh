@@ -183,9 +183,6 @@ rm -f $ARCREP_HOME/log/*.lck
 ## Clean up temporary things left behind
 rm -rf $ARCREP_HOME/hcs*.sh
 
-## Copy web pages over in case they changed.
-cp -r $NETARCHIVEDIR/webpages $ARCREP_HOME/data/working
-
 ## JVM arguments for all processes
 ## Includes a simple indicator of the fact that this is a simple_harvest process
 JVM_ARGS="-Xmx1512m -Ddk.netarkivet.settings.file=$ARCREP_HOME/settings.xml \
