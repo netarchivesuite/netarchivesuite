@@ -28,23 +28,23 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
- *
+ * Unit-tester suite for the classes inside
+ * package dk.netarkivet.common.distribute.arcrepository.
  */
-
 public class DistributeArcrepositoryTesterSuite {
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(DistributeArcrepositoryTesterSuite.class.getName());
+        suite = new TestSuite(
+                DistributeArcrepositoryTesterSuite.class.getName());
         DistributeArcrepositoryTesterSuite.addToSuite(suite);
         return suite;
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ARCLookupTester.class);
@@ -54,8 +54,9 @@ public class DistributeArcrepositoryTesterSuite {
         suite.addTestSuite(LocationTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", DistributeArcrepositoryTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", 
+                DistributeArcrepositoryTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

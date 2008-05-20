@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.distribute.arcrepository;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,6 +35,10 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
+/**
+ * Unit-tests for the class 
+ * TrivialArcRepositoryClient
+ */
 public class TrivialArcRepositoryClientTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);

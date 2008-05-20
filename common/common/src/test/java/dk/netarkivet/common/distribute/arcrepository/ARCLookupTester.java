@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.distribute.arcrepository;
-/**
- * Tests of the ARCLookup class.
- */
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,7 +55,9 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
-
+/**
+ * Tests of the ARCLookup class.
+ */
 public class ARCLookupTester extends TestCase {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;
