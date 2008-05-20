@@ -100,7 +100,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
      *         the current version read from the database
      * @throws NotImplementedException if there are table-specific updates 
      *         specified from current version to given toVersion
-     * @throws IOFaillure in case of problems in interacting with the database
+     * @throws IOFailure in case of problems in interacting with the database
      */
     public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
@@ -158,7 +158,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * consisting in change of field forcemaxbytes from int to bigint and set 
      * its default to -1. Furthermore the default value for field num_configs 
      * is set to 0.
-     * @throws IOFaillure in case of problems in interacting with the database
+     * @throws IOFailure in case of problems in interacting with the database
      */
     private void migrateJobsv3tov4() {
     	// Due to use of old version of Derby, it is not possible to use ALTER
