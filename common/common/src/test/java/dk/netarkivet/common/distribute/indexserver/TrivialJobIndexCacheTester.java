@@ -61,7 +61,7 @@ public class TrivialJobIndexCacheTester extends TestCase {
     public void testCacheData() throws Exception {
         JobIndexCache cache = new TrivialJobIndexCache(RequestType.DEDUP_CRAWL_LOG);
         assertEquals("Should give empty pseudo-cache for 1 file",
-                "1-DEDUP_CRAWL_LOG-cache", cache.getIndex(Collections.singleton(1L)).getName());
+                "1-DEDUP_CRAWL_LOG-cache", cache.getIndex(Collections.singleton(1L)).getIndex().getName());
 
         TestFileUtils.copyDirectoryNonCVS(new File(TestInfo.WORKING_DIR, "2-3-cache"),
                 new File(new File(Settings.get(Settings.CACHE_DIR), "TrivialJobIndexCache"),
@@ -70,7 +70,7 @@ public class TrivialJobIndexCacheTester extends TestCase {
         jobs.add(2L);
         jobs.add(3L);
         assertEquals("Should give the expected cache with the right jobs",
-                "2-3-DEDUP_CRAWL_LOG-cache", cache.getIndex(jobs).getName());
+                "2-3-DEDUP_CRAWL_LOG-cache", cache.getIndex(jobs).getIndex().getName());
 
     }
 }

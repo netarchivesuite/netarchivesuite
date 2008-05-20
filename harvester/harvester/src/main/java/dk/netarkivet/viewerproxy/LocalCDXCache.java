@@ -123,7 +123,7 @@ public class LocalCDXCache implements JobIndexCache {
      * @param jobIDs List of job IDs to generate index for.
      * @return A file containing the index.
      */
-    public File getIndex(Set<Long> jobIDs) {
+    public JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
         FileUtils.createDir(CACHE_DIR);
         ArgumentNotValid.checkNotNullOrEmpty(jobIDs, "jobIDs");
         File indexFile = getIndexFile(jobIDs);
@@ -135,7 +135,8 @@ public class LocalCDXCache implements JobIndexCache {
                 // if it exists -- if so, we can just use that.
                 // Safer but slower than checking existence twice
                 if (indexFile.exists()) {
-                    return indexFile;  // workFile deleted in finally.
+                    return new JobIndex(indexFile, jobIDs);
+                    // workFile deleted in finally.
                 }
                 OutputStream tmpOutput = new FileOutputStream(workFile);
                 retrieveIndex(jobIDs, tmpOutput);
@@ -160,7 +161,10 @@ public class LocalCDXCache implements JobIndexCache {
         if (!indexFile.exists()) {
             throw new IOFailure("Failed to create index file for " + jobIDs);
         }
-        return indexFile;
+        //TODO actually, this may not be the right set, it may only be a subset
+        //It is not possible to figure out what cdx files were found using only
+        //one batch job
+        return new JobIndex(indexFile, jobIDs);
     }
 
     /** Gets and extract index data from metadata for a given file, squirting

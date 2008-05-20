@@ -201,7 +201,7 @@ public class IndexRequestClientTester extends TestCase {
         mis.setUp();
         mis.resetMsgList();
         mis.setResponseSuccessfull(true);
-        File result = client.getIndex(jobSet);
+        File result = client.getIndex(jobSet).getIndex();
         List<IndexRequestMessage> sent = mis.getMsgList();
         assertEquals("Should send exactly one request to the index server",
                 1, sent.size());
@@ -231,7 +231,7 @@ public class IndexRequestClientTester extends TestCase {
         jobSet2.addAll(jobSet);
         jobSet2.add(6L);
         List<IndexRequestMessage> sent = mis.getMsgList();
-        File result = client.getIndex(jobSet2);
+        File result = client.getIndex(jobSet2).getIndex();
         assertEquals("Should send exactly one request to the index server",
                 1, sent.size());
         IndexRequestMessage msg = sent.get(0);

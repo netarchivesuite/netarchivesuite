@@ -36,5 +36,24 @@ public interface JobIndexCache {
      * @return A file containing the index. This file must not be modified or
      * deleted, since it is part of the cache of data.
      */
-    public File getIndex(Set<Long> jobIDs);
+    public JobIndex<Set<Long>> getIndex(Set<Long> jobIDs);
+
+    public class  JobIndex<I> {
+        private final File index;
+        private final I availableJobs;
+
+        public JobIndex(File index, I availableJobs) {
+            this.index = index;
+            this.availableJobs = availableJobs;
+        }
+
+        public File getIndex() {
+            return index;
+        }
+
+        public I getAvailableJobs() {
+            return availableJobs;
+        }
+
+    }
 }

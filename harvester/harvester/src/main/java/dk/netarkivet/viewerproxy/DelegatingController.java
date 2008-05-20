@@ -26,6 +26,7 @@ package dk.netarkivet.viewerproxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -60,6 +61,12 @@ public class DelegatingController implements Controller {
      * Remembers the last joblist used for setting index for status purposes.
      */
     private Set<Long> jobSet;
+    /**
+     * Remembers the jobs that were available from the last index job list for
+     * status purposes.
+     */
+    private Set<Long> availableSet;
+
     /**
      * Remembers the label of the index for status purposes.
      */
@@ -129,7 +136,9 @@ public class DelegatingController implements Controller {
      * @param label The label this index should be known as
      */
     public void changeIndex(Set<Long> jobSet, String label) {
-        aaa.setIndex(cc.getIndex(jobSet));
+        JobIndexCache.JobIndex<Set<Long>> jobindex = cc.getIndex(jobSet);
+        aaa.setIndex(jobindex.getIndex());
+        this.availableSet = jobindex.getAvailableJobs();
         this.jobSet = jobSet;
         this.indexLabel = label;
     }
@@ -155,11 +164,27 @@ public class DelegatingController implements Controller {
         if (jobSet == null) {
             status.append(I18N.getString(locale, "no.index.set"));
         } else {
-            List<Long> jobList = new ArrayList<Long>(jobSet);
-            Collections.sort(jobList);
+            List<Long> availableList = new ArrayList<Long>(availableSet);
+            Collections.sort(availableList);
             status.append(I18N.getString(locale, "index.0.built.on.jobs.1",
                                          indexLabel,
-                                         StringUtils.conjoin(", ",jobList )));
+                                         StringUtils.conjoin(
+                                                 ", ", availableList)));
+            if (!availableSet.containsAll(jobSet)) {
+                Set<Long> missingSet = new HashSet<Long>(jobSet);
+                missingSet.removeAll(availableSet);
+                List<Long> jobList = new ArrayList<Long>(jobSet);
+                Collections.sort(jobList);
+                List<Long> missingList = new ArrayList<Long>(missingSet);
+                Collections.sort(missingList);
+                status.append('\n');
+                status.append(I18N.getString(
+                        locale,
+                        "errormsg;request.was.for.0.but.got.1.missing.2",
+                        StringUtils.conjoin(", ", jobList),
+                        StringUtils.conjoin(", ", availableList),
+                        StringUtils.conjoin(", ", missingList)));
+            }
         }
         return status.toString();
     }

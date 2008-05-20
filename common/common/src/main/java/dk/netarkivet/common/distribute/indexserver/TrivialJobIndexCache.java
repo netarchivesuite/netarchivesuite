@@ -67,7 +67,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
      * @return A file containing the index. This file must not be modified or
      *         deleted, since it is part of the cache of data.
      */
-    public File getIndex(Set<Long> jobIDs) {
+    public JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
         ArgumentNotValid.checkNotNull(jobIDs, "jobIds");
         File cacheFile = new File(dir,
                 StringUtils.conjoin("-",jobIDs ) + "-" +
@@ -81,6 +81,6 @@ public class TrivialJobIndexCache implements JobIndexCache {
             log.warn("The cache does not contain '" + cacheFile + "' for "
                     + jobIDs);
         }
-        return cacheFile;
+        return new JobIndex(cacheFile, jobIDs);
     }
 }

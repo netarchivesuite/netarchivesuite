@@ -25,13 +25,13 @@ package dk.netarkivet.deploy;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.deploy.DeploymentBuilder;
-import dk.netarkivet.deploy.ItConfigParser;
-import dk.netarkivet.deploy.JmxHostsDeploymentBuilder;
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
-
 import junit.framework.TestCase;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class JmxHostsDeploymentBuilderTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
@@ -51,7 +51,7 @@ public class JmxHostsDeploymentBuilderTester extends TestCase {
         super.tearDown();
     }
 
-    public void testBuilder() {
+    public void testBuilder() throws DocumentException {
         StringBuilder result = new StringBuilder();
         DeploymentBuilder builder = new JmxHostsDeploymentBuilder(result);
         
@@ -68,6 +68,12 @@ public class JmxHostsDeploymentBuilderTester extends TestCase {
         // DeploymentBuilder cleanup and more (??)
         // is done in the done() method.
         builder.done();
+        Document d = DocumentHelper.parseText(result.toString());
+        Document d2 = DocumentHelper.parseText("<settings xmlns=\"http://www.netarkivet.dk/schemas/monitor_settings\"><monitor><jmxMonitorRolePassword>test</jmxMonitorRolePassword></monitor></settings>");
+        d.normalize();
+        d2.normalize();
+        assertEquals("Should get correct result when parsing itconfig to get "
+                     + "monitor settings", d.asXML(), d2.asXML());
     }
     
     

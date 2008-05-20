@@ -389,7 +389,7 @@ public class HarvestController {
         List<Long> jobIDsForDuplicateReduction
                 = parseJobIDsForDuplicateReduction(metadataEntries);
         return IndexClientFactory.getDedupCrawllogInstance().getIndex(
-                new HashSet<Long>(jobIDsForDuplicateReduction));
+                new HashSet<Long>(jobIDsForDuplicateReduction)).getIndex();
     }
 
     /**

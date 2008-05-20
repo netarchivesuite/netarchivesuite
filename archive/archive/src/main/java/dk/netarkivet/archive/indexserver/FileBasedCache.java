@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -193,7 +194,7 @@ public abstract class FileBasedCache<I> {
      * @param id The requested index.
      * @return An index over the greatest possible subset.
      */
-    public File getIndex(I id) {
+    public JobIndexCache.JobIndex<I> getIndex(I id) {
         I response = id;
         I lastResponse = null;
         while (response != null && !response.equals(lastResponse)) {
@@ -210,7 +211,7 @@ public abstract class FileBasedCache<I> {
         File cacheFile = getCacheFile(response);
         log.info("Generated index '" + cacheFile + "' of id '" + response
                  + "', request was for '" + id + "'");
-        return cacheFile;
+        return new JobIndexCache.JobIndex(cacheFile, response);
     }
 }
 

@@ -25,20 +25,21 @@ package dk.netarkivet.viewerproxy;
  * Tests of DelegatingController class.
  */
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+
+import junit.framework.TestCase;
+
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
+import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.StringAsserts;
 
 public class DelegatingControllerTester extends TestCase {
     private TestMissingURIRecorder mur;
@@ -279,11 +280,11 @@ public class DelegatingControllerTester extends TestCase {
         public TestCDXCache() {
             super(ArcRepositoryClientFactory.getViewerInstance());
         }
-        public File getIndex(Set<Long> jobIDs) {
+        public JobIndexCache.JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
             totalCounter++;
             getJobIndexCount++;
             getJobIndexArgument = jobIDs;
-            return new File("/return/data");
+            return new JobIndexCache.JobIndex(new File("/return/data"), jobIDs);
         }
     }
 
