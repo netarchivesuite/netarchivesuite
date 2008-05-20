@@ -42,7 +42,8 @@ public interface ActiveBitPreservation {
      * Get details of the state of one or more files in the bitarchives
      * and admin data.
      * @param filenames the list of filenames to investigate 
-     * @return a map with the preservationstate of all files in the list.
+     * @return a map ([filename]-> [FilePreservationState]) with the
+     *  preservationstate of all files in the list.
      *  The preservationstates in the map will be null for all filenames,
      *  that are not found in admin data.
      */
@@ -50,7 +51,7 @@ public interface ActiveBitPreservation {
             String... filenames);
 
     /**
-     * Get FilePreservationState for the given file in the bitarchives
+     * Get the details of the state of the given file in the bitarchives
      * and admin data.
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null,
@@ -198,7 +199,7 @@ public interface ActiveBitPreservation {
      *
      * @throws IOFailure if the list cannot be generated.
      */
-    Iterable getMissingFilesForAdminData();
+    Iterable<String> getMissingFilesForAdminData();
 
     /**
      * Return a list of files with wrong checksum or state in admin data.
@@ -207,7 +208,7 @@ public interface ActiveBitPreservation {
      *
      * @throws IOFailure if the list cannot be generated.
      */
-    Iterable getChangedFilesForAdminData();
+    Iterable<String> getChangedFilesForAdminData();
 
     // Update admin data
 

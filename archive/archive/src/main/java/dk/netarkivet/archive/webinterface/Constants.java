@@ -24,15 +24,14 @@
 package dk.netarkivet.archive.webinterface;
 
 /**
- * Constants for the bitarchive webinterface
+ * Constants for the bitarchive webinterface.
  *
  */
-
 public class Constants {
     /** Parameter name for the bitarchive to perform operation on. */
     public static final String BITARCHIVE_NAME_PARAM = "bitarchive";
     /** Parameter name for the action of running a batch job for missing files.
-     *  */
+     */
     public static final String FIND_MISSING_FILES_PARAM = "findmissingfiles";
     /** Parameter name for the action of running a checksum batch job. */
     public static final String CHECKSUM_PARAM = "checksum";
@@ -41,7 +40,7 @@ public class Constants {
     /** Parameter name for request to fix checksum in admin data. */
     public static final String FIX_ADMIN_CHECKSUM_PARAM = "fixadminchecksum";
     /** Parameter name for credentials for removing a file with wrong checksum.
-     *  */
+     */
     public static final String CREDENTIALS_PARAM = "credentials";
 
     /** BitPreservation main Java server page that contains status information
@@ -49,18 +48,19 @@ public class Constants {
     public static final String FILESTATUS_PAGE
             = "Bitpreservation-filestatus.jsp";
     /** BitPreservation page that checks if any files are missing in one of
-     *  the bitarchives */
+     *  the bitarchives. */
     public static final String FILESTATUS_MISSING_PAGE
             = "Bitpreservation-filestatus-missing.jsp";
-    /** BitPreservation page that checks files in archive for wrong checksum */
+    /** BitPreservation page that checks files in archive for wrong checksum. */
     public static final String FILESTATUS_CHECKSUM_PAGE
             = "Bitpreservation-filestatus-checksum.jsp";
-    /** Maximum number of files to toogle on one go. */
+    /** Maximum number of files to toggle on one go. */
     public static final int MAX_TOGGLE_AMOUNT = 100;
 
     /** Parameter for adding missing files. */
     public static final String ADD_COMMAND = "add";
     /** Parameter for getting info for missing files. */
     public static final String GET_INFO_COMMAND = "getInfo";
+    /** String to separate filename from checksum. */
     public static final String STRING_FILENAME_SEPARATOR = "##";
 }

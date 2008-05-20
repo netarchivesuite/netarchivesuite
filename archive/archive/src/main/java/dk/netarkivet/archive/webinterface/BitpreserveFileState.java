@@ -166,6 +166,10 @@ public class BitpreserveFileState {
                 }
             }
         }
+        // A map ([filename] -> [preservationstate]) to contain
+        // preservationstates for all files retrieved from the
+        // parameter Constants.GET_INFO_COMMAND.
+        // This map is an empty map, if this parameter is undefined. 
         Map<String, FilePreservationState> infoMap;
         // Do this at the end so that the info reflects the current state.
         if (params.containsKey(Constants.GET_INFO_COMMAND)) {
@@ -575,9 +579,6 @@ public class BitpreserveFileState {
             FilePreservationState fs, Locale locale) throws IOException {
         log.debug("Printing filestate for bitarchive '"
                 +  baLocation.getName() + "'");
-        if (fs.getBitarchiveChecksum(baLocation) == null){
-            log.fatal("Checksum is null for " + baLocation);
-        }
         out.print(HTMLUtils.makeTableRow(
                 HTMLUtils.makeTableElement(baLocation.getName()),
                 HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(baLocation)),

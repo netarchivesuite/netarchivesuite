@@ -55,6 +55,7 @@ import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
@@ -122,19 +123,29 @@ public class FileBasedActiveBitPreservation
      *
      * @param filenames List of filenames
      *
-     * @return a map of the preservation status for the given files.
-     * The preservationstate is null, if the file named does
-     * not exist in admin data.
+     * @return a map ([filename]-> [FilePreservationState]) of the preservation
+     * status for the given files.
+     * The preservationstate is null, if the file named does not exist
+     * in admin data.
      *
      * @throws ArgumentNotValid if argument is null
      */
     public Map<String, FilePreservationState> getFilePreservationStateMap(
             String... filenames) {
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
+        // check, that the files are not empty strings
+        for (String file: filenames) {
+            ArgumentNotValid.checkNotNullOrEmpty(file, "String file");
+        }
         // Start by retrieving the admin status
         admin.synchronize();
-            
-        // temporary datastructures to hold admindata info
+        
+        // Temporary datastructures:
+        // adminInfo: A map ([filename]->[ArcRepositoryEntry]) to hold admindata
+        // info. Holds one entry for each of the files
+        // known by admin data.
+        // missingInAdminData: Contains the names of files that admindata just
+        // don't know.
         Map<String, ArcRepositoryEntry> adminInfo
         = new HashMap<String, ArcRepositoryEntry>();
         Set<String> missingInAdmindata = new HashSet<String>();
@@ -147,33 +158,45 @@ public class FileBasedActiveBitPreservation
                 missingInAdmindata.add(filename);
             }
         }
-        
-        // create and return the preservation status
 
-        Map<String, FilePreservationState> filepreservationStates 
-            = new HashMap<String, FilePreservationState>();
-        
-        // Add null-entries for the files absent from admindata. 
-        for (String missing: missingInAdmindata) {
-            filepreservationStates.put(missing, null);
-        }
         if (missingInAdmindata.size() > 0) {
             log.warn("The following " + missingInAdmindata.size()
                     + " files are unknown to admindata: "
-                    + StringUtils.conjoin(",", missingInAdmindata));
+                    + StringUtils.conjoin(",", 
+                            new ArrayList<String>(missingInAdmindata).subList(0,
+                            Math.min(missingInAdmindata.size(), 10))
+                            ));
         }
-        // For every filename present in admin data,
-        // get a Map that maps from location -> checksums
-        // This takes a long time.
+        
+        // filepreservationStates: map ([filename] -> [filepreservationstate])
+        // This is the datastructure returned from this method
+        Map<String, FilePreservationState> filepreservationStates 
+            = new HashMap<String, FilePreservationState>();
+        
+        // Phase 1: Add null FilePreservationState entries for the files
+        // absent from admindata. 
+        for (String missing: missingInAdmindata) {
+            filepreservationStates.put(missing, (FilePreservationState) null);
+        }
+        // Phase 2: For every filename present in admin data,
+        // construct a map ([location] -> [list of checksums]).
+        // The resulting map:
+        //  map ([filename] -> map ([location] -> [list of checksums])).
+        // This takes a long time, as two batchjobs will be sent out to
+        // to the bitarchives to compute checksums for the files with these
+        // filenames.
         Map<String, Map<Location, List<String>>> checksumMaps 
             = getChecksumMaps(adminInfo.keySet());
         
-        // construct FilePreservationState objects for all filenames in
-        // admin data
-        for (String filename: adminInfo.keySet()) {
+        // Phase 3: construct FilePreservationState objects for subset of
+        // filenames known by admin data. The rest of the filenames are
+        // represented with a null FilePreservationState object.        
+        for (Map.Entry<String,ArcRepositoryEntry> entry: adminInfo.entrySet()) {
+            String filename = entry.getKey();
+            ArcRepositoryEntry adminFileInfo = entry.getValue();
             filepreservationStates.put(filename, 
                     new FilePreservationState(filename,
-                            adminInfo.get(filename),
+                            adminFileInfo,
                             checksumMaps.get(filename)
                             )
             );
@@ -182,7 +205,7 @@ public class FileBasedActiveBitPreservation
     }
     
     /**
-     * Get FilePreservationState for the given file in the bitarchives
+     * Get the details of the state of the given file in the bitarchives
      * and admin data.
      * @param filename A given file
      * @return the FilePreservationState for the given file. This will be null,
@@ -198,7 +221,11 @@ public class FileBasedActiveBitPreservation
     
     
     /**
-     * Generate a map of checksums for these filenames in the bitarchives.
+     * Generate a map of checksums for these filenames in the bitarchives (
+     * map ([filename] -> map ([location] -> [list of checksums]))).
+     * This takes a long time, as a batchjob will be sent out to
+     * all the bitarchives to compute checksums for the files with these
+     * filenames.
      *
      * @param filenames The filenames to get the checksums for.
      *
@@ -207,31 +234,49 @@ public class FileBasedActiveBitPreservation
     private Map<String, Map<Location, List<String>>>
     getChecksumMaps(Set<String> filenames) {
      
+        //checksummaps: map ([filename] -> map ([location] 
+        //  -> [list of checksums])).
+        // This datastructure will contain for each filename the computed 
+        // checksums for the file with this filename on all locations
+        // (bitarchives).
         Map<String, Map<Location, List<String>>> checksummaps =
                 new HashMap<String, Map<Location, List<String>>>();
         
         //Only make one checksum job for each location
         for (Location ba : Location.getKnown()) {
-            // get the checksum information
+            // Get the checksum information from Location ba as
+            // a map ([filename]->[list of checksums]).
             Map<String, List<String>> checksums = getChecksums(ba, filenames);
             log.debug("Adding checksums for location '"
                       + ba + "' for filenames: "
                       + StringUtils.conjoin(",", filenames));
+            
             for (String filename : filenames) {
-                // update checksummaps
+                // Update 'checksummaps' datastructure with the checksums received
+                // from Location 'ba'.
+                
+                // locationMap: map ([location] 
+                //  -> [list of checksums for one filename]).
                 Map<Location, List<String>> locationMap;
+                // Get current map in 'checksummaps' datastructure for filename,
+                // if it exists. Otherwise a new one is created, and
+                // stored.
                 if (checksummaps.containsKey(filename)) {
                     locationMap = checksummaps.get(filename);
                 } else {
                     locationMap = new HashMap<Location, List<String>>();
                     checksummaps.put(filename, locationMap);
                 }
-                
+                // Extract the list of checksums for the given filename from
+                // the 'checksums' datastructure.
                 List<String> checksumsForFileOnBa = checksums.get(filename);
                 if (checksumsForFileOnBa == null) {
-                    // Checksum for file not available on location ba
+                    // If no checksums for file was available on location 'ba'
+                    // just add an empty list of checksums.
                     checksumsForFileOnBa = new ArrayList<String>();
                 }
+                // Add the list of checksums for the given file
+                // on Location 'ba' to datastructure 'locationMap'.
                 locationMap.put(ba, checksumsForFileOnBa);
             }
         }
@@ -239,12 +284,13 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Get the checksum of a list of files in a bitarchive.
+     * Get the checksum of a list of files in a bitarchive
+     * (map ([filename] -> map ([location] -> [list of checksums])).
      *
      * Note that this method runs a batch job on the bitarchives, and therefore
      * may take a long time, depending on network delays.
      *
-     * @param ba       The bitarchive to ask for checksum
+     * @param ba    The bitarchive to ask for checksums
      * @param filenames The names of the files to ask for checksums for
      *
      * @return The MD5 checksums of the files, or the empty string if the file
@@ -254,12 +300,15 @@ public class FileBasedActiveBitPreservation
      */
     private Map<String, List<String>> getChecksums(
             Location ba, Set<String> filenames) {
-                
-        ChecksumJob checksumJob = new ChecksumJob();
         
+        // Configure the Checksum batchjob.
+        ChecksumJob checksumJob = new ChecksumJob();
         checksumJob.processOnlyFilesNamed(new ArrayList<String>(filenames));
         
+        // The result of the Checksum batchjob.
         String batchResult;
+        
+        // Execute the batchjob, and wait for the result.
         try {
             PreservationArcRepositoryClient arcrep =
                     ArcRepositoryClientFactory.getPreservationInstance();
@@ -278,14 +327,16 @@ public class FileBasedActiveBitPreservation
                 batchResult = "";
             }
         } catch (NetarkivetException e) {
-            // TODO Shouldn't we rather throw an exception here?
-            log.warn("Error asking location '" + ba + "' for checksums", e);
+            // Send notification, and return an empty map
+            String errMsg = "Error asking location '" + ba + "' for checksums";
+            NotificationsFactory.getInstance().errorEvent(errMsg, e);
+            log.warn(errMsg, e);
             return Collections.emptyMap();
         }
         
+        // map ([filename] -> [List of checksums for a given filename]).
         Map<String, List<String>> filesAndChecksums
             = new HashMap<String, List<String>>();
-        
         
         // parse the batchResult
         if (batchResult.length() > 0) {
@@ -491,7 +542,7 @@ public class FileBasedActiveBitPreservation
         runChecksumJob(location);
         admin.synchronize();
 
-        // Create set of checksumsfrom bitarchive data
+        // Create set of checksums from bitarchive data
         Set<String> bitarchiveChecksumSet = new HashSet<String>(
                 WorkFiles.getLines(location, WorkFiles.CHECKSUMS_ON_BA));
 
@@ -687,23 +738,28 @@ public class FileBasedActiveBitPreservation
      * @param location The location to restore files to
      * @param filenames The names of the files.
      *
-     * TODO Decide whether or not to throw IllegalState
-     * @throws IllegalState  If one of the files is unknown
-     *    (Known files will be attempted though)
-     * @throws IOFailure    If some file cannot be reestablished. All files
-     *                          will be attempted, though.
+     * @throws IllegalState  If one of the files is unknown 
+     * (For all known files, there will be an attempt at udpload)
+     * @throws IOFailure If some file cannot be reestablished. All files
+     *  will be attempted, though.
      */
     public void uploadMissingFiles(Location location, String... filenames) {
         ArgumentNotValid.checkNotNull(location, "Location location");
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
+        
+        // Contains all files that we couldn't reestablish
         List<String> troubleNames = new ArrayList<String>();
         
+        // preservationStates: map [filename]->[filepreservationstate]
+        // Initialized here to contain an entry for each filename in vargargs
+        // 'filenames'.
         Map<String,FilePreservationState> preservationStates
             =  getFilePreservationStateMap(filenames);
-        for (Map.Entry<String, FilePreservationState> entry
-                : preservationStates.entrySet()) {
-            String fn = entry.getKey();
-            FilePreservationState fps = entry.getValue();
+        
+        // For each given filename, try to reestablish it on
+        // location 'location'
+        for (String fn: filenames) {
+            FilePreservationState fps = preservationStates.get(fn);
             try {
                 if (fps == null) {
                     throw new IllegalState("No state known about '" + fn + "'");
@@ -719,13 +775,15 @@ public class FileBasedActiveBitPreservation
                 }
                 reestablishMissingFile(fn, location, fps);
             } catch (Exception e) {
-                log.warn("Trouble updating file '" + fn + "'", e);
+                log.warn("Trouble reestablishing file '" + fn
+                        + "' on location " + location.getName() , e);
                 troubleNames.add(fn);
             }
         }
         if (troubleNames.size() > 0) {
-            throw new IOFailure("Could not update all files. The following"
-                                + " files were not fixed: " + troubleNames);
+            throw new IOFailure("Could not reestablish all files. The following"
+                                + " files were not reestablished: "
+                                + troubleNames);
         }
     }
 
@@ -900,7 +958,7 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IOFailure if the list cannot be generated.
      */
-    public Iterable getMissingFilesForAdminData() {
+    public Iterable<String> getMissingFilesForAdminData() {
         //TODO implement method
         throw new NotImplementedException("Not implemented");
     }
@@ -912,7 +970,7 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IOFailure if the list cannot be generated.
      */
-    public Iterable getChangedFilesForAdminData() {
+    public Iterable<String> getChangedFilesForAdminData() {
         //TODO implement method
         throw new NotImplementedException("Not implemented");
     }
