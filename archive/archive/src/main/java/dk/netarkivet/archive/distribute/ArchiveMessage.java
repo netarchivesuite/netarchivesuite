@@ -35,7 +35,7 @@ import java.io.Serializable;
  *
  * @see NetarkivetMessage
  */
-public abstract class  ArchiveMessage extends NetarkivetMessage
+public abstract class ArchiveMessage extends NetarkivetMessage
         implements Serializable {
     /**
      * Creates a new ArchiveMessage.

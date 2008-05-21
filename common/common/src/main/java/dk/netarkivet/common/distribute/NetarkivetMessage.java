@@ -33,15 +33,14 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 
 
 /**
- * Common base class for messages exchanged between a bitarchiveserver and
- * a bitarchiveclient.
+ * Common base class for all messages exchanged in the NetarchiveSuite.
  */
-public abstract class  NetarkivetMessage implements Serializable {
+public abstract class NetarkivetMessage implements Serializable {
 
     // contains the error messages when isOk=false
     private String errMsg;
 
-    // when false an error occured processing the message
+    // when false an error occurred processing the message
     private boolean isOk = true;
 
     // id of this message. Is set when sent and null until then
@@ -91,7 +90,7 @@ public abstract class  NetarkivetMessage implements Serializable {
 
     /**
      * Did an error occur when processing the message.
-     * @return true if no error occured, otherwise false
+     * @return true if no error occurred, otherwise false
      */
     public boolean isOk() {
         return isOk;
