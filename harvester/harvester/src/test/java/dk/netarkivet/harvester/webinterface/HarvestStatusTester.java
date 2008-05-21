@@ -22,9 +22,6 @@
 */
 
 package dk.netarkivet.harvester.webinterface;
-/**
- * Test of Harvest Status utility method for resubmitting jobs.
- */
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +38,10 @@ import dk.netarkivet.harvester.datamodel.JobDBDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.webinterface.HarvestStatus.DefaultedRequest;
-import dk.netarkivet.testutils.TestUtils;
 
-
+/**
+ * Test of Harvest Status utility method for resubmitting jobs.
+ */
 public class HarvestStatusTester extends WebinterfaceTestCase {
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -61,10 +59,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessRequest() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            //Excluded while migrating to decidingScope
-            return;
-        }
+        
         JobDAO jobDAO = JobDBDAO.getInstance();
         Job job = Job.createJob(42L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
@@ -84,7 +79,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         TestServletRequest servletRequest = new TestServletRequest();
         try {
             HarvestStatus.processRequest(new TestPageContext(servletRequest),
-                                         null);
+                    (I18n) null);
             fail("Should have thrown ANV on null parameter.");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -167,7 +162,6 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     
     public void testGetSelectedSortOrder () throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
-    	TestPageContext context = new TestPageContext(servletRequest);
         
     	DefaultedRequest dfltRequest =
     	        new HarvestStatus.DefaultedRequest(servletRequest);
@@ -188,7 +182,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         Map<String, String[]> parms = new HashMap<String, String[]>();
         parms.put(Constants.JOBIDORDER_PARAM, new String[]{"XX"});
         servletRequest.setParameterMap(parms);
-        context = new TestPageContext(servletRequest);
+        
         dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
         try {
             s = HarvestStatus.getSelectedSortOrder(dfltRequest);
@@ -201,7 +195,6 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         parms = new HashMap<String, String[]>();
         parms.put(Constants.JOBIDORDER_PARAM, new String[]{HarvestStatus.SORTORDER_DESCENDING});
         servletRequest.setParameterMap(parms);
-        context = new TestPageContext(servletRequest);
         dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
         s = HarvestStatus.getSelectedSortOrder(dfltRequest);
         assertEquals("Expected descemnding sort order",
@@ -210,7 +203,6 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     
     public void testGetSelectedJobStatusCode() throws Exception {
     	TestServletRequest servletRequest = new TestServletRequest();
-    	TestPageContext context = new TestPageContext(servletRequest);
         
     	DefaultedRequest dfltRequest =
     	        new HarvestStatus.DefaultedRequest(servletRequest);
@@ -231,7 +223,6 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         Map<String, String[]> parms = new HashMap<String, String[]>();
         parms.put(Constants.JOBSTATUS_PARAM, new String[]{"XX"});
         servletRequest.setParameterMap(parms);
-        context = new TestPageContext(servletRequest);
         dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
         try {
             i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
@@ -244,7 +235,6 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         parms = new HashMap<String, String[]>();
         parms.put(Constants.JOBSTATUS_PARAM, new String[]{JobStatus.FAILED.name()});
         servletRequest.setParameterMap(parms);
-        context = new TestPageContext(servletRequest);
         dfltRequest = new HarvestStatus.DefaultedRequest(servletRequest);
         i = HarvestStatus.getSelectedJobStatusCode(dfltRequest);
         assertEquals("Expected failed job status for selection",

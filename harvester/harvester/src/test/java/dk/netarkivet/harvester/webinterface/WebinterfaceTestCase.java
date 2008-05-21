@@ -62,8 +62,8 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
- * A TestCase specifically tailored to test webinterface classes, primarily 
- * the classes in dk.netarkivet.harvester.webinterface:
+ * A TestCase subclass specifically tailored to test webinterface classes,
+ * primarily the classes in dk.netarkivet.harvester.webinterface:
  *   HarvestStatusTester, EventHarvestTester, DomainDefinitionTester, 
  *   ScheduleDefinitionTester, SnapshotHarvestDefinitionTester
  * but also 

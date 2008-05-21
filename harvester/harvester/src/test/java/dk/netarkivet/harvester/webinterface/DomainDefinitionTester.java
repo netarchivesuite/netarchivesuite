@@ -37,9 +37,9 @@ import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.SeedList;
 
 /**
- * Tests for class DomainDefinition associated with Definition-redigerdomaene.jsp
+ * Tests for class DomainDefinition associated with JSP-page
+ * Definitions-edit-domain.jsp.
  */
-
 public class DomainDefinitionTester extends WebinterfaceTestCase {
     public DomainDefinitionTester(String s) {
         super(s);
@@ -54,7 +54,7 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
     }
 
     /**
-     * Test that we can change the default configuration of a domain
+     * Test that we can change the default configuration of a domain.
      */
     public void testChangeDefaultConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -83,7 +83,7 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
     }
 
     /**
-     * Test that we can add a new domain configuration
+     * Test that we can add a new domain configuration.
      */
     public void testAddDomainConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -127,7 +127,7 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
     }
 
     /**
-     * test that we can change properties of a configuration
+     * Test that we can change properties of a configuration.
      */
     public static void testUpdateConfiguration() {
         DomainDAO ddao = DomainDAO.getInstance();
@@ -171,6 +171,9 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
         assertEquals("Should be exactly one seedlist", 1, slCount);
     }
 
+    /**
+     * Test that we can update the seeds associated with a given domain.
+     */
     public void testUpdateUrlList() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -198,6 +201,10 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
         assertEquals("Seedlist should have two elements", 2, seedList.size());
     }
 
+    /**
+     * Test that we can update the crawlertraps associated
+     * with a domain.
+     */
     public void testSetCrawlertraps() {
         DomainDAO ddao = DomainDAO.getInstance();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
@@ -225,7 +232,7 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
     }
 
     /**
-     * Test for impl. Traffic Reduction Task 4.1.2 Add alias definition input to
+     * Test for impl. Traffic Reduction Task 4.1.2 - Add alias definition input to
      * interfaces.
      */
     public void testSetAlias() {
@@ -266,14 +273,19 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
                      ddao.read("netarkivet.dk").getAliasInfo());
     }
 
+    /**
+     * Test the makeDomainLink() method.
+     */
     public void testMakeDomainLink() {
+        String domainName = "foo.dk";
         assertEquals("Should have full HTML link",
-                     "<a href=\"/HarvestDefinition/Definitions-edit-domain.jsp?name=foo.dk\">foo.dk</a>",
-                     DomainDefinition.makeDomainLink("foo.dk"));
+                     "<a href=\"/HarvestDefinition/Definitions-edit-domain.jsp?name="
+                + domainName + "\">" + domainName + "</a>",
+                     DomainDefinition.makeDomainLink(domainName));
 
         try {
             DomainDefinition.makeDomainLink(null);
-            fail("Should die on null argument");
+            fail("Should die on null domain Name");
         } catch (ArgumentNotValid e) {
             // expected
         }

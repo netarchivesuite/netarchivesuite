@@ -67,8 +67,8 @@ public class SelectiveHarvestTester extends DataModelTestCase {
     }
 
     /**
-     * Verify that the correct domain configurations are created
-     * This test handles the normal usage
+     * Verify that the correct domain configurations are created.
+     * This test handles the normal usage.
      */
     public void testgetDomainConfigurations() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
@@ -100,7 +100,9 @@ public class SelectiveHarvestTester extends DataModelTestCase {
 
 
     /**
-     * Verify that the correct domain configurations are added
+     * Tests the private static method
+     * SelectiveHarvest.addDomainsToConfigurations.
+     * This verifies that the correct domain configurations are added
      * This test handles the normal usage
      */
     public void testaddDomainConfigurations() throws NoSuchMethodException,
@@ -153,7 +155,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
 
     /**
      * Test the normal update scenario where the definition does
-     * not already exist
+     * not already exist.
      */
     public void testUpdateNew() {
         final Map<String , String[]> confs= new HashMap<String , String[]>();
@@ -185,8 +187,9 @@ public class SelectiveHarvestTester extends DataModelTestCase {
     }
 
     /**
+     * Unit-test for 
      * Test the update scenario where we do not add any new domains.
-     * not already exist
+     * not already exist.
      */
     public void testUpdateNoadd() {
         final Map<String , String[]> confs= new HashMap<String , String[]>();
@@ -221,7 +224,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
 
     /**
      * Test the normal update scenario where the definition does
-     * already exist
+     * already exist.
      */
     public void testUpdateExists() {
 

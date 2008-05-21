@@ -39,10 +39,9 @@ import dk.netarkivet.harvester.datamodel.SeedList;
 
 
 /**
- * csr forgot to comment this!
- *
+ * Unit-tests for the webinterface class
+ * dk.netarkivet.harvester.webinterface.EventHarvest.
  */
-
 public class EventHarvestTester extends WebinterfaceTestCase {
 
     private PartialHarvest harvest;
@@ -53,9 +52,9 @@ public class EventHarvestTester extends WebinterfaceTestCase {
         super(s);
     }
 
-
     /**
-     * Creating a valid schedule.
+     * Initialize the unit-tests.
+     * This creates a valid PartialHarvest.
      * @throws Exception
      */
     public void setUp() throws Exception {
@@ -70,7 +69,7 @@ public class EventHarvestTester extends WebinterfaceTestCase {
     }
 
     /**
-     * Tests the simple case of adding a single seed to an empty harvest
+     * Tests the simple case of adding a single seed to an empty harvest.
      */
     public void testAddConfigurationsSimpleAdd() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";
@@ -100,6 +99,4 @@ public class EventHarvestTester extends WebinterfaceTestCase {
         assertFalse("Should only be one configuration in the harvest", dci.hasNext());
         assertFalse("Should only be one seedlist in the configuration", si.hasNext());
     }
-
-
 }

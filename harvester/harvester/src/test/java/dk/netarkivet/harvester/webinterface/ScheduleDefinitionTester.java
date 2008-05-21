@@ -32,6 +32,7 @@ import java.util.Map;
 
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.DailyFrequency;
+import dk.netarkivet.harvester.datamodel.Frequency;
 import dk.netarkivet.harvester.datamodel.HourlyFrequency;
 import dk.netarkivet.harvester.datamodel.MonthlyFrequency;
 import dk.netarkivet.harvester.datamodel.RepeatingSchedule;
@@ -41,10 +42,8 @@ import dk.netarkivet.harvester.datamodel.TimedSchedule;
 import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 
 /**
- * csr forgot to comment this!
- *
+ * Unit-test for class ScheduleDefinition.
  */
-
 public class ScheduleDefinitionTester extends WebinterfaceTestCase {
 
     private static final String DATE_FORMAT = "dd/M yyyy HH:mm";
@@ -69,22 +68,33 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
     }
 
     /**
-     * test that a schedule already in the dao can be updated.
+     * Test that a schedule already in the dao can be updated.
      * @throws ParseException
      */
     public void testProcessRequestUpdateSchedule() throws ParseException {
         Long old_edition = ScheduleDAO.getInstance().read("schedule1").getEdition();
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("name", new String[] {"schedule1"});
-        parameterMap.put("edition", new String[] {""+old_edition});
-        parameterMap.put("update", new String[] {"1"});
-        parameterMap.put("frequency", new String[] {"1"});
-        parameterMap.put("timespan", new String[] {"weeks"});
-        parameterMap.put("harvestTime", new String[] {"whenever"});
-        parameterMap.put("beginAt", new String[] {"beginning"});
         String startDateString = "06/09 2005 12:30";
-        parameterMap.put("firstHarvestTime", new String[] {startDateString});
-        parameterMap.put("continue", new String[] {"forever"});
+        
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 
+                new String[] {"schedule1"});
+        parameterMap.put(ScheduleDefinition.EDITION_PARAMETER,
+                new String[] {"" + old_edition});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER,
+                new String[] {"weeks"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER,
+                new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER,
+                new String[] {"beginning"});
+        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER,
+                new String[] {startDateString});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER,
+                new String[] {"forever"});
+        
         final TestServletRequest servletRequest = new TestServletRequest();;
         servletRequest.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -107,14 +117,24 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
      */
     public void testProcessRequestNewScheduleHourly() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("name", new String[] {"schedule2"});
-        parameterMap.put("update", new String[] {"1"});
-        parameterMap.put("frequency", new String[] {"3"});
-        parameterMap.put("timespan", new String[] {"hours"});
-        parameterMap.put("harvestTime", new String[] {"aTime"});
-        parameterMap.put("frequency_minutes", new String[] {"15"});
-        parameterMap.put("beginAt", new String[] {"asSoonAsPossible"});
-        parameterMap.put("continue", new String[] {"forever"});
+
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 
+                new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER,
+                new String[] {"3"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER,
+                new String[] {"hours"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER,
+                new String[] {"aTime"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER,
+                new String[] {"15"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER,
+                new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER,
+                new String[] {"forever"});
+
         final TestServletRequest servletRequest = new TestServletRequest();;
         servletRequest.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -126,7 +146,7 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         TimedSchedule schedule_updated = (TimedSchedule) sdao.read("schedule2");
         assertTrue("Frequency should be hourly", schedule_updated.getFrequency()
                 instanceof HourlyFrequency);
-        assertEquals("Should run every third hour",3, schedule_updated.getFrequency().getNumUnits());
+        assertEquals("Should run every third hour", 3, schedule_updated.getFrequency().getNumUnits());
         assertNull("No start date should be specified", schedule_updated.getStartDate());
         assertNull("No end date should be specified", schedule_updated.getEndDate()) ;
     }
@@ -140,16 +160,27 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         String startDateString = "12/01 2007 16:16";
         Date startDate = (new SimpleDateFormat(DATE_FORMAT).parse(startDateString));
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("name", new String[] {"schedule2"});
-        parameterMap.put("update", new String[] {"1"});
-        parameterMap.put("frequency", new String[] {"2"});
-        parameterMap.put("timespan", new String[] {"days"});
-        parameterMap.put("harvestTime", new String[] {"aTime"});
-        parameterMap.put("frequency_hours", new String[] {"14"});
-        parameterMap.put("frequency_minutes", new String[] {"25"});
-        parameterMap.put("beginAt", new String[] {"beginning"});
-        parameterMap.put("firstHarvestTime", new String[] {startDateString});
-        parameterMap.put("continue", new String[] {"forever"});
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 
+                new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER,
+                new String[] {"2"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER,
+                new String[] {"days"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER,
+                new String[] {"aTime"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_HOURS_PARAMETER,
+                new String[] {"14"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_MINUTES_PARAMETER,
+                new String[] {"25"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER,
+                new String[] {"beginning"});
+        parameterMap.put(ScheduleDefinition.FIRST_HARVEST_TIME_PARAMETER,
+                new String[] {startDateString});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER,
+                new String[] {"forever"});
+
         final TestServletRequest servletRequest = new TestServletRequest();;
         servletRequest.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -159,8 +190,11 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         // Check (some of the) values
         //
         TimedSchedule schedule_updated = (TimedSchedule) sdao.read("schedule2");
-        DailyFrequency freq = (DailyFrequency) schedule_updated.getFrequency();
-        assertEquals("Hours should be as set", 14, freq.getHour());
+        Frequency freq = schedule_updated.getFrequency();
+        assertTrue("Should be a Daily Frequency",
+                freq instanceof DailyFrequency);
+        DailyFrequency dailyFreq = (DailyFrequency) schedule_updated.getFrequency();
+        assertEquals("Hours should be as set", 14, dailyFreq.getHour());
         assertEquals("Start date should be as set.", startDate, schedule_updated.getStartDate());
     }
 
@@ -173,14 +207,22 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         String endDateString = "12/01 2007 16:16";
         Date endDate = (new SimpleDateFormat(DATE_FORMAT).parse(endDateString));
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("name", new String[] {"schedule2"});
-        parameterMap.put("update", new String[] {"1"});
-        parameterMap.put("frequency", new String[] {"5"});
-        parameterMap.put("timespan", new String[] {"weeks"});
-        parameterMap.put("harvestTime", new String[] {"whenever"});
-        parameterMap.put("beginAt", new String[] {"asSoonAsPossible"});
-        parameterMap.put("continue", new String[] {"toTime"});
-        parameterMap.put("endHarvestTime", new String[] {endDateString});
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 
+                new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER,
+                new String[] {"5"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER,
+                new String[] {"weeks"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER,
+                new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER,
+                new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER,
+                new String[] {"toTime"});
+        parameterMap.put(ScheduleDefinition.END_HARVEST_TIME_PARAMETER,
+                new String[] {endDateString});
         final TestServletRequest servletRequest = new TestServletRequest();;
         servletRequest.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -190,7 +232,10 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         // Check (some of the) values
         //
         TimedSchedule schedule_updated = (TimedSchedule) sdao.read("schedule2");
-        WeeklyFrequency freq = (WeeklyFrequency) schedule_updated.getFrequency();
+        
+        Frequency freq = schedule_updated.getFrequency();
+        assertTrue("Should be a weekly Frequency",
+                        freq instanceof WeeklyFrequency);
         assertEquals("End time should be as set.", endDate,  schedule_updated.getEndDate());
         assertNull("Start time should be null", schedule_updated.getStartDate());
     }
@@ -202,15 +247,24 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
      * @throws ParseException
      */
     public void testProcessRequestNewMonthlySchedule() throws ParseException {
-        Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("name", new String[] {"schedule2"});
-        parameterMap.put("update", new String[] {"1"});
-        parameterMap.put("frequency", new String[] {"2"});
-        parameterMap.put("timespan", new String[] {"months"});
-        parameterMap.put("harvestTime", new String[] {"whenever"});
-        parameterMap.put("beginAt", new String[] {"asSoonAsPossible"});
-        parameterMap.put("continue", new String[] {"numberOfHarvests"});
-        parameterMap.put("numberOfHarvests", new String[] {"20"});
+        Map<String, String[]> parameterMap = new HashMap<String, String[]>();   
+        parameterMap.put(ScheduleDefinition.NAME_PARAMETER, 
+                new String[] {"schedule2"});
+        parameterMap.put(ScheduleDefinition.UPDATE_PARAMETER,
+                new String[] {"1"});
+        parameterMap.put(ScheduleDefinition.FREQUENCY_PARAMETER,
+                new String[] {"2"});
+        parameterMap.put(ScheduleDefinition.TIMESPAN_PARAMETER,
+                new String[] {"months"});
+        parameterMap.put(ScheduleDefinition.HARVEST_TIME_PARAMETER,
+                new String[] {"whenever"});
+        parameterMap.put(ScheduleDefinition.BEGIN_AT_PARAMETER,
+                new String[] {"asSoonAsPossible"});
+        parameterMap.put(ScheduleDefinition.CONTINUE_PARAMETER,
+                new String[] {"numberOfHarvests"});
+        parameterMap.put(ScheduleDefinition.NUMBER_OF_HARVESTS_PARAMETER,
+                new String[] {"20"});
+
         final TestServletRequest servletRequest = new TestServletRequest();;
         servletRequest.setParameterMap(parameterMap);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
@@ -220,8 +274,11 @@ public class ScheduleDefinitionTester extends WebinterfaceTestCase {
         // Check (some of the) values
         //
         RepeatingSchedule schedule_updated = (RepeatingSchedule) sdao.read("schedule2");
-        MonthlyFrequency freq = (MonthlyFrequency) schedule_updated.getFrequency();
-        assertEquals("Number of harvests should be as specified", 20, schedule_updated.getRepeats());
+        Frequency freq = schedule_updated.getFrequency();
+        assertTrue("Should be a monthly Frequency",
+                freq instanceof MonthlyFrequency);
+        assertEquals("Number of harvests should be as specified",
+                20, schedule_updated.getRepeats());
     }
 
 }

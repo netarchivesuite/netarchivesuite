@@ -44,25 +44,29 @@ import dk.netarkivet.harvester.datamodel.WeeklyFrequency;
 /**
  * Contains utility methods for creating and editing schedule definitions for
  * harvests.
- *
  */
-
 public class ScheduleDefinition {
-    private static final String BEGIN_AT_PARAMETER = "beginAt";
-    private static final String FIRST_HARVEST_TIME_PARAMETER = "firstHarvestTime";
-    private static final String CONTINUE_PARAMETER = "continue";
-    private static final String END_HARVEST_TIME_PARAMETER = "endHarvestTime";
-    private static final String TIMESPAN_PARAMETER = "timespan";
-    private static final String HARVEST_TIME_PARAMETER = "harvestTime";
-    private static final String FREQUENCY_MINUTES_PARAMETER = "frequency_minutes";
-    private static final String FREQUENCY_HOURS_PARAMETER = "frequency_hours";
-    private static final String FREQUENCY_DAY_PARAMETER = "frequency_day";
-    private static final String FREQUENCY_DATE_PARAMETER = "frequency_date";
-    private static final String COMMENTS_PARAMETERS = "comments";
-    private static final String EDITION_PARAMETER = "edition";
-    private static final String NUMBER_OF_HARVESTS_PARAMETER = "numberOfHarvests";
-    private static final String NAME_PARAMETER = "name";
-    private static final String UPDATE_PARAMETER = "update";
+    
+    /**
+     * Parameters for the Definitions-edit-schedule.jsp page. They should
+     * be self explanatory.
+     */
+    static final String BEGIN_AT_PARAMETER = "beginAt";
+    static final String FIRST_HARVEST_TIME_PARAMETER = "firstHarvestTime";
+    static final String CONTINUE_PARAMETER = "continue";
+    static final String END_HARVEST_TIME_PARAMETER = "endHarvestTime";
+    static final String TIMESPAN_PARAMETER = "timespan";
+    static final String HARVEST_TIME_PARAMETER = "harvestTime";
+    static final String FREQUENCY_MINUTES_PARAMETER = "frequency_minutes";
+    static final String FREQUENCY_HOURS_PARAMETER = "frequency_hours";
+    static final String FREQUENCY_DAY_PARAMETER = "frequency_day";
+    static final String FREQUENCY_DATE_PARAMETER = "frequency_date";
+    static final String COMMENTS_PARAMETERS = "comments";
+    static final String EDITION_PARAMETER = "edition";
+    static final String NUMBER_OF_HARVESTS_PARAMETER = "numberOfHarvests";
+    static final String NAME_PARAMETER = "name";
+    static final String UPDATE_PARAMETER = "update";
+    static final String FREQUENCY_PARAMETER = "frequency";
 
     /**
      * Private constructor. No instances.
@@ -252,8 +256,8 @@ public class ScheduleDefinition {
      * @return  the Frequency for the harvest
      */
     private static Frequency getFrequency(PageContext context, I18n i18n) {
-        int frequency = HTMLUtils.parseAndCheckInteger(context, "frequency",
-                1, Integer.MAX_VALUE);
+        int frequency = HTMLUtils.parseAndCheckInteger(context,
+                FREQUENCY_PARAMETER, 1, Integer.MAX_VALUE);
         HTMLUtils.forwardOnEmptyParameter(context,
                 TIMESPAN_PARAMETER, HARVEST_TIME_PARAMETER);
         HTMLUtils.forwardOnIllegalParameter(context, TIMESPAN_PARAMETER,

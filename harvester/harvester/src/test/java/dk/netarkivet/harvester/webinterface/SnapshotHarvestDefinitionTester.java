@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.webinterface;
-/**
- * lc forgot to comment this!
- */
 
 import javax.servlet.jsp.PageContext;
 
@@ -33,12 +30,13 @@ import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
-
+/**
+ * Unit-test for the SnapshotHarvestDefinition class.
+ */
 public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
     public SnapshotHarvestDefinitionTester(String s) {
         super(s);
     }
-
 
     public void setUp() throws Exception {
         super.setUp();
@@ -48,6 +46,10 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
         super.tearDown();
     }
 
+    /**
+     * Tests the SnapshotHarvestDefinition.processRequest() method.
+     * @throws Exception
+     */
     public void testProcessRequest() throws Exception {
         MockupServletRequest request = new MockupServletRequest();
         // Should just return with update==null

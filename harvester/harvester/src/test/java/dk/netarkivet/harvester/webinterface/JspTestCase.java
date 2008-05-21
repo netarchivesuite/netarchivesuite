@@ -67,10 +67,10 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.ApplicationUtils;
 
 /**
- * lc forgot to comment this!
- *
+ * An attempt at making a subclass of TestCase suitable for testing JSP pages.
+ * Only used by HarveststatusPerdomainTester.
+ * Is currently not working!
  */
-
 public class JspTestCase extends TestCase {
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
     public static final File TOP_DATA_DIR =

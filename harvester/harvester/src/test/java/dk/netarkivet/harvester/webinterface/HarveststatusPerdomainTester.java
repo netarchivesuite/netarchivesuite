@@ -35,10 +35,9 @@ import dk.netarkivet.testutils.StringAsserts;
 
 
 /**
- * lc forgot to comment this!
- *
+ * Unit-test for the JSP page History/Harveststatus-perdomain.jsp.
+ * FIXME Currently, the two tests here don't work.
  */
-
 public class HarveststatusPerdomainTester extends JspTestCase {
     private static final String webPage = "/History/Harveststatus-perdomain.jsp";
 

@@ -36,7 +36,9 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
 /**
- * @version $Id$
+ * Unit-test for the GUIWebServer class when the DefinitionsSiteSection
+ * is loaded.
+ * FIXME Some of these tests can be merged into the GUIWebServerTester.
  */
 public class HarvestDefinitionGUITester extends DataModelTestCase {
     private GUIWebServer gui;
@@ -47,6 +49,8 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        // Add a DefinitionsSiteSection to the list of Sitesections being loaded
+        // when GUIWebServer starts.
         Settings.set(Settings.SITESECTION_WEBAPPLICATION,
                 dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_JSP_DIR);
         Settings.set(Settings.SITESECTION_DEPLOYPATH,
@@ -124,7 +128,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
 
         // If we get here without exceptions, everything has shut down nicely
 
-        // Except some threads still hang around, keeping the DB alive.
+        // Except some threads may be still hanging around, keeping the DB alive.
         Thread.sleep(1000);
     }
 
