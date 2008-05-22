@@ -36,11 +36,11 @@ import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.RangeFilter;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.SparseRangeFilter;
 import dk.netarkivet.common.utils.arc.ARCKey;
 
 /**
@@ -147,7 +147,7 @@ public class ARCLookup {
         // RangeFilter + ConstantScoreQuery means we ignore norms and other
         // memory-eating things we don't need that TermQuery would imply.
         Query query = new ConstantScoreQuery(
-                new RangeFilter(DigestIndexer.FIELD_URL, uri, uri, true, true));
+                new SparseRangeFilter(DigestIndexer.FIELD_URL, uri, uri, true, true));
         try {
             Hits hits = luceneSearcher.search(query);
             Document doc = null;
