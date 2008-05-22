@@ -1,0 +1,1 @@
+copy tests\dk\netarkivet\sidekick\data\originals\tempfile.txt tests\dk\netarkivet\sidekick\data\working\tempfile.txt

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="http://www.netarkivet.dk/schemas/deploy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <installtype>test</installtype>
+    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
+    <largeIndexTimeout>432000000</largeIndexTimeout>
+    <location name="kb">
+        <installdir>/home/test</installdir>
+        <installdirwindows>c:\Documents and Settings\ba-test</installdirwindows>
+        <admin>
+            <host name="kb-dev-adm-001.kb.dk">
+                <jmxport>8100</jmxport><!-- arcrep -->
+                <jmxport>8101</jmxport><!-- bamonsb -->
+                <jmxport>8102</jmxport><!-- bamonkb -->
+                <jmxport>8103</jmxport><!-- harvestdef -->
+                <remotefilePort>8300</remotefilePort><!-- arcrep -->
+                <remotefilePort>8301</remotefilePort><!-- bamonsb -->
+                <remotefilePort>8302</remotefilePort><!-- bamonkb -->
+                <remotefilePort>8303</remotefilePort><!-- harvestdef -->
+            </host>
+        </admin>
+        <bitarchive>
+            <host os="windows" name="kb-dev-bar-010.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <remotefilePort>8300</remotefilePort><!-- bitarchive -->
+                <filedir>q:\bitarkiv</filedir>
+            </host>
+            <host os="windows" name="kb-dev-bar-011.bitarkiv.kb.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <remotefilePort>8300</remotefilePort><!-- bitarchive -->
+                <filedir>q:\bitarkiv</filedir>
+            </host>
+        </bitarchive>
+        <harvesters>
+            <host name="kb-dev-har-001.kb.dk">
+                <lowpriport>8081</lowpriport>
+                <highpriport>8082</highpriport>
+                <jmxport>8100</jmxport><!-- harvester -->
+                <jmxport>8101</jmxport><!-- sidekick -->
+                <jmxport>8102</jmxport><!-- harvester -->
+                <jmxport>8103</jmxport><!-- sidekick -->
+                <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8301</remotefilePort><!-- sidekick  8081 -->
+                <remotefilePort>8302</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8303</remotefilePort><!-- sidekick  8081 -->
+                <heritrixGuiPort>8090</heritrixGuiPort>
+                <heritrixJmxPort>8091</heritrixJmxPort>
+                <heritrixGuiPort>8092</heritrixGuiPort>
+                <heritrixJmxPort>8093</heritrixJmxPort>
+            </host>
+            <host name="kb-dev-har-002.kb.dk">
+                <lowpriport>8081</lowpriport>
+                <jmxport>8100</jmxport><!-- harvester -->
+                <jmxport>8101</jmxport><!-- sidekick -->
+                <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8301</remotefilePort><!-- sidekick 8081-->
+                <heritrixGuiPort>8090</heritrixGuiPort>
+                <heritrixJmxPort>8091</heritrixJmxPort>
+            </host>
+        </harvesters>
+        <access>
+            <host name="kb-dev-acs-001.kb.dk">
+                <port>8076</port>
+                <jmxport>8100</jmxport><!-- viewerproxy -->
+                <jmxport>8101</jmxport><!-- indexserver -->
+                <remotefilePort>8300</remotefilePort><!-- viewerproxy -->
+                <remotefilePort>8301</remotefilePort><!-- viewerproxy -->
+            </host>
+        </access>
+        <ftp>
+            <host name="kb-dev-har-001.kb.dk">
+                <user>ftptestuser</user>
+                <pw>ftptestpasswd</pw>
+            </host>
+        </ftp>
+        <jms>
+            <host name="kb-dev-adm-001.kb.dk">
+                <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
+            </host>
+        </jms>
+        <mail>
+            <host name="examplesmtpserversb.netarkivet.dk">
+                <sender>example@netarkivet.dk</sender>
+                <receiver>example@netarkivet.dk</receiver>
+            </host>
+        </mail>
+        <application type="indexserver" host="kb-dev-acs-001.kb.dk"/>
+    </location>
+    <location name="sb">
+        <installdir>/home/netarkiv</installdir>
+        <bitarchive>
+            <host name="sb-dev-bar-001.statsbiblioteket.dk">
+                <jmxport>8100</jmxport><!-- bitarchive -->
+                <remotefilePort>8300</remotefilePort><!-- bitarchive -->
+                <filedir>/netarkiv/0001</filedir>
+                <filedir>/netarkiv/0002</filedir>
+            </host>
+        </bitarchive>
+        <harvesters>
+            <host name="sb-dev-har-001.statsbiblioteket.dk">
+                <highpriport>8081</highpriport>
+                <jmxport>8100</jmxport><!-- harvester -->
+                <jmxport>8101</jmxport><!-- sidekick -->
+                <remotefilePort>8300</remotefilePort><!-- harvester -->
+                <remotefilePort>8301</remotefilePort><!-- sidekick -->
+                <heritrixGuiPort>8090</heritrixGuiPort>
+                <heritrixJmxPort>8091</heritrixJmxPort>
+            </host>
+        </harvesters>
+        <access>
+            <host name="sb-dev-acs-001.statsbiblioteket.dk">
+                <port>8076</port>
+                <jmxport>8100</jmxport><!-- viewerproxy -->
+                <remotefilePort>8300</remotefilePort><!-- viewerproxy -->
+            </host>
+        </access>
+        <ftp>
+            <host name="sb-dev-har-001.statsbiblioteket.dk">
+                <user>ftptestuser</user>
+                <pw>ftptestpasswd</pw>
+            </host>
+        </ftp>
+        <mail>
+            <host name="examplesmtpserverkb.netarkivet.dk">
+                <sender>example@netarkivet.dk</sender>
+                <receiver>example@netarkivet.dk</receiver>
+            </host>
+        </mail>
+    </location>
+</root>

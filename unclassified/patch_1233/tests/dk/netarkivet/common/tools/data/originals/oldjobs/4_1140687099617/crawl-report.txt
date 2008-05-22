@@ -1,0 +1,10 @@
+Crawl Name: 3levels_orderxml
+Crawl Status: Finished
+Duration Time: 12s148ms
+Total Seeds Crawled: 1
+Total Seeds not Crawled: 0
+Total Hosts Crawled: 1
+Total Documents Crawled: 48
+Processed docs/sec: 0.91
+Bandwidth in Kbytes/sec: 8
+Total Raw Data Size in Bytes: 109583 (107 KB) 

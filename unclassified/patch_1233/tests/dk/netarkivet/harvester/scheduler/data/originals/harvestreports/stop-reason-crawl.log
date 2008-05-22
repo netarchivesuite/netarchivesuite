@@ -1,0 +1,5 @@
+2006-08-15T09:53:58.470Z     1         59 dns:www.dr.dk P http://www.dr.dk/ text/dns #045 20060815075357634+15 - - content-size:59
+2006-08-15T09:53:58.958Z   302        301 http://www.kb.dk/robots.txt P http://www.dr.dk/ text/html #007 20060815075358804+124 ESVJLA2FRUB6UDKGUQWRMONKMVJQR325 - content-size:521
+2006-08-15T09:53:58.958Z   302        301 http://www.dr.dk/robots.txt P http://www.dr.dk/ text/html #007 20060815075358804+124 ESVJLA2FRUB6UDKGUQWRMONKMVJQR325 - content-size:521
+2006-08-15T09:54:11.455Z -5003          - http://dr.dk/presse/index-da.php LRL http://dr.dk/index-da.php no-type #039 - - - Q:group-max-all-kb
+2006-08-15T09:54:11.541Z -5003          - http://test.statsbiblioteket.dk/robots.txt LRLL http://dr.dk/kildetekster/index-da.php no-type #031 - - - Q:group-max-fetch-successes

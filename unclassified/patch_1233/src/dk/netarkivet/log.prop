@@ -1,0 +1,11 @@
+#define Handlers
+handlers=java.util.logging.FileHandler
+#define default logging level
+.level=WARNING
+#setup the File Handler
+java.util.logging.FileHandler.pattern=./log/netarkiv%g.log
+java.util.logging.FileHandler.limit=100000
+java.util.logging.FileHandler.count=3
+java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
+#define logging levels
+dk.netarkivet.level=ALL

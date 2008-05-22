@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:d="http://www.netarkivet.dk/schemas/deploy"
+    targetNamespace="http://www.netarkivet.dk/schemas/deploy"
+    elementFormDefault="qualified" >
+
+    <annotation>
+        <documentation xml:lang="en">
+            This is a schema for the deployment descriptor xml
+            files.
+        </documentation>
+    </annotation>
+
+    <simpleType name="windowspath">
+        <restriction base="string">
+            <pattern value="([a-z]|[A-Z]):((\\(.*))*)\\?"></pattern>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="unixpath">
+        <restriction base="string">
+            <pattern value="(/(.*))*/?"></pattern>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="directorypath">
+        <union memberTypes="d:windowspath d:unixpath" />
+    </simpleType>
+
+    <simpleType name="hostname">
+        <restriction base="string">
+            <pattern value="(.*)([.](.*))*" ></pattern>
+        </restriction>
+    </simpleType>
+
+   <simpleType name="port">
+        <restriction base="string">
+            <pattern value="[0-9]{1,5}" ></pattern>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="ostype" >
+        <restriction base="string">
+            <enumeration value="windows"/>
+            <enumeration value="linux"/>
+        </restriction>
+    </simpleType>
+
+    <element name="root" >
+        <complexType>
+            <sequence>
+                <element name="installtype" type="string" />
+                <element name="jmxMonitorRolePassword" type="string" />
+                <element name="largeIndexTimeout" type="integer"/>
+                <element name="location" type="d:location" minOccurs="1" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="setting">
+        <attribute name="name" type="string"/>
+    </complexType>
+
+    <complexType name="location" >
+        <sequence>
+            <element name="installdir" type="d:unixpath" />
+            <element name="installdirwindows" type="d:windowspath" minOccurs="0" maxOccurs="1"/>
+            <element name="admin" type="d:namedHost" minOccurs="0" />
+            <element name="bitarchive" type="d:filedirHosts" />
+            <element name="harvesters" type="d:harvesterHost" />
+            <element name="access" type="d:namedHost" />
+            <element name="ftp" type="d:loginHosts" />
+            <element name="jms" type="d:classHost" minOccurs="0"/>
+            <element name="mail" type="d:mailHost" />
+        </sequence>
+        <attribute name="name" type="string"/>
+    </complexType>
+
+    <!-- Any kind of host, may specify JMX ports for java apps -->
+    <complexType name="simpleHost">
+        <sequence>
+            <element name="port" type="d:port" minOccurs="0" maxOccurs="unbounded" />
+            <element name="jmxport" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="remotefilePort" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="os" type="d:ostype" />
+        <attribute name="name" type="d:hostname" />
+    </complexType>
+
+    <!-- Exactly one harvester host -->
+    <complexType name="harvesterHost">
+        <sequence>
+            <element name="host" type="d:priorityHost" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="priorityHost">
+        <sequence>
+            <element name="lowpriport" type="d:port" minOccurs="0" maxOccurs="1" />
+            <element name="highpriport" type="d:port" minOccurs="0" maxOccurs="1"/>
+            <element name="jmxport" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="remotefilePort" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="heritrixGuiPort" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="heritrixJmxPort" type="d:port" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="name" type="d:hostname" />
+    </complexType>
+
+    <!-- Exactly one simple host -->
+    <complexType name="namedHost">
+        <sequence>
+            <element name="host" type="d:simpleHost" />
+        </sequence>
+    </complexType>
+
+    <!-- Any number of simple hosts -->
+    <complexType name="namedHosts">
+        <sequence>
+            <element name="host" type="d:simpleHost" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="mailHost">
+        <sequence>
+            <element name="host" type="d:hostWithMail" />
+        </sequence>
+    </complexType>
+
+    <complexType name="hostWithMail">
+        <complexContent>
+            <extension base="d:simpleHost">
+                <sequence>
+                    <element name="sender" type="string" />
+                    <element name="receiver" type="string" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="loginHosts">
+        <sequence>
+            <element name="host" type="d:hostWithLogin" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <complexType name="hostWithLogin">
+        <complexContent>
+            <extension base="d:simpleHost">
+                <sequence>
+                    <element name="user" type="string" />
+                    <element name="pw" type="string" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="classHost" >
+        <sequence>
+            <element name="host" type="d:hostWithClass" />
+        </sequence>
+    </complexType>
+
+    <complexType name="hostWithClass">
+        <complexContent>
+            <extension base="d:simpleHost">
+                <sequence>
+                    <element name="class" type="string" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="filedirHosts">
+        <sequence>
+            <element name="host" type="d:hostWithFiledirs" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <complexType name="hostWithFiledirs" >
+          <complexContent>
+            <extension base="d:simpleHost">
+                <sequence>
+                    <element name="filedir" type="d:directorypath" maxOccurs="unbounded" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
