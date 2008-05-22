@@ -27,7 +27,7 @@ This page shows details about a single job.
 
 Note that the response language for the page is set using requested locale
 of the client browser when fmt:setBundle is called. After that, fmt:format
-and reposne.getLocale use this locale.
+and response.getLocale use this locale.
 --%><%@ page import="java.util.Map,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.exceptions.UnknownID,
@@ -36,7 +36,6 @@ and reposne.getLocale use this locale.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinition,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.HarvestInfo,
                  dk.netarkivet.harvester.datamodel.Job,
@@ -175,6 +174,7 @@ and reposne.getLocale use this locale.
         for (Map.Entry<String, String> conf :
                 job.getDomainConfigurationMap().entrySet()) {
             String domainLink;
+            String qaLink;
             String configLink;
             String domainName = conf.getKey();
             String configName = conf.getValue();
@@ -185,6 +185,15 @@ and reposne.getLocale use this locale.
                                 + Constants.DOMAIN_PARAM + "="
                                 + HTMLUtils.encodeAndEscapeHTML(domainName) + "\">"
                                 + HTMLUtils.escapeHtmlValues(domainName) + "</a>";
+                qaLink = " (<a href=\"/" + Constants.QA_SITESECTION_DIRNAME +
+                         "/QA-changeIndex.jsp?"
+                         + Constants.JOB_PARAM + "="+ job.getJobID()
+                         + "&amp;" + Constants.INDEXLABEL_PARAM + "="
+                         + HTMLUtils.encodeAndEscapeHTML(I18N.getString(
+                           response.getLocale(), "job.0", job.getJobID()))
+                         + "&amp;returnURL=http://www."
+                         + HTMLUtils.encodeAndEscapeHTML(domainName)
+                         + "/\">QA</a>)";             
                 configLink =
                         "<a href=\"/HarvestDefinition/Definitions-edit-domain-config.jsp?"
   						        + Constants.DOMAIN_PARAM + "="
@@ -195,13 +204,14 @@ and reposne.getLocale use this locale.
                                 + HTMLUtils.escapeHtmlValues(configName)  + "</a>";
             } else {
                 domainLink = HTMLUtils.escapeHtmlValues(domainName);
+                qaLink = "";
                 configLink = HTMLUtils.escapeHtmlValues(configName);
             }
             HarvestInfo hi = ddao.getDomainJobInfo(job, domainName,
                     configName);
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
-        <td><%=domainLink%></td>
+        <td><%=domainLink%><%=qaLink%></td>
         <td><%=configLink%></td>
             <% if (hi == null) { %>
               <td>-</td><td>-</td><td>-</td>
@@ -228,6 +238,22 @@ and reposne.getLocale use this locale.
             } else {
                 url = seed;
             }
+            String qaLink;
+            if (SiteSection.isDeployed(
+                    Constants.DEFINITIONS_SITESECTION_DIRNAME)) {
+                qaLink = " (<a href=\"/" + Constants.QA_SITESECTION_DIRNAME +
+                         "/QA-changeIndex.jsp?"
+                         + Constants.JOB_PARAM + "="+ job.getJobID()
+                         + "&amp;" + Constants.INDEXLABEL_PARAM + "="
+                         + HTMLUtils.encodeAndEscapeHTML(I18N.getString(
+                           response.getLocale(), "job.0", job.getJobID()))
+                         + "&amp;returnURL="
+                         + HTMLUtils.encodeAndEscapeHTML(url)
+                         + "/\">QA</a>)";
+            } else {
+               qaLink = "";
+            }
+
             // If length of seed exceeds Constants.MAX_SHOWN_SIZE_OF_URL
             // show only Constants.MAX_SHOWN_SIZE_OF_URL of the seed, and append
             // the string " .."
@@ -237,7 +263,7 @@ and reposne.getLocale use this locale.
     <a target="viewerproxy"
        href="<%=HTMLUtils.escapeHtmlValues(url)%>"><%=
         HTMLUtils.escapeHtmlValues(shownSeed)%>
-    </a>
+    </a><%=qaLink%>
     <br/>
     <%
         }

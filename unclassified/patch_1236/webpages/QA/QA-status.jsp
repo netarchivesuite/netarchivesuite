@@ -39,19 +39,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <iframe src="QA-getStatus.jsp" width="600"></iframe>
 <p><fmt:message key="helptext;qa.statusbox.explanation"/></p>
 
-<h2><fmt:message key="missing.urls"/></h2>
+<h2><fmt:message key="collect.missing.urls"/></h2>
 <p>
-    <a href="QA-startRecordingURIs.jsp"><fmt:message key="start.collecting.urls"/></a>
-</p>
-<p>
-    <a href="QA-stopRecordingURIs.jsp"><fmt:message key="stop.collecting.urls"/></a>
-</p>
-<p>
-    <a href="QA-clearRecordedURIs.jsp"><fmt:message key="clear.collected.urls"/></a>
-</p>
-<p>
-    <a href="QA-getRecordedURIs.jsp"><fmt:message key="show.collected.urls"/></a>
-</p>
+<table><tr>
+<td><form action="QA-startRecordingURIs.jsp" method="post"><input type="submit" value="<fmt:message key="start"/>"/></form></td>
+<td><form action="QA-stopRecordingURIs.jsp" method="post"><input type="submit" value="<fmt:message key="stop"/>"/></form></td>
+<td><form action="QA-clearRecordedURIs.jsp" method="post"><input type="submit" value="<fmt:message key="clear"/>"/></form></td>
+<td><form action="QA-getRecordedURIs.jsp" method="post"><input type="submit" value="<fmt:message key="show"/>"/></form></td>
+</tr></table></p>
 
 <h2><fmt:message key="browsing.jobs.in.viewerproxy"/></h2>
 <%

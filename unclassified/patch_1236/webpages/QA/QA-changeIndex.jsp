@@ -34,7 +34,8 @@ indexLabel: An arbitrary name that will be associated with the created index.
                     dk.netarkivet.viewerproxy.Constants,
                     dk.netarkivet.viewerproxy.Controller,
                     dk.netarkivet.viewerproxy.distribute.HTTPControllerClient,
-                    dk.netarkivet.viewerproxy.webinterface.Parameters, dk.netarkivet.viewerproxy.webinterface.QASiteSection"
+                    dk.netarkivet.viewerproxy.webinterface.Parameters,
+                    dk.netarkivet.viewerproxy.webinterface.QASiteSection"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -44,8 +45,13 @@ indexLabel: An arbitrary name that will be associated with the created index.
     HTMLUtils.setUTF8(request);
     HTMLUtils.forwardOnMissingParameter(pageContext, Parameters.JOB_ID,
             Parameters.INDEX_LABEL);
-    Controller c = new HTTPControllerClient(response, out,
-            QASiteSection.createQAReturnURL(request));
+             String qaReturnURL;
+    if (request.getParameter("returnURL") != null) {
+        qaReturnURL = request.getParameter("returnURL");
+    } else {
+        qaReturnURL = QASiteSection.createQAReturnURL(request);
+    }
+    Controller c = new HTTPControllerClient(response, out, qaReturnURL);
     Set<Long> jobIDList = new HashSet<Long>();
     //Note: It's okay exceptions end up on the error page, but sending an empty
     //set or null to the viewerproxy will delay exceptions for too long.
