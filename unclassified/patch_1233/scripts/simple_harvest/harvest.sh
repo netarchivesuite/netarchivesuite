@@ -1,5 +1,29 @@
 #!/bin/bash
 
+## $Id$
+## $Revision$
+## $Date$
+## $Author$
+##
+## The Netarchive Suite - Software to harvest and preserve websites
+## Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+##
+## This library is free software; you can redistribute it and/or
+## modify it under the terms of the GNU Lesser General Public
+## License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU Lesser General Public
+## License along with this library; if not, write to the Free Software
+## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+##
+
+
 ## This script can be used to start up a clean "local" functioning
 ## NetarchiveSuite with all applications running on the local machine. The only
 ## configuration which should be necessary is setting the paths to the JMS
@@ -7,8 +31,12 @@
 
 ## Path for Java 1.5.0_06 or higher, can be overridden by $JAVA or $JAVA_HOME
 JAVA=${JAVA:=${JAVA_HOME:=/usr/java}}
+
 ## Path for the JMS broker, can be overriden by $IMQ
 IMQ=${IMQ:=/opt/sun/mq/bin/imqbrokerd}
+
+## Path for the Java executable, can be overridden by $JAVA_CMD
+JAVA_CMD=${JAVA_CMD:=$JAVA_HOME/bin/java}
 
 ## ------------ The following settings normally work --------------
 
@@ -62,7 +90,7 @@ export HERITRIXPORT=8090
 ## Whether or not to use -hold argument
 ## Set $HOLD to the empty string to have windows automatically close when
 ## the process dies.
-if [ -z "${!HOLD*}" ]; then
+if [ -z "${!HOLD##}" ]; then
     HOLD=-hold
 fi
 
@@ -80,7 +108,7 @@ function makeCommonOptions {
 }
 
 function makeXtermOffset {
-    echo +$(( $XTERM_HOFFSET * ($WINDOWPOS / 3) ))+$(( $XTERM_VOFFSET * ($WINDOWPOS % 3) ));
+    echo +$(( $XTERM_HOFFSET ## ($WINDOWPOS / 3) ))+$(( $XTERM_VOFFSET ## ($WINDOWPOS % 3) ));
 }
 
 # Start a "normal" application (non-harvest).
@@ -93,7 +121,10 @@ function startApp {
     app=$2;
     otherargs=$3;
     termgeom=$TERMSIZE`makeXtermOffset`;
-    $XTERM_CMD $HOLD -geometry $termgeom -title "$title" -e $JAVA/bin/java \
+    logpropfile="$ARCREP_HOME/log/log.prop.$title-$HTTPPORT"
+    sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/'$title'-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
+    $XTERM_CMD $HOLD -geometry $termgeom -title "$title" -e $JAVA_CMD \
+        -Djava.util.logging.config.file="$logpropfile" \
         $JVM_ARGS `makeCommonOptions` -Dsettings.common.http.port=$HTTPPORT \
         -Dsettings.common.remoteFile.port=$FILETRANSFERPORT \
         -classpath $CLASSPATH $otherargs dk.netarkivet.$app &
@@ -122,10 +153,13 @@ function startHarvestApp {
              -Dsettings.harvester.harvesting.heritrix.jmxPort=$(( $HERITRIXPORT + 1 ))";
     runsetting=-Dsettings.harvester.harvesting.isrunningFile=./hcs${hcsid}Running.tmp;
     title="Harvest Controller (Priority ${priority})";
+    logpropfile="$ARCREP_HOME/log/log.prop.HarvestController-$HTTPPORT"
+    sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/HarvestController-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
     dirsetting="-Dsettings.harvester.harvesting.serverDir=server$hcsid \
       -Dsettings.harvester.harvesting.oldjobsDir=oldjobs$hcsid";
 
-    hcstart="$JAVA/bin/java `makeCommonOptions` $JVM_ARGS -classpath $CLASSPATH \
+    hcstart="$JAVA_CMD `makeCommonOptions` $JVM_ARGS -classpath $CLASSPATH \
+      -Djava.util.logging.config.file=\"$logpropfile\" \
       $prioritysetting $portsetting $runsetting $dirsetting \
       dk.netarkivet.harvester.harvesting.HarvestControllerApplication";
     scriptfile=./hcs${hcsid}.sh;
@@ -135,18 +169,22 @@ function startHarvestApp {
     chmod 755 $scriptfile;
     $scriptfile;
     JMXPORT=$(( $JMXPORT + 1 ));
-    HTTPPORT=$(( $HTTPPORT + 1 ));
     HERITRIXPORT=$(( $HERITRIXPORT + 2 ));
 
     # This starts a SideKick that re-runs the script made before
+    title=SideKick
+    logpropfile="$ARCREP_HOME/log/log.prop.$title-$HTTPPORT"
+    sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/'$title'-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
     $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title SideKick \
-      -e $JAVA/bin/java `makeCommonOptions` $JVM_ARGS -classpath \
-      $CLASSPATH $runsetting $portsetting \
+      -e $JAVA_CMD `makeCommonOptions` $JVM_ARGS \
+      -Djava.util.logging.config.file="$logpropfile" \
+      -classpath $CLASSPATH $runsetting $portsetting \
       dk.netarkivet.harvester.sidekick.SideKick \
       dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook \
       $scriptfile &
     JMXPORT=$(( $JMXPORT + 1 ));
     WINDOWPOS=$(( $WINDOWPOS + 1 ));
+    HTTPPORT=$(( $HTTPPORT + 1 ));
 }
 
 ## Clean up and copy harvest definition data
@@ -167,27 +205,27 @@ if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
     ## Clean up other stuff left behind
 
     ## Clean up old logs
-    rm -rf $ARCREP_HOME/log/* $ARCREP_HOME/derby.log
+    rm -rf $ARCREP_HOME/log/## $ARCREP_HOME/derby.log
 
     ## Clean up everything else left behind by old harvests
-    rm -rf $ARCREP_HOME/admin.data $ARCREP_HOME/server* \
-        $ARCREP_HOME/bitarchive* $ARCREP_HOME/oldjobs* $ARCREP_HOME/cache
+    rm -rf $ARCREP_HOME/admin.data $ARCREP_HOME/server## \
+        $ARCREP_HOME/bitarchive## $ARCREP_HOME/oldjobs## $ARCREP_HOME/cache
 fi
 
 chmod 600 $NETARCHIVEDIR/conf/jmxremote.password
 mkdir -p $ARCREP_HOME/log
 
 ## Clean up log locks
-rm -f $ARCREP_HOME/log/*.lck
+rm -f $ARCREP_HOME/log/##.lck
 
 ## Clean up temporary things left behind
-rm -rf $ARCREP_HOME/hcs*.sh
+rm -rf $ARCREP_HOME/hcs##.sh
 
 ## JVM arguments for all processes
 ## Includes a simple indicator of the fact that this is a simple_harvest process
 JVM_ARGS="-Xmx1512m -Ddk.netarkivet.settings.file=$ARCREP_HOME/settings.xml \
    -Ddk.netarkivet.monitorsettings.file=$ARCREP_HOME/monitor_settings.xml \
-   -Djava.util.logging.config.file=$ARCREP_HOME/log.prop -Dsimple.harvest.indicator=0"
+   -Dsimple.harvest.indicator=0"
 
 ## Classpath
 CLASSPATH=:$NETARCHIVEDIR/lib/dk.netarkivet.archive.jar:$NETARCHIVEDIR/lib/dk.netarkivet.viewerproxy.jar:$NETARCHIVEDIR/lib/dk.netarkivet.harvester.jar:$NETARCHIVEDIR/lib/dk.netarkivet.monitor.jar
