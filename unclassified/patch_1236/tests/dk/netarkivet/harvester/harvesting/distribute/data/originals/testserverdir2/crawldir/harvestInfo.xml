@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<harvestInfo>
+  <version>0.2</version>
+  <jobId>42</jobId>
+  <dataPath>tests/dk/netarkivet/distribute/harvestscheduler/data/working/testserverdir2/crawldir</dataPath>
+  <harvestNum>1</harvestNum>
+  <maxBytesPerDomain>100000</maxBytesPerDomain>
+  <maxObjectsPerDomain>10000</maxObjectsPerDomain>
+  <orderXMLName>defaultOrderXML</orderXMLName>
+  <priority>HIGH_PRIORITY</priority>
+  <origHarvestDefinitionID>1</origHarvestDefinitionID>
+</harvestInfo>

@@ -1,0 +1,23 @@
+#define Handlers
+handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netarkivet.monitor.MonitorLogHandler
+#handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler
+#define default logging level
+.level=INFO
+#setup the File Handler
+java.util.logging.FileHandler.level=FINE
+java.util.logging.FileHandler.pattern=./log/harvestcontrollerapplication%u.log
+java.util.logging.FileHandler.limit=1000000
+java.util.logging.FileHandler.count=100
+java.util.logging.FileHandler.append=true
+java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
+#setup the MonitorHandler
+dk.netarkivet.monitor.MonitorLogHandler.level=FINE
+#define logging levels
+java.util.logging.ConsoleHandler.level=CONFIG
+org.level=SEVERE
+org.archive.level=WARNING
+org.archive.crawler.filer.level=OFF
+org.archive.crawler.framework.Filter.level=OFF
+dk.netarkivet.level=FINE
+dk.netarkivet.common.distribute.JMSConnection.level=WARNING
+sun.jmx.level=WARNING

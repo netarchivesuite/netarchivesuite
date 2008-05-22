@@ -1,0 +1,47 @@
+grant codeBase "file:lib/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:${java.home}/-" {
+  permission java.security.AllPermission;
+};
+
+grant principal javax.management.remote.JMXPrincipal "monitorRole" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:lib/heritrix/lib/-" {
+  permission java.security.AllPermission;
+};
+
+/* Each web site section requires an AllPermission for the JSP compilation to
+ * work, but we don't want to give AllPermission to all of commontempdir, lest
+ * third-party classes get that permission, too. */
+grant codeBase "file:tests/commontempdir/Status/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tests/commontempdir/QA/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tests/commontempdir/History/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tests/commontempdir/HarvestDefinition/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tests/commontempdir/BitPreservation/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+/* This allows third-party batch classes to figure out which location they're at
+*/
+grant {
+  permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
+};
+
+/* Directories in the bitarchives should be added below.
+ */

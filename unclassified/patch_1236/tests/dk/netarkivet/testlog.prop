@@ -1,0 +1,18 @@
+#define Handlers
+handlers=java.util.logging.FileHandler,dk.netarkivet.monitor.logging.CachingLogHandler
+#define default logging level
+.level=INFO
+#setup the File Handler
+# Do not use \ -- this is parsed as a Java string!
+java.util.logging.FileHandler.pattern=./tests/testlogs/netarkivtest.log
+java.util.logging.FileHandler.limit=1500000
+java.util.logging.FileHandler.count=1
+java.util.logging.FileHandler.append=false
+java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter
+#define logging levels
+dk.netarkivet.level=ALL
+#do not log ordinary messages from non-netarkivet packages
+org.level=WARNING
+#Give properties to CachingLogHandler
+dk.netarkivet.monitor.logging.CachingLogHandler.formatter=java.util.logging.SimpleFormatter
+dk.netarkivet.monitor.logging.CachingLogHandler.level=FINE

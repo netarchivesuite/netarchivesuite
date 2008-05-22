@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:set="http://www.netarkivet.dk/schemas/monitor_settings"
+    targetNamespace="http://www.netarkivet.dk/schemas/monitor_settings"
+    elementFormDefault="qualified" >
+
+    <element name="settings">
+        <complexType>
+            <all>
+                <element name="monitor" type="set:deploy"/>
+            </all>
+        </complexType>
+    </element>
+
+    <complexType name="deploy">
+        <all>
+            <element name="jmxMonitorRolePassword" type="string"/>
+        </all>
+    </complexType>
+</schema>
