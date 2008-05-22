@@ -21,16 +21,17 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * kfc forgot to comment this!
- */
 
 import java.net.URI;
 import java.util.Observable;
 
 import junit.framework.TestCase;
 
-
+/**
+ * Unit-tests of the abstract URIObserver class.
+ * Uses a local class TestURIObserver that extends 
+ * URIObserver.   
+ */
 public class URIObserverTester extends TestCase {
     private TestURIObserver uriObserver;
 

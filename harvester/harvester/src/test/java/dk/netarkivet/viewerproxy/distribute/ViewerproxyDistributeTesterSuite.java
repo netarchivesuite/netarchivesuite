@@ -28,10 +28,10 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
- *
+ * Unit-test suite for the classes in package
+ * dk.netarkivet.viewerproxy.distribute.
+ * 
  */
-
 public class ViewerproxyDistributeTesterSuite {
     /**
      * Create a test suite just for these tests.
@@ -44,7 +44,7 @@ public class ViewerproxyDistributeTesterSuite {
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(HTTPControllerServerTester.class);

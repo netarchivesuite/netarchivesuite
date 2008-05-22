@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * Tests of MissingURIRecorder class.
- */
 
 import java.net.URI;
 import java.util.Set;
@@ -32,7 +29,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
+/**
+ * Tests of the MissingURIRecorder class.
+ */
 public class MissingURIRecorderTester extends TestCase {
     private MissingURIRecorder mur;
 

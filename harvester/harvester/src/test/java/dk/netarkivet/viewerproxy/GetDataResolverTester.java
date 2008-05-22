@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +42,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
-
+/**
+ * Unit-tests for the GetDataResolver class. 
+ */
 public class GetDataResolverTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);

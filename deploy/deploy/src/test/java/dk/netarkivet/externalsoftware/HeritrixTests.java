@@ -79,10 +79,6 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
  * Note that some of these tests require much heap space, so JVM parameter
  * -Xmx512M may be required.
- * Created by IntelliJ IDEA.
- * User: larsrc
- * Date: Dec 2, 2004
- * Time: 11:55:51 AM
  */
 public class HeritrixTests extends TestCase {
 
@@ -465,7 +461,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /**
-     * Test that Heritrix can handle cookies - setting and changing
+     * Test that Heritrix can handle cookies - setting and changing them.
      * This tests requirement #28.
      * @throws IOException
      */

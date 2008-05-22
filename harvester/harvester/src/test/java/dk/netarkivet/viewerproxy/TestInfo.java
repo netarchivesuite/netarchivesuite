@@ -26,10 +26,9 @@ package dk.netarkivet.viewerproxy;
 import java.io.File;
 
 /**
- * Constants for shared use by viewerproxy unit tests
+ * Constants for shared use by viewerproxy unit tests.
  *
  */
-
 public class TestInfo {
     private static final File BASE_DIR = new File("tests/dk/netarkivet/viewerproxy/data");
     static final File WORKING_DIR = new File(BASE_DIR, "working");

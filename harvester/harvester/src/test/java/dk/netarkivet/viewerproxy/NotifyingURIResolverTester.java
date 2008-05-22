@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * Test of NotifyingURIResolver
- */
 
 import java.io.OutputStream;
 import java.net.URI;
@@ -34,7 +31,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
+/**
+ * Test of the NotifyingURIResolver class.
+ */
 public class NotifyingURIResolverTester extends TestCase {
     private TestURIResolver uriResolver;
     private TestURIObserver uriObserver;

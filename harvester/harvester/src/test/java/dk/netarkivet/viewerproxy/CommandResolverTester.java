@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * lc forgot to comment this!
- */
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,7 +30,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
-
+/**
+ * Unit-tests for the CommandResolver class.
+ */
 public class CommandResolverTester extends TestCase {
     public CommandResolverTester(String s) {
         super(s);

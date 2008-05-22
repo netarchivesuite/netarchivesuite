@@ -45,12 +45,14 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
-/** Test of viewer proxy class */
+/** 
+ * Unit-tests for the ViewerProxy class. 
+ */
 public class ViewerProxyTester extends TestCase {
-    /** Viewerproxy instance to clean up in teardown*/
+    /** Viewerproxy instance to clean up in teardown. */
     ViewerProxy proxy;
 
-    /** HTTP client set with localhost as proxy */
+    /** HTTP client set with localhost as proxy. */
     private HttpClient httpClient;
 
     protected void setUp() throws Exception {
@@ -88,14 +90,14 @@ public class ViewerProxyTester extends TestCase {
     }
 
     /**
-     * Verfies that the proxyserver is started without errors.
+     * Verifies that the proxyserver is started without errors.
      */
     public void testStartViewerProxy() {
         proxy = ClassAsserts.assertSingleton(ViewerProxy.class);
     }
 
     /**
-     * Test that the proxyServer is giving meaningful output when asked for nonexisting content
+     * Test that the proxyServer is giving meaningful output when asked for non-existing content
      */
     public void testGetWithNoIndex() throws Exception {
         proxy = ViewerProxy.getInstance();
@@ -114,7 +116,7 @@ public class ViewerProxyTester extends TestCase {
 
     /**
      * Verifies that the proxyServer is logging when asked
-     *  for nonexisting content
+     *  for non-existing content.
      * @throws Exception
      */
     public void testLoggingGetNonExistingURL() throws Exception {
@@ -143,8 +145,8 @@ public class ViewerProxyTester extends TestCase {
     }
 
     /**
-     * Method used for getting URL-objects from the archive through the proxyServer
-     * @param uri the URL to fecth
+     * Method used for getting URL-objects from the archive through the proxyServer.
+     * @param uri the URL to fetch
      * @return the content as a String
      */
     private String getURLfromProxyServer(String uri) throws IOException {

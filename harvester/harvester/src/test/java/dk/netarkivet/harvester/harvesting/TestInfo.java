@@ -89,8 +89,11 @@ public class TestInfo {
             new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "max_objects_pr_domain_order.xml");
     static final File COOKIES_ORDER_FILE =
             new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "cookies_order.xml");
+
     static final File RESTRICTED_URL_ORDER_FILE =
-            new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order.xml");
+	//            new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order.xml");
+	new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "restricted_url_order_org.xml");
+
     static final File SEEDS_FILE = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "seeds.txt");
     static final File SEEDS_FILE2 = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "seeds2.txt");
     static final File SEEDS_DEFAULT = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "seeds-default.txt");

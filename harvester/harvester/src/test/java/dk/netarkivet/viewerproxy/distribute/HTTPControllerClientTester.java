@@ -1,7 +1,26 @@
-package dk.netarkivet.viewerproxy.distribute;
-/**
- * lc forgot to comment this!
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package dk.netarkivet.viewerproxy.distribute;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -18,9 +37,12 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
-import dk.netarkivet.testutils.TestUtils;
 
-
+/**
+ * Unit-tests of the class HTTPControllerClient. 
+ * Uses two dummy classes: An anonymous JspWriter,
+ * and a MockHttpServletResponse.
+ */
 public class HTTPControllerClientTester extends TestCase {
     public HTTPControllerClientTester(String s) {
         super(s);

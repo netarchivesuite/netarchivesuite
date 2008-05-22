@@ -56,7 +56,8 @@ public class TestInfo {
     static final File COOKIES_ORDER_FILE =
             new File(ORIGINALS_DIR, "cookies_order.xml");
     static final File RESTRICTED_URL_ORDER_FILE =
-            new File(ORIGINALS_DIR, "restricted_url_order.xml");
+    //        new File(ORIGINALS_DIR, "restricted_url_order.xml");
+            new File(ORIGINALS_DIR, "restricted_url_order_org.xml"); // taken from tests/dk/netarkivet/externalsoftware/data
     static final File SEEDS_FILE = new File(ORIGINALS_DIR, "seeds.txt");
     static final File SEEDS_FILE2 = new File(ORIGINALS_DIR, "seeds2.txt");
     static final File SEEDS_DEFAULT = new File(ORIGINALS_DIR, "seeds-default.txt");

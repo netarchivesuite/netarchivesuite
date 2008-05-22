@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * Tests of DelegatingController class.
- */
 
 import java.io.File;
 import java.net.URI;
@@ -41,6 +38,9 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.StringAsserts;
 
+/**
+ * Tests of DelegatingController class.
+ */
 public class DelegatingControllerTester extends TestCase {
     private TestMissingURIRecorder mur;
     private TestCDXCache cc;

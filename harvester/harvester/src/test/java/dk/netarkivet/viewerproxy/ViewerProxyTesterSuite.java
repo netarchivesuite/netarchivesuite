@@ -29,10 +29,10 @@ import junit.textui.TestRunner;
 
 
 /**
- * lc forgot to comment this!
+ * Unit test-suite covering all the classes in the
+ * dk.netarkivet.viewerproxy package. 
  *
  */
-
 public class ViewerProxyTesterSuite {
     /**
      * Create a test suite just for these tests.
@@ -45,7 +45,7 @@ public class ViewerProxyTesterSuite {
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ARCArchiveAccessTester.class);
@@ -61,8 +61,8 @@ public class ViewerProxyTesterSuite {
         suite.addTestSuite(WebProxyTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", ViewerProxyTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", ViewerProxyTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

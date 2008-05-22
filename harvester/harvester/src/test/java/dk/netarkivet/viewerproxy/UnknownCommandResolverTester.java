@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.OutputStream;
 import java.net.URI;
@@ -36,7 +33,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.StringAsserts;
 
-
+/**
+ * Unit-tests of the UnknownCommandResolver class.
+ */
 public class UnknownCommandResolverTester extends TestCase {
     public UnknownCommandResolverTester(String s) {
         super(s);
