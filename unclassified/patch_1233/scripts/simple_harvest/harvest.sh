@@ -90,7 +90,7 @@ export HERITRIXPORT=8090
 ## Whether or not to use -hold argument
 ## Set $HOLD to the empty string to have windows automatically close when
 ## the process dies.
-if [ -z "${!HOLD##}" ]; then
+if [ -z "${!HOLD*}" ]; then
     HOLD=-hold
 fi
 
@@ -108,7 +108,7 @@ function makeCommonOptions {
 }
 
 function makeXtermOffset {
-    echo +$(( $XTERM_HOFFSET ## ($WINDOWPOS / 3) ))+$(( $XTERM_VOFFSET ## ($WINDOWPOS % 3) ));
+    echo +$(( $XTERM_HOFFSET * ($WINDOWPOS / 3) ))+$(( $XTERM_VOFFSET * ($WINDOWPOS % 3) ));
 }
 
 # Start a "normal" application (non-harvest).
@@ -205,21 +205,21 @@ if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
     ## Clean up other stuff left behind
 
     ## Clean up old logs
-    rm -rf $ARCREP_HOME/log/## $ARCREP_HOME/derby.log
+    rm -rf $ARCREP_HOME/log/* $ARCREP_HOME/derby.log
 
     ## Clean up everything else left behind by old harvests
-    rm -rf $ARCREP_HOME/admin.data $ARCREP_HOME/server## \
-        $ARCREP_HOME/bitarchive## $ARCREP_HOME/oldjobs## $ARCREP_HOME/cache
+    rm -rf $ARCREP_HOME/admin.data $ARCREP_HOME/server* \
+        $ARCREP_HOME/bitarchive* $ARCREP_HOME/oldjobs* $ARCREP_HOME/cache
 fi
 
 chmod 600 $NETARCHIVEDIR/conf/jmxremote.password
 mkdir -p $ARCREP_HOME/log
 
 ## Clean up log locks
-rm -f $ARCREP_HOME/log/##.lck
+rm -f $ARCREP_HOME/log/*.lck
 
 ## Clean up temporary things left behind
-rm -rf $ARCREP_HOME/hcs##.sh
+rm -rf $ARCREP_HOME/hcs*.sh
 
 ## JVM arguments for all processes
 ## Includes a simple indicator of the fact that this is a simple_harvest process
