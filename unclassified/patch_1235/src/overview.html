@@ -1,0 +1,55 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>overview</title>
+    
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+    
+  </head>
+  
+  <body>
+  <h1>Netarchive Suite</h1> 
+  The NetarchiveSuite is a toolset for managing webharvests of subparts of the internet using the Heritrix webcrawler 
+  (<a href=http://crawler.archive.org>http://crawler.archive.org</A>).
+  
+  For further information about crawling the web, see http://en.wikipedia.org/wiki/Web_crawling).
+  We use Heritrix 1.10.1 (http://crawler.archive.org) as our webcrawler. Different versions of Heritrix is presently not supported.
+  In the future, other crawlers may be supported by the NetarchiveSuite.
+
+
+<p>The NetarchiveSuite can organize three different kind of harvests:
+<ul>
+    <li>Event harvesting (organize harvests of a set of domains related to a specific domain (e.g. 9.11, Royal Weddings, Elections and so on).
+    </li><li>Selective harvesting (recurrent harvests of a set of domains).
+    </li><li>Snapshot harvesting (organizing a snaphost of all known domains)</li>
+</ul>
+The crawling itself is divided into CrawlJobs, which is performed by an instance of Heritrix running locally or remotely. After the crawling is done, the statistics is sent back to the central machine, and the data (the ARC-files are sent to the archive).
+
+  
+<p>  The suite consists of a number of packages: dk.netarkivet.common, dk.netarkivet.harvester,
+  dk.netarkivet.archive, dk.netarkivet.viewerproxy
+  
+  <p>The <b>common</b> package ....
+  <p>The <b>harvester</b> package ....
+  <p>The <b>archive</b> package ....
+  <p>The <b>viewerproxy</b> package ....
+  
+<p>There are two more packages, which does not belong to the NetarchiveSuite as such:
+  The dk.netarkivet.deploy and dk.netarkivet.monitor packages.
+
+Prerequisites
+<ul>
+    <li>Java 1.5 (tested with Sun Java SE JDK 1.5.0_06: http://java.sun.com/javase/downloads/index.jsp) must be installed on all machines where NetarchiveSuite software running.
+    <li>A JMS broker must be installed on a machine (NetarchiveSuite only works with Suns Message Queue Enterprise Edition 3.5+: http://www.sun.com/software/products/message_queue/index.xml ).(How to install JMS)
+      The whereabouts of the JMS broker (machine, port-number) is written in the settings (settings.common.jms.broker, settings.common.jms.port).
+    <li>If you want to use your own type of repository with NetarchiveSuite, you need to implement a dk.netarkivet.distribute.arcrepository.ArcRepositoryClient (to access your repository), and a dk.netarkivet.distribute.indexserver.JobIndexCache (to access your indexserver?????). For our testing purposes, we have implemented the classes dk.netarkivet.common.distribute.indexserver.TrivialJobIndexCache, and dk.netarkivet.common.distribute.arcrepository.TrivialArcRepositoryClient that shows how to do this.
+</ul>
+  
+  
+  </body>
+</html>
