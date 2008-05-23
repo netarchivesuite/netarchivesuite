@@ -108,9 +108,12 @@ public class EventHarvest {
         long maxObjects = HTMLUtils.parseOptionalLong(context,
                 Constants.MAX_OBJECTS_PARAM, dk.netarkivet.harvester
                         .datamodel.Constants.DEFAULT_MAX_OBJECTS);
+        long maxBytes = HTMLUtils.parseOptionalLong(context,
+                Constants.MAX_BYTES_PARAM, dk.netarkivet.harvester
+                    .datamodel.Constants.DEFAULT_MAX_BYTES);
         // All parameters are valid, so call method
         try {
-            eventHarvest.addSeeds(seeds, orderTemplate, maxLoad, maxObjects);
+            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", eventHarvest.getName(),
