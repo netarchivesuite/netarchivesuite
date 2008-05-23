@@ -114,29 +114,29 @@ public class BitarchiveServerTester extends TestCase {
 
     /**
      * Test that the BitarchiveServer outputs logging information.
-     * This verifies the fix og bug #99.
+     * This verifies the fix of bug #99.
      *
-     * @throws IOException
+     * @throws IOException If unable to read the logfile.
      */
     public void testLogging() throws IOException {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
                 TestInfo.BITARCHIVE_APP_DIR_1);
         Settings.set(Settings.DIR_COMMONTEMPDIR,
                 TestInfo.BITARCHIVE_SERVER_DIR_1);
-        BitarchiveServer bas = BitarchiveServer.getInstance();
+        bas = BitarchiveServer.getInstance();
         bas.close();
         LogUtils.flushLogs("BitarchiveServer");
         String log = FileUtils.readFile(TestInfo.LOG_FILE);
         assertFalse("Should have non-empty log", log.equals(""));
-        FileAsserts.assertFileContains("Log should show bitarchive server created",
+        FileAsserts.assertFileContains(
+                "Log should show bitarchive server created",
                 "Created bitarchive server", TestInfo.LOG_FILE);
     }
 
     /**
      * Test that we don't listen on ANY_BA if we are out of space.
-     * @throws IOException
      */
-    public void testCTor() throws IOException {
+    public void testCTor() {
         // Set to just over the minimum size guaranteed.
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
         Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
@@ -324,8 +324,10 @@ public class BitarchiveServerTester extends TestCase {
                 .getInstance();
         con.setListener(Channels.getTheArcrepos(), listener);
         // Construct a get message for a file in the bitarchive
+        final long arcfileOffset = 3L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc", 3);
+                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc",
+                arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
@@ -354,8 +356,9 @@ public class BitarchiveServerTester extends TestCase {
                 .getInstance();
         con.setListener(Channels.getTheArcrepos(), listener);
         // Construct a get message for a file in the bitarchive
+        final long arcfileOffset = 3L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "Upload2.ARC", 3);
+                Channels.getTheArcrepos(), "Upload2.ARC", arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
@@ -380,8 +383,10 @@ public class BitarchiveServerTester extends TestCase {
                 .getInstance();
         con.setListener(Channels.getTheArcrepos(), listener);
         // Construct a get message for a file in the bitarchive
+        final long arcfileOffset = 300L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc", 300);
+                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc",
+                arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
@@ -436,7 +441,7 @@ public class BitarchiveServerTester extends TestCase {
         // of Heartbeat messages
         assertTrue("Should have received at least one message",
                 listener.messagesReceived.size() >= 1);
-        Iterator i = listener.messagesReceived.iterator();
+        Iterator<NetarkivetMessage> i = listener.messagesReceived.iterator();
         BatchEndedMessage bem = null;
         while (i.hasNext()) {
             Object o = i.next();
@@ -455,7 +460,9 @@ public class BitarchiveServerTester extends TestCase {
                 rf.getFile(), 2);
     }
 
-    /** Test that batch messages can run concurrently. */
+    /** Test that batch messages can run concurrently. 
+     * @throws IOException If unable to read a file. 
+     */
     public void testVisitBatchMessageThreaded() throws IOException {
         Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
                 BITARCHIVE1.getAbsolutePath());

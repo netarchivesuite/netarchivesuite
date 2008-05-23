@@ -39,8 +39,8 @@ public class CommonsTesterSuite {
         suite.addTestSuite(ConstantsTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", CommonsTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", CommonsTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }
