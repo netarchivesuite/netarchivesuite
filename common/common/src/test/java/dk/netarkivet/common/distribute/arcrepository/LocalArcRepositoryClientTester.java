@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -79,14 +79,17 @@ public class LocalArcRepositoryClientTester extends TestCase {
                      1, dir1.list().length + dir2.list().length);
         assertTrue("Dir1 should contain file",
                    new File(dir1, TestInfo.SAMPLE_FILE_COPY.getName()).exists());
+        // Try to store the same file again. This should provoke an IllegalState 
+        // exception
         try {
             FileUtils.copyFile(TestInfo.SAMPLE_FILE, TestInfo.SAMPLE_FILE_COPY);
             arcrep.store(TestInfo.SAMPLE_FILE_COPY);
-            assertEquals("Should not have stored file twice",
-                         1, dir1.list().length + dir2.list().length);
-        } catch (ArgumentNotValid e) {
+        } catch (IllegalState e) {
             // Expected
         }
+        assertEquals("Should not have stored file twice",
+                1, dir1.list().length + dir2.list().length);
+        
         assertTrue("Dir1 should contain file",
                    new File(dir1, TestInfo.SAMPLE_FILE_COPY.getName()).exists());
         FileUtils.removeRecursively(dir1);
@@ -121,7 +124,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                            Location.get(Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)),
                            TestInfo.SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
-        } catch (IOFailure e) {
+        } catch (UnknownID e) {
             // expected
         }
     }

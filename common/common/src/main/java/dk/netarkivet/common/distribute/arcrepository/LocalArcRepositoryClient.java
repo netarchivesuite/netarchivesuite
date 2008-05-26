@@ -94,7 +94,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * deleted.
      *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws IllegalState if file already exists.
      * @throws ArgumentNotValid if file parameter is null or file is not an
@@ -169,12 +169,12 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * Retrieves a file from an ArcRepository and places it in a local file.
      *
      * @param arcfilename Name of the arcfile to retrieve. Ignored in this
-     * implementaiton. May be null.
+     * implementation. May be null.
      * @param location The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile is
      * null
-     * @throws IOFailure if there are problems reading or wrting file
+     * @throws IOFailure if there are problems reading or writing file
      * @throws UnknownID if the file could not be found.
      */
     public void getFile(String arcfilename, Location location, File toFile) {
