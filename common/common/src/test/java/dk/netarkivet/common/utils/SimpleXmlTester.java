@@ -32,7 +32,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 public class SimpleXmlTester extends TestCase {
     public SimpleXmlTester(String sTestName) {
@@ -233,9 +232,6 @@ public class SimpleXmlTester extends TestCase {
     }
 
     public void testGetTree() {
-        if (!TestUtils.runningAs("lc")) {
-            return;
-        }
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
         StringTree<String> tree1 = xml.getTree("dk.netarkivet.test.q");
         assertNotNull("Getting a tree should return non-null",
