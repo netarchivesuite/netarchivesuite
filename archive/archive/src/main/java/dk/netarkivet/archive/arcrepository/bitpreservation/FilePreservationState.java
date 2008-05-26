@@ -102,13 +102,19 @@ public class FilePreservationState {
 
     /** Get the status of the file in a bitarchive, according to the admin data.
      * This returns the status as a string for presentation purposes only.
+     * TODO: Needs localisation.
      *
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
     public String getAdminBitarchiveState(Location bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
-        return getAdminBitarchiveStoreState(bitarchive).toString();
+        BitArchiveStoreState state = getAdminBitarchiveStoreState(bitarchive);
+        if (state != null) {
+            return state.toString();
+        } else {
+            return "No state";
+        }
     }
 
     /** Get the status of the file in a bitarchive, according to the admin data.
