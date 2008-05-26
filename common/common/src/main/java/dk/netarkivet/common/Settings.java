@@ -637,6 +637,10 @@ public class Settings {
     public static final String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
 
+    /** The timeout before a JMX connection is considered dead in seconds. */
+    public static final String JMX_TIMEOUT
+            = "settings.common.jmx.timeout";
+
     /** Which class to use for monitor registry. Must implement the interface
      * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
     public static final String MONITOR_REGISTRY_CLIENT

@@ -55,6 +55,7 @@
                         <element name="port" type="set:userPort"/>
                         <element name="rmiPort" type="set:userPort"/>
                         <element name="passwordFile" type="string"/>
+                        <element name="timeout" type="long"/>
                     </all>
                 </complexType>
             </element>

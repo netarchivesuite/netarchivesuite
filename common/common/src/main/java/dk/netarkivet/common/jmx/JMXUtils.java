@@ -46,6 +46,7 @@ import com.sun.jndi.rmi.registry.RegistryContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -63,12 +64,16 @@ public class JMXUtils {
      */
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
         "java.naming.factory.initial";
-    
+
+    /** The JMX timeout in milliseconds. */
+    private static final double TIMEOUT
+            = (double) Settings.getLong(Settings.JMX_TIMEOUT) * 1000.0;
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
-     * or with the current setting ({@link #MAX_TRIES})  131 seconds.
+     * thus the constant is defined as log2(TIMEOUT), as set in settings.
      */
-    public static final int MAX_TRIES = 17;
+    public static final int MAX_TRIES = (int) Math.ceil(
+            Math.log(TIMEOUT) / Math.log(2.0));
 
     /**
      * If no initial JNDI context has been configured,
