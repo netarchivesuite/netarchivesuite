@@ -175,7 +175,7 @@ function startHarvestApp {
     title=SideKick
     logpropfile="$ARCREP_HOME/log/log.prop.$title-$HTTPPORT"
     sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/'$title'-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
-    $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title SideKick \
+    $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title $title \
       -e $JAVA_CMD `makeCommonOptions` $JVM_ARGS \
       -Djava.util.logging.config.file="$logpropfile" \
       -classpath $CLASSPATH $runsetting $portsetting \
