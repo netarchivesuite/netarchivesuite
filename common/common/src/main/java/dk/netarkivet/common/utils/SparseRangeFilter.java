@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-/**
+/*
  * Copyright 2004 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,8 +46,8 @@ import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.search.RangeFilter;
 
 /**
- * Identical subclass of {@link RangeFilter}, except the bitset returned by
- * {@link #bits(IndexReader)} is sparse.
+ * Identical subclass of {@link RangeFilter} from Lucene 2.0.0, except the
+ * bitset returned by {@link #bits(IndexReader)} is sparse.
  */
 public class SparseRangeFilter extends RangeFilter {
     private String fieldName;
@@ -77,6 +77,7 @@ public class SparseRangeFilter extends RangeFilter {
      */
     public SparseBitSet bits(IndexReader reader) throws IOException {
         SparseBitSet bits = new SparseBitSet();
+        //No changes to original Lucene code beyond this point.
         TermEnum enumerator =
             (null != lowerTerm
              ? reader.terms(new Term(fieldName, lowerTerm))

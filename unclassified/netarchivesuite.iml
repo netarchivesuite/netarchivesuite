@@ -362,7 +362,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/deduplicator-0.3.0-20061218-patched-20080522.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/deduplicator-0.3.0-20061218-patched-20080527.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

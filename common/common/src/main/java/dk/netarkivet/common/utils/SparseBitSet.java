@@ -37,6 +37,8 @@ public class SparseBitSet extends BitSet {
      * Initialise the bitset.
      */
     public SparseBitSet() {
+        //Initialise super class to a zero-length bitset, to avoid allocating
+        //a bit array.
         super(0);
     }
 
@@ -178,7 +180,7 @@ public class SparseBitSet extends BitSet {
         if (bitIndex < 0) {
             throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
         }
-        return (setbits.contains(bitIndex));
+        return setbits.contains(bitIndex);
     }
 
     /**
@@ -213,7 +215,7 @@ public class SparseBitSet extends BitSet {
         }
         int index = -1;
         for (Integer i : setbits) {
-            if ((i >= fromIndex) && ((index == -1) || (i < index))) {
+            if (i >= fromIndex && (index == -1 || i < index)) {
                 index = i;
             }
         }
@@ -335,17 +337,19 @@ public class SparseBitSet extends BitSet {
     /**
      * A hash code for this bit set.
      * Note: The hash codes are not implemented to be compatible with
-     * java.util.BitSet#hashCode().
+     * java.util.BitSet#hashCode(). Implementing that algorithm would be
+     * difficult and inefficient on the current implementation.
+     * @return A hashcode. 
      */
     public int hashCode() {
         return setbits.hashCode();
     }
 
     /**
-     * In contrast with {@link java.util.BitSet#size()} this does not return the
+     * In contrast with {@link BitSet#size()} this does not return the
      * size in bytes used to represent this set. Instead, it returns the
      * same as {@link #length()} for compatibility with
-     * {@link java.util.BitSet}. The actual space used is a hashset of size
+     * {@link BitSet}. The actual space used is a hashset of size
      * {@link #cardinality()}.
      */
     public int size() {
@@ -355,31 +359,19 @@ public class SparseBitSet extends BitSet {
     /**
      * Two SparseBitSets are considered equal if they contain the same bits.
      *
-     * Note: Equality is not implemented to be compatible with
-     * java.util.BitSet#hashCode().
+     * Note: A SparseBitSet is never considered equal to a BitSet. This would
+     * be impossible to implement in a way so equality is symmetric, since
+     * {@link BitSet#equals(Object)} is implemented using its private fields to
+     * determine equality.
+     *
+     * @param obj The object to compare for equality.
+     *
+     * @return true, if obj is a SparseBitSet and contains the same bits as this
+     * object.
      */
     public boolean equals(Object obj) {
-        if (obj instanceof SparseBitSet) {
-            return setbits.equals(((SparseBitSet) obj).setbits);
-        } else if (obj instanceof BitSet) {
-//        NOTE: Do not re-add this code, unless you reimplement hashcode
-//              to be consistent with java.util.BitSet
-//              Do not mix java.util.BitSet with SparseBitSet in containers
-//              until this code is implemented.
-//            BitSet bitset = (BitSet) obj;
-//            if (cardinality() != bitset.cardinality()) {
-//                return false;
-//            }
-//            for (int i : setbits) {
-//                if (!bitset.get(i)) {
-//                    return false;
-//                }
-//            }
-//            return true;
-            return false;
-        } else {
-            return false;
-        }
+        return obj instanceof SparseBitSet
+               && setbits.equals(((SparseBitSet) obj).setbits);
     }
 
     /**

@@ -144,10 +144,11 @@ public class ARCLookup {
             throw new IOFailure("No index set while searching for '"
                     + uri + "'");
         }
-        // RangeFilter + ConstantScoreQuery means we ignore norms and other
-        // memory-eating things we don't need that TermQuery would imply.
-        Query query = new ConstantScoreQuery(
-                new SparseRangeFilter(DigestIndexer.FIELD_URL, uri, uri, true, true));
+        // SparseRangeFilter + ConstantScoreQuery means we ignore norms,
+        // bitsets, and other memory-eating things we don't need that TermQuery
+        // or RangeFilter would imply.
+        Query query = new ConstantScoreQuery(new SparseRangeFilter(
+                DigestIndexer.FIELD_URL, uri, uri, true, true));
         try {
             Hits hits = luceneSearcher.search(query);
             Document doc = null;
