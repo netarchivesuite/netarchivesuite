@@ -22,13 +22,13 @@
 */
 package dk.netarkivet.monitor.jmx;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.jmx.JMXUtils;
+import javax.management.remote.JMXServiceURL;
 
 import com.sun.jndi.rmi.registry.RegistryContextFactory;
 import junit.framework.TestCase;
 
-import javax.management.remote.JMXServiceURL;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.JMXUtils;
 
 
 

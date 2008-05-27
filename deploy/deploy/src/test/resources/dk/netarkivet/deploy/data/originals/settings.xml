@@ -97,6 +97,9 @@
             <!-- The password file, containing information about who may
             connect -->
             <passwordFile>conf/jmxremote.password</passwordFile>
+            <!-- How many seconds we will wait before giving up on a JMX
+            connection. -->
+            <timeout>120</timeout>
         </jmx>
         <!-- Settings for the web GUI -->
         <webinterface>

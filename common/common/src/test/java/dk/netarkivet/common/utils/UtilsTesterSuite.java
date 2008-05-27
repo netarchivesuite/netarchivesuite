@@ -46,6 +46,7 @@ public class UtilsTesterSuite {
         suite.addTestSuite(FileUtilsTester.class);
         suite.addTestSuite(FilterIteratorTester.class);
         suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
+        suite.addTestSuite(JMXUtilsTester.class);
         suite.addTestSuite(MD5Tester.class);
         suite.addTestSuite(ProcessUtilsTester.class);
         suite.addTestSuite(SettingsFactoryTester.class);

@@ -54,8 +54,8 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.jmx.JMXUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
@@ -195,6 +195,7 @@ public class JMXHeritrixController implements HeritrixController {
                                       "bin"), "java").getAbsolutePath(),
                     "-Xmx" + Settings.get(Settings.HERITRIX_HEAP_SIZE),
 
+                    "-XX:+HeapDumpOnOutOfMemoryError",
                     "-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath(),
                     "-Dcom.sun.management.jmxremote.port=" + getJMXPort(),
                     "-Dcom.sun.management.jmxremote.ssl=false",

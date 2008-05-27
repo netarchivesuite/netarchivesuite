@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.jmx;
+package dk.netarkivet.common.utils;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -50,7 +50,6 @@ import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Various JMX-related utility functions that have nowhere better to live.
