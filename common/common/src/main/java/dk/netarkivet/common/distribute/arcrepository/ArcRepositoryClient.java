@@ -38,6 +38,7 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
 public interface ArcRepositoryClient extends
         HarvesterArcRepositoryClient, ViewerArcRepositoryClient,
                 PreservationArcRepositoryClient {
+    
     /** Call on shutdown to release external resources. */
     void close();
 
@@ -48,7 +49,9 @@ public interface ArcRepositoryClient extends
      * @param index   The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
-     * @throws ArgumentNotValid If the get operation failed.
+     * @throws IOFailure If the get operation failed.
+     * @throws ArgumentNotValid if the given arcfile is null or empty string,
+     * or the given index is negative.
      */
     BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid;
 
@@ -69,7 +72,7 @@ public interface ArcRepositoryClient extends
      * deleted.
      *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
@@ -109,7 +112,7 @@ public interface ArcRepositoryClient extends
      */
     void updateAdminChecksum(String filename, String checksum);
 
-    /** Remove a file from one part of the ArcRepository, retrieveing a copy
+    /** Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
      *
@@ -120,6 +123,6 @@ public interface ArcRepositoryClient extends
      * perform this operation.
      * @return A local copy of the file removed.
      */
-File removeAndGetFile(String fileName, String bitarchiveName,
+    File removeAndGetFile(String fileName, String bitarchiveName,
                           String checksum, String credentials);
 }

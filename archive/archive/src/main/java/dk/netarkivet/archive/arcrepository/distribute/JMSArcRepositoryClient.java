@@ -135,11 +135,13 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param index   The offset of the wanted record in the file
      * @return a BitarchiveRecord-object or null if request times out or object
      * is not found.
-     * @exception ArgumentNotValid If a wrong message is returned or the
+     * @throws ArgumentNotValid If the given arcfile is null or empty, 
+     * or the given index is negative.
+     * @throws IOfailure If a wrong message is returned or the
      * get operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(arcfile, "arcfile");
+        ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '" + arcfile + ":" + index + "'");
         long start = System.currentTimeMillis();
@@ -216,7 +218,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * both the local copy of the file and the copy on the ftp server are
      * deleted.
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files locally or on the ftp server after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
@@ -321,7 +323,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      */
     public BatchStatus batch(FileBatchJob job, String locationName) {
         ArgumentNotValid.checkNotNull(job, "job");
-        ArgumentNotValid.checkNotNull(locationName, "locationName");
+        ArgumentNotValid.checkNotNullOrEmpty(locationName, "locationName");
 
         BatchMessage bMsg = new BatchMessage(Channels.getTheArcrepos(), replyQ,
                 job, locationName);

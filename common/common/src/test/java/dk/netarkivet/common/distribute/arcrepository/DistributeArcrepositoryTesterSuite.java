@@ -32,8 +32,10 @@ import junit.textui.TestRunner;
  * package dk.netarkivet.common.distribute.arcrepository.
  */
 public class DistributeArcrepositoryTesterSuite {
+    
     /**
      * Create a test suite just for these tests.
+     * @return the created test.
      */
     public static Test suite() {
         TestSuite suite;
@@ -47,11 +49,13 @@ public class DistributeArcrepositoryTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
+        // Sorted in alphabetical order
         suite.addTestSuite(ARCLookupTester.class);
-        suite.addTestSuite(TrivialArcRepositoryClientTester.class);
-        suite.addTestSuite(LocalArcRepositoryClientTester.class);
+        suite.addTestSuite(BatchStatusTester.class);
         suite.addTestSuite(BitarchiveRecordTester.class);
+        suite.addTestSuite(LocalArcRepositoryClientTester.class);
         suite.addTestSuite(LocationTester.class);
+        suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
     }
 
     public static void main(String[] args) {

@@ -37,6 +37,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Unit-test to test the BatchStatus class.
@@ -45,15 +46,22 @@ public class BatchStatusTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
 
+    
+    private UseTestRemoteFile utrf = new UseTestRemoteFile();
+    
     public BatchStatusTester(String s) {
         super(s);
     }
 
     public void setUp() {
         mtf.setUp();
+        utrf.setUp();
+        
+        
     }
 
     public void tearDown() {
+        utrf.tearDown();
         mtf.tearDown();
     }
 

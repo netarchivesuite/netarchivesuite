@@ -70,7 +70,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * deleted.
      *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccesful, or failed to clean
+     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
      * up files after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
@@ -87,7 +87,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * @param index   The offset of the desired record in the file
      * @return a BitarchiveRecord-object, or null if request times out or object
      * is not found.
-     * @exception ArgumentNotValid If the get operation failed.
+     * @throws IOFailure If the get operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid {
@@ -98,7 +98,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
             record = (ARCRecord) reader.get();
             return new BitarchiveRecord(record);
         } catch (IOException e) {
-            throw new ArgumentNotValid("Error reading record from '"
+            throw new IOFailure("Error reading record from '"
                     + arcfile + "' offset " + index, e);
         } finally {
             if (record != null) {

@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
@@ -124,7 +125,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                            Location.get(Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)),
                            TestInfo.SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
-        } catch (UnknownID e) {
+        } catch (IOFailure e) {
             // expected
         }
     }
