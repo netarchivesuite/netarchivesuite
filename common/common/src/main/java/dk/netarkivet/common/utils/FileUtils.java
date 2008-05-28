@@ -41,7 +41,9 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +61,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Misc. handy file utilities
+ * Misc. handy file utilities.
  */
 public class FileUtils {
     /** Extension used for CDX files, including separator . */
@@ -90,7 +92,7 @@ public class FileUtils {
      * its name (transformed to lower case) ends on ".cdx".
      */
     public static final FilenameFilter CDX_FILE_FILTER
-            = new FilenameFilter(){
+            = new FilenameFilter() {
                 public boolean accept(File directory, String filename) {
                     return filename.toLowerCase().endsWith(CDX_EXTENSION);
                 }
@@ -116,15 +118,17 @@ public class FileUtils {
                 }
             };
 
-    /** How many times we will retry making a unique directory name */
+    /** How many times we will retry making a unique directory name. */
     private static final int MAX_RETRIES = 10;
-    /** How many times we will retry making a directory */
+    /** How many times we will retry making a directory. */
     private static final int CREATE_DIR_RETRIES = 3;
     /** Maximum number of IDs we will put in a filename.  Above this
      * number, a checksum of the ids is generated instead.  This is done
      * to protect us from getting filenames too long for the filesystem.
      */
     public static final int MAX_IDS_IN_FILENAME = 4;
+    /** The size of a block as reported by a POSIX compliant utility. */
+    private static final int POSIX_BLOCK_SIZE = 512;
 
     /**
      * Remove a file and any subfiles in case of directories.
@@ -648,7 +652,8 @@ public class FileUtils {
 
     /**
      * Returns the number of bytes free on the file system that the given file
-     * resides on. Warning: Slow method, and only works on Linux and Windows!
+     * resides on. Warning: Slow method, and only works on Linux, Windows,
+     * and Mac OS X!
      *
      * @param f
      *            a given file
@@ -660,8 +665,10 @@ public class FileUtils {
         final String os = System.getProperty("os.name");
         if (os.toLowerCase().startsWith("windows")) {
             return getFreeSpaceOnWindows(f);
-        } else if (os.toLowerCase().startsWith("linux")) {
-            return getBytesFreeLinux(f);
+        } else if (os.toLowerCase().startsWith("linux")
+                   || os.toLowerCase().startsWith("mac os x")
+                   || os.toLowerCase().startsWith("sunos")) {
+            return getBytesPosix(f);
         } else {
             throw new NotImplementedException("getBytesFree not implemented "
                     + " for operating system '" + os + "'");
@@ -670,24 +677,36 @@ public class FileUtils {
 
     /**
      * Return the number of bytes free on the disk that the given file resides
-     * on. This method only works on Linux. Assumes that df -B 1 <filename>
-     * gives output of the format Filesystem 1-blocks Used Available Use%
-     * Mounted on /dev/sda3 9852805120 5572796416 3779502080 60% / <p/> Method
-     * is slow - starts an external process.
+     * on. This method only works on POSIX-compliant systems. Assumes that
+     * df -P "filename" gives output of the format
+     * <pre>
+     * Filesystem 512-blocks Used Available Use%
+     * Mounted on /dev/sda3 9852805120 5572796416 3779502080 60% /
+     * </pre>
+     * Method is slow - starts an external process.
      *
-     * @param f
-     *            A file.
+     * @param f A file.
      * @return Number of bytes free on the disk that the file is on
      */
-    private static long getBytesFreeLinux(File f) {
+    private static long getBytesPosix(File f) {
         try {
             // Want to be able to test on a file we're about to make, so
             // use parent dir if not already a dir.
             if (!f.isDirectory()) {
                 f = f.getAbsoluteFile().getParentFile();
             }
+            Map<String, String> environment
+                    = new HashMap<String, String>(System.getenv());
+            environment.put("POSIXLY_CORRECT", "true");
+            String[] env = new String[environment.size()];
+            int i = 0;
+            for (Map.Entry<String, String> entry : environment.entrySet()) {
+                env[i] = entry.getKey() + "=" + entry.getValue();
+                i++;
+            }
+
             Process p = Runtime.getRuntime().exec(
-                    new String[] {"df", "-P", "-B", "1", f.getAbsolutePath() });
+                    new String[] {"df", "-P", f.getAbsolutePath() }, env);
             final int exitValue = p.waitFor();
             String outputText = readProcessOutput(p.getInputStream());
             String errorText = readProcessOutput(p.getErrorStream());
@@ -706,7 +725,7 @@ public class FileUtils {
                 throw new IOFailure("Bogus output from df: " + kline);
             }
 
-            return Long.parseLong(lineparts[3]);
+            return Long.parseLong(lineparts[3]) * POSIX_BLOCK_SIZE;
         } catch (NumberFormatException e) {
             throw new IOFailure("Unable to parse output from df", e);
         } catch (IOException e) {
@@ -1062,7 +1081,7 @@ public class FileUtils {
 
     /**
      * A class for parsing an ARC filename as generated by our runs of Heritrix
-     * and retrieveing components like harvestID and jobID.
+     * and retrieving components like harvestID and jobID.
      * See HeritrixLauncher.getCrawlID for where the format gets defined.
      */
     public static class FilenameParser{
@@ -1077,7 +1096,7 @@ public class FileUtils {
         private static final int TIME_STAMP = 3;
         private static final int SERIAL_NO = 4;
 
-        /** Fields contanining parsed values. */
+        /** Fields containing parsed values. */
         private final String harvestID;
         private final String jobID;
         private final String timeStamp;
