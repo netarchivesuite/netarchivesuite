@@ -186,6 +186,8 @@
                 <!-- Default download rate for domain configuration.
                  Not currently enforced. -->
                 <defaultMaxrate>100</defaultMaxrate>
+                <!-- Default byte limit for domain configuration. -->
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <!-- This setting describes valid TLDs to define domains. -->
                 <tld>ac</tld>
                 <tld>ad</tld>

@@ -211,6 +211,7 @@
                         <element name="defaultConfig" type="string"/>
                         <element name="defaultOrderxml" type="string"/>
                         <element name="defaultMaxrate" type="string"/>
+                        <element name="defaultMaxbytes" type="string"/>
                         <element minOccurs="1" maxOccurs="unbounded" name="tld"
                                  type="string"/>
                     </sequence>

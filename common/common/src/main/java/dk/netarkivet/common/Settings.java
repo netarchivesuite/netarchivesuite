@@ -309,6 +309,10 @@ public class Settings {
     public static final String DOMAIN_CONFIG_MAXRATE
             = "settings.harvester.datamodel.domain.defaultMaxrate";
 
+    /** Default byte limit for domain configuration. */
+    public static final String DOMAIN_CONFIG_MAXBYTES
+            = "settings.harvester.datamodel.domain.defaultMaxbytes";
+
     /** Valid top level domains, like .co.uk, .dk, .org. Repeats. */
     public static final String TLDS = "settings.harvester.datamodel.domain.tld";
 
