@@ -222,18 +222,18 @@ public class DailyFrequency extends Frequency {
     }
 
     /**
-     * Return an integer that can be used to identify the kind of freqency.
+     * Return an integer that can be used to identify the kind of frequency.
      * No two subclasses should use the same integer
      *
-     * @return an integer that can be used to identify the kind of freqency
+     * @return an integer that can be used to identify the kind of frequency
      */
     public int ordinal() {
         return TimeUnit.DAILY.ordinal();
     }
 
-    /** Human readable represenation of this object.
+    /** Human readable representation of this object.
      *
-     * @return Human readble representation
+     * @return Human readable representation
      */
     public String toString() {
         if (isAnytime()) {

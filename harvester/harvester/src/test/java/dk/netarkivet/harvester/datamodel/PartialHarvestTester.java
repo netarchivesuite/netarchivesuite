@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Test cases specific to
- */
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,7 +33,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
 
-
+/**
+ * Test cases specific to the PartialHarvest class.
+ */
 public class PartialHarvestTester extends DataModelTestCase {
     private PartialHarvest harvest;
     private static final String harvestName = "Event Harvest";
@@ -61,7 +59,7 @@ public class PartialHarvestTester extends DataModelTestCase {
 
     /**
      * Test that adding a single seed results in creation of all the
-     * appropriate objects
+     * appropriate objects.
      */
     public void testAddSeedsSimpleCase() {
         String seedlist = "http://www.mydomain.dk/page1.jsp?aparam=avalue";

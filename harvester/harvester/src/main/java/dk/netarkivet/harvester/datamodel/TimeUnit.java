@@ -1,7 +1,7 @@
-/* File:        $Id: JobStatus.java 343 2008-04-11 13:40:55Z elzi $
- * Revision:    $Revision: 343 $
- * Author:      $Author: elzi $
- * Date:        $Date: 2008-04-11 15:40:55 +0200 (Fri, 11 Apr 2008) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,7 +20,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -33,7 +32,7 @@ public enum TimeUnit {
      * 'No time unit' is only included for historic reasons, since 0 did not 
      *  denote a timeunit.
      **/    
-	NOTIMEUNIT,
+    NOTIMEUNIT,
     /** 
      * Hourly time unit will result in a frequency where only "on minute" will
      * be set, i.e. "on hour", "on day of week" and "on day of month" are 
@@ -49,21 +48,23 @@ public enum TimeUnit {
     /** 
      * Weekly time unit will result in a frequency where only "on minute",
      * "on hour" and "on day of week" will be set, i.e. "on day of month" 
-     * are unused.
+     * is unused.
      **/
     WEEKLY,
     /** 
      * Monthly time unit will result in a frequency where only "on minute",
      * "on hour" and "on day of month" will be set, i.e. "on day of week" 
-     * are unused.
+     * is unused.
      **/
     MONTHLY;
 
-    /** Helper method that gives a proper object from e.g. a DB-stored value.
+    /**
+     * Helper method that gives a proper object from e.g. a DB-stored value.
      *
      * @param tu a certain integer for a timeunit
      * @return the TimeUnit related to a certain integer
-     * @throws ArgumentNotValid
+     * @throws ArgumentNotValid If argument tu is invalid
+     * (i.e. does not correspond to a TimeUnit)
      */
     public static TimeUnit fromOrdinal(int tu) {
         switch (tu) {

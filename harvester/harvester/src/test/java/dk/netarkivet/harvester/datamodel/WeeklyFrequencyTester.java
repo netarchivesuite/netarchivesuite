@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests a weekly frequency
- */
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,6 +30,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ * Tests a weekly frequency.
+ */
 public class WeeklyFrequencyTester extends TestCase {
     public WeeklyFrequencyTester(String s) {
         super(s);
@@ -48,7 +47,7 @@ public class WeeklyFrequencyTester extends TestCase {
     }
 
     /** 
-     * Test value is weekly
+     * Test value is weekly.
      */
     public void testTimeunitIsWeekly() {
     	WeeklyFrequency freq = new WeeklyFrequency(20);
@@ -63,7 +62,7 @@ public class WeeklyFrequencyTester extends TestCase {
     }
     
     /** Given a frequency that can start any time, check that first event is
-     * immediate
+     * immediate.
      * @throws Exception
      */
     public void testGetFirstEvent1() throws Exception {
@@ -93,7 +92,7 @@ public class WeeklyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start any time, check that next event is
-     * after correct period
+     * after correct period.
      * @throws Exception
      */
     public void testGetNextEvent1() throws Exception {
@@ -108,7 +107,7 @@ public class WeeklyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23
+     * first possible Mon 5:23.
      * @throws Exception
      */
     public void testGetNextEvent2() throws Exception {
@@ -126,7 +125,7 @@ public class WeeklyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start Mon at 5:23, check that first event is
-     * first possible Mon 5:23, given a time that IS actually Mon 5:23
+     * first possible Mon 5:23, given a time that IS actually Mon 5:23.
      * @throws Exception
      */
     public void testGetNextEvent3() throws Exception {
@@ -139,8 +138,8 @@ public class WeeklyFrequencyTester extends TestCase {
         assertEquals("Second event should happen four weeks later, on Monday at the 23rd minute of the 5th hour", d3, d4);
     }
 
-    /** Test validity of arguments
-     *
+    /**
+     * Test validity of arguments.
      */
     public void testValidityOfArguments() throws Exception {
         try {

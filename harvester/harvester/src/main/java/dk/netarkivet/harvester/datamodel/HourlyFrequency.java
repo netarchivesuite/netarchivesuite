@@ -205,9 +205,9 @@ public class HourlyFrequency extends Frequency {
         return TimeUnit.HOURLY.ordinal();
     }
 
-    /** Human readable represenation of this object.
+    /** Human readable representation of this object.
      *
-     * @return Human readble representation
+     * @return Human readable representation
      */
     public String toString() {
         if (isAnytime()) {

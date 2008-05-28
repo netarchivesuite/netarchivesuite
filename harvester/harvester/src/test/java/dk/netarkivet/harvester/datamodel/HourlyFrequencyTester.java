@@ -47,7 +47,7 @@ public class HourlyFrequencyTester extends TestCase {
     }
 
     /** 
-     * Test value is hourly
+     * Test value is hourly.
      */
     public void testTimeunitIsHourly() {
     	HourlyFrequency freq = new HourlyFrequency(20);

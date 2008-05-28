@@ -47,9 +47,8 @@ import dk.netarkivet.common.utils.FilterIterator;
  * A database-based implementation of the ScheduleDAO.
  *
  * The statements to create the tables are now in
- * scripts/sql/createfullhddb.sql
+ * scripts/sql/createfullhddb.sql and scripts/sql/createfullhddb.mysql.
  */
-
 public class ScheduleDBDAO extends ScheduleDAO {
     private final Log log = LogFactory.getLog(getClass());
 
@@ -88,7 +87,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setID(DBConnect.getGeneratedID(s));
             schedule.setEdition(edition);
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while creating schedule " + schedule, e);
+            throw new IOFailure("SQL error while creating schedule "
+                    + schedule, e);
         } finally {
             DBConnect.closeStatementIfOpen(s);
         }
@@ -98,9 +98,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * name, comments, startdate, enddate, maxrepeats,
      * timeunit, numtimeunits, anytime, onminute, onhour,
      * ondayofweek, ondayofmonth
-     * @param s
-     * @param schedule
-     * @throws SQLException
+     * @param s a prepared SQL statement
+     * @param schedule a given schedule.
+     * @throws SQLException If the operation fails.
      */
     private void setScheduleParameters(PreparedStatement s, Schedule schedule) throws SQLException {
         DBConnect.setName(s, 1, schedule);
@@ -135,7 +135,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @throws ArgumentNotValid if the schedulename is null or empty
      */
     public synchronized boolean exists(String scheduleName) {
-        final int count = DBConnect.selectIntValue("SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
+        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
+        final int count = DBConnect.selectIntValue(
+                "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
         return (1 == count);
     }
 
@@ -160,7 +162,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             s.setString(1, scheduleName);
             ResultSet rs = s.executeQuery();
             if (!rs.next()) {
-                throw new UnknownID("No schedule named " + scheduleName + " found");
+                throw new UnknownID("No schedule named '"
+                        + scheduleName + "' found");
             }
             long id = rs.getLong(1);
             boolean isTimedSchedule;
@@ -176,7 +179,17 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer hour = DBConnect.getIntegerMaybeNull(rs, 10);
             Integer dayofweek = DBConnect.getIntegerMaybeNull(rs, 11);
             Integer dayofmonth = DBConnect.getIntegerMaybeNull(rs, 12);
-            Frequency freq = Frequency.getOrdinalInstance(timeunit, anytime,
+            log.debug("Creating frequency for "
+                    + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek,dayofmonth)"
+                    + "= (" + timeunit + ", "
+                    + anytime + ","
+                    + numtimeunits + ","
+                    + minute + ","
+                    + hour + ","
+                    + dayofweek + ","
+                    + dayofmonth + ","
+                    + ")");	
+            Frequency freq = Frequency.getNewInstance(timeunit, anytime,
                     numtimeunits, minute, hour, dayofweek, dayofmonth);
             long edition = rs.getLong(13);
             final Schedule schedule;
@@ -196,6 +209,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     }
 
     public String describeUsages(String scheduleName) {
+        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
         return DBConnect.getUsages("SELECT harvestdefinitions.name "
                 + "FROM schedules, partialharvests, harvestdefinitions "
                 + "WHERE schedules.name = ?"
@@ -303,7 +317,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public synchronized Iterator<Schedule> getAllSchedules() {
         try {
-        List<String> names = DBConnect.selectStringlist("SELECT name FROM schedules ORDER BY name");
+        List<String> names = DBConnect.selectStringlist(
+                "SELECT name FROM schedules ORDER BY name");
             return new FilterIterator<String, Schedule>(names.iterator()) {
                 /**
                  * Returns the object corresponding to the given object, or null if
@@ -326,6 +341,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     }
 
     public boolean mayDelete(Schedule schedule) {
+        ArgumentNotValid.checkNotNull(schedule, "schedule");
         return !DBConnect.selectAny("SELECT harvest_id"
                 + " FROM partialharvests WHERE schedule_id = ?",
                 schedule.getID());

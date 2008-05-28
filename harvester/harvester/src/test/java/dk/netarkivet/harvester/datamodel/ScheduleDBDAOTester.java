@@ -22,15 +22,13 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.util.Date;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
 
-
+/**
+ * Unit-tests for the ScheduleDBDAO class.
+ */
 public class ScheduleDBDAOTester extends DataModelTestCase {
     private static final String THIRTY_CHAR_STRING = "123456789012345678901234567890";
 

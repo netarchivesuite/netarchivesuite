@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests a monthly frequency
- */
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,6 +30,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ * Tests a monthly frequency.
+ */
 public class MonthlyFrequencyTester extends TestCase {
     public MonthlyFrequencyTester(String s) {
         super(s);
@@ -46,7 +45,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** 
-     * Test value is monthly
+     * Test value is monthly.
      */
     public void testTimeunitIsMonthly() {
     	MonthlyFrequency freq = new MonthlyFrequency(20);
@@ -61,7 +60,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
     
     /** Given a frequency that can start any time, check that first event is
-     * immediate
+     * immediate.
      * @throws Exception
      */
     public void testGetFirstEvent1() throws Exception {
@@ -74,7 +73,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 5th of month 4:22, check that next
-     * event is at forst correct time
+     * event is at first correct time.
      * @throws Exception
      */
     public void testGetFirstEvent2() throws Exception {
@@ -90,7 +89,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start any time, check that next event is
-     * after appropriate period
+     * after appropriate period.
      * @throws Exception
      */
     public void testGetNextEvent1() throws Exception {
@@ -104,7 +103,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 5th of month 4:22, check that next
-     * event is after appropriate period
+     * event is after appropriate period.
      * @throws Exception
      */
     public void testGetNextEvent2() throws Exception {
@@ -122,7 +121,7 @@ public class MonthlyFrequencyTester extends TestCase {
 
     /** Given a frequency that can start 5th of month 4:22, check that next
      * event is after appropriate period, even given a date that is 5th of month
-     * at 4:22
+     * at 4:22.
      * @throws Exception
      */
     public void testGetNextEvent3() throws Exception {
@@ -136,7 +135,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 31st of month 12:00, check that this
-     * will be on the 29th in February, nad 31st in March.
+     * will be on the 29th in February, and 31st in March.
      * @throws Exception
      */
     public void testGetNextEvent4() throws Exception {
@@ -156,7 +155,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 31st of month any time, check that this
-     * will be on the 29th in February, nad 29th in March.
+     * will be on the 29th in February, and 29th in March.
      * @throws Exception
      */
     public void testGetNextEvent5() throws Exception {
@@ -176,7 +175,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 31st of month 12:00, check that this
-     * will be on the 28th in February, nad 31st in March.
+     * will be on the 28th in February, and 31st in March.
      * @throws Exception
      */
     public void testGetNextEvent6() throws Exception {
@@ -198,7 +197,7 @@ public class MonthlyFrequencyTester extends TestCase {
     }
 
     /** Test validity of arguments (correct number of units), correct time,
-     * correct date
+     * correct date.
      */
     public void testValidityOfArguments() throws Exception {
         try {

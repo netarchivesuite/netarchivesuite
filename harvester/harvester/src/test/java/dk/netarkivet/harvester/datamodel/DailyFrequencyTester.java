@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests a daily frequency
- */
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,6 +30,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
+/**
+ * Tests a daily frequency.
+ */
 public class DailyFrequencyTester extends TestCase {
     public DailyFrequencyTester(String s) {
         super(s);
@@ -48,7 +47,7 @@ public class DailyFrequencyTester extends TestCase {
     }
 
     /** 
-     * Test value is daily
+     * Test value is daily.
      */
     public void testTimeunitIsDaily() {
     	DailyFrequency freq = new DailyFrequency(20);
@@ -63,7 +62,7 @@ public class DailyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start any time, check that first event is
-     * immediate
+     * immediate.
      * @throws Exception
      */
     public void testGetFirstEvent1() throws Exception {
@@ -76,7 +75,7 @@ public class DailyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start at 4:22, check that first event starts
-     * first time it is 4:22
+     * first time it is 4:22.
      * @throws Exception
      */
     public void testGetFirstEvent2() throws Exception {
@@ -92,7 +91,7 @@ public class DailyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start any time, check that next event starts
-     * after the correct period
+     * after the correct period.
      * @throws Exception
      */
     public void testGetNextEvent1() throws Exception {
@@ -106,7 +105,7 @@ public class DailyFrequencyTester extends TestCase {
     }
 
     /** Given a frequency that can start 5:23, check that next event starts
-     * at 5:23 after the correct period
+     * at 5:23 after the correct period.
      * @throws Exception
      */
     public void testGetNextEvent2() throws Exception {

@@ -29,7 +29,11 @@ import junit.textui.TestRunner;
 import dk.netarkivet.common.webinterface.GUIWebServerTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
-
+/**
+ * 
+ * Unit-tester suite for the package dk.netarkivet.harvester.datamodel.
+ * 
+ */
 public class DataModelTesterSuite {
     public static Test suite() {
         TestSuite suite;
@@ -41,6 +45,7 @@ public class DataModelTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
+        // Sorted in alphabetical order.
         suite.addTestSuite(AliasInfoTester.class);
         suite.addTestSuite(ConstantsTester.class);
         suite.addTestSuite(DailyFrequencyTester.class);
@@ -52,7 +57,9 @@ public class DataModelTesterSuite {
         suite.addTestSuite(DomainHistoryTester.class);
         suite.addTestSuite(DomainOwnerInfoTester.class);
         suite.addTestSuite(DomainTester.class);
+        suite.addTestSuite(FrequencyTester.class);
         suite.addTestSuite(FullHarvestTester.class);
+        // TODO  move elsewehere
         suite.addTestSuite(GUIWebServerTester.class);
         suite.addTestSuite(HarvestDefinitionDAOTester.class);
         suite.addTestSuite(HarvestDefinitionGUITester.class);
@@ -80,8 +87,8 @@ public class DataModelTesterSuite {
         suite.addTestSuite(WeeklyFrequencyTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", DataModelTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", DataModelTesterSuite.class.getName()};
 
         TestRunner.main(args2);
         //junit.swingui.TestRunner.main(args2);

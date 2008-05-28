@@ -265,9 +265,9 @@ public class MonthlyFrequency extends Frequency {
         return TimeUnit.MONTHLY.ordinal();
     }
 
-    /** Human readable represenation of this object.
+    /** Human readable representation of this object.
      *
-     * @return Human readble representation
+     * @return Human readable representation
      */
     public String toString() {
         if (isAnytime()) {

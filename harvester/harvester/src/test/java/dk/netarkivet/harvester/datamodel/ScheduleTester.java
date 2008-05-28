@@ -31,6 +31,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 
 /**
+ * Unit-tests for the Schedule class.
  */
 public class ScheduleTester extends DataModelTestCase {
     public ScheduleTester(String testName) {
@@ -48,7 +49,7 @@ public class ScheduleTester extends DataModelTestCase {
     public void testValidityOfArguments() {
         try {
             Date startDate = new Date(System.currentTimeMillis());
-            Schedule schedule = new TimedSchedule(startDate, null, TestInfo.FREQUENCY, null, "");
+            new TimedSchedule(startDate, null, TestInfo.FREQUENCY, null, "");
             fail("Null not valid schedule name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -56,7 +57,7 @@ public class ScheduleTester extends DataModelTestCase {
 
         try {
             Date startDate = new Date(System.currentTimeMillis());
-            Schedule schedule = new TimedSchedule(startDate, null, null, TestInfo.DEFAULT_SCHEDULE_NAME, "");
+            new TimedSchedule(startDate, null, null, TestInfo.DEFAULT_SCHEDULE_NAME, "");
             fail("Null not valid schedule name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -64,7 +65,7 @@ public class ScheduleTester extends DataModelTestCase {
 
         try {
             Date startDate = new Date(System.currentTimeMillis());
-            Schedule schedule = new TimedSchedule(startDate, null, TestInfo.FREQUENCY, "", "");
+            new TimedSchedule(startDate, null, TestInfo.FREQUENCY, "", "");
             fail("Empty string not a valid schedule name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -72,7 +73,7 @@ public class ScheduleTester extends DataModelTestCase {
 
         try {
             Date startDate = new Date(System.currentTimeMillis());
-            Schedule schedule = new TimedSchedule(startDate, null, TestInfo.FREQUENCY, TestInfo.DEFAULT_SCHEDULE_NAME, null);
+            new TimedSchedule(startDate, null, TestInfo.FREQUENCY, TestInfo.DEFAULT_SCHEDULE_NAME, null);
             fail("Empty string not a valid schedule name");
         } catch (ArgumentNotValid e) {
             // expected
@@ -206,7 +207,6 @@ public class ScheduleTester extends DataModelTestCase {
         Date startDate = new Date(cal.getTime().getTime());
         cal.set(2007, Calendar.FEBRUARY, 1, 0, 0, 0);
         Date endDate = new Date(cal.getTime().getTime());
-        long freq = 600000;
 
         // A different schedule:
         Schedule sch_4 = new TimedSchedule(startDate, endDate, new HourlyFrequency(1), "NonDefaultSchedule", "");

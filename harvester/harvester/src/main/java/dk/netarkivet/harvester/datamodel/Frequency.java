@@ -25,7 +25,11 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * This class defines various frequencies at which things can happen, such
@@ -34,7 +38,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 
 public abstract class Frequency {
-	
+    
+    private static final Log log = LogFactory.getLog(Frequency.class);
+    
     /** How many units of time between each event? */
     private int numUnits;
 
@@ -158,14 +164,53 @@ public abstract class Frequency {
      *  the kind of frequency
      */
     public abstract int ordinal();
-
-    public static Frequency getOrdinalInstance(int timeunit, boolean anytime,
+    
+    /**
+     * Get a new instance of Frequency. The type of Frequency (either Hourly,
+     * Daily, Monthly, or Weekly) returned depends on the 'timeunit' argument.
+     * @param timeunit The type or frequency
+     * @param anytime Allow events to start anytime. If false,
+     * the starting point is described precisely.
+     * If true, the starting point will be immediately.
+     * @param numtimeunits The number of periods between events
+     * @param minute A given minute. Used to create hourly, daily, and monthly frequencies,
+     * if anytime is false.
+     * @param hour A given hour. Used to create hourly, daily, and monthly frequencies,
+     * if anytime is false.
+     * @param dayofweek A given day of the week. Used only to create weekly frequencies,
+     * if anytime is false.
+     * @param dayofmonth A given day of month. Used only to create monthly frequencies,
+     * if anytime is false.
+     * @return a new instance of the Frequency class.
+     * @throws ArgumentNotValid If the given timeunit is illegal,
+     * or the values of timeunit and numtimeunits is negative.
+     * @throws NotImplementedException If we can't yet make a
+     * Frequency for a legal timeunit. 
+     */
+    public static Frequency getNewInstance(int timeunit, boolean anytime,
                                                int numtimeunits,
                                                Integer minute, Integer hour,
                                                Integer dayofweek,
                                                Integer dayofmonth) {
+        ArgumentNotValid.checkPositive(timeunit, "int timeunit");
+        ArgumentNotValid.checkPositive(numtimeunits, "int timeunits");
+                
         Frequency freq;
     	TimeUnit tu = TimeUnit.fromOrdinal(timeunit);
+    	log.debug("Creating a " + tu.name() + " frequency."); 
+        if (!anytime) {
+            ArgumentNotValid.checkTrue(minute != null,
+                    "Arg. minute should not be null, if anytime is false");
+            ArgumentNotValid.checkTrue(hour != null || tu.equals(TimeUnit.HOURLY),
+                    "Arg. hour should not be null, if anytime is false unless"
+                    + " we are creating a Hourly frequency.");
+            ArgumentNotValid.checkTrue(dayofweek != null || !tu.equals(TimeUnit.WEEKLY),
+                    "Arg. dayofweek should not be null, if anytime is false "
+                    + " and we are creating a Weekly frequency.");
+            ArgumentNotValid.checkTrue(dayofmonth != null || !tu.equals(TimeUnit.MONTHLY),
+                    "Arg. dayofmonth should not be null, if anytime is false "
+                    + "and we are creating a Monthly frequency.");
+        }
     	
         switch (tu) {
             case HOURLY:
@@ -199,7 +244,9 @@ public abstract class Frequency {
                 }
                 break;
             default:
-                throw new ArgumentNotValid("Illegal timeunit " + timeunit);
+                throw new NotImplementedException(
+                        "We don't know how to make a Frequency for timeunit "
+                        + timeunit);
         }
         return freq;
     }
