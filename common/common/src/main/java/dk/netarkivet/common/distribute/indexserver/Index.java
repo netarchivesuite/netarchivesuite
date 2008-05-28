@@ -22,20 +22,43 @@
  */
 package dk.netarkivet.common.distribute.indexserver;
 
-import java.util.Set;
+import java.io.File;
 
-/** An interface to a cache of data for jobs. */
-public interface JobIndexCache {
-    /** Get an index for the given list of job IDs.
-     * The resulting file contains a suitably sorted list.
-     * This method should always be safe for asynchronous calling.
-     * This method may use a cached version of the file.
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
+/** An immutable pair if an index and the set this is an index for. */
+public class Index<I> {
+    /** The file containing the index over the set. */
+    private final File indexFile;
+    /** The set this is an index for. */
+    private final I indexSet;
+
+    /**
+     * Initialise the set.
+     * @param indexFile The index file.
+     * @param indexSet The set this is an index for.
      *
-     * @param jobIDs Set of job IDs to generate index for.
-     * @return An index, consisting of a file and the set this is an index for.
-     * This file must not be modified or deleted, since it is part of the cache
-     * of data.
+     * @throws ArgumentNotValid if indexFile is null.
      */
-    public Index<Set<Long>> getIndex(Set<Long> jobIDs);
+    public Index(File indexFile, I indexSet) {
+        ArgumentNotValid.checkNotNull(indexFile, "File indexFile");
+        this.indexFile = indexFile;
+        this.indexSet = indexSet;
+    }
 
+    /** Get the index file.
+     *
+     * @return The index file.
+     */
+    public File getIndexFile() {
+        return indexFile;
+    }
+
+    /** Get the set this is an index for.
+     *
+     * @return The set this is an index for.
+     */
+    public I getIndexSet() {
+        return indexSet;
+    }
 }

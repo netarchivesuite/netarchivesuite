@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
+import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -182,19 +182,17 @@ public abstract class FileBasedCache<I> {
     }
 
     /** Forgiving index generating method, that returns a file with an
-     * index of the greatest possible subset of a given id.
+     * index, of the greatest possible subset of a given id, and the subset.
      *
      * If the type I for instance is a Set, you may get an index of only a
      * subset. If I is a File, null may be seen as a subset.
      *
      * @see #cache for more information.
      *
-     * Please note that you will not know what the actual subset is.
-     *
      * @param id The requested index.
-     * @return An index over the greatest possible subset.
+     * @return An index over the greatest possible subset, and the subset.
      */
-    public JobIndexCache.JobIndex<I> getIndex(I id) {
+    public Index<I> getIndex(I id) {
         I response = id;
         I lastResponse = null;
         while (response != null && !response.equals(lastResponse)) {
@@ -211,7 +209,7 @@ public abstract class FileBasedCache<I> {
         File cacheFile = getCacheFile(response);
         log.info("Generated index '" + cacheFile + "' of id '" + response
                  + "', request was for '" + id + "'");
-        return new JobIndexCache.JobIndex(cacheFile, response);
+        return new Index<I>(cacheFile, response);
     }
 }
 

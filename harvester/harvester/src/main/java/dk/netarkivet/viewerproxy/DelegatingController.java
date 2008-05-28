@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
@@ -98,21 +99,21 @@ public class DelegatingController implements Controller {
     }
 
     /**
-     * Start collecting missing URLs
+     * Start collecting missing URLs.
      */
     public void startRecordingURIs() {
         mur.startRecordingURIs();
     }
 
     /**
-     * Stop collecting missing URLs
+     * Stop collecting missing URLs.
      */
     public void stopRecordingURIs() {
         mur.stopRecordingURIs();
     }
 
     /**
-     * Clear list of missing URLs
+     * Clear list of missing URLs.
      */
     public void clearRecordedURIs() {
         mur.clearRecordedURIs();
@@ -136,9 +137,9 @@ public class DelegatingController implements Controller {
      * @param label The label this index should be known as
      */
     public void changeIndex(Set<Long> jobSet, String label) {
-        JobIndexCache.JobIndex<Set<Long>> jobindex = cc.getIndex(jobSet);
-        aaa.setIndex(jobindex.getIndex());
-        this.availableSet = jobindex.getAvailableJobs();
+        Index<Set<Long>> jobindex = cc.getIndex(jobSet);
+        aaa.setIndex(jobindex.getIndexFile());
+        this.availableSet = jobindex.getIndexSet();
         this.jobSet = jobSet;
         this.indexLabel = label;
     }
@@ -171,6 +172,10 @@ public class DelegatingController implements Controller {
                                          StringUtils.conjoin(
                                                  ", ", availableList)));
             if (!availableSet.containsAll(jobSet)) {
+                //Generate a status message that lists
+                // - what was requested
+                // - what is available
+                // - what is missing
                 Set<Long> missingSet = new HashSet<Long>(jobSet);
                 missingSet.removeAll(availableSet);
                 List<Long> jobList = new ArrayList<Long>(jobSet);

@@ -24,14 +24,9 @@
 package dk.netarkivet.archive.indexserver;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * Implementation of file based cache, that works with the assumption we are
@@ -43,11 +38,6 @@ import dk.netarkivet.common.utils.StringUtils;
 
 public abstract class MultiFileBasedCache<T extends Comparable>
         extends FileBasedCache<Set<T>> {
-    /** Maximum number of IDs we will put in a filename.  Above this
-     * number, a checksum of the ids is generated instead.  This is done
-     * to protect us from getting filenames too long for the filesystem.
-     */
-    private static final int MAX_IDS_IN_FILENAME = 4;
 
     /**
      * Creates a new FileBasedCache object.  This creates a directory under the
@@ -70,19 +60,7 @@ public abstract class MultiFileBasedCache<T extends Comparable>
      * likelihood the order of 1/2^128 (i.e. use MD5 to abbreviate long lists).
      */
     public File getCacheFile(Set<T> IDs) {
-        ArgumentNotValid.checkNotNull(IDs, "Set<T> IDs");
-
-        List<T> sorted = new ArrayList<T>(IDs);
-        Collections.sort(sorted);
-
-        String allIDsString = StringUtils.conjoin("-",sorted );
-        if (sorted.size() > MAX_IDS_IN_FILENAME) {
-            String firstNIDs = StringUtils.conjoin("-",sorted.subList(0,
-                                                                  MAX_IDS_IN_FILENAME) );
-            return new File(getCacheDir(), firstNIDs + "-"
-                                           + MD5.generateMD5(allIDsString.getBytes()) + "-cache");
-        } else {
-            return new File(getCacheDir(), allIDsString + "-cache");
-        }
+        String fileName = FileUtils.generateFileNameFromSet(IDs, "-cache");
+        return new File(getCacheDir(), fileName);
     }
 }

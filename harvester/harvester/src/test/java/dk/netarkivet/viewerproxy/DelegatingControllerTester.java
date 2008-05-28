@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
+import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.StringAsserts;
 
@@ -280,11 +280,11 @@ public class DelegatingControllerTester extends TestCase {
         public TestCDXCache() {
             super(ArcRepositoryClientFactory.getViewerInstance());
         }
-        public JobIndexCache.JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
+        public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
             totalCounter++;
             getJobIndexCount++;
             getJobIndexArgument = jobIDs;
-            return new JobIndexCache.JobIndex(new File("/return/data"), jobIDs);
+            return new Index(new File("/return/data"), jobIDs);
         }
     }
 

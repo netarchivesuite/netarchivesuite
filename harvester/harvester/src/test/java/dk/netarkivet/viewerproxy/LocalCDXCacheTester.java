@@ -147,7 +147,7 @@ public class LocalCDXCacheTester extends TestCase {
         List<String> expectedData = FileUtils.readListFromFile(
                 new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
         Collections.sort(expectedData);
-        File realData = cache.getIndex(set(2L)).getIndex();
+        File realData = cache.getIndex(set(2L)).getIndexFile();
         assertEquals("Returned data should be the same as expected (sorted) data",
                      listToString(expectedData),
                      FileUtils.readFile(realData));
@@ -155,7 +155,7 @@ public class LocalCDXCacheTester extends TestCase {
         expectedData.addAll(FileUtils.readListFromFile(
                 new File(TestInfo.WORKING_DIR, "4-metadata-1.arc-contents")));
         Collections.sort(expectedData);
-        realData = cache.getIndex(set(2L, 4L)).getIndex();
+        realData = cache.getIndex(set(2L, 4L)).getIndexFile();
         assertEquals("Returned data should be the same as expected (sorted) data"
                      + " with multiple files",
                      listToString(expectedData), FileUtils.readFile(realData));
@@ -163,7 +163,7 @@ public class LocalCDXCacheTester extends TestCase {
         expectedData.addAll(FileUtils.readListFromFile(
                 new File(TestInfo.WORKING_DIR, "70-metadata-1.arc-contents")));
         Collections.sort(expectedData);
-        realData = cache.getIndex(set(2L, 1L, 4L, 70L, 3L)).getIndex();
+        realData = cache.getIndex(set(2L, 1L, 4L, 70L, 3L)).getIndexFile();
         assertEquals("Returned data should be the same as expected (sorted)"
                      + " data, even when some jobs are missing",
                      listToString(expectedData), FileUtils.readFile(realData));
@@ -185,13 +185,13 @@ public class LocalCDXCacheTester extends TestCase {
             // expected
         }
 
-        File f = cache.getIndex(set(-1L)).getIndex();
+        File f = cache.getIndex(set(-1L)).getIndexFile();
         assertTrue("A file should result from indexing just a non-existing job",
                    f.exists());
         assertEquals("Empty file should result from indexing just a non-existing job",
                      0, f.length());
 
-        realData = cache.getIndex(set(-1L, 2L)).getIndex();
+        realData = cache.getIndex(set(-1L, 2L)).getIndexFile();
         expectedData = FileUtils.readListFromFile(
                 new File(TestInfo.WORKING_DIR, "2-metadata-1.arc-contents"));
         Collections.sort(expectedData);
@@ -200,24 +200,24 @@ public class LocalCDXCacheTester extends TestCase {
                      FileUtils.readFile(realData));
 
         // Check that we cache the files
-        realData = cache.getIndex(set(2L, 4L)).getIndex();
+        realData = cache.getIndex(set(2L, 4L)).getIndexFile();
         // Kill a cache file and see that we get that content
         OutputStream out = new FileOutputStream(realData);
         out.write("foo".getBytes());
         out.close();
-        realData = cache.getIndex(set(2L, 4L)).getIndex();
+        realData = cache.getIndex(set(2L, 4L)).getIndexFile();
         assertEquals("Should get smashed cache file",
                      "foo", FileUtils.readFile(realData));
 
         // Check that batch isn't called unnecessarily
-        realData = cache.getIndex(set(2L, 70L)).getIndex();
+        realData = cache.getIndex(set(2L, 70L)).getIndexFile();
         batchMustDie = true;
-        realData = cache.getIndex(set(2L, 70L)).getIndex();
+        realData = cache.getIndex(set(2L, 70L)).getIndexFile();
         batchMustDie = false;
 
         // Check that async calling works
         // First make sure to destroy the file.
-        realData = cache.getIndex(set(4L, 70L)).getIndex();
+        realData = cache.getIndex(set(4L, 70L)).getIndexFile();
         FileUtils.remove(realData);
         batchPauseMilliseconds = 10;
         batchCounter = 0;

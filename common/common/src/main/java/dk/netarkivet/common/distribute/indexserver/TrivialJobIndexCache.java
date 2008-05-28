@@ -31,8 +31,8 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.StringUtils;
 
 /**
  * A trivial JobIndexCache implementation that just assumes somebody places
@@ -64,23 +64,21 @@ public class TrivialJobIndexCache implements JobIndexCache {
      * This method may use a cached version of the file.
      *
      * @param jobIDs Set of job IDs to generate index for.
-     * @return A file containing the index. This file must not be modified or
-     *         deleted, since it is part of the cache of data.
+     * @return A file containing the index, and always the full set.
+     *         The file must not be modified or deleted, since it is part of the
+     *         cache of data.
+     * @throws IOFailure if there is no cache file for the set.
      */
-    public JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
-        ArgumentNotValid.checkNotNull(jobIDs, "jobIds");
+    public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
+        ArgumentNotValid.checkNotNull(jobIDs, "Set<Long> jobIDs");
+
         File cacheFile = new File(dir,
-                StringUtils.conjoin("-",jobIDs ) + "-" +
-                requestType + "-cache");
-        // If the list of jobids is empty, prepend 0 to the cache-dir
-        if (jobIDs.isEmpty()) {
-            cacheFile = new File(dir, "0-" + requestType + "-cache");
-        }
+                FileUtils.generateFileNameFromSet(jobIDs, "-cache"));
 
         if (!cacheFile.exists()) {
-            log.warn("The cache does not contain '" + cacheFile + "' for "
-                    + jobIDs);
+            throw new IOFailure("The cache does not contain '" + cacheFile
+                                + "' for " + jobIDs);
         }
-        return new JobIndex(cacheFile, jobIDs);
+        return new Index<Set<Long>>(cacheFile, jobIDs);
     }
 }

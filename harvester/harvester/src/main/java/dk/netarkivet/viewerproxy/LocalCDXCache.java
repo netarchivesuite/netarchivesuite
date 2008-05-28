@@ -40,6 +40,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
+import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,8 +57,8 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
  * It has been designed to allow multiple instances to use the same cache
  * dir without interfering with each other, even if they run in separate VMs.
  *
+ * @deprecated Use {@link JobIndexCache}-mechanism instead
  */
-
 public class LocalCDXCache implements JobIndexCache {
     /** Don't put more than this number of job ids in the filename.  Above this
      * number, a checksum of the job ids is generated instead.  This is done
@@ -121,9 +122,9 @@ public class LocalCDXCache implements JobIndexCache {
      * This method may use a cached version of the file.
      *
      * @param jobIDs List of job IDs to generate index for.
-     * @return A file containing the index.
+     * @return A file containing an index, and always the full set.
      */
-    public JobIndex<Set<Long>> getIndex(Set<Long> jobIDs) {
+    public Index<Set<Long>> getIndex(Set<Long> jobIDs) {
         FileUtils.createDir(CACHE_DIR);
         ArgumentNotValid.checkNotNullOrEmpty(jobIDs, "jobIDs");
         File indexFile = getIndexFile(jobIDs);
@@ -135,7 +136,7 @@ public class LocalCDXCache implements JobIndexCache {
                 // if it exists -- if so, we can just use that.
                 // Safer but slower than checking existence twice
                 if (indexFile.exists()) {
-                    return new JobIndex(indexFile, jobIDs);
+                    return new Index(indexFile, jobIDs);
                     // workFile deleted in finally.
                 }
                 OutputStream tmpOutput = new FileOutputStream(workFile);
@@ -164,7 +165,7 @@ public class LocalCDXCache implements JobIndexCache {
         //TODO actually, this may not be the right set, it may only be a subset
         //It is not possible to figure out what cdx files were found using only
         //one batch job
-        return new JobIndex(indexFile, jobIDs);
+        return new Index(indexFile, jobIDs);
     }
 
     /** Gets and extract index data from metadata for a given file, squirting

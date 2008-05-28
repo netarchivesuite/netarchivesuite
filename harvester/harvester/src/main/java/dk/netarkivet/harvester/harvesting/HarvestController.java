@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,9 @@ import org.archive.io.arc.ARCWriter;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
+import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.distribute.indexserver.IndexClientFactory;
+import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -386,10 +389,17 @@ public class HarvestController {
         // Get list of jobs, which should be used for duplicate reduction
         // and retrieve a luceneIndex from the IndexServer
         // based on the crawl.logs from these jobs and their CDX'es.
-        List<Long> jobIDsForDuplicateReduction
-                = parseJobIDsForDuplicateReduction(metadataEntries);
-        return IndexClientFactory.getDedupCrawllogInstance().getIndex(
-                new HashSet<Long>(jobIDsForDuplicateReduction)).getIndex();
+        HashSet<Long> jobIDsForDuplicateReduction = new HashSet<Long>(
+                parseJobIDsForDuplicateReduction(metadataEntries));
+
+        // The client for requesting job index.
+        JobIndexCache jobIndexCache
+                = IndexClientFactory.getDedupCrawllogInstance();
+
+        // Request the index and return the index file.
+        Index<Set<Long>> jobIndex = jobIndexCache.getIndex(
+                jobIDsForDuplicateReduction);
+        return jobIndex.getIndexFile();
     }
 
     /**

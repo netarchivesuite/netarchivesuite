@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,6 +122,11 @@ public class FileUtils {
     private static final int MAX_RETRIES = 10;
     /** How many times we will retry making a directory */
     private static final int CREATE_DIR_RETRIES = 3;
+    /** Maximum number of IDs we will put in a filename.  Above this
+     * number, a checksum of the ids is generated instead.  This is done
+     * to protect us from getting filenames too long for the filesystem.
+     */
+    public static final int MAX_IDS_IN_FILENAME = 4;
 
     /**
      * Remove a file and any subfiles in case of directories.
@@ -1028,6 +1034,37 @@ public class FileUtils {
             copyFile(fromFile, toFile);
             remove(fromFile);
         }
+    }
+
+    /** Given a set, generate a reasonable file name from the set.
+     *
+     * @param IDs A set of IDs.
+     * @param suffix A suffix.
+     * @return A reasonable file name.
+     */
+    public static <T extends Comparable<T>> String generateFileNameFromSet(
+            Set<T> IDs, String suffix) {
+        ArgumentNotValid.checkNotNull(IDs, "Set<T> IDs");
+
+        if (IDs.isEmpty()) {
+            return "empty" + suffix;
+        }
+
+        List<T> sorted = new ArrayList<T>(IDs);
+        Collections.sort(sorted);
+
+        String allIDsString = StringUtils.conjoin("-", sorted);
+        String fileName;
+        if (sorted.size() > MAX_IDS_IN_FILENAME) {
+            String firstNIDs = StringUtils.conjoin("-", sorted.subList(
+                    0, MAX_IDS_IN_FILENAME));
+            fileName = firstNIDs + "-"
+                              + MD5.generateMD5(allIDsString.getBytes())
+                              + suffix;
+        } else {
+            fileName = allIDsString + suffix;
+        }
+        return fileName;
     }
 
     /**
