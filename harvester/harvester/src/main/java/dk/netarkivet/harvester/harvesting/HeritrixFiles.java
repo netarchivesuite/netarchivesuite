@@ -24,7 +24,6 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,10 +32,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 
+import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.Constants;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,
@@ -168,11 +167,7 @@ public class HeritrixFiles {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         ArgumentNotValid.checkTrue(doc.hasContent(), "XML document must not be empty");
         log.debug("Writing order-file to disk as file: " + getOrderXmlFile().getAbsolutePath());
-        try {
-            FileUtils.writeXmlToFile(doc, getOrderXmlFile());
-        } catch (IOException e) {
-            throw new IOFailure("order-file could not be written to disk!", e);
-        }
+        FileUtils.writeXmlToFile(doc, getOrderXmlFile());
     }
 
     /**

@@ -23,42 +23,38 @@
 
 package dk.netarkivet.deploy;
 
+import java.io.ByteArrayOutputStream;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.StreamUtils;
 
 /**
  * Generates the contents for the monitor_settings.xml, containing a list of
  * hostnames, and a list of JMX-ports associated with each hostname.
  * e.g.:
- * TODO perhaps include the JmxUsername ('monitorRole') in outputXML,
  * <?xml version="1.0" encoding="UTF-8"?>
  * <settings xmlns="http://www.netarkivet.dk/schemas/monitor_settings">
  *     <monitor>
- *         <jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
+ *         <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
  *     </monitor>
  * </settings>
+ * TODO perhaps include the JmxUsername ('monitorRole') in outputXML,
  */
 public class JmxHostsDeploymentBuilder implements DeploymentBuilder {
-    /** XML header for the monitor_settings.xml file. */
-    private static final String MONITOR_SETTTINGS_HEADER =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<settings "
-            + "xmlns=\"http://www.netarkivet.dk/schemas/monitor_settings\" "
-            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
-    /** XML footer for the monitor_settings.xml file. */
-    private static final String MONITOR_SETTTINGS_FOOTER = "</settings>\n";
-    
+
     /** This contains the end result of this builder. */
     private final StringBuilder result;
     /** The general JMX password for the deployment. */
     private String jmxPassword;
+    /** The namespace used in the generated XML document. */
     private static final String MONITOR_SETTINGS_NAMESPACE
             = "http://www.netarkivet.dk/schemas/monitor_settings";
 
     /**
-     * Register the factory used for establishing connections to remote servers.
+     * Initialise the builder with the stringbuilder to generate result to.
      * @param result the StringBuilder to write to
      */
     public JmxHostsDeploymentBuilder(StringBuilder result) {
@@ -78,7 +74,7 @@ public class JmxHostsDeploymentBuilder implements DeploymentBuilder {
 
     /**
      * Currently the host information is not used by this builder, so just
-     * return a hostbilder that does nothing.
+     * return a hostbuilder that does nothing.
      * @return an HostBuilder object that ignores information about a host.
      */
     public HostBuilder newHostBuilder() {
@@ -90,11 +86,10 @@ public class JmxHostsDeploymentBuilder implements DeploymentBuilder {
     }
 
     /**
-     * Remembers the current locations, but currently does not use it.
+     * Does nothing, location is not used.
      * @see DeploymentBuilder#setLocation(String)
      */
-    public void setLocation(String location) {
-    }
+    public void setLocation(String location) {}
 
     /**
      * Done collection information, generate resulting XML.
@@ -106,6 +101,9 @@ public class JmxHostsDeploymentBuilder implements DeploymentBuilder {
                 "monitor", MONITOR_SETTINGS_NAMESPACE).addElement(
                 "jmxMonitorRolePassword", MONITOR_SETTINGS_NAMESPACE).setText(
                 jmxPassword);
-        result.append(d.asXML());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        StreamUtils.writeXmlToStream(d, baos);
+        result.append(baos.toString());
+
     }
 }

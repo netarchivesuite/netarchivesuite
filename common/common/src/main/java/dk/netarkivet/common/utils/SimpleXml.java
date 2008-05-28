@@ -23,6 +23,14 @@
  */
 package dk.netarkivet.common.utils;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
@@ -35,16 +43,6 @@ import org.dom4j.dom.DOMDocument;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.exceptions.IllegalState;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Utility class to load and save data from/to XML files using a
@@ -298,15 +296,7 @@ public class SimpleXml {
      */
     public void save(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
-
-        try {
-            FileUtils.writeXmlToFile(xmlDoc, f);
-        } catch (IOException e) {
-            log.warn("Could not write to xml to file '"
-                    + f + "'", e);
-            throw new IOFailure("Could not write to xml file "
-                    + f.getAbsolutePath(), e);
-        }
+        FileUtils.writeXmlToFile(xmlDoc, f);
     }
 
 

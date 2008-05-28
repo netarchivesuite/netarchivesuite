@@ -30,6 +30,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
+import org.dom4j.Document;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -83,6 +87,34 @@ public class StreamUtils {
         } catch (IOException e) {
             throw new IOFailure("Trouble copying inputstream " + in
                                 + " to outputstream " + out, e);
+        }
+    }
+
+    /**
+     * Write document tree to stream. Note, the stream is flushed, but not
+     * closed.
+     *
+     * @param doc the document tree to save.
+     * @param os the stream to write xml to
+     * @throws IOFailure On trouble writing XML to stream.
+     */
+    public static void writeXmlToStream(Document doc,
+                                        OutputStream os) {
+        XMLWriter xwriter = null;
+        try {
+            try {
+                OutputFormat format = OutputFormat.createPrettyPrint();
+                format.setEncoding("UTF-8");
+                xwriter = new XMLWriter(os, format);
+                xwriter.write(doc);
+            } finally {
+                if (xwriter != null) {
+                    xwriter.close();
+                }
+                os.flush();
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to write XML to stream", e);
         }
     }
 }

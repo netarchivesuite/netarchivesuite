@@ -49,8 +49,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.Settings;
@@ -486,35 +484,6 @@ public class FileUtils {
     }
 
     /**
-     * Write document tree to file.
-     *
-     * @param doc
-     *            the document tree to save
-     * @param f
-     *            the file to write the document to.
-     * @throws IOException
-     *             author: SSC
-     */
-    public static void writeXmlToFile(Document doc, File f) throws IOException {
-        XMLWriter xwriter = null;
-        FileOutputStream fos = null;
-        try {
-            OutputFormat format = OutputFormat.createPrettyPrint();
-            format.setEncoding("UTF-8");
-            fos = new FileOutputStream(f);
-            xwriter = new XMLWriter(fos, format);
-            xwriter.write(doc);
-        } finally {
-            if (fos != null) {
-                fos.close();
-            }
-            if (xwriter != null) {
-                xwriter.close();
-            }
-        }
-    }
-
-    /**
      * Read a all lines from a file into a list of strings.
      * @param file The file to read from.
      * @return The list of lines.
@@ -542,6 +511,30 @@ public class FileUtils {
             throw new IOFailure(msg, e);
         }
         return lines;
+    }
+
+    /**
+     * Write document tree to file.
+     *
+     * @param doc the document tree to save.
+     * @param f the file to write the document to.
+     * @throws IOFailure On trouble writing XML file to disk.
+     */
+    public static void writeXmlToFile(Document doc, File f) throws IOFailure {
+        FileOutputStream fos = null;
+        try {
+            try {
+                fos = new FileOutputStream(f);
+                StreamUtils.writeXmlToStream(doc, fos);
+            } finally {
+                if (fos != null) {
+                    fos.close();
+                }
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to write XML to file '"
+                                + f.getAbsolutePath() + "'", e);
+        }
     }
 
     /** Writes a collection of strings to a file, each string on one line.

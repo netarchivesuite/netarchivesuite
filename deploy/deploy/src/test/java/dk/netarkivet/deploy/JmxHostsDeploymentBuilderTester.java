@@ -69,7 +69,12 @@ public class JmxHostsDeploymentBuilderTester extends TestCase {
         // is done in the done() method.
         builder.done();
         Document d = DocumentHelper.parseText(result.toString());
-        Document d2 = DocumentHelper.parseText("<settings xmlns=\"http://www.netarkivet.dk/schemas/monitor_settings\"><monitor><jmxMonitorRolePassword>test</jmxMonitorRolePassword></monitor></settings>");
+        Document d2 = DocumentHelper.parseText("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                               + "<settings xmlns=\"http://www.netarkivet.dk/schemas/monitor_settings\">\n"
+                                               + "  <monitor>\n"
+                                               + "    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>\n"
+                                               + "  </monitor>\n"
+                                               + "</settings>");
         d.normalize();
         d2.normalize();
         assertEquals("Should get correct result when parsing itconfig to get "
