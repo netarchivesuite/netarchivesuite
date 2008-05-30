@@ -96,7 +96,7 @@ insert into schemaversions ( tablename, version )
 -------------------------------------------------------------------------------
 -- Name:    domains
 -- Descr.:  This table contains the basic domain information.
--- Expected entry count: Approximately 600.000 entries
+-- Expected entry count: Many
 create table domains (
     domain_id bigint not null generated always as identity primary key,
                                        -- Unique id for the domain
@@ -104,13 +104,15 @@ create table domains (
     comments varchar(30000),           -- Comments on domain, if any 
     defaultconfig bigint not null,     -- Configuration used for snapshot
                                        --  harvests
-    crawlertraps varchar(1000),        -- Regexp(s) for excluded urlâ€™s.
+    crawlertraps varchar(1000),        -- Regexp(s) for excluded urls.
     edition bigint not null,           -- Marker for optimistic locking by 
                                        --  web interface
     alias bigint,                      -- Domain that this domain is an alias
-                                       --  of
+                                       --  of. Null, if this domain is not an
+                                       --  alias.
     lastaliasupdate timestamp          -- Last time a user has verified that
-                                       --  this domain is an alias
+                                       --  this domain is an alias. Null, if
+                                       --  this domain is not an alias.
 );
 
 create index domainnameid on domains(domain_id, name);
@@ -134,7 +136,8 @@ create table configurations (
      overridelimits int,             -- True if the configuration's limits
                                      --  should apply in snapshot harvests
      maxbytes bigint not null default -1 -- Maximum number of bytes to harvest
-                                         --  with this configuration
+                                         --  with this configuration.
+                                         -- -1 means no limit.
  );
 
  create index configurationname on configurations(name);
@@ -147,8 +150,8 @@ create table configurations (
 --          Note the following:
 --          1. the domain relation in the referenced configuration must be the
 --             same as the domain relation in the referenced password.
---          2. Not all passwords belongs to a configuration 
---          3. Even though it is possible to make many-to-may relations there
+--          2. Not all passwords belong to a configuration
+--          3. Even though it is possible to make many-to-many relations there
 --             are in reality a one (configuration) to many (passwords) 
 --             relation
 create table config_passwords (
@@ -163,8 +166,8 @@ create table config_passwords (
 --          Note the following:
 --          1. the domain relation in the referenced configuration must be the
 --             same as the domain relation in the referenced seedlist.
---          2. Not all seedlists belongs to a configuration 
---          3. Even though it is possible to make many-to-may relations there
+--          2. Not all seedlists belong to a configuration
+--          3. Even though it is possible to make many-to-many relations there
 --             are in reality a one (configuration) to many (seedlists) 
 --             relation
 create table config_seedlists (
@@ -181,7 +184,7 @@ create table seedlists (
                                 -- Unique id for the seed list
     name varchar(300) not null, -- Name of the seed list
     comments varchar(30000),    -- User-defined comments
-    domain_id bigint not null,  -- The domain that the seed list belong to
+    domain_id bigint not null,  -- The domain that the seed list belongs to
     seeds clob(8M) not null     -- Seed list, newline-seperated
 );
 
@@ -306,9 +309,9 @@ create index partialharvestsnextdate ON partialharvests (nextdate);
 -- Name:    harvest_configs
 -- Descr.:  This table contains relations between harvest definitions and 
 --          configurations.
---          Note that even though it is possible to make many-to-may relations
+--          Note that even though it is possible to make many-to-many relations
 --          there are in reality a one (harvestdefinition) to many 
---          (configutrations) relation
+--          (configurations) relation
 create table harvest_configs (
     harvest_id bigint not null, -- Reference to table harvestdefinitions
     config_id bigint not null,  -- Reference to table configurations
@@ -330,15 +333,14 @@ create table schedules (
      name varchar(300) not null unique, -- Name of schedule
      comments varchar(30000),      -- User-defined comments
      startdate timestamp,          -- Time to start, if specified
-     enddate timestamp,            -- Time to stop. It must be set, if 
-                                   --  maxrepeats is null, in order to avoid 
-                                   --  timeframe is endless
+     enddate timestamp,            -- Time to stop. timeframe is endless, if
+                                   --  both this field and maxrepeats are null.
      maxrepeats bigint,            -- Count of times it can be started. It must
                                    --  be set, if enddate is null, in order to 
                                    --  avoid timeframe is endless
      timeunit int not null,        -- Time unit used for time measure between 
                                    --  repetitions. It indicates whether it is
-                                   --  hours, days, weeks or moths. possible
+                                   --  hours, days, weeks or months. Possible
                                    --  values are defined in TimeUnit.java
      numtimeunits bigint not null, -- Count of time unit, for time of next 
                                    --  repetition
@@ -391,7 +393,7 @@ create table jobs (
     forcemaxcount bigint,           -- Max object count that overwrites the
                                     --  maxcount value in the harvest
                                     --  definition
-    orderxml varchar(300) not null, -- The order.xml file name that are use
+    orderxml varchar(300) not null, -- The order.xml file name that is used
                                     --  here
     orderxmldoc clob(64M) not null, -- The contents of the order.xml file in
                                     --  text form, added with specific details
@@ -428,6 +430,9 @@ create index jobharvestid on jobs(harvest_id);
 --          create a job. The information is basis for making a list of domain 
 --          configurations for a job. Note that it is possible to identify the 
 --          domain from the configuration, so the domain is not stored here.
+--          Note that even though it is possible to make many-to-many relations
+--          there are in reality a one (jobs) to many
+--          (configurations) relation
 -- Expected entry count: Many
 create table job_configs(
     job_id bigint not null,     -- Reference to table jobs
