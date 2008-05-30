@@ -73,7 +73,7 @@ public class TrivialJobIndexCache implements JobIndexCache {
         ArgumentNotValid.checkNotNull(jobIDs, "Set<Long> jobIDs");
 
         File cacheFile = new File(dir,
-                FileUtils.generateFileNameFromSet(jobIDs, requestType + "-cache"));
+                FileUtils.generateFileNameFromSet(jobIDs, "-" + requestType + "-cache"));
 
         if (!cacheFile.exists()) {
             throw new IOFailure("The cache does not contain '" + cacheFile
