@@ -1,1 +1,0 @@
- CREATE INDEX aliasindex ON domains(alias);
