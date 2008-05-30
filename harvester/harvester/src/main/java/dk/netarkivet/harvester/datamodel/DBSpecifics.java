@@ -28,8 +28,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
@@ -39,9 +43,10 @@ import dk.netarkivet.common.utils.SettingsFactory;
  *
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
+    /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
 
-    /** Get the singleton instance of the DBSpecifics implementation class
+    /** Get the singleton instance of the DBSpecifics implementation class.
      *
      * @return An instance of DBSpecifics with implementations for a given DB.
      */
@@ -70,7 +75,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @throws SQLException if there is a problem getting the table.
      * @return The name of the created table
      */
-    public abstract String getJobConfigsTmpTable(Connection c) throws SQLException;
+    public abstract String getJobConfigsTmpTable(Connection c)
+    throws SQLException;
 
     /** Dispose of a temporary table gotten with getTemporaryTable. This can be
      * expected to be called from within a finally clause, so it mustn't throw
@@ -106,15 +112,70 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      *
      * @param tableName The table to update
      * @param toVersion The version to update the table to.
-     * @throws IllegalState if there are inconsistencies with toVersion and/or
-     *         the current version read from the database
-     * @throws NotImplementedException if there are table-specific updates 
-     *         specified from current version to given toVersion
-     * @throws IOFaillure in case of problems in interacting with the database
+     * @throws IllegalState If the table is an unsupported version, and
+     * the toVersion is less than the current version of the table  
+     * @throws NotImplementedException If no method exists for migration from
+     * current version of the table to the toVersion of the table.
+     * @throws IOFailure in case of problems in interacting with the database
      */
+   
     public synchronized void updateTable(String tableName, int toVersion) {
+        ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
+        ArgumentNotValid.checkPositive(toVersion, "int toVersion");
+        
+        int currentVersion = DBUtils.getTableVersion(tableName);
+        
+        if (currentVersion == toVersion) {
+            // Nothing to do. Version of table is already correct.
+            return;
+        }
 
+        if (currentVersion > toVersion) {
+            throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version of table '"
+                    + tableName + "' is not acceptable "
+                    + "(current version is greater than requested version).");
+        }
+        
+        
+        if (tableName.equals("jobs")) {
+            if (currentVersion < 3) {
+                throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version " + currentVersion + " of table '"
+                    + tableName + "' is not acceptable. "
+                    + "(current version is less than open source version).");
+            }
+            if (currentVersion == 3 && toVersion >= 4) {
+                migrateJobsv3tov4();
+            }
+            // 
+            if (currentVersion == 4 && toVersion >= 5) {
+                    throw new NotImplementedException(
+                            "No method exists for migrating table '"
+                            +  tableName + "' from version " 
+                            + currentVersion + " to version " + toVersion);
+            }
+            // future updates of the job table are inserted here
+            if (currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: " 
+                    + "The current version (" + currentVersion + ") of table '"
+                    + tableName + "' is not an acceptable/known version. ");
+            }
+        //} else if tableName.equals("xxx") {   
+        } else {
+            // This includes cases where currentVersion < toVersion
+            // for all tables that does not have migration functions yet
+            throw new NotImplementedException(
+                    "No method exists for migrating table '"
+                    +  tableName + "' to version " + toVersion);
+        }
     }
-
     
+    /** Migrates the 'jobs' table from version 3 to version 4
+     * consisting of a change of the field forcemaxbytes from int to bigint
+     * and setting its default to -1. 
+     * Furthermore the default value for field num_configs is set to 0.
+     * @throws IOFailure in case of problems in interacting with the database
+     */
+    protected abstract void migrateJobsv3tov4();
 }

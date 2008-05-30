@@ -46,6 +46,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
 
@@ -63,14 +64,14 @@ public class JobDBDAO extends JobDAO {
      */
     protected JobDBDAO() {
         
-        int jobVersion = DBConnect.getTableVersion("jobs");
+        int jobVersion = DBUtils.getTableVersion("jobs");
         if (jobVersion == 3) {
             log.info("Migrate tabel 'jobs' to version 4");
             DBSpecifics.getInstance().updateTable("jobs", 4);
         }
         
-        DBConnect.checkTableVersion("jobs", 4);
-        DBConnect.checkTableVersion("job_configs", 1);
+        DBUtils.checkTableVersion("jobs", 4);
+        DBUtils.checkTableVersion("job_configs", 1);
     }
 
     /**
@@ -110,16 +111,16 @@ public class JobDBDAO extends JobDAO {
             s.setInt(4, job.getPriority().ordinal());
             s.setLong(5, job.getForceMaxObjectsPerDomain());
             s.setLong(6, job.getMaxBytesPerDomain());
-            DBConnect.setStringMaxLength(s, 7, job.getOrderXMLName(),
+            DBUtils.setStringMaxLength(s, 7, job.getOrderXMLName(),
                                          Constants.MAX_NAME_SIZE, job, "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBConnect.setClobMaxLength(s, 8, orderreader,
+            DBUtils.setClobMaxLength(s, 8, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job, "order.xml");
-            DBConnect.setClobMaxLength(s, 9, job.getSeedListAsString(),
+            DBUtils.setClobMaxLength(s, 9, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE, job, "seedlist");
             s.setInt(10, job.getHarvestNum());
-            DBConnect.setDateMaybeNull(s, 11, job.getActualStart());
-            DBConnect.setDateMaybeNull(s, 12, job.getActualStop());
+            DBUtils.setDateMaybeNull(s, 11, job.getActualStart());
+            DBUtils.setDateMaybeNull(s, 12, job.getActualStop());
             // The size of the configuration map == number of configurations
             s.setInt(13, job.getDomainConfigurationMap().size());
             long initialEdition = 1;
@@ -133,8 +134,8 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
-            DBConnect.rollbackIfNeeded(c, "create job", job);
+            DBUtils.closeStatementIfOpen(s);
+            DBUtils.rollbackIfNeeded(c, "create job", job);
         }
     }
 
@@ -187,7 +188,7 @@ public class JobDBDAO extends JobDAO {
                 }
                 c.commit();
             } finally {
-                DBConnect.closeStatementIfOpen(s);
+                DBUtils.closeStatementIfOpen(s);
                 if (tmpTable != null) {
                     DBSpecifics.getInstance().dropJobConfigsTmpTable(c,
                             tmpTable);
@@ -204,12 +205,12 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized boolean exists(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "Long jobID");
-        return 1 == DBConnect.selectLongValue(
+        return 1 == DBUtils.selectLongValue(
                 "SELECT COUNT(*) FROM jobs WHERE job_id = ?", jobID);
     }
 
     synchronized Long generateNextID() {
-        Long maxVal = DBConnect.selectLongValue("SELECT MAX(job_id) FROM jobs");
+        Long maxVal = DBUtils.selectLongValue("SELECT MAX(job_id) FROM jobs");
         if (maxVal == null) {
             maxVal = 0L;
         }
@@ -253,25 +254,25 @@ public class JobDBDAO extends JobDAO {
             s.setInt(3, job.getPriority().ordinal());
             s.setLong(4, job.getForceMaxObjectsPerDomain());
             s.setLong(5, job.getMaxBytesPerDomain());
-            DBConnect.setStringMaxLength(s, 6, job.getOrderXMLName(),
+            DBUtils.setStringMaxLength(s, 6, job.getOrderXMLName(),
                                          Constants.MAX_NAME_SIZE, job, "order.xml name");
             final String orderreader = job.getOrderXMLdoc().asXML();
-            DBConnect.setClobMaxLength(s, 7, orderreader,
+            DBUtils.setClobMaxLength(s, 7, orderreader,
                                        Constants.MAX_ORDERXML_SIZE, job, "order.xml");
-            DBConnect.setClobMaxLength(s, 8, job.getSeedListAsString(),
+            DBUtils.setClobMaxLength(s, 8, job.getSeedListAsString(),
                                        Constants.MAX_COMBINED_SEED_LIST_SIZE, job, "seedlist");
             s.setInt(9, job.getHarvestNum()); // Not in job yet
-            DBConnect.setStringMaxLength(s, 10, job.getHarvestErrors(),
+            DBUtils.setStringMaxLength(s, 10, job.getHarvestErrors(),
                                          Constants.MAX_ERROR_SIZE, job, "harvest_error");
-            DBConnect.setStringMaxLength(s, 11, job.getHarvestErrorDetails(),
+            DBUtils.setStringMaxLength(s, 11, job.getHarvestErrorDetails(),
                                          Constants.MAX_ERROR_DETAIL_SIZE, job, "harvest_error_details");
-            DBConnect.setStringMaxLength(s, 12, job.getUploadErrors(),
+            DBUtils.setStringMaxLength(s, 12, job.getUploadErrors(),
                                          Constants.MAX_ERROR_SIZE, job, "upload_error");
-            DBConnect.setStringMaxLength(s, 13, job.getUploadErrorDetails(),
+            DBUtils.setStringMaxLength(s, 13, job.getUploadErrorDetails(),
                                          Constants.MAX_ERROR_DETAIL_SIZE, job, "upload_error_details");
             long edition = job.getEdition() + 1;
-            DBConnect.setDateMaybeNull(s, 14, job.getActualStart());
-            DBConnect.setDateMaybeNull(s, 15, job.getActualStop());
+            DBUtils.setDateMaybeNull(s, 14, job.getActualStart());
+            DBUtils.setDateMaybeNull(s, 15, job.getActualStop());
             s.setInt(16, job.getDomainConfigurationMap().size());
             s.setLong(17, edition);
             s.setLong(18, job.getJobID());
@@ -290,8 +291,8 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.rollbackIfNeeded(c, "update job", job);
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.rollbackIfNeeded(c, "update job", job);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -337,8 +338,8 @@ public class JobDBDAO extends JobDAO {
             String harvestErrorDetails = result.getString(11);
             String uploadErrors = result.getString(12);
             String uploadErrorDetails = result.getString(13);
-            Date startdate = DBConnect.getDateMaybeNull(result, 14);
-            Date stopdate = DBConnect.getDateMaybeNull(result, 15);
+            Date startdate = DBUtils.getDateMaybeNull(result, 14);
+            Date stopdate = DBUtils.getDateMaybeNull(result, 15);
             Long edition = result.getLong(16);
             s.close();
             // IDs should match up in a natural join
@@ -380,7 +381,7 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -392,7 +393,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Job> getAll(JobStatus status) {
         try {
-            List<Long> idList = DBConnect.selectLongList(
+            List<Long> idList = DBUtils.selectLongList(
                     "SELECT job_id FROM jobs WHERE status = ? "
                     + "ORDER BY job_id", status.ordinal());
             return new FilterIterator<Long, Job>(idList.iterator()) {
@@ -417,7 +418,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Long> getAllJobIds(JobStatus status) {
         try {
-            List<Long> idList = DBConnect.selectLongList(
+            List<Long> idList = DBUtils.selectLongList(
                     "SELECT job_id FROM jobs WHERE status = ? "
                     + "ORDER BY job_id", status.ordinal());
             return idList.iterator();
@@ -435,7 +436,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Job> getAll() {
         try {
-            List<Long> idList = DBConnect.selectLongList(
+            List<Long> idList = DBUtils.selectLongList(
                     "SELECT job_id FROM jobs ORDER BY job_id");
             return new FilterIterator<Long, Job>(idList.iterator()) {
                 public Job filter(Long aLong) {
@@ -456,7 +457,7 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Long> getAllJobIds(){
         try {
-            List<Long> idList = DBConnect.selectLongList(
+            List<Long> idList = DBUtils.selectLongList(
                     "SELECT job_id FROM jobs ORDER BY job_id");
             return idList.iterator();
         } catch (SQLException e) {
@@ -513,8 +514,8 @@ public class JobDBDAO extends JobDAO {
                             res.getLong(3), res.getString(4), res.getInt(5),
                             res.getString(6),res.getString(7),
                             res.getString(8), res.getInt(9),
-                            DBConnect.getDateMaybeNull(res, 10),
-                            DBConnect.getDateMaybeNull(res, 11)
+                            DBUtils.getDateMaybeNull(res, 10),
+                            DBUtils.getDateMaybeNull(res, 11)
                 ));
             }
             return joblist;
@@ -524,7 +525,7 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -614,8 +615,8 @@ public class JobDBDAO extends JobDAO {
                                               JobStatus.fromOrdinal(res.getInt(2)), res.getLong(3),
                                               res.getString(4), res.getInt(5), res.getString(6),
                                               res.getString(7), res.getString(8), res.getInt(9),
-                                              DBConnect.getDateMaybeNull(res, 10),
-                                              DBConnect.getDateMaybeNull(res, 11)));
+                                              DBUtils.getDateMaybeNull(res, 10),
+                                              DBUtils.getDateMaybeNull(res, 11)));
             }
             return joblist;
         } catch (SQLException e) {
@@ -623,7 +624,7 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -657,7 +658,7 @@ public class JobDBDAO extends JobDAO {
         List<Long> jobs;
         try {
             //Select the previous harvest from the same harvestdefinition
-            jobs = DBConnect.selectLongList(
+            jobs = DBUtils.selectLongList(
                     "SELECT jobs.job_id FROM jobs, jobs AS original_jobs"
                     + " WHERE original_jobs.job_id=?"
                     + " AND jobs.harvest_id=original_jobs.harvest_id"
@@ -666,7 +667,7 @@ public class JobDBDAO extends JobDAO {
             List<Long> harvestDefinitions = getPreviousFullHarvests(jobID);
             if (!harvestDefinitions.isEmpty()) {
                 //Select all jobs from a given list of harvest definitions
-                jobs.addAll(DBConnect.selectLongList(
+                jobs.addAll(DBUtils.selectLongList(
                         "SELECT jobs.job_id FROM jobs"
                         + " WHERE jobs.harvest_id IN ("
                         + StringUtils.conjoin(",",harvestDefinitions )
@@ -690,7 +691,7 @@ public class JobDBDAO extends JobDAO {
     private List<Long> getPreviousFullHarvests(long jobID) {
         List<Long> results = new ArrayList<Long>();
         //Find the jobs' fullharvest id
-        Long thisHarvest = DBConnect.selectFirstLongValueIfAny(
+        Long thisHarvest = DBUtils.selectFirstLongValueIfAny(
                 "SELECT jobs.harvest_id FROM jobs, fullharvests"
                 + " WHERE jobs.harvest_id=fullharvests.harvest_id"
                 + " AND jobs.job_id=?", jobID);
@@ -703,7 +704,7 @@ public class JobDBDAO extends JobDAO {
         //Follow the chain of orginating IDs back
         for (Long originatingHarvest = thisHarvest;
              originatingHarvest != null;
-             originatingHarvest = DBConnect.selectFirstLongValueIfAny(
+             originatingHarvest = DBUtils.selectFirstLongValueIfAny(
                      "SELECT previoushd FROM fullharvests"
                      + " WHERE fullharvests.harvest_id=?",
                      originatingHarvest)) {
@@ -719,7 +720,7 @@ public class JobDBDAO extends JobDAO {
         }
 
         //Find the last harvest in the chain before
-        Long olderHarvest = DBConnect.selectFirstLongValueIfAny(
+        Long olderHarvest = DBUtils.selectFirstLongValueIfAny(
                 "SELECT fullharvests.harvest_id"
                 + " FROM fullharvests, harvestdefinitions,"
                 + "  harvestdefinitions AS currenthd"
@@ -730,7 +731,7 @@ public class JobDBDAO extends JobDAO {
         //Follow the chain of orginating IDs back
         for (Long originatingHarvest = olderHarvest;
              originatingHarvest != null;
-             originatingHarvest = DBConnect.selectFirstLongValueIfAny(
+             originatingHarvest = DBUtils.selectFirstLongValueIfAny(
                      "SELECT previoushd FROM fullharvests"
                      + " WHERE fullharvests.harvest_id=?",
                      originatingHarvest)) {
@@ -745,7 +746,7 @@ public class JobDBDAO extends JobDAO {
      * @return Number of jobs in 'jobs' table
      */
     public synchronized int getCountJobs() {
-        return DBConnect.selectIntValue("SELECT COUNT(*) FROM jobs");
+        return DBUtils.selectIntValue("SELECT COUNT(*) FROM jobs");
     }
 
     public synchronized long rescheduleJob(long oldJobID) {
@@ -804,8 +805,8 @@ public class JobDBDAO extends JobDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
-            DBConnect.rollbackIfNeeded(c, "resubmit job", oldJobID);
+            DBUtils.closeStatementIfOpen(s);
+            DBUtils.rollbackIfNeeded(c, "resubmit job", oldJobID);
         }
         return newJobID;
     }

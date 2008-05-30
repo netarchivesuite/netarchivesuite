@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 
 
@@ -53,7 +54,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
     private final Log log = LogFactory.getLog(getClass());
 
     protected ScheduleDBDAO() {
-        DBConnect.checkTableVersion("schedules", 1);
+        DBUtils.checkTableVersion("schedules", 1);
     }
 
     /**
@@ -84,13 +85,13 @@ public class ScheduleDBDAO extends ScheduleDAO {
             final long edition = 1;
             s.setLong(13, edition);
             s.executeUpdate();
-            schedule.setID(DBConnect.getGeneratedID(s));
+            schedule.setID(DBUtils.getGeneratedID(s));
             schedule.setEdition(edition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while creating schedule "
                     + schedule, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -103,14 +104,14 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @throws SQLException If the operation fails.
      */
     private void setScheduleParameters(PreparedStatement s, Schedule schedule) throws SQLException {
-        DBConnect.setName(s, 1, schedule);
-        DBConnect.setComments(s, 2, schedule);
+        DBUtils.setName(s, 1, schedule, Constants.MAX_NAME_SIZE);
+        DBUtils.setComments(s, 2, schedule, Constants.MAX_COMMENT_SIZE);
         final Date startDate = schedule.getStartDate();
         final int fieldNum = 3;
-        DBConnect.setDateMaybeNull(s, fieldNum, startDate);
+        DBUtils.setDateMaybeNull(s, fieldNum, startDate);
         if (schedule instanceof TimedSchedule) {
             TimedSchedule ts = (TimedSchedule) schedule;
-            DBConnect.setDateMaybeNull(s, 4, ts.getEndDate());
+            DBUtils.setDateMaybeNull(s, 4, ts.getEndDate());
             s.setNull(5, Types.BIGINT);
         } else {
             s.setNull(4, Types.DATE);
@@ -121,10 +122,10 @@ public class ScheduleDBDAO extends ScheduleDAO {
         s.setInt(6, freq.ordinal());
         s.setInt(7, freq.getNumUnits());
         s.setBoolean(8, freq.isAnytime());
-        DBConnect.setIntegerMaybeNull(s, 9, freq.getOnMinute());
-        DBConnect.setIntegerMaybeNull(s, 10, freq.getOnHour());
-        DBConnect.setIntegerMaybeNull(s, 11, freq.getOnDayOfWeek());
-        DBConnect.setIntegerMaybeNull(s, 12, freq.getOnDayOfMonth());
+        DBUtils.setIntegerMaybeNull(s, 9, freq.getOnMinute());
+        DBUtils.setIntegerMaybeNull(s, 10, freq.getOnHour());
+        DBUtils.setIntegerMaybeNull(s, 11, freq.getOnDayOfWeek());
+        DBUtils.setIntegerMaybeNull(s, 12, freq.getOnDayOfMonth());
     }
 
     /**
@@ -136,7 +137,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public synchronized boolean exists(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
-        final int count = DBConnect.selectIntValue(
+        final int count = DBUtils.selectIntValue(
                 "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
         return (1 == count);
     }
@@ -168,17 +169,17 @@ public class ScheduleDBDAO extends ScheduleDAO {
             long id = rs.getLong(1);
             boolean isTimedSchedule;
             String comments = rs.getString(2);
-            Date startdate = DBConnect.getDateMaybeNull(rs, 3);
-            Date enddate = DBConnect.getDateMaybeNull(rs, 4);
+            Date startdate = DBUtils.getDateMaybeNull(rs, 3);
+            Date enddate = DBUtils.getDateMaybeNull(rs, 4);
             int maxrepeats = rs.getInt(5);
             isTimedSchedule = rs.wasNull();
             int timeunit = rs.getInt(6);
             int numtimeunits = rs.getInt(7);
             boolean anytime = rs.getBoolean(8);
-            Integer minute = DBConnect.getIntegerMaybeNull(rs, 9);
-            Integer hour = DBConnect.getIntegerMaybeNull(rs, 10);
-            Integer dayofweek = DBConnect.getIntegerMaybeNull(rs, 11);
-            Integer dayofmonth = DBConnect.getIntegerMaybeNull(rs, 12);
+            Integer minute = DBUtils.getIntegerMaybeNull(rs, 9);
+            Integer hour = DBUtils.getIntegerMaybeNull(rs, 10);
+            Integer dayofweek = DBUtils.getIntegerMaybeNull(rs, 11);
+            Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             log.debug("Creating frequency for "
                     + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek,dayofmonth)"
                     + "= (" + timeunit + ", "
@@ -204,13 +205,13 @@ public class ScheduleDBDAO extends ScheduleDAO {
         } catch (SQLException e) {
             throw new IOFailure("SQL error reading schedule " + scheduleName, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
     public String describeUsages(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
-        return DBConnect.getUsages("SELECT harvestdefinitions.name "
+        return DBUtils.getUsages("SELECT harvestdefinitions.name "
                 + "FROM schedules, partialharvests, harvestdefinitions "
                 + "WHERE schedules.name = ?"
                 + "  AND schedules.schedule_id = partialharvests.schedule_id"
@@ -252,7 +253,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -306,7 +307,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
             throw new IOFailure("SQL error while creating schedule "
                     + schedule, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -317,7 +318,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public synchronized Iterator<Schedule> getAllSchedules() {
         try {
-        List<String> names = DBConnect.selectStringlist(
+        List<String> names = DBUtils.selectStringlist(
                 "SELECT name FROM schedules ORDER BY name");
             return new FilterIterator<String, Schedule>(names.iterator()) {
                 /**
@@ -337,12 +338,12 @@ public class ScheduleDBDAO extends ScheduleDAO {
     }
 
     public synchronized int getCountSchedules() {
-        return DBConnect.selectIntValue("SELECT COUNT(*) FROM schedules");
+        return DBUtils.selectIntValue("SELECT COUNT(*) FROM schedules");
     }
 
     public boolean mayDelete(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
-        return !DBConnect.selectAny("SELECT harvest_id"
+        return !DBUtils.selectAny("SELECT harvest_id"
                 + " FROM partialharvests WHERE schedule_id = ?",
                 schedule.getID());
     }

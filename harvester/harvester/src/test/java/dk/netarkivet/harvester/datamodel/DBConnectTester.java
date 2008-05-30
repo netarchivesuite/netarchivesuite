@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.logging.LogManager;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
@@ -101,7 +102,7 @@ public class DBConnectTester extends DataModelTestCase {
                     Connection c = DBConnect.getDBConnection();
                     c.setAutoCommit(false);
                     c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-                    DBConnect.selectLongList("SELECT domain_id FROM domains");
+                    DBUtils.selectLongList("SELECT domain_id FROM domains");
                     state[0] = 1;
                     waitForState(2, state);
                 } catch (Throwable e) {
@@ -176,7 +177,7 @@ public class DBConnectTester extends DataModelTestCase {
     	
     	// Verify, that setStringMaxLength works without warnings, if contents.length() <= maxSize
     	// and that storedContents equals to variable 'contents'
-    	DBConnect.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");    	
+    	DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");    	
  
     	// Check, that no WARNING has been written to the log 
     	LogUtils.flushLogs(DBConnect.class.getName());
@@ -193,7 +194,7 @@ public class DBConnectTester extends DataModelTestCase {
     	s = getPreparedStatementForTestingSetStringMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
     	maxSize = contents.length() - 2;
     	try {
-    		DBConnect.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+    		DBUtils.setStringMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
     	} catch (PermissionDenied e) {
     		fail("Should never throw PermissionDenied exception");
     	}    	
@@ -218,7 +219,7 @@ public class DBConnectTester extends DataModelTestCase {
     	
     	// Verify, that setClobMaxLength works without warnings, if contents.length() <= maxSize
     	// and that storedContents equals to variable 'contents'
-    	DBConnect.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+    	DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
 
     	// Check, that no WARNING has been written to the log
     	LogUtils.flushLogs(DBConnect.class.getName());
@@ -236,7 +237,7 @@ public class DBConnectTester extends DataModelTestCase {
     	s = getPreparedStatementForTestingSetClobMaxLength(id, "nameOfOrderxml", "ContentsOfOrderxmldoc");
         maxSize = contents.length() - 2;
     	try {
-    		DBConnect.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
+    		DBUtils.setClobMaxLength(s, fieldNum, contents, maxSize, dummyObject, "fieldname");
     	} catch (PermissionDenied e) {
     		fail("Should never throw PermissionDenied exception");
     	}
@@ -257,7 +258,7 @@ public class DBConnectTester extends DataModelTestCase {
         	c.prepareStatement("INSERT INTO DBConnectTester (id, orderxml, orderxmldoc) " 
         		+ " VALUES (?, ?, ?)");
     	s.setInt(1, id);
-    	DBConnect.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
+    	DBUtils.setClobMaxLength(s, 3, orderxmldoc, 64000L, null, "fieldName");
     	return s;
     }
     
@@ -268,7 +269,7 @@ public class DBConnectTester extends DataModelTestCase {
         	c.prepareStatement("INSERT INTO DBConnectTester (id, orderxml, orderxmldoc) " 
         		+ " VALUES (?, ?, ?)");
     	s.setInt(1, id);
-    	DBConnect.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
+    	DBUtils.setStringMaxLength(s, 2, orderxml, 300, null, "fieldName");
     	return s;
     }
     
@@ -293,11 +294,11 @@ public class DBConnectTester extends DataModelTestCase {
     
     private String retrieveStoredString(int id) {
 		return 
-			DBConnect.selectStringValue("SELECT orderxml from DBConnectTester where id=?", id);
+			DBUtils.selectStringValue("SELECT orderxml from DBConnectTester where id=?", id);
 	}
     
     private String retrieveStoredClob(int id) {
 		return 
-			DBConnect.selectStringValue("SELECT orderxmldoc from DBConnectTester where id=?", id);
+			DBUtils.selectStringValue("SELECT orderxmldoc from DBConnectTester where id=?", id);
 	}
 }

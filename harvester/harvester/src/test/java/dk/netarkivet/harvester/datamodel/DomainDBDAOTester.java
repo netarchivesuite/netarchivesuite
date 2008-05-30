@@ -40,6 +40,7 @@ import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * Unittests for the class dk.netarkivet.harvester.datamodel.DomainDBDAO.
@@ -371,9 +372,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 10000L,
                 64L,
                 StopReason.OBJECT_LIMIT);
-        long domainId = DBConnect.selectLongValue(
+        long domainId = DBUtils.selectLongValue(
                 "SELECT domain_id FROM domains WHERE name=?", theDomainName);
-        long configId = DBConnect.selectLongValue(
+        long configId = DBUtils.selectLongValue(
                 "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
                 configName, domainId);
         
@@ -412,11 +413,11 @@ public class DomainDBDAOTester extends DataModelTestCase {
             s.setLong(6, harvestInfo.getHarvestID());
             s.setTimestamp(7, new Timestamp(harvestInfo.getDate().getTime()));
             s.executeUpdate();
-            harvestInfo.setID(DBConnect.getGeneratedID(s));
+            harvestInfo.setID(DBUtils.getGeneratedID(s));
         } catch (SQLException e) {
             throw new IOFailure("SQL error while inserting harvest info", e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 }

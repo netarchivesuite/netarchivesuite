@@ -70,6 +70,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
@@ -85,6 +86,8 @@ public class JMXUtilsTester extends TestCase {
     public void tearDown() {
     }
     public void testGetAttribute() throws Exception {
+        // Set JMX_timeout to 5 seconds
+        Settings.set(Settings.JMX_TIMEOUT, "5");
         TestMBeanServerConnection connection = new TestMBeanServerConnection(0);
         Object ret = connection.getAttribute(JMXUtils.getBeanName("a:aBean=1"), "anAttribute");
         assertEquals("Should have composed bean/attribute name",

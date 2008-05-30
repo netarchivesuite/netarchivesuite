@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -40,7 +41,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
         } catch (SQLException e) {
             // expected
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
 
         try {
@@ -58,7 +59,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.executeUpdate();
             s.close();
             String domain =
-                    DBConnect.selectStringValue("SELECT domain_name FROM " + tmpTable
+                    DBUtils.selectStringValue("SELECT domain_name FROM " + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);
             c.commit();
@@ -67,21 +68,21 @@ public class DerbySpecificsTester extends DataModelTestCase {
         } catch (SQLException e) {
             fail("Should not have had SQL exception " + e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
 
         try {
             s = c.prepareStatement(statement);
             s.execute();
             String domain =
-                    DBConnect.selectStringValue("SELECT domain_name "
+                    DBUtils.selectStringValue("SELECT domain_name "
                             + "FROM session.jobconfignames "
                             + "WHERE config_name = 'foo'");
             fail("Should have failed query after table is dead");
         } catch (SQLException e) {
             // expected
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
 
         // Should be possible to get another temp table.
@@ -100,7 +101,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.executeUpdate();
             s.close();
             String domain =
-                    DBConnect.selectStringValue("SELECT domain_name FROM " + tmpTable
+                    DBUtils.selectStringValue("SELECT domain_name FROM " + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);
             c.commit();
@@ -109,7 +110,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
         } catch (SQLException e) {
             fail("Should not have had SQL exception " + e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 

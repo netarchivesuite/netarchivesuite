@@ -41,6 +41,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.testutils.TestUtils;
@@ -721,7 +722,7 @@ public class JobDAOTester extends DataModelTestCase {
                 + jobID + " in database";
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 

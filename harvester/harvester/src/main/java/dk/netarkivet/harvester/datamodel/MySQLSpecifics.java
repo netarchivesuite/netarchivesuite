@@ -32,8 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * MySQL-specific implementation of DB methods.
@@ -76,11 +75,12 @@ public class MySQLSpecifics extends DBSpecifics {
             s = c.prepareStatement("CREATE TEMPORARY TABLE  "
                     + "jobconfignames "
                     + "( domain_name varchar(" + Constants.MAX_NAME_SIZE + "), "
-                    + " config_name varchar(" + Constants.MAX_NAME_SIZE + ") )");
+                    + " config_name varchar(" + Constants.MAX_NAME_SIZE 
+                    + ") )");
             s.execute();
             s.close();
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
         return "jobconfignames";
     }
@@ -104,7 +104,7 @@ public class MySQLSpecifics extends DBSpecifics {
         } catch (SQLException e) {
             log.warn("Couldn't drop temporary table " + tableName, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -132,66 +132,14 @@ public class MySQLSpecifics extends DBSpecifics {
     public String getDriverClassName() {
         return "com.mysql.jdbc.Driver";
     }
-    
-    /** Update the database tables to the current versions.
-     * @param tableName the name of the table to update
-     * @param toVersion the required version of the table
-     * @throws IllegalState if there are inconsistencies with toVersion and/or
-     *         the current version read from the database
-     * @throws NotImplementedException if there are table-specific updates 
-     *         specified from current version to given toVersion
-     * @throws IOFaillure in case of problems in interacting with the database
-     */
-    public synchronized void updateTable(String tableName, int toVersion) {
-        ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
-        ArgumentNotValid.checkPositive(toVersion, "int toVersion");
         
-        int currentVersion = DBConnect.getTableVersion(tableName);
-        if (currentVersion == toVersion) {
-          // Nothing to do. Version of table is already correct.
-          return;
-        }
-        
-        if (tableName.equals("jobs")) {
-            if (currentVersion < 3) {
-                throw new IllegalState("Database is in an illegalState: " 
-                        + "The current version of table '"
-                        + tableName + "' is not acceptable. "
-                        + "(current version is less than open source version).");
-            }
-            if (currentVersion == 3 && toVersion >= 4) {
-            	migrateJobsv3tov4();
-            }
-            if (currentVersion == 4) {
-            	if (toVersion > 4) {
-                    throw new NotImplementedException(
-                    		"No method exists for migrating table '"
-                            +  tableName + "' to version " + toVersion);
-            	}
-            }            
-            if (currentVersion > 4) {
-                throw new IllegalState("Database is in an illegalState: " 
-                    + "The current version of table '"
-                    + tableName + "' is not acceptable. "
-                    + "(current version is an unknown version).");
-            }
-            //} else if tableName.equals("xxx") {   
-        } else {
-        	// This includes cases where currentVersion < toVersion
-        	// for all tables that does not have migartion functions yet
-            throw new NotImplementedException(
-            		"No method exists for migrating table '"
-                    +  tableName + "' to version " + toVersion);
-        }
-    }
-    
     /** Migrates the 'jobs' table from version 3 to version 4
-     * consisting in change of field forcemaxbytes from int to bigint and set
-     * its default to -1. Furthermore the default value for field num_configs 
-     * is set to 0.
-     * @throws IOFaillure in case of problems in interacting with the database
+     * consisting of a change of the field forcemaxbytes from int to bigint
+     * and setting its default to -1.
+     * Furthermore the default value for field num_configs is set to 0.
+     * @throws IOFailure in case of problems in interacting with the database
      */
-    private void migrateJobsv3tov4() {
+    protected synchronized void migrateJobsv3tov4() {
         String[] SqlStatements = {
             "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
             + " bigint not null default -1",
@@ -200,6 +148,4 @@ public class MySQLSpecifics extends DBSpecifics {
         };
         DBConnect.updateTable("jobs", 4, SqlStatements);
     }
-    
-    
 }

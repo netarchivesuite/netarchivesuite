@@ -41,6 +41,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DBUtils;
 
 /**
  * Implements the TemplateDAO with databases.
@@ -54,7 +55,7 @@ public class TemplateDBDAO extends TemplateDAO {
     private final Log log = LogFactory.getLog(getClass());
 
     TemplateDBDAO() {
-        DBConnect.checkTableVersion("ordertemplates", 1);
+        DBUtils.checkTableVersion("ordertemplates", 1);
     }
 
     /**
@@ -91,7 +92,7 @@ public class TemplateDBDAO extends TemplateDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -102,7 +103,7 @@ public class TemplateDBDAO extends TemplateDAO {
      */
     public synchronized Iterator<String> getAll() {
         try {
-            List<String> names = DBConnect.selectStringlist("SELECT name FROM ordertemplates ORDER BY name");
+            List<String> names = DBUtils.selectStringlist("SELECT name FROM ordertemplates ORDER BY name");
             return names.iterator();
         } catch (SQLException e) {
             throw new IOFailure("SQL error finding order.xml names", e);
@@ -115,7 +116,7 @@ public class TemplateDBDAO extends TemplateDAO {
      * @return True if such a template exists.
      */
     public synchronized boolean exists(String orderXmlName) {
-        int count = DBConnect.selectIntValue("SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
+        int count = DBUtils.selectIntValue("SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
         return count == 1;
     }
 
@@ -134,15 +135,15 @@ public class TemplateDBDAO extends TemplateDAO {
         try {
             s = c.prepareStatement("INSERT INTO ordertemplates "
                     + "( name, orderxml ) VALUES ( ?, ? )");
-            DBConnect.setStringMaxLength(s, 1, orderXmlName,
+            DBUtils.setStringMaxLength(s, 1, orderXmlName,
                     Constants.MAX_NAME_SIZE, orderXmlName, "length");
-            DBConnect.setClobMaxLength(s, 2, orderXml.getXML(),
+            DBUtils.setClobMaxLength(s, 2, orderXml.getXML(),
                     Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error creating template " + orderXmlName, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -153,7 +154,7 @@ public class TemplateDBDAO extends TemplateDAO {
      *  is not used.
      */
     public String describeUsages(String orderXmlName) {
-        return DBConnect.getUsages("SELECT DISTINCT domains.name "
+        return DBUtils.getUsages("SELECT DISTINCT domains.name "
                 + "  FROM domains, configurations, ordertemplates"
                 + " WHERE ordertemplates.name = ?"
                 + "   AND configurations.template_id = ordertemplates.template_id"
@@ -178,7 +179,7 @@ public class TemplateDBDAO extends TemplateDAO {
             s = c.prepareStatement("UPDATE ordertemplates "
                     + "SET orderxml = ? "
                     + "WHERE name = ?");
-            DBConnect.setClobMaxLength(s, 1, orderXml.getXML(),
+            DBUtils.setClobMaxLength(s, 1, orderXml.getXML(),
                     Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.setString(2, orderXmlName);
             s.executeUpdate();
@@ -186,7 +187,7 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error updating template "
                     + orderXmlName, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 
@@ -219,7 +220,7 @@ public class TemplateDBDAO extends TemplateDAO {
             throw new IOFailure("SQL error deleting template "
                     + orderXmlName, e);
         } finally {
-            DBConnect.closeStatementIfOpen(s);
+            DBUtils.closeStatementIfOpen(s);
         }
     }
 }

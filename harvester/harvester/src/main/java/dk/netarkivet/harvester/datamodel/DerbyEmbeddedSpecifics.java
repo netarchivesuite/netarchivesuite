@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -94,7 +95,7 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBConnect.closeStatementIfOpen(cs);
+            DBUtils.closeStatementIfOpen(cs);
         }
     }
 
