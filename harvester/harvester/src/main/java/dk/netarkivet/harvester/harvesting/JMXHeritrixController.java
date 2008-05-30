@@ -195,7 +195,7 @@ public class JMXHeritrixController implements HeritrixController {
                                       "bin"), "java").getAbsolutePath(),
                     "-Xmx" + Settings.get(Settings.HERITRIX_HEAP_SIZE),
 
-                    "-XX:+HeapDumpOnOutOfMemoryError",
+                    //"-XX:+HeapDumpOnOutOfMemoryError",
                     "-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath(),
                     "-Dcom.sun.management.jmxremote.port=" + getJMXPort(),
                     "-Dcom.sun.management.jmxremote.ssl=false",
