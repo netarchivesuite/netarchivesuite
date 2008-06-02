@@ -25,7 +25,6 @@ package dk.netarkivet.common.distribute.indexserver;
  * lc forgot to comment this!
  */
 
-import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +33,6 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -68,9 +66,6 @@ public class TrivialJobIndexCacheTester extends TestCase {
             //expected
         }
 
-        TestFileUtils.copyDirectoryNonCVS(new File(TestInfo.WORKING_DIR, "2-3-cache"),
-                new File(new File(Settings.get(Settings.CACHE_DIR), "TrivialJobIndexCache"),
-                        "2-3-cache"));
         Set<Long> jobs = new HashSet<Long>();
         jobs.add(2L);
         jobs.add(3L);
