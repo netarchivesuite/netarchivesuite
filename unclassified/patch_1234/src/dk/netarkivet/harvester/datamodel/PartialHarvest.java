@@ -322,6 +322,14 @@ public class PartialHarvest extends HarvestDefinition {
      * Takes a seed list and creates any necessary domains, configurations, and
      * seedlists to enable them to be harvested with the given template and
      *  other parameters.
+     * <A href="https://gforge.statsbiblioteket.dk/tracker/?group_id=7&atid=105&func=detail&aid=717">Bug 717</A> 
+     * addresses this issue.
+     * Current naming of the seedlists and domainconfigurations are: 
+     *  one of <br>
+     *  harvestdefinitionname + "_" + templateName + "_" + "UnlimitedBytes" 
+     *  (if maxbytes is negative)<br>
+     *  harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes" 
+     *  (if maxbytes is zero or postive).
      * @see EventHarvest#addConfigurations(PageContext,I18n,PartialHarvest)
      * for details
      * @param seeds a newline-separated list of the seeds to be added
@@ -335,9 +343,11 @@ public class PartialHarvest extends HarvestDefinition {
             throw new UnknownID("No such template: " + templateName);
         }
         // Generate components for the name for the configuration and seedlist
-        String maxBytesS = "NoLimit";
+        final String maxbytesSuffix = "Bytes"; 
+        String maxBytesS = "Unlimited" + maxbytesSuffix;
         if (maxBytes >= 0) {
             maxBytesS = Long.toString(maxBytes);
+            maxBytesS = maxBytesS + maxbytesSuffix;
         }
         String name = harvestDefName + "_" + templateName + "_" + maxBytesS;
 

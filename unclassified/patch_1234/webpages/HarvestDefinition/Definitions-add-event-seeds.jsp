@@ -144,14 +144,6 @@ the user
                 </select>
             </td>
         </tr>
-        <%--<tr>
-            <td>Maximal load rate(default 60 fetches/min): </td>
-            <td><input name="maxRate" size="4" /></td>
-        </tr>
-        <tr>
-            <td>Max objects fetched per domain (default 2000): </td>
-            <td><input name="maxObjects" size="4" /></td>
-        </tr>--%>
         <tr>
             <td colspan="2"><input type="submit"
                                    value="<fmt:message key="insert"/>"/></td>

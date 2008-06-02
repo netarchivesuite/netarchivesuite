@@ -67,7 +67,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName +"_" + order1xml + "_" + maxbytes;
+        String expectedName = harvestName +"_" + order1xml + "_" + maxbytes 
+            + "Bytes";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
@@ -124,7 +125,7 @@ public class PartialHarvestTester extends DataModelTestCase {
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName + "_" + order1xml + "_" + "NoLimit";
+        String expectedName = harvestName + "_" + order1xml + "_" + "UnlimitedBytes";
         
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
@@ -157,7 +158,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName + "_" + order1xml + "_" + maxbytes;
+        String expectedName = harvestName + "_" + order1xml + "_"
+            + maxbytes + "Bytes";
         //
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc = dci.next();
@@ -186,7 +188,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         PartialHarvest updatedHarvest =
                 (PartialHarvest) HarvestDefinitionDAO.getInstance().
                 getHarvestDefinition(harvestName);
-        String expectedName = harvestName + "_" + order1xml + "_" + maxbytes;
+        String expectedName = harvestName + "_" + order1xml + "_"
+            + maxbytes + "Bytes";
         // Should be two configurations
         Iterator<DomainConfiguration> dci = updatedHarvest.getDomainConfigurations();
         DomainConfiguration dc1 = dci.next();
@@ -239,8 +242,8 @@ public class PartialHarvestTester extends DataModelTestCase {
         String list3 = "www.2.dk/images\n www.4.dk/images\nwww.3.dk/images";
         final long maxbytes1 = 70000L;
         final long maxbytes2 = 80000L;
-        String name1 = harvestName + "_" + order1xml + "_" + maxbytes1;
-        String name2 = harvestName + "_" + order2xml + "_" + maxbytes2;
+        String name1 = harvestName + "_" + order1xml + "_" + maxbytes1 + "Bytes";
+        String name2 = harvestName + "_" + order2xml + "_" + maxbytes2 + "Bytes";
         harvest.addSeeds(list1, order1xml, maxbytes1);
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);
         harvest.addSeeds(list2, order2xml, maxbytes2);
