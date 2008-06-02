@@ -49,6 +49,7 @@ import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NetarkivetException;
+import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
@@ -137,7 +138,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * is not found.
      * @throws ArgumentNotValid If the given arcfile is null or empty, 
      * or the given index is negative.
-     * @throws IOfailure If a wrong message is returned or the
+     * @throws IOFailure If a wrong message is returned or the
      * get operation failed.
      */
     public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
@@ -271,10 +272,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                         + " of " + storeRetries + ".";
                 log.warn(msg, e);
                 messages += (msg + "\n");
-                messages += (e.getMessage() + "\n");
-                for (StackTraceElement line : e.getStackTrace()) {
-                    messages += ("    " + line + "\n");
-                }
+                messages += ExceptionUtils.getStackTrace(e);
             } finally {
                 if (outMsg != null) {
                     cleanUpAfterStore(outMsg);
@@ -401,7 +399,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *  equal to the empty string
      * @throws IOFailure if we could not delete the remote file, or 
      * there was no response to our RemoveAndGetFileMessage within the allotted
-     * time defined by the setting {@link Settings.ARCREPOSITORY_STORE_TIMEOUT}.
+     * time defined by the setting {@link Settings#ARCREPOSITORY_STORE_TIMEOUT}.
      * @return The file that was removed
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,
