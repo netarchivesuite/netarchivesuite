@@ -322,30 +322,34 @@ public class PartialHarvest extends HarvestDefinition {
      * Takes a seed list and creates any necessary domains, configurations, and
      * seedlists to enable them to be harvested with the given template and
      *  other parameters.
-     * @see EventHarvest#addConfigurations(PageContext,I18n,PartialHarvest) for details
+     * <A href="https://gforge.statsbiblioteket.dk/tracker/?group_id=7&atid=105&func=detail&aid=717">Bug 717</A> 
+     * addresses this issue.
+     * Current naming of the seedlists and domainconfigurations are: 
+     *  one of <br>
+     *  harvestdefinitionname + "_" + templateName + "_" + "UnlimitedBytes" 
+     *  (if maxbytes is negative)<br>
+     *  harvestdefinitionname + "_" + templateName + "_" + maxBytes + "Bytes" 
+     *  (if maxbytes is zero or postive).
+     * @see EventHarvest#addConfigurations(PageContext,I18n,PartialHarvest)
+     * for details
      * @param seeds a newline-separated list of the seeds to be added
      * @param templateName the name of the template to be used
-     * @param maxLoad the maximum load. If <0, the default is used
-     * @param maxObjects the maximum number of objects per domain. If <0,
-     *      the default is used
+     * @param maxBytes Maximum number of bytes to harvest per domain
      */
-    public void addSeeds(String seeds, String templateName, long maxLoad, long maxObjects) {
+    public void addSeeds(String seeds, String templateName, long maxBytes) {
         ArgumentNotValid.checkNotNullOrEmpty(seeds, "seeds");
         ArgumentNotValid.checkNotNullOrEmpty(templateName, "templateName");
         if (!TemplateDAO.getInstance().exists(templateName)) {
             throw new UnknownID("No such template: " + templateName);
         }
         // Generate components for the name for the configuration and seedlist
-        String maxLoadS = "";
-        if (maxLoad >= 0) {
-            maxLoadS += maxLoad;
+        final String maxbytesSuffix = "Bytes"; 
+        String maxBytesS = "Unlimited" + maxbytesSuffix;
+        if (maxBytes >= 0) {
+            maxBytesS = Long.toString(maxBytes);
+            maxBytesS = maxBytesS + maxbytesSuffix;
         }
-        String maxObjectsS = "";
-        if (maxObjects >= 0) {
-            maxObjectsS += maxObjects;
-        }
-        String name = harvestDefName + "_" + templateName + "_"
-                      + maxLoadS + "_" + maxObjectsS;
+        String name = harvestDefName + "_" + templateName + "_" + maxBytesS;
 
         // Note: Matches any sort of newline (unix/mac/dos), but won't get empty
         // lines, which is fine for this purpose
@@ -358,7 +362,7 @@ public class PartialHarvest extends HarvestDefinition {
         boolean valid = true;
         //validate:
 
-        for (String seed: seedArray) {
+        for (String seed : seedArray) {
             seed = seed.trim();
             if (seed.length() != 0) {
                 if (!(seed.startsWith("http://")
@@ -425,12 +429,8 @@ public class PartialHarvest extends HarvestDefinition {
                 dc = new DomainConfiguration(name, domain, seedListList,
                                              new ArrayList<Password>());
                 dc.setOrderXmlName(templateName);
-                if (maxLoad >= 0) {
-                    dc.setMaxRequestRate((int) maxLoad);
-                }
-                if (maxObjects >= 0) {
-                    dc.setMaxObjects((int) maxObjects);
-                }
+
+                dc.setMaxBytes(maxBytes);
                 domain.addConfiguration(dc);
             }
 

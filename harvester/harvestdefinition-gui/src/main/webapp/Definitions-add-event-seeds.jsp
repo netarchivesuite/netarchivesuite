@@ -1,4 +1,4 @@
-�<%--
+<%--
 File:       $Id$
 Revision:   $Revision$
 Author:     $Author$
@@ -22,7 +22,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%--
-This page is used to add a (potenitially) large number of seeds to an event harvest.
+This page is used to add a (potentially) large number of seeds to an event harvest.
 Parameters:
 harvestName:
           the harvest to add the seeds to, must be name of a known harvest
@@ -122,6 +122,11 @@ the user
             </td>
         </tr>
         <tr>
+        	<td><fmt:message key="prompt;max.bytes.per.domain"/></td>
+            <td><input type="text" name="<%= Constants.MAX_BYTES_PARAM %>" 
+                       value="<%= dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES %>"/> </td>
+        </tr>
+        <tr>
             <td><fmt:message key="prompt;harvest.template"/></td>
             <td>
                 <select name="<%= Constants.ORDER_TEMPLATE_PARAM %>">
@@ -139,14 +144,6 @@ the user
                 </select>
             </td>
         </tr>
-        <%--<tr>
-            <td>Maximal load rate(default 60 fetches/min): </td>
-            <td><input name="maxRate" size="4" /></td>
-        </tr>
-        <tr>
-            <td>Max objects fetched per domain (default 2000): </td>
-            <td><input name="maxObjects" size="4" /></td>
-        </tr>--%>
         <tr>
             <td colspan="2"><input type="submit"
                                    value="<fmt:message key="insert"/>"/></td>

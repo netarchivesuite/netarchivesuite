@@ -84,7 +84,7 @@ public class EventHarvestTester extends WebinterfaceTestCase {
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
         PageContext pageContext = new TestPageContext(request);
         EventHarvest.addConfigurations(pageContext, I18N, harvest);
-        String expectedName = harvestName+"_"+order1+"_3_4";
+        String expectedName = harvestName+"_"+order1+"_1000000000Bytes";
         // Check that the domain and configuration have been created
         harvest = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition(harvestName);
         Iterator<DomainConfiguration> dci = harvest.getDomainConfigurations();
