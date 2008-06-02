@@ -33,6 +33,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -60,8 +61,12 @@ public class TrivialJobIndexCacheTester extends TestCase {
     }
     public void testCacheData() throws Exception {
         JobIndexCache cache = new TrivialJobIndexCache(RequestType.DEDUP_CRAWL_LOG);
-        assertEquals("Should give empty pseudo-cache for 1 file",
-                "1-DEDUP_CRAWL_LOG-cache", cache.getIndex(Collections.singleton(1L)).getIndexFile().getName());
+        try {
+            cache.getIndex(Collections.singleton(1L)).getIndexFile().getName();
+            fail("Expected IOFailure on non-existing cache file");                    
+        } catch (IOFailure e) {
+            //expected
+        }
 
         TestFileUtils.copyDirectoryNonCVS(new File(TestInfo.WORKING_DIR, "2-3-cache"),
                 new File(new File(Settings.get(Settings.CACHE_DIR), "TrivialJobIndexCache"),

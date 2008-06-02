@@ -753,7 +753,7 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration cfg = d.getDefaultConfiguration();
         Job j = Job.createJob(42L, cfg, 2);
         assertEquals("Should have no max bytes limit after creation",
-                Constants.DEFAULT_MAX_BYTES, j.getMaxBytesPerDomain());
+                500000000, j.getMaxBytesPerDomain());
         final long maxBytes = 222 * 1024 * 1024;
         m.invoke(j, maxBytes);
         assertEquals("Should have set number of bytes after setting",

@@ -814,7 +814,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should be the right object limit", 2000L, sph
                 .getMaxCountObjects());
         assertEquals("Should be the right byte limit",
-                     Constants.DEFAULT_MAX_BYTES, sph.getMaxBytes());
+                     500000000, sph.getMaxBytes());
         assertEquals("Should be the right previous harvest", null, sph
                 .getPreviousHarvestDefinitionOid());
         assertNull("Should be null on unknown harvestdefinition", hddao
@@ -840,7 +840,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         assertEquals("Should be the right object limit", 2000L, sph
                 .getMaxCountObjects());
         assertEquals("Should be the right byte limit",
-                     Constants.DEFAULT_MAX_BYTES, sph.getMaxBytes());
+                     500000000, sph.getMaxBytes());
         assertEquals("Should be the right previous harvest", null, sph
                 .getPreviousHarvestDefinitionOid());
         assertFalse("Should return no more hds", it.hasNext());

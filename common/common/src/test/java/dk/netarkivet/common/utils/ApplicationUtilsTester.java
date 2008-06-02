@@ -25,7 +25,8 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.Socket;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
@@ -94,7 +95,7 @@ public class ApplicationUtilsTester extends TestCase {
     }
 
     /** Test that startApp checks the required things. */
-    public void testStartApp() throws InterruptedException {
+    public void testStartApp() throws InterruptedException, IOException {
         // Check that no args are allowed.
         try {
             ApplicationUtils.startApp(this.getClass(), new String[] { "arg1" });
@@ -109,10 +110,10 @@ public class ApplicationUtilsTester extends TestCase {
 
         
         // Check first, that the JMX-RMI ports are available.
-        int JmxPort = Settings.getInt(Settings.JMX_PORT);
-        checkPortAvailable("JMX port '" + JmxPort + "' not free", JmxPort);
+        int jmxPort = Settings.getInt(Settings.JMX_PORT);
+        checkPortAvailable(jmxPort);
         int rmiPort = Settings.getInt(Settings.JMX_RMI_PORT);
-        checkPortAvailable("RMI port '" + rmiPort + "' not free", rmiPort);
+        checkPortAvailable(rmiPort);
  
         
         // Check that missing factory method is checked
@@ -168,14 +169,10 @@ public class ApplicationUtilsTester extends TestCase {
         assertTrue("Should have tempdir after start", tempdir.exists());
     }
 
-    private void checkPortAvailable(final String errMsg, final int portToCheck) {
-        try {
-            Socket socket = new Socket("localhost", portToCheck);
-            socket.bind(null);
+    private void checkPortAvailable(final int portToCheck)
+            throws IOException {
+            ServerSocket socket = new ServerSocket(portToCheck);
             socket.close();
-        } catch (Exception e) {
-            fail(errMsg + " due to error: " + e);
-        }  
     }
 }
 
