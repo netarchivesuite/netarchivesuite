@@ -563,4 +563,169 @@ public class WebinterfaceTestCase extends TestCase {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
+    
+    public PageContext getDummyPageContext(final Locale l,
+    		final ServletRequest request) {
+    	return new PageContext() {
+    		public void initialize(Servlet servlet, ServletRequest servletRequest,
+    				ServletResponse servletResponse,
+    				String string,
+    				boolean b, int i, boolean b1)
+    		throws IOException,
+    		IllegalStateException, IllegalArgumentException {
+    		}
+
+    		public void release() {
+    		}
+
+    		public HttpSession getSession() {
+    			return null;
+    		}
+
+    		public Object getPage() {
+    			return null;
+    		}
+
+    		public ServletRequest getRequest() {
+    			return request;
+    		}
+
+    		public ServletResponse getResponse() {
+    			return new ServletResponse() {
+    				public String getCharacterEncoding() {
+    					return null;
+    				}
+
+    				public String getContentType() {
+    					return null;
+    				}
+
+    				public ServletOutputStream getOutputStream()
+    				throws IOException {
+    					return null;
+    				}
+
+    				public PrintWriter getWriter() throws IOException {
+    					return null;
+    				}
+
+    				public void setCharacterEncoding(String string) {
+    				}
+
+    				public void setContentLength(int i) {
+    				}
+
+    				public void setContentType(String string) {
+    				}
+
+    				public void setBufferSize(int i) {
+    				}
+
+    				public int getBufferSize() {
+    					return 0;
+    				}
+
+    				public void flushBuffer() throws IOException {
+    				}
+
+    				public void resetBuffer() {
+    				}
+
+    				public boolean isCommitted() {
+    					return false;
+    				}
+
+    				public void reset() {
+    				}
+
+    				public void setLocale(Locale locale) {
+    				}
+
+    				public Locale getLocale() {
+    					return l;
+    				}
+    			};
+    		}
+
+    		public Exception getException() {
+    			return null;
+    		}
+
+    		public ServletConfig getServletConfig() {
+    			return null;
+    		}
+
+    		public ServletContext getServletContext() {
+    			return null;
+    		}
+
+    		public void forward(String string)
+    		throws ServletException, IOException {
+    		}
+
+    		public void include(String string)
+    		throws ServletException, IOException {
+    		}
+
+    		public void include(String string, boolean b)
+    		throws ServletException, IOException {
+    		}
+
+    		public void handlePageException(Exception exception)
+    		throws ServletException, IOException {
+    		}
+
+    		public void handlePageException(Throwable throwable)
+    		throws ServletException, IOException {
+    		}
+
+    		public void setAttribute(String string, Object object) {
+    		}
+
+    		public void setAttribute(String string, Object object, int i) {
+    		}
+
+    		public Object getAttribute(String string) {
+    			return null;
+    		}
+
+    		public Object getAttribute(String string, int i) {
+    			return null;
+    		}
+
+    		public Object findAttribute(String string) {
+    			return null;
+    		}
+
+    		public void removeAttribute(String string) {
+    		}
+
+    		public void removeAttribute(String string, int i) {
+    		}
+
+    		public int getAttributesScope(String string) {
+    			return 0;
+    		}
+
+    		public Enumeration<String> getAttributeNamesInScope(int i) {
+    			return null;
+    		}
+
+    		public JspWriter getOut() {
+    			return null;
+    		}
+
+    		public ExpressionEvaluator getExpressionEvaluator() {
+    			return null;
+    		}
+
+    		public VariableResolver getVariableResolver() {
+    			return null;
+    		}
+
+    		public ELContext getELContext() {
+    			return null;
+    		}
+    	};
+    }
 }

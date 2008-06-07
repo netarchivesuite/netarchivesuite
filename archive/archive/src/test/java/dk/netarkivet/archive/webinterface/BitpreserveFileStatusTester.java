@@ -22,25 +22,9 @@
 */
 package dk.netarkivet.archive.webinterface;
 
-import javax.el.ELContext;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.VariableResolver;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +44,6 @@ import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unittest for the class
@@ -93,20 +76,14 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessMissingRequest() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
+    
         Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
                 TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
                 TestInfo.WORKING_DIR.getAbsolutePath());
         
-        //Settings.set(Settings.JMS_BROKER_CLASS, JMSConnectionTestMQ.class.getName());
-        
         // Ensure that a admin data exists before we start.
-        //AdminData a =  AdminData.getUpdateableInstance();
-
-        //System.out.println("Finished setup");
+        AdminData.getUpdateableInstance();
   
         MockFileBasedActiveBitPreservation mockabp 
             = new MockFileBasedActiveBitPreservation();
@@ -146,8 +123,6 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                 1, mockabp.getCallCount(GET_INFO_METHOD));
         assertEquals("Should have one info element (with mock results)",
                 null, status.get(filename1));
-        
-        System.out.println("Finished #1 call");
         
         // Check that we can call without any params
         mockabp.calls.clear();
@@ -216,170 +191,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                 mockabp.calls.get(GET_INFO_METHOD).iterator());
     }
 
-    private PageContext getDummyPageContext(final Locale l,
-                                            final ServletRequest request) {
-        return new PageContext() {
-            public void initialize(Servlet servlet, ServletRequest servletRequest,
-                                   ServletResponse servletResponse,
-                                   String string,
-                                   boolean b, int i, boolean b1)
-                    throws IOException,
-                    IllegalStateException, IllegalArgumentException {
-            }
-
-            public void release() {
-            }
-
-            public HttpSession getSession() {
-                return null;
-            }
-
-            public Object getPage() {
-                return null;
-            }
-
-            public ServletRequest getRequest() {
-                return request;
-            }
-
-            public ServletResponse getResponse() {
-                return new ServletResponse() {
-                    public String getCharacterEncoding() {
-                        return null;
-                    }
-
-                    public String getContentType() {
-                        return null;
-                    }
-
-                    public ServletOutputStream getOutputStream()
-                            throws IOException {
-                        return null;
-                    }
-
-                    public PrintWriter getWriter() throws IOException {
-                        return null;
-                    }
-
-                    public void setCharacterEncoding(String string) {
-                    }
-
-                    public void setContentLength(int i) {
-                    }
-
-                    public void setContentType(String string) {
-                    }
-
-                    public void setBufferSize(int i) {
-                    }
-
-                    public int getBufferSize() {
-                        return 0;
-                    }
-
-                    public void flushBuffer() throws IOException {
-                    }
-
-                    public void resetBuffer() {
-                    }
-
-                    public boolean isCommitted() {
-                        return false;
-                    }
-
-                    public void reset() {
-                    }
-
-                    public void setLocale(Locale locale) {
-                    }
-
-                    public Locale getLocale() {
-                        return l;
-                    }
-                };
-            }
-
-            public Exception getException() {
-                return null;
-            }
-
-            public ServletConfig getServletConfig() {
-                return null;
-            }
-
-            public ServletContext getServletContext() {
-                return null;
-            }
-
-            public void forward(String string)
-                    throws ServletException, IOException {
-            }
-
-            public void include(String string)
-                    throws ServletException, IOException {
-            }
-
-            public void include(String string, boolean b)
-                    throws ServletException, IOException {
-            }
-
-            public void handlePageException(Exception exception)
-                    throws ServletException, IOException {
-            }
-
-            public void handlePageException(Throwable throwable)
-                    throws ServletException, IOException {
-            }
-
-            public void setAttribute(String string, Object object) {
-            }
-
-            public void setAttribute(String string, Object object, int i) {
-            }
-
-            public Object getAttribute(String string) {
-                return null;
-            }
-
-            public Object getAttribute(String string, int i) {
-                return null;
-            }
-
-            public Object findAttribute(String string) {
-                return null;
-            }
-
-            public void removeAttribute(String string) {
-            }
-
-            public void removeAttribute(String string, int i) {
-            }
-
-            public int getAttributesScope(String string) {
-                return 0;
-            }
-
-            public Enumeration<String> getAttributeNamesInScope(int i) {
-                return null;
-            }
-
-            public JspWriter getOut() {
-                return null;
-            }
-
-            public ExpressionEvaluator getExpressionEvaluator() {
-                return null;
-            }
-
-            public VariableResolver getVariableResolver() {
-                return null;
-            }
-
-            public ELContext getELContext() {
-                return null;
-            }
-        };
-    }
+    
 
     /** A placeholder for ActiveBitPreservation that's easy to ask questions
      * of.
@@ -420,10 +232,23 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
 
         public FilePreservationState
         getFilePreservationState(String filename) {
-            addCall(calls, GET_INFO_METHOD, filename);
-            return null;
+        	addCall(calls, GET_INFO_METHOD, filename);
+        	return null;
         }
-
+        
+        public Map<String, FilePreservationState> getFilePreservationStateMap(
+                String... filenames) {
+        	Map<String, FilePreservationState> result =
+        		new HashMap<String, FilePreservationState>();
+        	for (String filename: filenames) {
+        		addCall(calls, GET_INFO_METHOD, filename);
+        		result.put(filename, null);
+        	}
+        	return result;
+        	
+        }
+        
+        
         public void cleanup() {
             JMSConnectionTestMQ.useJMSConnectionTestMQ();
             super.cleanup();
