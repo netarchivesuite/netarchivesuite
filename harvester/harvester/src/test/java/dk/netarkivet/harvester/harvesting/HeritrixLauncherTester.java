@@ -261,13 +261,11 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /** Test that starting a job does not throw an Exception.
+     * Will fail if conf/jmxremote.password has other rights than -r------ 
      * @throws NoSuchFieldException
      * @throws IllegalAccessException */
     public void testStartJob()
             throws NoSuchFieldException, IllegalAccessException {
-    	if (!TestUtils.runningAs("LC")) {
-    	    return;
-    	}
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
         HeritrixFiles files =
                 (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
