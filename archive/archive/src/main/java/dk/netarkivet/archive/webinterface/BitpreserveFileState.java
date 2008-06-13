@@ -351,7 +351,7 @@ public class BitpreserveFileState {
             res.append("\"");
         }
         return ("<input type=\"checkbox\" name=\"" + command + "\""
-                + res.toString() + ">");
+                + res.toString() + " />");
     }
 
     /**
@@ -611,7 +611,7 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         out.println("<script type=\"text/javascript\" language=\"javascript\""
-                    + " src=\"toggleCheckboxes.js\" />");
+                    + " src=\"toggleCheckboxes.js\"></script>");
         // Add checkbox to toggle multiple "fileinfo" checkboxes
         printMultipleToggler(
                 out, Constants.GET_INFO_COMMAND,
@@ -653,7 +653,7 @@ public class BitpreserveFileState {
                                  + "\" value=\"" + Math.min(
                                          numberOfCheckboxes,
                                          Constants.MAX_TOGGLE_AMOUNT)
-                                 + "\">"));
+                                 + "\" />"));
         out.println("<br/> ");
     }
 
