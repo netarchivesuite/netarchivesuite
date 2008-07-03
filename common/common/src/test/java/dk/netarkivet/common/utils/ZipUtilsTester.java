@@ -145,6 +145,15 @@ public class ZipUtilsTester extends TestCase {
         assertTrue("Should have no files left, but has " + files,
                 files.isEmpty());
 
+        FileUtils.removeRecursively(unzipDir);
+        ZipUtils.unzip(TestInfo.ZIPPED_DIR_WITH_SUBDIRS, unzipDir);
+        assertTrue("Should have dir a", new File(unzipDir, "a").isDirectory());
+        assertTrue("Should have file b in a", new File(new File(unzipDir, "a"), "b").isFile());
+        assertEquals("File b should have length 4", 4, new File(new File(unzipDir, "a"), "b").length());
+        assertTrue("Should have dir c in b", new File(new File(unzipDir, "a"), "c").isDirectory());
+        assertTrue("Should have file d in c", new File(new File(new File(unzipDir, "a"), "c"), "d").isFile());
+        assertEquals("File b should have length 7", 7, new File(new File(new File(unzipDir, "a"), "c"), "d").length());
+
         try {
             ZipUtils.unzip(null, unzipDir);
             fail("Should fail on null zipfile");

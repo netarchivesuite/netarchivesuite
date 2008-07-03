@@ -76,6 +76,7 @@ public class TestInfo {
     public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final File ZIPDIR = new File(TEMPDIR, "zipdir");
     public static final File ZIPPED_DIR = new File(TestInfo.ZIPDIR, "zippedDir.zip");
+    public static final File ZIPPED_DIR_WITH_SUBDIRS = new File(TestInfo.ZIPDIR, "sub/zippedDirWithSubdirs.zip");
 
     public static final File NON_EXISTING_FILE = new File("/no/such/file");
     public static final File SETTINGS_FILE = new File(TEMPDIR, "settings.xml");

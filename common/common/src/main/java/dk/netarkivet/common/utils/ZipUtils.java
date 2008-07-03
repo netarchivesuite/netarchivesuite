@@ -109,9 +109,11 @@ public class ZipUtils {
                 "can't write to '" + toDir + "'");
         ArgumentNotValid.checkTrue(zipFile.canRead(),
                 "can't read '" + zipFile + "'");
+        InputStream inputStream = null;
+        ZipFile unzipper = null;
         try {
-            ZipFile unzipper = new ZipFile(zipFile);
             try {
+                unzipper = new ZipFile(zipFile);
                 Enumeration<? extends ZipEntry> entries = unzipper.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry ze = entries.nextElement();
@@ -119,12 +121,21 @@ public class ZipUtils {
                     // Ensure that its dir exists
                     FileUtils.createDir
                             (target.getCanonicalFile().getParentFile());
-                    InputStream inputStream = unzipper.getInputStream(ze);
-                    FileUtils.writeStreamToFile(inputStream, target);
-                    inputStream.close();
+                    if (ze.isDirectory()) {
+                        target.mkdir();
+                    } else {
+                        inputStream = unzipper.getInputStream(ze);
+                        FileUtils.writeStreamToFile(inputStream, target);
+                        inputStream.close();
+                    }
                 }
             } finally {
-                unzipper.close();
+                if (unzipper != null) {
+                    unzipper.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             }
         } catch (IOException e) {
             throw new IOFailure("Failed to unzip '" + zipFile + "'", e);
