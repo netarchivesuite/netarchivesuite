@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.utils;
+package dk.netarkivet.harvester.harvesting;
 
 import org.apache.commons.httpclient.URIException;
 import org.archive.net.UURI;

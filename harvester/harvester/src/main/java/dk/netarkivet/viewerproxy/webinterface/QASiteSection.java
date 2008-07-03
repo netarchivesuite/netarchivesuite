@@ -42,11 +42,7 @@ public class QASiteSection extends SiteSection {
     public QASiteSection() {
         super("sitesection;qa", "QA", 1,
               new String[][]{
-                      {"status", "pagetitle;qa.status"},
-                      {"getreports", "pagetitle;qa.get.reports"},
-                      {"getfiles", "pagetitle;qa.get.files"},
-                      {"crawlloglines",
-                       "pagetitle;qa.crawllog.lines.for.domain"}
+                      {"status", "pagetitle;qa.status"}
               }, "QA",
                  Constants.TRANSLATIONS_BUNDLE);
     }
