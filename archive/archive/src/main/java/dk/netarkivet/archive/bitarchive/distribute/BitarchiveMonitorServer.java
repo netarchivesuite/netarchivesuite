@@ -83,9 +83,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * @throws IOFailure - if an error with the JMSConnection occurs
      */
     protected BitarchiveMonitorServer() throws IOFailure {
-        con.setListener(Channels.getTheBamon(), this);
         bamon = new BitarchiveMonitor();
         bamon.addObserver(this);
+        con.setListener(Channels.getTheBamon(), this);
         log.info("BitarchiveMonitorServer instantiated. "
                  + "Listening to queue: '" + Channels.getTheBamon() + "'.");
     }
