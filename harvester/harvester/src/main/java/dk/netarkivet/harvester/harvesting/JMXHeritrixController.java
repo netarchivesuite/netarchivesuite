@@ -47,7 +47,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.Heritrix;
-import org.archive.crawler.admin.CrawlJob;
 import org.archive.util.JmxUtils;
 
 import dk.netarkivet.common.Settings;
@@ -106,11 +105,6 @@ public class JMXHeritrixController implements HeritrixController {
     /** Command for shutting down Heritrix.  */
     private static final String SHUTDOWN_COMMAND = "shutdown";
 
-    /** This prefix of the string returned by Heritrix for the Status attribute
-     * indicates a job has finished in one way or another.
-     */
-    private static final String FINISHED_STATUS_PREFIX = "FINISHED";
-
     /** How long we're willing to wait for Heritrix to shutdown in a
      * shutdown hook.
      */
@@ -154,6 +148,20 @@ public class JMXHeritrixController implements HeritrixController {
     /** The header line (legend) for the statistics report. */
     private String progressStatisticsLegend;
 
+    /* The possible values of a request of the status attrbiute.
+     * Copied from private values in
+     * {@link org.archive.crawler.framework.CrawlController} */
+    private static final String NASCENT_STATUS = "NASCENT";
+    private static final String RUNNING_STATUS = "RUNNING";
+    private static final String PAUSED_STATUS = "PAUSED";
+    private static final String PAUSING_STATUS = "PAUSING";
+    private static final String CHECKPOINTING_STATUS = "CHECKPOINTING";
+    private static final String STOPPING_STATUS = "STOPPING";
+    private static final String FINISHED_STATUS = "FINISHED";
+    private static final String STARTED_STATUS = "STARTED";
+    private static final String PREPARING_STATUS = "PREPARING";
+    private static final String ILLEGAL_STATUS = "Illegal State";
+
     /** Create a JMXHeritrixController object.
      *
      * @param files Files that are used to set up Heritrix.
@@ -189,7 +197,7 @@ public class JMXHeritrixController implements HeritrixController {
             ulimit -a
              */
             File heritrixOutputFile = files.getHeritrixOutput();
- 
+
             ProcessBuilder builder = new ProcessBuilder(
                     new File(new File(System.getProperty("java.home"),
                                       "bin"), "java").getAbsolutePath(),
@@ -371,9 +379,10 @@ public class JMXHeritrixController implements HeritrixController {
     /** @see HeritrixController#isPaused()  */
     public boolean isPaused() {
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
+        log.debug("Heritrix state: '" + status + "'");
         // Either Pausing or Paused.
-        return status.equals(CrawlJob.STATUS_PAUSED) ||
-               status.equals(CrawlJob.STATUS_WAITING_FOR_PAUSE);
+        return status.equals(PAUSED_STATUS) ||
+               status.equals(PAUSING_STATUS);
     }
 
     /** Check if the crawl has ended, either because Heritrix finished
@@ -405,9 +414,8 @@ public class JMXHeritrixController implements HeritrixController {
         }
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
         return status == null
-               || status.startsWith(FINISHED_STATUS_PREFIX)
-               || status.equals(CrawlJob.STATUS_MISCONFIGURED)
-               || status.equals(CrawlJob.STATUS_DELETED);
+               || status.equals(FINISHED_STATUS)
+               || status.equals(ILLEGAL_STATUS);
     }
 
     /** Return true if the Heritrix process has exited, logging the exit
