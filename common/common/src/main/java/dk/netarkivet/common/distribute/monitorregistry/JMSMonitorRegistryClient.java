@@ -52,7 +52,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
      * Used for control of timer task that sends messages. */
     private static final long MINUTE_IN_MILLISECONDS = 60000L;
     /** Delay between every reregistering in minutes. */
-    private static final long REREGISTER_DELAY = 1;
+    private static final long REREGISTER_DELAY = 5;
     /** Zero milliseconds from now.
      * Used for control of timer task that sends messages. */
     private static final long NOW = 0L;
