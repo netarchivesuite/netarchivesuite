@@ -31,6 +31,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -38,13 +39,14 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.DBConnect;
 
 /**
- * Utilities to allow testing databases
+ * Utilities to allow testing databases.
  *
  */
-
-public class DBUtils {
+public class DatabaseTestUtils {
     private static Map<Thread,Connection> connectionPool;
     private static String dburi;
+    protected static final Logger log = 
+        Logger.getLogger(DatabaseTestUtils.class.getName());
 
 
     /** Get access to the database stored in the given file.  This will start
@@ -119,7 +121,8 @@ public class DBUtils {
             DriverManager.getConnection(shutdownUri);
             throw new IOFailure("Failed to shut down database");
         } catch (SQLException e) {
-            //System.out.println("Got expected shutdown message " + e);
+            log.warning(
+                    "Expected SQL-exception when shutting down database:" + e);
         }
         connectionPool.clear();
 /*

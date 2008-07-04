@@ -22,17 +22,14 @@
 */
 package dk.netarkivet.common.exceptions;
 
-
-/**
- * Unittests for all Exceptions in this package
- */
-
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-
+/**
+ * Unit-tests for all Exceptions in this package.
+ */
 public class ExceptionsTester extends TestCase {
     private String nullString;
     private String emptyString;
@@ -52,7 +49,7 @@ public class ExceptionsTester extends TestCase {
     }
 
     /**
-     * Test PermissionDenied exception *
+     * Test PermissionDenied exception.
      */
     public void testPermissionDeniedException() {
         // Test PermissionDenied(String) constructor
@@ -87,7 +84,7 @@ public class ExceptionsTester extends TestCase {
     }
 
     /**
-     * Test UnknownID exception
+     * Test UnknownID exception.
      **/
     public void testUnknownIDException() {
         // Test UnknownID(String) constructor
@@ -122,7 +119,7 @@ public class ExceptionsTester extends TestCase {
     }
 
     /**
-     * Test NotImplementedException exception
+     * Test NotImplementedException exception.
      **/
     public void testNotImplementedException() {
         // Test NotImplementedException(String) constructor
@@ -157,7 +154,7 @@ public class ExceptionsTester extends TestCase {
     }
 
     /**
-     * Test IOFailure exception
+     * Test IOFailure exception.
      **/
     public void testIOFailureException() {
         // Test IOFailure(String) constructor
@@ -192,7 +189,7 @@ public class ExceptionsTester extends TestCase {
     }
 
     /**
-     * Test ArgumentNotValid exception
+     * Test ArgumentNotValid exception.
      **/
     public void testArgumentNotValidException() {
         // Test ArgumentNotValid(String) constructor
@@ -227,7 +224,7 @@ public class ExceptionsTester extends TestCase {
 
         // Check ArgumentNotValid.checkNotNullOrEmpty()
         try {
-            List lst = new ArrayList();
+            List<?> lst = new ArrayList<String>();
             ArgumentNotValid.checkNotNullOrEmpty(lst, "lst");
         } catch (ArgumentNotValid e) {
             // Expected for the empty list
@@ -238,7 +235,7 @@ public class ExceptionsTester extends TestCase {
         ArgumentNotValid.checkNotNullOrEmpty(lst, "lst");
 
         try {
-            List aList = null;
+            List<String> aList = null;
             ArgumentNotValid.checkNotNullOrEmpty(aList, "Alist");
         } catch (ArgumentNotValid e) {
             // Expected for the null list
@@ -264,7 +261,9 @@ public class ExceptionsTester extends TestCase {
 
     }
 
-    //  Test IllegalState(String, Throwable) constructor
+    /**
+     * Test IllegalState(String, Throwable) constructor.
+     */
     public void testIllegalState() {
 
         try {

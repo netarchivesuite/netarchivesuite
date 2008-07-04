@@ -36,7 +36,6 @@ import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.webinterface.DefinitionsSiteSection;
 
 
@@ -80,7 +79,6 @@ public class TestInfo {
     public static String DEFAULT_HARVEST_COMMENT = "DefaultHarvestDefDesc";
     public static final File BASE_DIR_ORDER_XML_TEMPLATES = new File(TEMPDIR, "order_templates");
     public static String BASE_DIR_HERITRIX_JOBS = "jobs/";
-    public static String JOB_DIR_PREFIX = "job_";
     public static final String ORDER_XML_NAME = "FullSite-order";
     public static final String ORDER_XML_FILENAME2 = "OneLevel-order";
     public static final String SCHEDULE_XML_FILENAME = "schedule.xml";
@@ -114,8 +112,7 @@ public class TestInfo {
         new File(BASE_DIR_ORDER_XML_TEMPLATES, "FullSite-order.xml"),
         new File(BASE_DIR_ORDER_XML_TEMPLATES, "Max_20_2-order.xml")
     };
-    //public static Document ORDERXMLDOC = null;
-    //public static Document[] SETTINGSXMLDOCS = null;
+    
     public static Date START_DATE = new GregorianCalendar(105, 2, 3, 4, 5, 6).getTime();
     public static Date END_DATE = new GregorianCalendar(106, 2, 3, 4, 5, 6).getTime();
     public static Frequency DEFAULT_FREQ = new DailyFrequency(3);
@@ -173,7 +170,6 @@ public class TestInfo {
             new File(new File(TEMP_DOMAIN_DIR, "dr"), "dr.dk");
     public static final File EXISTING_DOMAIN_DIR2 =
             new File(new File(TEMP_DOMAIN_DIR, "kb"), "kb.dk");
-    public static String JOB_BASE_DIR = TEMPDIR + "/jobs/" + JOB_DIR_PREFIX;
 
     public static final int NO_OF_TESTDOMAINS = 7;
 
@@ -185,10 +181,6 @@ public class TestInfo {
             = TestSiteSection.class.getName();
     public static final String HARVESTDEFINITION_SITESECTIONCLASS
             = DefinitionsSiteSection.class.getName();
-
-    static {
-        FileUtils.createDir(new File(JOB_BASE_DIR));
-    }
 
     /**
      * Load resources needed by unit tests.
@@ -221,11 +213,6 @@ public class TestInfo {
 
         return dao.read(domainName).getConfiguration(configName);
 
-    }
-
-    public static void setup() {
-        //ORDERXMLDOC = getOrderXmlDoc(ORDERXMLFILE);
-        //SETTINGSXMLDOCS = getSettingsXmlDocs(SETTINGSXMLFILES);
     }
 
     protected static Document getOrderXmlDoc(File f) {

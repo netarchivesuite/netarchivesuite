@@ -64,7 +64,7 @@ import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.DBUtils;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
@@ -95,7 +95,7 @@ public class HarvestSchedulerTester extends TestCase {
         fis.close();
         Settings.set(Settings.DB_URL, "jdbc:derby:"
                 + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
-        DBUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
+        DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
         Settings.set(Settings.NOTIFICATIONS_CLASS,
@@ -113,7 +113,7 @@ public class HarvestSchedulerTester extends TestCase {
         if (hsch != null) {
             hsch.close();
         }
-        DBUtils.dropHDDB();
+        DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         Settings.reload();
         TestUtils.resetDAOs();

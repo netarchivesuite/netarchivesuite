@@ -33,7 +33,8 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * lc forgot to comment this!
+ * Alternate unit-test class for TemplateDAO.
+ * Test that it's possible to get access to an empty templates table.
  */
 public class TemplateDAOTesterAlternate extends TestCase {
     public TemplateDAOTesterAlternate(String s) {
@@ -46,33 +47,38 @@ public class TemplateDAOTesterAlternate extends TestCase {
 
     public void tearDown() throws Exception {
         super.tearDown();
+        
     }
 
     /**
      * Test that it's possible to get access to an empty templates table.
      * This tests that Bug 916 is fixed.
      * TODO merge with TemplateDAOTester
-     * @throws IllegalAccessException
      * @throws IOException
      * @throws SQLException
      */
-    public void testGetinstanceOnEmptyDatabase() throws IOException, SQLException, IllegalAccessException {
-        Settings.set(Settings.DB_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
-        assertEquals("DBUrl wrong", Settings.get(Settings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+    public void testGetinstanceOnEmptyDatabase() throws IOException, SQLException {
+        final String emptyDatabaseUrl = "jdbc:derby:"  
+            + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"; 
+        Settings.set(Settings.DB_URL, emptyDatabaseUrl);
+        assertEquals("DBUrl wrong", 
+                Settings.get(Settings.DB_URL), emptyDatabaseUrl);
 
         TestInfo.TEMPDIR.mkdirs();
         FileUtils.copyFile(new File(TestInfo.TOPDATADIR, "emptyhddb.jar"),
                 new File(TestInfo.TEMPDIR, "emptyhddb.jar"));
-        TestFileUtils.unzip(new File(TestInfo.TEMPDIR, "emptyhddb.jar"), TestInfo.TEMPDIR);
+        TestFileUtils.unzip(new File(TestInfo.TEMPDIR, "emptyhddb.jar"), 
+                TestInfo.TEMPDIR);
         TemplateDAO dao = null;
         try {
             dao = TemplateDAO.getInstance();
         } catch (Exception e) {
-            fail("Should not throw an exception with an templates table without" +
-                    "the default template");
+            fail("Should not throw an exception with an templates table without"
+                    + "the default template");
         }
         // verify that templates table is indeed derived of default template
-        assertFalse("Should not contain default template", dao.exists(Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)));
+        assertFalse("Should not contain default template", 
+                dao.exists(Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)));
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
     }
 }

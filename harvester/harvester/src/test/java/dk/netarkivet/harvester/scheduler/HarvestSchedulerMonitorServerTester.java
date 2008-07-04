@@ -45,21 +45,18 @@ import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
-import dk.netarkivet.harvester.datamodel.DomainDAOTester;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
-import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
-import dk.netarkivet.testutils.DBUtils;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -90,18 +87,20 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      */
     public void setUp() throws IOException, SQLException,
             IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
+        // Start up a logmanager
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
+        
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         TestUtils.resetDAOs();
         Settings.set(Settings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        JobDAO.reset();
+        //JobDAO.reset();
         Settings.set(Settings.DB_URL, "jdbc:derby:" + WORKING.getCanonicalPath() + "/fullhddb");
-        DBUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"), WORKING);
+        DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"), WORKING);
         the_dao = JobDAO.getInstance();
         Settings.set(Settings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
@@ -114,12 +113,12 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         FileUtils.removeRecursively(WORKING);
         JMSConnectionTestMQ.clearTestQueues();
         HarvestSchedulerMonitorServer.getInstance().close();
-        DBUtils.dropHDDB();
+        DatabaseTestUtils.dropHDDB();
         Settings.reload();
-        JobDAO.reset();
-        HarvestDefinitionDAOTester.resetDAO();
-        DomainDAOTester.resetDomainDAO();
-        ScheduleDAOTester.resetDAO();
+//        JobDAO.reset();
+//        HarvestDefinitionDAOTester.resetDAO();
+//        DomainDAOTester.resetDomainDAO();
+//        ScheduleDAOTester.resetDAO();
     }
 
     /** Tests that default onMessage is used.

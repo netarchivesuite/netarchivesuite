@@ -66,18 +66,18 @@ public class SynchronizerTester extends TestCase {
     }
 
     /**
-     * Tests that everything works if the correct parameters are submitted to the
-     * Synchronizer.
+     * Tests that everything works if the correct parameters are submitted to
+     * the Synchronizer.
      */
     public void testNormalBehaviour() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
         /**
          * The sender is also the listener. Avoids the need for creating a
-         * seperate server thread for replying.
+         * separate server thread for replying.
          */
         con.setListener(toQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg, 0);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
 
         /**
          * Pretest: Test everything is initialized.
@@ -106,8 +106,8 @@ public class SynchronizerTester extends TestCase {
     }
 
     /**
-     * Tests that the synchronizer doesn't trigger if it gets a wrong message as a
-     * reply.
+     * Tests that the synchronizer doesn't trigger if it gets a wrong message
+     * as a reply.
      */
     public void testWrongReplyToRequest() {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
@@ -115,10 +115,10 @@ public class SynchronizerTester extends TestCase {
         Synchronizer sync = new Synchronizer();
         /**
          * The sender is also the listener. Avoids the need for creating a
-         * seperate server thread for replying.
+         * separate server thread for replying.
          */
         con.setListener(replyToQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg, 0);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
 
         /**
          * Pretest: Test everything is initialized.
@@ -128,7 +128,7 @@ public class SynchronizerTester extends TestCase {
                    "request/reply has been dispatched", sr.getReceived());
 
         /**
-         * Send one message and check all queues
+         * Send one message and check all queues.
          */
         // Send message
         sr.sendAndWaitForOneReply();
@@ -158,10 +158,10 @@ public class SynchronizerTester extends TestCase {
         Synchronizer sync = new Synchronizer();
         /**
          * The sender is also the listener. Avoids the need for creating a
-         * seperate server thread for replying.
+         * separate server thread for replying.
          */
         con.setListener(toQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg, 0);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
 
         /**
          * Pretest: Test everything is initialized.
@@ -193,10 +193,10 @@ public class SynchronizerTester extends TestCase {
         Synchronizer sync = new Synchronizer();
         /**
          * The sender is also the listener. Avoids the need for creating a
-         * seperate server thread for replying.
+         * separate server thread for replying.
          */
         con.setListener(toQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg, 0);
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg, 0);
 
         /**
          * Pretest: Test everything is initialized.
@@ -208,13 +208,14 @@ public class SynchronizerTester extends TestCase {
         /**
          * Send one message and check all queues
          */
-        // Send message
+        
+        // 1. Send message
         sr.sendAndWaitForOneReply();
 
-        // Wait for reply message
+        // 2. Wait for reply message
         waitUntilEnded(sr);
 
-        // Check if a message have been received and its
+        // 3. Check if a message have been received and its
         // the correct message.
         assertNotNull("A reply should have been received", sr.getReceived());
         assertEquals("The reply message should correspond to the request " +
@@ -241,8 +242,8 @@ public class SynchronizerTester extends TestCase {
 
             public String getID() {
                 queries++;
-                // Should wait for the exact number of calls to getId before waking
-                // this thread.
+                // Should wait for the exact number of calls to getId before
+                // waking this thread.
                 if (queries == 2) {
                     synchronized (SynchronizerTester.this) {
                         SynchronizerTester.this.notifyAll();
@@ -255,7 +256,7 @@ public class SynchronizerTester extends TestCase {
         Synchronizer sync = new Synchronizer();
         /**
          * The sender is also the listener. Avoids the need for creating a
-         * seperate server thread for replying.
+         * separate server thread for replying.
          */
         con.setListener(replyToQ, sync);
         con.setListener(toQ, new MessageListener() {
@@ -266,7 +267,7 @@ public class SynchronizerTester extends TestCase {
 
             }
         });
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg,
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg,
                                                        WAIT_TIME);
 
         /**
@@ -306,7 +307,7 @@ public class SynchronizerTester extends TestCase {
     }
 
     /**
-     * Tests that a timed-out synchronizer returns null
+     * Tests that a timed-out synchronizer returns null.
      */
     public void testTimeout() throws InterruptedException {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
@@ -314,7 +315,7 @@ public class SynchronizerTester extends TestCase {
         MessageListener listener = new DelayedReplier();
         con.setListener(toQ, listener);
         con.setListener(replyToQ, sync);
-        SynchronizerRunner sr = new SynchronizerRunner(sync, con, msg,
+        SynchronizerRunner sr = new SynchronizerRunner(sync, msg,
                                                        WAIT_TIME);
         sr.sendAndWaitForOneReply();
         waitUntilEnded(sr);
@@ -359,21 +360,19 @@ public class SynchronizerTester extends TestCase {
 
 
     /**
-     * Used for testing. Runs a synchronizer.sendAndWaitForOneReply(con, msg) in a
-     * new thread.
+     * Used for testing. Runs a synchronizer.sendAndWaitForOneReply(msg,timeout)
+     * in a new thread.
      */
     private static class SynchronizerRunner extends Thread {
         private Synchronizer sync;
-        private JMSConnection con;
         private NetarkivetMessage msg;
         private NetarkivetMessage received;
         private boolean ended;
         private int timeout;
 
-        public SynchronizerRunner(Synchronizer sync, JMSConnection con,
+        public SynchronizerRunner(Synchronizer sync,
                                   NetarkivetMessage msg, int timeout) {
             this.sync = sync;
-            this.con = con;
             this.msg = msg;
             this.received = null;
             this.timeout = timeout;

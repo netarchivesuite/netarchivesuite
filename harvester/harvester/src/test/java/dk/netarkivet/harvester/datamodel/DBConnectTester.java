@@ -39,7 +39,6 @@ import dk.netarkivet.testutils.LogUtils;
  * especially the ones related to backup of the database.
  *
  */
-
 public class DBConnectTester extends DataModelTestCase {
 	
 	private File logfile = new File("tests/testlogs/netarkivtest.log");
@@ -274,7 +273,7 @@ public class DBConnectTester extends DataModelTestCase {
     }
     
     private void createTestTable() throws SQLException {
-    	// create "DBConnectTester" tabel for testing set*Max methods
+    	// create "DBConnectTester" table for testing set*Max methods
     	Connection c = DBConnect.getDBConnection();
     	PreparedStatement s = 
     	c.prepareStatement("CREATE TABLE DBConnectTester ( " 

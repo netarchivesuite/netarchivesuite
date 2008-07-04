@@ -57,7 +57,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.DBUtils;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 
@@ -84,11 +84,11 @@ public class WebinterfaceTestCase extends TestCase {
         TestUtils.resetDAOs();
         Settings.set(Settings.DB_URL, "jdbc:derby:"
                 + HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb");
-        DBUtils.getHDDB(TestInfo.DBFILE, HARVEST_DEFINITION_BASEDIR);
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, HARVEST_DEFINITION_BASEDIR);
     }
 
     public void tearDown() throws Exception {
-        DBUtils.dropHDDB();
+        DatabaseTestUtils.dropHDDB();
         Settings.reload();
         TestUtils.resetDAOs();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);

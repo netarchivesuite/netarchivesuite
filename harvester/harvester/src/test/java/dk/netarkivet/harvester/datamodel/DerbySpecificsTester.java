@@ -1,11 +1,29 @@
-package dk.netarkivet.harvester.datamodel;
-/**
- * lc forgot to comment this!
- * @author lc
- * @since Mar 5, 2007
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,7 +34,11 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
-
+/**
+ * 
+ * Unit test testing the DerbySpecifics class.
+ *
+ */
 public class DerbySpecificsTester extends DataModelTestCase {
     public DerbySpecificsTester(String s) {
         super(s);
@@ -46,7 +68,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
         try {
             c.setAutoCommit(false);
-            String tmpTable = DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+            String tmpTable = 
+                DBSpecifics.getInstance().getJobConfigsTmpTable(c);
             assertEquals("Should have given expected name for Derby temp table",
                     "session.jobconfignames", tmpTable);
             s = c.prepareStatement(statement);
@@ -59,7 +82,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.executeUpdate();
             s.close();
             String domain =
-                    DBUtils.selectStringValue("SELECT domain_name FROM " + tmpTable
+                    DBUtils.selectStringValue(
+                            "SELECT domain_name FROM " + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);
             c.commit();
@@ -78,17 +102,19 @@ public class DerbySpecificsTester extends DataModelTestCase {
                     DBUtils.selectStringValue("SELECT domain_name "
                             + "FROM session.jobconfignames "
                             + "WHERE config_name = 'foo'");
-            fail("Should have failed query after table is dead");
+            fail("Should have failed query after table is dead, "
+                    + "but return domain= " + domain);
         } catch (SQLException e) {
             // expected
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
 
-        // Should be possible to get another temp table.
+        // Should be possible to get another temporary table.
         try {
             c.setAutoCommit(false);
-            String tmpTable = DBSpecifics.getInstance().getJobConfigsTmpTable(c);
+            String tmpTable =
+                DBSpecifics.getInstance().getJobConfigsTmpTable(c);
             assertEquals("Should have given expected name for Derby temp table",
                     "session.jobconfignames", tmpTable);
             s = c.prepareStatement(statement);
@@ -101,7 +127,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.executeUpdate();
             s.close();
             String domain =
-                    DBUtils.selectStringValue("SELECT domain_name FROM " + tmpTable
+                    DBUtils.selectStringValue("SELECT domain_name FROM " 
+                            + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);
             c.commit();
@@ -116,11 +143,13 @@ public class DerbySpecificsTester extends DataModelTestCase {
 
     /**
      * Test backup-functionality of our Derby database.
-     * @throws Exception
+     * @throws SQLException If unable to backup derby database.
+     * @throws IOException If unable to get the canonical path of
+     * the backup directory.
      */
-    public void testBackupDatabase() throws Exception {
+    public void testBackupDatabase() throws SQLException, IOException {
         File tempdir = new File(TestInfo.TEMPDIR,
-                                "db-backup-" + System.currentTimeMillis() );
+                                "db-backup-" + System.currentTimeMillis());
         DBSpecifics.getInstance().backupDatabase(tempdir);
         assertTrue("Backup dir should exist after calling backup.",
                 tempdir.exists());
@@ -131,7 +160,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
                 new File(backupdir, "BACKUP.HISTORY").exists());
 
         LogUtils.flushLogs(DBConnect.class.getName());
-        FileAsserts.assertFileNotContains("Should not have warned about non-existing dir being created",
+        FileAsserts.assertFileNotContains(
+                "Should not have warned about non-existing dir being created",
                 TestInfo.LOG_FILE, "WARNING: Non-existing directory created");
         FileAsserts.assertFileContains("Should have backed-up info",
                 "Backed up database to " + tempdir.getCanonicalPath(),

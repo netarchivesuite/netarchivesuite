@@ -22,15 +22,14 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.util.regex.Matcher;
 
 import junit.framework.TestCase;
 
-
+/**
+ * Unit-tests for the Constants class.
+ * Only tests the static method getIdMatcher.
+ */
 public class ConstantsTester extends TestCase {
     public ConstantsTester(String s) {
         super(s);

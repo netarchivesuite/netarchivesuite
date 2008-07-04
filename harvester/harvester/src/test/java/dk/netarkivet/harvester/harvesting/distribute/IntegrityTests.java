@@ -52,7 +52,7 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
-import dk.netarkivet.testutils.DBUtils;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -60,13 +60,15 @@ import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 
 /**
- * lc forgot to comment this!
- *
+ * Integrity tests for the dk.harvester.harvesting.distribute 
+ * package. Both tests assume that a JMSBroker is running on localhost 
+ * at port 7676
+ * FIXME Both tests fail at the moment
  */
-
 public class IntegrityTests extends TestCase{
-    /** The message to write to log when starting the server */
-    private static final String START_MESSAGE = "Starting HarvestControllerServer.";
+    /** The message to write to log when starting the server. */
+    private static final String START_MESSAGE =
+        "Starting HarvestControllerServer.";
 
     TestInfo info = new TestInfo();
 
@@ -75,7 +77,8 @@ public class IntegrityTests extends TestCase{
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
-    MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+    MockupIndexServer mis = new MockupIndexServer(
+            new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
 
     SecurityManager sm;
 
@@ -87,13 +90,16 @@ public class IntegrityTests extends TestCase{
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
+            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, 
+                    TestInfo.WORKING_DIR);
         } catch (IOFailure e) {
-            fail("Could not copy working-files to: " + TestInfo.WORKING_DIR.getAbsolutePath());
+            fail("Could not copy working-files to: " 
+                    + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
         try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream(TestInfo.TESTLOGPROP));
+            LogManager.getLogManager().readConfiguration(
+                    new FileInputStream(TestInfo.TESTLOGPROP));
         } catch (IOException e) {
             fail("Could not load the testlog.prop file");
         }
@@ -102,7 +108,8 @@ public class IntegrityTests extends TestCase{
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
         Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR,
-                 TestInfo.WORKING_DIR.getPath() + "/harvestControllerServerDir");
+                 TestInfo.WORKING_DIR.getPath() 
+                 + "/harvestControllerServerDir");
 
         /** Do not send notification by email. Print them to STDOUT. */
         Settings.set(Settings.NOTIFICATIONS_CLASS,
@@ -123,7 +130,7 @@ public class IntegrityTests extends TestCase{
         });
         // Copy database to working dir: TestInfo.WORKING_DIR
         File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
-        DBUtils.getHDDB(databaseJarFile, TestInfo.WORKING_DIR);
+        DatabaseTestUtils.getHDDB(databaseJarFile, TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
         mis.setUp();
      }
@@ -140,7 +147,7 @@ public class IntegrityTests extends TestCase{
         if (hs != null) {
             hs.close();
         }
-        DBUtils.dropHDDB();
+        DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
@@ -163,20 +170,21 @@ public class IntegrityTests extends TestCase{
         if (!TestUtils.runningAs("SVC")) {
             return;
         }
-        fail("This unittest does not complete at the moment, so therefore we stop it now.");
+        fail("This unittest does not complete at the moment, "
+                + "so therefore we stop it now.");
         done = false;
         String priority2 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result2;
         if (priority2.equals(JobPriority.LOWPRIORITY.toString())) {
             result2 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (priority2.equals(JobPriority.HIGHPRIORITY.toString())) {
                 result2 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority2 + " is not a valid priority");
+            } else {
+                throw new UnknownID(priority2 + " is not a valid priority");
+            }
         }
-        List listeners =
+        List<MessageListener> listeners =
                 ((JMSConnectionTestMQ) con).getListeners(result2);
         assertEquals("The HACO should listen before job",
                      1, listeners.size());
@@ -212,7 +220,7 @@ public class IntegrityTests extends TestCase{
         Job j = TestInfo.getJob();
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        //TODO: Fix the next line
+        //FIXME Fix the next line
         hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
         //wait until we know file is uploaded, listener will tell us so
         synchronized(listenerDummy) {
@@ -234,12 +242,12 @@ public class IntegrityTests extends TestCase{
         ChannelID result1;
         if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
             result1 = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (priority1.equals(JobPriority.HIGHPRIORITY.toString())) {
                 result1 = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority1 + " is not a valid priority");
+            } else {
+                throw new UnknownID(priority1 + " is not a valid priority");
+            }
         }
         listeners =
                 ((JMSConnectionTestMQ) con).getListeners(result1);
@@ -268,12 +276,12 @@ public class IntegrityTests extends TestCase{
         ChannelID result;
         if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
                 result = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority + " is not a valid priority");
+            } else {
+                throw new UnknownID(priority + " is not a valid priority");
+            }
         }
         listeners =
                 ((JMSConnectionTestMQ) con).getListeners(result);
@@ -308,7 +316,7 @@ public class IntegrityTests extends TestCase{
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
 
-        //A dummy arcrepositry that just replies
+        //A dummy arcrepository that just replies
         MessageListener arcrepDummy = new MessageListener() {
             public void onMessage(Message message) {
                 NetarkivetMessage nMsg = JMSConnection.unpack(message);
@@ -323,7 +331,7 @@ public class IntegrityTests extends TestCase{
         CrawlStatusMessageListener listener = new CrawlStatusMessageListener();
         con.setListener(Channels.getTheSched(), listener);
         //Submit the job
-        //TODO: ensure, that we have some alias-metadata to produce here
+        //TODO ensure, that we have some alias-metadata to produce here
         List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
         hcc.doOneCrawl(j, metadata);
         //Note: Since this returns, we need to wait for replymessage
@@ -336,7 +344,8 @@ public class IntegrityTests extends TestCase{
         // Check requirement that we log crawl start
         //
         LogUtils.flushLogs(HarvestControllerServer.class.getName());
-        FileAsserts.assertFileContains("HarvestControllerServer should log starting with "
+        FileAsserts.assertFileContains(
+                "HarvestControllerServer should log starting with "
                                        + START_MESSAGE,
                                        START_MESSAGE, TestInfo.LOG_FILE
         );
@@ -345,20 +354,21 @@ public class IntegrityTests extends TestCase{
         // one with status done
         //
         assertEquals("Should have received two messages", 2,
-                     listener.status_codes.size());
-        assertEquals("First message should be STATUS_STARTED", JobStatus.STARTED,
-                     listener.status_codes.get(0)) ;
-        assertEquals("Second message should be STATUS_DONE" + listener.messages.get(1).getHarvestErrorDetails(), JobStatus.DONE,
-                     listener.status_codes.get(1)) ;
+                listener.status_codes.size());
+        assertEquals("First message should be STATUS_STARTED",
+                JobStatus.STARTED, listener.status_codes.get(0));
+        assertEquals("Second message should be STATUS_DONE"
+                + listener.messages.get(1).getHarvestErrorDetails(),
+                JobStatus.DONE, listener.status_codes.get(1));
         //
         // Check that JobIDs are corrects
         //
         assertEquals("JobIDs do not match for first message:",
                      j.getJobID().longValue(),
-                     (listener.jobids.get(0)).longValue()) ;
+                     (listener.jobids.get(0)).longValue());
         assertEquals("JobIDs do not match for second message:",
                      j.getJobID().longValue(),
-                     (listener.jobids.get(1)).longValue()) ;
+                     (listener.jobids.get(1)).longValue());
         //
         // Get the crawl log
         //
@@ -368,6 +378,4 @@ public class IntegrityTests extends TestCase{
         assertTrue("Did not find expected domain crawled",
                    dhr.getByteCount("www.netarkivet.dk") > 0);
     }
-
-
 }

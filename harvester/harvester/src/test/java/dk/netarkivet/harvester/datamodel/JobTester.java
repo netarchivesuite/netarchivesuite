@@ -74,7 +74,6 @@ public class JobTester extends DataModelTestCase {
         super.setUp();
         LogManager.getLogManager().readConfiguration();
         LogUtils.flushLogs(Job.class.getName());
-        TestInfo.setup();
         Settings.set(Settings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
     }
@@ -167,7 +166,7 @@ public class JobTester extends DataModelTestCase {
         assertEquals("Value from CTOR expected", TestInfo.HARVESTID,
                 job.getOrigHarvestDefinitionID());
         Set<String> seeds = new HashSet<String>();
-        for (Iterator i = dc.getSeedLists(); i.hasNext();) {
+        for (Iterator<SeedList> i = dc.getSeedLists(); i.hasNext();) {
             SeedList list = (SeedList) i.next();
             seeds.addAll(list.getSeeds());
         }
@@ -332,7 +331,7 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration anotherConfig = TestInfo.getConfigurationNotDefault(TestInfo.getDomainNotDefault());
         job.addConfiguration(anotherConfig);
 
-        Map domainConfigMap = job.getDomainConfigurationMap();
+        Map<String,String> domainConfigMap = job.getDomainConfigurationMap();
         assertTrue("Length of DomainConfigurationMap should be 2", domainConfigMap.size() == 2);
 
         //Another test: The implicit call of testAddConfiguration in the

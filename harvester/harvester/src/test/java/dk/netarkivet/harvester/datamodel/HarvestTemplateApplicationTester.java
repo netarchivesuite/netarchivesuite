@@ -39,7 +39,7 @@ import org.dom4j.Document;
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.testutils.DBUtils;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
@@ -65,7 +65,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         TestUtils.resetDAOs();Settings.set(Settings.DB_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
-        DBUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
         TemplateDAO.getInstance();
 
         origIn = System.in;
@@ -88,7 +88,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         newOut.reset();
         newErr.reset();
 
-        DBUtils.dropHDDB();
+        DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         Settings.reload();
         TestUtils.resetDAOs();
