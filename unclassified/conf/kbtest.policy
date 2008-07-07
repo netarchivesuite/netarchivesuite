@@ -5,6 +5,10 @@ grant codeBase "file:classes/-" {
   permission java.security.AllPermission;
 };
 
+grant codeBase "file:bin/-" {
+  permission java.security.AllPermission;
+};
+
 grant codeBase "file:lib/-" {
   permission java.security.AllPermission;
 };

@@ -63,6 +63,9 @@ public class DataModelTestCase extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        if (TestInfo.TEMPDIR.exists()) {
+            FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        }
         assertFalse("Tempdir '" +  TestInfo.TEMPDIR.getAbsolutePath() 
                 +  "' exists ", TestInfo.TEMPDIR.exists());
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
