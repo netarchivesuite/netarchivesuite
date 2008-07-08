@@ -45,12 +45,20 @@ public class LoadableFileBatchJob extends FileBatchJob {
     transient FileBatchJob loadedJob;
     /** The binary contents of the file before they are turned into a class */
     byte[] fileContents;
+    /** The name of the file before they are turned into a class */    
+    String fileName;
 
     /** Create a new batch job that runs the loaded class. */
     public LoadableFileBatchJob(File classFile) {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
+        fileName = classFile.getName();
     }
+
+    /** Override of the default toString to include name of loaded class. */
+   public String toString() {
+       return this.getClass().getName() + " processing " + fileName;
+   }
 
     /** Override of the default way to serialize this class.
      *
