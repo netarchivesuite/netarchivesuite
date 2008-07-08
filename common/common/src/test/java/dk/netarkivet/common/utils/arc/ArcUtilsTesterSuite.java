@@ -49,6 +49,7 @@ public class ArcUtilsTesterSuite
         suite.addTestSuite(BatchFilterTester.class);
         suite.addTestSuite(BatchLocalFilesTester.class);
         suite.addTestSuite(FileBatchJobTester.class);
+        suite.addTestSuite(LoadableFileBatchJobTester.class);
         suite.addTestSuite(ShareableARCRecordTester.class);
     }
 
