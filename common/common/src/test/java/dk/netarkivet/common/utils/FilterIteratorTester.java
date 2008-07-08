@@ -22,11 +22,6 @@
 */
 package dk.netarkivet.common.utils;
 
-/**
- * lc forgot to comment this!
- */
-
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -36,7 +31,11 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.testutils.TestFileUtils;
 
-
+/**
+ * Unit tests for the abstract class FilterIterator.
+ * For this purpose it uses a private class TestIterator
+ * that extends FilterIterator.
+ */
 public class FilterIteratorTester extends TestCase {
     public FilterIteratorTester(String s) {
         super(s);
@@ -53,7 +52,7 @@ public class FilterIteratorTester extends TestCase {
         super.tearDown();
     }
 
-    /** This test iterator filters out non-existing files */
+    /** This test iterator filters out non-existing files. */
     private class TestIterator extends FilterIterator<File, File> {
         public TestIterator(File[] files) {
             super(Arrays.asList(files).iterator());
@@ -64,8 +63,8 @@ public class FilterIteratorTester extends TestCase {
          *
          * @param o The file to read
          * @return An object of the type iterated over by the list, or null
-         *         if the file does not exist or cannot be used to create an appropriate
-         *         object.
+         *         if the file does not exist or cannot be used to create
+         *         an appropriate object.
          */
         protected File filter(File o) {
             if (o.exists()) {
@@ -82,9 +81,10 @@ public class FilterIteratorTester extends TestCase {
      * Tests bug 193: Even if hasNext() returns true, there may not be a
      * next element.
      */
-    public void testNextEmptyList() throws Exception {
-        Iterator list = new TestIterator(new File[0]);
-        assertFalse("List should not claim more elements when the list is empty",
+    public void testNextEmptyList() {
+        Iterator<File> list = new TestIterator(new File[0]);
+        assertFalse("List should not claim more elements "
+                    + "when the list is empty",
                 list.hasNext());
 
         try {
@@ -97,9 +97,9 @@ public class FilterIteratorTester extends TestCase {
 
     /** Tests that an element can be taken from the list.
      */
-    public void testNextOneElementList() throws Exception {
-        Iterator list = new TestIterator(
-                new File[] { TestInfo.XML_FILE_1});
+    public void testNextOneElementList() {
+        Iterator<File> list = new TestIterator(
+                new File[] {TestInfo.XML_FILE_1});
         assertTrue("List should give the next file when it exists",
                 list.hasNext());
         Object d = list.next();
@@ -113,12 +113,15 @@ public class FilterIteratorTester extends TestCase {
             // Expected case
         }
     }
-    /** Tests that a bad element cannot be taken from the list.
-     *
+    
+    /** 
+     * Tests that a bad element cannot be taken from the list.
      */
-    public void testNextBadElementList() throws Exception {
-        Iterator list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE });
-        assertFalse("List should not claim more elements when no existing objects are in the list",
+    public void testNextBadElementList() {
+        Iterator<File> list = new TestIterator(new File[] {
+                TestInfo.NON_EXISTING_FILE });
+        assertFalse("List should not claim more elements "
+                    + "when no existing objects are in the list",
                 list.hasNext());
         try {
             list.next();
@@ -128,13 +131,14 @@ public class FilterIteratorTester extends TestCase {
         }
     }
 
-    /** Tests that a disappearing element doesn't confuse the list.
-     *
+    /** 
+     * Tests that a disappearing element doesn't confuse the list.
      */
-    public void testNextDisappearingElementList() throws Exception {
-        Iterator list = new TestIterator(new File[] { TestInfo.NON_EXISTING_FILE,
-                                                      TestInfo.DATADIR,
-                                                      TestInfo.XML_FILE_1});
+    public void testNextDisappearingElementList() {
+        Iterator<File> list = new TestIterator(new File[] {
+                TestInfo.NON_EXISTING_FILE,
+                TestInfo.DATADIR,
+                TestInfo.XML_FILE_1});
         assertTrue("Should be able to skip past bad dir",
                 list.hasNext());
         Object d = list.next();
@@ -145,7 +149,8 @@ public class FilterIteratorTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.XML_FILE_1);
         assertFalse("File should be gone", TestInfo.XML_FILE_1.exists());
         d = list.next();
-        assertNotNull("Should get file object even though it has disappeared", d);
+        assertNotNull("Should get file object even though it has disappeared",
+                d);
         assertEquals("Should get correct domain", TestInfo.XML_FILE_1, d);
         assertFalse("Should not get more elements now", list.hasNext());
     }

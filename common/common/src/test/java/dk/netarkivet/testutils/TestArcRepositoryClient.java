@@ -125,7 +125,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
             os = new FileOutputStream(f);
         } catch (IOException e) {
             return new BatchStatus(locationName,
-                    new ArrayList<File>(), 0, null);
+                    new ArrayList<File>(), 0, null, job.getExceptions());
         }
         File[] files = arcDir.listFiles(
                 new FilenameFilter() {
@@ -152,8 +152,10 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
             throw new IOFailure("Error in close", e);
         }
         return new BatchStatus(locationName,
-                failures, processed, new TestRemoteFile(f, batchMustDie,
-                                                         batchMustDie,
-                                                         batchMustDie));
+                failures, processed, 
+                new TestRemoteFile(f, batchMustDie,
+                        batchMustDie,
+                        batchMustDie),
+                        job.getExceptions());
     }
 }

@@ -25,10 +25,13 @@ package dk.netarkivet.common.distribute.arcrepository;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.List;
 
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.arc.FileBatchJob.ExceptionOccurrence;
 
 
 /**
@@ -36,39 +39,56 @@ import dk.netarkivet.common.exceptions.IllegalState;
  *
  */
 public class BatchStatus {
+    /** The total number of files processed so far. */
     private final int noOfFilesProcessed;
+    /** A list of files that the batch job could not process. */
     private final Collection<File> filesFailed;
+    /** The application ID identifying the bitarchive, that run this
+     * batch job. */
     private final String bitArchiveAppId;
+    /** The file containing the result of the batch job. */
     private RemoteFile resultFile;
+    /** A list of exceptions caught during the execution of
+     * the batchJob. 
+     */
+    private final List<ExceptionOccurrence> exceptions;
 
     /** Create a new BatchStatus object for a specific bitarchive.
      *
-     * @param bitArchiveAppId
-     * @param filesFailed
-     * @param noOfFilesProcessed
-     * @param resultFile
+     * @param bitArchiveAppId The application ID identifying the bitarchive, that run this
+     * batch job.
+     * @param filesFailed A list of files that the batch job could not process.
+     * @param noOfFilesProcessed The total number of files processed
+     * @param resultFile A file containing the result of the batch job
+     * @param exceptions A list of exceptions caught during the execution of
+     * the batchJob
      */
     public BatchStatus(String bitArchiveAppId,
                        Collection<File> filesFailed,
                        int noOfFilesProcessed,
-                       RemoteFile resultFile) {
+                       RemoteFile resultFile,
+                       List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this.bitArchiveAppId = bitArchiveAppId;
         this.filesFailed = filesFailed;
         this.noOfFilesProcessed = noOfFilesProcessed;
         this.resultFile = resultFile;
+        this.exceptions = exceptions;
     }
 
     /** Create a new BatchStatus object for a specific bitarchive.
      *
-     * @param filesFailed
-     * @param noOfFilesProcessed
-     * @param resultFile
+     * @param filesFailed A list of files that the batch job could not process
+     * @param noOfFilesProcessed The total number of files processed
+     * @param resultFile A file containing the result of the batch job
+     * @param exceptions A list of exceptions caught during the execution of
+     * the batchJob
      */
     public BatchStatus(Collection<File> filesFailed,
                        int noOfFilesProcessed,
-                       RemoteFile resultFile) {
+                       RemoteFile resultFile,
+                       List<FileBatchJob.ExceptionOccurrence> exceptions) {
         this("ALL_BITARCHIVE_APPS", filesFailed, noOfFilesProcessed,
-                resultFile);
+                resultFile, exceptions);
     }
 
     /** Get the number of files processed by the batch job.  This counts all
@@ -108,6 +128,14 @@ public class BatchStatus {
         return resultFile;
     }
 
+    /** Get the list of exceptions that happened during the batch job.
+     *
+     * @return List of exceptions with information on where they occurred.
+     */
+    public List<ExceptionOccurrence> getExceptions() {
+        return exceptions;
+    }
+    
     /** Copy the results of a batch job into a local file.  This deletes the
      * file from the remote server as appropriate. Note that this method or
      * appendResults can only be called once on a given object. If

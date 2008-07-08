@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCRecord;
@@ -36,6 +37,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unit tests for the class ARCBatchJob.
@@ -47,7 +49,7 @@ public class ARCBatchJobTester extends TestCase {
     private static final File ORIGINALS = new File(
             "tests/dk/netarkivet/common/utils/arc/data/input/");
     private static final File ARC_FILE = new File(ARC_DIR, "fyensdk.arc");
-    private static final File ARC_GZ_FILE = new File(ARC_DIR, 
+    private static final File ARC_GZ_FILE = new File(ARC_DIR,
             "NetarchiveSuite-netarkivet.arc.gz");
     private static final File NON_EXISTENT_FILE
         = new File(ARC_DIR, "no_such_file.arc");
@@ -102,7 +104,7 @@ public class ARCBatchJobTester extends TestCase {
     public void testOrdinaryRun() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Should have processed 190 entries in normal run",
                 TOTAL_RECORDS, processed);
@@ -136,7 +138,7 @@ public class ARCBatchJobTester extends TestCase {
                 }
             };
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         assertEquals("Should have gotten through all records",
                 TOTAL_RECORDS, processed);
         final int numExceptions = TOTAL_RECORDS
@@ -164,7 +166,7 @@ public class ARCBatchJobTester extends TestCase {
                 }
             };
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Should have processed all but one records",
                 TOTAL_RECORDS - 1, processed);
@@ -181,6 +183,9 @@ public class ARCBatchJobTester extends TestCase {
      * without harm.
      */
     public void testSerializability() {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         //Take two jobs: one for study and one for reference.
         SerializableARCBatchJob job1 = new SerializableARCBatchJob();
         SerializableARCBatchJob job2 = new SerializableARCBatchJob();
@@ -213,16 +218,19 @@ public class ARCBatchJobTester extends TestCase {
         job1.finish(new ByteArrayOutputStream());
         job2.finish(new ByteArrayOutputStream());
         //Finally, compare their visible states:
-        Exception[] state1 = job1.getExceptions();
-        Exception[] state2 = job2.getExceptions();
+        List<FileBatchJob.ExceptionOccurrence> state1
+        = job1.getExceptions();
+        List<FileBatchJob.ExceptionOccurrence> state2
+        = job2.getExceptions();
+
         assertEquals("The two jobs should have the same number of "
                 + "registered exceptions.",
-          state1.length, state2.length);
-        for(int i = 0; i < state1.length; i++){
+          state1.size(), state2.size());
+        for (int i = 0; i < state1.size(); i++) {
           assertEquals("Found differing registered exceptions: "
-              + state1[i].toString() + state2[i].toString(),
-            state1[i].toString(),
-            state2[i].toString());
+              + state1.get(i).toString() + state2.get(i).toString(),
+            state1.get(i).toString(),
+            state2.get(i).toString());
         }
     }
     /**
@@ -240,7 +248,7 @@ public class ARCBatchJobTester extends TestCase {
     public void testProcessCompressedFile() {
         TestARCBatchJob job = new TestARCBatchJob();
         job.processFile(ARC_GZ_FILE, new ByteArrayOutputStream());
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("Batching compressed file should give expected "
                 + "number of records",
@@ -257,7 +265,7 @@ public class ARCBatchJobTester extends TestCase {
         boolean success =
                 job.processFile(NON_EXISTENT_FILE, new ByteArrayOutputStream());
         assertEquals("Should record exactly one exception",
-                job.getExceptions().length, 1);
+                job.getExceptionArray().length, 1);
         assertFalse("Should fail on missing file", success);
     }
 
@@ -295,9 +303,10 @@ public class ARCBatchJobTester extends TestCase {
             lastSeenURL = record.getMetaData().getUrl();
 
         }
-        public Exception[] getExceptions() {
-            return super.getExceptions();
+        public Exception[] getExceptionArray() {
+            return super.getExceptionArray();
         }
+
     }
 
     private static class SerializableARCBatchJob extends ARCBatchJob {
@@ -328,9 +337,8 @@ public class ARCBatchJobTester extends TestCase {
         public void handleException(Exception e, File arcfile, long index) {
             super.handleException(e, arcfile, index);
         }
-
-        public Exception[] getExceptions() {
-            return super.getExceptions();
+        public Exception[] getExceptionArray() {
+            return super.getExceptionArray();
         }
     }
 }

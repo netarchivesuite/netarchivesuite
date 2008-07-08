@@ -29,13 +29,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.netarkivet.testutils.TestUtils;
+
 import junit.framework.TestCase;
 
 /**
+ * Unit test for BatchLocalFiles.
  */
 public class BatchLocalFilesTester extends TestCase {
     //Reference to test files:
-    private static final String INPUT_DIR = "tests/dk/netarkivet/arcutils/data/input/";
+    private static final String INPUT_DIR
+        = "tests/dk/netarkivet/arcutils/data/input/";
     private static final String[] TEST_FILE_NAMES = {
             "Reader1.cdx", "Reader2.cdx", "Reader3.cdx"
         };
@@ -89,7 +93,8 @@ public class BatchLocalFilesTester extends TestCase {
     }
     /**
     * Tests that a job throwing Exception during initialize()
-    * does not get executed, and that a representation of the Exception is thrown.
+    * does not get executed, and that a representation of the Exception
+    * is thrown.
     */
     public void testOneJob_ExceptionInInitialize() {
         FileBatchJob job = new TestBatchJob() {
@@ -99,15 +104,22 @@ public class BatchLocalFilesTester extends TestCase {
                 }
             };
         blf.run(job, os);
-        assertEquals(0, initialized);
-        assertEquals(0, processed);
-        assertEquals(1, finished);
+        assertEquals("Initialize should have failed before counting",
+                0, initialized);
+        assertEquals("Failing initialize should have prevented processing",
+                0, processed);
+        assertEquals("Finish should still be called after failed initiailize",
+                1, finished);
     }
+    
     /**
-     * Verfies that thrown Exceptions in process interrupt the processing
-     * rather than being caught
+     * Verifies that thrown Exceptions in process does not interrupt
+     * the processing but is caught and collected.
      */
     public void testOneJob_ExceptionInProcess() {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         FileBatchJob job = new TestBatchJob() {
                 private boolean done = false;
 
@@ -121,9 +133,11 @@ public class BatchLocalFilesTester extends TestCase {
                 }
             };
         blf.run(job, os);
-        assertEquals(1, initialized);
-        assertEquals(2, processed);
-        assertEquals(1, finished);
+        assertEquals("Should have called initialize", 1, initialized);
+        assertEquals("Should have called process twice", 2, processed);
+        assertEquals("Should have called finish", 1, finished);
+        assertEquals("Should have one exception collected",
+                1, job.getExceptions().size());
     }
     /**
     * Verifies that an Exception thrown during finish()
@@ -136,9 +150,9 @@ public class BatchLocalFilesTester extends TestCase {
                 }
             };
         blf.run(job, os);
-        assertEquals(1, initialized);
-        assertEquals(FILES, processed);
-        assertEquals(0, finished);
+        assertEquals("Should have called initialize", 1, initialized);
+        assertEquals("Should have processed all files", FILES, processed);
+        assertEquals("Should not have counted finish call", 0, finished);
     }
     /**
      * Verify that batch jobs sequentially does not disturb the results
@@ -158,16 +172,16 @@ public class BatchLocalFilesTester extends TestCase {
      */
     public void testFilesPresented() {
         FileBatchJob job = new TestBatchJob() {
-                private Set checkList = new HashSet(Arrays.asList(testFiles));
+                private Set<File> checkList = new HashSet<File>(Arrays.asList(testFiles));
 
                 public boolean processFile(File file, OutputStream os) {
                     boolean found = checkList.remove(file);
-                    assertTrue("Should have found " + file.toString(),found);
+                    assertTrue("Should have found " + file.toString(), found);
                     return super.processFile(file, os);
                 }
-                public void finish() {
-                    assertTrue("Expected empty list but found " +
-                    checkList.toString(), checkList.isEmpty());
+                public void finish(OutputStream os) {
+                    assertTrue("Expected empty list but found "
+                            + checkList.toString(), checkList.isEmpty());
                     super.finish(new ByteArrayOutputStream());
                 }
             };
@@ -185,7 +199,7 @@ public class BatchLocalFilesTester extends TestCase {
     public void testSpecifiedFilenameRun() {
         TestBatchJob tbj = new TestBatchJob();
         tbj.processOnlyFileNamed(TEST_FILE_NAMES[1]);
-        blf.run(tbj, new ByteArrayOutputStream() );
+        blf.run(tbj, new ByteArrayOutputStream());
         assertEquals(1, initialized);
         assertEquals(1, processed);
         assertEquals(1, finished);

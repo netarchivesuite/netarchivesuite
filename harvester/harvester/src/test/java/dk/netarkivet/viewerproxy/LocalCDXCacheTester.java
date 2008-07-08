@@ -355,7 +355,8 @@ public class LocalCDXCacheTester extends TestCase {
                     os = new FileOutputStream(f);
                 } catch (IOException e) {
                     return new BatchStatus(locationName,
-                                           new ArrayList<File>(), 0, null);
+                                           new ArrayList<File>(), 0, null,
+                                           job.getExceptions());
                 }
                 File[] files = TestInfo.WORKING_DIR.listFiles(
                         new FilenameFilter() {
@@ -386,7 +387,8 @@ public class LocalCDXCacheTester extends TestCase {
                                        new TestRemoteFile(f,
                                                batchMustDie,
                                                batchMustDie,
-                                               batchMustDie));
+                                               batchMustDie),
+                                               job.getExceptions());
             }
         };
         Field arcField = ReflectUtils.getPrivateField(LocalCDXCache.class,

@@ -25,8 +25,8 @@ package dk.netarkivet.common.utils.arc;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,9 +47,7 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
  * the archive, and then runs finish().
  */
 public abstract class ARCBatchJob extends FileBatchJob {
-    /** List for collecting caught Exceptions. */
-    private ArrayList<Exception> exceptionList = new ArrayList<Exception>();
-
+  
     /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 
@@ -211,20 +209,27 @@ public abstract class ARCBatchJob extends FileBatchJob {
         log.debug("Caught exception while running batch job " +
           "on file " + arcfile + ", position " + index + ":\n" + e.getMessage(),
                 e);
-        exceptionList.add(e);
+        addException(arcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
     /**
-     * Returns a representation of the list of Exceptions recorded.
+     * Returns a representation of the list of Exceptions recorded for this
+     * ARC batch job.
      * If called by a subclass, a method overriding handleException()
      * should always call super.handleException().
      *
      * @return All Exceptions passed to handleException so far.
      */
-    public Exception[] getExceptions() {
-        return exceptionList.toArray(new Exception[] {  });
+    public Exception[] getExceptionArray() {
+        List<ExceptionOccurrence> exceptions = getExceptions();
+        Exception[] exceptionList = new Exception[exceptions.size()];
+        int i = 0;
+        for (ExceptionOccurrence e : exceptions) {
+            exceptionList[i++] = e.getException();
+        }
+        return exceptionList;
     }
-
+    
     public int noOfRecordsProcessed() {
         return noOfRecordsProcessed;
     }

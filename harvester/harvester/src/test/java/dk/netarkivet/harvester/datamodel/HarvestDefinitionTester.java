@@ -43,6 +43,7 @@ import dk.netarkivet.testutils.CollectionAsserts;
 
 
 /**
+ * Unit tests for the static methods in the abstract class HarvestDefinition. 
  */
 public class HarvestDefinitionTester extends DataModelTestCase {
     private Schedule schedule;
@@ -170,7 +171,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs 
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
@@ -189,7 +191,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         Domain d = TestInfo.getDefaultDomain();
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs 
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         PartialHarvest harvestDef
@@ -215,6 +218,13 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     /**
      * Verify that a HarvestDefinition can be created and the correct data
      * retrieved.
+     * FIXME This unittest fails every other time with error 
+     * junit.framework.AssertionFailedError: 
+     * The first event must not happen before now (Tue Jul 08 20:43:28 CEST 2008), but happens at Tue Jul 08 20:43:29 CEST 2008
+     *      at junit.framework.Assert.fail(Assert.java:47)
+     *      at junit.framework.Assert.assertTrue(Assert.java:20)
+     *      at dk.netarkivet.harvester.datamodel.HarvestDefinitionTester.testSetAndGet(HarvestDefinitionTester.java:248)
+     * 
      */
     public void testSetAndGet() {
 
@@ -222,7 +232,8 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         DomainConfiguration cfg1 = TestInfo.getDefaultConfig(d);
         d.addConfiguration(cfg1);
 
-        List<DomainConfiguration> domainConfigs = new ArrayList<DomainConfiguration>();
+        List<DomainConfiguration> domainConfigs
+            = new ArrayList<DomainConfiguration>();
         domainConfigs.add(cfg1);
 
         Date before = new Date(System.currentTimeMillis() / 1000 * 1000);

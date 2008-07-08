@@ -59,7 +59,7 @@ public class ExtractCDX {
         runner.run(job, cdxstream);
         log.trace("Created index for " + job.noOfRecordsProcessed()
                      + " records on file '" + arcfile + "'");
-        Exception[] exceptions = job.getExceptions();
+        Exception[] exceptions = job.getExceptionArray();
         if (exceptions.length > 0) {
             StringBuilder msg = new StringBuilder();
             for (Exception e : exceptions) {

@@ -29,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -155,7 +154,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         // integrity11 has no state and wrong checksum
         // integrity12 is marked as completed but has wrong checksum
 
-        // Set up damin data
+        // Set up admin data
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
         ad.addEntry("integrity1.ARC", null,
                     "708afc1b7aebc12f7e65ecf1be054d23");
@@ -217,7 +216,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                    "unsorted.txt");
         MockupArcRepositoryClient.getInstance().overrideBatch = new BatchStatus(
                 "AP1", Collections.<File>emptySet(), 5,
-                RemoteFileFactory.getMovefileInstance(listingDir));
+                RemoteFileFactory.getMovefileInstance(listingDir),
+                new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         Location locationSB = Location.get("SB");
 
         //Run method.
@@ -259,9 +259,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             throws FileNotFoundException, IOException, NoSuchMethodException,
                    InvocationTargetException, IllegalAccessException {
         Method runChecksumJob = ReflectUtils.getPrivateMethod(
-                FileBasedActiveBitPreservation.class, "runChecksumJob", Location.class);
+                FileBasedActiveBitPreservation.class, "runChecksumJob",
+                Location.class);
 
-        FileBasedActiveBitPreservation acp = FileBasedActiveBitPreservation.getInstance();
+        FileBasedActiveBitPreservation acp 
+            = FileBasedActiveBitPreservation.getInstance();
 
         // Test valid parameters:
         try {
@@ -282,15 +284,18 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                    unsortedOutput.exists());
 
         /* No longer automatically sorting when not needed
-        File sortedOutput = new File(outputSubDir, Constants.SORTED_OUTPUT_FILE);
-        assertTrue("No output file generated for sorted output", sortedOutput.exists());
+        File sortedOutput = new File(outputSubDir,
+            Constants.SORTED_OUTPUT_FILE);
+        assertTrue("No output file generated for sorted output",
+            sortedOutput.exists());
         */
 
         assertEquals("Unsorted output file should have been deleted from FTP "
                 + "server", 0, TestRemoteFile.remainingFiles().size());
 
         /*
-        assertEquals("The two files containing unsorted output and sorted output do not have the same size",
+        assertEquals("The two files containing unsorted output"
+            + " and sorted output do not have the same size",
                 unsortedOutput.length(), sortedOutput.length());
 
         FileInputStream fis = new FileInputStream(sortedOutput);
@@ -298,9 +303,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         String line = null;
         String prevArcFileName = null;
         while ((line = in.readLine()) != null) {
-            String arcFileName = line.substring(0, line.indexOf(Constants.STRING_FILENAME_SEPARATOR));
+            String arcFileName = line.substring(0, 
+                line.indexOf(Constants.STRING_FILENAME_SEPARATOR));
             if (prevArcFileName != null) {
-                assertTrue("Batch output is not sorted (lexicographically) according to ARC file name",
+                assertTrue("Batch output is not sorted (lexicographically) "
+                + "according to ARC file name",
                         arcFileName.compareTo(prevArcFileName) > 0);
             }
             prevArcFileName = arcFileName;
@@ -330,12 +337,14 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                    outputFile.exists());
 
         // Mimic failure
-        File artificial_failure = new File(TestInfo.GOOD_ARCHIVE_FILE_DIR,
+        File artificialFailure = new File(TestInfo.GOOD_ARCHIVE_FILE_DIR,
                                            TestInfo.REFERENCE_FILES[0]);
                 List<File> l = new ArrayList<File>();
-                l.add(artificial_failure);
+                l.add(artificialFailure);
                 MockupArcRepositoryClient.getInstance().overrideBatch
-                        = new BatchStatus("AP1", l, 1, null);
+                        = new BatchStatus("AP1", l, 1, null,
+                                new ArrayList<FileBatchJob
+                                    .ExceptionOccurrence>(0));
         outputFile.delete();
         runBatchJob.invoke(abp, job, Location.get("KB"),
                            null, outputFile);
@@ -348,7 +357,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         FileUtils.copyFile(TestInfo.CORRECT_ADMIN_DATA, TestInfo.ADMIN_DATA);
         // Ensure that the admin data are read from the file
-        AdminData dummyad = AdminData.getUpdateableInstance();
+        AdminData.getUpdateableInstance();
         abp = FileBasedActiveBitPreservation.getInstance();
         FilePreservationState fps
                 = abp.getFilePreservationState(TestInfo.FILE_IN_ADMIN_DATA);
@@ -375,7 +384,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         final FileBasedActiveBitPreservation abp
             = FileBasedActiveBitPreservation.getInstance();
-        // Make a dummy arcrepclient that just drops the name into an array.
+        // Make a dummy archive repository client that just drops the name
+        // into an array.
         final String[] location = new String[1];
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
             public BatchStatus batch(FileBatchJob job, String locationName) {
@@ -391,7 +401,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 }
                 return new BatchStatus(locationName, new HashSet<File>(), 0,
                                        new TestRemoteFile(file, to_fail,
-                                                           to_fail, to_fail));
+                                                           to_fail, to_fail),
+                                                           job.getExceptions());
             }
 
             public void close() {
@@ -452,9 +463,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         MockupArcRepositoryClient.getInstance().overrideBatch
                 = new BatchStatus("AP1", Collections.<File>emptyList(), 17,
                         RemoteFileFactory.getMovefileInstance(
-                                new File(
-                                        TestInfo.WORKING_DIR, 
-                                        "test_file_list_output/filelistOutput/unsorted.txt")));
+                                new File(TestInfo.WORKING_DIR, 
+                                        "test_file_list_output/"
+                                        + "filelistOutput/unsorted.txt")),
+                                        new ArrayList<FileBatchJob
+                                            .ExceptionOccurrence>(0));
         runFilelistJob.invoke(abp, location);
         LogUtils.flushLogs(FileBasedActiveBitPreservation.class.getName());
         FileAsserts.assertFileContains("Should have warning about wrong count",
@@ -482,10 +495,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                         return new BatchStatus("AP1",
                                 Collections.<File>emptyList(), 1,
                                 new StringRemoteFile(
-                                        results.get(Location.get(locationName))));
+                                        results.get(Location.get(locationName))),
+                                        new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
                         return new BatchStatus("AP1",
-                                    Collections.<File>emptyList(), 0, null);
+                                    Collections.<File>emptyList(), 0, null,
+                                    new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     }
                 } else {
                     return super.batch(job,
@@ -601,11 +616,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         /**
          * The following three methods are used by the ActiveBitPreservation.
-         *
-         * @param job
-         * @param file
-         * @return BatchStatus
-         * @throws IOException
+         * 
+         * @param job a given FileBatchjob
+         * @param file a given RemoteFile (ignored)
+         * @return BatchStatus 
+         * @throws IOException If trouble creating temporary files and
+         * writing to this temporary files.
          */
         public BatchStatus batch(FileBatchJob job, String locationName,
                                  RemoteFile file) throws IOException {
@@ -624,19 +640,19 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             RemoteFile resultFile = RemoteFileFactory.getInstance(tmpfile, true,
                                                                   false, true);
             if (to_fail) {
-                File artificial_failure = new File(bitarchive_dir,
+                File artificialFailure = new File(bitarchive_dir,
                                                    TestInfo.REFERENCE_FILES[0]);
                 List<File> l = new ArrayList<File>();
-                l.add(artificial_failure);
+                l.add(artificialFailure);
                 lbs = new BatchStatus(bitarchive_dir.getName(),
                                       l, job.getNoOfFilesProcessed(),
-                                      null);
+                                      null, null);
             } else {
 
                 lbs = new BatchStatus(bitarchive_dir.getName(),
                                       job.getFilesFailed(),
                                       job.getNoOfFilesProcessed(),
-                                      resultFile);
+                                      resultFile, null);
             }
             return lbs;
         }
@@ -708,8 +724,10 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 FileOutputStream os = new FileOutputStream(output);
                 new BatchLocalFiles(in_files).run(job, os);
                 os.close();
-                return new BatchStatus("BA1", Collections.<File>emptyList(), in_files.length,
-                                       RemoteFileFactory.getMovefileInstance(output));
+                return new BatchStatus("BA1", Collections.<File>emptyList(),
+                        in_files.length,
+                        RemoteFileFactory.getMovefileInstance(output),
+                        new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
             } catch (IOException e) {
                 fail("IO error during test");
                 return null;

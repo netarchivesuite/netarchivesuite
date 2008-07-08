@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,15 +38,15 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
- * BitArchiveAdminData test class
+ * BitArchiveAdminData test class.
  * Unfortunately, in unit tests there is no way I can be sure to have
  * two directories with different amounts of space free, so first dir is always
  * used...
  */
 
 public class BitarchiveAdminTester extends TestCase {
-    public static final File DATA_DIR
-            = new File("./tests/dk/netarkivet/archive/bitarchive/data/admindata");
+    public static final File DATA_DIR = new File(
+            "./tests/dk/netarkivet/archive/bitarchive/data/admindata");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File BA_DIR_1 = new File(WORKING_DIR, "badir1");
     public static final File BA_DIR_2 = new File(WORKING_DIR, "badir2");
@@ -85,7 +86,8 @@ public class BitarchiveAdminTester extends TestCase {
         assertTrue("Should return true", ad.hasEnoughSpace());
         //2) One directory and settings set to return false
         long df = FileUtils.getBytesFree(BA_DIR_1);
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT, Long.toString(2L * df));
+        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
+                Long.toString(2L * df));
         ad.close();
         ad = BitarchiveAdmin.getInstance();
         assertFalse("Should return true", ad.hasEnoughSpace());
@@ -99,7 +101,8 @@ public class BitarchiveAdminTester extends TestCase {
                      TEMPDIR, tempfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
                      BA_DIR_1.getAbsolutePath(),
-                     tempfile.getParentFile().getParentFile().getAbsolutePath());
+                     tempfile.getParentFile()
+                     .getParentFile().getAbsolutePath());
     }
 
     public void testGetTemporaryPathThrowsException() throws Exception {
@@ -143,14 +146,15 @@ public class BitarchiveAdminTester extends TestCase {
                      "filedir", finalfile.getParentFile().getName());
         assertEquals("File should go in bitarchive dir",
                      BA_DIR_1.getAbsolutePath(),
-                     finalfile.getParentFile().getParentFile().getAbsolutePath());
+                     finalfile.getParentFile()
+                     .getParentFile().getAbsolutePath());
     }
 
     public void testMoveToStorageThrowsException() throws Exception {
         try {
             ad.moveToStorage(null);
             fail("Should throw exception on null argument");
-        } catch(ArgumentNotValid e) {
+        } catch (ArgumentNotValid e) {
             //expected
         }
 
@@ -160,7 +164,7 @@ public class BitarchiveAdminTester extends TestCase {
         try {
             ad.moveToStorage(invalidtopdir);
             fail("Should throw exception when giving file not in tempdir");
-        } catch(IOFailure e) {
+        } catch (IOFailure e) {
             //expected
             assertTrue("File should still exist", invalidtopdir.exists());
         }
@@ -173,7 +177,7 @@ public class BitarchiveAdminTester extends TestCase {
         try {
             ad.moveToStorage(invalidbadir);
             fail("Should throw exception when giving file not in tempdir");
-        } catch(IOFailure e) {
+        } catch (IOFailure e) {
             //expected
             assertTrue("File should still exist", invalidbadir.exists());
         }
@@ -184,7 +188,7 @@ public class BitarchiveAdminTester extends TestCase {
         try {
             ad.moveToStorage(knownfile);
             fail("Should throw exception when moving fails (file exists)");
-        } catch(IOFailure e) {
+        } catch (IOFailure e) {
             //expected
         }
 
@@ -200,8 +204,9 @@ public class BitarchiveAdminTester extends TestCase {
         FileUtils.removeRecursively(new File(BA_DIR_1, FILEDIR));
         try {
             ad.moveToStorage(tempfile);
-            fail("Should throw exception when moving fails (to does not exist)");
-        } catch(IOFailure e) {
+            fail("Should throw exception when moving fails "
+                    + "(to does not exist)");
+        } catch (IOFailure e) {
             //expected
             assertTrue("Temp file should still exist", tempfile.exists());
         }
@@ -226,7 +231,7 @@ public class BitarchiveAdminTester extends TestCase {
         try {
             ad.lookup(null);
             fail("Should throw exception on null argument");
-        } catch(ArgumentNotValid e) {
+        } catch (ArgumentNotValid e) {
             //Expected
         }
 
@@ -234,13 +239,15 @@ public class BitarchiveAdminTester extends TestCase {
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file1", file.getName());
         assertEquals("Should be right file",
-                     new File(new File(BA_DIR_1, FILEDIR), "file1").getAbsolutePath(),
+                     new File(new File(BA_DIR_1, FILEDIR), 
+                             "file1").getAbsolutePath(),
                      file.getFilePath().getAbsolutePath());
         file = ad.lookup("file3");
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file3", file.getName());
         assertEquals("Should be right file",
-                     new File(new File(BA_DIR_2, FILEDIR), "file3").getAbsolutePath(),
+                     new File(new File(BA_DIR_2, FILEDIR), 
+                             "file3").getAbsolutePath(),
                      file.getFilePath().getAbsolutePath());
         file = ad.lookup("none");
         assertNull("Should return null on non-existing file", file);
@@ -303,7 +310,7 @@ public class BitarchiveAdminTester extends TestCase {
         File[] files = ad.getFilesMatching(Pattern.compile("ile."));
         assertEquals("Should find no files since regexp doesn't match start", 0,
                 files.length);
-        files  = ad.getFilesMatching(Pattern.compile("file[24]"));
+        files = ad.getFilesMatching(Pattern.compile("file[24]"));
         assertEquals("Should find two files buf found " + files,
                 2, files.length);
         List<String> filePaths = new ArrayList<String>();
@@ -311,11 +318,34 @@ public class BitarchiveAdminTester extends TestCase {
             filePaths.add(f.getAbsolutePath());
         }
 
-        String file2path = new File(new File(BA_DIR_1, "filedir"), "file2").getAbsolutePath();
+        String file2path = new File(
+                new File(BA_DIR_1, "filedir"), "file2").getAbsolutePath();
         assertTrue("Should have " + file2path + " but found " + filePaths,
                 filePaths.contains(file2path));
-        String file4path = new File(new File(BA_DIR_2, "filedir"), "file4").getAbsolutePath();
+        String file4path = new File(
+                new File(BA_DIR_2, "filedir"), "file4").getAbsolutePath();
         assertTrue("Should have " + file4path + " but found " + filePaths,
                 filePaths.contains(file4path));
     }
+    
+    public void testIsBitarchiveDirectory() throws IOException {
+        assertTrue("Should find existing dir",
+                ad.isBitarchiveDirectory(BA_DIR_1));
+        assertTrue("Should find existing file's parent dir",
+                ad.isBitarchiveDirectory(new File(BA_DIR_2, "file3")
+                    .getCanonicalFile().getParentFile()));
+        assertFalse("Should not find file in wrong dir",
+                ad.isBitarchiveDirectory(new File("file1")
+                    .getCanonicalFile().getParentFile()));
+        assertFalse("Should not find parent dir",
+                ad.isBitarchiveDirectory(BA_DIR_1.getCanonicalFile()
+                        .getParentFile()));
+        try {
+            ad.isBitarchiveDirectory(null);
+            fail("Should fail on null file");
+        } catch (ArgumentNotValid e) {
+            // expected
+        }
+    }
+
 }

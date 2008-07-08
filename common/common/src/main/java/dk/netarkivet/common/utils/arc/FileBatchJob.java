@@ -58,10 +58,17 @@ public abstract class FileBatchJob implements Serializable {
     
     /** A Set of files which generated errors. */
     protected Set<File> filesFailed = new HashSet<File>();
-
+    
+    /** A list with information about the exceptions thrown during the execution
+     * of the batchjob.
+     */
+    protected List<ExceptionOccurrence> exceptions
+                = new ArrayList<ExceptionOccurrence>();
     /**
      * Initialize the job before runnning.
-     * This is called before the processFile() calls
+     * This is called before the processFile() calls. If this throws an
+     * exception, processFile() will not be called, but finish() will,
+     *
      * @param os the OutputStream to which output should be written
      */
     public abstract void initialize(OutputStream os);
@@ -76,8 +83,11 @@ public abstract class FileBatchJob implements Serializable {
     public abstract boolean processFile(File file, OutputStream os);
 
     /**
-     * Finish up the job.
-     * This is called after the last process() call.
+     * Finish up the job.  This is called after the last process() call.
+     * If the initialize() call throws an exception, this will still be called
+     * so that any resources allocated can be cleaned up.  Implementations
+     * should make sure that this method can handle a partial initialization
+     * 
      * @param os the OutputStream to which output should be written
      */
     public abstract void finish(OutputStream os);
@@ -170,5 +180,215 @@ public abstract class FileBatchJob implements Serializable {
      */
     public Collection<File> getFilesFailed() {
         return filesFailed;
+    }
+    
+    /** Get the list of exceptions that have occurred during processing.
+      *
+      * @return List of exceptions together with information on where they
+      * happened.
+      */
+    public List<ExceptionOccurrence> getExceptions() {
+            return exceptions;
+    }
+    
+    /** Record an exception that occurred during the processFile of this job
+     * and that should be returned with the result.  If maxExceptionsReached()
+     * returns true, this method silently does nothing.
+     *
+     * @param currentFile The file that is currently being processed.
+     * @param currentOffset The relevant offset into the file when the
+     * exception happened (e.g. the start of an ARC record).
+     * @param outputOffset The offset we were at in the outputstream when the
+     * exception happened.  If UNKNOWN_OFFSET, the offset could not be found.
+     * @param e The exception thrown.  This exception must be serializable.
+     */
+    protected void addException(File currentFile, long currentOffset,
+            long outputOffset, Exception e) {
+        if (!maxExceptionsReached()) {
+            exceptions.add(new ExceptionOccurrence(currentFile,
+                    currentOffset,
+                    outputOffset,
+                    e));
+        }
+    }
+    
+    /** Record an exception that occurred during the initialize() method of
+     * this job.
+     *
+     * @param outputOffset The offset we were at in the outputstream when the
+     * exception happened.  If UNKNOWN_OFFSET, the offset could not be found.
+     * @param e The exception thrown.  This exception must be serializable.
+     */
+    protected void addInitializeException(long outputOffset, Exception e) {
+        if (!maxExceptionsReached()) {
+            exceptions.add(new ExceptionOccurrence(true, outputOffset, e));
+        }
+    }
+
+    /** Record an exception that occurred during the finish() method of
+     * this job.
+     *
+     * @param outputOffset The offset we were at in the outputstream when the
+     * exception happened.  If UNKNOWN_OFFSET, the offset could not be found.
+     * @param e The exception thrown.  This exception must be serializable.
+     */
+    protected void addFinishException(long outputOffset, Exception e) {
+        if (!maxExceptionsReached()) {
+            exceptions.add(new ExceptionOccurrence(false, outputOffset, e));
+        }
+    }
+
+    /** Returns true if we have already recorded the maximum number of
+     * exceptions.  At this point, no more exceptions will be recorded, and
+     * processing should be aborted.
+     *
+     * @return True if the maximum number of exceptions (MAX_EXCEPTIONS) has
+     * been recorded already.
+     */
+    protected boolean maxExceptionsReached() {
+        return exceptions.size() >= ExceptionOccurrence.MAX_EXCEPTIONS;
+    }
+    
+    /** This class holds the information about exceptions that occurred in
+     * a batchjob.
+     */
+    public static class ExceptionOccurrence implements Serializable {
+
+        /** The maximum number of exceptions we will accumulate before
+         * aborting processing.
+         */
+        private static final int MAX_EXCEPTIONS = 100;
+
+        /** Marker for the case when we couldn't find an offset for the
+         * outputstream.
+         */
+        public static final long UNKNOWN_OFFSET = -1;
+
+        /** The name of the file we were processing when the exception
+         * occurred, or null.
+         */
+        private final String fileName;
+
+        /** The offset in the file we were processing when the exception
+         * occurred.
+         */
+        private final long fileOffset;
+        /** How much we had written to the output stream when the exception
+         * occurred.
+         */
+        private final long outputOffset;
+        /** The exception that was thrown. */
+        private final Exception exception;
+        /** True if this exception was thrown during initialize(). */
+        private final boolean inInitialize;
+        /** True if this exception was thrown during finish(). */
+        private final boolean inFinish;
+
+        /** Standard Constructor for ExceptionOccurrence.
+         * @see FileBatchJob#addException(File,long,long, Exception) for
+         * details on the parameters. 
+         * @param file The file that caused the exception.
+         * @param fileOffset The relevant offset into the file when the
+         * exception happened (e.g. the start of an ARC record).
+         * @param outputOffset The offset we were at in the outputstream when
+         * the exception happened.
+         * @param exception The exception thrown.
+         *  This exception must be serializable.
+         */
+        public ExceptionOccurrence(File file, long fileOffset,
+                long outputOffset, Exception exception) {
+            ArgumentNotValid.checkNotNull(file, "File file");
+            ArgumentNotValid.checkNotNegative(fileOffset, "long fileOffset");
+            ArgumentNotValid.checkTrue(outputOffset >= 0
+                    || outputOffset == UNKNOWN_OFFSET,
+                    "outputOffset must be either "
+                    + "non-negative or UNKNOWN_OFFSET");
+            ArgumentNotValid.checkNotNull(exception, "Exception exception");
+            this.fileName = file.getName();
+            this.fileOffset = fileOffset;
+            this.inFinish = false;
+            this.inInitialize = false;
+            this.outputOffset = outputOffset;
+            this.exception = exception;
+        }
+
+        /** Constructor for ExceptionOccurrence when an exception happened
+         * during initialize() or finish().
+         *
+         * @param inInitialize True if the exception happened in initialize()
+         * @param outputOffset Current offset in the output stream, or
+         * UNKNOWN_OFFSET if the offset cannot be found.
+         * @param exception The exception that was thrown.
+         */
+        public ExceptionOccurrence(boolean inInitialize, long outputOffset,
+                Exception exception) {
+            ArgumentNotValid.checkTrue(outputOffset >= 0
+                    || outputOffset == UNKNOWN_OFFSET,
+                    "outputOffset must be either "
+                    + "non-negative or UNKNOWN_OFFSET");
+            ArgumentNotValid.checkNotNull(exception, "Exception exception");
+            this.fileName = null;
+            this.fileOffset = -1;
+            this.inFinish = !inInitialize;
+            this.inInitialize = inInitialize;
+            this.outputOffset = outputOffset;
+            this.exception = exception;
+        }
+
+        /** Get the name of the file that this exception occurred in.
+         *
+         * @return Name of the file that this exception occurred in, or null
+         * if it happened during initialize() or finish().
+         */
+        public String getFileName() {
+            return fileName;
+        }
+
+        /** Get the offset into the file that this exception occurred at.  This
+         * location may not be exactly where the problem that caused the
+         * exception occurred, but may be e.g. at the start of a corrupt
+         * record.
+         *
+         * @return Offset into the file that this exception occurred at, or
+         * UNKNOWN_OFFSET if it happened during initialize() or finish().
+         */
+        public long getFileOffset() {
+            return fileOffset;
+        }
+
+        /** Offset of the output stream when this exception occurred.
+         *
+         * @return Offset in output stream, or UNKNOWN_OFFSET if the offset
+         * could not be determined.
+         */
+        public long getOutputOffset() {
+            return outputOffset;
+        }
+
+        /** The exception that was thrown.
+         *
+         * @return An exception.
+         */
+        public Exception getException() {
+            return exception;
+        }
+
+        /** Returns true if the exception was thrown during initialize().  In
+         * that case, no processing has taken place, but finish() has been
+         * called.
+         *
+         * @return true if the exception was thrown during initialize()
+         */
+        public boolean isInitializeException() {
+            return inInitialize;
+        }
+
+        /** Returns true if the exception was thrown during finish().
+         *
+         * @return true if the exception was thrown during finish().
+         */
+        public boolean isFinishException() {
+            return inFinish;
+        }
     }
 }

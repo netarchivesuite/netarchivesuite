@@ -120,9 +120,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         log.info("Received BatchMessage\n" + inbMsg.toString());
         try {
             BatchMessage outbMsg =
-                    new BatchMessage(Channels.getAllBa(), inbMsg.getJob(),
-                                     Settings.get(
-                                             Settings.ENVIRONMENT_THIS_LOCATION));
+                    new BatchMessage(
+                            Channels.getAllBa(), inbMsg.getJob(),
+                            Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
             con.send(outbMsg);
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
                         outbMsg.getID());
@@ -135,10 +135,10 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * This is the message handling method for BatchEndedMessages.
      *
-     * This delegates the handling of the reply to the bitarhcive monitor, which
+     * This delegates the handling of the reply to the bitarchive monitor, which
      * will notify us if the batch job is now done.
      *
-     * @param beMsg
+     * @param beMsg 
      */
     public void visit(final BatchEndedMessage beMsg) {
         log.info("Received batch ended from bitarchive '"
@@ -153,7 +153,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                                           beMsg.getFilesFailed(),
                                           beMsg.getRemoteFile(),
                                           beMsg.isOk() ? null :
-                                          beMsg.getErrMsg());
+                                          beMsg.getErrMsg(),
+                                          beMsg.getExceptions());
 
                 }
             }.start();
@@ -204,7 +205,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             log.warn("Received unexpected notification with no argument");
             return;
         }
-        if (!(arg instanceof dk.netarkivet.archive.bitarchive.BitarchiveMonitor.BatchJobStatus)) {
+        if (!(arg
+                instanceof dk.netarkivet.archive.bitarchive
+                            .BitarchiveMonitor.BatchJobStatus)) {
             log.warn("Received notification with incorrect argument type "
                      + arg.getClass() + ":'" + arg + "''");
             return;

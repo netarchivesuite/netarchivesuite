@@ -338,7 +338,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             }
         }
         BatchStatus lbs = new BatchStatus(brMsg.getFilesFailed(),
-                brMsg.getNoOfFilesProcessed(), brMsg.getResultFile());
+                brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
+                job.getExceptions());
         return lbs;
     }
 

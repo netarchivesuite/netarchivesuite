@@ -45,7 +45,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
  * The upload method is tested
  */
 public class BitarchiveTesterUpload extends BitarchiveTestCase {
-    /** The external interface */
+    /** The external interface. */
     private static BitarchiveServer server;
 
     /** The directory from where we upload the ARC files.
@@ -57,7 +57,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     /** The files that are uploaded during the tests and that must be removed
      * afterwards.
      */
-    private static final List UPLOADED_FILES =
+    private static final List<String> UPLOADED_FILES =
             Arrays.asList("Upload1.ARC",
                           "Upload2.ARC",
                           "Upload3.ARC");
@@ -71,16 +71,16 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
         return ORIGINALS_DIR;
     }
 
-    /** At start of test, set up an archive we can run against.
-     *
+    /** 
+     * At start of test, set up an archive we can run against.
      */
     public void setUp() throws Exception {
         super.setUp();
         server = BitarchiveServer.getInstance();
     }
 
-    /** At end of test, remove any files we managed to upload.
-     *
+    /**
+     * At end of test, remove any files we managed to upload.
      */
     public void tearDown() throws Exception {
         if (server != null) {
@@ -104,7 +104,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
 
     /* **** Part two: Test that errors are treated correctly. **** */
     /**
-     * Uploading a file that does not exist should throw an ArgumentNotValid exception.
+     * Uploading a file that does not exist should throw
+     * an ArgumentNotValid exception.
      */
     public void testUploadMissingFile() {
         try {
@@ -125,7 +126,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
             final RemoteFile arcfile = RemoteFileFactory
                     .getInstance(new File(ORIGINALS_DIR, "Upload1.ARC"), true,
                                  false, true);
-            ((TestRemoteFile)arcfile).failsOnCopy = true;
+            ((TestRemoteFile) arcfile).failsOnCopy = true;
             archive.upload(arcfile, "ShouldNotExist.ARC");
             fail("Non-existing file should have given an exception.");
         } catch (IOFailure e) {
@@ -138,8 +139,10 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      */
     public void testUploadNoDir() {
         try {
-            archive.upload(RemoteFileFactory.getInstance(TestInfo.WORKING_DIR, true,
-                                                         false, true), TestInfo.WORKING_DIR.getName());
+            archive.upload(
+                    RemoteFileFactory.getInstance(
+                            TestInfo.WORKING_DIR, true, false, true), 
+                    TestInfo.WORKING_DIR.getName());
             fail("Uploading directory should have given an exception.");
         } catch (ArgumentNotValid e) {
             /* Expected case */
@@ -151,14 +154,16 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * FileAlreadyExists exception.
      */
     public void testUploadAlreadyUploaded() {
+        RemoteFile rf = new TestRemoteFile(new File(
+                ORIGINALS_DIR, UPLOADED_FILES.get(0)),
+                false, false, false);
         try {
-            archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, (String)UPLOADED_FILES.get(0)),
-                                               false, false, false), (String)UPLOADED_FILES.get(0));
-            archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, (String)UPLOADED_FILES.get(0)),
-                                               false, false, false), (String)UPLOADED_FILES.get(0));
-            fail("Should throw exception when uploading an existing file.");
+            archive.upload(rf, UPLOADED_FILES.get(0));
+            archive.upload(rf, UPLOADED_FILES.get(0));
+            fail("Should throw exception when uploading "
+                    + "a file already present in the archive.");
         } catch (PermissionDenied e) {
-            // Correct exception
+            // This exception is expected
         }
     }
 
@@ -167,18 +172,19 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
      * in the archive.
      */
     public void testUploadSuccess() {
-        archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, (String)UPLOADED_FILES.get(1)),
-                                           false, false, false), (String)UPLOADED_FILES.get(1));
+        archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR, 
+                UPLOADED_FILES.get(1)), false, false, false),
+                UPLOADED_FILES.get(1));
     }
 
     /**
      * Verify that data do not exist in the archive before uploading the file
      * and that data are part of the archive after upload.
-     * @throws IOException
+     * @throws IOException If unable to close FileOutputStream.
      */
     public void testUploadDataInArchive() throws IOException {
 
-        String nameForFileToUpload = (String)UPLOADED_FILES.get(2);
+        String nameForFileToUpload = UPLOADED_FILES.get(2);
         long index = 0;
         assertNull("File should not be in archive before upload",
                 archive.get(nameForFileToUpload, index));
@@ -201,7 +207,8 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
             File tmp = File.createTempFile("uploadtest-", ".tmp");
             os = new FileOutputStream(tmp);
             record.getData(os);
-            assertEquals("Size of record should be equal to 1254", 1254, tmp.length());
+            assertEquals("Size of record should be equal to 1254", 1254,
+                    tmp.length());
         } catch (IOException e) {
             fail("Unable to write record to disk: " + e);
         } finally {
@@ -219,7 +226,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     /**
-     * Verify that we upload into specified dir.
+     * Verify that we upload into specified directory.
      */
     public void testUploadUsesDir() {
         final File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
@@ -227,10 +234,11 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
                     dir1.getAbsolutePath(),
                 });
         archive.upload(new TestRemoteFile(new File(ORIGINALS_DIR,
-                (String)UPLOADED_FILES.get(2)), false, false, false),
-                (String)UPLOADED_FILES.get(2));
+                UPLOADED_FILES.get(2)), false, false, false),
+                UPLOADED_FILES.get(2));
         assertTrue("Should place file in directory " + dir1,
-                new File(new File(dir1, "filedir"), (String)UPLOADED_FILES.get(2)).exists());
+                new File(new File(dir1, "filedir"), 
+                        UPLOADED_FILES.get(2)).exists());
     }
 
     private void setupBitarchiveWithDirs(final String[] dirpaths) {

@@ -242,7 +242,9 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         }
         return new BatchStatus(locationName, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
-                RemoteFileFactory.getMovefileInstance(resultFile));
+                RemoteFileFactory.getMovefileInstance(resultFile),
+                //new ArrayList<FileBatchJob.ExceptionOccurrence>(0))
+                job.getExceptions());
     }
 
     /** Updates the administrative data in the ArcRepository for a given

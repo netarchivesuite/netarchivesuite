@@ -22,19 +22,19 @@
 */
 package dk.netarkivet.archive.bitarchive;
 
-/**
- * kfc forgot to comment this!
- */
-
 import java.io.File;
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
+/**
+ * Unit tests for the class BitarchiveARCFile.
+ *
+ */
 public class BitarchiveARCFileTester extends TestCase {
-    private static final File EXISTING_FILE = new File("./tests/dk/netarkivet/archive/bitarchive/data/originals/Upload2.ARC");
+    private static final File EXISTING_FILE = 
+        new File(TestInfo.ORIGINALS_DIR, "Upload2.ARC");
     private static final File NON__EXISTING__FILE = new File("Test2");
 
     public BitarchiveARCFileTester(String s) {
@@ -76,7 +76,8 @@ public class BitarchiveARCFileTester extends TestCase {
             //expected
         }
 
-        BitarchiveARCFile f = new BitarchiveARCFile("Test1", NON__EXISTING__FILE);
+        BitarchiveARCFile f = new BitarchiveARCFile(
+                "Test1", NON__EXISTING__FILE);
         assertEquals("File names should be the same",
                      f.getName(), "Test1");
         assertEquals("File paths should be the same",

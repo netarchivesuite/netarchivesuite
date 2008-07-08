@@ -226,13 +226,17 @@ public class BitarchiveAdmin {
         return storageFile;
     }
 
-    /** Checks whether a directory is one of the known bitarchive dirs.
+    /** 
+     * Checks whether a directory is one of the known bitarchive directories.
      *
      * @param theDir The dir to check
-     * @return whether it is a valid archive directory
-     * @throws IOFailure if archivedir or one of the valid archive directories does not exist
+     * @return true If it is a valid archive directory; otherwise returns false.
+     * @throws IOFailure if theDir or one of the valid archive directories
+     * does not exist
+     * @throws ArgumentNotValid if theDir is null
      */
-    private boolean isBitarchiveDirectory(File theDir) {
+    protected boolean isBitarchiveDirectory(File theDir) {
+        ArgumentNotValid.checkNotNull(theDir, "File theDir");
         try {
             theDir = theDir.getCanonicalFile();
             for (Iterator<File> i = archivePaths.iterator(); i.hasNext(); ) {
@@ -243,8 +247,9 @@ public class BitarchiveAdmin {
             }
             return false;
         } catch (IOException e) {
-            log.warn("File not known", e);
-            throw new IOFailure("File not known", e);
+            final String errMsg = "File not known";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 
@@ -340,8 +345,8 @@ public class BitarchiveAdmin {
      */
     public BitarchiveARCFile lookup(String arcFileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFileName");
-        for (Iterator i = archivePaths.iterator(); i.hasNext();) {
-            File archiveDir = new File((File) i.next(), FILE_DIRECTORY_NAME);
+        for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
+            File archiveDir = new File(i.next(), FILE_DIRECTORY_NAME);
 
             if (checkArchiveDir(archiveDir)) {
                 File filename = new File(archiveDir, arcFileName);
@@ -355,7 +360,8 @@ public class BitarchiveAdmin {
                 }
             }
         }
-        return null; // the arcfile named "arcFileName" does not exist in this bitarchive.
+        // the arcfile named "arcFileName" does not exist in this bitarchive.
+        return null;
     }
 
     /**
@@ -369,10 +375,12 @@ public class BitarchiveAdmin {
     private long calculateBytesUsed(File filedir) {
         long used = 0;
         File[] files = new File(filedir, FILE_DIRECTORY_NAME).listFiles();
-        if (files != null) { // Check, that listFiles method returns valid information
+        // Check, that listFiles method returns valid information
+        if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isFile()) {
-                    used += files[i].length(); // Add size of file files[i] to amount of bytes used.
+                    // Add size of file files[i] to amount of bytes used.
+                    used += files[i].length(); 
                 } else {
                     log.warn("Non-file '" + files[i] + "' found in archive");
                 }
@@ -383,7 +391,8 @@ public class BitarchiveAdmin {
         }
         File[] tempfiles = new File(filedir,
                                     TEMPORARY_DIRECTORY_NAME).listFiles();
-        if (tempfiles != null) { // Check, that listFiles() method returns valid information
+        // Check, that listFiles() method returns valid information
+        if (tempfiles != null) { 
             for (int i = 0; i < tempfiles.length; i++) {
                 if (tempfiles[i].isFile()) {
                     // Add size of file tempfiles[i] to amount of bytes used.
@@ -398,7 +407,8 @@ public class BitarchiveAdmin {
                         + TEMPORARY_DIRECTORY_NAME);
         }
         File[] atticfiles = new File(filedir, ATTIC_DIRECTORY_NAME).listFiles();
-        if (atticfiles != null) { // Check, that listFiles() method returns valid information
+        // Check, that listFiles() method returns valid information
+        if (atticfiles != null) { 
             for (int i = 0; i < atticfiles.length; i++) {
                 if (atticfiles[i].isFile()) {
                     // Add size of file tempfiles[i] to amount of bytes used.
@@ -438,10 +448,12 @@ public class BitarchiveAdmin {
     /** Return the path used to store files that are removed by
      * RemoveAndGetFileMessage.
      *
-     * @param existingFile
+     * @param existingFile a File object for an existing file in the bitarchive
+     * 
      * @return The full path of the file in the attic dir
      */
     public File getAtticPath(File existingFile) {
+        ArgumentNotValid.checkNotNull(existingFile, "File existingFile");
         // Find where the file resides so we can use a dir in the same place.
         existingFile = existingFile.getAbsoluteFile();
         String arcFileName = existingFile.getName();

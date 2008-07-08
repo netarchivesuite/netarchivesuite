@@ -67,8 +67,8 @@ public class Bitarchive {
 
     /**
      * Create a new Bitarchive with files stored on local disk in one or more
-     * dirs. This can reopen an existing bit archive or create a Bitarchive from
-     * scratch, with no files on disk.
+     * directories. This can reopen an existing bit archive or create a
+     * Bitarchive from scratch, with no files on disk.
      *
      * @throws PermissionDenied
      *             if creating directory fails.
@@ -215,7 +215,7 @@ public class Bitarchive {
      *             if there was problems writing to the RemoteFile
      * @return A localBatchStatus
      */
-    public BatchStatus batch(String bitarchiveAppId, FileBatchJob job) {
+    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) {
         ArgumentNotValid.checkNotNull(job, "job");
         log.info("Starting batch job: " + job.getClass().getName());
         BatchStatus returnStatus;
@@ -224,7 +224,7 @@ public class Bitarchive {
         try {
             tmpFile = File.createTempFile("BatchOutput", "",
                     FileUtils.getTempDir());
-            OutputStream os = new FileOutputStream(tmpFile);
+            final OutputStream os = new FileOutputStream(tmpFile);
 
             try {
                 // Run the batch job
@@ -232,7 +232,7 @@ public class Bitarchive {
                         + new Date());
                 File[] processFiles
                         = admin.getFilesMatching(job.getFilenamePattern());
-                BatchLocalFiles localBatchRunner =
+                final BatchLocalFiles localBatchRunner =
                     new BatchLocalFiles(processFiles);
                 localBatchRunner.run(job, os);
                 log.debug("Batch: Job " + job + " finished at "
@@ -252,9 +252,8 @@ public class Bitarchive {
             returnStatus = new BatchStatus(bitarchiveAppId,
                     job.getFilesFailed(),
                     job.getNoOfFilesProcessed(),
-                    RemoteFileFactory.getMovefileInstance(tmpFile));
-            // TODO: Caught exceptions should be concatenated and written to
-            // the error msg field of the reply-msg.
+                    RemoteFileFactory.getMovefileInstance(tmpFile),
+                    job.getExceptions());
         } catch (IOException e) {
             log.fatal("Failed to create temporary file for batch "
                     + job, e);

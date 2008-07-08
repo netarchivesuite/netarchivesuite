@@ -24,6 +24,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
@@ -32,6 +33,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.arc.FileBatchJob;
 
 /**
  * An instance of this class is sent by a bitarchive machine (Bitarchive class)
@@ -50,8 +52,11 @@ public class BatchEndedMessage extends ArchiveMessage {
     private int noOfFilesProcessed;
     /** Collection of files that the batch-job could not process. */
     private Collection<File> filesFailed;
-    /** The resultfile of the batchJob. */
+    /** The result of the batchJob. */
     private RemoteFile rf;
+    /** List of exceptions that occurred during processing. */
+    private List<FileBatchJob.ExceptionOccurrence> exceptions;
+     
 
 
     /**
@@ -112,6 +117,7 @@ public class BatchEndedMessage extends ArchiveMessage {
         this.rf = status.getResultFile();
         this.noOfFilesProcessed = status.getNoOfFilesProcessed();
         this.filesFailed = status.getFilesFailed();
+        this.exceptions = status.getExceptions();
     }
 
     /**
@@ -189,5 +195,13 @@ public class BatchEndedMessage extends ArchiveMessage {
                 + "\nFilesProcessed = " + noOfFilesProcessed
                 + "\n" + super.toString();
     }
-
+    
+    /** Returns the list of the exceptions that occurred during processing.
+     *
+     * @return List of exceptions and occurrence information.
+     */
+    public List<FileBatchJob.ExceptionOccurrence> getExceptions() {
+        return exceptions;
+    }
+    
 }

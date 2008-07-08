@@ -146,8 +146,8 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         OutputStream os = null;
         File resultFile;
         try {
-            List<File> filesFailed = new ArrayList<File>();
-            int filesProcessed = 0;
+            //List<File> filesFailed = new ArrayList<File>();
+            //int filesProcessed = 0;
             resultFile = File.createTempFile("batch", locationName,
                     FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
@@ -175,7 +175,8 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         }
         return new BatchStatus(locationName, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
-                RemoteFileFactory.getMovefileInstance(resultFile));
+                RemoteFileFactory.getMovefileInstance(resultFile), 
+                job.getExceptions());
     }
 
     /** Updates the administrative data in the ArcRepository for a given
@@ -200,7 +201,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
     public void updateAdminChecksum(String filename, String checksum) {
     }
 
-    /** Remove a file from one part of the ArcRepository, retrieveing a copy
+    /** Remove a file from one part of the ArcRepository, retrieving a copy
      * for security purposes.  This is typically used when repairing a file
      * that has been corrupted.
      *

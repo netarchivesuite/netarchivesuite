@@ -28,21 +28,22 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 
 /**
- * Created by IntelliJ IDEA.
- * User: csr
- * Date: Mar 4, 2005
- * Time: 2:02:43 PM
- * To change this template use File | Settings | File Templates.
+ * TestInfo associated with package dk.netarkivet.archive.bitarchive.
+ * Contains useful constants.
  */
 public class TestInfo {
     static final File DATA_DIR =
             new File("tests/dk/netarkivet/archive/bitarchive/data");
+    static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     static final File WORKING_DIR = new File(DATA_DIR, "working");
     static final File FILE_DIR = new File(WORKING_DIR, "filedir");
 
-    static final File LOGFILE = new File("tests/testlogs", "netarkivtest.log");
-    static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
-    static final File BATCH_OUTPUT_FILE = new File(WORKING_DIR, "batch_output.log");
+    static final File LOGFILE = new File("tests/testlogs", 
+            "netarkivtest.log");
+    static final File TESTLOGPROP = 
+            new File("tests/dk/netarkivet/testlog.prop");
+    static final File BATCH_OUTPUT_FILE =
+            new File(WORKING_DIR, "batch_output.log");
 
     static String baAppId = "bitArchiveApp_1";
 

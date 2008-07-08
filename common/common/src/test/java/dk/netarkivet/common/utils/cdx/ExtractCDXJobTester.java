@@ -92,7 +92,7 @@ public class ExtractCDXJobTester extends TestCase {
         OutputStream os = new FileOutputStream(TestInfo.TEMP_FILE);
         blaf.run(job, os);
         os.close();
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         printExceptions(es);
         assertEquals("No exceptions should be thrown", 0, es.length);
         assertEquals("The correct number of records should be processed",
@@ -111,7 +111,7 @@ public class ExtractCDXJobTester extends TestCase {
                     TestInfo.CDX_FILE.exists());
         os = new FileOutputStream(TestInfo.CDX_FILE);
         blaf.run(job, os);
-        Exception[] es = job.getExceptions();
+        Exception[] es = job.getExceptionArray();
         os.close();
         //TODO: Should test for length or content instead:
         assertTrue("The generated file must exist", TestInfo.CDX_FILE.exists());
@@ -130,7 +130,7 @@ public class ExtractCDXJobTester extends TestCase {
     }
 
     public static String replace(String psWord, String psReplace,
-                                 String psNewSeg) {
+            String psNewSeg) {
         StringBuffer lsNewStr = new StringBuffer();
         int liFound = 0;
         int liLastPointer = 0;
@@ -168,7 +168,8 @@ public class ExtractCDXJobTester extends TestCase {
         BatchLocalFiles blaf = new BatchLocalFiles(arcFiles);
         blaf.run(job, new ByteArrayOutputStream());
 
-        assertEquals("No exceptions expected", 0, job.getExceptions().length);
+        assertEquals("No exceptions expected", 0,
+                job.getExceptionArray().length);
     }
 
     /**
