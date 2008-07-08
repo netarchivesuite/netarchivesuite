@@ -92,9 +92,17 @@ public class LoadableFileBatchJobTester extends TestCase {
                      "processFile() called on me with input-2.arc\n",
                      os.toString());
         assertFalse("File should have even length", retval);
+        
+        ///Test hack file
+        //see if fnord file exists from earlier failed unitTests
+        if (new File("fnord").exists()) { 
+        	File f =  new File("fnord");
+            assertFalse("REMOVE file from earlier test before running this again: " + f.getAbsolutePath(), f.exists());
+        }
+        //try to make hack file via loaded batch file
         try {
             retval = job.processFile(new File("makeahack"), os);
-            fail("Should have been denied a hack");
+            fail("Should have been denied a hack via file");
         } catch (AccessControlException e) {
             // expected
         }
