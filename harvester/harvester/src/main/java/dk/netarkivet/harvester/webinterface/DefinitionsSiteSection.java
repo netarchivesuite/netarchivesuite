@@ -26,9 +26,10 @@ package dk.netarkivet.harvester.webinterface;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.SiteSection;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
@@ -94,9 +95,9 @@ public class DefinitionsSiteSection extends SiteSection {
         // Enforce, that the default harvest-template set by
         // Settings.DOMAIN_DEFAULT_ORDERXML should exist.
         if (!templateDao.exists(Settings.get(
-                Settings.DOMAIN_DEFAULT_ORDERXML))) {
+                HarvesterSettings.DOMAIN_DEFAULT_ORDERXML))) {
             String message = "The default order template '"
-                    + Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)
+                    + Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML)
                     + "' does not exist in the template DAO. Please use the"
                     + HarvestTemplateApplication.class.getName()
                     + " tool to upload this template before"

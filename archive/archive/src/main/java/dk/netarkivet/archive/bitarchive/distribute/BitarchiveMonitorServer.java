@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -38,6 +38,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Class representing message handling for the monitor for bitarchives. The
@@ -120,9 +121,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         log.info("Received BatchMessage\n" + inbMsg.toString());
         try {
             BatchMessage outbMsg =
-                    new BatchMessage(
-                            Channels.getAllBa(), inbMsg.getJob(),
-                            Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                    new BatchMessage(Channels.getAllBa(), inbMsg.getJob(),
+                                     Settings.get(
+                                             CommonSettings.ENVIRONMENT_THIS_LOCATION));
             con.send(outbMsg);
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
                         outbMsg.getID());
@@ -138,7 +139,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * This delegates the handling of the reply to the bitarchive monitor, which
      * will notify us if the batch job is now done.
      *
-     * @param beMsg 
+     * @param beMsg
      */
     public void visit(final BatchEndedMessage beMsg) {
         log.info("Received batch ended from bitarchive '"

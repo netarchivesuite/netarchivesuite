@@ -34,19 +34,21 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestObjectMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class ArchiveMessageHandlerTester extends TestCase {
 
     private TestMessageHandler tmh;
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         tmh = new TestMessageHandler();
@@ -54,7 +56,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     public final void testOnMessage() {

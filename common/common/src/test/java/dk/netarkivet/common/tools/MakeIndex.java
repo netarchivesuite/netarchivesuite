@@ -27,12 +27,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.NetarkivetException;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 
 /**
@@ -57,8 +58,7 @@ public class MakeIndex {
             // Set to one below the number used by the hacos to avoid them
             // eating our reply.
             // Yes, it's a kludge.  Anyone care to add me a channel just for this?
-            Settings.set(Settings.HTTP_PORT_NUMBER,
-                    "" + (Settings.getInt(Settings.HTTP_PORT_NUMBER) - 1));
+            Settings.set(CommonSettings.HTTP_PORT_NUMBER, "" + (Settings.getInt(CommonSettings.HTTP_PORT_NUMBER) - 1));
             System.out.println("Connecting to ArcRepository");
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
             System.out.println("Creating index file '" + indexfile + "'");
@@ -66,7 +66,8 @@ public class MakeIndex {
             // Do index on the first bitarchive found.
             //String baName = wc.getBitarchiveNames()[0];
             BatchStatus cdxstatus =
-                    arcrep.batch(cdxjob, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                    arcrep.batch(cdxjob, Settings.get(
+                            CommonSettings.ENVIRONMENT_THIS_LOCATION));
             cdxstatus.getResultFile().copyTo(indexfile);
             cdxstatus.getResultFile().cleanup();
             final List<File> filesFailed = new ArrayList<File>(cdxstatus.getFilesFailed());

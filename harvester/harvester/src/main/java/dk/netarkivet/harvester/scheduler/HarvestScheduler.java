@@ -36,10 +36,11 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -102,7 +103,7 @@ public class HarvestScheduler implements CleanupIF {
         log.info("Creating HarvestScheduler");
         hcc = HarvestControllerClient.getInstance();
         hsmon = HarvestSchedulerMonitorServer.getInstance();
-        backupInitHour = Settings.getInt(Settings.DB_BACKUP_INIT_HOUR);
+        backupInitHour = Settings.getInt(CommonSettings.DB_BACKUP_INIT_HOUR);
         if (backupInitHour < 0 || backupInitHour > 23) {
             log.warn("Illegal value for backupHour "
                     + "(Settting = DB_BACKUP_INIT_HOUR) found: "

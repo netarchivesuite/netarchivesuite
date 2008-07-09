@@ -32,12 +32,13 @@ import java.util.Collections;
 import java.util.List;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
@@ -74,7 +75,7 @@ public class Reporting {
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
                 fileListJob,
-                Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
         status.getResultFile().copyTo(f);
         List<String> lines = new ArrayList<String>(
                 FileUtils.readListFromFile(f));
@@ -104,7 +105,7 @@ public class Reporting {
         }
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
-                cdxJob, Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                cdxJob, Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
         status.getResultFile().copyTo(f);
         List<CDXRecord> records;
         try {
@@ -157,7 +158,7 @@ public class Reporting {
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
                 urlsForDomainBatchJob,
-                Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
         status.getResultFile().copyTo(f);
         FileUtils.sortCrawlLog(f, fsorted);
         FileUtils.remove(f);

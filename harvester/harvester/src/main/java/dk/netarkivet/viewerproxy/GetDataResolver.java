@@ -32,8 +32,8 @@ import java.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Location;
@@ -41,6 +41,7 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
 /**
@@ -62,14 +63,14 @@ public class GetDataResolver extends CommandResolver {
      * in the bitarchive. */
     public static final String GET_RECORD_COMMAND = "/getRecord";
     /** Command for getting all metadata for a single job. */
-    static final String GET_METADATA_COMMAND = "/getMetadata";
+    public static final String GET_METADATA_COMMAND = "/getMetadata";
 
     /** Parameter defining the file to return the getting files or records. */
     public static final String FILE_NAME_PARAMETER = "arcFile";
     /** Parameter defining the offset into an ARC file for getting a record. */
     public static final String FILE_OFFSET_PARAMETER = "arcOffset";
     /** Parameter for ids of jobs to get metadata for.  */
-    static final String JOB_ID_PARAMETER = "jobID";
+    public static final String JOB_ID_PARAMETER = "jobID";
 
     /** HTTP response code for OK. */
     private static final int OK_RESPONSE_CODE = 200;
@@ -146,8 +147,8 @@ public class GetDataResolver extends CommandResolver {
                 FileBatchJob job = new GetFileBatchJob();
                 job.processOnlyFilesMatching(id
                         + Constants.METADATA_FILE_PATTERN_SUFFIX);
-                BatchStatus b = client.batch(job, Settings
-                        .get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                BatchStatus b = client.batch(job, Settings.get(
+                        CommonSettings.ENVIRONMENT_BATCH_LOCATION));
                 if (b.getNoOfFilesProcessed() > b.getFilesFailed().size()
                         && b.hasResultFile()) {
                     b.appendResults(response.getOutputStream());
@@ -215,7 +216,8 @@ public class GetDataResolver extends CommandResolver {
                     tempFile = File.createTempFile("getFile", "download",
                             FileUtils.getTempDir());
                     client.getFile(fileName, Location.get(
-                            Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)),
+                            Settings.get(
+                                    CommonSettings.ENVIRONMENT_THIS_LOCATION)),
                             tempFile);
                     FileUtils.writeFileToStream(tempFile,
                             response.getOutputStream());

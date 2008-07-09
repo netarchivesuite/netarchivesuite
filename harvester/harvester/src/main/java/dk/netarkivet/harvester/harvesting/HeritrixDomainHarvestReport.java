@@ -36,8 +36,8 @@ import org.archive.net.UURI;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FixedUURI;
-import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.DomainStats;
@@ -159,7 +159,7 @@ public class HeritrixDomainHarvestReport extends DomainHarvestReport
             throw new IOFailure(errorMsg);
         }
         String domainName;
-        domainName = Domain.domainNameFromHostname(hostName);
+        domainName = DomainUtils.domainNameFromHostname(hostName);
 
         //Get the response code for the URL in the second field
         long response;

@@ -32,8 +32,8 @@ import java.util.Arrays;
 
 import org.archive.io.arc.ARCWriter;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
@@ -153,7 +154,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             FileBatchJob job = new ExtractCDXJob();
             job.processOnlyFilesMatching(jobID + REMAINING_ARC_FILE_PATTERN);
             BatchStatus status = arcrep.batch(job,
-                    Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                                              Settings.get(
+                                                      CommonSettings.ENVIRONMENT_BATCH_LOCATION));
             if (status.hasResultFile()) {
                 File resultFile = null;
                 try {

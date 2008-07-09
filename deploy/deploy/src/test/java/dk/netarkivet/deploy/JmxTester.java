@@ -34,7 +34,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.monitor.logging.CachingLogHandler;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -126,12 +127,13 @@ public class JmxTester extends TestCase{
     private static ObjectName getObjectName(int index) throws
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
-                              + Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)
+                              + Settings.get(
+                CommonSettings.ENVIRONMENT_THIS_LOCATION)
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
-                              + Settings.get(Settings.HTTP_PORT_NUMBER)
+                              + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + ",applicationname="
-                              + Settings.get(Settings.APPLICATIONNAME) + "," + (
+                              + Settings.get(CommonSettings.APPLICATIONNAME) + "," + (
                 index == -1 ? "*" : "index=" + index));
     }
     

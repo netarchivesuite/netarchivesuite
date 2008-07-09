@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 
 /**
  * Utilities for working with domain names.
@@ -67,7 +67,7 @@ public class DomainUtils {
      * Settings may be with or without prefix "." */
     private static List<String> readTlds() {
         List<String> tlds = new ArrayList<String>();
-        for (String tld : Settings.getAll(Settings.TLDS)) {
+        for (String tld : Settings.getAll(CommonSettings.TLDS)) {
             if (tld.startsWith(".")) {
                 tld = tld.substring(1);
             }

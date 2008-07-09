@@ -32,11 +32,12 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
@@ -46,31 +47,34 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 public class ArcRepositoryTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
     }
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
-        Settings.reload();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // Empty the log file.
         new FileOutputStream(TestInfo.LOG_FILE).close();
+        rs.tearDown();
         super.tearDown();
     }
 
@@ -123,7 +127,7 @@ public class ArcRepositoryTester extends TestCase {
     public void testGetBitarchiveClientFromLocationName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
-                Settings.ENVIRONMENT_LOCATION_NAMES);
+                CommonSettings.ENVIRONMENT_LOCATION_NAMES);
         for(int n = 0; n<locations.length; n++) {
             BitarchiveClient bc = a.getBitarchiveClientFromLocationName(
                     locations[n]);

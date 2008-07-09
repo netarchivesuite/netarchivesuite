@@ -33,10 +33,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This class holds information about one section of the site, including
@@ -228,7 +229,8 @@ public abstract class SiteSection {
     public static synchronized List<SiteSection> getSections() {
         if (sections == null) {
             sections = new ArrayList<SiteSection>();
-            String[] sitesections = Settings.getAll(Settings.SITESECTION_CLASS);
+            String[] sitesections = Settings.getAll(
+                    CommonSettings.SITESECTION_CLASS);
             for (String sitesection : sitesections) {
                 try {
                     ClassLoader loader

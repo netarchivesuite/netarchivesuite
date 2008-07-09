@@ -54,24 +54,27 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,
  * primarily the classes in dk.netarkivet.harvester.webinterface:
- *   HarvestStatusTester, EventHarvestTester, DomainDefinitionTester, 
+ *   HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
  *   ScheduleDefinitionTester, SnapshotHarvestDefinitionTester
- * but also 
+ * but also
  *  dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 public class WebinterfaceTestCase extends TestCase {
     static final File HARVEST_DEFINITION_BASEDIR
             = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
+    ReloadSettings rs = new ReloadSettings();
 
     public WebinterfaceTestCase(String s) {
         super(s);
@@ -79,19 +82,20 @@ public class WebinterfaceTestCase extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
-        Settings.set(Settings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
                 + HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, HARVEST_DEFINITION_BASEDIR);
     }
 
     public void tearDown() throws Exception {
         DatabaseTestUtils.dropHDDB();
-        Settings.reload();
         TestUtils.resetDAOs();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        rs.tearDown();
         super.tearDown();
     }
 

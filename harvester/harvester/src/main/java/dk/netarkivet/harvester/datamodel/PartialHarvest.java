@@ -37,10 +37,11 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.EventHarvest;
 
 
@@ -138,15 +139,15 @@ public class PartialHarvest extends HarvestDefinition {
      * or if the size of the job is inappropriate.
      *
      * The following settings are used:
-     * {@link Settings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}:
+     * {@link HarvesterSettings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}:
      * The maximum relative difference between the smallest and largest
      * number of objects expected in a job
      * <p/>
-     * {@link Settings#JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE}: 
+     * {@link HarvesterSettings#JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE}:
      * Size differences below this threshold are ignored even if
-     * the relative difference exceeds {@link Settings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}
+     * the relative difference exceeds {@link HarvesterSettings#JOBS_MAX_RELATIVE_SIZE_DIFFERENCE}
      * <p/>
-     * {@link Settings#JOBS_MAX_TOTAL_JOBSIZE}:
+     * {@link HarvesterSettings#JOBS_MAX_TOTAL_JOBSIZE}:
      * The upper limit on the total number of objects that a job may
      * retrieve
      *
@@ -379,7 +380,7 @@ public class PartialHarvest extends HarvestDefinition {
                     continue;
                 }
                 String host = url.getHost();
-                String domainName = Domain.domainNameFromHostname(host);
+                String domainName = DomainUtils.domainNameFromHostname(host);
                 if (domainName == null) {
                     valid = false;
                     invalidMessage.append(seed);

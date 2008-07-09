@@ -24,6 +24,7 @@
 package dk.netarkivet.common.utils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -77,6 +78,24 @@ public class SimpleXml {
         xmlDoc = new DOMDocument();
         xmlDoc.addElement(rootElement);
         source = "Newly creating XML file with root '" + rootElement + "'";
+    }
+
+    /** Create a new SimpleXml object by loading a file
+     *
+     * @param resourceAsStream XML file to load
+     */
+    public SimpleXml(InputStream resourceAsStream) {
+        load(resourceAsStream);
+    }
+
+    /**
+     * Loads an xml stream.
+     *
+     * @param resourceAsStream
+     */
+    private void load(InputStream resourceAsStream) {
+        xmlDoc = XmlUtils.getXmlDoc(resourceAsStream);
+        source = "XML file from input stream '" + resourceAsStream + "'";
     }
 
     /**

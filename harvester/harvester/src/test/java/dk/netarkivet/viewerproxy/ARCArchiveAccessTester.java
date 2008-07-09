@@ -43,8 +43,9 @@ import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -54,11 +55,13 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCKey;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for ARCArchiveAccess.  This only tests that we connect the CDX
@@ -112,8 +115,10 @@ public class ARCArchiveAccessTester extends TestCase {
     //Our main instance of ARCArchiveAccess:
     private ARCArchiveAccess aaa;
 
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
+        rs.setUp();
         WRONG_URL = new URI("http://www.test.dk/hest");
         GIF_URL = new URI(
                 "http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
@@ -129,21 +134,17 @@ public class ARCArchiveAccessTester extends TestCase {
         //Although we also need some real data
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        Settings.set(Settings.VIEWERPROXY_DIR,
-                     new File(WORKING, "viewerproxy").getAbsolutePath());
+        Settings.set(ViewerProxySettings.VIEWERPROXY_DIR, new File(WORKING, "viewerproxy").getAbsolutePath());
         FileUtils.createDir(new File(WORKING, "viewerproxy"));
 
         aaa = new ARCArchiveAccess(fakeArcRepos);
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     LOG_PATH.getAbsolutePath());
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     new File(WORKING, "admin-data").getAbsolutePath());
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     LOG_PATH.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(WORKING, "admin-data").getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
 
         realArcRepos = ArcRepositoryClientFactory.getViewerInstance();
 
@@ -159,7 +160,7 @@ public class ARCArchiveAccessTester extends TestCase {
         }
         FileUtils.removeRecursively(WORKING);
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**

@@ -34,10 +34,13 @@ import java.util.logging.LogRecord;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Test behavior of the CachingLogHandler, and its exposure of log records using
@@ -49,18 +52,19 @@ public class CachingLogHandlerTester extends TestCase {
     private static final int LOG_HISTORY_SIZE = 42;
     private static final String METHOD_NAME = "myMethod";
     private static final String LOG_MESSAGE = "Log message ";
+    ReloadSettings rs = new ReloadSettings();
 
     public CachingLogHandlerTester(String s) {
         super(s);
     }
 
     public void setUp() {
+        rs.setUp();
         //Get the MBean server
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
         //Set Settings to what we expect
-        Settings.set(Settings.APPLICATIONNAME, "TestApp1");
-        Settings.set(Settings.LOGGING_HISTORY_SIZE,
-                     Integer.toString(LOG_HISTORY_SIZE));
+        Settings.set(CommonSettings.APPLICATIONNAME, "TestApp1");
+        Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
 
     }
 
@@ -68,7 +72,7 @@ public class CachingLogHandlerTester extends TestCase {
         if (cachingLogHandler != null) {
             cachingLogHandler.close();
         }
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**
@@ -336,12 +340,13 @@ public class CachingLogHandlerTester extends TestCase {
     private static ObjectName getObjectName(int index) throws
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
-                              + Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)
+                              + Settings.get(
+                CommonSettings.ENVIRONMENT_THIS_LOCATION)
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
-                              + Settings.get(Settings.HTTP_PORT_NUMBER)
+                              + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + ",applicationname="
-                              + Settings.get(Settings.APPLICATIONNAME) + "," + (
+                              + Settings.get(CommonSettings.APPLICATIONNAME) + "," + (
                 index == -1 ? "*" : "index=" + index));
     }
 

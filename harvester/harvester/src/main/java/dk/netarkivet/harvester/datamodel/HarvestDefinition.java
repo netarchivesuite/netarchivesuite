@@ -33,8 +33,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * This abstract class models the general properties of a harvest definition,
@@ -78,7 +79,7 @@ public abstract class HarvestDefinition implements Named {
      * How many domain configurations to process at a time.
      */
     private final long MAX_CONFIGS_PER_JOB_CREATION =
-            Settings.getLong(Settings.MAX_CONFIGS_PER_JOB_CREATION);
+            Settings.getLong(HarvesterSettings.MAX_CONFIGS_PER_JOB_CREATION);
 
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass());

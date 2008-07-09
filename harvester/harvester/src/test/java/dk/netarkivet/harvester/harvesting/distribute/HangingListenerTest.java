@@ -37,7 +37,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -46,6 +46,7 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A test of the behaviour if onMessage() hangs when there is more than one
@@ -62,8 +63,7 @@ public class HangingListenerTest extends TestCase {
         //JMSConnection.getInstance();
         ChannelsTester.resetChannels();
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() {
@@ -78,7 +78,7 @@ public class HangingListenerTest extends TestCase {
      * @throws JMSException
      */
     public void testNotListeningWhileProcessingSunMQ() throws InterruptedException, JMSException {
-        if (!Settings.get(Settings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
+        if (!Settings.get(CommonSettings.JMS_BROKER_CLASS).equals(JMSConnectionSunMQ.class.getName())) {
             fail("Wrong message queue for test");
         }
         JMSConnectionFactory.getInstance().cleanup();
@@ -120,8 +120,8 @@ public class HangingListenerTest extends TestCase {
         QueueConnection myQConn;
 
         public MiniConnectionSunMQ() throws JMSException {
-            String host = Settings.get(Settings.JMS_BROKER_HOST);
-            String port = Settings.get(Settings.JMS_BROKER_PORT);
+            String host = Settings.get(JMSConnectionSunMQ.JMS_BROKER_HOST);
+            String port = Settings.get(JMSConnectionSunMQ.JMS_BROKER_PORT);
             QueueConnectionFactory cFactory = new QueueConnectionFactory();
             ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqBrokerHostName, host);
             ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqBrokerHostPort, String.valueOf(port));

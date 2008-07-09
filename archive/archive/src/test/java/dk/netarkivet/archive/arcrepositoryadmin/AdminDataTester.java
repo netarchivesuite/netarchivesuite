@@ -36,8 +36,9 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -45,10 +46,12 @@ import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -65,10 +68,11 @@ public class AdminDataTester extends TestCase {
      * A dummy file name.
      */
     private String myFile;
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws IOException {
-        Settings.reload();
-        Settings.set(Settings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
+        rs.setUp();
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         FileUtils.removeRecursively(TestInfo.TEST_DIR);
         FileUtils.createDir(TestInfo.TEST_DIR);
@@ -76,7 +80,7 @@ public class AdminDataTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.ARCHIVE_DIR2);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG,
                 TestInfo.NON_EMPTY_ADMIN_DATA_DIR);
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
         myFile = "<arcfileNameForTests>";
         FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().readConfiguration(fis);
@@ -89,7 +93,7 @@ public class AdminDataTester extends TestCase {
             ad.close();
         }
         FileUtils.removeRecursively(TestInfo.TEST_DIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testSingleton() {
@@ -280,7 +284,8 @@ public class AdminDataTester extends TestCase {
      */
     public void testCTOR() {
         // Test invalid settings:
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN, "/foo/bar/nonExistingDir");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
+                     "/foo/bar/nonExistingDir");
         try {
             ad = UpdateableAdminData.getUpdateableInstance();
             fail("Should have thrown PermissionDenied");
@@ -288,14 +293,13 @@ public class AdminDataTester extends TestCase {
             // expected
         }
     }
-
+                                 
 
     /**
      * Test that we can read the set of all files stored in admin.data.
      */
     public void testGetAllFiles() {
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.NON_EMPTY_ADMIN_DATA_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.NON_EMPTY_ADMIN_DATA_DIR.getAbsolutePath());
         ad = UpdateableAdminData.getUpdateableInstance();
         Set<String> allFiles = ad.getAllFileNames();
         Set<String> expectedFiles = new HashSet<String>();
@@ -311,7 +315,8 @@ public class AdminDataTester extends TestCase {
      */
     public void testWriteJournalling() throws IOException, FileNotFoundException{
         ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
-        File datafile = new File(Settings.get(Settings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
+        File datafile = new File(Settings.get(
+                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
         ad = UpdateableAdminData.getUpdateableInstance();
         //System.out.println("datafile at step 0: " + FileUtils.readFile(datafile));
         final String filename = TestInfo.files[0];
@@ -365,7 +370,8 @@ public class AdminDataTester extends TestCase {
      * @throws Exception
      */
     public void testReadCurrentVersion() throws Exception {
-        File datafile = new File(Settings.get(Settings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
+        File datafile = new File(Settings.get(
+                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
         // Note: the file 'datafile' does not exist at this point in time.
 
         ad = UpdateableAdminData.getUpdateableInstance();
@@ -473,7 +479,8 @@ public class AdminDataTester extends TestCase {
     public void testMigrateOldToCurrentVersion() throws Exception {
 
         File old_version_admindata = new File(TestInfo.VERSION_03_ADMIN_DATA_DIR_ORIG,"admin.data");
-        File datafile = new File(Settings.get(Settings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
+        File datafile = new File(Settings.get(
+                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
 
         FileUtils.copyFile(old_version_admindata, datafile);
         ad = UpdateableAdminData.getUpdateableInstance();

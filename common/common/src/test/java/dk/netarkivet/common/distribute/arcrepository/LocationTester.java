@@ -26,10 +26,11 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Tests of the Location class.
@@ -39,7 +40,8 @@ public class LocationTester extends TestCase {
 
     public LocationTester() {
         if (knownTestNames == null) {
-        	knownTestNames = Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES);
+            knownTestNames = Settings.getAll(
+                    CommonSettings.ENVIRONMENT_LOCATION_NAMES);
         }
     }
 

@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -46,6 +47,16 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Optimised to transfer 0 byte files inline.
  */
 public class HTTPRemoteFile extends AbstractRemoteFile {
+    /** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml";
+
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+
     /** The host name this file orignated on. */
     protected final String hostname;
     /** The url that exposes this remote file. */
@@ -54,6 +65,9 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     protected final String checksum;
     /** The logger for this class. */
     private static final Log log = LogFactory.getLog(AbstractRemoteFile.class);
+    /** HTTP remotefile port number. */
+    public static String HTTPREMOTEFILE_PORT_NUMBER
+            = "settings.common.remoteFile.port";
 
     /**
      * Initialises a remote file implemented by point-to-point HTTP

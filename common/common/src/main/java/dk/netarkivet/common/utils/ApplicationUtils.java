@@ -29,8 +29,8 @@ import java.lang.reflect.Modifier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.management.MBeanConnectorCreator;
@@ -117,11 +117,12 @@ public abstract class ApplicationUtils {
      */
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
-        Settings.set(Settings.APPLICATIONNAME, appName);
+        Settings.set(CommonSettings.APPLICATIONNAME, appName);
         logAndPrint("Starting " + appName + "\n"
                     + Constants.getVersionString());
-        log.info("Using settings file '"
-                    + Settings.getSettingsFile() + "'");
+        log.info("Using settings files '"
+                    + StringUtils.conjoin(File.pathSeparator,
+                                          Settings.getSettingsFiles()) + "'");
         checkArgs(args);
         dirMustExist(FileUtils.getTempDir());
         Method factoryMethod = null;

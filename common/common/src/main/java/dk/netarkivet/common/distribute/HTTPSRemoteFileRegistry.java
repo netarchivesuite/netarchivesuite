@@ -39,8 +39,8 @@ import java.security.SecureRandom;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.security.SslSocketConnector;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This is a registry for HTTPS remote file, meant for serving registered files
@@ -68,13 +68,13 @@ public class HTTPSRemoteFileRegistry extends HTTPRemoteFileRegistry {
     /** The path to the keystore containing the certificate used for SSL in
      * HTTPS connections. */
     private static final String KEYSTORE_PATH
-            = Settings.get(Settings.HTTPSREMOTEFILE_KEYSTORE_FILE);
+            = Settings.get(HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_FILE);
     /** The keystore password. */
-    private static final String KEYSTORE_PASSWORD = Settings
-            .get(Settings.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
+    private static final String KEYSTORE_PASSWORD = Settings.get(
+            HTTPSRemoteFile.HTTPSREMOTEFILE_KEYSTORE_PASSWORD);
     /** The certificate password. */
-    private static final String KEY_PASSWORD = Settings
-            .get(Settings.HTTPSREMOTEFILE_KEY_PASSWORD);
+    private static final String KEY_PASSWORD = Settings.get(
+            HTTPSRemoteFile.HTTPSREMOTEFILE_KEY_PASSWORD);
     /** An SSL context, used for creating SSL connections only accepting this
      * certificate. */
     private final SSLContext sslContext;

@@ -129,6 +129,14 @@ public class CacheData {
         public void setListener(ChannelID mq, MessageListener ml) throws IOFailure {
         }
 
+        public String getHost() {
+            return "Dummy";
+        }
+
+        public int getPort() {
+            return 0;
+        }
+
         public void sendMessage(NetarkivetMessage msg, ChannelID to) {
             throw new IllegalState("Attempt to use JMS, should fail");
         }

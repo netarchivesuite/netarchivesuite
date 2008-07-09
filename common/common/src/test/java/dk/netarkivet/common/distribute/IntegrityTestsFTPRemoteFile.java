@@ -38,15 +38,17 @@ import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TestInfo;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -74,11 +76,14 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
     // A named logger for this class is retrieved
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
+    ReloadSettings rs = new ReloadSettings();
+
     public IntegrityTestsFTPRemoteFile(String sTestName) {
         super(sTestName);
     }
 
     public void setUp() {
+        rs.setUp();
         try {
             if (!TestInfo.TEMPDIR.exists()) {
                 dk.netarkivet.common.utils.TestInfo.TEMPDIR.mkdir();
@@ -108,11 +113,13 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
         }
 
         /** Read ftp-related settings from settings.xml */
-        final String ftpServerName = Settings.get(Settings.FTP_SERVER_NAME);
+        final String ftpServerName = Settings.get(
+                FTPRemoteFile.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                Settings.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(Settings.FTP_USER_NAME);
-        final String ftpUserPassword = Settings.get(Settings.FTP_USER_PASSWORD);
+                FTPRemoteFile.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+        final String ftpUserPassword = Settings.get(
+                FTPRemoteFile.FTP_USER_PASSWORD);
 
         /** Connect to test ftp-server */
         theFTPClient = new FTPClient();
@@ -134,8 +141,7 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
         rf = FTPRemoteFile.getInstance(testFile1, true, false, true);
 
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() throws IOException {
@@ -172,7 +178,7 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
         }
 
         FileUtils.removeRecursively(dk.netarkivet.common.utils.TestInfo.TEMPDIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
 

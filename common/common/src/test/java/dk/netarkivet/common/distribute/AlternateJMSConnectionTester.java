@@ -23,11 +23,12 @@
  */
 package dk.netarkivet.common.distribute;
 
-import java.util.Calendar;
+ import java.util.Calendar;
 
-import dk.netarkivet.common.Settings;
-import dk.netarkivet.common.utils.TimeUtils;
-import junit.framework.TestCase;
+ import junit.framework.TestCase;
+
+ import dk.netarkivet.common.utils.Settings;
+ import dk.netarkivet.common.utils.TimeUtils;
 
 /**
  * Testclass for testing the exceptionhandling in JMSConnection.
@@ -35,7 +36,7 @@ import junit.framework.TestCase;
 public class AlternateJMSConnectionTester extends TestCase {
 
     public void testErrorcodes() {
-        Settings.set(Settings.JMS_BROKER_PORT, "7677");
+        Settings.set(JMSConnectionSunMQ.JMS_BROKER_PORT, "7677");
         JMSConnection con = JMSConnectionFactory.getInstance();
         NetarkivetMessage msg = null;
         int msgNr = 0;

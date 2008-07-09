@@ -31,8 +31,9 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 
@@ -258,7 +259,7 @@ public class SiteSectionTester extends TestCase {
             assertEquals(
                     "#sections must be identical length of list returned from "
                     + "Settings",
-                    Settings.getAll(Settings.SITESECTION_CLASS).length,
+                    Settings.getAll(CommonSettings.SITESECTION_CLASS).length,
                     sections.size());
         }
     }

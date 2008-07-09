@@ -30,18 +30,19 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class DeployTester extends TestCase {
 
     protected final Logger log = Logger.getLogger(getClass().getName());
     String oldSettingsFileName;
+    ReloadSettings rs = new ReloadSettings();
+
     public void setUp() {
-        // Save previous settingsfile before setting it to the new one.
-        oldSettingsFileName = System.getProperty(
-                "dk.netarkivet.settings.file");
+        rs.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
 
@@ -52,14 +53,7 @@ public class DeployTester extends TestCase {
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // reset Settings to before
-        if (oldSettingsFileName != null) {
-            System.setProperty("dk.netarkivet.settings.file",
-                               oldSettingsFileName);
-        } else {
-            System.clearProperty("dk.netarkivet.settings.file");
-        }
-        Settings.reload();
-
+        rs.tearDown();
     }
 
     /**
@@ -104,7 +98,7 @@ public class DeployTester extends TestCase {
             System.setProperty("dk.netarkivet.settings.file",
                     f.getAbsolutePath());
             Settings.reload();
-            Settings.SETTINGS_STRUCTURE.validateWithXSD(new File(
+            Settings.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
         }
     }
@@ -143,9 +137,9 @@ public class DeployTester extends TestCase {
                                                            });
         // XSD-test them
         for (File f : settingsFiles) {
-            final String fileName = f.getName();
             System.setProperty("dk.netarkivet.settings.file",
                                f.getAbsolutePath());
+            //TODO test here
         }
 
     }

@@ -35,8 +35,9 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.monitor.MonitorSettings;
 
 /**
  * A LogHandler that keeps the last N messages in memory, and exposes each as a
@@ -160,7 +161,8 @@ public class CachingLogHandler extends Handler {
         setFormatter(getFormatterProperty(cname + ".formatter",
                                           new SimpleFormatter()));
 
-        loggingHistorySize = Settings.getInt(Settings.LOGGING_HISTORY_SIZE);
+        loggingHistorySize = Settings.getInt(
+                MonitorSettings.LOGGING_HISTORY_SIZE);
         loggingHistory = Collections.synchronizedList(
                 new ArrayList<LogRecord>(loggingHistorySize));
         //Fill out the list with loggingHistorySize null-records.

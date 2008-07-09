@@ -32,13 +32,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
@@ -123,7 +124,8 @@ public class RawMetadataCache extends FileBasedCache<Long>
     protected Long cacheData(Long ID) {
         job.processOnlyFilesMatching(ID + Constants.METADATA_FILE_PATTERN_SUFFIX);
         BatchStatus b = arcrep.batch(job,
-                Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                                     Settings.get(
+                                             CommonSettings.ENVIRONMENT_BATCH_LOCATION));
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.

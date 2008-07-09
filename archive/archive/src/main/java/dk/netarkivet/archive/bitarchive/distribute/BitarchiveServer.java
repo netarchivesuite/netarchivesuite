@@ -28,10 +28,11 @@ import java.util.Timer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.Bitarchive;
 import dk.netarkivet.archive.bitarchive.BitarchiveAdmin;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -46,6 +47,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 
@@ -176,7 +178,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         Timer timer = new Timer(true);
         heartBeatSender = new HeartBeatSender(baMon, this);
         long frequency
-                = Settings.getLong(Settings.BITARCHIVE_HEARTBEAT_FREQUENCY);
+                = Settings.getLong(
+                ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY);
         timer.scheduleAtFixedRate(heartBeatSender, 0, frequency);
         log.info("Heartbeat frequency: '" + frequency + "'");
         // Next logentry depends on whether we are listening to ANY_BA or not
@@ -330,8 +333,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             String credentialsReceived = msg.getCredentials();
             ArgumentNotValid.checkNotNullOrEmpty(credentialsReceived,
                     "credentialsReceived");
-            if (!credentialsReceived.equals(Settings
-                    .get(Settings.ENVIRONMENT_THIS_CREDENTIALS))) {
+            if (!credentialsReceived.equals(Settings.get(
+                    ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
                 String message = "Attempt to remove '" + foundFile
                         + "' with wrong credentials!";
                 log.warn(message);
@@ -479,7 +482,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         // if specified in settings.
         // If no HTTP_PORT_NUMBER is found do nothing.
         try {
-            String port = Settings.get(Settings.HTTP_PORT_NUMBER);
+            String port = Settings.get(CommonSettings.HTTP_PORT_NUMBER);
             id += "_" + port;
         } catch (UnknownID e) {
             // Ignore the fact, that there is no HTTP_PORT_NUMBER in settings

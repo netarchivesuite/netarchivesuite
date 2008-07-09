@@ -36,30 +36,33 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class BitarchiveRecordTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
+    ReloadSettings rs = new ReloadSettings();
     private File testFile = new File(TestInfo.ORIGINALS_DIR,
         "3-3-20070119143010-00000-sb-test-har-001.statsbiblioteket.dk.arc");
 
     protected void setUp() throws Exception {
+        rs.setUp();
         utrf.setUp();
-        Settings.set(
-                Settings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE,
-                "10000");
+        Settings.set(CommonSettings.BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE,
+                     "10000");
         TestInfo.WORKING_DIR.mkdir();
-        Settings.set(Settings.DIR_COMMONTEMPDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         super.setUp();
     }
     protected void tearDown() throws Exception {
         super.tearDown();
         utrf.tearDown();
-        Settings.reload();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        rs.tearDown();
     }
 
     /** Test storing ArcRecord in byte array.

@@ -31,11 +31,12 @@ import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * csr forgot to comment this!
@@ -251,7 +252,8 @@ public class SideKickTester extends TestCase {
 
         // Test isRunning() method
         assertEquals("IsRunning returns wrong result: ",
-                new File(Settings.get(Settings.HARVEST_CONTROLLER_ISRUNNING_FILE)).exists(),
+                new File(Settings.get(
+                        HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE)).exists(),
                 h.isRunning());
     }
 

@@ -42,13 +42,14 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 
 /**
@@ -199,7 +200,7 @@ public class HTMLUtils {
                                                              IOException {
         out.print("<div class=\"languagelinks\">");
         StringTree<String> webinterfaceSettings = Settings.getTree(
-                Settings.WEBINTERFACE_SETTINGS);
+                CommonSettings.WEBINTERFACE_SETTINGS);
 
         for (StringTree<String> language
                 : webinterfaceSettings.getSubTrees(
@@ -261,7 +262,7 @@ public class HTMLUtils {
         // Add information about the running system
         out.print("<div class='systeminfo'>");
         out.print("NetarchiveSuite " + Constants.getVersionString()
-                  + ", " + Settings.get(Settings.ENVIRONMENT_NAME));
+                  + ", " + Settings.get(CommonSettings.ENVIRONMENT_NAME));
         out.print("</div>");
         // Close the page
         out.print("</body></html>");

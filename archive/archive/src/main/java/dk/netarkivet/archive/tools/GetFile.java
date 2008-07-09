@@ -25,7 +25,7 @@ package dk.netarkivet.archive.tools;
 
 import java.io.File;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.Location;
@@ -33,6 +33,7 @@ import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A command-line tool to get ARC files from the bitarchive.
@@ -99,8 +100,8 @@ public class GetFile extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            myLocation = Location.get(Settings
-                    .get(Settings.ENVIRONMENT_THIS_LOCATION));
+            myLocation = Location.get(Settings.get(
+                    CommonSettings.ENVIRONMENT_THIS_LOCATION));
         }
 
         /**

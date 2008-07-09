@@ -29,9 +29,11 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebResponse;
 import org.xml.sax.SAXException;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.viewerproxy.webinterface.QASiteSection;
 
 /**
@@ -40,6 +42,7 @@ import dk.netarkivet.viewerproxy.webinterface.QASiteSection;
 public class IntegrityTests extends DataModelTestCase {
     private SecurityManager m;
     private GUIWebServer gui;
+    ReloadSettings rs = new ReloadSettings();
 
     public IntegrityTests(String s) {
             super(s);
@@ -47,14 +50,11 @@ public class IntegrityTests extends DataModelTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        Settings.set(Settings.SITESECTION_WEBAPPLICATION,
-                     TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
-        Settings.set(Settings.SITESECTION_DEPLOYPATH,
-                     TestInfo.GUI_WEB_SERVER_WEBBASE);
-        Settings.set(Settings.SITESECTION_CLASS,
-                     QASiteSection.class.getName());
-        Settings.set(Settings.HTTP_PORT_NUMBER,
-                     Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+        rs.setUp();
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
+        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.GUI_WEB_SERVER_WEBBASE);
+        Settings.set(CommonSettings.SITESECTION_CLASS, QASiteSection.class.getName());
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
 
         m = System.getSecurityManager();
         SecurityManager manager = new SecurityManager() {
@@ -67,17 +67,16 @@ public class IntegrityTests extends DataModelTestCase {
         System.setSecurityManager(manager);
         
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        Settings.reload();
         System.setSecurityManager(m);
         if (gui != null) {
             gui.cleanup();
         }
+        ReloadSettings rs = new ReloadSettings();
     }
 
     public void testRun() throws IOException, SAXException {

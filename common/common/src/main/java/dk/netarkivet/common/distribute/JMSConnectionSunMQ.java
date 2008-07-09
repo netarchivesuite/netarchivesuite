@@ -22,24 +22,23 @@
  */
 package dk.netarkivet.common.distribute;
 
-import java.util.Calendar;
-
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.QueueReceiver;
 import javax.jms.Topic;
 import javax.jms.TopicSubscriber;
+import java.util.Calendar;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.ConnectionFactory;
 import com.sun.messaging.QueueConnectionFactory;
 import com.sun.messaging.TopicConnectionFactory;
 
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TimeUtils;
 
 
@@ -57,6 +56,16 @@ import dk.netarkivet.common.utils.TimeUtils;
  * for Java Clients: http://docs.sun.com/app/docs/doc/819-7757/aeqgo?a=view
  */
 public class JMSConnectionSunMQ extends JMSConnection {
+    /** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
+
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+
     /** Singleton pattern is be used for this class.
      * This is the one and only instance. */
     protected static JMSConnectionSunMQ instance = null;
@@ -75,6 +84,10 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * has been shutdown. This errorcode is issued by the JMS-client.
      */
     final static String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
+    /** The JMS broker host contacted by the JMS connection. */
+    public static final String JMS_BROKER_HOST = "settings.common.jms.broker";
+    /** The port the JMS connection should use. */
+    public static final String JMS_BROKER_PORT = "settings.common.jms.port";
 
     /**
      * Constructor.
@@ -186,6 +199,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
             instance = null;
             super.cleanup();
         }
+    }
+
+    public String getHost()  {
+        return Settings.get(JMS_BROKER_HOST);
+    }
+
+    public int getPort()  {
+        return Settings.getInt(JMS_BROKER_PORT);
     }
 
     /**

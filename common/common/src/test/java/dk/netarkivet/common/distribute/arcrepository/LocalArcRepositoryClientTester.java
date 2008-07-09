@@ -28,11 +28,11 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -56,8 +56,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
         rs.setUp();
         utrf.setUp();
 
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -70,8 +69,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
     public void testStore() throws Exception {
         File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
-        Settings.create("settings.common.arcrepositoryClient.fileDir",
-                        dir1.getAbsolutePath(), dir2.getAbsolutePath());
+        Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
+                     dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
 
         FileUtils.copyFile(TestInfo.SAMPLE_FILE, TestInfo.SAMPLE_FILE_COPY);
@@ -105,15 +104,16 @@ public class LocalArcRepositoryClientTester extends TestCase {
     public void testGetFile() throws IOException {
         File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
-        Settings.create("settings.common.arcrepositoryClient.fileDir",
-                        dir1.getAbsolutePath(), dir2.getAbsolutePath());
+        Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
+                     dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
         FileUtils.copyFile(TestInfo.SAMPLE_FILE, TestInfo.SAMPLE_FILE_COPY);
         arcrep.store(TestInfo.SAMPLE_FILE_COPY);
         assertFalse("Should have removed sample file original",
                     TestInfo.SAMPLE_FILE_COPY.exists());
         arcrep.getFile(TestInfo.SAMPLE_FILE_COPY.getName(),
-                       Location.get(Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)),
+                       Location.get(Settings.get(
+                               CommonSettings.ENVIRONMENT_THIS_LOCATION)),
                        TestInfo.SAMPLE_FILE_COPY);
         assertTrue("Should have fetched sample file",
                    TestInfo.SAMPLE_FILE_COPY.exists());
@@ -122,7 +122,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
                      FileUtils.readFile(TestInfo.SAMPLE_FILE_COPY));
         try {
             arcrep.getFile("No Such File",
-                           Location.get(Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)),
+                           Location.get(Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_LOCATION)),
                            TestInfo.SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
         } catch (IOFailure e) {
@@ -133,8 +134,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
     public void testBatch() {
         File dir1 = new File(TestInfo.WORKING_DIR, "dir1");
         File dir2 = new File(TestInfo.WORKING_DIR, "dir2");
-        Settings.create("settings.common.arcrepositoryClient.fileDir",
-                        dir1.getAbsolutePath(), dir2.getAbsolutePath());
+        Settings.set("settings.common.arcrepositoryClient.fileDir", dir1.getAbsolutePath(),
+                     dir2.getAbsolutePath());
         ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
 
         BatchStatus status = arcrep.batch(new FileListJob(), "BA");

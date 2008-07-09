@@ -56,11 +56,11 @@ import org.xml.sax.SAXException;
 
 import dk.netarkivet.archive.indexserver.CrawlLogIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.cdx.ExtractCDX;
-import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
@@ -82,7 +82,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
  */
 public class HeritrixTests extends TestCase {
 
-    protected final static String WRITE_PROCESSORS_XPATH 
+    protected final static String WRITE_PROCESSORS_XPATH
         = "/crawl-order/controller/map[@name='write-processors']";
     protected final static String DEDUPLICATOR_XPATH = WRITE_PROCESSORS_XPATH
         + "/newObject[@name='DeDuplicator']";
@@ -417,7 +417,7 @@ public class HeritrixTests extends TestCase {
         validateOrder(TestInfo.MAX_OBJECTS_ORDER_FILE);
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
-        runHeritrix(TestInfo.MAX_OBJECTS_ORDER_FILE, 
+        runHeritrix(TestInfo.MAX_OBJECTS_ORDER_FILE,
                     TestInfo.SEEDS_FILE, tempDir);
 
         int num_harvested = 0;
@@ -622,7 +622,7 @@ public class HeritrixTests extends TestCase {
                     URL url = new URL(lineparts[urlIndex]);
                     //System.out.println("URL (" + lineparts[urlIndex] + ") has domain: "
                     //        + Domain.domainNameFromHostname(url.getHost()));
-                    if (Domain.domainNameFromHostname(url.getHost()).equals(domainName)) {
+                    if (DomainUtils.domainNameFromHostname(url.getHost()).equals(domainName)) {
                         return Long.parseLong(lineparts[bytesIndex]);
                     }
                 }

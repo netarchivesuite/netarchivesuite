@@ -34,25 +34,30 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.Constants;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.DomainDAOTester;
 import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinition;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.HarvestInfo;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;
 import dk.netarkivet.harvester.datamodel.StopReason;
+import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
@@ -61,6 +66,7 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests of the class HarvestSchedulerMonitorServer.
@@ -81,29 +87,30 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         new File(WORKING, "harvestreports/stop-reason-crawl.log");
     private static final StopReason DEFAULT_STOPREASON =
         StopReason.DOWNLOAD_COMPLETE;
-    
+    ReloadSettings rs = new ReloadSettings();
+
     /**
      * setUp method for this set of unittests.
      */
     public void setUp() throws IOException, SQLException,
             IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
-        // Start up a logmanager
+        rs.setUp();
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
-        
+
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         TestUtils.resetDAOs();
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        //JobDAO.reset();
-        Settings.set(Settings.DB_URL, "jdbc:derby:" + WORKING.getCanonicalPath() + "/fullhddb");
+        JobDAO.reset();
+        Settings.set(CommonSettings.DB_URL,
+                     "jdbc:derby:" + WORKING.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(BASEDIR, "fullhddb.jar"), WORKING);
         the_dao = JobDAO.getInstance();
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
     /**
      * tearDown method for this set of unittests.
@@ -114,11 +121,12 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         JMSConnectionTestMQ.clearTestQueues();
         HarvestSchedulerMonitorServer.getInstance().close();
         DatabaseTestUtils.dropHDDB();
-        Settings.reload();
-//        JobDAO.reset();
-//        HarvestDefinitionDAOTester.resetDAO();
-//        DomainDAOTester.resetDomainDAO();
-//        ScheduleDAOTester.resetDAO();
+        JobDAO.reset();
+        HarvestDefinitionDAOTester.resetDAO();
+        DomainDAOTester.resetDomainDAO();
+        ScheduleDAOTester.resetDAO();
+        TemplateDAOTester.resetTemplateDAO();
+        rs.tearDown();
     }
 
     /** Tests that default onMessage is used.

@@ -35,13 +35,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 
 /**
@@ -79,8 +80,8 @@ public class BitarchiveRecord implements Serializable {
     
     /** How large the ARCRecord can before saving as RemoteFile. */
     private final long LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
-        = Settings.getLong(Settings
-                    .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
+        = Settings.getLong(CommonSettings
+            .BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE);
 
     /** the log. */
     private static final transient Log log
@@ -108,7 +109,7 @@ public class BitarchiveRecord implements Serializable {
                     + LIMIT_FOR_SAVING_DATA_IN_OBJECT_BUFFER
                     + " bytes. Length is " + length
                     + " bytes, Storing as "
-                    + Settings.get(Settings.REMOTE_FILE_CLASS));
+                    + Settings.get(CommonSettings.REMOTE_FILE_CLASS));
             File localTmpFile = null;
             try {
                 localTmpFile = File.createTempFile("BitarchiveRecord-"

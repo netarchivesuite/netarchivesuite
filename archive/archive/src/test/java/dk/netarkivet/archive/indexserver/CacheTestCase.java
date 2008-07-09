@@ -27,11 +27,13 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -41,7 +43,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class CacheTestCase extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
-    
+    ReloadSettings rs = new ReloadSettings();
 
     public CacheTestCase(String string) {
         super(string);
@@ -49,23 +51,22 @@ public class CacheTestCase extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         // This just is needed to allow an instance of CDXIndexCache to be made
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         utrf.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "tmp").getAbsolutePath());
-        Settings.set(Settings.CACHE_DIR,
-                new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "tmp").getAbsolutePath());
+        Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
         FileUtils.createDir(new File(TestInfo.WORKING_DIR, "tmp"));
     }
 
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         ArcRepositoryClientFactory.getViewerInstance().close();
-        Settings.reload();
         utrf.tearDown();
         super.tearDown();
+        rs.tearDown();
     }
 }

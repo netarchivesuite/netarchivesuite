@@ -34,10 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
@@ -47,8 +49,10 @@ import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryCl
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
@@ -84,28 +88,28 @@ public class ArcRepositoryTesterBatch extends TestCase {
     static PreservationArcRepositoryClient arClient = null;
     static BitarchiveMonitorServer bam_server = null;
 
+    ReloadSettings rs = new ReloadSettings();
+
     /**
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
         ChannelsTester.resetChannels();
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         FileUtils.createDir(CLOG_DIR);
         FileUtils.createDir(ALOG_DIR);
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     ALOG_DIR.getAbsolutePath());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     BITARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     SERVER_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         archiveServer1 = BitarchiveServer.getInstance();
         c = ArcRepository.getInstance();
 
@@ -129,7 +133,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         archiveServer1.close();
         FileUtils.removeRecursively(WORKING_DIR);
         rf.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**
@@ -142,7 +146,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
                                                  Settings.get(
-                                                         Settings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
         int processed = batchStatus.getNoOfFilesProcessed();
         assertEquals("Number of files processed: " + processed
                      + " does not equal number of given files",
@@ -157,7 +161,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus lbs = arClient.batch(jobTest,
                                          Settings.get(
-                                                 Settings.ENVIRONMENT_THIS_LOCATION));
+                                                 CommonSettings.ENVIRONMENT_THIS_LOCATION));
         lbs.getResultFile().copyTo(OUTPUT_FILE);
         assertEquals("No exceptions should have happened", 0,
                      jobTest.getFilesFailed().size());
@@ -173,7 +177,8 @@ public class ArcRepositoryTesterBatch extends TestCase {
     public void testNullArgumentsToBatch() {
         try {
             arClient.batch(null,
-                           Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                           Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
             fail("Failed to throw exception on null batch-job argument to Controller.batch()");
         } catch (ArgumentNotValid e) {
             //expected
@@ -187,13 +192,13 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
                                                  Settings.get(
-                                                         Settings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
         assertEquals("First batch should work",
                      testFiles.length, batchStatus.getNoOfFilesProcessed());
 
         batchStatus = arClient.batch(jobTest,
                                      Settings.get(
-                                             Settings.ENVIRONMENT_THIS_LOCATION));
+                                             CommonSettings.ENVIRONMENT_THIS_LOCATION));
         assertEquals("Second batch should work",
                      testFiles.length, batchStatus.getNoOfFilesProcessed());
     }
@@ -210,7 +215,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob checkJob = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(checkJob,
                                                  Settings.get(
-                                                         Settings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
         batchStatus.getResultFile().copyTo(OUTPUT_FILE);
         List<String> jobChecksums = new ArrayList<String>();
 

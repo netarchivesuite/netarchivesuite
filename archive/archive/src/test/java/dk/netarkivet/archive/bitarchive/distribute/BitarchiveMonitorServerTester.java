@@ -38,9 +38,10 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -57,6 +58,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.common.utils.arc.TestJob;
 import dk.netarkivet.testutils.ClassAsserts;
@@ -100,11 +102,9 @@ public class BitarchiveMonitorServerTester extends TestCase {
         mtf.setUp();
 
         con = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
-        Settings.set(Settings.BITARCHIVE_BATCH_JOB_TIMEOUT,
-                     String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
-        Settings.set(Settings.BITARCHIVE_HEARTBEAT_FREQUENCY,
-                     String.valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
-        Settings.set(Settings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY,
+        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
+        Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY, String.valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
+        Settings.set(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY,
                      String.valueOf(
                              TestInfo.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY));
     }
@@ -119,7 +119,6 @@ public class BitarchiveMonitorServerTester extends TestCase {
         mjms.tearDown();
         rls.tearDown();
         ChannelsTester.resetChannels();
-        Settings.reload();
     }
 
     /**
@@ -197,7 +196,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                             public void finish(OutputStream os) {
                             }
                         },
-                        Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
         JMSConnectionTestMQ.updateMsgID(result, id);
         return result;
     }
@@ -241,7 +240,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
         NetarkivetMessage message = new BatchMessage(THE_BAMON,
                                                      job, Settings.get(
-                Settings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -289,7 +288,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         // send a batch message to the monitor
         BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheArcrepos(),
                                            job, Settings.get(
-                Settings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
         con.send(bm);
         con.waitForConcurrentTasksToFinish();
 
@@ -367,7 +366,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      */
     private void testListeningPerLocation(String locationName,
                                           String otherLocation) {
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, locationName);
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, locationName);
         JMSConnectionTestMQ jms
                 = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
         BitarchiveMonitorServer bamon = BitarchiveMonitorServer.getInstance();
@@ -429,10 +428,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
      */
     public void testProcessBatchEndedMessage() {
         bam_server = new TestBitarchiveMonitorServer();
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     TestInfo.BITARCHIVE_APP_DIR_1);
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     TestInfo.BITARCHIVE_SERVER_DIR_1);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         BitarchiveServer bas = BitarchiveServer.getInstance();
 
         //Make sure we know about the BA server
@@ -508,10 +505,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
         bam_server = new TestBitarchiveMonitorServer();
 
         // Set up a BitarchiveServer:
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     TestInfo.BITARCHIVE_APP_DIR_1);
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     TestInfo.BITARCHIVE_SERVER_DIR_1);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         BitarchiveServer bas1 = BitarchiveServer.getInstance();
 
         TestJob job = new TestJob(
@@ -519,7 +514,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         BatchMessage batchMessage = new BatchMessage(THE_BAMON,
                                                      Channels.getTheArcrepos(),
                                                      job, Settings.get(
-                Settings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
         TestBatchReplyListener batchReplyListener
                 = new TestBatchReplyListener();
@@ -612,7 +607,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         BatchMessage bm = new BatchMessage(Channels.getTheBamon(),
                                            Channels.getTheArcrepos(),
                                            new ChecksumJob(), Settings.get(
-                Settings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
         JMSConnectionTestMQ.updateMsgID(bm, "ID50");
 
         //Invent two BitarchiveServers and send heartbeats from them

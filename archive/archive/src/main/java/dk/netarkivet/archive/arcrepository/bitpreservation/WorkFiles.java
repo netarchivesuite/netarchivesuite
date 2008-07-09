@@ -27,12 +27,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This class encapsulates access to the files used in bitpreservation.
@@ -154,7 +155,8 @@ public enum WorkFiles {
      * @return The directory to place bitpreservation for the archive under.
      */
     static File getPreservationDir(Location location) {
-        File base = new File(Settings.get(Settings.DIR_ARCREPOSITORY_BITPRESERVATION));
+        File base = new File(Settings.get(
+                ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION));
         return new File(base, location.getName());
     }
 

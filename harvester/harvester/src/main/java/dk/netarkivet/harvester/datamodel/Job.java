@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.harvester.datamodel;
 
-import gnu.inet.encoding.IDNA;
-import gnu.inet.encoding.IDNAException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -46,22 +43,25 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
-
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 
 /**
@@ -195,12 +195,12 @@ public class Job implements Serializable {
      */
     private final long LIM_MAX_REL_SIZE
             = Long.parseLong(
-                    Settings.get(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE));
+            Settings.get(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE));
     private final long LIM_MIN_ABS_SIZE
             = Long.parseLong(
-                    Settings.get(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
+            Settings.get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
     private final long LIM_MAX_TOTAL_SIZE
-            = Long.parseLong(Settings.get(Settings.JOBS_MAX_TOTAL_JOBSIZE));
+            = Long.parseLong(Settings.get(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
 
     ;
 
@@ -795,7 +795,7 @@ public class Job implements Serializable {
     private String getDomain(String url) {
         try {
             URL uri = new URL(url);
-            return Domain.domainNameFromHostname(uri.getHost());
+            return DomainUtils.domainNameFromHostname(uri.getHost());
         } catch (MalformedURLException e) {
             throw new ArgumentNotValid("The string '" + url
                     + "' is not a valid URL");

@@ -29,10 +29,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 
 /**
@@ -317,9 +318,11 @@ public class DomainConfiguration implements Named {
      */
     public long getExpectedNumberOfObjects(long objectLimit, long byteLimit) {
         long prevresultfactor
-                = Settings.getLong(Settings.ERRORFACTOR_PERMITTED_PREVRESULT);
+                = Settings.getLong(
+                HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
         long bestguessfactor
-                = Settings.getLong(Settings.ERRORFACTOR_PERMITTED_BESTGUESS);
+                = Settings.getLong(
+                HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS);
 
         HarvestInfo best = getBestHarvestInfoExpectation();
 
@@ -338,7 +341,7 @@ public class DomainConfiguration implements Named {
             maximum = minObjectsBytesLimit(maxObjects, maxBytes,
                                            expectedObjectSize);
         } else {
-            maximum = Settings.getLong(Settings.MAX_DOMAIN_SIZE);
+            maximum = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
         }
         long minimum;
         if (best != null) {
@@ -398,7 +401,7 @@ public class DomainConfiguration implements Named {
             if (byteLimit != Constants.HERITRIX_MAXBYTES_INFINITY) {
                 return maxObjectsByBytes;
             } else {
-                return Settings.getLong(Settings.MAX_DOMAIN_SIZE);
+                return Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
             }
         }
     }
@@ -418,7 +421,7 @@ public class DomainConfiguration implements Named {
      */
     private long getExpectedBytesPerObject(HarvestInfo bestInfo) {
         long default_expectation = Settings.getLong(
-                Settings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
+                HarvesterSettings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
         if (bestInfo != null && bestInfo.getCountObjectRetrieved() > 0) {
             long expectation = Math.max(MIN_EXPECTATION,
                                         bestInfo.getSizeDataRetrieved()

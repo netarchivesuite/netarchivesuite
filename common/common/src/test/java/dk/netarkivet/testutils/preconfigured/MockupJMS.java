@@ -1,16 +1,16 @@
 package dk.netarkivet.testutils.preconfigured;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.utils.Settings;
 
 public class MockupJMS implements TestConfigurationIF {
     private String originalClass;
 
     public void setUp() {
-        originalClass = Settings.get(Settings.JMS_BROKER_CLASS);
-        Settings.set(Settings.JMS_BROKER_CLASS,
-                     JMSConnectionTestMQ.class.getName());
+        originalClass = Settings.get(CommonSettings.JMS_BROKER_CLASS);
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionTestMQ.class.getName());
         JMSConnectionFactory.getInstance().cleanup();
         JMSConnectionTestMQ.clearTestQueues();
     }
@@ -22,7 +22,7 @@ public class MockupJMS implements TestConfigurationIF {
         } catch (Exception e) {
             //just ignore it
         }
-        Settings.set(Settings.JMS_BROKER_CLASS, originalClass);
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, originalClass);
     }
 
 }

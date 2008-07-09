@@ -24,16 +24,19 @@ package dk.netarkivet.harvester.webinterface;
 
 import java.io.IOException;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.harvester.scheduler.HarvestScheduler;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit-test for the GUIWebServer class when the DefinitionsSiteSection
@@ -46,17 +49,16 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     public HarvestDefinitionGUITester(String s) {
         super(s);
     }
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
-        Settings.set(Settings.SITESECTION_WEBAPPLICATION,
-                dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_JSP_DIR);
-        Settings.set(Settings.SITESECTION_DEPLOYPATH,
-                dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_WEBBASE);
-        Settings.set(Settings.SITESECTION_CLASS,
-                dk.netarkivet.harvester.datamodel.TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.HARVESTDEFINITION_JSP_DIR);
+        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.HARVESTDEFINITION_WEBBASE);
+        Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
     }
 
@@ -65,12 +67,13 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         if (gui != null) {
             gui.cleanup();
         }
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testSettingsWebappFault() {
         try {
-            Settings.set(Settings.SITESECTION_WEBAPPLICATION, "not_a_webapp");
+            Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
+                         "not_a_webapp");
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid webapp");
         } catch (IOFailure e) {
@@ -80,7 +83,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
 
     public void testSettingsPortFault() {
         try {
-            Settings.set(Settings.HTTP_PORT_NUMBER, "not_a_number");
+            Settings.set(CommonSettings.HTTP_PORT_NUMBER, "not_a_number");
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
         } catch (NumberFormatException e) {
@@ -89,7 +92,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     }
 
     public void testSettingsPortWrong() {
-        Settings.set(Settings.HTTP_PORT_NUMBER, "42");
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "42");
         try {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
@@ -99,7 +102,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     }
 
     public void testSettingsWrongContext() {
-        Settings.set(Settings.SITESECTION_DEPLOYPATH, "not_a_context");
+        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, "not_a_context");
         try {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid context");
@@ -142,7 +145,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
      public void testExitWithoutDefaultTemplateInTemplatesTable() throws InterruptedException {
          TemplateDAO dao = TemplateDAO.getInstance();
          // remove default order.xml from dao
-         dao.delete(Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML));
+        dao.delete(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
          try {
              gui = GUIWebServer.getInstance();
              fail("Should fail if default template is gone");

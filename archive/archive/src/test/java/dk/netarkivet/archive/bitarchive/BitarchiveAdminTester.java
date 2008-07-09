@@ -30,12 +30,14 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * BitArchiveAdminData test class.
@@ -58,15 +60,17 @@ public class BitarchiveAdminTester extends TestCase {
     private static final String ARC_FILE_NAME = "testfile.arc";
     private static final String TEMPDIR = "tempdir";
     private static final String FILEDIR = "filedir";
+    ReloadSettings rs = new ReloadSettings();
 
     public BitarchiveAdminTester(String s) {
         super(s);
     }
 
     public void setUp() {
+        rs.setUp();
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, BA_DIR_ALL);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BA_DIR_ALL);
         ad = BitarchiveAdmin.getInstance();
     }
 
@@ -75,19 +79,18 @@ public class BitarchiveAdminTester extends TestCase {
             ad.close();
         }
         FileUtils.removeRecursively(WORKING_DIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testHasEnoughSpace() throws Exception {
         //1) settings set to 0 bytes required
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT, "1");
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "1");
         ad.close();
         ad = BitarchiveAdmin.getInstance();
         assertTrue("Should return true", ad.hasEnoughSpace());
         //2) One directory and settings set to return false
         long df = FileUtils.getBytesFree(BA_DIR_1);
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
-                Long.toString(2L * df));
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, Long.toString(2L * df));
         ad.close();
         ad = BitarchiveAdmin.getInstance();
         assertFalse("Should return true", ad.hasEnoughSpace());
@@ -239,14 +242,14 @@ public class BitarchiveAdminTester extends TestCase {
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file1", file.getName());
         assertEquals("Should be right file",
-                     new File(new File(BA_DIR_1, FILEDIR), 
+                     new File(new File(BA_DIR_1, FILEDIR),
                              "file1").getAbsolutePath(),
                      file.getFilePath().getAbsolutePath());
         file = ad.lookup("file3");
         assertNotNull("Should find existing file", file);
         assertEquals("Should be right file", "file3", file.getName());
         assertEquals("Should be right file",
-                     new File(new File(BA_DIR_2, FILEDIR), 
+                     new File(new File(BA_DIR_2, FILEDIR),
                              "file3").getAbsolutePath(),
                      file.getFilePath().getAbsolutePath());
         file = ad.lookup("none");
@@ -257,7 +260,7 @@ public class BitarchiveAdminTester extends TestCase {
         ad.close();
         File baddir = new File(WORKING_DIR, "baddir");
         baddir.createNewFile();
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, baddir.getPath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, baddir.getPath());
         try {
             ad = BitarchiveAdmin.getInstance();
             fail("Should throw permission denied on bad dir");
@@ -327,7 +330,7 @@ public class BitarchiveAdminTester extends TestCase {
         assertTrue("Should have " + file4path + " but found " + filePaths,
                 filePaths.contains(file4path));
     }
-    
+
     public void testIsBitarchiveDirectory() throws IOException {
         assertTrue("Should find existing dir",
                 ad.isBitarchiveDirectory(BA_DIR_1));

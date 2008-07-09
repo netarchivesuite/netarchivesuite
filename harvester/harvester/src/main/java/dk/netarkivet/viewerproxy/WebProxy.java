@@ -36,10 +36,11 @@ import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.DefaultHandler;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * The WebProxy is the ONLY viewerproxy class that interfaces with the
@@ -81,7 +82,7 @@ public class WebProxy extends DefaultHandler
      */
     public WebProxy(URIResolver uriResolver) {
         setURIResolver(uriResolver);
-        int portno = Settings.getInt(Settings.HTTP_PORT_NUMBER);
+        int portno = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
         jettyServer = new Server(portno);
         jettyServer.setHandler(this);
         log.info("Starting viewerproxy jetty on port " + portno);

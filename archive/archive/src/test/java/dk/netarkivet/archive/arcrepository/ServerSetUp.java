@@ -23,12 +23,15 @@
 
 import java.io.File;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,13 +66,15 @@ public class ServerSetUp {
     /** The arc repository. */
     private static ArcRepository arcRepos;
 
+    static ReloadSettings rs = new ReloadSettings();
+
     protected static void setUp() {
-        Settings.reload();
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,ADMINDATA_DIR.getAbsolutePath());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
+        rs.setUp();
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ADMINDATA_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
 
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
@@ -97,7 +102,7 @@ public class ServerSetUp {
         FileUtils.removeRecursively(TEMP_DIR);
 
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
+        rs.tearDown();
     }
 
      public static ArcRepository getArcRepository() {

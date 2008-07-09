@@ -30,10 +30,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -47,8 +49,10 @@ import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryCl
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -100,15 +104,17 @@ public class ArcRepositoryTesterGet extends TestCase {
     /** A client for communicating with the ArcRepository. */
     PreservationArcRepositoryClient client;
 
+    ReloadSettings rs = new ReloadSettings();
+
     /**
      * Set up the test.
      */
     protected void setUp() {
-        Settings.reload();
+        rs.setUp();
         ChannelsTester.resetChannels();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
         ChannelsTester.resetChannels();
 
         rf.setUp();
@@ -118,19 +124,18 @@ public class ArcRepositoryTesterGet extends TestCase {
         FileUtils.createDir(CLOG_DIR);
         FileUtils.createDir(ALOG_DIR);
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR
                 .getAbsolutePath());
 
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR
                 .getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR, SERVER_DIR
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR
                 .getAbsolutePath());
         bitArchiveServer = BitarchiveServer.getInstance();
         arcRepository = ArcRepository.getInstance();
-        Settings.set(Settings.ARCREPOSITORY_GET_TIMEOUT, "1000");
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
         client = ArcRepositoryClientFactory.getPreservationInstance();
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     /**
@@ -142,9 +147,9 @@ public class ArcRepositoryTesterGet extends TestCase {
         bitArchiveServer.close();
         FileUtils.removeRecursively(WORKING_DIR);
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
         rf.tearDown();
         RememberNotifications.resetSingleton();
+        rs.tearDown();
     }
 
     /**
@@ -180,8 +185,8 @@ public class ArcRepositoryTesterGet extends TestCase {
         	= new DummyGetFileMessageReplyServer();
         File result = new File(FileUtils.createUniqueTempDir(
         		WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
-        Location location = Location.get(Settings
-                .get(Settings.ENVIRONMENT_THIS_LOCATION));
+        Location location = Location.get(Settings.get(
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
         client.getFile(GETTABLE_FILES.get(1), location, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
         ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
@@ -203,10 +208,11 @@ public class ArcRepositoryTesterGet extends TestCase {
         client = ArcRepositoryClientFactory.getPreservationInstance();
         new DummyRemoveAndGetFileMessageReplyServer();
         final File bitarchiveFiledir = new File(
-        		Settings.get(Settings.BITARCHIVE_SERVER_FILEDIR),
+                Settings.get(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR),
         		"filedir");
         client.removeAndGetFile((String) GETTABLE_FILES.get(1),
-                              Settings.get(Settings.ENVIRONMENT_THIS_LOCATION),
+                                Settings.get(
+                                        CommonSettings.ENVIRONMENT_THIS_LOCATION),
                                 "42",
                                 MD5.generateMD5onFile(
                                 		new File(bitarchiveFiledir,

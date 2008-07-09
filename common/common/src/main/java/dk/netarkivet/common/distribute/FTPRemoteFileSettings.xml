@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <common>
+        <!-- FTP connection data-->
+        <remoteFile xsi:type="ftpremotefile">
+            <!-- The default FTP-server used -->
+            <serverName>localhost</serverName>
+            <!-- The default FTP-server port used -->
+            <serverPort>21</serverPort>
+            <!-- The default FTP username -->
+            <userName>exampleusername</userName>
+            <!-- The default FTP password -->
+            <userPassword>examplepassword</userPassword>
+            <!-- The number of times FTPRemoteFile should try before giving up
+                 a copyTo operation. We augment FTP with checksum checks. -->
+            <retries>3</retries>
+        </remoteFile>
+    </common>
+</settings>

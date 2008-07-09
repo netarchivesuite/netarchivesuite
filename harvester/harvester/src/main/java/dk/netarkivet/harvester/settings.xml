@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <harvester>
+        <datamodel>
+            <domain>
+                <!-- Default seed list to use when new domains are created -->
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <!-- The name of a configuration that is created by default and
+                     which is initially used for snapshot harvests-->
+                <defaultConfig>defaultconfig</defaultConfig>
+                <!-- Name of order xml template used for domains if nothing
+                 else is specified (e.g. newly created configrations use this) -->
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <!-- Default download rate for domain configuration.
+                 Not currently enforced. -->
+                <defaultMaxrate>100</defaultMaxrate>
+                <!-- Default byte limit for domain configuration. -->
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
+            </domain>
+        </datamodel>
+        <scheduler>
+            <!-- Used when calculating expected size of a harvest of some
+                 configuration during job-creation process. This defines how
+                 great a possible factor we will permit a harvest to be larger
+                 then the expectation, when basing the expectation on a previous
+                 completed job. -->
+            <errorFactorPrevResult>10</errorFactorPrevResult>
+            <!-- Used when calculating expected size of a harvest of some
+                 configuration during job-creation process.  This defines how
+                 great a possible factor we will permit a harvest to be larger
+                 then the expectation, when basing the expectation on previous
+                 uncompleted harvests or no harvest data at all. -->
+            <errorFactorBestGuess>2</errorFactorBestGuess>
+            <!-- How many bytes the average object is expected to be on domains
+                 where we don't know any better.  This number should grow over
+                 time, as of end of 2005 empirical data shows 38000 -->
+            <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+            <!-- Initial guess of #objects in an unknown domain -->
+            <maxDomainSize>5000</maxDomainSize>
+            <jobs><!-- One Job corresponds to a Heritrix run -->
+                <!-- The maximum allowed relative difference in expected number
+                     of objects retrieved in a single job definition.  Set to
+                     MAX_LONG for no splitting -->
+                <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+                <!-- Size differences for jobs below this threshold are ignored,
+                     regardless of the limits for the relative size difference.
+                     Set to MAX_LONG for no splitting. -->
+                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+                <!-- When this limit is exceeded no more configurations may be
+                     added to a job. Set to MAX_LONG for no splitting. -->
+                <maxTotalSize>2000000</maxTotalSize>
+            </jobs>
+            <!-- How many domain configurations we will process in one go before
+                 making jobs out of them.  This amount of domains will be stored
+                 in memory at the same time.  Set to MAX_LONG for no job
+                 splitting. -->
+            <configChunkSize>10000</configChunkSize>
+        </scheduler>
+        <harvesting>
+            <!-- Each job gets a subdir of this dir. Job data is written and
+                 Heritrix writes to that subdir-->
+            <serverDir>server</serverDir>
+            <!--  The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is
+                 400000000 bytes (~400 Mbytes).
+            -->
+            <minSpaceLeft>400000000</minSpaceLeft>
+            <!-- The directory in which data from old jobs is kept after
+                 uploading.  Each directory from serverDir will be moved to
+                 here if any data remains, either due to failed uploads or
+                 because it wasn't attempted uploaded. -->
+            <oldjobsDir>oldjobs</oldjobsDir>
+            <!-- Pool to take jobs from -->
+            <queuePriority>HIGHPRIORITY</queuePriority>
+            <!-- When to stop Heritrix, timeouts in ms. -->
+            <heritrix>
+                <!-- The timeout setting for aborting a crawl based on
+                    crawler-inactivity. If the crawler is inactive for this
+                    amount of seconds the crawl will be aborted.
+                    The inactivity is measured on the
+                    crawlController.activeToeCount(). -->
+                <inactivityTimeout>100</inactivityTimeout>
+                <!-- The timeout value (in seconds) used in HeritrixLauncher
+                     for aborting crawl when no bytes are being received from
+                     web servers. -->
+                <noresponseTimeout>100</noresponseTimeout>
+                <!-- Name for accessing the Heritrix GUI -->
+                <adminName>admin</adminName>
+                <!-- Password for accesing the Heritrix GUI -->
+                <adminPassword>adminPassword</adminPassword>
+                <!-- Port used to access the Heritrix web user interface.
+                     This port must not be used by anything else on the machine.
+                     -->
+                <guiPort>8090</guiPort>
+                <!-- Port used to access the Heritrix JMX interface.
+                     This port must not be used by anything else on the machine,
+                     but does not need to be accessible from other machines
+                     unless you want to be able to use jconsole to access
+                     Heritrix directly
+                     -->
+                <jmxPort>8091</jmxPort>
+                <!-- The heap size to use for the Heritrix sub-process.  This
+                     should probably be fairly large.  It can be specified in
+                     the same way as for the -Xmx argument to Java, e.g.
+                     512M, 2G etc.-->
+                <heapSize>1598M</heapSize>
+            </heritrix>
+            <!-- The file used to signal that the harvest controller is running.
+                 Sidekick starts HarvestController if this file is not present
+                 -->
+            <isrunningFile>./hcsRunning.tmp</isrunningFile>
+        </harvesting>
+    </harvester>
+</settings>

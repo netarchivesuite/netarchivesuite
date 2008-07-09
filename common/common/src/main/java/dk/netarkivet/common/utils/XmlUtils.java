@@ -24,6 +24,7 @@
 package dk.netarkivet.common.utils;
 
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,10 +60,28 @@ public class XmlUtils {
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            log.warn("Could not parse file as XML: " + f);
-            throw new IOFailure("Could not parse file as XML:" + f);
+            log.warn("Could not parse file as XML: " + f, e);
+            throw new IOFailure("Could not parse file as XML:" + f, e);
         }
    }
+
+    /** Read and parse an XML-stream, and return
+     * a Document object representing this object.
+     * @param resourceAsStream a given xml document
+     * @return a Document representing the xml-document
+     * @throws IOFailure if unable to read the xml-document
+     *          or unable to parse the document as XML
+     */
+    public static Document getXmlDoc(InputStream resourceAsStream) {
+        SAXReader reader = new SAXReader();
+        try {
+            return reader.read(resourceAsStream);
+        } catch (DocumentException e) {
+            log.warn("Could not parse file as XML: " + resourceAsStream, e);
+            throw new IOFailure("Could not parse file as XML:"
+                                + resourceAsStream, e);
+        }
+    }
 
     /**
      * Set a XmlNode defined by the given XPath to the given value.

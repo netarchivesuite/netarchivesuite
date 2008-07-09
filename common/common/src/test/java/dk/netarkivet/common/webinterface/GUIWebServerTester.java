@@ -29,9 +29,11 @@ import java.net.Socket;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.TestInfo;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests running a web server, represented by the GUIWebServer() class.
@@ -39,23 +41,21 @@ import dk.netarkivet.harvester.datamodel.TestInfo;
 public class GUIWebServerTester extends TestCase {
     TestInfo info = new TestInfo();
     private GUIWebServer server;
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
-        Settings.set(Settings.SITESECTION_WEBAPPLICATION,
-                     TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
-        Settings.set(Settings.SITESECTION_DEPLOYPATH,
-                     TestInfo.GUI_WEB_SERVER_WEBBASE);
-        Settings.set(Settings.SITESECTION_CLASS,
-                     TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
-        Settings.set(Settings.HTTP_PORT_NUMBER,
-                     Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+        rs.setUp();
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
+        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.GUI_WEB_SERVER_WEBBASE);
+        Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
     }
 
     public void tearDown() {
         if (server != null) {
             server.cleanup();
         }
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testRunningServer() {
@@ -70,8 +70,7 @@ public class GUIWebServerTester extends TestCase {
     }
 
     public void testExpectedExceptionsWhenStartingServer() throws IOException {
-        Settings.set(Settings.HTTP_PORT_NUMBER,
-                     Long.toString(65536L));
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(65536L));
 
         //arguments not in range
         try {
@@ -81,8 +80,7 @@ public class GUIWebServerTester extends TestCase {
             //Expected
         }
 
-        Settings.set(Settings.HTTP_PORT_NUMBER,
-                     Long.toString(-1L));
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(-1L));
 
         try {
             server = new GUIWebServer();
@@ -91,8 +89,7 @@ public class GUIWebServerTester extends TestCase {
             //Expected
         }
 
-        Settings.set(Settings.HTTP_PORT_NUMBER,
-                     Long.toString(1023L));
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Long.toString(1023L));
 
         try {
             server = new GUIWebServer();
@@ -118,7 +115,7 @@ public class GUIWebServerTester extends TestCase {
 
     public void testExpectedExceptionsWhenAddingContext() throws IOException {
         //wrong arguments when adding context
-        Settings.set(Settings.SITESECTION_WEBAPPLICATION,
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION,
                      "/not_found_because_it_doesnt_exist");
         try {
             server = new GUIWebServer();

@@ -24,23 +24,26 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class UploadMessageTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public UploadMessageTester(String sTestName) {
         super(sTestName);
     }
 
     public void setUp() {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
     }
 
     public void tearDown() {
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testInvalidArguments() {

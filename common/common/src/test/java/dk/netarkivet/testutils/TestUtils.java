@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DomainDAOTester;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDAOTester;

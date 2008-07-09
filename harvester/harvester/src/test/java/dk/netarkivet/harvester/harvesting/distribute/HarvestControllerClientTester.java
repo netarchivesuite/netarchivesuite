@@ -35,7 +35,6 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -49,6 +48,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -61,6 +61,7 @@ public class HarvestControllerClientTester extends TestCase {
     /* The client and dummy-servers used for testing */
     HarvestControllerClient hcc;
     private List<MetadataEntry> metadata = new ArrayList<MetadataEntry>();
+    ReloadSettings rs = new ReloadSettings();
 
 
     public HarvestControllerClientTester(String sTestName) {
@@ -74,6 +75,7 @@ public class HarvestControllerClientTester extends TestCase {
     public void setUp() throws JMSException, GeneralSecurityException,
             IOException, SQLException, IllegalAccessException,
             NoSuchFieldException, ClassNotFoundException {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         ChannelsTester.resetChannels();
         TestInfo.WORKING_DIR.mkdirs();
@@ -93,7 +95,7 @@ public class HarvestControllerClientTester extends TestCase {
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         ChannelsTester.resetChannels();
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**

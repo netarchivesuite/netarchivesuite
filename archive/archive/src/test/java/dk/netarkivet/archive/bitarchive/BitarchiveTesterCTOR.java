@@ -29,12 +29,14 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -51,6 +53,7 @@ public class BitarchiveTesterCTOR extends TestCase {
             new File(PATH_TO_TEST, "noaccess");
     private static File WORKING_ARCHIVE_DIR =
             new File(PATH_TO_TEST, "working");
+    ReloadSettings rs = new ReloadSettings();
 
     /**
      * The properties-file containg properties for logging in unit-tests
@@ -64,6 +67,7 @@ public class BitarchiveTesterCTOR extends TestCase {
     }
 
     public void setUp() {
+        rs.setUp();
         try {
             // This forces an emptying of the log file.
             FileInputStream fis = new FileInputStream(TESTLOGPROP);
@@ -86,7 +90,7 @@ public class BitarchiveTesterCTOR extends TestCase {
     public void tearDown() {
         FileUtils.removeRecursively(WORKING_ARCHIVE_DIR);
         FileUtils.removeRecursively(NEW_ARCHIVE_DIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**
@@ -95,7 +99,7 @@ public class BitarchiveTesterCTOR extends TestCase {
     public void testFromScratch() {
         assertFalse("No bitarchive should exist before creating it", NEW_ARCHIVE_DIR.exists());
         // Create new test archive and close it
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, NEW_ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, NEW_ARCHIVE_DIR.getAbsolutePath());
         Bitarchive ba = Bitarchive.getInstance();
         ba.close();
         // verify that the directory, admin and log files are created
@@ -121,7 +125,8 @@ public class BitarchiveTesterCTOR extends TestCase {
                 NOACCESS_ARCHIVE_DIR.canWrite());
 
         try {
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, NOACCESS_ARCHIVE_DIR.getAbsolutePath());
+            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR,
+                         NOACCESS_ARCHIVE_DIR.getAbsolutePath());
             Bitarchive ba = Bitarchive.getInstance();
             ba.close();
             fail("Accessing read-only archive should throw exception"); // do not come here

@@ -41,10 +41,11 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -384,8 +385,7 @@ public class HarvestDocumentationTester extends TestCase {
         Method m = ReflectUtils.getPrivateMethod(HarvestDocumentation.class,
                 "moveAwayForeignFiles", File.class, Long.TYPE);
         // Set oldjobs place to a different name to check use of setting.
-        Settings.set(Settings.HARVEST_CONTROLLER_OLDJOBSDIR,
-                new File(TestInfo.WORKING_DIR, "oddjobs").getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR, new File(TestInfo.WORKING_DIR, "oddjobs").getAbsolutePath());
         TestInfo.WORKING_DIR.mkdirs();
         File arcsDir = new File(TestInfo.WORKING_DIR, Constants.ARCDIRECTORY_NAME);
         TestFileUtils.copyDirectoryNonCVS(

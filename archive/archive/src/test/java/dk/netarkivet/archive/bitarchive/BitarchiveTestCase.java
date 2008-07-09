@@ -22,23 +22,26 @@
  */
 package dk.netarkivet.archive.bitarchive;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.LogManager;
-import java.io.File;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /** A collection of setup/teardown stuff usable by most bitarchive tests.. */
 public abstract class BitarchiveTestCase extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     protected static Bitarchive archive;
+    ReloadSettings rs = new ReloadSettings();
 
     /** Make a new BitarchiveTestCase using the given directory for originals.
      *
@@ -52,6 +55,7 @@ public abstract class BitarchiveTestCase extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         try {
@@ -66,8 +70,7 @@ public abstract class BitarchiveTestCase extends TestCase {
             // Copy over the "existing" bit archive.
             TestFileUtils.copyDirectoryNonCVS(getOriginalsDir(),
                                               TestInfo.WORKING_DIR);
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                         TestInfo.WORKING_DIR.getAbsolutePath());
+            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.WORKING_DIR.getAbsolutePath());
             archive = Bitarchive.getInstance();
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -82,7 +85,7 @@ public abstract class BitarchiveTestCase extends TestCase {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         JMSConnectionTestMQ.clearTestQueues();
         rf.tearDown();
-        Settings.reload();
+        rs.tearDown();
         super.tearDown();
     }
 }

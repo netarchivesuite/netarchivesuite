@@ -23,20 +23,21 @@
 
 package dk.netarkivet.archive.tools;
 
-import dk.netarkivet.common.Settings;
+import java.io.File;
+import java.util.Collection;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
-
-import java.io.File;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.Collection;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
@@ -181,7 +182,7 @@ public class RunBatch extends ToolRunnerBase {
                 job.processOnlyFilesMatching(regexp);
             }
             Location myLocation = Location.get(Settings.get(
-                    Settings.ENVIRONMENT_THIS_LOCATION)
+                    CommonSettings.ENVIRONMENT_THIS_LOCATION)
             );
             if (args.length > 2) {
                 myLocation = Location.get(args[2]);

@@ -24,7 +24,7 @@ package dk.netarkivet.common.distribute;
 
 import java.io.File;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.SettingsFactory;
 
@@ -49,7 +49,7 @@ public class RemoteFileFactory extends SettingsFactory<RemoteFile> {
                                          boolean multipleDownloads) {
         ArgumentNotValid.checkNotNull(file, "File file");
         return SettingsFactory.getInstance(
-                Settings.REMOTE_FILE_CLASS, file, useChecksums, fileDeletable,
+                CommonSettings.REMOTE_FILE_CLASS, file, useChecksums, fileDeletable,
                 multipleDownloads);
     }
 

@@ -24,32 +24,37 @@ package dk.netarkivet.harvester.datamodel;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class MySQLSpecificsTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public MySQLSpecificsTester(String s) {
         super(s);
     }
 
     public void setUp() throws Exception {
-        Settings.set(Settings.DB_SPECIFICS_CLASS,
-        "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
+        rs.setUp();
+        Settings.set(CommonSettings.DB_SPECIFICS_CLASS,
+                     "dk.netarkivet.harvester.datamodel.MySQLSpecifics");
         super.setUp();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        Settings.reload(); // Reset Settings so Settings.DB_SPECIFICS_CLASS is restored to standard value
+        rs.tearDown();
     }
     
     public void testLoadClass() {
         DBSpecifics instance = DBSpecifics.getInstance(
-                Settings.DB_SPECIFICS_CLASS);
+                CommonSettings.DB_SPECIFICS_CLASS);
     }
     
    public void testGetDriverClassName() {
            DBSpecifics instance = DBSpecifics.getInstance(
-                   Settings.DB_SPECIFICS_CLASS);
+                   CommonSettings.DB_SPECIFICS_CLASS);
            assertEquals("Wrong driver", instance.getDriverClassName(),
             "com.mysql.jdbc.Driver");
     }

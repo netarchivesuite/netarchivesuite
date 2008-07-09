@@ -65,12 +65,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.TestJob;
 
 /**
@@ -160,6 +161,14 @@ public class JMSConnectionMockupMQ extends JMSConnection {
         instance = null;
         channelIDListenerPairs.clear();
         sentTestJobs = null;
+    }
+
+    public String getHost() {
+        return "localhost";
+    }
+
+    public int getPort() {
+        return 0;
     }
 
     class ChannelIDListenerPair {
@@ -454,7 +463,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     }
 
     public static void useJMSConnectionTestMQ() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         getInstance().close();
     }
 

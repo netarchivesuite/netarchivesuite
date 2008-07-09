@@ -30,13 +30,15 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.TestInfo;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Class testing the FTPRemoteFile class.
@@ -54,11 +56,14 @@ public class FTPRemoteFileTester extends TestCase {
     // A named logger for this class is retrieved
     protected final Logger logger = Logger.getLogger(getClass().getName());
 
+    ReloadSettings rs = new ReloadSettings();
+    
     public FTPRemoteFileTester(String sTestName) {
         super(sTestName);
     }
 
     public void setUp() {
+        rs.setUp();
         try {
             if (!TestInfo.TEMPDIR.exists()) {
                 dk.netarkivet.common.utils.TestInfo.TEMPDIR.mkdir();
@@ -91,7 +96,7 @@ public class FTPRemoteFileTester extends TestCase {
     public void tearDown() throws IOException {
         FileUtils.removeRecursively(
                 dk.netarkivet.common.utils.TestInfo.TEMPDIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**
@@ -100,8 +105,7 @@ public class FTPRemoteFileTester extends TestCase {
     public void testSetTest() {
         RemoteFile rf;
         try {
-            Settings.set(Settings.REMOTE_FILE_CLASS,
-                    TestRemoteFile.class.getName());
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
             rf = RemoteFileFactory.getInstance(testFile2, true, false, true);
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
@@ -113,8 +117,7 @@ public class FTPRemoteFileTester extends TestCase {
 
         // Must be sure the file does not exist, or it will try to upload.
         try {
-            Settings.set(Settings.REMOTE_FILE_CLASS,
-                    FTPRemoteFile.class.getName());
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
             rf = RemoteFileFactory.getInstance(testFile2, true, false, true);
             fail("Should have rejected a non-existing file");
         } catch (ArgumentNotValid e) {
@@ -124,15 +127,13 @@ public class FTPRemoteFileTester extends TestCase {
                     "is not a readable file", e.getCause().getMessage());
         }
 
-        Settings.set(Settings.REMOTE_FILE_CLASS,
-            NullRemoteFile.class.getName());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, NullRemoteFile.class.getName());
         rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
         assertTrue("Expected NullRemoteFile", rf instanceof NullRemoteFile);
 
         // Unknown behaviour?
         try {
-            Settings.set(Settings.REMOTE_FILE_CLASS,
-                RemoteFile.class.getName());
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS, RemoteFile.class.getName());
             rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             fail("Should not instantiate interface RemoteFile");
         } catch (ArgumentNotValid e) {
@@ -140,8 +141,8 @@ public class FTPRemoteFileTester extends TestCase {
         }
 
         try {
-            Settings.set(Settings.REMOTE_FILE_CLASS,
-                "dk.netarkivet.common.distribute.NoRemoteFile");
+            Settings.set(CommonSettings.REMOTE_FILE_CLASS,
+                         "dk.netarkivet.common.distribute.NoRemoteFile");
             rf = RemoteFileFactory.getInstance(testFile1, true, false, true);
             fail("No getInstance method should exist for NoRemoteFile");
         } catch (IOFailure e) {

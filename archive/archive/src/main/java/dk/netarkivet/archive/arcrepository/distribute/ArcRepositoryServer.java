@@ -38,12 +38,13 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Listens on the queue "TheArcrepos" and submits the messages to
@@ -194,7 +195,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         BitarchiveClient bc = ar.getBitarchiveClientFromLocationName(
-                Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
         try {
             bc.get(msg);
         } catch (Throwable t) {

@@ -35,17 +35,20 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * lc forgot to comment this!
@@ -60,12 +63,14 @@ public class IntegrityTestsHCSJMSException extends TestCase{
     HarvestControllerClient hcc;
     HarvestControllerServer hs;
     private SecurityManager originalSM;
+    ReloadSettings rs = new ReloadSettings();
 
     public IntegrityTestsHCSJMSException(String sTestName) {
         super(sTestName);
     }
 
     public void setUp() {
+        rs.setUp();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
@@ -79,11 +84,11 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         } catch (IOException e) {
             fail("Could not load the testlog.prop file");
         }
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionSunMQ");
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR,
-                TestInfo.SERVER_DIR.getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR.getAbsolutePath());
         hs = HarvestControllerServer.getInstance();
         hcc = HarvestControllerClient.getInstance();
         originalSM = System.getSecurityManager();
@@ -111,8 +116,8 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
-        Settings.reload();
         System.setSecurityManager(originalSM);
+        rs.tearDown();
     }
 
     /**

@@ -29,8 +29,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -38,6 +38,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.Settings;
 
 
 /**
@@ -242,7 +243,7 @@ public class BitarchiveTesterUpload extends BitarchiveTestCase {
     }
 
     private void setupBitarchiveWithDirs(final String[] dirpaths) {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirpaths);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirpaths);
         // Don't like the archive made in setup, try again:)
         archive.close();
         archive = Bitarchive.getInstance();

@@ -24,8 +24,9 @@ package dk.netarkivet.harvester.sidekick;
 
 import java.io.File;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  */
@@ -37,7 +38,8 @@ public class HarvestControllerServerMonitorHook extends DefaultMonitorHook {
      * @return true if the application is running
      */
     public boolean isRunning() {
-        File file = new File(Settings.get(Settings.HARVEST_CONTROLLER_ISRUNNING_FILE) );
+        File file = new File(Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE));
         return file.exists();
     }
 

@@ -31,6 +31,7 @@ import java.util.List;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
@@ -242,7 +243,7 @@ public class DomainDefinition {
         DomainDAO ddao = DomainDAO.getInstance();
         List<String> illegals = new ArrayList<String>();
         for (String domain : domains) {
-            if (Domain.isValidDomainName(domain) && !ddao.exists(domain)) {
+            if (DomainUtils.isValidDomainName(domain) && !ddao.exists(domain)) {
                 Domain dd = Domain.getDefaultDomain(domain);
                 ddao.create(dd);
             } else {

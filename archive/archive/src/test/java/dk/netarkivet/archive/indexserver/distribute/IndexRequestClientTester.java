@@ -34,17 +34,19 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class IndexRequestClientTester extends TestCase {
@@ -57,13 +59,13 @@ public class IndexRequestClientTester extends TestCase {
             TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupIndexServer mis;
+    ReloadSettings rs = new ReloadSettings();
     public IndexRequestClientTester() {
     }
     public void setUp(){
-        Settings.set(Settings.CACHE_DIR,
-                new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
+        rs.setUp();
+        Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cache").getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
 
         ulrf.setUp();
         mjms.setUp();
@@ -84,7 +86,7 @@ public class IndexRequestClientTester extends TestCase {
         f.set(null, new EnumMap<RequestType, IndexRequestClient>(RequestType.class));
         f = ReflectUtils.getPrivateField(IndexRequestClient.class, "synchronizer");
         f.set(null, null);
-        Settings.reload();
+        rs.tearDown();
     }
     /**
      * Verify that factory method
@@ -176,7 +178,7 @@ public class IndexRequestClientTester extends TestCase {
 
     private void clearCache(String cacheName) {
         File[] files =
-                new File(Settings.get(Settings.CACHE_DIR), cacheName).listFiles();
+                new File(Settings.get(CommonSettings.CACHE_DIR), cacheName).listFiles();
         if (files != null) {
             for(File f : files) {
                 FileUtils.removeRecursively(f);

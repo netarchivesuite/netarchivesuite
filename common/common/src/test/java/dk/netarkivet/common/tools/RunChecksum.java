@@ -30,12 +30,13 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A tool that runs a checksum job on a bitarchive, outputting the results.
@@ -52,7 +53,8 @@ public class RunChecksum {
         if (argv.length == 1) {
             bitarchive = argv[0];
             boolean found = false;
-            final String[] locations = Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES);
+            final String[] locations = Settings.getAll(
+                    CommonSettings.ENVIRONMENT_LOCATION_NAMES);
             for (String location : locations) {
                 if (bitarchive.equals(location)) {
                     found = true;
@@ -65,7 +67,7 @@ public class RunChecksum {
                 dieWithUsage();
             }
         } else {
-            bitarchive = Settings.get(Settings.ENVIRONMENT_THIS_LOCATION);
+            bitarchive = Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION);
         }
 
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();

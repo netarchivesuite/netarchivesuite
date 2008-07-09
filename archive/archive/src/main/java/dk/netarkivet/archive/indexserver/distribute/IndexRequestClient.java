@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.indexserver.FileBasedCache;
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -47,6 +46,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
@@ -77,6 +77,12 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * Logger for this indexRequestClient.
      */
     private Log log = LogFactory.getLog(getClass().getName());
+    /**
+     * The amount of time, in milliseconds, we should wait for replies when
+     * issuing a call to generate an index over som jobs.
+     */
+    public static final String INDEXREQUEST_TIMEOUT
+            = "settings.common.indexClient.indexRequestTimeout";
 
     /**
      * Initialise this client, handling requests of a given type. Start
@@ -254,7 +260,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      */
     protected long getIndexTimeout() {
         //NOTE: It might be a good idea to make this dependant on "type"
-        return Settings.getLong(Settings.INDEXREQUEST_TIMEOUT);
+        return Settings.getLong(INDEXREQUEST_TIMEOUT);
     }
 
     /**

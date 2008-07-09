@@ -29,8 +29,8 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class SynchronizerTester extends TestCase {
     private static final ChannelID toQ = Channels.getAnyBa();
@@ -40,15 +40,17 @@ public class SynchronizerTester extends TestCase {
     private static final long DELAY_TIME = 20;
     private static final int WAIT_TIME = 5;
 
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws IOException {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         con = JMSConnectionFactory.getInstance();
     }
 
     public void tearDown() {
-        Settings.reload();
+        rs.tearDown();
     }
 
 
@@ -254,7 +256,7 @@ public class SynchronizerTester extends TestCase {
         };
         /* This special synchronizer wakes up the listener early */
         Synchronizer sync = new Synchronizer();
-        /**
+        /*
          * The sender is also the listener. Avoids the need for creating a
          * separate server thread for replying.
          */
@@ -270,14 +272,14 @@ public class SynchronizerTester extends TestCase {
         SynchronizerRunner sr = new SynchronizerRunner(sync, msg,
                                                        WAIT_TIME);
 
-        /**
+        /*
          * Pretest: Test everything is initialized.
          */
         // Test no messages have been received.
         assertNull("A reply shouldn't have been received before " +
                    "request/reply has been dispatched", sr.getReceived());
 
-        /**
+        /*
          * Send one message and check all queues
          */
         // Send message
@@ -285,7 +287,7 @@ public class SynchronizerTester extends TestCase {
         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
         try {
             synchronized (this) {
-                this.wait();
+                this.wait(2000);
             }
             synchronized (msg) {
             }

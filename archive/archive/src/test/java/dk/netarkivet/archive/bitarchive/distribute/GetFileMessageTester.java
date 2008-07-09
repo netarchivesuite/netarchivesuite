@@ -28,7 +28,6 @@ import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -36,6 +35,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -46,8 +46,10 @@ public class GetFileMessageTester extends TestCase {
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     private static final File WORKING = TestInfo.UPLOADMESSAGE_TEMP_DIR;
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws IOException {
+        rs.setUp();
         utrf.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.UPLOADMESSAGE_ORIGINALS_DIR,
@@ -57,7 +59,7 @@ public class GetFileMessageTester extends TestCase {
     protected void tearDown() {
         FileUtils.removeRecursively(WORKING);
         utrf.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
 

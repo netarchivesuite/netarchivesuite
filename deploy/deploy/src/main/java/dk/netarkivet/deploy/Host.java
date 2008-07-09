@@ -38,18 +38,22 @@ import java.util.Set;
 
 import org.archive.crawler.Heritrix;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.ArcRepositoryApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
 import dk.netarkivet.archive.indexserver.IndexServerApplication;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.HTTPRemoteFile;
 import dk.netarkivet.common.distribute.HTTPSRemoteFile;
+import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.GUIApplication;
@@ -306,34 +310,34 @@ public class Host {
                 "String environmentName");
 
         if (jmsHost != null) {
-            overrideSetting(Settings.JMS_BROKER_HOST, jmsHost.getName());
-            overrideSetting(Settings.JMS_BROKER_CLASS,
+            overrideSetting(JMSConnectionSunMQ.JMS_BROKER_HOST, jmsHost.getName());
+            overrideSetting(CommonSettings.JMS_BROKER_CLASS,
                     jmsHost.getProperty(Constants.JMS_CLASS_PROPERTY));
 
-            overrideSetting(Settings.ENVIRONMENT_NAME, environmentName);
+            overrideSetting(CommonSettings.ENVIRONMENT_NAME, environmentName);
         }
 
         if (ftpHost != null) {
-            overrideSetting(Settings.FTP_SERVER_NAME, ftpHost.getName());
-            overrideSetting(Settings.FTP_USER_NAME,
+            overrideSetting(FTPRemoteFile.FTP_SERVER_NAME, ftpHost.getName());
+            overrideSetting(FTPRemoteFile.FTP_USER_NAME,
                     ftpHost.getProperty(Constants.FTP_USER_PROPERTY));
-            overrideSetting(Settings.FTP_USER_PASSWORD,
+            overrideSetting(FTPRemoteFile.FTP_USER_PASSWORD,
                     ftpHost.getProperty(Constants.FTP_PASSWORD_PROPERTY));
         }
 
-        overrideSetting(Settings.ENVIRONMENT_THIS_LOCATION,
+        overrideSetting(CommonSettings.ENVIRONMENT_THIS_LOCATION,
                 location.toUpperCase());
 
         if (mailHost != null) {
-            overrideSetting(Settings.MAIL_SERVER, mailHost.getName());
-            overrideSetting(Settings.MAIL_RECEIVER,
+            overrideSetting(CommonSettings.MAIL_SERVER, mailHost.getName());
+            overrideSetting(CommonSettings.MAIL_RECEIVER,
                     mailHost.getProperty(Constants.MAIL_RECEIVER_PROPERTY));
-            overrideSetting(Settings.MAIL_SENDER,
+            overrideSetting(CommonSettings.MAIL_SENDER,
                     mailHost.getProperty(Constants.MAIL_SENDER_PROPERTY));
         }
 
         List<String> webapplications
-                = settingsXml.getList(Settings.SITESECTION_WEBAPPLICATION);
+                = settingsXml.getList(CommonSettings.SITESECTION_WEBAPPLICATION);
         List<String> warFiles = new ArrayList<String>(webapplications.size());
         for (String webapplication : webapplications) {
             if (webapplication.toLowerCase().endsWith(WAR_EXTENSION)) {
@@ -342,11 +346,11 @@ public class Host {
                 warFiles.add(webapplication + WAR_EXTENSION);
             }
         }
-        settingsXml.update(Settings.SITESECTION_WEBAPPLICATION,
+        settingsXml.update(CommonSettings.SITESECTION_WEBAPPLICATION,
                 warFiles.toArray(new String[0]));
 
         if (properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY) != null) {
-            settingsXml.update(Settings.BITARCHIVE_SERVER_FILEDIR,
+            settingsXml.update(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR,
                     properties.get(Constants.BITARCHIVE_FILEDIR_PROPERTY)
                             .toArray(new String[0]));
         }
@@ -603,8 +607,7 @@ public class Host {
             try {
                 pw = new PrintWriter(new FileWriter(res));
                 String JVMARGS = "-Xmx1536m";
-                String SETTINGSFILE = "-D" + Settings
-                        .SETTINGS_FILE_NAME_PROPERTY
+                String SETTINGSFILE = "-D" + Settings.SYSTEM_PROPERTY
                                       + "=" + settingsfn;
                 String LOGFILE
                     = "-Dorg.apache.commons.logging.Log="
@@ -735,7 +738,7 @@ public class Host {
                                       installDirWindows + "\\lib\\", ";"));
 
                 String settingsFile = "-D"
-                                      + Settings.SETTINGS_FILE_NAME_PROPERTY
+                                      + Settings.SYSTEM_PROPERTY
                                       + "=\"" + settingsfn + "\"";
                 String logFile 
                     = "-Dorg.apache.commons.logging.Log="
@@ -920,7 +923,7 @@ public class Host {
      */
     private String getHttpFileTransferArgs() {
         String remoteFileClass = settingsXml
-                .getString(Settings.REMOTE_FILE_CLASS);
+                .getString(CommonSettings.REMOTE_FILE_CLASS);
         if (remoteFileClass.equals(HTTPRemoteFile.class.getName())
             || remoteFileClass.equals(HTTPSRemoteFile.class.getName())) {
             List<String> available = getProperties().get(

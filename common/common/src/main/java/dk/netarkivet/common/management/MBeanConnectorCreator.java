@@ -37,9 +37,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClientFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -76,9 +77,10 @@ public class MBeanConnectorCreator {
     public static synchronized void exposeJMXMBeanServer() {
         try {
             if (!isExposed) {
-                int jmxPort = Settings.getInt(Settings.JMX_PORT);
-                int rmiPort = Settings.getInt(Settings.JMX_RMI_PORT);
-                String passwordFile = Settings.get(Settings.JMX_PASSWORD_FILE);
+                int jmxPort = Settings.getInt(CommonSettings.JMX_PORT);
+                int rmiPort = Settings.getInt(CommonSettings.JMX_RMI_PORT);
+                String passwordFile = Settings.get(
+                        CommonSettings.JMX_PASSWORD_FILE);
                 log.info("Registering mbean server in registry on port "
                          + jmxPort + " communicating on port " + rmiPort
                          + " using password file '" + passwordFile + "'");
@@ -112,8 +114,8 @@ public class MBeanConnectorCreator {
                 //Register the JMX server at the registry.
                 MonitorRegistryClientFactory.getInstance().register(
                         SystemUtils.getLocalHostName(),
-                        Settings.getInt(Settings.JMX_PORT),
-                        Settings.getInt(Settings.JMX_RMI_PORT));
+                        Settings.getInt(CommonSettings.JMX_PORT),
+                        Settings.getInt(CommonSettings.JMX_RMI_PORT));
             }
         } catch (IOException e) {
             throw new IOFailure("Error creating and registering an"

@@ -27,7 +27,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -52,7 +52,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      */
     public static synchronized DBSpecifics getInstance() {
         if (instance == null) {
-            instance = getInstance(Settings.DB_SPECIFICS_CLASS);
+            instance = getInstance(CommonSettings.DB_SPECIFICS_CLASS);
         }
         return instance;
     }

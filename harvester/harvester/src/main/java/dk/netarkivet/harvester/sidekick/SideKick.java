@@ -27,11 +27,12 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.MBeanConnectorCreator;
 import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  */
@@ -68,7 +69,7 @@ public class SideKick implements Runnable {
     public static void main(String[] args) {
         ArgumentNotValid.checkNotNullOrEmpty(args[0], "Monitor Class");
         ArgumentNotValid.checkNotNullOrEmpty(args[1], "Shell Script");
-        Settings.set(Settings.APPLICATIONNAME, SideKick.class.getName());
+        Settings.set(CommonSettings.APPLICATIONNAME, SideKick.class.getName());
         MBeanConnectorCreator.exposeJMXMBeanServer();
         new Thread(new SideKick(args[0], args[1])).start();
     }

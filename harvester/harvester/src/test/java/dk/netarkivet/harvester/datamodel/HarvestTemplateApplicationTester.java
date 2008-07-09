@@ -36,16 +36,19 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 import org.dom4j.Document;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvestTemplateApplicationTester extends TestCase {
     PreventSystemExit pse = new PreventSystemExit();
+    ReloadSettings rs = new ReloadSettings();
 
     InputStream origIn;
     PrintStream origOut;
@@ -62,9 +65,12 @@ public class HarvestTemplateApplicationTester extends TestCase {
     }
 
     public void setUp() throws SQLException, IllegalAccessException, IOException {
+        rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        TestUtils.resetDAOs();Settings.set(Settings.DB_URL, "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+        TestUtils.resetDAOs();
+        Settings.set(CommonSettings.DB_URL,
+                     "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
         TemplateDAO.getInstance();
 
@@ -90,8 +96,8 @@ public class HarvestTemplateApplicationTester extends TestCase {
 
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
-        Settings.reload();
         TestUtils.resetDAOs();
+        rs.tearDown();
     }
 
     /** Check that the locally setup output and error streams match certain

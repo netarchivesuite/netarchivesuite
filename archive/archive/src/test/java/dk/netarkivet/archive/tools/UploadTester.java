@@ -26,14 +26,17 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MockupArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -46,24 +49,24 @@ public class UploadTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupArcRepositoryClient marc = new MockupArcRepositoryClient();
+    ReloadSettings rs = new ReloadSettings();
 
     /** Max number of store retries.*/
-    private final int storeRetries = Integer.parseInt(Settings.get(
-            Settings.ARCREPOSITORY_STORE_RETRIES));
+    private final int storeRetries = Settings.getInt(
+            JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES);
 
 
     public void setUp(){
+        rs.setUp();
         ulrf.setUp();
         mjms.setUp();
         mtf.setUp();
         pss.setUp();
         pse.setUp();
         marc.setUp();
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
     public void tearDown(){
-        Settings.reload();
         marc.tearDown();
         pse.tearDown();
         pss.tearDown();
@@ -71,6 +74,7 @@ public class UploadTester extends TestCase {
         mjms.tearDown();
         ulrf.tearDown();
         RememberNotifications.resetSingleton();
+        rs.tearDown();
     }
 
     /**

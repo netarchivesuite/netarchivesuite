@@ -28,11 +28,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -54,8 +55,8 @@ public class ReportingTester extends TestCase {
         super.setUp();
         rs.setUp();
         utrf.setUp();
-        String[] values = new String[]{TrivialArcRepositoryClient.class.getName()};
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT, values);
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
+                     TrivialArcRepositoryClient.class.getName());
         ArcRepositoryClientFactory.getViewerInstance().close();
         tarc = (TrivialArcRepositoryClient) ArcRepositoryClientFactory
                 .getViewerInstance();

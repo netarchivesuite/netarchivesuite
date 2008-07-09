@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <archive>
+        <arcrepository>
+            <!-- Absolute/relative path to where the "central list of files and
+                 checksums" (admin.data) is written. Used by ArcRepository and
+                 BitPreservation. -->
+            <baseDir>.</baseDir>
+        </arcrepository>
+        <bitarchive>
+            <!-- The minimum amount of bytes left *in any dir* that we will
+                 allow a bitarchive machine to accept uploads with.  When no
+                 dir has more space than this, the bitarchive machine stops
+                 listening for uploads.  This values should at the very least
+                 be greater than the largest ARC file you expect to receive.
+            -->
+            <minSpaceLeft>200000000</minSpaceLeft>
+            <!-- These are the directories where ARC files are stored
+                 (in a subdir). If more than one is given, they are used from
+                 one end. -->
+            <fileDir>m:\bitarchive</fileDir>
+            <fileDir>n:\bitarchive</fileDir>
+            <fileDir>o:\bitarchive</fileDir>
+            <fileDir>p:\bitarchive</fileDir>
+            <!-- The frequency in milliseconds of heartbeats that are sent by
+                 each BitarchiveServer to the BitarchiveMonitor. -->
+            <heartbeatFrequency>1000</heartbeatFrequency>
+            <!-- If we haven't heard from a bit archive within this many
+                 milliseconds, we don't excpect it to be online and won't wait
+                 for them to reply on a batch job.  This number should be
+                 significantly greater than heartbeatFrequency to account for
+                 temporary network congestion. -->
+            <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
+            <!-- The BitarchiveMonitorServer will listen for BatchEndedMessages
+                 for this many milliseconds before it decides that a batch job
+                 is taking too long and returns just the replies it has
+                 received at that point. -->
+            <batchMessageTimeout>1209600000</batchMessageTimeout>
+            <!-- Credentials to enter in the GUI for "deleting" ARC files in
+                 this bit archive -->
+            <thisCredentials>examplecredentials</thisCredentials>
+        </bitarchive>
+        <bitpreservation>
+            <!-- Absolute or relative path to dir containing results of
+                 file-list-batch-jobs and checksumming batch jobs
+                 for bit preservation-->
+            <baseDir>bitpreservation</baseDir>
+        </bitpreservation>
+    </archive>
+</settings>

@@ -32,9 +32,10 @@ import java.util.Iterator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.StringAsserts;
 
 
@@ -67,7 +68,8 @@ public class TemplateDAOTester extends DataModelTestCase {
 
     public void testCreate() throws DocumentException {
         TemplateDAO dao = TemplateDAO.getInstance();
-        String defaultOrderXmlName = Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML);
+        String defaultOrderXmlName = Settings.get(
+                HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
         assertTrue("The default orderxml should exist",
                 dao.exists(defaultOrderXmlName));
         HeritrixTemplate doc = dao.read(defaultOrderXmlName);
@@ -94,7 +96,8 @@ public class TemplateDAOTester extends DataModelTestCase {
 
     public void testUpdate() throws Exception {
         TemplateDAO dao = TemplateDAO.getInstance();
-        String defaultOrderXmlName = Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML);
+        String defaultOrderXmlName = Settings.get(
+                HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
         assertTrue("The default orderxml should exist",
                 dao.exists(defaultOrderXmlName));
 
@@ -114,7 +117,8 @@ public class TemplateDAOTester extends DataModelTestCase {
 
     public void testDelete() {
         TemplateDAO dao = TemplateDAO.getInstance();
-        String defaultOrderXmlName = Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML);
+        String defaultOrderXmlName = Settings.get(
+                HarvesterSettings.DOMAIN_DEFAULT_ORDERXML);
         assertTrue("The default orderxml should exist",
                 dao.exists(defaultOrderXmlName));
         dao.delete(defaultOrderXmlName);

@@ -49,21 +49,23 @@ import org.apache.commons.logging.LogFactory;
 import org.archive.crawler.Heritrix;
 import org.archive.util.JmxUtils;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix
  * as a separate process and uses JMX to communicate with it.  Each instance
- * executes exactly one process that runs exactly one crawl job. 
+ * executes exactly one process that runs exactly one crawl job.
  */
 public class JMXHeritrixController implements HeritrixController {
     private Log log = LogFactory.getLog(getClass());
@@ -82,7 +84,7 @@ public class JMXHeritrixController implements HeritrixController {
     private static final String DISCOVERED_COUNT_ATTRIBUTE = "DiscoveredCount";
     private static final String DOWNLOADED_COUNT_ATTRIBUTE = "DownloadedCount";
     private static final String STATUS_ATTRIBUTE = "Status";
-    
+
 
     /* Commands and attributes from org.archive.crawler.Heritrix
      * @see <A href="http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html">
@@ -118,10 +120,10 @@ public class JMXHeritrixController implements HeritrixController {
 
     /** Name of the JMX user that can control anything in Heritrix. */
     private static final String JMX_ADMIN_NAME = "controlRole";
-    
+
     /** File path Separator. Used to separate the jar-files in the classpath. */
     private static final String FILE_PATH_SEPARATOR = ":";
-    
+
     /** The one-shot Heritrix process created in the constructor.  It will
      * only perform a single crawl before being shut down.
      */
@@ -132,8 +134,8 @@ public class JMXHeritrixController implements HeritrixController {
      */
     private Thread processKillerHook;
 
-    /** The threads used to collect process output. 
-     * Only one thread used presently. 
+    /** The threads used to collect process output.
+     * Only one thread used presently.
      */
     private Set<Thread> collectionThreads = new HashSet<Thread>(1);
 
@@ -188,7 +190,7 @@ public class JMXHeritrixController implements HeritrixController {
                 This is done with argument "--bind /" (default is 127.0.0.1)
             - listen on a specific port using the port argument:
               --port <GUI port>
-            
+
             We also need to output something like the following to heritrix.out:
             `date Starting heritrix
             uname -a
@@ -197,23 +199,31 @@ public class JMXHeritrixController implements HeritrixController {
             ulimit -a
              */
             File heritrixOutputFile = files.getHeritrixOutput();
+            StringBuilder settingProperty = new StringBuilder();
+            for (File file : Settings.getSettingsFiles()) {
+                settingProperty.append(File.pathSeparator);
+                settingProperty.append(file.getAbsolutePath());
+            }
+            if (settingProperty.length() > 0) {
+                settingProperty.deleteCharAt(0);
+            }
 
             ProcessBuilder builder = new ProcessBuilder(
                     new File(new File(System.getProperty("java.home"),
                                       "bin"), "java").getAbsolutePath(),
-                    "-Xmx" + Settings.get(Settings.HERITRIX_HEAP_SIZE),
+                    "-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE),
 
                     //"-XX:+HeapDumpOnOutOfMemoryError",
                     "-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath(),
                     "-Dcom.sun.management.jmxremote.port=" + getJMXPort(),
                     "-Dcom.sun.management.jmxremote.ssl=false",
                     "-Dcom.sun.management.jmxremote.password.file="
-                            + new File(Settings.get(Settings.JMX_PASSWORD_FILE))
+                            + new File(Settings.get(
+                            CommonSettings.JMX_PASSWORD_FILE))
                             .getAbsolutePath(),
                     "-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath(),
                     "-Djava.protocol.handler.pkgs=org.archive.net",
-                    "-Ddk.netarkivet.settings.file="
-                            + Settings.getSettingsFile().getAbsolutePath(),
+                    "-Ddk.netarkivet.settings.file=" + settingProperty,
 
                     Heritrix.class.getName(),
                     "--bind", "/",
@@ -245,7 +255,7 @@ public class JMXHeritrixController implements HeritrixController {
     public void initialize() {
         if (processHasExited()) {
             String errMsg = "Heritrix process of " + this
-            + " died before initialization"; 
+            + " died before initialization";
             log.warn(errMsg);
             throw new IOFailure(errMsg);
         }
@@ -274,7 +284,7 @@ public class JMXHeritrixController implements HeritrixController {
         initializeProgressStatisticsLegend();
     }
 
-    /** 
+    /**
      * @throws IOFailure if unable to communicate with Heritrix
      * @see HeritrixController#requestCrawlStart()
      */
@@ -288,7 +298,7 @@ public class JMXHeritrixController implements HeritrixController {
     }
 
     /**
-     * @throws IOFailure if unable to communicate with Heritrix 
+     * @throws IOFailure if unable to communicate with Heritrix
      * @see HeritrixController#beginCrawlStop() */
     public void beginCrawlStop() {
         executeHeritrixCommand(TERMINATE_CURRENT_JOB_COMMAND);
@@ -443,7 +453,7 @@ public class JMXHeritrixController implements HeritrixController {
         } catch (IOFailure e) {
             log.error("JMX error while cleaning up Heritrix controller", e);
         }
-        final long maxWait = Settings.getLong(Settings.PROCESS_TIMEOUT);
+        final long maxWait = Settings.getLong(CommonSettings.PROCESS_TIMEOUT);
         Integer exitValue = ProcessUtils.waitFor(heritrixProcess,
                                                  maxWait);
         if (exitValue != null) {
@@ -720,7 +730,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Name to use for accessing Heritrix web GUI
      */
     private String getHeritrixAdminName() {
-        return Settings.get(Settings.HERITRIX_ADMIN_NAME);
+        return Settings.get(HarvesterSettings.HERITRIX_ADMIN_NAME);
     }
 
     /** Get the login password for accessing the Heritrix GUI.  This password
@@ -729,7 +739,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Password to use for accessing the Heritrix GUI
      */
     private String getHeritrixAdminPassword() {
-        return Settings.get(Settings.HERITRIX_ADMIN_PASSWORD);
+        return Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
     }
 
     /** Get the name to use for logging on to Heritrix' JMX with full control.
@@ -749,7 +759,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Password for accessing Heritrix JMX
      */
     private String getJMXAdminPassword() {
-        File filename = new File(Settings.get(Settings.JMX_PASSWORD_FILE));
+        File filename = new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE));
         List<String> lines = FileUtils.readListFromFile(filename);
         for (String line : lines) {
             if (!line.startsWith("#")) {
@@ -768,7 +778,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Port that Heritrix will expose its JMX interface on.
      */
     private int getJMXPort() {
-        return Settings.getInt(Settings.HERITRIX_JMX_PORT);
+        return Settings.getInt(HarvesterSettings.HERITRIX_JMX_PORT);
     }
 
     /** Get the port to use for Heritrix GUI, as set in settings.xml.
@@ -776,7 +786,7 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Port that Heritrix will expose its web interface on.
      */
     private int getGUIPort() {
-        return Settings.getInt(Settings.HERITRIX_GUI_PORT);
+        return Settings.getInt(HarvesterSettings.HERITRIX_GUI_PORT);
     }
 
     /** Execute a command for the Heritrix process we're running.

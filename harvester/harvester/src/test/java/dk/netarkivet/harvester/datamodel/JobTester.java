@@ -50,11 +50,13 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -74,8 +76,7 @@ public class JobTester extends DataModelTestCase {
         super.setUp();
         LogManager.getLogManager().readConfiguration();
         LogUtils.flushLogs(Job.class.getName());
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() throws Exception {
@@ -137,8 +138,8 @@ public class JobTester extends DataModelTestCase {
         DomainConfiguration dc2 = TestInfo.createConfig("netarkivet.dk", "fuld_dybde", 1112);
         DomainConfiguration dc3 = TestInfo.createConfig("statsbiblioteket.dk", "fuld_dybde", 2223);
 
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "3");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "0");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "3");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "0");
         Job job = Job.createJob(42L, dc1, 0);
         //should be okay, relative size difference below 3
         job.addConfiguration(dc2);

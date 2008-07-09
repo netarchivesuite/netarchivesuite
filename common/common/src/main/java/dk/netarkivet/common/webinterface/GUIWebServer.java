@@ -30,12 +30,13 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.DefaultHandler;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
@@ -65,18 +66,17 @@ public class GUIWebServer implements CleanupIF {
     protected GUIWebServer() {
         //Read and log settings.
         int port = Integer.parseInt(Settings.get(
-                Settings.HTTP_PORT_NUMBER));
+                CommonSettings.HTTP_PORT_NUMBER));
         if (port < 1025 || port > 65535) {
             throw new IOFailure(
                     "Port must be in the range 1025-65535, not " + port);
         }
         //TODO: Replace with just one setting. See feature request 1204
         String[] webApps = Settings.getAll(
-                Settings.SITESECTION_WEBAPPLICATION);
+                CommonSettings.SITESECTION_WEBAPPLICATION);
         String[] deployDirs = Settings.getAll(
-                Settings.SITESECTION_DEPLOYPATH);
-        String[] classes = Settings.getAll(
-                Settings.SITESECTION_CLASS);
+                CommonSettings.SITESECTION_DEPLOYPATH);
+        String[] classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
         if (webApps.length != deployDirs.length
             || webApps.length != classes.length) {
             throw new IOFailure(

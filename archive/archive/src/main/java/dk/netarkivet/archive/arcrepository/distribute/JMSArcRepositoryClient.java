@@ -33,7 +33,6 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -52,6 +51,7 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
 /**
@@ -62,6 +62,10 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
         ArcRepositoryClient {
+    static {
+        Settings.addDefaultClasspathSettings("dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml");
+    }
+
     /** the one and only JMSArcRepositoryClient instance. */
     private static JMSArcRepositoryClient instance;
 
@@ -83,14 +87,34 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** The length of time to wait for a get reply before giving up. */
     private long getTimeout;
+    /**
+     * How many milliseconds we will wait before giving up on a lookup request
+     * to the Arcrepository
+     */
+    public static final String ARCREPOSITORY_GET_TIMEOUT
+            = "settings.common.arcrepositoryClient.getTimeout";
+    /**
+     * Number of times to try sending a store message before failing,
+     * including the first attempt.
+     */
+    public static String ARCREPOSITORY_STORE_RETRIES
+            = "settings.common.arcrepositoryClient.storeRetries";
+    /**
+     * Timeout in milliseconds before retrying when calling
+     * ArcRepositoryClient.store()
+     */
+    public static final String ARCREPOSITORY_STORE_TIMEOUT
+            = "settings.common.arcrepositoryClient.storeTimeout";
 
     /**
      * Adds this Synchronizer as listener on a jms connection.
      */
     protected JMSArcRepositoryClient() {
-        storeRetries = Settings.getLong(Settings.ARCREPOSITORY_STORE_RETRIES);
-        storeTimeout = Settings.getLong(Settings.ARCREPOSITORY_STORE_TIMEOUT);
-        getTimeout = Settings.getLong(Settings.ARCREPOSITORY_GET_TIMEOUT);
+        storeRetries = Settings.getLong(
+                ARCREPOSITORY_STORE_RETRIES);
+        storeTimeout = Settings.getLong(
+                ARCREPOSITORY_STORE_TIMEOUT);
+        getTimeout = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
         
         log.info("JMSArcRepositoryClient will retry a store " + storeRetries
                    + " times and timeout on each try after " + storeTimeout
@@ -400,7 +424,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *  equal to the empty string
      * @throws IOFailure if we could not delete the remote file, or 
      * there was no response to our RemoveAndGetFileMessage within the allotted
-     * time defined by the setting {@link Settings#ARCREPOSITORY_STORE_TIMEOUT}.
+     * time defined by the setting {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      * @return The file that was removed
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,

@@ -39,14 +39,17 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests JMSConnection, the class that handles all JMS operations for Netarkivet.
@@ -58,7 +61,8 @@ public class IntegrityTests extends TestCase {
     private static final ChannelID sendQ;
 
     static {
-        String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
         if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
@@ -87,8 +91,10 @@ public class IntegrityTests extends TestCase {
 
     private JMSConnection conn;
 
+    ReloadSettings rs = new ReloadSettings();
+
     public void setUp() {
-        Settings.reload();
+        rs.setUp();
         JMSConnectionFactory.getInstance().close();
         conn = JMSConnectionFactory.getInstance();
         originalSecurityManager = System.getSecurityManager();
@@ -101,15 +107,14 @@ public class IntegrityTests extends TestCase {
         };
         System.setSecurityManager(manager);
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() {
-        Settings.reload();
         ChannelsTester.resetChannels();
         System.setSecurityManager(originalSecurityManager);
         JMSConnectionFactory.getInstance().close();
+        rs.tearDown();
     }
 
     /**
@@ -374,7 +379,8 @@ public class IntegrityTests extends TestCase {
      */
     public void testMsgIds() throws Exception {
         //Just for emptying the queue
-        String priority1 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority1 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result1;
         if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
             result1 = Channels.getAnyLowpriorityHaco();
@@ -391,7 +397,8 @@ public class IntegrityTests extends TestCase {
         Set<String> set = new HashSet<String>();
 
         for (int i = 0; i < 100; i++) {
-            String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+            String priority = Settings.get(
+                    HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
             ChannelID result;
             if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
                 result = Channels.getAnyLowpriorityHaco();
@@ -409,10 +416,10 @@ public class IntegrityTests extends TestCase {
             Logger log = Logger.getLogger(getClass().getName());
             log.finest("Generated message ID " + msg.getID());
         }
-        Settings.reload();
         conn = JMSConnectionFactory.getInstance();
         for (int i = 0; i < 100; i++) {
-            String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+            String priority = Settings.get(
+                    HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
             ChannelID result;
             if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
                 result = Channels.getAnyLowpriorityHaco();
@@ -447,7 +454,7 @@ public class IntegrityTests extends TestCase {
      * @throws java.io.IOException
      */
     public void testProvokeNullPointer() throws IOException {
-        Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File testFile1 = new File("tests/dk/netarkivet/common/distribute/data/originals/arc_record0.txt");
         File LOGFILE = new File("tests/testlogs/netarkivtest.log");
         int tries = 100;

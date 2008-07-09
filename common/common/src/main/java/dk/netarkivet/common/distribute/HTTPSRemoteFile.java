@@ -26,6 +26,7 @@ import java.io.File;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A remote file implemented with point-to-point HTTPS communication.
@@ -34,6 +35,28 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Will use one shared certificate for secure communication.
  */
 public class HTTPSRemoteFile extends HTTPRemoteFile {
+    /** The default place in classpath where the settings file can be found. */
+    private static final String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
+
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+
+    /** The keystore file used for HTTPS remotefiles. */
+    public static String HTTPSREMOTEFILE_KEYSTORE_FILE
+            = "settings.common.remoteFile.certificateKeyStore";
+    /** The password used for HTTPS remotefile keystore.
+     * Refer to the installation manual for how to build a keystore.
+     */
+    public static String HTTPSREMOTEFILE_KEYSTORE_PASSWORD
+            = "settings.common.remoteFile.certificateKeyStorePassword";
+    /** The password used for HTTPS remotefile private key. */
+    public static String HTTPSREMOTEFILE_KEY_PASSWORD
+            = "settings.common.remoteFile.certificatePassword";
+
     /**
      * Initialises a remote file implemented by point-to-point HTTPS
      * communication.

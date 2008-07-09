@@ -25,9 +25,10 @@ package dk.netarkivet.harvester.harvesting;
 import java.io.File;
 import java.io.IOException;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 
 /**
@@ -50,7 +51,7 @@ public class HarvestControllerApplication {
      */
     public static void main(String[] args) {
         File file = new File(Settings.get(
-                Settings.HARVEST_CONTROLLER_ISRUNNING_FILE));
+                HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE));
         try {
             file.createNewFile();
             file.deleteOnExit();

@@ -1,0 +1,11 @@
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <common>
+        <!-- Connection data for JMS-->
+        <jms>
+            <!-- The JMS broker host contacted by the JMS connection -->
+            <broker>localhost</broker>
+            <!-- The port the JMS connection should use -->
+            <port>7676</port>
+        </jms>
+    </common>
+</settings>

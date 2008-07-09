@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.utils;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 
 /**
  * Get a notifications handler for serious errors.
@@ -35,6 +35,6 @@ public class NotificationsFactory extends SettingsFactory<Notifications> {
      * @return The Notifications instance.
      */
     public static Notifications getInstance() {
-        return SettingsFactory.getInstance(Settings.NOTIFICATIONS_CLASS);
+        return SettingsFactory.getInstance(CommonSettings.NOTIFICATIONS_CLASS);
     }
 }

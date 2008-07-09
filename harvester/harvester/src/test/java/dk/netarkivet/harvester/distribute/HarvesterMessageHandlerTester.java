@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
@@ -39,13 +38,16 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvesterMessageHandlerTester extends TestCase {
 
     private TestMessageHandler tmh;
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         tmh = new TestMessageHandler();
@@ -53,7 +55,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     public final void testOnMessage() {

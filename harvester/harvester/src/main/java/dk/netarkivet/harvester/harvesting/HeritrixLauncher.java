@@ -29,10 +29,11 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * A HeritrixLauncher object wraps around an instance of the web crawler
@@ -93,7 +94,7 @@ public class HeritrixLauncher {
      */
     private static long timeOutInMillisReceivedData =
             Long.parseLong(Settings.get(
-                    Settings.CRAWLER_TIMEOUT_NON_RESPONDING))
+                    HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING))
             * MILLIS_PER_SECOND;
 
     /**
@@ -101,7 +102,7 @@ public class HeritrixLauncher {
      */
     private static long timeOutInMillis =
             Long.parseLong(Settings.get(
-                    Settings.INACTIVITY_TIMEOUT_IN_SECS)) * MILLIS_PER_SECOND;
+                    HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS)) * MILLIS_PER_SECOND;
     /** Xpath for the 'disk-path' in the order.xml */
     private static final String DISK_PATH_XPATH =
     	"//crawl-order/controller"

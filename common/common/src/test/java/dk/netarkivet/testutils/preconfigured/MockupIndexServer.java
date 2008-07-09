@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
+import dk.netarkivet.common.utils.Settings;
 
 /** A fake IndexServer that gives one or more files back as specified in
  * its constructor.
@@ -37,13 +38,13 @@ public class MockupIndexServer implements TestConfigurationIF, MessageListener {
     }
     public void setUp() {
         setResponseSuccessfull(true);
-        origDir = Settings.get(Settings.CACHE_DIR);
-        Settings.set(Settings.CACHE_DIR, Settings.get(Settings.DIR_COMMONTEMPDIR));
+        origDir = Settings.get(CommonSettings.CACHE_DIR);
+        Settings.set(CommonSettings.CACHE_DIR, Settings.get(CommonSettings.DIR_COMMONTEMPDIR));
         JMSConnectionFactory.getInstance().setListener(Channels.getTheIndexServer(), this);
     }
     public void tearDown() {
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheIndexServer(), this);
-        Settings.set(Settings.CACHE_DIR, origDir);
+        Settings.set(CommonSettings.CACHE_DIR, origDir);
     }
     public void setResponseSuccessfull(boolean isOk) {
         responseOK = isOk;

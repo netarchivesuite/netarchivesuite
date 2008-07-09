@@ -29,8 +29,9 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
 
@@ -60,7 +61,8 @@ public class BatchMessageTester extends TestCase {
      * @throws ClassNotFoundException
      */
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
-        BatchMessage bm = new BatchMessage(q1, job, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+        BatchMessage bm = new BatchMessage(q1, job, Settings.get(
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
         BatchMessage bm2 = (BatchMessage) Serial.serial(bm);
         assertEquals("Serializability failure for BatchMessage", relevantState(bm), relevantState(bm2));
     }

@@ -35,10 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.IteratorUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.CollectionAsserts;
 
 
@@ -648,9 +649,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         hdao.create(hd);
 
         // set upper limit to allow all configurations in one job
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         hd = hdao.read(hd.getOid());
         int jobsMade = hd.createJobs();
 
@@ -659,9 +660,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         // set upper limit to allow all configurations in one job by using
         // absolute size difference (4000-3500 = 500)
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "1");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "3500");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "1");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "3500");
         hd = hdao.read(hd.getOid());
         jobsMade = hd.createJobs();
 
@@ -671,9 +672,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // set upper limit to require 2 jobs
         // (2400 is more than 4 times 500, thus jobs are (500,1400)
         // and (2400,4000))
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "4");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "4");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         hd = hdao.read(hd.getOid());
         jobsMade = hd.createJobs();
 
@@ -684,9 +685,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         // set upper limit to require each configuration resulting in
         // a separate job
         // All configurations are more than 1 time as great as another
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "1");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "10");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "1");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "10");
         hd = hdao.read(hd.getOid());
         jobsMade = hd.createJobs();
 
@@ -707,9 +708,10 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         hdao.create(hd);
 
         // set upper limit to allow all configurations in one job
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "10000");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE,
+                     "10000");
         int jobsMade = hd.createJobs();
 
         assertEquals("3 different order.xmls used", 3, jobsMade);
@@ -727,18 +729,18 @@ public class HarvestDefinitionTester extends DataModelTestCase {
         hdao.create(hd);
 
         // set upper limit to allow all configurations in one job
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "40000");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         int jobsMade = hd.createJobs();
 
         // verify only one job is created
         assertEquals("Limits set to allow one job", 1, jobsMade);
 
         // set upper limit to require 2 jobs
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "6500");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "6500");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         jobsMade = hd.createJobs();
 
         // verify that 2 jobs are created
@@ -746,9 +748,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
 
         // set upper limit to require each configuration resulting in
         // a separate job
-        Settings.set(Settings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "0");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_RELATIVE_SIZE_DIFFERENCE, "50");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "0");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
         jobsMade = hd.createJobs();
 
         // verify one job per configuration

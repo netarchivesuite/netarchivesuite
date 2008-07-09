@@ -39,8 +39,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -48,6 +48,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Class for accessing and manipulating the administrative data for
@@ -102,7 +103,7 @@ public abstract class AdminData {
      */
     protected AdminData() {
         this.adminDir
-                = new File(Settings.get(Settings.DIRS_ARCREPOSITORY_ADMIN));
+                = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
         ApplicationUtils.dirMustExist(adminDir);
 
         adminDataFile = new File(adminDir, AdminData.ADMIN_FILE_NAME);

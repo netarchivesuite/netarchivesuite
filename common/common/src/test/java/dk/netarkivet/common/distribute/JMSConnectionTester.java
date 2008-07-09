@@ -43,11 +43,13 @@ import java.util.logging.Logger;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests JMSConnection, the class that handles all JMS operations for
@@ -57,10 +59,13 @@ public class JMSConnectionTester extends TestCase {
 
     private SecurityManager originalSecurityManager;
 
+    ReloadSettings rs = new ReloadSettings();
+
     /**
      * setUp() method for this testsuite.
      */
     public void setUp() {
+        rs.setUp();
         originalSecurityManager = System.getSecurityManager();
         SecurityManager manager = new SecurityManager() {
             public void checkPermission(Permission perm) {
@@ -70,17 +75,19 @@ public class JMSConnectionTester extends TestCase {
             }
         };
         System.setSecurityManager(manager);
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
     }
 
     /**
      * tearDown() method for this testsuite.
      */
     public void tearDown() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnectionFactory.getInstance().close();
-        Settings.reload();
         System.setSecurityManager(originalSecurityManager);
+        rs.tearDown();
     }
 
     /**
@@ -97,7 +104,8 @@ public class JMSConnectionTester extends TestCase {
      * Tests for null parameters.
      */
     public void testUnpackParameterIsNull() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         try {
             JMSConnection.unpack(null);
             fail("Should throw an ArgumentNotValidException when given a " +
@@ -111,7 +119,8 @@ public class JMSConnectionTester extends TestCase {
      * Tests for wrong parameters.
      */
     public void testUnpackParameterIsAnObjectMessage() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         try {
             JMSConnection.unpack(new DummyMapMessage());
             fail("Should throw an ArgumentNotValid exception when given a " +
@@ -126,7 +135,8 @@ public class JMSConnectionTester extends TestCase {
      * payload.
      */
     public void testUnpackInvalidPayload() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         try {
             JMSConnection.unpack(new TestObjectMessage(
                     new DummySerializableClass()));
@@ -141,7 +151,8 @@ public class JMSConnectionTester extends TestCase {
      * Tests if correct payload is unwrapped.
      */
     public void testUnpackOfCorrectPayload() {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         String testID = "42";
         TestMessage testMessage = new TestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), testID);
         JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
@@ -155,7 +166,7 @@ public class JMSConnectionTester extends TestCase {
      * Test resend() methods arguments.
      */
     public void testResendArgumentsNotNull() {
-        /**
+        /*
          * Check it is the correct resend method which is invoked and not
          * an overloaded version in fx. JMSConnectionTestMQ. Resend should be
          * declared final.
@@ -163,12 +174,13 @@ public class JMSConnectionTester extends TestCase {
         Class parameterTypes[] = {NetarkivetMessage.class, ChannelID.class};
         assertMethodIsFinal(JMSConnection.class, "resend", parameterTypes);
 
-        /**
+        /*
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
 
-        /**
+        /*
          * Test if ArgumentNotValid is thrown if null
          * is given as first parameter.
          */
@@ -179,7 +191,7 @@ public class JMSConnectionTester extends TestCase {
             // Expected
         }
 
-        /**
+        /*
          * Test if ArgumentNotValid is thrown if null
          * is given as second parameter
          */
@@ -209,7 +221,8 @@ public class JMSConnectionTester extends TestCase {
         /**
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
 
         // Create dummy server and listen on the Error queue.
@@ -242,11 +255,6 @@ public class JMSConnectionTester extends TestCase {
         assertEquals("Server should not have received any messages", 0, serverTheArcreposQueue.msgReceived);
         assertEquals("Server should not have received any messages", 0, serverTheBamonQueue.msgReceived);
         assertEquals("Server should have received 1 message", 1, serverErrorQueue.msgReceived);
-
-        /**
-         * Clean up.
-         */
-        Settings.reload();
     }
 
     /** Tests that initconnection actually starts a topic connection and a
@@ -257,7 +265,8 @@ public class JMSConnectionTester extends TestCase {
         /*
          * Set up JMSConnection and dummy receive servers.
          */
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         Field QConnField = ReflectUtils.getPrivateField(JMSConnection.class,
                 "myQConn");
@@ -276,7 +285,8 @@ public class JMSConnectionTester extends TestCase {
 
     public void testSendToQueue() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
@@ -309,7 +319,8 @@ public class JMSConnectionTester extends TestCase {
 
     public void testSendToTopic() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
@@ -342,7 +353,8 @@ public class JMSConnectionTester extends TestCase {
 
     public void testSetListener() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
@@ -466,7 +478,8 @@ public class JMSConnectionTester extends TestCase {
 
     public void testGetConsumerKey() throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         Method getConsumerKey = ReflectUtils.getPrivateMethod(JMSConnection.class,
                 "getConsumerKey", ChannelID.class, MessageListener.class);
         MessageListener listener = new MessageListener() {
@@ -488,7 +501,8 @@ public class JMSConnectionTester extends TestCase {
 
     public void testReply() throws JMSException, NoSuchFieldException,
             IllegalAccessException {
-        Settings.set(Settings.JMS_BROKER_CLASS, "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 

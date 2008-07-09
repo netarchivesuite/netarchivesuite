@@ -28,11 +28,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.TestBatchJobRuns;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -42,8 +43,10 @@ import dk.netarkivet.common.distribute.JMSConnectionTester.DummyServer;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for the class ArcRepositoryServer.
@@ -89,9 +92,11 @@ public class ArcRepositoryServerTester extends TestCase {
 
     private JMSConnectionTester.DummyServer dummyServer;
 
+    ReloadSettings rs = new ReloadSettings();
+
     protected void setUp() throws Exception {
-        Settings.reload();
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        rs.setUp();
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
 
@@ -100,7 +105,7 @@ public class ArcRepositoryServerTester extends TestCase {
         FileUtils.createDir(CLOG_DIR);
         FileUtils.createDir(ALOG_DIR);
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ALOG_DIR
                 .getAbsolutePath());
         con = JMSConnectionFactory.getInstance();
         dummyServer = new JMSConnectionTester.DummyServer();
@@ -108,9 +113,9 @@ public class ArcRepositoryServerTester extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        Settings.reload();
         FileUtils.removeRecursively(WORKING_DIR);
         con.removeListener(Channels.getError(), dummyServer);
+        rs.tearDown();
     }
 
     /**
@@ -165,8 +170,8 @@ public class ArcRepositoryServerTester extends TestCase {
 
         ArcRepository arc = ArcRepository.getInstance();
         BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels
-                .getError(), new TestBatchJobRuns(), Settings
-                .get(Settings.ENVIRONMENT_THIS_LOCATION));
+                .getError(), new TestBatchJobRuns(), Settings.get(
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
         new ArcRepositoryServer(arc).visit(msg);
 
@@ -191,8 +196,7 @@ public class ArcRepositoryServerTester extends TestCase {
             //expected
         }
 
-        Settings.set(Settings.REMOTE_FILE_CLASS,
-                     NullRemoteFile.class.getName());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, NullRemoteFile.class.getName());
 
         file = new File(new File(BITARCHIVE_DIR, "filedir"),
                         STORABLE_FILES.get(0).toString());

@@ -35,12 +35,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This class handles file lookup and encapsulates the actual placement of
@@ -90,8 +91,9 @@ public class BitarchiveAdmin {
      */
     private BitarchiveAdmin() {
         String[] filedirnames =
-                Settings.getAll(Settings.BITARCHIVE_SERVER_FILEDIR);
-        minSpaceLeft = Settings.getLong(Settings.BITARCHIVE_MIN_SPACE_LEFT);
+                Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR);
+        minSpaceLeft = Settings.getLong(
+                ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT);
         // Check, if value of minSpaceLeft is greater than zero
         if (minSpaceLeft <= 0L) {
             log.warn(

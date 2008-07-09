@@ -27,32 +27,36 @@ package dk.netarkivet.common.utils;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 public class SettingsFactoryTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public SettingsFactoryTester(String s) {
         super(s);
     }
 
     public void setUp() {
+        rs.setUp();
     }
 
     public void tearDown() {
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testGetInstance() throws Exception {
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT, Test1.class.getName());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test1.class.getName());
         TestClass newClass
-                = SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT);
+                = SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
         assertNotNull("Should be able to create trivial class", newClass);
         assertTrue("Class should have been made with getInstance",
                 newClass.fromGetInstance);
 
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
         Test2 newClass2
-                = SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT,
+                = SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT,
                 "FooBar", 23L);
         assertNotNull("Should be able to create trivial class", newClass2);
         assertTrue("Object should have been made with getInstance",
@@ -62,9 +66,9 @@ public class SettingsFactoryTester extends TestCase {
         assertEquals("Object should get long arg",
                 23, newClass2.arg2);
 
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
         Test2 newClass3
-                = SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT,
+                = SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT,
                 "Barfu");
         assertNotNull("Should be able to create trivial class", newClass3);
         assertFalse("Class should not have been made with getInstance",
@@ -74,9 +78,9 @@ public class SettingsFactoryTester extends TestCase {
         assertEquals("Object should get have default long value",
                 42, newClass3.arg2);
 
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT, Test2.class.getName());
         Test2 newClass4
-                = SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT,
+                = SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT,
                 43L);
         assertNotNull("Should be able to create trivial class", newClass4);
         assertFalse("Class should not have been made with getInstance",

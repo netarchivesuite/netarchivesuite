@@ -29,9 +29,11 @@ import java.sql.SQLException;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -53,11 +55,9 @@ public class TemplateDAOTesterAlternate extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        String[] values1 = new String[]{
-                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"};
-        Settings.set(Settings.DB_URL, values1);
-        String[] values = new String[]{RememberNotifications.class.getName()};
-        Settings.set(Settings.NOTIFICATIONS_CLASS, values);
+        Settings.set(CommonSettings.DB_URL,
+                     "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         TestUtils.resetDAOs();
 
         Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE, TestInfo.TEMPDIR);
@@ -65,7 +65,7 @@ public class TemplateDAOTesterAlternate extends TestCase {
             fail("No connection to Database: " + TestInfo.EMPTYDBFILE.getAbsolutePath());
         }
 
-        assertEquals("DBUrl wrong", Settings.get(Settings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         TemplateDAO.getInstance();
     }
 
@@ -97,6 +97,6 @@ public class TemplateDAOTesterAlternate extends TestCase {
         }
         // verify that templates table is indeed derived of default template
         assertFalse("Should not contain default template", dao.exists(
-                Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)));
+                Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML)));
     }
 }

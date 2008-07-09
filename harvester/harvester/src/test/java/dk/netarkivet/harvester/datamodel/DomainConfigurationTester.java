@@ -29,9 +29,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -41,21 +43,25 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 
 public class DomainConfigurationTester extends DataModelTestCase {
+    ReloadSettings rs = new ReloadSettings();
+
+
     public DomainConfigurationTester(String sTestName) {
         super(sTestName);
     }
 
     public void setUp() throws Exception {
         super.setUp();
-        Settings.set(Settings.ERRORFACTOR_PERMITTED_BESTGUESS, "2");
-        Settings.set(Settings.ERRORFACTOR_PERMITTED_PREVRESULT, "10");
-        Settings.set(Settings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
-        Settings.set(Settings.JOBS_MAX_TOTAL_JOBSIZE, "1000000");
+        rs.setUp();
+        Settings.set(HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS, "2");
+        Settings.set(HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT, "10");
+        Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");
+        Settings.set(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE, "1000000");
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testConstructorAndSomeGetters() {

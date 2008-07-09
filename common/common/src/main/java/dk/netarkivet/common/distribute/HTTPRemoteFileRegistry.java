@@ -42,12 +42,12 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.handler.AbstractHandler;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -91,7 +91,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
      * @throws IOFailure if it cannot initalise.
      */
     protected HTTPRemoteFileRegistry() {
-        port = Settings.getInt(Settings.HTTPREMOTEFILE_PORT_NUMBER);
+        port = Settings.getInt(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER);
         localHostName = SystemUtils.getLocalHostName();
         registeredFiles = Collections.synchronizedMap(
                 new HashMap<URL, FileInfo>());

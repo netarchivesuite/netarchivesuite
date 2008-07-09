@@ -33,6 +33,7 @@ import java.util.Map;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
@@ -284,7 +285,7 @@ public class SelectiveHarvest {
                         dc.add(d.getDefaultConfiguration());
                     }
                 } else {
-                    if (Domain.isValidDomainName(domain)) {
+                    if (DomainUtils.isValidDomainName(domain)) {
                         unknownDomains.add(domain);
                     } else {
                         illegalDomains.add(domain);
@@ -310,7 +311,7 @@ public class SelectiveHarvest {
         List<DomainConfiguration> configurations
                 = new ArrayList<DomainConfiguration>();
         for (String domainName : domainsS) {
-            if (Domain.isValidDomainName(domainName)) {
+            if (DomainUtils.isValidDomainName(domainName)) {
                 Domain domain = Domain.getDefaultDomain(domainName);
                 DomainDAO.getInstance().create(domain);
                 configurations.add(domain.getDefaultConfiguration());

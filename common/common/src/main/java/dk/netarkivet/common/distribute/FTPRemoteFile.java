@@ -38,11 +38,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -51,6 +51,16 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Transfers are done using binary type and passive mode, if available.
  */
 final public class FTPRemoteFile extends AbstractRemoteFile {
+    /** The default place in classpath where the settings file can be found. */
+    private static final String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
+
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+
     /**
      * A named logger for this class.
      */
@@ -62,20 +72,16 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
      * Notice that these settings get transferred to the receiver, which is
      * necessary to allow the receiver to get data from different servers.
      */
-    private String ftpServerName = Settings.get(Settings.FTP_SERVER_NAME);
+    private String ftpServerName = Settings.get(FTP_SERVER_NAME);
 
-    private final int ftpServerPort = Settings.getInt(Settings.FTP_SERVER_PORT);
+    private final int ftpServerPort = Settings.getInt(
+            FTP_SERVER_PORT);
 
-    private final String ftpUserName = Settings.get(Settings.FTP_USER_NAME);
+    private final String ftpUserName = Settings.get(
+            FTP_USER_NAME);
 
-    private final String ftpUserPassword = Settings
-            .get(Settings.FTP_USER_PASSWORD);
-
-    /**
-     * How many times we will retry upload and download.
-     */
-    private static final transient int FTP_COPYTO_RETRIES
-            = Settings.getInt(Settings.FTP_COPYTO_RETRIES);
+    private final String ftpUserPassword = Settings.get(
+            FTP_USER_PASSWORD);
 
     /**
      * The FTP client object for the current connection.
@@ -87,8 +93,32 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
      * internal use.
      */
     private final String ftpFileName;
+
     /** If useChecksums is true, contains the file checksum. */
     protected final String checksum;
+    /** The default FTP-server used. */
+    public static String FTP_SERVER_NAME
+            = "settings.common.remoteFile.serverName";
+    /** The default FTP-server port used. */
+    public static String FTP_SERVER_PORT
+            = "settings.common.remoteFile.serverPort";
+    /** The default FTP username. */
+    public static String FTP_USER_NAME
+            = "settings.common.remoteFile.userName";
+    /** The default FTP password. * */
+    public static String FTP_USER_PASSWORD
+            = "settings.common.remoteFile.userPassword";
+    /**
+     * The number of times FTPRemoteFile should try before giving up a copyTo
+     * operation.
+     */
+    public static final String FTP_COPYTO_RETRIES_SETTINGS
+            = "settings.common.remoteFile.retries";
+    /**
+     * How many times we will retry upload and download.
+     */
+    private static final transient int FTP_COPYTO_RETRIES
+            = Settings.getInt(FTP_COPYTO_RETRIES_SETTINGS);
 
     /**
      * Private constructor used by getInstance() static-method Tries to generate

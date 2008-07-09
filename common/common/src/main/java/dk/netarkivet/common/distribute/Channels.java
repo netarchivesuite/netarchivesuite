@@ -25,8 +25,9 @@ package dk.netarkivet.common.distribute;
 
 import java.util.Arrays;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This singleton class is in charge of giving out the correct channels.
@@ -57,15 +58,15 @@ public class Channels {
      * applications that need to communicate with e.g. all bit archives. An
      * example value is {"KB","SB"}.
      */
-    private final String[] allLocations = Settings
-            .getAll(Settings.ENVIRONMENT_LOCATION_NAMES);
+    private final String[] allLocations = Settings.getAll(
+            CommonSettings.ENVIRONMENT_LOCATION_NAMES);
 
     /**
      * thisLocation is the local location, used for applications
      * that only communicate with local processes. An example value is "KB".
      */
-    private final String thisLocation = Settings
-            .get(Settings.ENVIRONMENT_THIS_LOCATION);
+    private final String thisLocation = Settings.get(
+            CommonSettings.ENVIRONMENT_THIS_LOCATION);
 
     /** The index of this location in the allLocations list. */
     private final int indexOfThisLocation = Arrays.asList(allLocations)
@@ -282,7 +283,7 @@ public class Channels {
         ChannelID[] bamons = getAllArchives_BAMONs();
         for (ChannelID bamon : bamons) {
             if (bamon.getName().equals(
-                    Settings.get(Settings.ENVIRONMENT_NAME)
+                    Settings.get(CommonSettings.ENVIRONMENT_NAME)
                     + "_" + location + "_THE_BAMON")) {
                 return bamon;
             }

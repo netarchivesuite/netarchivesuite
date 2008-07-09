@@ -31,12 +31,13 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -45,25 +46,26 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
  */
 public class ApplicationUtilsTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().reset();
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         pse.setUp();
     }
 
     public void tearDown() throws Exception {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         pse.tearDown();
-        Settings.reload();
         RememberNotifications.resetSingleton();
+        rs.tearDown();
         super.tearDown();
     }
 
@@ -110,9 +112,9 @@ public class ApplicationUtilsTester extends TestCase {
 
         
         // Check first, that the JMX-RMI ports are available.
-        int jmxPort = Settings.getInt(Settings.JMX_PORT);
+        int jmxPort = Settings.getInt(CommonSettings.JMX_PORT);
         checkPortAvailable(jmxPort);
-        int rmiPort = Settings.getInt(Settings.JMX_RMI_PORT);
+        int rmiPort = Settings.getInt(CommonSettings.JMX_RMI_PORT);
         checkPortAvailable(rmiPort);
  
         
@@ -152,7 +154,7 @@ public class ApplicationUtilsTester extends TestCase {
 
         // Check that successfull start logs and makes tmpdir
         File tempdir = new File(TestInfo.TEMPDIR, "new_temp_dir");
-        Settings.set(Settings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
         assertFalse("Should not have tempdir before start", tempdir.exists());
         FileAsserts.assertFileNotContains(
                 "Should not have shutdown hook mentioned in log",
@@ -160,7 +162,7 @@ public class ApplicationUtilsTester extends TestCase {
         ApplicationUtils.startApp(App3.class, new String[0]);
         assertEquals("Should have correct appName",
                      "dk.netarkivet.common.utils.App3",
-                     Settings.get(Settings.APPLICATIONNAME));
+                     Settings.get(CommonSettings.APPLICATIONNAME));
         LogUtils.flushLogs(ApplicationUtils.class.getName());
         FileAsserts.assertFileContains(
                 "Should have shutdown hook mentioned in log",

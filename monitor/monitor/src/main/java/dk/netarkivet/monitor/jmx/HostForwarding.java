@@ -43,7 +43,8 @@ import dk.netarkivet.common.distribute.monitorregistry.HostEntry;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.monitor.Settings;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.monitor.registry.MonitorRegistry;
 
 /**
@@ -55,7 +56,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistry;
 public class HostForwarding<T> {
     
     /** The log. */
-    public final static Log log = LogFactory.getLog(
+    public static final Log log = LogFactory.getLog(
             HostForwarding.class);
     
     /** List of all known and established JMX connections for this object. */
@@ -94,15 +95,11 @@ public class HostForwarding<T> {
      */
     private static Map<String, HostForwarding> instances
             = new HashMap<String, HostForwarding>();
-    
-    /** List of registeredMbeans for this object. */
-    private List<SingleMBeanObject> registeredMbeans =
-        new ArrayList<SingleMBeanObject>();
-    
+
     /**
      * The factory used for producing connections to remote mbean servers.
      */
-    private JMXProxyConnectionFactory connectionFactory;
+    private final JMXProxyConnectionFactory connectionFactory;
 
     /**
      * Initialise forwarding MBeans. This will connect to all hosts mentioned in
@@ -162,15 +159,18 @@ public class HostForwarding<T> {
      */
     private synchronized void updateJmx() {
         // update variable jmxPassword
-        jmxPassword = Settings.get(Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING);
-        log.trace("Setting '" + Settings.JMX_MONITOR_ROLE_PASSWORD_SETTING
+        jmxPassword = Settings.get(
+                MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING);
+        log.trace("Setting '" + MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING
                   + "' has been updated");
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
         for (Map.Entry<String, Set<HostEntry>> entries
                 : getCurrentHostEntries().entrySet()) {
             String host = entries.getKey();
-            Set<HostEntry> hostEntries = entries.getValue();
+            //Take a copy of the host entries, to avoid concurrent modifications
+            Set<HostEntry> hostEntries
+                    = new HashSet<HostEntry>(entries.getValue());
             if (knownJmxConnections.containsKey(host)) {
                 Set<HostEntry> registeredJmxPortsOnHost
                         = knownJmxConnections.get(host);
@@ -254,9 +254,6 @@ public class HostForwarding<T> {
                     names.put("hostname", hostEntry.getName());
                     handler.setSingleMBeanObject(singleMBeanObject);
                     singleMBeanObject.register();
-                    // Adding the just registered singleMBeanObject to a global
-                    // list, so we can unregister this.
-                    registeredMbeans.add(singleMBeanObject);
                 } catch (Exception e1) {
                     log.warn("Failure registering error mbean for hostentry: "
                              + hostEntry, e1);
@@ -274,7 +271,7 @@ public class HostForwarding<T> {
      * @param hostEntry The host to connect to.
      * @throws IOFailure if remote host cannot be connected to.
      */
-    private void createProxyMBeansForHost(
+    private synchronized void createProxyMBeansForHost(
             HostEntry hostEntry) {
         Set<ObjectName> remoteObjectNames;
         JMXProxyConnection connection = connectionFactory.getConnection(
@@ -301,9 +298,6 @@ public class HostForwarding<T> {
                         = new SingleMBeanObject<T>(name, mbean, asInterface,
                                                    mBeanServer);
                 singleMBeanObject.register();
-                // Adding the just registered singleMBeanObject to a global list, 
-                // so we can unregister this.
-                registeredMbeans.add(singleMBeanObject);
               } catch (Exception e) {
                 log.warn("Error registering mbean", e);
             }

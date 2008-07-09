@@ -31,7 +31,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -45,6 +44,7 @@ import dk.netarkivet.testutils.preconfigured.MockupMultiFileBasedCache;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class IndexRequestServerTester extends TestCase {
@@ -62,9 +62,10 @@ public class IndexRequestServerTester extends TestCase {
                                                   TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     private MockupMultiFileBasedCache mmfbc = new MockupMultiFileBasedCache();
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
-        Settings.reload();
+        rs.setUp();
         ulrf.setUp();
         mjms.setUp();
         mtf.setUp();
@@ -83,6 +84,7 @@ public class IndexRequestServerTester extends TestCase {
         mtf.tearDown();
         mjms.tearDown();
         ulrf.tearDown();
+        rs.tearDown();
     }
 
     /**

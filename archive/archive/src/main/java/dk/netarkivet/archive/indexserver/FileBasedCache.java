@@ -34,11 +34,12 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * A generic cache that stores items in files.  This abstract superclass
@@ -60,7 +61,7 @@ public abstract class FileBasedCache<I> {
      */
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
-        this.cacheDir = new File(new File(Settings.get(Settings.CACHE_DIR)),
+        this.cacheDir = new File(new File(Settings.get(CommonSettings.CACHE_DIR)),
                                  cacheName).getAbsoluteFile();
         log.info("Metadata cache for '" + cacheName + "' uses directory '"
                  + getCacheDir().getAbsolutePath() + "'");

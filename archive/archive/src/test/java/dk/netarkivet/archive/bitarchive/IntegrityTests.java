@@ -29,13 +29,16 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * lc forgot to comment this!
@@ -66,6 +69,7 @@ public class IntegrityTests extends TestCase {
             Arrays.asList(new String[] { "Upload1.ARC",
                                          "Upload2.ARC",
                                          "Upload3.ARC" });
+    ReloadSettings rs = new ReloadSettings();
 
 
     /** Construct a new tester object. */
@@ -77,9 +81,10 @@ public class IntegrityTests extends TestCase {
      *
      */
     public void setUp() {
+        rs.setUp();
         FileUtils.removeRecursively(ARCHIVE_DIR);
-        Settings.set(Settings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
         archive = Bitarchive.getInstance();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         server = BitarchiveServer.getInstance();
@@ -91,17 +96,15 @@ public class IntegrityTests extends TestCase {
     public void tearDown() {
         archive.close();
         FileUtils.removeRecursively(ARCHIVE_DIR);
-        Settings.reload();
         if (server != null) {
             server.close();
         }
-        Settings.reload();
+        rs.tearDown();
         //FileUtils.removeRecursively(new File(ARCHIVE_DIR));
     }
 
     private void setupBitarchiveWithDirs(final String[] dirpaths) {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                dirpaths);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirpaths);
         // Don't like the archive made in setup, try again:)
         archive.close();
         archive = Bitarchive.getInstance();
@@ -139,8 +142,7 @@ public class IntegrityTests extends TestCase {
         long freeSpace = FileUtils.getBytesFree(ARCHIVE_DIR);
         final File localFile2 = new File(ORIGINALS_DIR,
                 (String)UPLOADED_FILES.get(2));
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
-                "" + (freeSpace - localFile2.length() - 1));
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (freeSpace - localFile2.length() - 1));
         final File dir1 = new File(ARCHIVE_DIR, "dir1");
         setupBitarchiveWithDirs(new String[] {
             dir1.getAbsolutePath(),

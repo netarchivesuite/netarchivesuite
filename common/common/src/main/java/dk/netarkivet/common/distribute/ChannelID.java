@@ -25,9 +25,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -41,7 +42,7 @@ public class ChannelID implements Serializable {
      * An example value is "PROD".
      */
     private final String environmentName =
-        Settings.get(Settings.ENVIRONMENT_NAME);
+            Settings.get(CommonSettings.ENVIRONMENT_NAME);
     /**
      * httpPortNumber is the IP port that is reserved for this application's
      * HTTP communication (if applicable).
@@ -49,7 +50,7 @@ public class ChannelID implements Serializable {
      * An example value is "8080".
      */
     private static final String httpPortNumber =
-        Settings.get(Settings.HTTP_PORT_NUMBER);
+            Settings.get(CommonSettings.HTTP_PORT_NUMBER);
     /**
      * Constants to make the semantics of parameters to our name constructors
      * more explicit.

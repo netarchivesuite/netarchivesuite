@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.Constants;
 
@@ -97,7 +98,7 @@ public class IngestDomainList {
                         }
                     }
                     
-                    if (Domain.isValidDomainName(domainName)) {
+                    if (DomainUtils.isValidDomainName(domainName)) {
                         if (!dao.exists(domainName)) {
                             myDomain = Domain.getDefaultDomain(domainName);
                             dao.create(myDomain);

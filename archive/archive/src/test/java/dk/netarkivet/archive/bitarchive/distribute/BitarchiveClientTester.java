@@ -32,8 +32,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -43,11 +44,13 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
@@ -90,6 +93,7 @@ public class BitarchiveClientTester extends TestCase {
      */
     private static final int NUM_RECORDS = 13;
     private JMSConnectionTestMQ con;
+    ReloadSettings rs = new ReloadSettings();
 
 
     public BitarchiveClientTester(String sTestName) {
@@ -97,6 +101,7 @@ public class BitarchiveClientTester extends TestCase {
     }
 
     public void setUp() {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
 
         rf.setUp();
@@ -108,10 +113,8 @@ public class BitarchiveClientTester extends TestCase {
         con.setListener(Channels.getTheArcrepos(), handler);
         bac = BitarchiveClient.getInstance(ALL_BA, ANY_BA, THE_BAMON);
 
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     BITARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     SERVER_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         bam = BitarchiveMonitorServer.getInstance();
     }
@@ -130,7 +133,7 @@ public class BitarchiveClientTester extends TestCase {
         //JMSConnection.getInstance().removeListener(Channels.getTheArcrepos(), handler);
         FileUtils.removeRecursively(WORKING_DIR);
         rf.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**
@@ -139,10 +142,8 @@ public class BitarchiveClientTester extends TestCase {
      */
     public void testBug34() {
         File serverdir = new File(SERVER_DIR, "/sub1/sub2/");
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     BITARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                     serverdir.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, serverdir.getAbsolutePath());
         BitarchiveServer.getInstance().close();
         BitarchiveServer bas1 = BitarchiveServer.getInstance();
         assertTrue("The serverdir should exist now", serverdir.exists());
@@ -243,7 +244,7 @@ public class BitarchiveClientTester extends TestCase {
      * message received by onUpload message handler
      */
     public void testUploadTwice() {
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
 
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
@@ -328,7 +329,7 @@ public class BitarchiveClientTester extends TestCase {
                                              Channels.getTheArcrepos(),
                                              new TestBatchJobRuns(),
                                              Settings.get(
-                                                     Settings.ENVIRONMENT_THIS_LOCATION));
+                                                     CommonSettings.ENVIRONMENT_THIS_LOCATION));
         bac.batch(bMsg);
         verifyBatchWentWell();
     }

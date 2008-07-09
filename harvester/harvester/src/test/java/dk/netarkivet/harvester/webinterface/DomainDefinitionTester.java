@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -238,7 +239,7 @@ public class DomainDefinitionTester extends WebinterfaceTestCase {
     public void testSetAlias() {
         DomainDAO ddao = DomainDAO.getInstance();
         String testAlias = "kb.dk";
-        if (Domain.isValidDomainName(testAlias) && !ddao.exists(testAlias)) {
+        if (DomainUtils.isValidDomainName(testAlias) && !ddao.exists(testAlias)) {
             Domain dd = Domain.getDefaultDomain(testAlias);
             ddao.create(dd);
         }

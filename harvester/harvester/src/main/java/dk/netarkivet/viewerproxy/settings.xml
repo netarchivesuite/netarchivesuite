@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <viewerproxy>
+        <!-- The main directory for the ViewerProxy, used for storing the Lucene
+             index for the jobs being viewed -->
+        <baseDir>viewerproxy</baseDir>
+    </viewerproxy>
+</settings>

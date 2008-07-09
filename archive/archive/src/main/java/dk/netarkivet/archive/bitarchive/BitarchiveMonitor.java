@@ -41,7 +41,7 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -49,6 +49,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 
@@ -106,9 +107,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      */
     public BitarchiveMonitor() {
         acceptableSignOfLifeDelay = Settings.getLong(
-                Settings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
+                ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
         batchTimeout = Settings.getLong(
-                Settings.BITARCHIVE_BATCH_JOB_TIMEOUT);
+                ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
         log.info("Bitarchive liveness times out after "
                  + acceptableSignOfLifeDelay + " milliseconds."
                  + "Batchjobs time out after " + batchTimeout
@@ -213,7 +214,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param errMsg             An error message, if the job was not successful
      *                           on the bitarchive, or null for none.
      * @param exceptions         A list of exceptions caught during
-     *                           batch processing.                          
+     *                           batch processing.
      * @throws ArgumentNotValid  If either ID is null.
      */
     public void bitarchiveReply(
@@ -315,7 +316,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * A File with a concatenation of results from replies received so far.
          */
         public final File batchResultFile;
-        /** 
+        /**
          * A list of the exceptions that occurred during processing.
          */
         public final List<FileBatchJob.ExceptionOccurrence> exceptions;
@@ -357,7 +358,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             //Null indicates no error
             this.errMsg = null;
             this.notifyInitiated = false;
-            
+
             exceptions = new ArrayList<FileBatchJob.ExceptionOccurrence>();
         }
 

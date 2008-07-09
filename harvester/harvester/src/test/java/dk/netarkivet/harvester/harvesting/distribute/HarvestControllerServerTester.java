@@ -37,8 +37,9 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -50,9 +51,11 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -67,6 +70,7 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MockupArcRepositoryClient;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -93,6 +97,8 @@ public class HarvestControllerServerTester extends TestCase {
 
     File jobTempDir;
 
+    ReloadSettings rs = new ReloadSettings();
+
     /**
      * Constants used by writeOtherFilesToArc().
      */
@@ -109,6 +115,7 @@ public class HarvestControllerServerTester extends TestCase {
     }
 
     public void setUp() throws Exception {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
@@ -124,12 +131,10 @@ public class HarvestControllerServerTester extends TestCase {
         fis.close();
         ChannelsTester.resetChannels();
         utrf.setUp();
-        Settings.set(Settings.ARCREPOSITORY_STORE_RETRIES, "1");
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
-        Settings.set(Settings.HARVEST_CONTROLLER_OLDJOBSDIR,
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR,
                      TestInfo.WORKING_DIR.getAbsolutePath() + "/oldjobs");
     }
 
@@ -151,14 +156,14 @@ public class HarvestControllerServerTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         FileUtils.removeRecursively(TestInfo.CRAWL_DIR_COPY);
 
-        FileUtils.removeRecursively(new File(Settings
-                .get(Settings.HARVEST_CONTROLLER_OLDJOBSDIR)));
-        FileUtils.removeRecursively(new File(Settings
-                .get(Settings.HARVEST_CONTROLLER_SERVERDIR)));
+        FileUtils.removeRecursively(new File(Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
+        FileUtils.removeRecursively(new File(Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR)));
         ChannelsTester.resetChannels();
         utrf.tearDown();
-        Settings.reload();
         RememberNotifications.resetSingleton();
+        rs.tearDown();
     }
 
     /**
@@ -173,7 +178,7 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws IOException
      */
     public void testServerStarting() throws IOException {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         LogUtils.flushLogs(HarvestControllerServer.class.getName());
@@ -185,14 +190,15 @@ public class HarvestControllerServerTester extends TestCase {
      * will not be added
      */
     public void testFailingArcRepositoryClient() {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, "/fnord");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, "/fnord");
         try {
             hcs = HarvestControllerServer.getInstance();
             fail("HarvestControllerServer should have thrown an exception");
         } catch (PermissionDenied e) {
             //expected
         }
-        String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
         if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
@@ -216,7 +222,7 @@ public class HarvestControllerServerTester extends TestCase {
      */
     public void testCreateServerDir() {
         File server_dir = new File(TestInfo.SERVER_DIR + "/server/server");
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, server_dir
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, server_dir
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         assertTrue("Server Directory not created " + server_dir, server_dir
@@ -232,7 +238,7 @@ public class HarvestControllerServerTester extends TestCase {
      */
     public synchronized void testMessagesSentByFailedJob()
             throws InterruptedException {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         hcc = HarvestControllerClient.getInstance();
@@ -287,7 +293,7 @@ public class HarvestControllerServerTester extends TestCase {
      * @throws IOException
      */
     public void testClose() throws IOException {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         hcs.close();
@@ -310,7 +316,8 @@ public class HarvestControllerServerTester extends TestCase {
         theJob = TestInfo.getJob();
         theJob.setStatus(JobStatus.DONE);
         theJob.setJobID(new Long(42L));
-        String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
         if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
@@ -339,7 +346,7 @@ public class HarvestControllerServerTester extends TestCase {
     }
 
     public void harvestInfoSetup() {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.SERVER_DIR
                 .getAbsolutePath());
         hcs = HarvestControllerServer.getInstance();
         // TODO check that new clean Haco does not send any CrawlStatusMessages
@@ -374,7 +381,7 @@ public class HarvestControllerServerTester extends TestCase {
         //System.out.println("StoreFailFile: " + storeFailFile);
         final JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR, crawlDir.getParentFile()
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, crawlDir.getParentFile()
                 .getAbsolutePath());
         MockupArcRepositoryClient marc = new MockupArcRepositoryClient();
         marc.setUp();
@@ -404,7 +411,7 @@ public class HarvestControllerServerTester extends TestCase {
         //The HCS should move found crawlDir to oldjobsdir
         assertFalse("Crawl directory should have been moved", crawlDir.exists());
         File expected_new_crawl_dir =
-            new File(Settings.get(Settings.HARVEST_CONTROLLER_OLDJOBSDIR),
+            new File(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR),
                     crawlDir.getName());
         File expected_new_arcs_dir = new File(expected_new_crawl_dir, "arcs");
         assertTrue("Should find crawl directory moved to "
@@ -455,7 +462,8 @@ public class HarvestControllerServerTester extends TestCase {
                 crawlStatusMessage.getHarvestErrorDetails());
         assertFalse(crawlStatusMessage.isOk());
 
-        String oldjobsdir = Settings.get(Settings.HARVEST_CONTROLLER_OLDJOBSDIR);
+        String oldjobsdir = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR);
         FileUtils.removeRecursively(new File(
                 oldjobsdir));
 

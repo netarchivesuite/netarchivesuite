@@ -32,7 +32,6 @@ import java.sql.SQLException;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -40,6 +39,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -52,6 +52,7 @@ public class DoOneCrawlMessageTester extends TestCase {
      We use (arbitrarily) THIS_HACO as channel for testing.
      */
     private static final ChannelID CHAN1 = Channels.getThisHaco();
+    ReloadSettings rs = new ReloadSettings();
 
     public DoOneCrawlMessageTester(String sTestName) {
         super(sTestName);
@@ -62,6 +63,7 @@ public class DoOneCrawlMessageTester extends TestCase {
      */
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
+        rs.setUp();
         if (!TestInfo.WORKING_DIR.exists()) {
             TestInfo.WORKING_DIR.mkdir();
         }
@@ -76,8 +78,8 @@ public class DoOneCrawlMessageTester extends TestCase {
     public void tearDown()
             throws SQLException, IllegalAccessException, NoSuchFieldException {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        Settings.reload();
         ChannelsTester.resetChannels();
+        rs.tearDown();
     }
 
     /** Test one of constructor. */

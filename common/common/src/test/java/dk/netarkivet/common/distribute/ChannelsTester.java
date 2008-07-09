@@ -24,16 +24,20 @@ package dk.netarkivet.common.distribute;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unittests of the class dk.netarkivet.common.distribute.Channels.
  */
 public class ChannelsTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
 
     public ChannelsTester(String s) {
         super(s);
@@ -44,11 +48,12 @@ public class ChannelsTester extends TestCase {
     }
 
     public void setUp() {
+        rs.setUp();
     }
 
     public void tearDown() {
-        Settings.reload();
         resetChannels();
+        rs.tearDown();
     }
 
     /** This test checks that changing settings and resetting
@@ -56,11 +61,11 @@ public class ChannelsTester extends TestCase {
      * @throws Exception
      */
     public void testReset() throws Exception {
-        String env = Settings.get(Settings.ENVIRONMENT_NAME);
+        String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB", "KB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "KB");
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB", "KB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "KB");
         assertEquals("Channel name must not change just because setting does",
                 env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
         resetChannels();
@@ -73,11 +78,12 @@ public class ChannelsTester extends TestCase {
      * @throws Exception
      */
     public void testBadLocation() throws Exception {
-        String env = Settings.get(Settings.ENVIRONMENT_NAME);
+        String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
-                env + "_" + Settings.get(Settings.ENVIRONMENT_THIS_LOCATION)
+                env + "_" + Settings.get(
+                        CommonSettings.ENVIRONMENT_THIS_LOCATION)
                 + "_THE_BAMON", Channels.getTheBamon().getName());
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "NOWHERE");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "NOWHERE");
         try {
             resetChannels();
             Channels.getTheBamon();
@@ -93,12 +99,14 @@ public class ChannelsTester extends TestCase {
      * priority from settings.
      */
     public void testGetAnyHaco() {
-        String env = Settings.get(Settings.ENVIRONMENT_NAME);
+        String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
 
         // Test setting low priority in settings
-        Settings.set(Settings.HARVEST_CONTROLLER_PRIORITY, "LOWPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
+                     "LOWPRIORITY");
         Channels.reset();
-        String priority2 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority2 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result5;
         if (priority2.equals(JobPriority.LOWPRIORITY.toString())) {
             result5 = Channels.getAnyLowpriorityHaco();
@@ -132,9 +140,11 @@ public class ChannelsTester extends TestCase {
                      anyHaco1.getName());
 
         // Test setting high priority in settings
-        Settings.set(Settings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
+                     "HIGHPRIORITY");
         Channels.reset();
-        String priority1 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority1 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result3;
         if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
             result3 = Channels.getAnyLowpriorityHaco();
@@ -203,11 +213,12 @@ public class ChannelsTester extends TestCase {
         }
 
         // Test illegal argument in settings
-        Settings.set(Settings.HARVEST_CONTROLLER_PRIORITY, "ILLEGALPRIORITY");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
+                     "ILLEGALPRIORITY");
         Channels.reset();
         try {
             String priority
-                = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+                = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
             ChannelID result;
             if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
                 result = Channels.getAnyLowpriorityHaco();
@@ -241,7 +252,7 @@ public class ChannelsTester extends TestCase {
             //expected
         }
 
-        Settings.set(Settings.ENVIRONMENT_NAME, "A_B");
+        Settings.set(CommonSettings.ENVIRONMENT_NAME, "A_B");
         Channels.reset();
         ChannelID ch = Channels.getBaMonForLocation("SB");
         StringAsserts.assertStringContains(

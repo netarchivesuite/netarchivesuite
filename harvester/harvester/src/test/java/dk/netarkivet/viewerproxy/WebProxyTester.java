@@ -49,8 +49,9 @@ import org.mortbay.jetty.HttpConnection;
 import org.mortbay.jetty.HttpURI;
 import org.mortbay.jetty.LocalConnector;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -71,7 +72,7 @@ public class WebProxyTester extends TestCase {
 
     public void setUp() throws IOException {
         //Check port not in use (since this will fail all tests)
-        httpPort = Settings.getInt(Settings.HTTP_PORT_NUMBER);
+        httpPort = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");

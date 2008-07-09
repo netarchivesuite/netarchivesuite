@@ -40,7 +40,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
@@ -53,7 +53,7 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -63,6 +63,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 public class FileUtilsTester extends TestCase{
     private UseTestRemoteFile rf = new UseTestRemoteFile();
+    ReloadSettings rs = new ReloadSettings();
 
     private final static File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
     private final static File ORIGINALS = new File(BASE_DIR, "fileutils_data");
@@ -71,6 +72,7 @@ public class FileUtilsTester extends TestCase{
     private final static File SUBDIR = new File(WORKING, "subdir");
 
     public void setUp() {
+        rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         rf.setUp();
@@ -79,6 +81,7 @@ public class FileUtilsTester extends TestCase{
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
         rf.tearDown();
+        rs.tearDown();
     }
 
     /**
@@ -107,7 +110,7 @@ public class FileUtilsTester extends TestCase{
      * @throws IOException
      */
     public void testAppendRemoteFiles() throws IOException {
-        Settings.set(Settings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
         File in_1 = new File(WORKING, "append_data/file1");
         File in_2 = new File(WORKING, "append_data/file2");
         File out_file = new File(WORKING, "append_data/output");
@@ -129,7 +132,6 @@ public class FileUtilsTester extends TestCase{
                 out_file, 2);
         FileAsserts.assertFileContains("Missing content", "1", out_file);
         FileAsserts.assertFileContains("Missing content", "2", out_file);
-        Settings.reload();
     }
 
     /** Check that we can at least get some information out of getBytesFree

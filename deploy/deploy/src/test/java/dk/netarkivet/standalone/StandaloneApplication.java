@@ -29,11 +29,13 @@ import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.archive.indexserver.IndexServer;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 import dk.netarkivet.viewerproxy.ViewerProxy;
 
@@ -57,12 +59,13 @@ public class StandaloneApplication {
      * @param args an empty array
      */
     public static void main(String[] args) {
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES,
-                     Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
-        Settings.set(Settings.ENVIRONMENT_BATCH_LOCATION, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
+        Settings.set(CommonSettings.ENVIRONMENT_BATCH_LOCATION, Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
 
         ApplicationUtils.startApp(BitarchiveMonitorServer.class, args);
@@ -71,19 +74,21 @@ public class StandaloneApplication {
         ApplicationUtils.startApp(ArcRepository.class, args);
         ApplicationUtils.startApp(IndexServer.class, args);
 
-        Settings.set(Settings.HTTP_PORT_NUMBER,"8081");
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8081");
 
         try {
             File file = new
-                    File(Settings.get(Settings.HARVEST_CONTROLLER_ISRUNNING_FILE));
+                    File(Settings.get(
+                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE));
             file.createNewFile();
             file.deleteOnExit();
         } catch (IOException e) {
             throw new IOFailure("Couldn't create temporary file " +
-                                Settings.get(Settings.HARVEST_CONTROLLER_ISRUNNING_FILE), e);
+                                Settings.get(
+                                        HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE), e);
         }
 
-        Settings.set(Settings.HTTP_PORT_NUMBER,"8081");
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8081");
         ApplicationUtils.startApp(ViewerProxy.class, args);
 
         // HarvesterControllerServer started as the last app

@@ -33,10 +33,13 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * Utilities for wirking with strings.
+ * Utilities for working with strings.
  */
 public class StringUtils {
     public static final Log log = LogFactory.getLog(StringUtils.class);
+
+    /** Utillity class, do not initialise. */
+    private StringUtils() {}
 
     /**
      * Replace all occurrences of oldString with newString in a string.

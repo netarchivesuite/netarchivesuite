@@ -36,9 +36,10 @@ import java.util.logging.Logger;
 import junit.framework.TestCase;
 import org.apache.commons.net.ftp.FTPClient;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.FTPRemoteFile;
@@ -51,9 +52,11 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestMessageListener;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 /**
@@ -94,6 +97,7 @@ public class IntegrityTests extends TestCase {
     BitarchiveClient bac;
     BitarchiveServer bas;
     BitarchiveMonitorServer bam;
+    ReloadSettings rs = new ReloadSettings();
 
     /**
      * @param sTestName
@@ -106,10 +110,10 @@ public class IntegrityTests extends TestCase {
      * @see junit.framework.TestCase#setUp()
      */
     public void setUp() {
+        rs.setUp();
         //new UseTestRemoteFile().setUp();
 
-        Settings.set(Settings.BITARCHIVE_BATCH_JOB_TIMEOUT,
-                     String.valueOf(1000));
+        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String.valueOf(1000));
 
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
@@ -137,11 +141,13 @@ public class IntegrityTests extends TestCase {
         }
 
         /** Read ftp-related settings from settings.xml. */
-        final String ftpServerName = Settings.get(Settings.FTP_SERVER_NAME);
+        final String ftpServerName = Settings.get(
+                FTPRemoteFile.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
-                Settings.FTP_SERVER_PORT));
-        final String ftpUserName = Settings.get(Settings.FTP_USER_NAME);
-        final String ftpUserPassword = Settings.get(Settings.FTP_USER_PASSWORD);
+                FTPRemoteFile.FTP_SERVER_PORT));
+        final String ftpUserName = Settings.get(FTPRemoteFile.FTP_USER_NAME);
+        final String ftpUserPassword = Settings.get(
+                FTPRemoteFile.FTP_USER_PASSWORD);
 
         /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();
@@ -170,17 +176,14 @@ public class IntegrityTests extends TestCase {
 
         bac = BitarchiveClient.getInstance( ALL_BA, ANY_BA, THE_BAMON);
 
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         bam = BitarchiveMonitorServer.getInstance();
 
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
-        }
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+    }
 
     /**
      * After test is done, remove the "archive".
@@ -221,7 +224,7 @@ public class IntegrityTests extends TestCase {
         bac.close();
         bam.close();
         FileUtils.removeRecursively(WORKING_DIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
 
@@ -230,7 +233,7 @@ public class IntegrityTests extends TestCase {
      * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
      */
     public void testBatchEndedMessageAggregation() throws InterruptedException {
-         Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
+         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
          bas.close();
          JMSConnection con = JMSConnectionFactory.getInstance();
 
@@ -243,8 +246,9 @@ public class IntegrityTests extends TestCase {
         File output_file = new File(WORKING, "batch_output.txt");
 
         //Create a batch message
-        BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheArcrepos(),
-                new ChecksumJob(), Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+         BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheArcrepos(),
+                new ChecksumJob(),
+                Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
          JMSConnectionTestMQ.updateMsgID(bm, "testmsgid0");
 
 
@@ -351,8 +355,9 @@ public class IntegrityTests extends TestCase {
             bac.get(FILENAME_TO_GET, 0);
             bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                      true)); // only first upload will succeed
-            BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisHaco(), new TestBatchJobRuns(), Settings.get(
-                    Settings.ENVIRONMENT_THIS_LOCATION));
+            BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisHaco(), new TestBatchJobRuns(),
+                                                 Settings.get(
+                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
             bac.batch(bMsg);
             RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(FILENAME_TO_GET, "SB", "FFFF", "42");
             bac.removeAndGetFile(rMsg);

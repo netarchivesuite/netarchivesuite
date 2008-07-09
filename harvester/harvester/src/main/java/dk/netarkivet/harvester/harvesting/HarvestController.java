@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCWriter;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
 import dk.netarkivet.common.distribute.indexserver.Index;
@@ -45,8 +44,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
@@ -321,7 +322,7 @@ public class HarvestController {
                 } catch (Exception e) {
                     File oldJobsDir
                             = new File(Settings.get(
-                            Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
+                            HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
                     String errorMsg = "Error uploading arcfile '"
                                       + f.getAbsolutePath()
                                       + "' Will be moved to '"

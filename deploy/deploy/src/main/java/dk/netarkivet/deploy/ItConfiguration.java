@@ -37,7 +37,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -45,6 +46,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.viewerproxy.ViewerProxySettings;
 
 /**
  * Loads the IT configuration from an xml description and creates a list of host
@@ -347,9 +350,9 @@ public class ItConfiguration {
                     // TODO: Make bamons ports not be hardcoded
                     int locationPort = 8081;
                     for (String l : locations) {
-                        host.overrideSetting(Settings.ENVIRONMENT_THIS_LOCATION,
+                        host.overrideSetting(CommonSettings.ENVIRONMENT_THIS_LOCATION,
                                              l.toUpperCase());
-                        host.overrideSetting(Settings.HTTP_PORT_NUMBER,
+                        host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER,
                                              Integer.toString(locationPort));
                         host.getSettingsXml().save(
                                 new File(subDir, "settings_bamonitor_" + l + ".xml"));
@@ -364,14 +367,14 @@ public class ItConfiguration {
                     if (ports != null) {
                         for (String port : ports) {
                             // create settings files for each harvester to start
-                            host.overrideSetting(Settings.HTTP_PORT_NUMBER, port);
+                            host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    Settings.HARVEST_CONTROLLER_SERVERDIR,
+                                    HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                                     host.getInstallDir() + "/harvester_" + port);
                             host.overrideSetting(
-                                    Settings.HARVEST_CONTROLLER_ISRUNNING_FILE,
+                                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE,
                                     "./hcsRunning" + port + ".tmp");
-                            host.overrideSetting(Settings.HARVEST_CONTROLLER_PRIORITY,
+                            host.overrideSetting(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
                             "HIGHPRIORITY");
                             host.getSettingsXml().save(new File(
                                     subDir, "settings_harvester_" + port + ".xml"));
@@ -384,21 +387,21 @@ public class ItConfiguration {
                     if (ports != null) {
                         for (String port : ports) {
                             // create settings files for each harvester to start
-                            host.overrideSetting(Settings.HTTP_PORT_NUMBER, port);
+                            host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    Settings.HARVEST_CONTROLLER_SERVERDIR,
+                                    HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                                     host.getInstallDir() + "/harvester_" + port);
                             host.overrideSetting(
-                                    Settings.HARVEST_CONTROLLER_ISRUNNING_FILE,
+                                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE,
                                     "./hcsRunning" + port + ".tmp");
-                            host.overrideSetting(Settings.HARVEST_CONTROLLER_PRIORITY,
+                            host.overrideSetting(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
                             "LOWPRIORITY");
                             /*
                              * set indexRequestTimeout to a larger value for big
                              * jobs.
                              */
                             if (largeIndexTimeout != 0) {
-                                host.overrideSetting(Settings.INDEXREQUEST_TIMEOUT,
+                                host.overrideSetting(IndexRequestClient.INDEXREQUEST_TIMEOUT,
                                         Long.toString(largeIndexTimeout));
                             }
                             host.getSettingsXml().save(new File(
@@ -413,13 +416,13 @@ public class ItConfiguration {
                 if (host.isType(Host.Type.access)) {
                     List<String> ports = host.getProperties().get("port");
                     final String viewerproxyBasedirPrefix =
-                        host.getSettingsXml().getString(Settings.VIEWERPROXY_DIR);
+                        host.getSettingsXml().getString(ViewerProxySettings.VIEWERPROXY_DIR);
                     for (String port : ports) {
                         // create settings files for each viewerproxy to start
-                        host.overrideSetting(Settings.HTTP_PORT_NUMBER, port);
+                        host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
                         // append "_PORT" (e.g _8077) to original value of viewerproxy.baseDir
                         // This solves bug 828
-                        host.overrideSetting(Settings.VIEWERPROXY_DIR,
+                        host.overrideSetting(ViewerProxySettings.VIEWERPROXY_DIR,
                                 viewerproxyBasedirPrefix + "_" + port);
                         String vpSettings = "settings_viewerproxy_" + port
                                             + ".xml";
@@ -435,7 +438,7 @@ public class ItConfiguration {
                     if (app.getType().equals(Application.Type.indexserver)) {
                         // create settings for starting index server
                         // It doesn't use the HTTP port at all.
-                        host.overrideSetting(Settings.HTTP_PORT_NUMBER, "9999");
+                        host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, "9999");
                     }
                     String appSettings = "settings_" + app.getType() + ".xml";
                     host.getSettingsXml().save(

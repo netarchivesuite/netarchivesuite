@@ -26,7 +26,7 @@ package dk.netarkivet.common.utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 
 /**
  * Handles serious errors by sending email.
@@ -36,10 +36,10 @@ import dk.netarkivet.common.Settings;
 public class EMailNotifications extends Notifications {
     /** The email receiver of the errors. */
     private static final String MAIL_RECEIVER = Settings.get(
-            Settings.MAIL_RECEIVER);
+            CommonSettings.MAIL_RECEIVER);
     /** The email sender of the errors. */
     private static final String MAIL_SENDER = Settings.get(
-            Settings.MAIL_SENDER);
+            CommonSettings.MAIL_SENDER);
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
 

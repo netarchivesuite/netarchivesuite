@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.distribute.arcrepository;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
@@ -45,7 +45,7 @@ public class ArcRepositoryClientFactory
      * on this to release any resources claimed.
      */
     public static HarvesterArcRepositoryClient getHarvesterInstance() {
-        return SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT);
+        return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 
     /** Returns a new ArcRepositoryClient suitable for use by a viewer.
@@ -55,7 +55,7 @@ public class ArcRepositoryClientFactory
      * on this to release any resources claimed.
      */
     public static ViewerArcRepositoryClient getViewerInstance() {
-        return SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT);
+        return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 
     /** Returns a new ArcRepositoryClient suitable for use in bit preservation.
@@ -65,6 +65,6 @@ public class ArcRepositoryClientFactory
      * called on this to release any resources claimed.
      */
     public static PreservationArcRepositoryClient getPreservationInstance() {
-        return SettingsFactory.getInstance(Settings.ARC_REPOSITORY_CLIENT);
+        return SettingsFactory.getInstance(CommonSettings.ARC_REPOSITORY_CLIENT);
     }
 }

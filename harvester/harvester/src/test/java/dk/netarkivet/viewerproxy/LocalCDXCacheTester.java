@@ -41,7 +41,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
@@ -51,12 +50,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -72,16 +73,18 @@ public class LocalCDXCacheTester extends TestCase {
     private int batchCounter;
     UseTestRemoteFile utrf = new UseTestRemoteFile();
 
+    ReloadSettings rs = new ReloadSettings();
+
     public LocalCDXCacheTester(String s) {
         super(s);
     }
 
     public void setUp() {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(Settings.VIEWERPROXY_DIR, 
-                TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ViewerProxySettings.VIEWERPROXY_DIR, TestInfo.WORKING_DIR.getAbsolutePath());
         utrf.setUp();
         batchMustDie = false;
         batchPauseMilliseconds = 0;
@@ -96,7 +99,7 @@ public class LocalCDXCacheTester extends TestCase {
                 LocalCDXCache.class, "CACHE_DIR");
         FileUtils.removeRecursively((File) dirField.get(null));
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testGetIndexFile() throws Exception {

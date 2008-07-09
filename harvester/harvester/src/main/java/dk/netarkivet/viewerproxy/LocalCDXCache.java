@@ -36,8 +36,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.distribute.indexserver.Index;
@@ -47,6 +47,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.ProcessUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
@@ -77,7 +78,7 @@ public class LocalCDXCache implements JobIndexCache {
      * yet.
      */
     private static final File CACHE_DIR
-            = new File(new File(Settings.get(Settings.VIEWERPROXY_DIR)),
+            = new File(new File(Settings.get(ViewerProxySettings.VIEWERPROXY_DIR)),
             "viewerproxy/cdxcache");
     /** How long we sleep between each check for another process having
      * finished creating an index file.
@@ -182,7 +183,8 @@ public class LocalCDXCache implements JobIndexCache {
         ARCBatchJob job = new CDXCacheBatchJob();
         job.processOnlyFilesMatching(metadataFiles);
         BatchStatus status = arcRepos.batch(job,
-                Settings.get(Settings.ENVIRONMENT_BATCH_LOCATION));
+                                            Settings.get(
+                                                    CommonSettings.ENVIRONMENT_BATCH_LOCATION));
         if (status.hasResultFile()) {
             status.appendResults(out);
         }

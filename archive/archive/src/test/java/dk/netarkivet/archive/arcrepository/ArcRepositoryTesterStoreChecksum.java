@@ -30,11 +30,11 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -43,6 +43,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 
@@ -77,11 +78,13 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
 
     ArcRepository arcRepos;
 
+    ReloadSettings rs = new ReloadSettings();
+
     public ArcRepositoryTesterStoreChecksum() {
     }
 
     protected void setUp() {
-        Settings.reload();
+        rs.setUp();
         ChannelsTester.resetChannels();
         ServerSetUp.setUp();
         arcRepos = ServerSetUp.getArcRepository();
@@ -91,6 +94,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
     protected void tearDown() {
         rf.tearDown();
         ServerSetUp.tearDown();
+        rs.tearDown();
     }
 
 

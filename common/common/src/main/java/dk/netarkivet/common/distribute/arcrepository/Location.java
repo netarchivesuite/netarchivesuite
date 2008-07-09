@@ -31,11 +31,12 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * This class encapsulates the bitarchive locations.  It guarantees that
@@ -65,7 +66,7 @@ public class Location {
         if (known == null) {
             known = new HashMap<String, Location>(2);
             for (String location
-                    : Settings.getAll(Settings.ENVIRONMENT_LOCATION_NAMES)) {
+                    : Settings.getAll(CommonSettings.ENVIRONMENT_LOCATION_NAMES)) {
                 known.put(location, new Location(location));
             }
         }

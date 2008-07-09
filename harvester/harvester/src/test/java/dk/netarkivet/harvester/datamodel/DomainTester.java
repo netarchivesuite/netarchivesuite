@@ -37,11 +37,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.testutils.CollectionAsserts;
 
@@ -287,7 +289,8 @@ public class DomainTester extends DataModelTestCase {
         wd.addConfiguration(cfg1);
         wd.addConfiguration(cfg2);
         dao.create(wd);
-        String defaultcfgName = Settings.get(Settings.DOMAIN_DEFAULT_CONFIG);
+        String defaultcfgName = Settings.get(
+                HarvesterSettings.DOMAIN_DEFAULT_CONFIG);
         assertEquals("The default configuration does not change when adding new configs",
                      wd.getDefaultConfiguration().getName(), defaultcfgName);
 
@@ -316,7 +319,7 @@ public class DomainTester extends DataModelTestCase {
         Domain d = Domain.getDefaultDomain(TestInfo.DEFAULTNEWDOMAINNAME);
         DomainConfiguration conf = d.getDefaultConfiguration();
         final List<SeedList> seedlists = Arrays.asList(new SeedList[] {
-            d.getSeedList(Settings.get(Settings.DEFAULT_SEEDLIST)) });
+            d.getSeedList(Settings.get(HarvesterSettings.DEFAULT_SEEDLIST)) });
         try {
             DomainConfiguration conf2 = new DomainConfiguration(TestInfo.CONFIGURATION_NAMEJOB4,
                                                                 d, seedlists, new ArrayList<Password>());
@@ -466,7 +469,7 @@ public class DomainTester extends DataModelTestCase {
         Domain wd = Domain.getDefaultDomain(TestInfo.DOMAIN_NAME);
 
         try {
-            wd.removeSeedList(Settings.get(Settings.DEFAULT_SEEDLIST));
+            wd.removeSeedList(Settings.get(HarvesterSettings.DEFAULT_SEEDLIST));
             fail("Removing last seedlist not allowed");
         } catch (PermissionDenied e) {
             //Expected
@@ -844,36 +847,36 @@ public class DomainTester extends DataModelTestCase {
      */
     public void testIsValidDomainName() throws Exception {
         assertFalse("Multidot should not be valid",
-                    Domain.isValidDomainName("foo.bar.dk"));
+                    DomainUtils.isValidDomainName("foo.bar.dk"));
         assertFalse("Multidot should not be valid",
-                    Domain.isValidDomainName(".bar.dk"));
+                    DomainUtils.isValidDomainName(".bar.dk"));
         assertFalse("Multidot should not be valid",
-                    Domain.isValidDomainName("foo.bar."));
+                    DomainUtils.isValidDomainName("foo.bar."));
         assertFalse("Strange TLDs should not be valid",
-                    Domain.isValidDomainName("foo.bar"));
+                    DomainUtils.isValidDomainName("foo.bar"));
         assertFalse("Singledot should not be valid",
-                    Domain.isValidDomainName(".dk"));
+                    DomainUtils.isValidDomainName(".dk"));
         assertFalse("Ending in dot should not be valid",
-                    Domain.isValidDomainName("foo."));
+                    DomainUtils.isValidDomainName("foo."));
         assertFalse("Nodot should not be valid",
-                    Domain.isValidDomainName("dk"));
+                    DomainUtils.isValidDomainName("dk"));
         assertTrue("Danish characters should be valid",
-                   Domain.isValidDomainName("æøåÆØÅëËüÜéÉ.dk"));
+                   DomainUtils.isValidDomainName("æøåÆØÅëËüÜéÉ.dk"));
         // The following command will extract all non-LDH chars from
         // a domain list:
         //  sed 's/\(.\)/\1\n/g;' <dk-domains-10102005.utf-8.txt | grep -v '[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-]' | sort -u
         assertTrue("Characters from the domain list should be legal",
-                   Domain.isValidDomainName("åäæéöøü.dk"));
+                   DomainUtils.isValidDomainName("åäæéöøü.dk"));
         assertTrue("Raw IP numbers should be legal",
-                   Domain.isValidDomainName("192.168.0.1"));
+                   DomainUtils.isValidDomainName("192.168.0.1"));
         assertFalse("Mixed IP/DNS names should not be legal",
-                    Domain.isValidDomainName("foo.1"));
+                    DomainUtils.isValidDomainName("foo.1"));
         assertTrue("DNS names starting with numbers should be legal",
-                   Domain.isValidDomainName("1.dk"));
+                   DomainUtils.isValidDomainName("1.dk"));
         assertFalse("Temporarily enabled domain names should eventually not be valid",
-                    Domain.isValidDomainName("foo.aspx"));
+                    DomainUtils.isValidDomainName("foo.aspx"));
         assertFalse("Temporarily enabled domain names should eventually not be valid",
-                    Domain.isValidDomainName("bar.d"));
+                    DomainUtils.isValidDomainName("bar.d"));
     }
 
     public void testDomainNameFromHostname() throws Exception {
@@ -904,15 +907,15 @@ public class DomainTester extends DataModelTestCase {
         hostnameToDomainname.put("3.192.168.0.5", null);
 
         for (Map.Entry<String,String> entry : hostnameToDomainname.entrySet()) {
-            String domainName = Domain.domainNameFromHostname(entry.getKey());
+            String domainName = DomainUtils.domainNameFromHostname(entry.getKey());
             assertEquals("Domain name should be correctly calculated for " + entry.getKey(),
                          entry.getValue(), domainName);
             if (entry.getValue() != null) {
                 assertTrue("Domain name calculated from " + entry.getKey() + " must be a legal domain name",
-                           Domain.isValidDomainName(domainName));
+                           DomainUtils.isValidDomainName(domainName));
             } else {
                 assertFalse("Should not get null domain name from legal domainname " + entry.getKey(),
-                            Domain.isValidDomainName(entry.getKey()));
+                            DomainUtils.isValidDomainName(entry.getKey()));
             }
         }
     }

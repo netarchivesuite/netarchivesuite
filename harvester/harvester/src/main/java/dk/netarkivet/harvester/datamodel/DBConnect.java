@@ -32,9 +32,10 @@ import java.util.WeakHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.Settings;
 
 
 /**
@@ -63,10 +64,10 @@ public class DBConnect {
             try {
                 Class.forName(DBSpecifics.getInstance().getDriverClassName());
                 Connection connection = DriverManager.getConnection(
-                        Settings.get(Settings.DB_URL));
+                        Settings.get(CommonSettings.DB_URL));
                 connectionPool.put(Thread.currentThread(), connection);
                 log.info("Connected to database using DBurl '"
-                        + Settings.get(Settings.DB_URL) + "'  using driver '"
+                        + Settings.get(CommonSettings.DB_URL) + "'  using driver '"
                         + DBSpecifics.getInstance().getDriverClassName() + "'");
             } catch (ClassNotFoundException e) {
                 final String message = "Can't find driver '"
@@ -75,7 +76,7 @@ public class DBConnect {
                 throw new IOFailure(message, e);
             } catch (SQLException e) {
                 final String message = "Can't connect to database with DBurl: '"
-                        + Settings.get(Settings.DB_URL) + "' using driver '"
+                        + Settings.get(CommonSettings.DB_URL) + "' using driver '"
                         + DBSpecifics.getInstance().getDriverClassName() + "'";
                 log.warn(message, e);
                 throw new IOFailure(message, e);

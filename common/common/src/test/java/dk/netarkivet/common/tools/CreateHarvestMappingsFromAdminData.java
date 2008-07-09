@@ -30,10 +30,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
+import dk.netarkivet.common.utils.Settings;
 
 /** This tool produces a jobid-harvestid.txt from a admin.data file.
  *  The file contains <job-id>,<harvest-id> tuples, sorted after job-id.
@@ -68,8 +69,7 @@ public class CreateHarvestMappingsFromAdminData {
                 System.exit(1);
         }
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                admindataDir.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, admindataDir.getAbsolutePath());
 
         ReadOnlyAdminData ad = AdminData.getReadOnlyInstance();
         Set<String> arcFiles = ad.getAllFileNames();

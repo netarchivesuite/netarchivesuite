@@ -41,7 +41,6 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -131,20 +129,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /** Shutdown hook that closes the JMS connection. */
     private Thread closeHook;
 
-    /** The hostname of the JMSBroker. */
-    private String host;
-
-    /** The port of the JMSBroker. */
-    private String port;
-
     /**
      * Class constructor.
-     * Sets the broker address and port number using
-     * values taken from settings.
      */
     protected JMSConnection() {
-        host = Settings.get(Settings.JMS_BROKER_HOST);
-        port = Settings.get(Settings.JMS_BROKER_PORT);
     }
 
     /**
@@ -154,8 +142,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure if initialization fails.
      */
     protected void initConnection() {
-        log.info("Initializing a JMS connection to Broker at "
-                + host + ":" + port + ".");
+        log.info("Initializing a JMS connection of type '" + getClass()
+                 + "' to Broker at " + getHost() + ":" + getPort() + ".");
 
         int tries = 0;
         JMSException lastException = null;
@@ -181,7 +169,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         }
         if (!operationSuccessful) {
             throw new IOFailure("Could not initialize JMS connection to "
-                    + host + ":" + port, lastException);
+                    + getHost() + ":" + getPort(), lastException);
         }
         closeHook = new CleanupHook(this);
         Runtime.getRuntime().addShutdownHook(closeHook);
@@ -747,17 +735,13 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Get the hostname for the JMSBroker.
      * @return the hostname for the JMSBroker
      */
-    public String getHost() {
-        return host;
-    }
+    public abstract String getHost();
 
     /**
      * Get the port for the JMSBroker.
      * @return the port for the JMSBroker
      */
-    public String getPort() {
-        return port;
-    }
+    public abstract int getPort();
 
     /**
      * Exceptionhandler for the JMSConnection.

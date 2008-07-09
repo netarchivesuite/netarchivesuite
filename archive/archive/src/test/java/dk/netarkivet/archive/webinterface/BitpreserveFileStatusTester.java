@@ -33,17 +33,19 @@ import java.util.Vector;
 
 import com.mockobjects.servlet.MockHttpServletRequest;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unittest for the class
@@ -58,7 +60,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         = dk.netarkivet.archive.webinterface.Constants.GET_INFO_COMMAND;
     private static final String BITARCHIVE_NAME_PARAM 
         = dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM;
-            
+
+    ReloadSettings rs = new ReloadSettings();
     
     public BitpreserveFileStatusTester(String s) {
         super(s);
@@ -66,22 +69,21 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
 
 
     public void setUp() throws Exception {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         super.setUp();
     }
 
     public void tearDown() throws Exception {
-        Settings.reload();
+        rs.tearDown();
         super.tearDown();
     }
 
     public void testProcessMissingRequest() throws Exception {
-    
-        Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
-                TestInfo.WORKING_DIR.getAbsolutePath());
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.WORKING_DIR.getAbsolutePath());
-        
+
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
+
         // Ensure that a admin data exists before we start.
         AdminData.getUpdateableInstance();
   

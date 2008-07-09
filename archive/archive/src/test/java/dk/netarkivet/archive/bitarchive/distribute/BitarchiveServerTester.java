@@ -36,8 +36,9 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -49,11 +50,13 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -73,8 +76,10 @@ public class BitarchiveServerTester extends TestCase {
             WORKING.getAbsolutePath()+"o_bitarchive",
             WORKING.getAbsolutePath()+"p_bitarchive",
     };
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws IOException {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().
@@ -84,9 +89,8 @@ public class BitarchiveServerTester extends TestCase {
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
     }
 
     protected void tearDown() {
@@ -95,19 +99,19 @@ public class BitarchiveServerTester extends TestCase {
         }
         FileUtils.removeRecursively(WORKING);
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
         utrf.tearDown();
         for (String dir: dirs) {
             FileUtils.removeRecursively(new File(dir));
         }
         RememberNotifications.resetSingleton();
+        rs.tearDown();
     }
 
     /**
      * Test that BitarchiveServer is a singleton.
      */
     public void testSingletonicity() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
         ClassAsserts.assertSingleton(BitarchiveServer.class);
     }
 
@@ -119,10 +123,8 @@ public class BitarchiveServerTester extends TestCase {
      * @throws IOException If unable to read the logfile.
      */
     public void testLogging() throws IOException {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                TestInfo.BITARCHIVE_APP_DIR_1);
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                TestInfo.BITARCHIVE_SERVER_DIR_1);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.BITARCHIVE_APP_DIR_1);
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BITARCHIVE_SERVER_DIR_1);
         bas = BitarchiveServer.getInstance();
         bas.close();
         LogUtils.flushLogs("BitarchiveServer");
@@ -138,9 +140,8 @@ public class BitarchiveServerTester extends TestCase {
      */
     public void testCTor() {
         // Set to just over the minimum size guaranteed.
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, dirs);
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
-                "" + (FileUtils.getBytesFree(WORKING) + 1));
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(WORKING) + 1));
 
         bas = BitarchiveServer.getInstance();
         ChannelID anyBa = Channels.getAnyBa();
@@ -163,12 +164,9 @@ public class BitarchiveServerTester extends TestCase {
      */
     public void testVisitUploadMessage() {
         // Set to just over the minimum size guaranteed.
-        Settings.set(Settings.BITARCHIVE_MIN_SPACE_LEFT,
-                "" + (FileUtils.getBytesFree(SERVER1) - 12000));
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(SERVER1) - 12000));
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
 
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheArcrepos();
@@ -216,10 +214,8 @@ public class BitarchiveServerTester extends TestCase {
      */
     public void testVisitUploadMessageDiskcrash() {
         // Set to just over the minimum size guaranteed.
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
 
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheArcrepos();
@@ -314,10 +310,8 @@ public class BitarchiveServerTester extends TestCase {
      * Test the normal operation of getting a record of a file which is present.
      */
     public void testVisitGetMessage() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -346,10 +340,8 @@ public class BitarchiveServerTester extends TestCase {
      * not present on this bitarchive.
      */
     public void testVisitGetMessageNoSuchFile() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -373,10 +365,8 @@ public class BitarchiveServerTester extends TestCase {
      * not.
      */
     public void testVisitGetMessageNoSuchRecord() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
@@ -404,10 +394,8 @@ public class BitarchiveServerTester extends TestCase {
      * appropriate BatchEndedMessage.
      */
     public void testVisitBatchMessage() throws InterruptedException {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -417,8 +405,8 @@ public class BitarchiveServerTester extends TestCase {
         //the Bitarchive
         BatchMessage bm =
                 new BatchMessage(Channels.getTheBamon(),
-                        new ChecksumJob(), Settings.get(
-                                Settings.ENVIRONMENT_THIS_LOCATION));
+                        new ChecksumJob(),
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
         JMSConnectionTestMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -464,10 +452,8 @@ public class BitarchiveServerTester extends TestCase {
      * @throws IOException If unable to read a file. 
      */
     public void testVisitBatchMessageThreaded() throws IOException {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
@@ -494,11 +480,12 @@ public class BitarchiveServerTester extends TestCase {
                                     // Not likely, not dangerous.
                                 }
                             }
-                        }, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                        },
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
         BatchMessage bm2 =
                 new BatchMessage(Channels.getTheBamon(),
-                        new TimedChecksumJob(), Settings.get(
-                                Settings.ENVIRONMENT_THIS_LOCATION));
+                        new TimedChecksumJob(),
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
 
         JMSConnectionTestMQ.updateMsgID(bm1, "ID45");
         JMSConnectionTestMQ.updateMsgID(bm2, "ID46");
@@ -563,11 +550,9 @@ public class BitarchiveServerTester extends TestCase {
         String dummyLocation = "KB";
         String checksum = TestInfo.BA1_CHECKSUM;
         String credentials = Settings.get(
-                Settings.ENVIRONMENT_THIS_CREDENTIALS);
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                BITARCHIVE1.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                SERVER1.getAbsolutePath());
+                ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS);
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         File baFile = TestInfo.BA1_ORG_FILE;
         File backupFile = TestInfo.BA1_ATTIC_FILE;

@@ -29,10 +29,12 @@ import java.lang.management.ManagementFactory;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * This class tests the class dk.netarkivet.common.management.SingleMBeanObject.
@@ -40,6 +42,7 @@ import dk.netarkivet.common.utils.SystemUtils;
 public class SingleMBeanObjectTester extends TestCase {
     private ObjectName name;
     private MBeanServer platformMBeanServer;
+    ReloadSettings rs = new ReloadSettings();
 
     {
         try {
@@ -57,17 +60,18 @@ public class SingleMBeanObjectTester extends TestCase {
     }
 
     public void setUp() {
-        Settings.set(Settings.APPLICATIONNAME, "TestApp1");
-        Settings.set(Settings.HTTP_PORT_NUMBER, "1234");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "NO");
+        rs.setUp();
+        Settings.set(CommonSettings.APPLICATIONNAME, "TestApp1");
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "NO");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 
     public void tearDown() throws Exception {
-        Settings.reload();
         if (platformMBeanServer.isRegistered(name)) {
             platformMBeanServer.unregisterMBean(name);
         }
+        rs.tearDown();
     }
 
     /**

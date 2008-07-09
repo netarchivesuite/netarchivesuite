@@ -46,7 +46,7 @@ import com.sun.jndi.rmi.registry.RegistryContextFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -66,7 +66,7 @@ public class JMXUtils {
 
     /** The JMX timeout in milliseconds. */
     private static final double TIMEOUT
-            = (double) Settings.getLong(Settings.JMX_TIMEOUT) * 1000.0;
+            = (double) Settings.getLong(CommonSettings.JMX_TIMEOUT) * 1000.0;
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
      * thus the constant is defined as log2(TIMEOUT), as set in settings.

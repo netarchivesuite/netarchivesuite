@@ -28,7 +28,7 @@ import org.archive.crawler.datamodel.CandidateURI;
 import org.archive.crawler.framework.CrawlController;
 import org.archive.crawler.frontier.HostnameQueueAssignmentPolicy;
 
-import dk.netarkivet.harvester.datamodel.Domain;
+import dk.netarkivet.common.utils.DomainUtils;
 
 /**
  * Using the domain as the queue-name.
@@ -75,7 +75,7 @@ public class DomainnameQueueAssignmentPolicy
         if (hostnameandportnr.length == 0 || hostnameandportnr.length > 2) {
             return candidate;
         }
-        String domainName = Domain.domainNameFromHostname(hostnameandportnr[0]);
+        String domainName = DomainUtils.domainNameFromHostname(hostnameandportnr[0]);
         if (domainName == null) { // Not valid according to our rules
             log.debug("Illegal class key candidate '" + candidate
                       + "' for '" + cauri + "'");

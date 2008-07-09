@@ -39,7 +39,7 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -50,6 +50,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -68,6 +69,7 @@ import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Test HarvestScheduler class.
@@ -83,8 +85,11 @@ public class HarvestSchedulerTester extends TestCase {
         super(sTestName);
     }
 
+    ReloadSettings rs = new ReloadSettings();
+
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
@@ -93,13 +98,12 @@ public class HarvestSchedulerTester extends TestCase {
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
-        Settings.set(Settings.DB_URL, "jdbc:derby:"
+        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
                 + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
         DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
                 TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     /**
@@ -115,8 +119,8 @@ public class HarvestSchedulerTester extends TestCase {
         }
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        Settings.reload();
         TestUtils.resetDAOs();
+        rs.tearDown();
     }
 
     /**

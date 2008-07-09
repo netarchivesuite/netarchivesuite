@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
-        <!-- Common temporary directory for all applications. -->
+        <!-- Common temporary directory for all applications. Some subdirs of
+             this directory  must be set to have AllPermision in the
+             conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
         <remoteFile xsi:type="ftpremotefile">
             <!-- The class to use for RemoteFile objects. -->
-            <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+            <class>dk.netarkivet.common.distribute.HTTPSRemoteFile</class>
             <!-- The default FTP-server used -->
             <serverName>localhost</serverName>
             <!-- The default FTP-server port used -->
             <serverPort>21</serverPort>
             <!-- The default FTP username -->
-            <userName>jms</userName>
+            <userName>exampleusername</userName>
             <!-- The default FTP password -->
-            <userPassword>jms*ftp</userPassword>
+            <userPassword>examplepassword</userPassword>
             <!-- The number of times FTPRemoteFile should try before giving up
                  a copyTo operation. We augment FTP with checksum checks. -->
             <retries>3</retries>
         </remoteFile>
         <!-- Connection data for JMS-->
         <jms>
-            <!-- Selects the broker class to be used. Fx. ActiveMQ. -->
+            <!-- Selects the broker class to be used. Must be a subclass of
+            dk.netarkivet.common.distribute.JMSConnection. -->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
             <!-- The JMS broker host contacted by the JMS connection -->
             <broker>localhost</broker>
@@ -43,8 +46,9 @@
                  will be instantiated by the ArcRepositoryClientFactory -->
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
             <!-- How many milliseconds we will wait before giving up on a
-                 lookup request to the Arcrepository -->
-            <getTimeout>10000</getTimeout>
+                 lookup request to the Arcrepository. Set to 1 minute to
+                 make it possible to retrieve large records using FTP -->
+            <getTimeout>60000</getTimeout>
             <!-- Number of times to try sending a store message before failing,
                  including the first attempt -->
             <storeRetries>3</storeRetries>
@@ -54,113 +58,120 @@
         </arcrepositoryClient>
         <monitorregistryClient xsi:type="jmsmonitorregistryclient">
             <!-- The class instantiated to register JMX urls at a registry. -->
-            <class>dk.netarkivet.monitor.registry.JMSMonitorRegistryClient</class>
+            <class>dk.netarkivet.common.distribute.monitorregistry.JMSMonitorRegistryClient</class>
         </monitorregistryClient>
         <indexClient xsi:type="indexrequestclient">
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
             <!-- The amount of time, in milliseconds, we should wait for replies
-                 when issuing a call to generate an index over som jobs. -->
-            <indexRequestTimeout>432000000</indexRequestTimeout>
+                 when issuing a call to generate an index over som jobs.
+             -->
+            <indexRequestTimeout>43200000</indexRequestTimeout>
         </indexClient>
         <!-- The name of the directory where cache data global to the entire
              machine can be stored.  Various kinds of caches should be stored in
              subdirectories of this -->
         <cacheDir>cache</cacheDir>
+        <!--The number of milliseconds we wait for processes to react
+            to shutdown requests.-->
+        <processTimeout>5000</processTimeout>
         <!-- Error notification settings -->
         <notifications>
             <!-- Which class to instantiate to handle error notifications -->
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
-            <!-- The sender of emails -->
-            <receiver>kfc@statsbiblioteket.dk</receiver>
-            <!-- The recipient of emails -->
-            <sender>netarkivet@netarkivet.dk</sender>
+            <!-- The receiver of emails -->
+            <receiver>example@netarkivet.dk</receiver>
+            <!-- The stated sender of emails  (and receiver of bounces)-->
+            <sender>example@netarkivet.dk</sender>
         </notifications>
         <!-- Settings for sending email. Currently mail is only used for email
          notifications. -->
         <mail>
             <!-- The email server to use -->
-            <server>post.statsbiblioteket.dk</server>
+            <server>examplesmtpserver.netarkivet.dk</server>
         </mail>
+        <!-- JMX logging settings -->
         <jmx>
+            <!-- The port to connect to using JMX -->
             <port>8100</port>
+            <!-- The RMI port used for communicating with beans -->
             <rmiPort>8200</rmiPort>
+            <!-- The password file, containing information about who may
+            connect -->
             <passwordFile>conf/jmxremote.password</passwordFile>
+            <!-- How many seconds we will wait before giving up on a JMX
+            connection. -->
+            <timeout>120</timeout>
         </jmx>
+        <!-- Settings for the web GUI -->
         <webinterface>
             <!-- Language settings -->
             <language>
-                <!-- The locale the GUI is available as -->
+                <!-- A locale the GUI is available as -->
                 <locale>da</locale>
                 <!-- Native name of the language for this locale -->
                 <name>Dansk</name>
             </language>
             <!-- Language settings -->
             <language>
-                <!-- The locale the GUI is available as -->
+                <!-- A locale the GUI is available as -->
                 <locale>en</locale>
                 <!-- Native name of the language for this locale -->
                 <name>English</name>
             </language>
             <siteSection>
-                <!-- The subclass of SiteSection that defines this part of the
-                     web interface.
-                     -->
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/HarvestDefinition</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
+                <!-- The URL path for this section of the web interface. -->
                 <deployPath>/HarvestDefinition</deployPath>
             </siteSection>
             <siteSection>
-                <!-- The subclass of SiteSection that defines this part of the
-                     web interface.
-                     -->
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/History</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
+                <!-- The URL path for this section of the web interface. -->
                 <deployPath>/History</deployPath>
             </siteSection>
             <siteSection>
-                <!-- The subclass of SiteSection that defines this part of the
-                     web interface.
-                     -->
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
                 <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/BitPreservation</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
+                <!-- The URL path for this section of the web interface. -->
                 <deployPath>/BitPreservation</deployPath>
             </siteSection>
             <siteSection>
-                <!-- The subclass of SiteSection that defines this part of the
-                     web interface.
-                     -->
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
                 <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/QA</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
+                <!-- The URL path for this section of the web interface. -->
                 <deployPath>/QA</deployPath>
             </siteSection>
             <siteSection>
-                <!-- The subclass of SiteSection that defines this part of the
-                     web interface.
-                     -->
+                <!-- A subclass of SiteSection that defines this part of the
+                     web interface. -->
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/Status</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
+                <!-- The URL path for this section of the web interface. -->
                 <deployPath>/Status</deployPath>
             </siteSection>
         </webinterface>
     </common>
-
     <harvester>
         <datamodel>
             <domain>
@@ -175,6 +186,8 @@
                 <!-- Default download rate for domain configuration.
                  Not currently enforced. -->
                 <defaultMaxrate>100</defaultMaxrate>
+                <!-- Default byte limit for domain configuration. -->
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <!-- This setting describes valid TLDs to define domains. -->
                 <tld>ac</tld>
                 <tld>ad</tld>
@@ -464,12 +477,11 @@
                 <tld>zw</tld>
             </domain>
             <database xsi:type="derbydatabase">
-                <!-- Name of the database (unpacked Derby file) with data
-                     model information. Full path to database is assumed to be:
-                     <DATAMODEL_BASEDIR>/<DB_NAME>. This is part of the
-                     connection string -->
+                <!-- The full URL for connecting to the database.
+                     If present and not empty, this URL must match the settings
+                     baseDir and class.-->
                 <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-                <!-- Name of the JDBC driver class to load the database with?  -->
+                <!-- The class that handles DB-specific methods -->
                 <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
                 <!-- The earliest time of day backup will be initiated, 0..24
                      hours.  At a time shortly after this, a consistent backup
@@ -489,7 +501,7 @@
                  great a possible factor we will permit a harvest to be larger
                  then the expectation, when basing the expectation on previous
                  uncompleted harvests or no harvest data at all. -->
-            <errorFactorBestGuess>2</errorFactorBestGuess>
+            <errorFactorBestGuess>20</errorFactorBestGuess>
             <!-- How many bytes the average object is expected to be on domains
                  where we don't know any better.  This number should grow over
                  time, as of end of 2005 empirical data shows 38000 -->
@@ -504,10 +516,10 @@
                 <!-- Size differences for jobs below this threshold are ignored,
                      regardless of the limits for the relative size difference.
                      Set to MAX_LONG for no splitting. -->
-                <minAbsoluteSizeDifference>100</minAbsoluteSizeDifference>
+                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <!-- When this limit is exceeded no more configurations may be
                      added to a job. Set to MAX_LONG for no splitting. -->
-                <maxTotalSize>1000000</maxTotalSize>
+                <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <!-- How many domain configurations we will process in one go before
                  making jobs out of them.  This amount of domains will be stored
@@ -519,6 +531,11 @@
             <!-- Each job gets a subdir of this dir. Job data is written and
                  Heritrix writes to that subdir-->
             <serverDir>server</serverDir>
+            <!--  The minimum amount of free bytes in the serverDir
+                required before accepting any harvest-jobs. Default is
+                 400000000 bytes (~400 Mbytes).
+            -->
+            <minSpaceLeft>400000000</minSpaceLeft>
             <!-- The directory in which data from old jobs is kept after
                  uploading.  Each directory from serverDir will be moved to
                  here if any data remains, either due to failed uploads or
@@ -530,14 +547,34 @@
             <heritrix>
                 <!-- The timeout setting for aborting a crawl based on
                     crawler-inactivity. If the crawler is inactive for this
-                    amount of milliseconds the crawl will be aborted.
+                    amount of seconds the crawl will be aborted.
                     The inactivity is measured on the
                     crawlController.activeToeCount(). -->
-                <inactivityTimeout>1800</inactivityTimeout>
+                <inactivityTimeout>100</inactivityTimeout>
                 <!-- The timeout value (in seconds) used in HeritrixLauncher
                      for aborting crawl when no bytes are being received from
                      web servers. -->
-                <noresponseTimeout>1800</noresponseTimeout>
+                <noresponseTimeout>100</noresponseTimeout>
+                <!-- Name for accessing the Heritrix GUI -->
+                <adminName>admin</adminName>
+                <!-- Password for accesing the Heritrix GUI -->
+                <adminPassword>adminPassword</adminPassword>
+                <!-- Port used to access the Heritrix web user interface.
+                     This port must not be used by anything else on the machine.
+                     -->
+                <guiPort>8090</guiPort>
+                <!-- Port used to access the Heritrix JMX interface.
+                     This port must not be used by anything else on the machine,
+                     but does not need to be accessible from other machines
+                     unless you want to be able to use jconsole to access
+                     Heritrix directly
+                     -->
+                <jmxPort>8091</jmxPort>
+                <!-- The heap size to use for the Heritrix sub-process.  This
+                     should probably be fairly large.  It can be specified in
+                     the same way as for the -Xmx argument to Java, e.g.
+                     512M, 2G etc.-->
+                <heapSize>1598M</heapSize>
             </heritrix>
             <!-- The file used to signal that the harvest controller is running.
                  Sidekick starts HarvestController if this file is not present
@@ -551,7 +588,7 @@
                  checksums" (admin.data) is written. Used by ArcRepository and
                  BitPreservation. -->
             <baseDir>.</baseDir>
-            <!-- The names of all institutional bit archive locations in the
+            <!-- The names of all bit archive locations in the
                  environment, e.g., "KB" and "SB". -->
             <location>
                 <name>SB</name>
@@ -569,7 +606,7 @@
                  listening for uploads.  This values should at the very least
                  be greater than the largest ARC file you expect to receive.
             -->
-            <minSpaceLeft>2000000000</minSpaceLeft>
+            <minSpaceLeft>200000000</minSpaceLeft>
             <!-- These are the directories where ARC files are stored
                  (in a subdir). If more than one is given, they are used from
                  one end. -->
@@ -590,16 +627,16 @@
                  for this many milliseconds before it decides that a batch job
                  is taking too long and returns just the replies it has
                  received at that point. -->
-            <batchMessageTimeout>172800000</batchMessageTimeout>
+            <batchMessageTimeout>1209600000</batchMessageTimeout>
             <!-- For archiving applications, which bit archive are you part of?-->
             <thisLocation>SB</thisLocation>
             <!-- Credentials to enter in the GUI for "deleting" ARC files in
                  this bit archive -->
-            <thisCredentials>42</thisCredentials>
-             <!-- When the length record exceeds this number, the contents of the record
-                 will be transferred using a RemoteFile. Currently set to 31 MB
-                 ( Integer.MAX_VALUE / 64) -->
-            <limitForRecordDatatransferInFile>33554431</limitForRecordDatatransferInFile>
+            <thisCredentials>examplecredentials</thisCredentials>
+            <!-- When the length record exceeds this number, the contents of the record
+                 will be transferred using a RemoteFile. Currently set to 10 MB
+              -->
+            <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </bitarchive>
         <bitpreservation>
             <!-- Absolute or relative path to dir containing results of

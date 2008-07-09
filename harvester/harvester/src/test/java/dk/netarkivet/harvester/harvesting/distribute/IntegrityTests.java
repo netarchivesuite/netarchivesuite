@@ -36,7 +36,7 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -48,6 +48,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobPriority;
@@ -58,10 +60,11 @@ import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Integrity tests for the dk.harvester.harvesting.distribute 
- * package. Both tests assume that a JMSBroker is running on localhost 
+ * Integrity tests for the dk.harvester.harvesting.distribute
+ * package. Both tests assume that a JMSBroker is running on localhost
  * at port 7676
  * FIXME Both tests fail at the moment
  */
@@ -77,8 +80,8 @@ public class IntegrityTests extends TestCase{
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
-    MockupIndexServer mis = new MockupIndexServer(
-            new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+    MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+    ReloadSettings rs = new ReloadSettings();
 
     SecurityManager sm;
 
@@ -87,13 +90,14 @@ public class IntegrityTests extends TestCase{
     }
 
     public void setUp() throws IOException, SQLException, IllegalAccessException {
+        rs.setUp();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, 
+            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                     TestInfo.WORKING_DIR);
         } catch (IOFailure e) {
-            fail("Could not copy working-files to: " 
+            fail("Could not copy working-files to: "
                     + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
@@ -107,13 +111,11 @@ public class IntegrityTests extends TestCase{
         con = JMSConnectionFactory.getInstance();
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR,
-                 TestInfo.WORKING_DIR.getPath() 
-                 + "/harvestControllerServerDir");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
+                     TestInfo.WORKING_DIR.getPath() + "/harvestControllerServerDir");
 
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
 
         hs = HarvestControllerServer.getInstance();
         hcc = HarvestControllerClient.getInstance();
@@ -151,8 +153,8 @@ public class IntegrityTests extends TestCase{
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
-        Settings.reload();
         System.setSecurityManager(sm);
+        rs.tearDown();
    }
 
     //This test tests that the HACO does not block (Bug 221).
@@ -173,7 +175,8 @@ public class IntegrityTests extends TestCase{
         fail("This unittest does not complete at the moment, "
                 + "so therefore we stop it now.");
         done = false;
-        String priority2 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority2 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result2;
         if (priority2.equals(JobPriority.LOWPRIORITY.toString())) {
             result2 = Channels.getAnyLowpriorityHaco();
@@ -238,7 +241,8 @@ public class IntegrityTests extends TestCase{
         con.setListener(Channels.getTheSched(), listenerDummy);
 
         //Check listener is not there
-        String priority1 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority1 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result1;
         if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
             result1 = Channels.getAnyLowpriorityHaco();
@@ -272,7 +276,8 @@ public class IntegrityTests extends TestCase{
         }
 
         //Check HACO listener is back
-        String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
         if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();

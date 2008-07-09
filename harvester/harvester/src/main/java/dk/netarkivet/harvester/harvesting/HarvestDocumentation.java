@@ -39,16 +39,17 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FileUtils.FilenameParser;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
@@ -330,7 +331,7 @@ public class HarvestDocumentation {
         throws UnknownID {
         File[] arcFiles = dir.listFiles(FileUtils.ARCS_FILTER);
         File oldJobsDir = new File(
-                Settings.get(Settings.HARVEST_CONTROLLER_OLDJOBSDIR));
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR));
         File unknownJobDir = new File(oldJobsDir,
                 "lost-files-" + new Date().getTime());
         List<File> movedFiles = new ArrayList<File>();

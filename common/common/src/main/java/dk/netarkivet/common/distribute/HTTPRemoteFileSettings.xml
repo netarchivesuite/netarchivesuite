@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <common>
+        <!-- FTP connection data-->
+        <remoteFile xsi:type="httpremotefile">
+            <!-- The default HTTP port used -->
+            <port>8100</port>
+        </remoteFile>
+    </common>
+</settings>

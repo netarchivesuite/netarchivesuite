@@ -24,29 +24,33 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for the class ReadOnlyAdminData.
  */
 public class ReadOnlyAdminDataTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public ReadOnlyAdminDataTester(String s) {
         super(s);
     }
 
     public void setUp() {
+        rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.TEST_DIR);
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.TEST_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
     }
 
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.TEST_DIR);
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testSynchronize() throws Exception {

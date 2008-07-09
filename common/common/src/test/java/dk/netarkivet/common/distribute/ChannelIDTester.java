@@ -29,9 +29,10 @@ import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
 
@@ -79,7 +80,8 @@ public class ChannelIDTester extends TestCase {
      * Test that each channel is equal only to itself
      */
     public void testChannelIdentity(){
-        String priority1 = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority1 = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         JobPriority p = JobPriority.valueOf(priority1);
         ChannelID result1;
         switch(p) {
@@ -96,7 +98,8 @@ public class ChannelIDTester extends TestCase {
          {Channels.getAllBa(), result1, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheArcrepos(), Channels.getTheBamon(),
           Channels.getTheSched(), Channels.getThisHaco()};
-        String priority = Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY);
+        String priority = Settings.get(
+                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
         JobPriority p1 = JobPriority.valueOf(priority1);
         switch(p1) {

@@ -25,14 +25,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
+import dk.netarkivet.common.utils.Settings;
 
 
 /**
@@ -120,9 +116,8 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
      * after creating admin.
      */
     public void testCTOR() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                ARCHIVE_DIR_1.getAbsolutePath(),
-                ARCHIVE_DIR_2.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR_1.getAbsolutePath(),
+                     ARCHIVE_DIR_2.getAbsolutePath());
         archive.close();
         archive = null;
         archive = Bitarchive.getInstance();
@@ -138,7 +133,7 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
 
     /** Check that the constructor handles illegal dirs correctly. */
     public void testCTORErrors() {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, "/foo:bar");
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, "/foo:bar");
         archive.close();
         archive = null;
         try {
@@ -147,20 +142,12 @@ public class BitarchiveTesterAdmin extends BitarchiveTestCase {
         } catch (PermissionDenied e) {
             // Expected
         }
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR, "/:");
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, "/:");
         try {
             archive = Bitarchive.getInstance();
             fail("Should fail when given a nonwritable path");
         } catch (PermissionDenied e) {
             // Expected
         }
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR);
-        try {
-            archive = Bitarchive.getInstance();
-            fail("Should fail when given no dirs");
-        } catch (UnknownID e) {
-            // Expected
-        }
-
     }
 }

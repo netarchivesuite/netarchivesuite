@@ -36,14 +36,15 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
@@ -577,8 +578,7 @@ public class JobDAOTester extends DataModelTestCase {
         
         // It is now possible to set start date to after end date '
         // without any exceptions being thrown. However, a notification is emitted.
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         RememberNotifications.resetSingleton();
         
         try {

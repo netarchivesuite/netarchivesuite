@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -41,7 +42,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
@@ -50,10 +51,12 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.MessageAsserts;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -83,9 +86,9 @@ public class ArcRepositoryTesterStore extends TestCase {
                                                             "checksumwrong");
     private static final File BATCH_RESULT_EMPTY = new File(ORIGINALS_DIR,
                                                             "checksumempty");
-    private static final File TEST_DIR = 
-    	new File (Settings.get(Settings.DIR_COMMONTEMPDIR));
-    
+    private static final File TEST_DIR =
+            Settings.getFile(CommonSettings.DIR_COMMONTEMPDIR);
+
     public ArcRepositoryTesterStore() {
     }
 
@@ -104,16 +107,16 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     private static final File TEMP_DIR = new File(TEST_DIR, "tempdir");
 
+    ReloadSettings rs = new ReloadSettings();
+
     public void setUp() throws IOException {
-        Settings.reload();
+        rs.setUp();
         rf.setUp();
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     ADMINDATA_DIR.getAbsolutePath());
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                     ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ADMINDATA_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
 
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
@@ -145,7 +148,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         JMSConnectionTestMQ.clearTestQueues();
         rf.tearDown();
-        Settings.reload();
+        rs.tearDown();
     }
 
     /**

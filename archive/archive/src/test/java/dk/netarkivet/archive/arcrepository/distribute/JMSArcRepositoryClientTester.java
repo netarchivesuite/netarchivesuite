@@ -47,7 +47,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -56,8 +56,8 @@ import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.Synchronizer;
+import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -70,12 +70,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -98,16 +100,16 @@ public class JMSArcRepositoryClientTester extends TestCase {
     JMSArcRepositoryClient arc;
     private JMSArcRepositoryClient arcrepos;
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
+    ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws Exception {
+        rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         utrf.setUp();
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                     RememberNotifications.class.getName());
-        Settings.set(Settings.ARCREPOSITORY_GET_TIMEOUT,
-                     "1000"); // Set timeout to 1 second
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
         arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
 
     }
@@ -120,9 +122,9 @@ public class JMSArcRepositoryClientTester extends TestCase {
             arcrepos.close();
         }
         utrf.tearDown();
-        Settings.reload();
         FileUtils.removeRecursively(WORKING);
         RememberNotifications.resetSingleton();
+        rs.tearDown();
     }
 
     /**
@@ -227,7 +229,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
         String filename = "Upload2.ARC";
         File toFile = new File(WORKING, "newFile.arc");
         Location location =
-                Location.get(Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                Location.get(Settings.get(
+                        CommonSettings.ENVIRONMENT_THIS_LOCATION));
         arc.getFile(filename, location, toFile);
         assertTrue("Result file should exist", toFile.exists());
         assertEquals("Result file should contain right text",
@@ -325,7 +328,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      */
     public void testStoreDelete() throws InterruptedException {
         // Set a listener on PRES
-        Settings.set(Settings.DIR_COMMONTEMPDIR, "tests/commontempdir");
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, "tests/commontempdir");
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.setListener(Channels.getTheArcrepos(), listener);
@@ -395,7 +398,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
          * is given as first parameter
          */
         try {
-            arc.batch(null, Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+            arc.batch(null,
+                      Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
             fail("Should throw ArgumentNotValid exception");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -433,7 +437,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
             }
         };
         BatchStatus lbStatus = arc.batch(batchJob, Settings.get(
-                Settings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_LOCATION));
         assertEquals("Number of files should have been set by the server to 42",
                      42, lbStatus.getNoOfFilesProcessed());
     }
@@ -471,7 +475,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         //timeout after 1 millisecond
         //not - no listeners
 
-        Settings.set(Settings.ARCREPOSITORY_STORE_TIMEOUT, "1");
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_TIMEOUT, "1");
         arc.close();
         arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getHarvesterInstance();
         final boolean[] ok = new boolean[]{false};

@@ -33,10 +33,11 @@ import java.util.Hashtable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -78,7 +79,7 @@ public class SingleMBeanObject<I> {
      */
     private final MBeanServer mBeanServer;
 
-    private static Log log = LogFactory.getLog(Settings.class.getName());
+    private static Log log = LogFactory.getLog(CommonSettings.class.getName());
 
 
     /**
@@ -103,11 +104,13 @@ public class SingleMBeanObject<I> {
         this.asInterface = asInterface;
         this.o = o;
         nameProperties.put("location",
-                           Settings.get(Settings.ENVIRONMENT_THIS_LOCATION));
+                           Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
         nameProperties.put("hostname", SystemUtils.getLocalHostName());
-        nameProperties.put("httpport", Settings.get(Settings.HTTP_PORT_NUMBER));
+        nameProperties.put("httpport",
+                           Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         nameProperties.put("applicationname",
-                           Settings.get(Settings.APPLICATIONNAME));
+                           Settings.get(CommonSettings.APPLICATIONNAME));
         this.mBeanServer = mBeanServer;
     }
 

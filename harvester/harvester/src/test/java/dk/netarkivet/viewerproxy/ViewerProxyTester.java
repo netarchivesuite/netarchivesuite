@@ -33,17 +33,19 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** 
  * Unit-tests for the ViewerProxy class. 
@@ -55,19 +57,22 @@ public class ViewerProxyTester extends TestCase {
     /** HTTP client set with localhost as proxy. */
     private HttpClient httpClient;
 
+    ReloadSettings rs = new ReloadSettings();
+
     protected void setUp() throws Exception {
-        Settings.reload();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         ChannelsTester.resetChannels();
-        Settings.set(Settings.REMOTE_FILE_CLASS, "dk.netarkivet.common.distribute.TestRemoteFile");
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
+                     "dk.netarkivet.common.distribute.TestRemoteFile");
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.ARCHIVE_DIR);
 
-        Settings.set(Settings.CACHE_DIR,
-                new File(TestInfo.WORKING_DIR, "cachedir").getAbsolutePath());
+        Settings.set(CommonSettings.CACHE_DIR, new File(TestInfo.WORKING_DIR, "cachedir").getAbsolutePath());
         //Set up an HTTP client that can send commands to our proxy;
-        int httpPort = Integer.parseInt(Settings.get(Settings.HTTP_PORT_NUMBER));
+        int httpPort = Integer.parseInt(Settings.get(
+                CommonSettings.HTTP_PORT_NUMBER));
         httpClient = new HttpClient();
         HostConfiguration hc = new HostConfiguration();
         String hostName = "localhost";
@@ -81,12 +86,12 @@ public class ViewerProxyTester extends TestCase {
             proxy.cleanup();
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        Settings.reload();
         TestRemoteFile.removeRemainingFiles();
         Field f = ReflectUtils.getPrivateField(IndexRequestClient.class, "clients");
         f.set(null, new EnumMap<RequestType, IndexRequestClient>(RequestType.class));
         f = ReflectUtils.getPrivateField(IndexRequestClient.class, "synchronizer");
         f.set(null, null);
+        rs.tearDown();
     }
 
     /**

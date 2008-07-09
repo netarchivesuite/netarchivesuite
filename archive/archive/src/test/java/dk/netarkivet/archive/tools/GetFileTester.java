@@ -22,24 +22,26 @@
 */
 package dk.netarkivet.archive.tools;
 
+import javax.jms.Message;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 
-import javax.jms.Message;
-
 import junit.framework.TestCase;
+
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Test the GetFile tool.
@@ -52,25 +54,28 @@ public class GetFileTester extends TestCase {
             TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
     TestMessageListener listener;
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp(){
+        rs.setUp();
         mjms.setUp();
         listener = new GetFileListener(mtf.working(
         		new File(TestInfo.DATA_DIR, "test1.arc")));
         JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), listener);
-        Settings.set(Settings.REMOTE_FILE_CLASS, new String[]{"dk.netarkivet.common.distribute.NullRemoteFile"});
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
+                     "dk.netarkivet.common.distribute.NullRemoteFile");
         mtf.setUp();
         pss.setUp();
         pse.setUp();
    
     }
     public void tearDown(){
-    	Settings.reload();
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheArcrepos(), listener);
         mjms.tearDown();
+        rs.tearDown();
     }
     
     /**

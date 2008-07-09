@@ -43,17 +43,21 @@ import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCKey;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.viewerproxy.ViewerProxySettings;
 
 /**
  * Tests of the ARCLookup class.
@@ -62,6 +66,7 @@ public class ARCLookupTester extends TestCase {
     private ViewerArcRepositoryClient realArcRepos;
     private static ARCLookup lookup;
     protected ARCReader arcReader;
+    ReloadSettings rs = new ReloadSettings();
 
     public ARCLookupTester(String s) {
         super(s);
@@ -69,6 +74,7 @@ public class ARCLookupTester extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
         TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
@@ -77,18 +83,14 @@ public class ARCLookupTester extends TestCase {
         //Although we also need some real data
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(Settings.VIEWERPROXY_DIR,
-                new File(TestInfo.WORKING_DIR, "viewerproxy").getAbsolutePath());
+        Settings.set(ViewerProxySettings.VIEWERPROXY_DIR, new File(TestInfo.WORKING_DIR, "viewerproxy").getAbsolutePath());
         FileUtils.createDir(new File(TestInfo.WORKING_DIR, "viewerproxy"));
 
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.LOG_PATH.getAbsolutePath());
-        Settings.set(Settings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(Settings.ENVIRONMENT_THIS_LOCATION, "SB");
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                new File(TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                TestInfo.LOG_PATH.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.LOG_PATH.getAbsolutePath());
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.LOG_PATH.getAbsolutePath());
 
         // This is "real" in the sense that it returns records from a bitarchive-
         // like file system instaed of making them up.
@@ -113,7 +115,7 @@ public class ARCLookupTester extends TestCase {
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         JMSConnectionTestMQ.clearTestQueues();
-        Settings.reload();
+        rs.tearDown();
         super.tearDown();
     }
 
@@ -162,10 +164,8 @@ public class ARCLookupTester extends TestCase {
      * really an integrity test. Move and clean up!
      */
     public void testLookup() throws Exception {
-        Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
-                TestInfo.ARCHIVE_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
 
         // Get the data from the bitarchive
         InputStream is = lookup.lookup(TestInfo.GIF_URL);

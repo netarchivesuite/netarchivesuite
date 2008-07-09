@@ -39,12 +39,14 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.StopReason;
@@ -56,6 +58,7 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
@@ -72,20 +75,21 @@ public class HarvestControllerTester extends TestCase {
     MockupIndexServer mis = new MockupIndexServer(
             new File(TestInfo.ORIGINALS_DIR, "dedupcache"));
     UseTestRemoteFile rf = new UseTestRemoteFile();
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp()
             throws Exception, IllegalAccessException, IOException {
         super.setUp();
+        rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.CRAWLDIR_ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
         rf.setUp();
-        Settings.set(Settings.ARCREPOSITORY_STORE_RETRIES, "1");
-        Settings.set(Settings.CACHE_DIR, new File(
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES, "1");
+        Settings.set(CommonSettings.CACHE_DIR, new File(
                 TestInfo.WORKING_DIR, "cacheDir").getAbsolutePath());
-        Settings.set(Settings.DIR_COMMONTEMPDIR,
-                new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "commontempdir").getAbsolutePath());
         mis.setUp();
    }
 
@@ -95,18 +99,19 @@ public class HarvestControllerTester extends TestCase {
         JMSConnectionTestMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rf.tearDown();
-        Settings.reload();
         if (hc != null) {
             hc.cleanup();
             hc = null;
         }
+        rs.tearDown();
     }
 
     /** Test that if the arcrepository client cannot start we
      * get an exception.
      */
     public void testFailingArcRepositoryClient() {
-        Settings.set(Settings.ARCREPOSITORY_STORE_RETRIES, "Not a number");
+        Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
+                     "Not a number");
         try {
             HarvestController.getInstance();
             fail("Arc repository client should have thrown an exception");
@@ -208,8 +213,7 @@ public class HarvestControllerTester extends TestCase {
      * @throws Exception
      */
     public void testWritePreharvestMetadata() throws Exception {
-        Settings.set(Settings.HARVEST_CONTROLLER_SERVERDIR,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, TestInfo.WORKING_DIR.getAbsolutePath());
         TestInfo.oneMetadata.add(TestInfo.sampleEntry);
         Job someJob = TestInfo.getJob();
         someJob.setJobID(1L);

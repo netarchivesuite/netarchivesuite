@@ -35,18 +35,20 @@ import java.util.zip.GZIPOutputStream;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Integrity tests for the package dk.netarkivet.common.utils.
  */
 public class IntegrityTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
     private static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
     private static final File ORIGINALS = new File(BASE_DIR, "fileutils_data");
     private static final File WORKING = new File(BASE_DIR, "working");
@@ -58,15 +60,16 @@ public class IntegrityTester extends TestCase {
     public static final String LARGE_FILE = "largeFile";
 
     public void setUp() {
+        rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         /** Do not send notifications by email. Print them to STDOUT. */
-        Settings.set(Settings.NOTIFICATIONS_CLASS,
-                RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
     }
 
     public void tearDown() {
         FileUtils.removeRecursively(WORKING);
+        rs.tearDown();
     }
 
     /**
@@ -74,7 +77,7 @@ public class IntegrityTester extends TestCase {
      * using ftp.
      */
     public void testAppendRemoteFiles() throws IOException {
-        Settings.set(Settings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File in_1 = new File(WORKING, "append_data/file1");
         File in_2 = new File(WORKING, "append_data/file2");
         File out_file = new File(WORKING, "append_data/output");
@@ -88,7 +91,6 @@ public class IntegrityTester extends TestCase {
                 out_file, 2);
         FileAsserts.assertFileContains("Missing content", "1", out_file);
         FileAsserts.assertFileContains("Missing content", "2", out_file);
-        Settings.reload();
     }
 
     /** Test that files larger than 2GB can be copied! */

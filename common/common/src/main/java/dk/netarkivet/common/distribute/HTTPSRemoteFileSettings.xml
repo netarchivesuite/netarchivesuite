@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <common>
+        <!-- FTP connection data-->
+        <remoteFile xsi:type="httpsremotefile">
+            <!-- The default HTTP port used -->
+            <port>8100</port>
+            <!-- The path for the keystore containing the certificate. -->
+            <certificateKeyStore>conf/keystore</certificateKeyStore>
+            <!-- The password the keystore is encrypted with. -->
+            <certificateKeyStorePassword>1234</certificateKeyStorePassword>
+            <!-- The password the certificate is encrypted with. -->
+            <certificatePassword>1234</certificatePassword>
+        </remoteFile>
+    </common>
+</settings>

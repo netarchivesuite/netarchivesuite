@@ -34,12 +34,12 @@ import java.security.MessageDigest;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 
 public class MD5Tester extends TestCase {
-    private String oldSettingsFilename;
+    ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
     private static final String EMPTY_STRING_MD5 = "d41d8cd98f00b204e9800998ecf8427e";
     private static final String BIG_FILE_MD5 = "6179feb1f881b0aae442876d8a6086bc";
 
@@ -48,6 +48,7 @@ public class MD5Tester extends TestCase {
     }
 
     public void setUp() {
+        rs.setUp();
         try {
             if (!TestInfo.TEMPDIR.exists()) {
                 dk.netarkivet.common.utils.TestInfo.TEMPDIR.mkdir();
@@ -58,20 +59,11 @@ public class MD5Tester extends TestCase {
         catch (Exception e) {
             fail("Could not setup configuration");
         }
-
-        oldSettingsFilename = System.getProperty(Settings.SETTINGS_FILE_NAME_PROPERTY);
-        System.setProperty(Settings.SETTINGS_FILE_NAME_PROPERTY, TestInfo.SETTINGSFILENAME);
-        Settings.reload();
     }
 
     public void tearDown() {
         FileUtils.removeRecursively(dk.netarkivet.common.utils.TestInfo.TEMPDIR);
-        if (oldSettingsFilename != null) {
-            System.setProperty(Settings.SETTINGS_FILE_NAME_PROPERTY, oldSettingsFilename);
-        } else {
-            System.clearProperty(Settings.SETTINGS_FILE_NAME_PROPERTY);
-        }
-        Settings.reload();
+        rs.tearDown();
     }
 
     public void testGenerateMD5onFile() throws Exception {

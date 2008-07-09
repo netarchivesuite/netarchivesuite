@@ -42,28 +42,34 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringTree;
 import dk.netarkivet.harvester.webinterface.JspTestCase;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for the HTMLUtils utility class.
  */
 public class HTMLUtilsTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public HTMLUtilsTester(String s) {
         super(s);
     }
 
     public void setUp() {
-        Settings.reload();
+        rs.setUp();
         SiteSection.cleanup();
     }
 
     public void tearDown() {
+        rs.tearDown();
     }
 
     /**
@@ -139,13 +145,20 @@ public class HTMLUtilsTester extends TestCase {
 
         //Test locale
         int i = 0;
-        for (String locale : Settings.getAll(Settings.LANGUAGE_LOCALE)) {
+        StringTree<String> webinterfaceSettings = Settings.getTree(
+                CommonSettings.WEBINTERFACE_SETTINGS);
+
+        for (StringTree<String> language
+                : webinterfaceSettings.getSubTrees(
+                Constants.WEBINTERFACE_LANGUAGE)) {
+            String locale = language.getValue(Constants.
+                    WEBINTERFACE_LANGUAGE_LOCALE);
+            String name = language.getValue(Constants.
+                    WEBINTERFACE_LANGUAGE_NAME);
             StringAsserts.assertStringContains("Should contain link to locale",
                                                "locale=" + locale, result);
             StringAsserts.assertStringContains("Should contain name of locale",
-                                               "name=" + Settings.getAll(
-                                                       Settings.LANGUAGE_NAME)[i++],
-                                               result);
+                                               "name=" + name, result);
         }
 
         out = new JspWriterMockup();

@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.distribute.monitorregistry;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
@@ -36,6 +36,6 @@ public class MonitorRegistryClientFactory
      * @return A MonitorRegistryClient.
      */
     public static MonitorRegistryClient getInstance() {
-        return SettingsFactory.getInstance(Settings.MONITOR_REGISTRY_CLIENT);
+        return SettingsFactory.getInstance(CommonSettings.MONITOR_REGISTRY_CLIENT);
     }
 }

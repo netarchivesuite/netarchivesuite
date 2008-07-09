@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <common>
+        <arcrepositoryClient xsi:type="jmsarcrepositoryclient">
+            <!-- How many milliseconds we will wait before giving up on a
+                 lookup request to the Arcrepository. Set to 1 minute to
+                 make it possible to retrieve large records using FTP -->
+            <getTimeout>60000</getTimeout>
+            <!-- Number of times to try sending a store message before failing,
+                 including the first attempt -->
+            <storeRetries>3</storeRetries>
+            <!-- Timeout in milliseconds before retrying when calling
+                 ArcRepositoryClient.store() -->
+            <storeTimeout>3600000</storeTimeout>
+        </arcrepositoryClient>
+    </common>
+</settings>

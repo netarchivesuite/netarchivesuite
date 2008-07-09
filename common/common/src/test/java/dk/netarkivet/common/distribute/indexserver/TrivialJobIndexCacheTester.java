@@ -31,8 +31,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -48,8 +49,7 @@ public class TrivialJobIndexCacheTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        Settings.set(Settings.CACHE_DIR,
-                TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.CACHE_DIR, TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 

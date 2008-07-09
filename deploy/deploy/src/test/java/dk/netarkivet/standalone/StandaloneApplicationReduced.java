@@ -25,9 +25,10 @@ package dk.netarkivet.standalone;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 
 /**
@@ -46,7 +47,7 @@ public class StandaloneApplicationReduced {
      * @param args an empty array
      */
     public static void main(String[] args) {
-        Settings.set(Settings.REMOTE_FILE_CLASS,
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
 

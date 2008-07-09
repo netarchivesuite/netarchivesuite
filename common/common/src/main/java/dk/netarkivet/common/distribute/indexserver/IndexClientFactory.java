@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.distribute.indexserver;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
@@ -43,7 +43,7 @@ public class IndexClientFactory
      * @return A cache implementation for CDX files.
      */
     public static JobIndexCache getCDXInstance() {
-        return SettingsFactory.getInstance(Settings.INDEXSERVER_CLIENT,
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
                 RequestType.CDX);
     }
 
@@ -54,7 +54,7 @@ public class IndexClientFactory
      * @return A cache implementation for Lucene index files for deduplication.
      */
     public static JobIndexCache getDedupCrawllogInstance() {
-        return SettingsFactory.getInstance(Settings.INDEXSERVER_CLIENT,
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
                 RequestType.DEDUP_CRAWL_LOG);
     }
 
@@ -65,7 +65,7 @@ public class IndexClientFactory
      * @return A cache implementation for Lucene index files for viewing.
      */
     public static JobIndexCache getFullCrawllogInstance() {
-        return SettingsFactory.getInstance(Settings.INDEXSERVER_CLIENT,
+        return SettingsFactory.getInstance(CommonSettings.INDEXSERVER_CLIENT,
                 RequestType.FULL_CRAWL_LOG);
     }
 }

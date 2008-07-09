@@ -43,12 +43,13 @@ import junit.framework.TestCase;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.BitarchiveAdmin;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -67,6 +68,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.BatchLocalFiles;
 import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
@@ -105,12 +107,10 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
         to_fail = false;
 
-        Settings.set(Settings.ARC_REPOSITORY_CLIENT,
+        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                      MockupArcRepositoryClient.class.getName());
-        Settings.set(Settings.DIRS_ARCREPOSITORY_ADMIN,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
-        Settings.set(Settings.DIR_ARCREPOSITORY_BITPRESERVATION,
-                     TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
     protected void tearDown() throws Exception {
@@ -630,7 +630,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             OutputStream os = new FileOutputStream(tmpfile);
             // The file name
             File bitarchive_dir = new File(TestInfo.WORKING_DIR, locationName);
-            Settings.set(Settings.BITARCHIVE_SERVER_FILEDIR,
+            Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR,
                          bitarchive_dir.getAbsolutePath());
             BitarchiveAdmin admin = BitarchiveAdmin.getInstance();
             BatchLocalFiles localBatchRunner = new BatchLocalFiles(

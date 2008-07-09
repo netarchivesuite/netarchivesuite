@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.Constants;
-import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -44,6 +43,8 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -149,12 +150,12 @@ public class HarvestControllerServer extends HarvesterMessageHandler
 
     	// Make sure serverdir (where active crawl-dirs live) and oldJobsDir
     	// (where old crawl dirs are stored) exist.
-    	File serverDir = new File(
-    			Settings.get(Settings.HARVEST_CONTROLLER_SERVERDIR));
+        File serverDir = new File(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
     	ApplicationUtils.dirMustExist(serverDir);
     	log.info("Serverdir: '" + serverDir + "'");
-    	minSpaceRequired = Settings.getLong(
-    			Settings.HARVEST_SERVERDIR_MINSPACE);
+        minSpaceRequired = Settings.getLong(
+                HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
     	if (minSpaceRequired <= 0L) {
     		log.warn("Wrong setting of minSpaceLeft read from Settings: "
     				+ minSpaceRequired);
@@ -190,8 +191,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     	processOldJobs();
 
     	//Environment and connections are now ready for processing of messages
-    	JobPriority p = JobPriority.valueOf(
-    			Settings.get(Settings.HARVEST_CONTROLLER_PRIORITY));
+        JobPriority p = JobPriority.valueOf(
+                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
     	switch (p) {
     	case HIGHPRIORITY:
     		jobChannel = Channels.getAnyHighpriorityHaco();
@@ -266,7 +267,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         //Search through all crawldirs and process PersistentJobData
         // files in them
         File crawlDir = new File(Settings.get(
-                Settings.HARVEST_CONTROLLER_SERVERDIR));
+                HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
         File[] subdirs = crawlDir.listFiles();
         for (File oldCrawlDir : subdirs) {
             if (PersistentJobData.existsIn(oldCrawlDir)) {
@@ -581,7 +582,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 // Cleanup is in an extra finally, because it is large amounts
                 // of data we need to remove, even on send trouble.
                 files.cleanUpAfterHarvest(new File(
-                        Settings.get(Settings.HARVEST_CONTROLLER_OLDJOBSDIR)));
+                        Settings.get(
+                                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
             }
         }
         log.info("Done post-processing files for job " + jobID
@@ -673,7 +675,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             try {
                 File baseCrawlDir =
                         new File(Settings.get(
-                                Settings.HARVEST_CONTROLLER_SERVERDIR));
+                                HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
                 crawlDir = new File(baseCrawlDir,
                                     job.getJobID() + "_" + System.currentTimeMillis());
                 FileUtils.createDir(crawlDir);

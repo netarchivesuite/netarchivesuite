@@ -26,7 +26,8 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import dk.netarkivet.common.Settings;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Constants used by the datamodel and webinterface packages.
@@ -77,7 +78,7 @@ public class Constants {
      * Set to the max number of bytes we harvest from any domain per harvest,
      * unless explicitly deciding otherwise. */
     public static final long DEFAULT_MAX_BYTES
-            = Settings.getLong(Settings.DOMAIN_CONFIG_MAXBYTES);
+            = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXBYTES);
     /** This is the default number set as max harvested objects. Note, that
      * although this is a long it is sometimes used as an int, so don't set
      * this value too high. Default max objects should now be inifinity, since
