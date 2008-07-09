@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
@@ -116,7 +117,7 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
             
             try {
-                Iterator it = arcReader.iterator();
+                Iterator<? extends ArchiveRecord> it = arcReader.iterator();
                 /* Process all records from this Iterator: */
                 log.debug("Starting processing records in ARCfile '"
                         + arcFile.getName() + "'.");

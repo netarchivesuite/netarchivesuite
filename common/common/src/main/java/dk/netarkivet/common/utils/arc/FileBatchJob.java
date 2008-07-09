@@ -390,5 +390,13 @@ public abstract class FileBatchJob implements Serializable {
         public boolean isFinishException() {
             return inFinish;
         }
+        
+        public String toString() {
+            return "ExceptionOccurrence: (filename, fileoffset, outputoffset, "
+            		+ "exception, inInitialize, inFinish) = ("
+            		+ fileName + ", " + fileOffset +  ", " + outputOffset + ", "
+            		+ exception + ", " + inInitialize + ", " + inFinish + "). ";
+        }
+        
     }
 }

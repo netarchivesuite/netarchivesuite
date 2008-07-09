@@ -183,9 +183,6 @@ public class ARCBatchJobTester extends TestCase {
      * without harm.
      */
     public void testSerializability() {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         //Take two jobs: one for study and one for reference.
         SerializableARCBatchJob job1 = new SerializableARCBatchJob();
         SerializableARCBatchJob job2 = new SerializableARCBatchJob();
