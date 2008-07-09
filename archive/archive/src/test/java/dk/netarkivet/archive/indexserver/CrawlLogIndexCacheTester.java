@@ -26,7 +26,6 @@ package dk.netarkivet.archive.indexserver;
  */
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,11 +54,8 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
      * @throws Exception
      */
     public void testSortCrawlLog() throws Exception {
-        Method sortCrawlLog
-                = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "sortCrawlLog", File.class, File.class);
         File sortedFile = new File(TestInfo.CRAWL_LOG_1.getAbsolutePath() + ".sorted");
-        sortCrawlLog.invoke(null, TestInfo.CRAWL_LOG_1, sortedFile);
+        FileUtils.sortCrawlLog(TestInfo.CRAWL_LOG_1, sortedFile);
 
         assertIsSortedCrawlLog("Should be sorted", sortedFile);
     }

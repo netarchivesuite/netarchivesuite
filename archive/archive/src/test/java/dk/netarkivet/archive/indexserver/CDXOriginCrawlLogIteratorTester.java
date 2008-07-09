@@ -22,22 +22,20 @@
 */
 package dk.netarkivet.archive.indexserver;
 
-import is.hi.bok.deduplicator.CrawlDataItem;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import is.hi.bok.deduplicator.CrawlDataItem;
 import junit.framework.TestCase;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
@@ -229,11 +227,6 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
      * @throws Exception
      */
     public void testbug680() throws Exception {    
-        Method sortCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "sortCDX", File.class, File.class);
-        Method sortCrawlLog = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "sortCrawlLog", File.class, File.class);
-
         File unsortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680.log");
         File sortedCrawlLogFile = new File(TestInfo.CRAWLLOGS_DIR, "crawl-680-sorted.log");
 
@@ -241,8 +234,8 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
         File sortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-sorted-680");
 
 
-        sortCrawlLog.invoke(null, unsortedCrawlLogFile, sortedCrawlLogFile);
-        sortCDX.invoke(null, unsortedCDXFile, sortedCDXFile);
+        FileUtils.sortCrawlLog(unsortedCrawlLogFile, sortedCrawlLogFile);
+        FileUtils.sortCDX(unsortedCDXFile, sortedCDXFile);
 
         BufferedReader cdx =
             new BufferedReader(new FileReader(sortedCDXFile));
@@ -273,8 +266,8 @@ public class CDXOriginCrawlLogIteratorTester extends TestCase {
         sortedCDXFile = new File(TestInfo.CDXDATACACHE_DIR, "cdxdata-9-sorted-cache");
 
 
-        sortCrawlLog.invoke(null, unsortedCrawlLogFile, sortedCrawlLogFile);
-        sortCDX.invoke(null, unsortedCDXFile, sortedCDXFile);
+        FileUtils.sortCrawlLog(unsortedCrawlLogFile, sortedCrawlLogFile);
+        FileUtils.sortCDX(unsortedCDXFile, sortedCDXFile);
 
         cdx =
             new BufferedReader(new FileReader(sortedCDXFile));
