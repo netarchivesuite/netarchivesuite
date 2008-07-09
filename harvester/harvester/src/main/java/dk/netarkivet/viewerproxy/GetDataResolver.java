@@ -57,17 +57,17 @@ public class GetDataResolver extends CommandResolver {
     ViewerArcRepositoryClient client;
 
     /** Command for getting a single file from the bitarchive. */
-    static final String GET_FILE_COMMAND = "/getFile";
+    public static final String GET_FILE_COMMAND = "/getFile";
     /** Command for getting a specific record (file+offset) from an ARC file
      * in the bitarchive. */
-    static final String GET_RECORD_COMMAND = "/getRecord";
+    public static final String GET_RECORD_COMMAND = "/getRecord";
     /** Command for getting all metadata for a single job. */
     static final String GET_METADATA_COMMAND = "/getMetadata";
 
     /** Parameter defining the file to return the getting files or records. */
-    static final String FILE_NAME_PARAMETER = "arcFile";
+    public static final String FILE_NAME_PARAMETER = "arcFile";
     /** Parameter defining the offset into an ARC file for getting a record. */
-    static final String FILE_OFFSET_PARAMETER = "arcOffset";
+    public static final String FILE_OFFSET_PARAMETER = "arcOffset";
     /** Parameter for ids of jobs to get metadata for.  */
     static final String JOB_ID_PARAMETER = "jobID";
 

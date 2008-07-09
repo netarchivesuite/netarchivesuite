@@ -40,7 +40,6 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 
 /**
@@ -61,7 +60,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      */
     private final CDXDataCache cdxcache = new CDXDataCache();
     /** Optimizes Lucene index, if set to true. */
-    private final static boolean OPTIMIZE_INDEX = true;
+    private static final boolean OPTIMIZE_INDEX = true;
     private boolean useBlacklist;
     private String mimeFilter;
     private static Log log
@@ -205,27 +204,11 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         try {
             final File tmpFile = File.createTempFile("sorted", "cdx",
                     FileUtils.getTempDir());
-            sortCDX(cdxcache.getCacheFile(cached), tmpFile);
+            FileUtils.sortCDX(cdxcache.getCacheFile(cached), tmpFile);
             tmpFile.deleteOnExit();
             return tmpFile;
         } catch (IOException e) {
             throw new IOFailure("Error while making tmp file for " + cached, e);
-        }
-    }
-
-    /** Sort a CDX file according to our standard for CDX file sorting.  This
-     * method depends on the Unix sort() command.
-     *
-     * @param file The raw unsorted CDX file.
-     * @param toFile The file that the result will be put into.
-     */
-    private static void sortCDX(File file, File toFile) {
-        int error = ProcessUtils.runProcess(new String[] { "LANG=C"} ,
-                "sort", file.getAbsolutePath(),
-                "-o", toFile.getAbsolutePath());
-        if (error != 0) {
-            throw new IOFailure("Error code " + error + " sorting cdx file "
-                    + file);
         }
     }
 
@@ -236,35 +219,16 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      * URL.  The file will be removed upon exit of the JVM, but should be
      * attempted removed when it is no longer used.
      */
-    private File getSortedCrawlLog(File file) {
+    private static File getSortedCrawlLog(File file) {
         try {
             File tmpCrawlLog = File.createTempFile("sorted", "crawllog",
                     FileUtils.getTempDir());
-            sortCrawlLog(file, tmpCrawlLog);
+            FileUtils.sortCrawlLog(file, tmpCrawlLog);
             tmpCrawlLog.deleteOnExit();
             return tmpCrawlLog;
         } catch (IOException e) {
             throw new IOFailure("Error creating sorted crawl log file for '"
-                    + file + "'");
-        }
-    }
-
-    /** Sort a crawl.log file according to URL.  This method depends on
-     * the Unix sort() command.
-     *
-     * @param file The file containing the unsorted data.
-     * @param tmpCrawlLog The file that the sorted data can be put into.
-     * @throws IOFailure if there were errors running the sort process.
-     */
-    private static void sortCrawlLog(File file, File tmpCrawlLog) {
-        int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
-                // 4b means fourth field (from 1) ignoring leading blanks
-                "sort", "-k", "4b",
-                file.getAbsolutePath(),
-                "-o", tmpCrawlLog.getAbsolutePath());
-        if (error != 0) {
-            throw new IOFailure("Error code " + error + " sorting crawl log "
-                    + file);
+                    + file + "'", e);
         }
     }
 }

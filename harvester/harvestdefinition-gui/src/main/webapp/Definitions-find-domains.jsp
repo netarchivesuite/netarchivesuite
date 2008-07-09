@@ -29,9 +29,9 @@ displayed, if no domains are found for a non-glob search, the user is
 asked if they should be created.
 --%><%@ page import="javax.servlet.RequestDispatcher,
                  java.util.List,
+                 dk.netarkivet.common.utils.DomainUtils,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.datamodel.Domain,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.webinterface.Constants"
          pageEncoding="UTF-8"
@@ -80,8 +80,8 @@ asked if they should be created.
             rd.forward(request, response);
         } else {
             //Is it a legal domain name
-            boolean isLegal = Domain.isValidDomainName(domainName);
-            String message = null;
+            boolean isLegal = DomainUtils.isValidDomainName(domainName);
+            String message;
             if (isLegal) {
                 String createUrl = "Definitions-create-domain.jsp?"
                         + Constants.DOMAINLIST_PARAM + "="

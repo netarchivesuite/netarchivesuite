@@ -40,6 +40,7 @@ import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 public class LoadableFileBatchJobTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
+    private static final File FNORD_FILE = new File("fnord");
 
     public LoadableFileBatchJobTester(String s) {
         super(s);
@@ -48,6 +49,10 @@ public class LoadableFileBatchJobTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         mtf.setUp();
+        //clean up fnord file if it exists from earlier failed unitTests
+        if (FNORD_FILE.exists()) {
+        	FileUtils.remove(FNORD_FILE);
+        }
     }
 
     public void tearDown() throws Exception {
@@ -93,12 +98,6 @@ public class LoadableFileBatchJobTester extends TestCase {
                      os.toString());
         assertFalse("File should have even length", retval);
         
-        ///Test hack file
-        //see if fnord file exists from earlier failed unitTests
-        if (new File("fnord").exists()) { 
-        	File f =  new File("fnord");
-            assertFalse("REMOVE file from earlier test before running this again: " + f.getAbsolutePath(), f.exists());
-        }
         //try to make hack file via loaded batch file
         try {
             retval = job.processFile(new File("makeahack"), os);
@@ -107,7 +106,7 @@ public class LoadableFileBatchJobTester extends TestCase {
             // expected
         }
         assertFalse("Hack should not be successfull", retval);
-        assertFalse("Hacked file should not exist", new File("fnord").exists());
+        assertFalse("Hacked file should not exist", FNORD_FILE.exists());
     }
 
     public void testFinish() {

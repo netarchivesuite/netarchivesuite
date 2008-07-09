@@ -102,6 +102,7 @@ public class UnitTesterSuite {
         ViewerproxyDistributeTesterSuite.addToSuite(suite);
         ViewerProxyTesterSuite.addToSuite(suite);
         WebinterfaceTesterSuite.addToSuite(suite);
+        dk.netarkivet.viewerproxy.webinterface.WebinterfaceTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {

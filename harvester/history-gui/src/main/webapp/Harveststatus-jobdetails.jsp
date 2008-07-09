@@ -36,11 +36,11 @@ and reposne.getLocale use this locale.
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.HarvestDefinition,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
                  dk.netarkivet.harvester.datamodel.HarvestInfo,
                  dk.netarkivet.harvester.datamodel.Job,
                  dk.netarkivet.harvester.datamodel.JobDAO,
+                 dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.webinterface.Constants"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -243,6 +243,31 @@ and reposne.getLocale use this locale.
         }
     %>
 </p>
+
+<%
+if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
+    && job.getStatus().ordinal() > JobStatus.STARTED.ordinal()) {
+    //make links to reports from harvest, extracted from viewerproxy.
+%>
+<h3><fmt:message key="subtitle;reports.for.job"/></h3>
+<p><a href="/QA/QA-getreports.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.reports"/></a></p>
+<p><a href="/QA/QA-getfiles.jsp?jobid=<%=jobID%>"><fmt:message key="harvest.files"/></a></p>
+<p>
+    <%
+    for (String domain :
+                    job.getDomainConfigurationMap().keySet()) {
+        %>
+        <a href="/QA/QA-crawlloglines.jsp?jobid=<%=jobID%>&domain=<%=domain%>"><fmt:message key="crawl.log.lines.for.domain.0">
+            <fmt:param value="<%=domain%>"/>
+        </fmt:message></a><br/>
+        <%
+    }
+    %>
+</p>
+<p><fmt:message key="helptext;select.job.for.qa.with.viewerproxy"/></p>
+<%
+}
+%>
 
 <h3><fmt:message key="subtitle.job.harvesttemplate">
     <fmt:param value="<%=HTMLUtils.escapeHtmlValues((job.getOrderXMLName()))%>"/>

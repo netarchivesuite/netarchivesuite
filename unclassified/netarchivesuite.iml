@@ -254,7 +254,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../src/heritrix-1.12.1/src/java" />
+          <root url="file://$MODULE_DIR$/../projects/webarkivering/roles/externsoftware/heritrix-1.12.1b/src/java" />
         </SOURCES>
       </library>
     </orderEntry>
