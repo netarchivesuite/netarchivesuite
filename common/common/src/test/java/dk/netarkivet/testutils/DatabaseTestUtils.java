@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.datamodel.DBConnect;
 
 /**
@@ -66,7 +67,7 @@ public class DatabaseTestUtils {
         String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
 
         FileUtils.removeRecursively(new File(dbUnzipDir, dbname));
-        TestFileUtils.unzip(jarfile, dbUnzipDir);
+        ZipUtils.unzip(jarfile, dbUnzipDir);
         // Absolute or relative path should work according to
         // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
 

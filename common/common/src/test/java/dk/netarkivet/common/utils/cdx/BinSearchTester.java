@@ -50,8 +50,8 @@ public class BinSearchTester extends TestCase {
         super.tearDown();
     }
 
-    /** Test that getLinesInFile(String, List<File>) returns the expected
-     * lines.
+    /** Test that getLinesInFile(File, String) returns the expected
+     * lines. Uses the locally defined wrapper method findLinesInFile.
      */
     public void testGetLinesInFile() throws IOException {
         // Test a failing search
@@ -59,7 +59,8 @@ public class BinSearchTester extends TestCase {
                 0, findLinesInFile(TestInfo.CDX_FILE1, "http://fnord/").size());
         // Test a search beyond the end
         assertEquals("Should get no results for past-the-end domain",
-                0, findLinesInFile(TestInfo.CDX_FILE1, "http://xenophile.dk/").size());
+                0, findLinesInFile(TestInfo.CDX_FILE1,
+                        "http://xenophile.dk/").size());
         // Test a search beyond the start
         assertEquals("Should get no results for past-the-start domain",
                 0, findLinesInFile(TestInfo.CDX_FILE1, "dns:101").size());
@@ -69,20 +70,26 @@ public class BinSearchTester extends TestCase {
         assertEquals("Should get exactly 4 lines for player.",
                 4, playerUrls.size());
         assertTrue("Should have right line first",
-                playerUrls.get(0).startsWith("http://player.localeyes.tv/entry.asp"));
+                playerUrls.get(0).startsWith(
+                        "http://player.localeyes.tv/entry.asp"));
         assertTrue("Should have other line next",
-                playerUrls.get(1).startsWith("http://player.localeyes.tv/graphics/copyright_m_logo.gif"));
+                playerUrls.get(1).startsWith(
+                        "http://player.localeyes.tv/graphics/"
+                        + "copyright_m_logo.gif"));
 
         List<String> serverDkUrls = findLinesInFile(TestInfo.CDX_FILE1,
                 "http://server-dk.");
         assertEquals("Should get exactly 5 lines for server-dk",
                 5, serverDkUrls.size());
         assertTrue("Should have root first",
-                serverDkUrls.get(0).startsWith("http://server-dk.imrworldwide.com/ "));
+                serverDkUrls.get(0).startsWith(
+                        "http://server-dk.imrworldwide.com/ "));
         assertTrue("Should have root second, too",
-                serverDkUrls.get(1).startsWith("http://server-dk.imrworldwide.com/ "));
+                serverDkUrls.get(1).startsWith(
+                        "http://server-dk.imrworldwide.com/ "));
         assertTrue("Should have different thing third",
-                serverDkUrls.get(2).startsWith("http://server-dk.imrworldwide.com/a1.js "));
+                serverDkUrls.get(2).startsWith(
+                        "http://server-dk.imrworldwide.com/a1.js "));
 
         // Test that the Iterable can be reused
         Iterable<String> lines = BinSearch.getLinesInFile(TestInfo.CDX_FILE1,
@@ -94,9 +101,16 @@ public class BinSearchTester extends TestCase {
                 count1, count2);
     }
 
+    /**
+     * Test the BinSearch.getLinesInFile(File, String) with
+     * Danish letters.
+     */
     public void testGetLinesInFileDanish() {
         // This test fails because RandomAccessFile doesn't support UniCode at
-        // all (see its documentation).  It can sometimes look like it passes,
+        // all (see its documentation:
+        // http://java.sun.com/j2se/1.5.0/docs/api/java/io/RandomAccessFile.html
+        // http://java.sun.com/javase/6/docs/api/java/io/RandomAccessFile.html).
+        // It can sometimes look like it passes,
         // since it hits some bug in IDEA's JUnit framework.  It should
         // therefore not be included until a more robust way of random access
         // if found.
@@ -121,9 +135,14 @@ public class BinSearchTester extends TestCase {
                 1, danishSearch.size());
     }
 
-    /** Wrapper around getLinesInFile that turns them into a List. */
+    /** Wrapper around getLinesInFile that turns them into a List. 
+     * @param file The file to search in 
+     * @param find The string to look for in the file.
+     * @return a List of lines that matches the String given by arg find.
+     */
     private static List<String> findLinesInFile(File file, String find) {
-        return IteratorUtils.toList(BinSearch.getLinesInFile(file, find).iterator());
+        return IteratorUtils.toList(
+                BinSearch.getLinesInFile(file, find).iterator());
     }
 
     /** Test that skipToLine goes to the expected place, and puts the file
@@ -132,9 +151,10 @@ public class BinSearchTester extends TestCase {
      */
     public void testSkipToLine() throws Exception {
         Method m = BinSearch.class.getDeclaredMethod("skipToLine",
-                new Class[] { RandomAccessFile.class, Long.TYPE } );
+                new Class[] {RandomAccessFile.class, Long.TYPE });
         m.setAccessible(true);
-        RandomAccessFile f = new RandomAccessFile(TestInfo.SORTED_CDX_FILE, "r");
+        RandomAccessFile f = new RandomAccessFile(
+                TestInfo.SORTED_CDX_FILE, "r");
         // Test at start of line
         Long l = (Long) m.invoke(null, f, 24859); // 342-line
         assertEquals("Should have 343-line returned",
@@ -161,7 +181,8 @@ public class BinSearchTester extends TestCase {
     public void testFindMiddleLine() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(BinSearch.class,
                 "findMiddleLine", RandomAccessFile.class, Long.TYPE, Long.TYPE);
-        RandomAccessFile f = new RandomAccessFile(TestInfo.SORTED_CDX_FILE, "r");
+        RandomAccessFile f = new RandomAccessFile(
+                TestInfo.SORTED_CDX_FILE, "r");
         // This file has linestarts at 24859, 25041, 25223, 25406 consecutively
         Long l = (Long) m.invoke(null, f, 24859, 25223);
         assertEquals("Should have given line in middle", 25041, l.longValue());

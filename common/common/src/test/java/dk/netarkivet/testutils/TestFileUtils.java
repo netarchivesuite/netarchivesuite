@@ -23,24 +23,16 @@
 
 package dk.netarkivet.testutils;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
@@ -263,61 +255,6 @@ public class TestFileUtils {
             return "lines " + (startLine + 1) + "-" + (endLine + 1);
         }
     }
-
-    /**
-     * Unzip a zip file into a given directory.
-     *
-     * @param zipfile a given zipfile.
-     * @param destdir the destination directory,
-     *  to which the zipfile should be unzipped.
-     */
-    public static void unzip(File zipfile, File destdir) throws IOException {
-        ArgumentNotValid.checkNotNull(zipfile, "File f");
-        ArgumentNotValid.checkNotNull(destdir, "File destdir");
-        Enumeration entries;
-        ZipFile zipFile;
-        ArgumentNotValid.checkTrue(zipfile.exists(), 
-                "File '" + zipfile.getAbsolutePath() + "' does not exist");
-        ArgumentNotValid.checkTrue(destdir.exists(), 
-                "File '" + destdir.getAbsolutePath() + "' does not exist");
-        zipFile = new ZipFile(zipfile);
-
-        entries = zipFile.entries();
-
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-
-            final File file = new File(destdir, entry.getName());
-            if (entry.isDirectory()) {
-                // Assume directories are stored parents first then children.
-                // This is not robust, just for demonstration purposes.
-                file.mkdir();
-                file.deleteOnExit();
-                continue;
-            }
-
-            copyInputStream(zipFile.getInputStream(entry),
-                            new BufferedOutputStream(
-                                    new FileOutputStream(file)));
-            file.deleteOnExit();
-        }
-
-        zipFile.close();
-    }
-
-    private static final void copyInputStream(InputStream in, OutputStream out)
-            throws IOException {
-        byte[] buffer = new byte[1024];
-        int len;
-
-        while ((len = in.read(buffer)) >= 0) {
-            out.write(buffer, 0, len);
-        }
-
-        in.close();
-        out.close();
-    }
-
 
     /**
      * Make a temporary directory using File.createTempFile.
