@@ -63,12 +63,14 @@ public class DatabaseTestUtils {
     public static Connection takeDatabase(File jarfile, File dbUnzipDir)
             throws SQLException, IOException, IllegalAccessException
     {
-        FileUtils.removeRecursively(new File(dbUnzipDir, "fullhddb"));
+        String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
+
+        FileUtils.removeRecursively(new File(dbUnzipDir, dbname));
         TestFileUtils.unzip(jarfile, dbUnzipDir);
         // Absolute or relative path should work according to
         // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
 
-        final String dbfile = dbUnzipDir + "/fullhddb";
+        final String dbfile = dbUnzipDir + "/" + dbname;
         try {
             Field f = DBConnect.class.getDeclaredField("connectionPool");
             f.setAccessible(true);

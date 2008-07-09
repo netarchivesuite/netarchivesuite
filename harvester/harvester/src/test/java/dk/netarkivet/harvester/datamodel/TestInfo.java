@@ -175,6 +175,7 @@ public class TestInfo {
 
     public static File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     static final File DBFILE = new File(TOPDATADIR, "fullhddb.jar");
+    static final File EMPTYDBFILE = new File(TOPDATADIR, "emptyhddb.jar");
     public static final File NONEXISTINGDIR =
             new File(TEMPDIR, "nonexisting");
     public static final String GUI_WEB_SERVER_SITESECTION_CLASS

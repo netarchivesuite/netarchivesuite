@@ -22,63 +22,81 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.Settings;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
+import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Alternate unit-test class for TemplateDAO.
- * Test that it's possible to get access to an empty templates table.
+ * lc forgot to comment this!
  */
 public class TemplateDAOTesterAlternate extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
     public TemplateDAOTesterAlternate(String s) {
         super(s);
     }
 
     public void setUp() throws Exception {
         super.setUp();
+        rs.setUp();
+        FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
+        String[] values1 = new String[]{
+                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"};
+        Settings.set(Settings.DB_URL, values1);
+        String[] values = new String[]{RememberNotifications.class.getName()};
+        Settings.set(Settings.NOTIFICATIONS_CLASS, values);
+        TestUtils.resetDAOs();
+
+        Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE, TestInfo.TEMPDIR);
+        if (c == null) {
+            fail("No connection to Database: " + TestInfo.EMPTYDBFILE.getAbsolutePath());
+        }
+
+        assertEquals("DBUrl wrong", Settings.get(Settings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        TemplateDAO.getInstance();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        
+        DatabaseTestUtils.dropHDDB();
+        Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
+        f.set(null, null);
+        FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        TestUtils.resetDAOs();
+        rs.tearDown();
     }
 
     /**
      * Test that it's possible to get access to an empty templates table.
      * This tests that Bug 916 is fixed.
      * TODO merge with TemplateDAOTester
+     * @throws IllegalAccessException
      * @throws IOException
      * @throws SQLException
      */
-    public void testGetinstanceOnEmptyDatabase() throws IOException, SQLException {
-        final String emptyDatabaseUrl = "jdbc:derby:"  
-            + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb"; 
-        Settings.set(Settings.DB_URL, emptyDatabaseUrl);
-        assertEquals("DBUrl wrong", 
-                Settings.get(Settings.DB_URL), emptyDatabaseUrl);
-
-        TestInfo.TEMPDIR.mkdirs();
-        FileUtils.copyFile(new File(TestInfo.TOPDATADIR, "emptyhddb.jar"),
-                new File(TestInfo.TEMPDIR, "emptyhddb.jar"));
-        TestFileUtils.unzip(new File(TestInfo.TEMPDIR, "emptyhddb.jar"), 
-                TestInfo.TEMPDIR);
+    public void testGetinstanceOnEmptyDatabase() throws IOException, SQLException, IllegalAccessException {
         TemplateDAO dao = null;
         try {
             dao = TemplateDAO.getInstance();
         } catch (Exception e) {
-            fail("Should not throw an exception with an templates table without"
-                    + "the default template");
+            fail("Should not throw an exception with an templates table without" +
+                    "the default template");
         }
         // verify that templates table is indeed derived of default template
-        assertFalse("Should not contain default template", 
-                dao.exists(Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)));
-        FileUtils.removeRecursively(TestInfo.TEMPDIR);
+        assertFalse("Should not contain default template", dao.exists(
+                Settings.get(Settings.DOMAIN_DEFAULT_ORDERXML)));
     }
 }
