@@ -26,11 +26,9 @@ Parameters:
 resubmit - jobID of a job to resubmit.
 --%><%@ page import="java.util.List,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
-                 dk.netarkivet.common.exceptions.ArgumentNotValid,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
-                 dk.netarkivet.harvester.datamodel.JobDBDAO,
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.JobStatusInfo,
                  dk.netarkivet.harvester.webinterface.Constants,
