@@ -51,8 +51,8 @@ public class DomainConfigurationTester extends DataModelTestCase {
     }
 
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
+        super.setUp();
         Settings.set(HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS, "2");
         Settings.set(HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT, "10");
         Settings.set(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE, "100");

@@ -139,9 +139,9 @@ public class IntegrityTests extends TestCase{
 
     /**
      * After test is done close test-objects.
-     * @throws SQLException
+     * @throws Exception
      */
-    public void tearDown() throws SQLException {
+    public void tearDown() throws Exception {
         mis.tearDown();
         if (hcc != null) {
             hcc.close();

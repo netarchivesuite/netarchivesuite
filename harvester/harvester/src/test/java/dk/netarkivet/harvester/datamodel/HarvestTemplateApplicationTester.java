@@ -84,7 +84,7 @@ public class HarvestTemplateApplicationTester extends TestCase {
         pse.setUp();
     }
 
-    public void tearDown() throws SQLException {
+    public void tearDown() throws Exception {
         pse.tearDown();
 
         System.setIn(origIn);

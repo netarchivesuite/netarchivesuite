@@ -38,6 +38,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.datamodel.DBConnect;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 
 /**
  * Utilities to allow testing databases.
@@ -118,7 +119,9 @@ public class DatabaseTestUtils {
     /** Drop access to the database that's currently taken.
      * @throws SQLException
      */
-    public static void dropDatabase() throws SQLException {
+    public static void dropDatabase() throws SQLException,
+                                             NoSuchFieldException,
+                                             IllegalAccessException {
         try {
             final String shutdownUri = dburi + ";shutdown=true";
             DriverManager.getConnection(shutdownUri);
@@ -128,6 +131,9 @@ public class DatabaseTestUtils {
                     "Expected SQL-exception when shutting down database:" + e);
         }
         connectionPool.clear();
+        // null field instance in DBSpecifics.
+        Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
+        f.set(null, null);
 /*
         for (Thread t: connectionPool.keySet()) {
             final Connection connection = connectionPool.get(t);
@@ -153,7 +159,8 @@ public class DatabaseTestUtils {
     /** Drop the connection to the harvest definition database.
      * @throws SQLException
      */
-    public static void dropHDDB() throws SQLException {
+    public static void dropHDDB()
+            throws SQLException, NoSuchFieldException, IllegalAccessException {
         dropDatabase();
     }
 }

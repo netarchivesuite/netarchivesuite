@@ -24,7 +24,6 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +41,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.DatabaseTestUtils;
-import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -71,8 +69,10 @@ public class DataModelTestCase extends TestCase {
                 +  "' exists ", TestInfo.TEMPDIR.exists());
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         derbyLog.setUp();
+        String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
+                            + "/fullhddb";
         Settings.set(CommonSettings.DB_URL,
-                     "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+                     derbyDBUrl);
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         TestUtils.resetDAOs();
 
@@ -82,16 +82,14 @@ public class DataModelTestCase extends TestCase {
                     + TestInfo.DBFILE.getAbsolutePath());
         }
 
-        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL),
+                     derbyDBUrl);
         //TemplateDAO.getInstance();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
         DatabaseTestUtils.dropHDDB();
-        // null field instance in DBSpecifics.
-        Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
-        f.set(null, null);
         derbyLog.tearDown();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestUtils.resetDAOs();

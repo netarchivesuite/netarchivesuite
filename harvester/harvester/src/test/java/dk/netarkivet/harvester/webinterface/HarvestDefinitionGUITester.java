@@ -52,8 +52,8 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws Exception {
-        super.setUp();
         rs.setUp();
+        super.setUp();
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.HARVESTDEFINITION_JSP_DIR);
