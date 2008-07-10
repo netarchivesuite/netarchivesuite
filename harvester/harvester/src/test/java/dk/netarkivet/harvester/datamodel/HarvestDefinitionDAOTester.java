@@ -40,6 +40,7 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 
 /**
+ * Unit tests for the class HarvestDefinitionDAO class.
  */
 public class HarvestDefinitionDAOTester extends DataModelTestCase {
     public HarvestDefinitionDAOTester(String s) {
@@ -55,7 +56,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Check that creation of a new HarvestDefinition instance succeeds
+     * Check that creation of a new HarvestDefinition instance succeeds.
      */
     public void testCreateAndRead() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
@@ -131,7 +132,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
     /**
      * Verify that updating an already modified harvestdefinition throws an
-     * exception
+     * exception.
      */
     public void testOptimisticLocking() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
@@ -164,7 +165,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test deletion of HarvestDefinition
+     * Test deletion of HarvestDefinition.
      */
     public void testDelete() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
@@ -233,7 +234,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Check updating of an existing entry
+     * Check updating of an existing entry.
      */
     public void testUpdate() {
         HarvestDefinitionDAO hdDAO = HarvestDefinitionDAO.getInstance();
@@ -359,7 +360,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         now = cal.getTime();
         runGenerateJobs(hddao, now, 0);
         JobDAO jobdao = JobDAO.getInstance();
-        List jobs = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
+        List<Job> jobs = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should get no job for the HD in the future", 0, jobs
                 .size());
         // Make some harvest definitions with schedules around the given time
@@ -383,7 +384,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         hd2.setSubmissionDate(new Date());
         hddao.create(hd2);
         runGenerateJobs(hddao, now, 0);
-        List jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
+        List<Job> jobs1 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals("Should get jobs for no new defs immediately", 0, jobs1
                 .size());
 
@@ -412,7 +413,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                                               || j2.getOrigHarvestDefinitionID().equals(
                 hd2.getOid()));
         runGenerateJobs(hddao, now, 1);
-        List jobs2 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
+        List<Job> jobs2 = IteratorUtils.toList(jobdao.getAll(JobStatus.NEW));
         assertEquals(
                 "Should generate one more job because we are past the time"
                 + " when the next hourly job should have been scheduled.",

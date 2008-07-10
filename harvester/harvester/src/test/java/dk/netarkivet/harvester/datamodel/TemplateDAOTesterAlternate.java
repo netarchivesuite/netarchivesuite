@@ -22,13 +22,10 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -41,7 +38,8 @@ import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * lc forgot to comment this!
+ * Alternate unit test class for the TemplateDAO.
+ * FIXME Merge with TemplateDAOTester
  */
 public class TemplateDAOTesterAlternate extends TestCase {
     ReloadSettings rs = new ReloadSettings();
@@ -55,17 +53,23 @@ public class TemplateDAOTesterAlternate extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
-        Settings.set(CommonSettings.DB_URL,
-                     "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
+                + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
         TestUtils.resetDAOs();
 
-        Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE, TestInfo.TEMPDIR);
+        Connection c = DatabaseTestUtils.getHDDB(TestInfo.EMPTYDBFILE,
+                "emptyhddb", TestInfo.TEMPDIR);
+
         if (c == null) {
-            fail("No connection to Database: " + TestInfo.EMPTYDBFILE.getAbsolutePath());
+            fail("No connection to Database: "
+                    + TestInfo.EMPTYDBFILE.getAbsolutePath());
         }
 
-        assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL), "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
+        assertEquals("DBUrl wrong",
+                Settings.get(CommonSettings.DB_URL), "jdbc:derby:" 
+                + TestInfo.TEMPDIR.getCanonicalPath() + "/emptyhddb");
         TemplateDAO.getInstance();
     }
 
@@ -82,18 +86,15 @@ public class TemplateDAOTesterAlternate extends TestCase {
     /**
      * Test that it's possible to get access to an empty templates table.
      * This tests that Bug 916 is fixed.
-     * TODO merge with TemplateDAOTester
-     * @throws IllegalAccessException
-     * @throws IOException
-     * @throws SQLException
+     * FIXME merge with TemplateDAOTester
      */
-    public void testGetinstanceOnEmptyDatabase() throws IOException, SQLException, IllegalAccessException {
+    public void testGetinstanceOnEmptyDatabase() {
         TemplateDAO dao = null;
         try {
             dao = TemplateDAO.getInstance();
         } catch (Exception e) {
-            fail("Should not throw an exception with an templates table without" +
-                    "the default template");
+            fail("Should not throw an exception with an templates table without"
+                    + "the default template, but threw exception: " + e);
         }
         // verify that templates table is indeed derived of default template
         assertFalse("Should not contain default template", dao.exists(

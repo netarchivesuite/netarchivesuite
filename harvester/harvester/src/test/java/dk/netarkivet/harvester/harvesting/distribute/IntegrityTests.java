@@ -63,8 +63,8 @@ import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * Integrity tests for the dk.harvester.harvesting.distribute
- * package. Both tests assume that a JMSBroker is running on localhost
+ * Integrity tests for the dk.harvester.harvesting.distribute 
+ * package. Both tests assume that a JMSBroker is running on localhost 
  * at port 7676
  * FIXME Both tests fail at the moment
  */
@@ -80,7 +80,8 @@ public class IntegrityTests extends TestCase{
     HarvestControllerServer hs;
     private JMSConnection con;
     private boolean done = false;
-    MockupIndexServer mis = new MockupIndexServer(new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
+    MockupIndexServer mis = new MockupIndexServer(
+            new File(TestInfo.ORIGINALS_DIR, "2-3-cache.zip"));
     ReloadSettings rs = new ReloadSettings();
 
     SecurityManager sm;
@@ -94,10 +95,10 @@ public class IntegrityTests extends TestCase{
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
+            TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, 
                     TestInfo.WORKING_DIR);
         } catch (IOFailure e) {
-            fail("Could not copy working-files to: "
+            fail("Could not copy working-files to: " 
                     + TestInfo.WORKING_DIR.getAbsolutePath());
         }
 
@@ -112,11 +113,13 @@ public class IntegrityTests extends TestCase{
         ChannelsTester.resetChannels();
         TestUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
-                     TestInfo.WORKING_DIR.getPath() + "/harvestControllerServerDir");
+                     TestInfo.WORKING_DIR.getPath()
+                         + "/harvestControllerServerDir");
 
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
-
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
+        
         hs = HarvestControllerServer.getInstance();
         hcc = HarvestControllerClient.getInstance();
 
@@ -132,7 +135,8 @@ public class IntegrityTests extends TestCase{
         });
         // Copy database to working dir: TestInfo.WORKING_DIR
         File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
-        DatabaseTestUtils.getHDDB(databaseJarFile, TestInfo.WORKING_DIR);
+        DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
+                TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
         mis.setUp();
      }
@@ -163,7 +167,7 @@ public class IntegrityTests extends TestCase{
     //2) A listener as added to the ArcRepos queue
     //3) A crawl job is started on the HACO
     //4) Sleeps until ArcRepos gets a store message, indicating doOneCrawl runs
-    //5) Before replying, checks that noone listens to the haco queue
+    //5) Before replying, checks that no one listens to the haco queue
     //6) A listener listens to TheSched
     //7) The reply to the store is sent
     //8) Waits for message on the sched, indicating doOneCrawl ended
@@ -366,7 +370,7 @@ public class IntegrityTests extends TestCase{
                 + listener.messages.get(1).getHarvestErrorDetails(),
                 JobStatus.DONE, listener.status_codes.get(1));
         //
-        // Check that JobIDs are corrects
+        // Check that JobIDs are correct
         //
         assertEquals("JobIDs do not match for first message:",
                      j.getJobID().longValue(),

@@ -34,14 +34,21 @@ import dk.netarkivet.harvester.datamodel.Job;
 public class TestInfo {
 
     /**
-     * The properties-file containg properties for logging in unit-tests.
+     * The properties-file containing properties for logging in unit-tests.
      */
-    static final File TESTLOGPROP = new File("tests/dk/netarkivet/testlog.prop");
+    static final File TESTLOGPROP = new File(
+            "tests/dk/netarkivet/testlog.prop");
 
-    static final File BASEDIR = new File("tests/dk/netarkivet/harvester/scheduler/data");
+    static final File BASEDIR = new File(
+            "tests/dk/netarkivet/harvester/scheduler/data");
     static final File ORIGINALS_DIR = new File(BASEDIR, "originals");
     static final File WORKING_DIR = new File(BASEDIR, "working");
 
+    static final File orderTemplatesOriginalsDir 
+        = new File(
+                "tests/dk/netarkivet/"
+                + "/harvester/data/originals/order_templates/");
+    
     public TestInfo() {
 
     }

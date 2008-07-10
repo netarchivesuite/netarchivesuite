@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.harvester.datamodel;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,10 +43,13 @@ import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+/**
+ * Unit tests for the HarvestTemplateApplication tool.
+ */
 public class HarvestTemplateApplicationTester extends TestCase {
     PreventSystemExit pse = new PreventSystemExit();
     ReloadSettings rs = new ReloadSettings();
-
+    
     InputStream origIn;
     PrintStream origOut;
     PrintStream origErr;
@@ -70,8 +70,9 @@ public class HarvestTemplateApplicationTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         TestUtils.resetDAOs();
         Settings.set(CommonSettings.DB_URL,
-                     "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
+                "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath() + "/fullhddb");
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
+                TestInfo.TEMPDIR);
         TemplateDAO.getInstance();
 
         origIn = System.in;
@@ -131,38 +132,38 @@ public class HarvestTemplateApplicationTester extends TestCase {
     }
 
     public void testMainIllegalCommand() {
-        HarvestTemplateApplication.main(new String[] { "foo" });
+        HarvestTemplateApplication.main(new String[] {"foo"});
         assertOutAndErrMatches("Should fail on illegal command.", "^$",
                 ".*foo.*not one of the legal commands.*"
                         + "create.*download.*update.*showall.*");
     }
 
     public void testCreateNoArgs() throws Exception {
-        HarvestTemplateApplication.main(new String[] { "create" });
+        HarvestTemplateApplication.main(new String[] {"create"});
         assertOutAndErrMatches("Should fail on missing parameter.",
                 "^$", ".*create.*Wrong number\\(0\\) of arguments.*"
                 + "download.*update.*");
     }
 
     public void testCreateOneArg() throws Exception {
-        HarvestTemplateApplication.main(new String[]
-                { "create", "foo"});
+        HarvestTemplateApplication.main(new String[]{
+                "create", "foo"});
         assertOutAndErrMatches("Should fail on missing parameter.",
                 "^$", ".*create.*Wrong number\\(1\\) of arguments.*"
                 + "download.*update.*");
     }
 
     public void testCreateMissingFile() throws Exception {
-        HarvestTemplateApplication.main(new String[]
-                { "create", "foo", "missing-file"});
+        HarvestTemplateApplication.main(new String[]{
+                "create", "foo", "missing-file"});
         assertOutAndErrMatches("Should fail on missing file.",
                 "^$",
                 ".*missing-file.*is not readable.*");
     }
 
     public void testCreateIllegalFile() throws Exception {
-        HarvestTemplateApplication.main(new String[]
-                { "create", "foo", TestInfo.LOG_FILE.getAbsolutePath()});
+        HarvestTemplateApplication.main(new String[]{
+                "create", "foo", TestInfo.LOG_FILE.getAbsolutePath()});
         assertOutAndErrMatches("Should fail on illegal file.",
                 "^$",
                 ".*netarkivtest.log.*is not readable or is not valid xml.*");
@@ -178,7 +179,8 @@ public class HarvestTemplateApplicationTester extends TestCase {
         Document doc = XmlUtils.getXmlDoc(TestInfo.ORDERXMLFILE);
         assertEquals("Should have same info in doc as in dao",
                 doc.getText(),
-                TemplateDAO.getInstance().read("NewTemplate").getTemplate().getText());
+                TemplateDAO.getInstance().read("NewTemplate")
+                    .getTemplate().getText());
     }
 
     public void testDownloadTemplatesAll() {
@@ -193,7 +195,8 @@ public class HarvestTemplateApplicationTester extends TestCase {
                 "^$");
         Document doc = XmlUtils.getXmlDoc(new File("OneLevel-order.xml"));
         assertEquals("Should have same info in downloaded as in DB",
-                TemplateDAO.getInstance().read("OneLevel-order").getTemplate().getText(),
+                TemplateDAO.getInstance().read("OneLevel-order")
+                .getTemplate().getText(),
                 doc.getText());
     }
 
@@ -215,21 +218,21 @@ public class HarvestTemplateApplicationTester extends TestCase {
     }
 
     public void testUpdateNoArgs() {
-        HarvestTemplateApplication.main(new String[] { "update" });
+        HarvestTemplateApplication.main(new String[] {"update" });
         assertOutAndErrMatches("Should fail on missing parameter.",
                 "", ".*update.*Wrong number\\(0\\) of arguments.*"
                         + "create.*download.*update.*showall.*");
     }
 
     public void testUpdateOneArg() {
-        HarvestTemplateApplication.main(new String[] { "update", "foo" });
+        HarvestTemplateApplication.main(new String[] {"update", "foo" });
         assertOutAndErrMatches("Should fail on missing parameter.",
                 "", ".*update.*Wrong number\\(1\\) of arguments.*"
                 + "create.*download.*update.*showall.*");
     }
 
     public void testUpdateNoTemplate() {
-        HarvestTemplateApplication.main(new String[] { "update", "foo", "bar" });
+        HarvestTemplateApplication.main(new String[] {"update", "foo", "bar" });
         assertOutAndErrMatches("Should fail on missing parameter.",
                 "^$",
                 ".*There is no template named 'foo'. Use the create.*");
@@ -237,13 +240,14 @@ public class HarvestTemplateApplicationTester extends TestCase {
 
     public void testUpdateNoFile() {
         HarvestTemplateApplication.main(new String[]
-                { "update", "OneLevel-order", "missing-file" });
+                {"update", "OneLevel-order", "missing-file" });
         assertOutAndErrMatches("Should fail on missing file.",
-                "^$", ".*missing-file.*could not be read or is not valid xml.*");
+                "^$",
+                ".*missing-file.*could not be read or is not valid xml.*");
     }
 
     public void testShowAll() {
-        HarvestTemplateApplication.main(new String[] { "showall" });
+        HarvestTemplateApplication.main(new String[] {"showall"});
         assertOutAndErrMatches("Should list all templates.",
                 "^FullSite-order\n"
                         + "Max_20_2-order\n"

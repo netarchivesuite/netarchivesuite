@@ -24,6 +24,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +42,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -51,11 +53,13 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * sets up the various DAOs etc.
  */
 public class DataModelTestCase extends TestCase {
-
     SetSystemProperty derbyLog
-            = new SetSystemProperty("derby.stream.error.file",
-                                    new File(TestInfo.TEMPDIR, "derby.log").getAbsolutePath());
+        = new SetSystemProperty(
+                "derby.stream.error.file",
+                    new File(TestInfo.TEMPDIR, "derby.log")
+                        .getAbsolutePath());
     ReloadSettings rs = new ReloadSettings();
+
 
     public DataModelTestCase(String s) {
         super(s);
@@ -70,26 +74,30 @@ public class DataModelTestCase extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
         derbyLog.setUp();
         String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
-                            + "/fullhddb";
-        Settings.set(CommonSettings.DB_URL,
-                     derbyDBUrl);
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
-        TestUtils.resetDAOs();
+        + "/fullhddb";
+        Settings.set(CommonSettings.DB_URL, derbyDBUrl);
 
-        Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, TestInfo.TEMPDIR);
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                RememberNotifications.class.getName());
+        TestUtils.resetDAOs();
+        
+        Connection c = DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
+                TestInfo.TEMPDIR);
         if (c == null) {
             fail("No connection to Database: "
                     + TestInfo.DBFILE.getAbsolutePath());
         }
 
         assertEquals("DBUrl wrong", Settings.get(CommonSettings.DB_URL),
-                     derbyDBUrl);
-        //TemplateDAO.getInstance();
-    }
+                derbyDBUrl);
+      }
 
     public void tearDown() throws Exception {
         super.tearDown();
         DatabaseTestUtils.dropHDDB();
+        // null field instance in DBSpecifics.
+        Field f = ReflectUtils.getPrivateField(DBSpecifics.class, "instance");
+        f.set(null, null);
         derbyLog.tearDown();
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
         TestUtils.resetDAOs();
@@ -113,7 +121,7 @@ public class DataModelTestCase extends TestCase {
      * Jobs: HD#5, harvest 0: 14,15
      *
      */
-    public static void createTestJobs() {
+    public static void createTestJobs(long startJobId, long endJobId) {
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         List<DomainConfiguration> list = new ArrayList<DomainConfiguration>();
         list.add(DomainDAO.getInstance().read("netarkivet.dk").getDefaultConfiguration());
@@ -147,78 +155,80 @@ public class DataModelTestCase extends TestCase {
         Map<String, String> dcmap = new HashMap<String, String>();
         dcmap.put("netarkivet.dk", hd1.getDomainConfigurations().next().getName());
         Document defaultOrderXmlDocument = TemplateDAO.getInstance().read("default_orderxml").getTemplate();
-        Job j2 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, Constants.DEFAULT_MAX_OBJECTS,
+        Job j2 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, Constants.DEFAULT_MAX_OBJECTS, 
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j2);
-        assertEquals("Job IDs in database have changed. Please update unit test to reflect.", 2L, j2.getJobID().longValue());
-        Job j3 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
-                Constants.DEFAULT_MAX_OBJECTS,
+        assertEquals("Job IDs in database have changed."
+                    + "Please update unit test to reflect.",
+                startJobId, j2.getJobID().longValue());
+        Job j3 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, 
+                Constants.DEFAULT_MAX_OBJECTS, 
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j3);
-        Job j4 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
+        Job j4 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 1);
         JobDAO.getInstance().create(j4);
-        Job j5 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
+        Job j5 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 1);
         JobDAO.getInstance().create(j5);
-        Job j6 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
+        Job j6 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 2);
         JobDAO.getInstance().create(j6);
-        Job j7 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY,
+        Job j7 = new Job(hd1.getOid(), dcmap, JobPriority.HIGHPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 2);
         JobDAO.getInstance().create(j7);
-        Job j8 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j8 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j8);
-        Job j9 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j9 = new Job(hd2.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j9);
-        Job j10 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j10 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j10);
-        Job j11 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j11 = new Job(hd3.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j11);
-        Job j12 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j12 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j12);
-        Job j13 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j13 = new Job(hd4.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j13);
-        Job j14 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j14 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j14);
-        Job j15 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY,
+        Job j15 = new Job(hd5.getOid(), dcmap, JobPriority.LOWPRIORITY, 
                 Constants.DEFAULT_MAX_OBJECTS,
                 Constants.DEFAULT_MAX_BYTES, JobStatus.NEW, "default_orderxml",
                 defaultOrderXmlDocument, "netarkivet.dk", 0);
         JobDAO.getInstance().create(j15);
         assertEquals("Job IDs in database have changed. "
-                + "Please update unit test to reflect.", 15L,
+                + "Please update unit test to reflect.", endJobId,
                 j15.getJobID().longValue());
     }
 }

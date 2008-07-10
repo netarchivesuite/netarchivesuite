@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.LogManager;
 
@@ -81,11 +82,12 @@ public class HarvestSchedulerTester extends TestCase {
     /** The harvestScheduler used for testing. */
     HarvestScheduler hsch;
 
+    ReloadSettings rs = new ReloadSettings();
+    
+    
     public HarvestSchedulerTester(String sTestName) {
         super(sTestName);
     }
-
-    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
@@ -100,10 +102,12 @@ public class HarvestSchedulerTester extends TestCase {
         fis.close();
         Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
                 + TestInfo.WORKING_DIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR, "fullhddb.jar"),
+        DatabaseTestUtils.getHDDB(new File(TestInfo.BASEDIR,"fullhddb.jar"),
+                "fullhddb",
                 TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
     }
 
     /**
@@ -129,7 +133,7 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception
      */
     public void testClose() throws Exception {
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         hsch.close();
         hsch = null;
         /* TODO: Test that JMS connection has been closed properly. */
@@ -146,32 +150,31 @@ public class HarvestSchedulerTester extends TestCase {
         ChannelID result;
         if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
+        } else {
             if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.HIGHPRIORITY.toString())) {
                 result = Channels.getAnyHighpriorityHaco();
-            } else
-            {
+            } else {
                 throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
             }
         }
         JMSConnectionTestMQ.getInstance().setListener(result, hacoListener);
-        hsch = getSchedulerInstance();
-        assertEquals("Should have created one job, but got " + dao.getAll(),
-                     1, dao.getCountJobs());
+        hsch = submitNewJobsAndGetSchedulerInstance();
+        assertEquals("Should have created one job, but got " 
+                    + dao.getCountJobs(),
+                1, dao.getCountJobs());
         ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
-                .waitForConcurrentTasksToFinish();
-        List jobs = IteratorUtils.toList(dao.getAll(JobStatus.NEW));
+        .waitForConcurrentTasksToFinish();
+        List<Job> jobs = IteratorUtils.toList(dao.getAll(JobStatus.NEW));
         assertEquals("No jobs should be left with status new, but got " + jobs,
-                     0, jobs.size());
+                0, jobs.size());
         assertEquals("One job should have been created and submitted",
-                     1, IteratorUtils.toList(dao.getAll(JobStatus.SUBMITTED)).size());
+                1, IteratorUtils.toList(dao.getAll(JobStatus.SUBMITTED)).size());
         assertNotNull("Should have received a message", hacoListener
                 .getReceived());
         assertTrue("Message received should be a DoOneCrawlMessage",
-                   hacoListener.getReceived() instanceof DoOneCrawlMessage);
+                hacoListener.getReceived() instanceof DoOneCrawlMessage);
         assertEquals("Should have received exactly one message, but got "
-                     + hacoListener.getAllReceived(), 1, hacoListener
+                + hacoListener.getAllReceived(), 1, hacoListener
                 .getNumReceived());
     }
 
@@ -182,12 +185,17 @@ public class HarvestSchedulerTester extends TestCase {
     public void testCreateInstance() throws Exception {
         JobDAO dao = JobDAO.getInstance();
         assertEquals("Should have no jobs before start", 0, dao.getCountJobs());
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         hsch.close();
         assertTrue("Should have created a job", dao.getCountJobs() > 0);
     }
 
-    private HarvestScheduler getSchedulerInstance() throws Exception {
+    /**
+     * Submit new jobs and return Scheduler instance.
+     * @return a Scheduler instance.
+     * @throws Exception
+     */
+    private HarvestScheduler submitNewJobsAndGetSchedulerInstance() throws Exception {
         final HarvestScheduler instance = HarvestScheduler.getInstance();
         HarvestDefinitionDAOTester.waitForJobGeneration();
         Method m = HarvestScheduler.class.getDeclaredMethod("submitNewJobs", new Class[0]);
@@ -201,7 +209,7 @@ public class HarvestSchedulerTester extends TestCase {
      * @throws Exception
      */
     public void testGetHoursPassedSince() throws Exception {
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         Method getHoursPassedSince = hsch.getClass().getDeclaredMethod("getHoursPassedSince", Date.class);
         getHoursPassedSince.setAccessible(true);
         Calendar c = new GregorianCalendar();
@@ -229,7 +237,7 @@ public class HarvestSchedulerTester extends TestCase {
         HarvestDefinitionDAOTester.waitForJobGeneration();
         Method m = HarvestScheduler.class.getDeclaredMethod("submitNewJobs", new Class[0]);
         m.setAccessible(true);
-        m.invoke((hsch = getSchedulerInstance()), new Object[0]);
+        m.invoke((hsch = submitNewJobsAndGetSchedulerInstance()), new Object[0]);
     }
 
     /** Test that runNewJobs skips bad jobs without crashing (bug #627).
@@ -239,9 +247,12 @@ public class HarvestSchedulerTester extends TestCase {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                                                  "submitNewJobs");
         // Create a bad job.
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         final DomainDAO dao = DomainDAO.getInstance();
-        DomainConfiguration cfg = dao.getAllDomains().next().getDefaultConfiguration();
+        Iterator<Domain> domainsIterator = dao.getAllDomains();
+        assertTrue("Should be at least one domain in domains table",
+                domainsIterator.hasNext());
+        DomainConfiguration cfg = domainsIterator.next().getDefaultConfiguration();
         Job bad = Job.createJob(7000L, cfg, 1);
         bad.setStatus(JobStatus.NEW);
         bad.setActualStart(new Date());
@@ -277,11 +288,11 @@ public class HarvestSchedulerTester extends TestCase {
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                                                  "submitNewJobs");
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         //Get rid of the existing new job
         m.invoke(hsch);
 
-        //Add a listender to see what is sent
+        //Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
         ChannelID result;
         if (JobPriority.HIGHPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
@@ -343,7 +354,7 @@ public class HarvestSchedulerTester extends TestCase {
         assertEquals("Should have right url",
                      "metadata://netarkivet.dk/crawl/setup/aliases"
                      + "?majorversion=1&minorversion=0"
-                     + "&harvestid=5678&harvestnum=0&jobid=2",
+                     + "&harvestid=5678&harvestnum=0&jobid=1",
                      metadataEntry.getURL());
         assertEquals("Should have right data",
                      "alias3.dk is an alias for dr.dk\n"
@@ -359,12 +370,13 @@ public class HarvestSchedulerTester extends TestCase {
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                                                  "submitNewJobs");
-        hsch = getSchedulerInstance();
+        hsch = submitNewJobsAndGetSchedulerInstance();
         //Get rid of the existing new job
         m.invoke(hsch);
 
         //Make some jobs to submit
-        DataModelTestCase.createTestJobs();
+        //Assume 1st jobId is 1, and lastId is 14
+        DataModelTestCase.createTestJobs(1L, 14L);
 
         //Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
@@ -430,7 +442,10 @@ public class HarvestSchedulerTester extends TestCase {
         HarvestDefinitionDAOTester.waitForJobGeneration();
 
         final DomainDAO dao = DomainDAO.getInstance();
-        DomainConfiguration cfg = dao.getAllDomains().next().getDefaultConfiguration();
+        Iterator<Domain> domainsIterator = dao.getAllDomains();
+        assertTrue("Should be at least one domain in domains table",
+                domainsIterator.hasNext());
+        DomainConfiguration cfg = domainsIterator.next().getDefaultConfiguration();
         final JobDAO jdao = JobDAO.getInstance();
         for (JobStatus status : JobStatus.values()) {
             Job newJob = Job.createJob(42L, cfg, 1);
@@ -504,7 +519,7 @@ public class HarvestSchedulerTester extends TestCase {
             return received.size();
         }
 
-        public List getAllReceived() {
+        public List<NetarkivetMessage> getAllReceived() {
             return received;
         }
     } // end class TestMessageListener

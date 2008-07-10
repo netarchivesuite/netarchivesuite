@@ -62,10 +62,10 @@ public class DatabaseTestUtils {
      * @throws IOException
      * @throws IllegalAccessException
      */
-    public static Connection takeDatabase(File jarfile, File dbUnzipDir)
+    public static Connection takeDatabase(File jarfile, String dbname, File dbUnzipDir)
             throws SQLException, IOException, IllegalAccessException
     {
-        String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
+        //String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
 
         FileUtils.removeRecursively(new File(dbUnzipDir, dbname));
         ZipUtils.unzip(jarfile, dbUnzipDir);
@@ -111,17 +111,17 @@ public class DatabaseTestUtils {
      * @throws IOException
      * @throws IllegalAccessException
      */
-    public static Connection getHDDB(File samplefile, File dbUnzipDir)
+    public static Connection getHDDB(File samplefile, String dbname, File dbUnzipDir)
             throws SQLException, IOException, IllegalAccessException {
-        return takeDatabase(samplefile, dbUnzipDir);
+        return takeDatabase(samplefile, dbname, dbUnzipDir);
     }
 
     /** Drop access to the database that's currently taken.
      * @throws SQLException
      */
     public static void dropDatabase() throws SQLException,
-                                             NoSuchFieldException,
-                                             IllegalAccessException {
+    										NoSuchFieldException,
+                                            IllegalAccessException{
         try {
             final String shutdownUri = dburi + ";shutdown=true";
             DriverManager.getConnection(shutdownUri);
@@ -157,10 +157,12 @@ public class DatabaseTestUtils {
 
 
     /** Drop the connection to the harvest definition database.
-     * @throws SQLException
+     * @throws IllegalAccessException 
+     * @throws NoSuchFieldException 
+     * @throws Exception
      */
-    public static void dropHDDB()
-            throws SQLException, NoSuchFieldException, IllegalAccessException {
+    public static void dropHDDB() throws SQLException,
+                            NoSuchFieldException, IllegalAccessException {
         dropDatabase();
     }
 }

@@ -88,7 +88,7 @@ public class WebinterfaceTestCase extends TestCase {
         TestUtils.resetDAOs();
         Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
                 + HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, HARVEST_DEFINITION_BASEDIR);
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",HARVEST_DEFINITION_BASEDIR);
     }
 
     public void tearDown() throws Exception {

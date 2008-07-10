@@ -39,8 +39,8 @@ import org.dom4j.Node;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -48,15 +48,11 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
- * For purposes of DB tests in this class, create a table
- * CREATE TABLE tests ( name varchar, value int );
- *
+ * Unit tests for the JobDAO class.
  */
-
-
 public class JobDAOTester extends DataModelTestCase {
     Connection c;
-    /** We start out with one job in status DONE */
+    /** We start out with one job in status DONE. */
     private static final int INITIAL_JOB_COUNT = 1;
 
     public JobDAOTester(String s) {
@@ -578,7 +574,8 @@ public class JobDAOTester extends DataModelTestCase {
         
         // It is now possible to set start date to after end date '
         // without any exceptions being thrown. However, a notification is emitted.
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                RememberNotifications.class.getName());
         RememberNotifications.resetSingleton();
         
         try {
@@ -621,7 +618,8 @@ public class JobDAOTester extends DataModelTestCase {
      * @throws Exception
      */
     public void testGetJobIDsForDuplicateReduction() throws Exception {
-        createTestJobs();
+        // Assume 1st job has id=2, and Last job has id 15 
+        createTestJobs(2L, 15L);
         JobDAO dao = JobDAO.getInstance();
 
         try {
@@ -731,7 +729,8 @@ public class JobDAOTester extends DataModelTestCase {
      * Now verifies, that the new job has startdate and enddate set to null.
      */
     public void testRescheduleJob() {
-        createTestJobs();
+     // Assume 1st job has id=2, and Last job has id 15 
+        createTestJobs(2L, 15L);
         JobDAO dao = JobDAO.getInstance();
 
         for (long i = 1; i < 16; i++) {
