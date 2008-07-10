@@ -23,19 +23,12 @@
 package dk.netarkivet.harvester.scheduler;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -44,6 +37,7 @@ import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Frequency;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
 import dk.netarkivet.harvester.datamodel.Password;
@@ -62,7 +56,7 @@ import dk.netarkivet.testutils.TestUtils;
  *  
  *  Add domain netarkivet.dk with two seedlist
  *  Add the three schedules Dagligt, Once_a_day, OnceOnly
- *
+ *  Add one selective harvestdefinition (isActive=true)
  */
 public class SchedulerDatabaseBuilder {
 
@@ -73,7 +67,6 @@ public class SchedulerDatabaseBuilder {
         sdb.doWork();
         sdb.close();
     }
-
 
     public SchedulerDatabaseBuilder() throws Exception {
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
@@ -93,29 +86,16 @@ public class SchedulerDatabaseBuilder {
                 RememberNotifications.class.getName());
     }
 
-    /**
-     * After test is done close test-objects.
-     * @throws SQLException
-     * @throws IllegalAccessException
-     * @throws NoSuchFieldException
-     */
-    public void tearDown() throws SQLException, IllegalAccessException,
-            NoSuchFieldException {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        Settings.reload();
-        TestUtils.resetDAOs();
-    }
-
     private void close() throws Exception {
-
         DatabaseTestUtils.dropHDDB();
-        File destinationDir = new File(TestInfo.ORIGINALS_DIR, "schedulerDB-"
+        File destinationDir = new File(TestInfo.ORIGINALS_DIR, "fullhddb-"
                 + System.currentTimeMillis());
         destinationDir.mkdir();
         System.out.println("Copied database to " 
                 + destinationDir.getAbsolutePath());
         TestFileUtils.copyDirectoryNonCVS(new File(TestInfo.WORKING_DIR,
                 "fullhddb"), destinationDir);
+        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         
         
         // Zip jarfile as schedulerDB.jar and copy to TestInfo.ORIGINALS_DIR
@@ -151,7 +131,7 @@ public class SchedulerDatabaseBuilder {
         ht = new HeritrixTemplate(XmlUtils.getXmlDoc(OneLevelOrderXml), true);
         tdao.create("OneLevel-order", ht);
         
-        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(Max_20_2_OrderXml), true);       
+        ht = new HeritrixTemplate(XmlUtils.getXmlDoc(Max_20_2_OrderXml), true);
         tdao.create("Max_20_2-order", ht);
         
         // Create domain netarkivet.dk and its configurations.
@@ -168,14 +148,16 @@ public class SchedulerDatabaseBuilder {
         DomainConfiguration cfg1 = new DomainConfiguration(
                 "Dansk_netarkiv_fuld_dybde", d, 
                 Arrays.asList(danishSeed), new ArrayList<Password>());
-        cfg1.setMaxBytes(500000000);
+        cfg1.setMaxBytes(
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
         cfg1.setOrderXmlName("FullSite-order");
         d.addConfiguration(cfg1);
         
         DomainConfiguration cfg2 = new DomainConfiguration(
                 "Engelsk_netarkiv_et_niveau", d, 
                 Arrays.asList(englishSeed), new ArrayList<Password>());
-        cfg2.setMaxBytes(500000000);
+        cfg2.setMaxBytes(
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
         cfg2.setOrderXmlName("OneLevel-order");
         d.addConfiguration(cfg2);
         dao.create(d);
@@ -183,73 +165,31 @@ public class SchedulerDatabaseBuilder {
         // Create schedules:
         
         ScheduleDAO sDao = ScheduleDAO.getInstance();        
-        Frequency f = Frequency.getNewInstance(TimeUnit.DAILY.ordinal(), true, 1, null, null, null, null);
+        Frequency f = Frequency.getNewInstance(TimeUnit.DAILY.ordinal(),
+                true, 1, null, null, null, null);
         
-        Schedule s1 = Schedule.getInstance(null, null, f, "Dagligt", "Dagligt, nårsomhelt på dagen");
+        Schedule s1 = Schedule.getInstance(null, null, f,
+                "Dagligt", "Dagligt, nårsomhelt på dagen");
         
-        Schedule s2 = Schedule.getInstance(null, null, f, "Once_a_day", "Once a day, anytime");
-        Schedule s3 = Schedule.getInstance(null, 1, f, "OnceOnly", "En gang, med det samme");
+        Schedule s2 = Schedule.getInstance(null, null, f, 
+                "Once_a_day", "Once a day, anytime");
+        Schedule s3 = Schedule.getInstance(null, 1, f, 
+                "OnceOnly", "En gang, med det samme");
         sDao.create(s1);
         sDao.create(s2);
         sDao.create(s3);
         
-        // Create a selective harvestdefinition
+        // Create a selective harvestdefinition and save it in our database.
         
         List<DomainConfiguration> dcs = new ArrayList<DomainConfiguration>();
         dcs.add(cfg2);
         
         PartialHarvest ph =  
-            PartialHarvest.createPartialHarvest(dcs, s2, "Testhøstning", "No Comments");
+            PartialHarvest.createPartialHarvest(dcs, s2,
+                    "Testhøstning", "No Comments");
         ph.setActive(true);
         
+        HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();
+        hdd.create(ph);
     }
-    
-    public static void zipDirectory(File dir, File into) {
-        ArgumentNotValid.checkNotNull(dir, "File dir");
-        ArgumentNotValid.checkNotNull(into, "File into");
-        ArgumentNotValid.checkTrue(dir.isDirectory(),
-                "directory '" + dir + "' to zip is not a directory");
-        ArgumentNotValid.checkTrue
-                (into.getAbsoluteFile().getParentFile().canWrite(),
-                "cannot write to '" + into + "'");
-        
-        File[] files = dir.listFiles();
-        FileOutputStream out;
-        try {
-            out = new FileOutputStream(into);
-        } catch (IOException e) {
-            throw new IOFailure("Error creating ZIP outfile file '"
-                    + into + "'", e);
-        }
-        ZipOutputStream zipout = new ZipOutputStream(out);
-        try {
-            try {
-                for (File f: files) {
-                    if (f.isFile()) {
-                        ZipEntry entry = new ZipEntry(f.getName());
-                        zipout.putNextEntry(entry);
-                        FileUtils.writeFileToStream(f, zipout);
-                    } else if (f.isDirectory()) {
-                        System.out.println("Storing files in dir " + f.getName());
-                        ZipEntry entry = new ZipEntry(f.getName());
-                        zipout.putNextEntry(entry);
-                        zipout.closeEntry();
-                        File[] filesInDir = f.listFiles();
-                        for (File f2: filesInDir) {
-                            System.out.println("Storing file " + f2.getName());
-                            ZipEntry entry1 = new ZipEntry(f.getName() 
-                                    + "/" + f2.getName());
-                            zipout.putNextEntry(entry1);
-                            FileUtils.writeFileToStream(f2, zipout);
-                        }
-                    }
-                }
-            } finally {
-                zipout.close();
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Failed to zip directory '" + dir + "'", e);
-        }
-    }
-    
 }

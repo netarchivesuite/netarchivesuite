@@ -56,6 +56,7 @@ import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
@@ -354,7 +355,7 @@ public class HarvestSchedulerTester extends TestCase {
         assertEquals("Should have right url",
                      "metadata://netarkivet.dk/crawl/setup/aliases"
                      + "?majorversion=1&minorversion=0"
-                     + "&harvestid=5678&harvestnum=0&jobid=1",
+                     + "&harvestid=5678&harvestnum=0&jobid=2",
                      metadataEntry.getURL());
         assertEquals("Should have right data",
                      "alias3.dk is an alias for dr.dk\n"
@@ -375,8 +376,8 @@ public class HarvestSchedulerTester extends TestCase {
         m.invoke(hsch);
 
         //Make some jobs to submit
-        //Assume 1st jobId is 1, and lastId is 14
-        DataModelTestCase.createTestJobs(1L, 14L);
+        //Assume 1st jobId is 2, and lastId is 15
+        DataModelTestCase.createTestJobs(2L, 15L);
 
         //Add a listener to see what is sent
         TestMessageListener hacoListener = new TestMessageListener();
@@ -426,7 +427,7 @@ public class HarvestSchedulerTester extends TestCase {
         assertEquals("Should have right url",
                      "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs"
                      + "?majorversion=1&minorversion=0"
-                     + "&harvestid=47&harvestnum=0&jobid=15",
+                     + "&harvestid=6&harvestnum=0&jobid=15",
                      metadataEntry.getURL());
         assertEquals("Should have right data",
                      "8,9,10,11,12,13",
@@ -434,7 +435,7 @@ public class HarvestSchedulerTester extends TestCase {
     }
 
     /**
-     * Unittest testing the private method rescheduleJob.
+     * Unit test testing the private method rescheduleJob.
      * @throws Exception
      */
     public void testRescheduleJobs() throws Exception {
@@ -447,14 +448,26 @@ public class HarvestSchedulerTester extends TestCase {
                 domainsIterator.hasNext());
         DomainConfiguration cfg = domainsIterator.next().getDefaultConfiguration();
         final JobDAO jdao = JobDAO.getInstance();
+        
+        final Long harvestID = 1L;
+        // Verify that harvestDefinition with ID=1L exists
+        assertTrue("harvestDefinition with ID=" + harvestID 
+                + " does not exist, but should have",
+                HarvestDefinitionDAO.getInstance().exists(harvestID));
+        // Create 6 jobs, one in each JobStatus:
+        // (NEW, SUBMITTED, STARTED, DONE, FAILED, RESUBMITTED) 
         for (JobStatus status : JobStatus.values()) {
-            Job newJob = Job.createJob(42L, cfg, 1);
+            Job newJob = Job.createJob(harvestID, cfg, 1);
             newJob.setStatus(status);
             jdao.create(newJob);
         }
+
         List<JobStatusInfo> oldInfos = jdao.getStatusInfo();
         // Since initial DB contains one NEW job, we now have one of each
-        // status plus one extra NEW.
+        // status plus one extra NEW (i.e. 7 jobs).
+        
+        assertTrue("There should have been 7 jobs now, but there was "
+                + oldInfos.size(), oldInfos.size() == 7);
 
         Method rescheduleJobs = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                                                               "rescheduleJobs");
