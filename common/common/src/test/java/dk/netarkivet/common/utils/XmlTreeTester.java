@@ -34,7 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class XmlTreeTester extends TestCase {
@@ -329,9 +328,6 @@ public class XmlTreeTester extends TestCase {
     }
 
     public void testGetChildMap() {
-        if (!TestUtils.runningAs("lc")) {
-            return;
-        }
         StringTree<String> tree1 = getTree();
         final Map<String, StringTree<String>> rootChildren = tree1
                 .getChildMap();
@@ -339,8 +335,7 @@ public class XmlTreeTester extends TestCase {
                      1, rootChildren.size());
         tree1 = tree1.getSubTree("dk");
         try {
-            Map<String, StringTree<String>> children =
-                    tree1.getChildMap();
+            tree1.getChildMap();
             fail("Should not be allowed to get childmap of node with "
                  + "several of the same subnode.");
         } catch (IllegalState e) {
@@ -411,7 +406,7 @@ public class XmlTreeTester extends TestCase {
         Method selectSingleNode = ReflectUtils.getPrivateMethod(XmlTree.class,
                                                               "selectSingleNode",
                                                               String.class);
-        StringTree tree1 = getTree();
+        StringTree<String> tree1 = getTree();
         assertNotNull("Should be able to get root node",
                       selectSingleNode.invoke(tree1, "dk"));
         assertNotNull("Should be able to get two levels of nodes",
