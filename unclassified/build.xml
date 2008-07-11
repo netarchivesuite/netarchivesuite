@@ -142,7 +142,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <classpath refid="jars.path"/>
         </javac>
         <copy todir="${classdir}">
-            <fileset dir="${srcdir}" includes="**/*.properties"/>
+            <fileset dir="${srcdir}">
+            	<include name="**/*.properties"/>
+            	<include name="**/*.xml"/>
+            </fileset>
         </copy>
     </target>
 
@@ -153,7 +156,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <classpath refid="unittest.jars.path"/>
         </javac>
         <copy todir="${classdir}">
-            <fileset dir="${testdir}" includes="**/*.properties"/>
+            <fileset dir="${testdir}">
+             	<include name="**/*.properties"/>
+             </fileset>
         </copy>
     </target>
 
