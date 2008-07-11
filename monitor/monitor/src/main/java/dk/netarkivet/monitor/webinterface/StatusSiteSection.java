@@ -44,7 +44,7 @@ public class StatusSiteSection extends SiteSection {
     }
 
     /**
-     * Regsister monitor server when deploying.
+     * Register monitor server when deploying.
      */
     public void initialize() {
         monitorListener = MonitorRegistryServer.getInstance();
