@@ -72,7 +72,8 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
      * private to ensure use of getInstance method.
      */
     private HarvestSchedulerMonitorServer() {
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheSched(), this);
+        JMSConnectionFactory.getInstance().setListener(
+                Channels.getTheSched(), this);
     }
 
     /**
@@ -99,18 +100,18 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
     private void processCrawlStatusMessage(CrawlStatusMessage cmsg)
             throws ArgumentNotValid {
         long jobID = cmsg.getJobID();
-        JobStatus new_status = cmsg.getStatusCode();
+        JobStatus newStatus = cmsg.getStatusCode();
         Job job = jobDAO.read(new Long(jobID));
-        JobStatus old_status = job.getStatus();
+        JobStatus oldStatus = job.getStatus();
         // Update the job status
 
         // a NEW job should never get a message
-        if (old_status == JobStatus.NEW) {
+        if (oldStatus == JobStatus.NEW) {
             String msg = "CrawlStatusMessage received on new job: " + job;
             log.warn(msg);
         }
 
-        switch (new_status) {
+        switch (newStatus) {
             case RESUBMITTED:
             case SUBMITTED:
             case NEW:
@@ -118,54 +119,63 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 // new/submitted/resubmitted, because these statuses should not
                 // be used by the harvesters!
                 String msg = "CrawlStatusMessage tried to update job "
-                             + job + " to status " + new_status;
+                             + job + " to status " + newStatus;
                 log.warn(msg);
                 throw new ArgumentNotValid(msg);
             case STARTED:
-                if (old_status == JobStatus.SUBMITTED
-                    || old_status == JobStatus.NEW) {
-                    if (old_status == JobStatus.NEW) {
+                if (oldStatus == JobStatus.SUBMITTED
+                    || oldStatus == JobStatus.NEW) {
+                    if (oldStatus == JobStatus.NEW) {
                         log.warn("CrawlStatusMessage updated job in unexpected "
-                                 + "state " + old_status + " to "
-                                 + new_status + "\n"
+                                 + "state " + oldStatus + " to "
+                                 + newStatus + "\n"
                                  + job.toString());
                     }
                     // The usual case submitted -> started
-                    job.setStatus(new_status);
+                    job.setStatus(newStatus);
                     log.debug(job + " has started crawling.");
                     jobDAO.update(job);
                 } else {
                     // Must not change status back to STARTED
                     log.warn("CrawlStatusMessage tried to update job status"
                              + " for job " + job.getJobID()
-                             + " from " + old_status + " to " + new_status
+                             + " from " + oldStatus + " to " + newStatus
                              + ". Ignoring.");
                 }
                 break;
             case DONE:
             case FAILED:
-                if (old_status == JobStatus.STARTED
-                    || old_status == JobStatus.SUBMITTED
-                    || old_status == JobStatus.RESUBMITTED
-                    || old_status == JobStatus.NEW) {
+                if (oldStatus == JobStatus.STARTED
+                    || oldStatus == JobStatus.SUBMITTED
+                    || oldStatus == JobStatus.RESUBMITTED
+                    || oldStatus == JobStatus.NEW) {
                     // Received done or failed on non-ended job - okay
-                    if (old_status != JobStatus.STARTED) {
+                    if (oldStatus != JobStatus.STARTED) {
                         //we expect "started" first, but it's not serious. Just
                         //log.
                         log.warn("CrawlStatusMessage updated job in unexpected "
-                                 + "state " + old_status + " to "
-                                 + new_status + "\n"
+                                 + "state " + oldStatus + " to "
+                                 + newStatus + "\n"
                                  + job.toString());
                     }
-                    if (new_status == JobStatus.FAILED) {
-                        log.warn("Job " + jobID + " failed: "
-                                 + cmsg.getErrMsg());
+                    if (newStatus == JobStatus.FAILED) {
+                        String errors = "HarvestErrors = "
+                            + cmsg.getHarvestErrors()
+                            + "\nHarvestErrorDetails = "
+                            + cmsg.getHarvestErrorDetails() 
+                            + "\nUploadErrors = "
+                            + cmsg.getUploadErrors()
+                            + "\nUploadErrorDetails = "
+                            + cmsg.getUploadErrorDetails();
+                        
+                        log.warn("Job " + jobID + " failed: " + errors);
                     } else {
                         log.info("Job " + jobID + " succesfully completed");
                     }
-                    job.setStatus(new_status);
+                    job.setStatus(newStatus);
                     job.appendHarvestErrors(cmsg.getHarvestErrors());
-                    job.appendHarvestErrorDetails(cmsg.getHarvestErrorDetails());
+                    job.appendHarvestErrorDetails(
+                            cmsg.getHarvestErrorDetails());
                     job.appendUploadErrors(cmsg.getUploadErrors());
                     job.appendUploadErrorDetails(cmsg.getUploadErrorDetails());
                     jobDAO.update(job);
@@ -173,8 +183,8 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                     // Received done or failed on already dead job. Bad!
                     String message = "CrawlStatusMessage tried to update "
                                      + "job status "
-                                     + " from " + old_status + " to "
-                                     + new_status
+                                     + " from " + oldStatus + " to "
+                                     + newStatus
                                      + ". Marking job FAILED";
                     log.warn(message);
                     job.setStatus(JobStatus.FAILED);
@@ -191,7 +201,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                 break;
             default:
                 log.warn("CrawlStatusMessage tried to update job status to "
-                         + "unsupported status " + new_status);
+                         + "unsupported status " + newStatus);
                 break;
         }
     }
@@ -299,7 +309,7 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
 
     /**
      *  Cleanup method. Resets HarvestSchedulerMonitorServer singleton.
-     *  Note: this cleanup() methodm is called from
+     *  Note: this cleanup() method is called from
      *  HarvestScheduler.cleanup(), therefore it needs to be public
      */
     public void cleanup() {

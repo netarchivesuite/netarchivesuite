@@ -446,8 +446,6 @@ public class HarvestControllerServerTester extends TestCase {
                     TestInfo.LEFTOVER_CRAWLDIR_2,
                     TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2.length + 1,
                     TestInfo.FILES_IN_LEFTOVER_JOB_DIR_2[1]);
-        assertNotNull("Job error message should be set",
-                crawlStatusMessage.getErrMsg());
         assertEquals("Job upload message should detail number of failures",
                     "No hosts report found, 1 files failed to upload",
                     crawlStatusMessage.getUploadErrors());
@@ -460,7 +458,8 @@ public class HarvestControllerServerTester extends TestCase {
         StringAsserts.assertStringMatches("Harvest should seem interrupted",
                 "Crawl probably interrupted.*HarvestControllerServer",
                 crawlStatusMessage.getHarvestErrorDetails());
-        assertFalse(crawlStatusMessage.isOk());
+        assertTrue("Failed CrawlStatusMessage should also be OK",
+                crawlStatusMessage.isOk());
 
         String oldjobsdir = Settings.get(
                 HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR);
@@ -472,11 +471,8 @@ public class HarvestControllerServerTester extends TestCase {
                     TestInfo.LEFTOVER_CRAWLDIR_3,
                     0,
                     null);
-        assertFalse(crawlStatusMessage.isOk());
-        assertNotNull("Job error message should be set",
-                crawlStatusMessage.getErrMsg());
-        //TODO: Check the error message content
-
+        assertTrue("Failed CrawlStatusMessage should also be OK",
+                crawlStatusMessage.isOk());
 
         assertTrue("Crawl.log must not have been deleted on error",
                    new File(new File(oldjobsdir, TestInfo.LEFTOVER_CRAWLDIR_3.getName()), "logs/crawl.log").exists());

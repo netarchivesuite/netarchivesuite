@@ -135,7 +135,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * In this constructor, the server creates an instance of the
      * HarvestController, uploads any arc-files from incomplete harvests.
      * Then it starts listening for new doOneCrawl messages, unless there
-     * is no available space. In that case, it sends a notication to
+     * is no available space. In that case, it sends a notification to
      * the administrator and pauses.
      *
      * @throws PermissionDenied
@@ -220,7 +220,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /**
      * Returns or creates the unique instance of this singleton
      * The server creates an instance of the HarvestController,
-     * uploads arc-files from unfinshed harvests, and
+     * uploads arc-files from unfinished harvests, and
      * starts to listen to JMS messages on the incoming jms queues.
      *
      * @return The instance
@@ -465,9 +465,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                                   String errorMessage,
                                   boolean missingHostsReport,
                                   int failedFiles) {
-        String fullError = "";
         if (crawlException != null) {
-            fullError = crawlException + "\n";
             csm.setHarvestErrors(crawlException.toString());
             csm.setHarvestErrorDetails(
                     ExceptionUtils.getStackTrace(crawlException));
@@ -486,8 +484,6 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             csm.setUploadErrors(shortDesc);
             csm.setUploadErrorDetails(errorMessage);
         }
-        fullError += errorMessage;
-        csm.setNotOk(fullError);
     }
 
     /**
