@@ -926,6 +926,9 @@ public class FileBasedActiveBitPreservation
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
         removeAndGetFile(filename, location, checksum, credentials);
         uploadMissingFiles(location, filename);
+        FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
+                location,
+                WorkFiles.WRONG_FILES));
     }
 
     /**

@@ -530,8 +530,8 @@ public class BitpreserveFileState {
         //Table headers for info table
         out.println("<table>");
         out.print(HTMLUtils.makeTableRow(
-                "<th>&nbsp;</th>",
-                HTMLUtils.makeTableHeader(I18N.getString(locale, "state")),
+        		HTMLUtils.makeTableHeader(I18N.getString(locale, "location")),
+                HTMLUtils.makeTableHeader(I18N.getString(locale, "admin.state")),
                 HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
 
         //Admin data info

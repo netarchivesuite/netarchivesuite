@@ -94,72 +94,58 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             %>
             <!-- Table for presenting checksums -->
             <fmt:message key="state.of.file"/><%=HTMLUtils.escapeHtmlValues(filename)%>
-            <table>
 
-            <!-- Table header for info-->
-            <tr><th>&nbsp;</th>
-                <th><fmt:message key="admin.state"/></th>
-                <th><fmt:message key="checksum"/></th>
-            </tr>
-
-            <!-- Table entry for admin data -->
-            <tr><td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <%=HTMLUtils.makeTableElement(fs.getAdminChecksum())%>
-            </tr>
-
-            <!-- Table entries for each bitarchive -->
-            <%
-                for (Location l : Location.getKnown()) {
-                    String csumString = BitpreserveFileState.presentChecksum(
-                            fs.getBitarchiveChecksum(l), response.getLocale());
-                    String trContents = HTMLUtils.makeTableElement(l.getName())
-                            + HTMLUtils.makeTableElement(
-                            fs.getAdminBitarchiveState(l))
-                            + HTMLUtils.makeTableElement(csumString);
+            // Print information about the file
+            <% 
+            BitpreserveFileState.printFileState(out, fs, response.getLocale());
             %>
-                    <tr>
-                        <%=trContents%>
-                    </tr>
-            <%
-                }
-            %>
-            </table>
 
             <!-- Form for taking action -->
             <form method="post" action="">
-            <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(bitarchive.getName())%>" name="<%=Constants.BITARCHIVE_NAME_PARAM%>">
-            <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(filename)%>" name="<%=Constants.FILENAME_PARAM%>">
-		    <%
-                if (fs.isAdminCheckSumOk()) {
-                    List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
-                    if (checksum.size() == 1 && !checksum.get(0).equals(fs.getAdminChecksum())) {
-                        // Remove file action
-                        %>
-                        <fmt:message key="insert.password"/><input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
-                        <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
-                        <input type="submit" value="<fmt:message key="replace.file.in.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
-                        <%
-                    } else {
+            <input type="hidden" 
+                   value="<%=HTMLUtils.escapeHtmlValues(bitarchive.getName())%>" 
+                   name="<%=Constants.BITARCHIVE_NAME_PARAM%>">
+            <input type="hidden" 
+                   value="<%=HTMLUtils.escapeHtmlValues(filename)%>" 
+                   name="<%=Constants.FILENAME_PARAM%>">
+            <%
+            if (fs.isAdminCheckSumOk()) {
+                List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
+                if (checksum.size() == 1 
+                    && !checksum.get(0).equals(fs.getAdminChecksum())) {
+                   // Remove file action
+                    %>
+                    <fmt:message key="insert.password"/>
+                    <input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
+                    <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
+                    <input type="submit" value="<fmt:message key="replace.file.in.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
+                    <%
+                } else {
+                    if (!(checksum.size() == 1 
+                          && checksum.get(0).equals(fs.getAdminChecksum()))) {
                         %>
                         <fmt:message key="unable.to.correct"/>
                         <%
+                    } else { //checksum is corrected and ok
+                        //remove file from wrongFiles list
                     }
-                } else {
-                    // Correct admin data action
-             %>
-                    <input type="hidden" value="1" name="<%=Constants.FIX_ADMIN_CHECKSUM_PARAM%>" >
-                    <input type="submit" value="<fmt:message key="correct.admin.checksum"/>">
-             <%
                 }
-             %>
+            } else {
+                  // Correct admin data action
+            %>
+                <input type="hidden" value="1" name="<%=Constants.FIX_ADMIN_CHECKSUM_PARAM%>" >
+                <input type="submit" value="<fmt:message key="correct.admin.checksum"/>">
+            <%
+            }
+            %>
             </form>
-<%
+<%          
         } // if fs != null
     } // if filename != null
 %>
 
-<!-- List of files with checksum errors -->
+<!-- List of files with checksum errors, if any  -->
+
 <h4><fmt:message key="files.with.checksum.errors.in.0">
     <fmt:param><%=bitarchiveName%></fmt:param>
 </fmt:message></h4>
@@ -183,6 +169,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 <%
         rowCount++;
     } // end for
+    if (rowCount == 0) {
+    %>
+        <fmt:message key="no.files.with.checksum.errors"/>
+    <%
+    }
 %>
 </table>
 <%
