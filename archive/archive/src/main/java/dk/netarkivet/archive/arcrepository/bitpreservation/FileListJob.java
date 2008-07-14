@@ -74,8 +74,8 @@ public class FileListJob extends FileBatchJob {
      * @return false If listing of this arcfile fails; otherwise true
      */
     public boolean processFile(File file, OutputStream os) {
-        String result = file.getName() + "\n";
         ArgumentNotValid.checkNotNull(file, "file");
+        String result = file.getName() + "\n";
         //++noOfFilesProcessed;
         try {
             os.write(result.getBytes());
