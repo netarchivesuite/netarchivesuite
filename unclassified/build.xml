@@ -308,6 +308,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.common.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/common/**/*.class"/>
             <include name="dk/netarkivet/common/**/*.properties"/>
+            <include name="dk/netarkivet/common/**/*.xml"/> 
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path" value="${jarclasspath}"/>
@@ -320,6 +321,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.archive.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/archive/**/*.class"/>
             <include name="dk/netarkivet/archive/**/*.properties"/>
+	    <include name="dk/netarkivet/archive/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
@@ -338,6 +340,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.harvester.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/harvester/**/*.class"/>
             <include name="dk/netarkivet/harvester/**/*.properties"/>
+            <include name="dk/netarkivet/harvester/**/*.xml"/>
             <include name="modules/**"/>
             <!-- removed jndi.properties from src
 		 <include name="jndi.properties"/> -->
@@ -353,6 +356,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.viewerproxy.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/viewerproxy/**/*.class"/>
             <include name="dk/netarkivet/viewerproxy/**/*.properties"/>
+            <include name="dk/netarkivet/viewerproxy/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path" value="dk.netarkivet.common.jar ${jarclasspath}"/>
@@ -365,6 +369,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.monitor.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/monitor/**/*.class"/>
             <include name="dk/netarkivet/monitor/**/*.properties"/>
+            <include name="dk/netarkivet/monitor/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path"
@@ -379,6 +384,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <jar destfile="lib/dk.netarkivet.deploy.jar" basedir="${classdir}" update="no">
             <include name="dk/netarkivet/deploy/**/*.class"/>
             <include name="dk/netarkivet/deploy/**/*.properties"/>
+            <include name="dk/netarkivet/deploy/**/*.xml"/>
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path"
