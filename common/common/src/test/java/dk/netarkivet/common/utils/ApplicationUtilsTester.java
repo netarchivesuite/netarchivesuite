@@ -32,6 +32,7 @@ import java.util.logging.LogManager;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -152,7 +153,7 @@ public class ApplicationUtilsTester extends TestCase {
                         pse.getExitValue());
         }
 
-        // Check that successfull start logs and makes tmpdir
+        // Check that successful start logs and makes tmpdir
         File tempdir = new File(TestInfo.TEMPDIR, "new_temp_dir");
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, tempdir.getAbsolutePath());
         assertFalse("Should not have tempdir before start", tempdir.exists());
@@ -172,9 +173,14 @@ public class ApplicationUtilsTester extends TestCase {
     }
 
     private void checkPortAvailable(final int portToCheck)
-            throws IOException {
-            ServerSocket socket = new ServerSocket(portToCheck);
-            socket.close();
+            throws IOFailure {
+            try {
+                ServerSocket socket = new ServerSocket(portToCheck);
+                socket.close();
+            } catch (IOException e) {
+                throw new IOFailure("Unexpected Failure connecting to port " 
+                        + portToCheck + " due to IOException: " + e);
+            }
     }
 }
 
