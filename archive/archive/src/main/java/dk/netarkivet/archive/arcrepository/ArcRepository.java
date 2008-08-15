@@ -86,7 +86,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * The class which listens to messages sent to this instance of
-     * Arcrepository or its sublasses.
+     * Arcrepository or its subclasses.
      */
     private ArcRepositoryServer arcReposhandler;
 
@@ -107,7 +107,7 @@ public class ArcRepository implements CleanupIF {
         new HashMap<String, String>();
 
     /**
-     * Map from filenames to remote files. Used for retreiving a remote file
+     * Map from filenames to remote files. Used for retrieving a remote file
      * reference while a store operation is in process.
      */
     private final Map<String, RemoteFile> outstandingRemoteFiles =
@@ -181,9 +181,9 @@ public class ArcRepository implements CleanupIF {
      * @param allBas
      *            The topics for bitarchives
      * @param anyBas
-     *            The queues for biatarchives
+     *            The queues for bitarchives
      * @param theBamons
-     *            The queues for biatrchive monitors
+     *            The queues for bitarchive monitors
      * @throws PermissionDenied
      *             if inconsistent data is found
      */
@@ -229,17 +229,17 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Stores a file in all known Bitarchives. This runs asynchronously, and
-     * returns immediately. Sideeffects: 1) The RemoteFile added to List
-     * outstandingRemoteFiles 2) TODO: Document other sideeffects.
+     * returns immediately. Side effects: 1) The RemoteFile added to List
+     * outstandingRemoteFiles 2) TODO: Document other side effects.
      *
      * @param rf
      *            A remotefile to be stored.
      * @param replyInfo
-     *            A StoreMessage used to reply with succes or failure.
+     *            A StoreMessage used to reply with success or failure.
      * @throws IOFailure
      *             If file couldn't be stores.
      */
-    synchronized public void store(RemoteFile rf, StoreMessage replyInfo)
+    public synchronized void store(RemoteFile rf, StoreMessage replyInfo)
             throws IOFailure {
 
         final String filename = rf.getName();
@@ -289,7 +289,7 @@ public class ArcRepository implements CleanupIF {
      * @param bitarchiveName
      *            The name of the bitarchive, where RemoteFile is to be stored.
      */
-    synchronized private void startUpload(RemoteFile rf,
+    private synchronized void startUpload(RemoteFile rf,
             BitarchiveClient bitarchiveClient, String bitarchiveName) {
         final String filename = rf.getName();
         log.debug("Upload started '" + filename + "' at '" + bitarchiveName
@@ -353,7 +353,7 @@ public class ArcRepository implements CleanupIF {
      * @param arcFileName
      *            The arcfile we consider replying to.
      */
-    synchronized private void considerReplyingOnStore(String arcFileName) {
+    private synchronized void considerReplyingOnStore(String arcFileName) {
         if (ad.hasReplyInfo(arcFileName)) {
             if (isStoreCompleted(arcFileName)) {
                 replyOK(arcFileName, ad.removeReplyInfo(arcFileName));
@@ -372,7 +372,7 @@ public class ArcRepository implements CleanupIF {
      * @param msg
      *            The message to reply to
      */
-    synchronized private void replyOK(String arcFileName, StoreMessage msg) {
+    private synchronized void replyOK(String arcFileName, StoreMessage msg) {
         outstandingRemoteFiles.remove(arcFileName);
         clearRetries(arcFileName);
         log.info("Store OK: '" + arcFileName + "'");
@@ -388,7 +388,7 @@ public class ArcRepository implements CleanupIF {
      * @param msg
      *            The message to reply to
      */
-    synchronized private void replyNotOK(String arcFileName, StoreMessage msg) {
+    private synchronized void replyNotOK(String arcFileName, StoreMessage msg) {
         outstandingRemoteFiles.remove(arcFileName);
         clearRetries(arcFileName);
         msg.setNotOk("Failure while trying to store ARC file: " + arcFileName);
@@ -473,9 +473,9 @@ public class ArcRepository implements CleanupIF {
      * @param msg
      *            an UploadMessage
      */
-    synchronized public void onUpload(UploadMessage msg) {
-        log.debug("Received upload reply: " + msg.toString());
+    public synchronized void onUpload(UploadMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
+        log.debug("Received upload reply: " + msg.toString());
 
         String bitarchiveName = resolveBitarchiveID(msg.getTo().getName());
 
@@ -499,7 +499,7 @@ public class ArcRepository implements CleanupIF {
      * @param bitarchiveName
      *            The bitarchive that uploaded it
      */
-    synchronized private void processDataUploaded(String arcfileName,
+    private synchronized void processDataUploaded(String arcfileName,
             String bitarchiveName) {
         log.debug("Data uploaded '" + arcfileName + "' ," + bitarchiveName);
         ad.setState(arcfileName, bitarchiveName,
@@ -534,7 +534,7 @@ public class ArcRepository implements CleanupIF {
      * @param msg
      *            a BatchReplyMessage
      */
-    synchronized public void onBatchReply(BatchReplyMessage msg) {
+    public synchronized void onBatchReply(BatchReplyMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.debug("BatchReplyMessage received: '" + msg + "'");
 
@@ -661,7 +661,7 @@ public class ArcRepository implements CleanupIF {
      *            The checksum calculated by the bitarchive This value is "", if
      *            arcfileName does not exist in bitarchive.
      */
-    synchronized private void processCheckSum(String arcFileName,
+    private synchronized void processCheckSum(String arcFileName,
             String bitarchiveName, String orgChecksum,
             String reportedChecksum) {
         log.debug("Checksum received ... processing");
