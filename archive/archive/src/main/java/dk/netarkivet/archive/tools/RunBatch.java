@@ -24,6 +24,7 @@
 package dk.netarkivet.archive.tools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -132,11 +133,26 @@ public class RunBatch extends ToolRunnerBase {
                                    + Location.getKnown());
                 return false;
             }
-            if (args.length > 3 
-                    && !new File(args[3]).canWrite()) {
-                System.err.println("Output file '" + args[3]
-                                   + "' cannot be written to");
-                return false;
+            if (args.length > 3) {
+            	if (new File(args[3]).exists()) {
+                    System.err.println("Output file '" + args[3]
+                                  + "' does already exist");
+                    return false;
+                } else {
+                	try {
+	            		File tmpFile = new File(args[3]);
+	            		tmpFile.createNewFile();
+	                    if (!tmpFile.canWrite()) {
+	                    	System.err.println("Output file '" + args[3]
+	                    	           + "' cannot be written to");
+	                        return false;
+	                    }
+                	} catch (IOException e) {
+                        System.err.println("Output file '" + args[3]
+                                                     + "' cannot be created.");
+                		return false;
+                	}
+                }
             }
             return true;
         }
