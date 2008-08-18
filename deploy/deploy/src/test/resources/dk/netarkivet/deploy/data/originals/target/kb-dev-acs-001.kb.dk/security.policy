@@ -36,7 +36,7 @@ grant codeBase "file:scripts/simple_harvest/tests/commontempdir/BitPreservation/
 /* This allows third-party batch classes to figure out which location they're at
 */
 grant {
-  permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
+  permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
 }
 
 /* These permissions allow third-party batch classes to read the bitarchive

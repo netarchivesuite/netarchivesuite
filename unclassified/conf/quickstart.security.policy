@@ -43,5 +43,5 @@ grant {
 /* This allows third-party batch classes to figure out which location they're at
 */
 grant {
-  permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
+  permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
 };

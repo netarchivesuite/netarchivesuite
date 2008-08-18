@@ -29,7 +29,7 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * Provides access to monitor settings.
- * The settings are retrieved from an monitor_settings.xml file.
+ * The settings are retrieved from an settings.xml file under monitor dir.
  */
 public class MonitorSettings {
     /** The default place in classpath where the settings file can be found. */

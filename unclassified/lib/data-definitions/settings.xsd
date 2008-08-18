@@ -60,9 +60,58 @@
                 </complexType>
             </element>
             <element name="webinterface" type="set:webinterface"/>
+            <element name="topLevelDomains" type="set:topLevelDomains">
+            <element name="database" type="set:database"/>
+            <element name="repository" type="set:repository"/>
+            <element name="locations" type="locations"/>
+            <element name="thisPhysicalLocation" type="string"/>
+            <element name="monitorApplicationName" type="string"/>
         </all>
     </complexType>
 
+    <complexType name="topLevelDomains">
+        <sequence>
+            <element minOccurs="1" maxOccurs="unbounded" name="tld"
+                     type="string"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="database">
+        <sequence>
+            <element name="url" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="specificsclass" type="set:classname"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="derbydatabase">
+        <complexContent>
+            <extension base="set:database">
+                <sequence>
+                    <element name="backupInitHour" type="int"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="repository">
+        <all>
+            <element name="limitForRecordDatatransferInFile" type="long"/>
+        </all>
+    </complexType>
+
+    <complexType name="locations">
+        <sequence>
+            <element name="location" maxOccurs="unbounded">
+                <complexType>
+                    <all>
+                        <element name="name" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="batchLocation" type="string"/>
+        </sequence>
+    </complexType>
+    
     <complexType name="harvester">
         <all>
             <element name="datamodel" type="set:datamodel"/>
@@ -212,30 +261,10 @@
                         <element name="defaultOrderxml" type="string"/>
                         <element name="defaultMaxrate" type="string"/>
                         <element name="defaultMaxbytes" type="string"/>
-                        <element minOccurs="1" maxOccurs="unbounded" name="tld"
-                                 type="string"/>
                     </sequence>
                 </complexType>
             </element>
-            <element name="database" type="set:database"/>
         </all>
-    </complexType>
-
-    <complexType name="database">
-        <sequence>
-            <element name="url" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="specificsclass" type="set:classname"/>
-        </sequence>
-    </complexType>
-
-    <complexType name="derbydatabase">
-        <complexContent>
-            <extension base="set:database">
-                <sequence>
-                    <element name="backupInitHour" type="int"/>
-                </sequence>
-            </extension>
-        </complexContent>
     </complexType>
 
     <complexType name="scheduler">
@@ -330,9 +359,7 @@
             <element name="heartbeatFrequency" type="long"/>
             <element name="acceptableHeartbeatDelay" type="long"/>
             <element name="batchMessageTimeout" type="long"/>
-            <element name="thisLocation" type="string"/>
             <element name="thisCredentials" type="string"/>
-            <element name="limitForRecordDatatransferInFile" type="long"/>
         </sequence>
     </complexType>
 

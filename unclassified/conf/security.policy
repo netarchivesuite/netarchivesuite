@@ -40,7 +40,7 @@ grant codeBase "file:tests/commontempdir/BitPreservation/jsp/-" {
 /* This allows third-party batch classes to figure out which location they're at
 */
 grant {
-  permission java.util.PropertyPermission "settings.archive.bitarchive.thisLocation", "read";
+  permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
 };
 
 /* Directories in the bitarchives should be added below.

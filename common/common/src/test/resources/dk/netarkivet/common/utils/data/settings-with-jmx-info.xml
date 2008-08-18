@@ -4,8 +4,6 @@
   <archive>
     <bitarchive>
       <batchMessageTimeout>172800000</batchMessageTimeout>
-      <thisLocation>KB</thisLocation>
-      <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
       <thisCredentials>42</thisCredentials>
       <heartbeatFrequency>1000</heartbeatFrequency>
       <fileDir>m:\bitarchive</fileDir>
@@ -20,14 +18,28 @@
     </bitpreservation>
     <arcrepository>
       <baseDir>.</baseDir>
+    </arcrepository>
+  </archive>
+  <common>
+      <database>
+        <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
+        <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+        <backupInitHour>3</backupInitHour>
+        <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
+      </database>
+      <database/>
+    <monitorApplicationName>NA</monitorApplicationName>
+    <locations>
       <batchLocation>KB</batchLocation>
       <location>
         <name>SB</name>
         <name>KB</name>
       </location>
-    </arcrepository>
-  </archive>
-  <common>
+    </locations>
+    <thisPhysicalLocation>KB</thisPhysicalLocation>
+    <repository>
+      <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+    </repository>
     <indexClient>
       <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
       <indexRequestTimeout>43200000</indexRequestTimeout>
@@ -101,19 +113,12 @@
   </viewerproxy>
   <harvester>
     <datamodel>
-      <database>
-        <driverclass>org.apache.derby.jdbc.EmbeddedDriver</driverclass>
-        <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-        <backupInitHour>3</backupInitHour>
-        <specificsclass>dk.netarkivet.harvester.datamodel.DerbySpecifics</specificsclass>
-      </database>
       <domain>
         <defaultSeedlist>defaultseeds</defaultSeedlist>
         <defaultOrderxml>default_orderxml</defaultOrderxml>
         <defaultMaxrate>100</defaultMaxrate>
         <defaultConfig>defaultconfig</defaultConfig>
       </domain>
-      <database/>
       <domain/>
     </datamodel>
     <harvesting>
@@ -140,7 +145,6 @@
     </scheduler>
   </harvester>
   <monitor>
-    <applicationName>NA</applicationName>
     <logging>
       <historySize>100</historySize>
     </logging>

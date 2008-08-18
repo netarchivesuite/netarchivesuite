@@ -174,23 +174,7 @@
         <deployPath>/Status</deployPath>
       </siteSection>
     </webinterface>
-  </common>
-  <harvester>
-    <datamodel>
-      <domain>
-        <!-- Default seed list to use when new domains are created -->
-        <defaultSeedlist>defaultseeds</defaultSeedlist>
-        <!-- The name of a configuration that is created by default and
-                     which is initially used for snapshot harvests-->
-        <defaultConfig>defaultconfig</defaultConfig>
-        <!-- Name of order xml template used for domains if nothing
-                 else is specified (e.g. newly created configrations use this) -->
-        <defaultOrderxml>default_orderxml</defaultOrderxml>
-        <!-- Default download rate for domain configuration.
-                 Not currently enforced. -->
-        <defaultMaxrate>100</defaultMaxrate>
-        <!-- Default byte limit for domain configuration. -->
-        <defaultMaxbytes>1000000000</defaultMaxbytes>
+    <topLevelDomains>
         <!-- This setting describes valid TLDs to define domains. -->
         <tld>ac</tld>
         <tld>ad</tld>
@@ -478,19 +462,60 @@
         <tld>za</tld>
         <tld>zm</tld>
         <tld>zw</tld>
+    </topLevelDomains>
+    <database xsi:type="derbydatabase">
+	  <!-- The full URL for connecting to the database.
+	               If present and not empty, this URL must match the settings
+	               baseDir and class.-->
+	  <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
+	  <!-- The class that handles DB-specific methods -->
+	  <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
+	  <!-- The earliest time of day backup will be initiated, 0..24
+	               hours.  At a time shortly after this, a consistent backup
+	               copy of the database will be created -->
+	  <backupInitHour>3</backupInitHour>
+    </database>
+    <repository>
+      <!-- When the length record exceeds this number, the contents of the record
+           will be transferred using a RemoteFile. Currently set to 10 MB
+         -->
+      <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+    </repository>
+    <locations>
+      <!-- The names of all bit archive locations in the
+                 environment, e.g., "KB" and "SB". -->
+      <location>
+        <name>SB</name>
+      </location>
+      <location>
+        <name>KB</name>
+      </location>
+      <!-- Default bit archive to use for batch jobs (if none is specified) -->
+      <batchLocation>KB</batchLocation>
+    </locations>
+    <!-- For archiving applications, which bit archive are you part of?-->
+    <thisPhysicalLocation>KB</thisPhysicalLocation>
+    <!-- The name of the application, fx. "BitarchiveServerApplication".
+         The monitor puts this with each log message -->
+    <monitorApplicationName>NA</monitorApplicationName>
+  </common>
+  <harvester>
+    <datamodel>
+      <domain>
+        <!-- Default seed list to use when new domains are created -->
+        <defaultSeedlist>defaultseeds</defaultSeedlist>
+        <!-- The name of a configuration that is created by default and
+                     which is initially used for snapshot harvests-->
+        <defaultConfig>defaultconfig</defaultConfig>
+        <!-- Name of order xml template used for domains if nothing
+                 else is specified (e.g. newly created configrations use this) -->
+        <defaultOrderxml>default_orderxml</defaultOrderxml>
+        <!-- Default download rate for domain configuration.
+                 Not currently enforced. -->
+        <defaultMaxrate>100</defaultMaxrate>
+        <!-- Default byte limit for domain configuration. -->
+        <defaultMaxbytes>1000000000</defaultMaxbytes>
       </domain>
-      <database xsi:type="derbydatabase">
-        <!-- The full URL for connecting to the database.
-                     If present and not empty, this URL must match the settings
-                     baseDir and class.-->
-        <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-        <!-- The class that handles DB-specific methods -->
-        <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
-        <!-- The earliest time of day backup will be initiated, 0..24
-                     hours.  At a time shortly after this, a consistent backup
-                     copy of the database will be created -->
-        <backupInitHour>3</backupInitHour>
-      </database>
     </datamodel>
     <scheduler>
       <!-- Used when calculating expected size of a harvest of some
@@ -592,16 +617,6 @@
                  checksums" (admin.data) is written. Used by ArcRepository and
                  BitPreservation. -->
       <baseDir>.</baseDir>
-      <!-- The names of all bit archive locations in the
-                 environment, e.g., "KB" and "SB". -->
-      <location>
-        <name>SB</name>
-      </location>
-      <location>
-        <name>KB</name>
-      </location>
-      <!-- Default bit archive to use for batch jobs (if none is specified) -->
-      <batchLocation>KB</batchLocation>
     </arcrepository>
     <bitarchive>
       <!-- The minimum amount of bytes left *in any dir* that we will
@@ -632,15 +647,9 @@
                  is taking too long and returns just the replies it has
                  received at that point. -->
       <batchMessageTimeout>172800000</batchMessageTimeout>
-      <!-- For archiving applications, which bit archive are you part of?-->
-      <thisLocation>KB</thisLocation>
       <!-- Credentials to enter in the GUI for "deleting" ARC files in
                  this bit archive -->
       <thisCredentials>42</thisCredentials>
-      <!-- When the length record exceeds this number, the contents of the record
-                 will be transferred using a RemoteFile. Currently set to 10 MB
-              -->
-      <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
     </bitarchive>
     <bitpreservation>
       <!-- Absolute or relative path to dir containing results of
@@ -655,9 +664,6 @@
     <baseDir>viewerproxy</baseDir>
   </viewerproxy>
   <monitor>
-    <!-- The name of the application, fx. "BitarchiveServerApplication".
-             The monitor puts this with each log message -->
-    <applicationName>NA</applicationName>
     <logging>
       <historySize>100</historySize>
     </logging>

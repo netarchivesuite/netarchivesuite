@@ -106,7 +106,7 @@ public class CommonSettings {
     // settings?
     /** The class that defines DB-specific methods */
     public static String DB_SPECIFICS_CLASS
-            = "settings.harvester.datamodel.database.specificsclass";
+            = "settings.common.database.specificsclass";
 
     /**
      * URL to use to connect to the database.  If absent or empty, the URL
@@ -114,7 +114,7 @@ public class CommonSettings {
      * HARVESTDEFINITION_BASEDIR.
      */
     public static String DB_URL
-            = "settings.harvester.datamodel.database.url";
+            = "settings.common.database.url";
 
     /**
      * The earliest time of day backup will be initiated, 0..24 hours.  At
@@ -122,7 +122,7 @@ public class CommonSettings {
      * will be created.
      */
     public static String DB_BACKUP_INIT_HOUR
-            = "settings.harvester.datamodel.database.backupInitHour";
+            = "settings.common.database.backupInitHour";
 
 
     /**
@@ -152,19 +152,19 @@ public class CommonSettings {
      * environment, e.g., "KB" and "SB".
      */
     public static String ENVIRONMENT_LOCATION_NAMES
-            = "settings.archive.arcrepository.location.name";
+            = "settings.common.locations.location.name";
 
     /** Default bit archive to use for batch jobs (if none is specified) */
     public static String ENVIRONMENT_BATCH_LOCATION
-            = "settings.archive.arcrepository.batchLocation";
+            = "settings.common.locations.batchLocation";
 
     /** For archiving applications, which bit archive are you part of? */
     public static String ENVIRONMENT_THIS_LOCATION
-            = "settings.archive.bitarchive.thisLocation";
+            = "settings.common.thisPhysicalLocation";
 
     /** The name of the application, fx. "BitarchiveServerApplication". */
     public static String APPLICATIONNAME
-            = "settings.monitor.applicationName";
+            = "settings.common.monitorApplicationName";
 
     /**
      * The mail server to use when sending mails. Currently only used for
@@ -204,12 +204,12 @@ public class CommonSettings {
             = "settings.common.monitorregistryClient.class";
 
     /** Valid top level domains, like .co.uk, .dk, .org. Repeats. */
-    public static String TLDS = "settings.harvester.datamodel.domain.tld";
+    public static String TLDS = "settings.common.topLevelDomains.tld";
     /**
      * When the length record exceeds this number, the contents of the record
      * will be transferred using a RemoteFile. Currently set to 31 MB
      * ( Integer.MAX_VALUE / 64) -->
      */
     public static String BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
-            = "settings.archive.bitarchive.limitForRecordDatatransferInFile";
+            = "settings.common.repository.limitForRecordDatatransferInFile";
 }
