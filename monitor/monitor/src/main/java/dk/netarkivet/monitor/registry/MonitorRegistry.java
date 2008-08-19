@@ -78,7 +78,7 @@ public class MonitorRegistry {
         } else {
             set.remove(hostEntry);
             set.add(hostEntry);
-            log.debug("Updated time for '" + hostEntry.getName() + "' port "
+            log.trace("Updated time for '" + hostEntry.getName() + "' port "
                      + hostEntry.getJmxPort() + "/" + hostEntry.getRmiPort()
                      + " to " + hostEntry.getTime());
         }

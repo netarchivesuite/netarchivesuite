@@ -157,7 +157,7 @@ public class SingleMBeanObject<I> {
             name = new ObjectName(domain, nameProperties);
             mBeanServer.registerMBean(
                     new StandardMBean(o, asInterface), name);
-            log.debug("Registered mbean '" + name + "'");
+            log.trace("Registered mbean '" + name + "'");
         } catch (InstanceAlreadyExistsException e) {
             String msg = "this MBean is already registered on "
                          + "the MBeanServer";
