@@ -24,7 +24,9 @@
 package dk.netarkivet.archive.tools;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -39,6 +41,7 @@ import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
+import dk.netarkivet.common.utils.arc.FileBatchJob.ExceptionOccurrence;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
@@ -54,13 +57,14 @@ import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
  *              default taken from settings.
  *       outputfile is a file where the output from the batch job will be
  *              written.  By default, it goes to stdout.
- *
+ *       errorFile is a file where the errors from the batch job will be
+ *       written. By default, it goes to stdout.
  * Example:
  *
  * java dk.netarkivet.archive.tools.RunBatch FindMime.class 10-*.arc SB mimes
  *
  * Note that you probably want to set the HTTP port setting
- * (settings.common.port.http) to something other than its default value to
+ * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its default value to
  * avoid clashing with other channel listeners.
  */
 public class RunBatch extends ToolRunnerBase {
@@ -96,10 +100,29 @@ public class RunBatch extends ToolRunnerBase {
          * teardown in case of exceptions during execution.
          */
         private ViewerArcRepositoryClient arcrep;
-
+        
+        /** The maximum number of argument accepted by the tool. */
+        private static final int MAX_ARGS_LENGTH = 5;
+        
+        /** Default regexp that matches everything. */
+        private static final String DEFAULT_REGEXP = ".*";
+        
+        /** The regular expression that will be matched against
+               file names in the archive, by default .*
+        */
+        private String regexp = DEFAULT_REGEXP;
+        
         /**
-         * Accept 1 to 4 parameters and checks them for validity.
-         *
+         * The outputfile, if any was given.
+         */
+        private File outputFile;
+        
+        /** The errorfile, if any was given. */
+        private File errorFile;
+        
+        
+        /**
+         * Accept 1 to 5 parameters and checks them for validity.
          * @param args the arguments
          * @return true, if given arguments are valid
          *  returns false otherwise
@@ -109,7 +132,7 @@ public class RunBatch extends ToolRunnerBase {
                 System.err.println("Missing required argument: class file");
                 return false;
             }
-            if (args.length > 4) {
+            if (args.length > MAX_ARGS_LENGTH) {
                 System.err.println("Too many arguments");
                 return false;
             }
@@ -134,24 +157,49 @@ public class RunBatch extends ToolRunnerBase {
                 return false;
             }
             if (args.length > 3) {
-            	if (new File(args[3]).exists()) {
-                    System.err.println("Output file '" + args[3]
-                                  + "' does already exist");
+             // consider 4th argument to be the outputfilename
+                final String outputFileName = args[3];
+                if (new File(outputFileName).exists()) {
+                    System.err.println("Output file '" + outputFileName
+                            + "' does already exist");
                     return false;
                 } else {
-                	try {
-	            		File tmpFile = new File(args[3]);
-	            		tmpFile.createNewFile();
-	                    if (!tmpFile.canWrite()) {
-	                    	System.err.println("Output file '" + args[3]
-	                    	           + "' cannot be written to");
-	                        return false;
-	                    }
-                	} catch (IOException e) {
-                        System.err.println("Output file '" + args[3]
-                                                     + "' cannot be created.");
-                		return false;
-                	}
+                    try {
+                        File tmpFile = new File(outputFileName);
+                        tmpFile.createNewFile();
+                        if (!tmpFile.canWrite()) {
+                            System.err.println("Output file '" + outputFileName
+                                    + "' cannot be written to");
+                            return false;
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Output file '" + outputFileName
+                                + "' cannot be created.");
+                        return false;
+                    }
+                }
+            }
+            if (args.length > 4) {
+             // consider 5th argument to be the errorfilename
+                final String errorfilename = args[4];
+                if (new File(errorfilename).exists()) {
+                    System.err.println("Error file '" + errorfilename
+                            + "' does already exist");
+                    return false;
+                } else {
+                    try {
+                        File tmpFile = new File(errorfilename);
+                        tmpFile.createNewFile();
+                        if (!tmpFile.canWrite()) {
+                            System.err.println("Error file '" + errorfilename
+                                    + "' cannot be written to");
+                            return false;
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Error file '" + errorfilename
+                                + "' cannot be created.");
+                        return false;
+                    }
                 }
             }
             return true;
@@ -159,7 +207,7 @@ public class RunBatch extends ToolRunnerBase {
 
         /**
          * Create the ArcRepositoryClient instance here for reliable execution
-         * of close method in teardown.
+         * of close method in tearDown.
          *
          * @param args the arguments (not used)
          */
@@ -184,7 +232,7 @@ public class RunBatch extends ToolRunnerBase {
          * command line parameters and system settings required to run the
          * ViewerArcRepositoryClient.batch(), and perform the operation.
          * Creating and closing the ArcRepositoryClient (arcrep) is
-         * done in setup and teardown methods.
+         * done in the setUp and tearDown methods.
          *
          * @param args the arguments
          */
@@ -192,18 +240,18 @@ public class RunBatch extends ToolRunnerBase {
             String filename = args[0];
             LoadableFileBatchJob job
                     = new LoadableFileBatchJob(new File(filename));
-            String regexp = ".*";
-            if (args.length > 1) {
+            if (args.length > 1) { // assume args[1] is the wanted regexp
                 regexp = args[1];
                 job.processOnlyFilesMatching(regexp);
             }
+            
             Location myLocation = Location.get(Settings.get(
                     CommonSettings.ENVIRONMENT_THIS_LOCATION)
             );
             if (args.length > 2) {
                 myLocation = Location.get(args[2]);
             }
-            File outputFile = null;
+            
             if (args.length > 3) {
                 outputFile = new File(args[3]);
             }
@@ -213,21 +261,59 @@ public class RunBatch extends ToolRunnerBase {
                                + "'");
             BatchStatus status = arcrep.batch(job, myLocation.getName());
             final Collection<File> failedFiles = status.getFilesFailed();
+            Collection<ExceptionOccurrence> exceptions = status.getExceptions();
             System.out.println("Processed " + status.getNoOfFilesProcessed()
                                + " files with "
                                + failedFiles.size()
                                + " failures");
-            if (outputFile != null) {
-                status.copyResults(outputFile);
-            } else {
+            if (outputFile == null) {
                 status.appendResults(System.out);
+            } else {
+                status.copyResults(outputFile);
             }
-            if (failedFiles.size() != 0) {
-                System.out.println("Failed files:");
-                for (File f : failedFiles) {
-                    System.out.println(f.getName());
+            
+            // Write the errors to the errorfile if defined or to stdout if not
+            if (args.length > 4) {
+                errorFile = new File(args[4]);
+            }
+            
+            PrintStream errorOutput = System.out;
+            if (errorFile != null) {
+                try {
+                    System.out.println("Writing errors to file: "
+                            + errorFile.getAbsolutePath());
+                    errorOutput = new PrintStream(errorFile);
+                } catch (FileNotFoundException e) {
+                    System.out.println(
+                            "Unable to to create errorfile for writing: " + e);
+                    System.out.println(
+                            "Writing errors to stdout instead!");                
                 }
             }
+            
+            if (!failedFiles.isEmpty()) {
+                errorOutput.println("Failed files:");
+                for (File f : failedFiles) {
+                    errorOutput.println(f.getName());
+                }
+            }
+            
+            if (!exceptions.isEmpty()) {
+                errorOutput.println("Failed files that produced exceptions("
+                        + exceptions.size() + "):");
+                for (ExceptionOccurrence occurrence : exceptions) {
+                    errorOutput.println("File: " + occurrence.getFileName());
+                    errorOutput.println("Offset: " +  occurrence.getFileOffset());
+                    errorOutput.println("OutputOffset: " +  occurrence.getOutputOffset());
+                    errorOutput.println("Class name: " +  occurrence.getClass().getName());
+                    errorOutput.println("Was exception during initialize: " + occurrence.isInitializeException());
+                    errorOutput.println("Was exception during finish: " + occurrence.isFinishException());
+                    errorOutput.println("Exception w/stacktrace: ");
+                    occurrence.getException().printStackTrace(errorOutput);
+                }
+                
+            }
+            errorOutput.close();
         }
 
         /**
@@ -236,7 +322,7 @@ public class RunBatch extends ToolRunnerBase {
          * @return the list of parameters accepted.
          */
         public String listParameters() {
-            return "classfile [regexp [location]]";
+            return "classfile [regexp [location [outputfile [errrorfile]]]]";
         }
 
     }

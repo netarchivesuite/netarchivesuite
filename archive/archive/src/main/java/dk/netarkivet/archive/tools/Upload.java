@@ -34,7 +34,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * A tool to force upload of given arc files into the ArcRepository found in settings.xml.
+ * A tool to force upload of given arc files into the ArcRepository found in
+ * settings.xml.
  * All successfully uploaded files are deleted locally.
  *
  * Usage: java dk.netarkivet.archive.tools.Upload file1 [file2 ...]
@@ -67,10 +68,12 @@ public class Upload {
             //Upload each input file
             for (File f : files) {
                 System.out.println("Uploading file '" + f + "'...");
-                boolean success = uploadSingleFile(arcrep,f);
-                System.out.println("Uploading file '" + f + "' " + (success ? "succeeded" : "failed"));
+                boolean success = uploadSingleFile(arcrep, f);
+                System.out.println("Uploading file '" + f + "' "
+                        + (success ? "succeeded" : "failed"));
             }
-            System.out.println("All files processed, closing connection to ArcRepository");
+            System.out.println(
+                    "All files processed, closing connection to ArcRepository");
         } finally {
             //Close connections
             if (arcrep != null) {
@@ -81,7 +84,7 @@ public class Upload {
     }
 
     /**
-     * Checks existence and arcness of all input files
+     * Checks existence and arcness of all input files.
      * @param fileNames The input files as a String array
      * @return If all files existed and were arc files,
      * a list of Files that is 1-1 with the input files.
@@ -91,12 +94,15 @@ public class Upload {
         for (String arg : fileNames) {
             try {
             File file = FileUtils.makeValidFileFromExisting(arg);
-            if(!FileUtils.ARCS_FILTER.accept(file.getParentFile(),file.getName())) {
-                dieWithException("Error checking input file: ",new IOFailure(file.getAbsolutePath() + " is not an arc file"));
+            if(!FileUtils.ARCS_FILTER.accept(
+                    file.getParentFile(), file.getName())) {
+                dieWithException("Error checking input file: ",
+                        new IOFailure(file.getAbsolutePath()
+                                + " is not an arc file"));
             }
             files.add(file);
             } catch (IOFailure e) {
-                dieWithException("Error concerning file '" + arg + "':",e);
+                dieWithException("Error concerning file '" + arg + "':", e);
             }
         }
         return files;
@@ -109,7 +115,8 @@ public class Upload {
      * @param f The file to upload. Should exist and be an arc file.
      * @return true if the upload succeeded, false otherwise.
      */
-    private static boolean uploadSingleFile(HarvesterArcRepositoryClient arcRep, File f) {
+    private static boolean uploadSingleFile(
+            HarvesterArcRepositoryClient arcRep, File f) {
         boolean success = false;
         try {
             arcRep.store(f);
@@ -123,7 +130,7 @@ public class Upload {
 
     /**
      * Output a message and a stack trace before exiting
-     * with a failure code
+     * with a failure code.
      * @param msg The message to output
      * @param e The Exception containing the relevant stack trace
      */
