@@ -25,7 +25,6 @@ package dk.netarkivet.deploy;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -33,11 +32,11 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class DeployTester extends TestCase {
 
-    protected final Logger log = Logger.getLogger(getClass().getName());
     String oldSettingsFileName;
     ReloadSettings rs = new ReloadSettings();
 
@@ -58,13 +57,17 @@ public class DeployTester extends TestCase {
 
     /**
      * This test invokes the deploy application and verifies that all files
-     * (settings.xml, scripts, bats) created by the script matches the target files
-     * stored in CVS Any change to the output files, will break this test. When the
-     * test is broken: Verify that all differences reported by this test are
-     * intended and correct, when all output files are verified correct, replace
-     * the target files in CVS with the new set of output files.
+     * (settings.xml, scripts, bats) created by the script matches the target
+     * files stored in CVS Any change to the output files, will break this test.
+     * When the test is broken: Verify that all differences reported by this
+     * test are intended and correct, when all output files are verified
+     * correct, replace the target files in CVS with the new set of
+     * output files.
      */
     public void testDeploy() {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         String it_conf_xml_name = TestInfo.IT_CONF_FILE.getPath();
         //String it_conf_xml_name = TestInfo.IT_CONF_TEST_FILE.getPath();
         String settings_xml_name = TestInfo.SETTINGS_FILE.getPath();
@@ -88,9 +91,11 @@ public class DeployTester extends TestCase {
         // find all settings*.xml files
         List<File> settingsFiles = TestFileUtils.findFiles(TestInfo.TMPDIR,
                 new FileFilter() {
-                    Pattern settingsPattern = Pattern.compile("^settings.*\\.xml$");
+                    Pattern settingsPattern = Pattern.compile(
+                            "^settings.*\\.xml$");
                     public boolean accept(File pathname) {
-                        return settingsPattern.matcher(pathname.getName()).matches();
+                        return settingsPattern.matcher(
+                                pathname.getName()).matches();
                     }
                 });
         // XSD-test them
@@ -107,6 +112,9 @@ public class DeployTester extends TestCase {
      *
      */
     public void testDeploySingle() {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         String it_conf_xml_name = TestInfo.IT_CONF_SINGLE_FILE.getPath();
         //String it_conf_xml_name = TestInfo.IT_CONF_TEST_FILE.getPath();
         String settings_xml_name = TestInfo.SETTINGS_FILE.getPath();
@@ -128,13 +136,17 @@ public class DeployTester extends TestCase {
         assertEquals("No differences expected", 0, differences.length());
 
         // find all settings*.xml files
-        List<File> settingsFiles = TestFileUtils.findFiles(TestInfo.TMPDIR,
-                                                           new FileFilter() {
-                                                               Pattern settingsPattern = Pattern.compile("^settings.*\\.xml$");
-                                                               public boolean accept(File pathname) {
-                                                                   return settingsPattern.matcher(pathname.getName()).matches();
-                                                               }
-                                                           });
+        List<File> settingsFiles = TestFileUtils.findFiles(
+                TestInfo.TMPDIR,
+                new FileFilter() {
+                    Pattern settingsPattern = Pattern.compile(
+                            "^settings.*\\.xml$");
+                    public boolean accept(File pathname) {
+                        return settingsPattern.matcher(
+                                pathname.getName()).matches();
+                    }
+                 }
+                );
         // XSD-test them
         for (File f : settingsFiles) {
             System.setProperty("dk.netarkivet.settings.file",
