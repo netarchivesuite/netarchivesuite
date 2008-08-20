@@ -64,14 +64,15 @@ import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 
 /**
- * The host class represents the machines to install the netarkiv software onto,
- * *and* the ftp-servers and the jms-broker (ftp and jms should probably be
- * reprensented by a different class).
+ * The host class represents the machines to install the NetarchiveSuite
+ * software onto, *and* the ftp-servers and the jms-broker
+ * (ftp and jms should probably be represented by a different class).
  *
  */
 public class Host {
     /**
-     * Location must be kb or sb.
+     * Location represents the different physical locations taking part 
+     * in the installation.
      */
     private final String location;
 
@@ -310,7 +311,8 @@ public class Host {
                 "String environmentName");
 
         if (jmsHost != null) {
-            overrideSetting(JMSConnectionSunMQ.JMS_BROKER_HOST, jmsHost.getName());
+            overrideSetting(JMSConnectionSunMQ.JMS_BROKER_HOST, 
+                    jmsHost.getName());
             overrideSetting(CommonSettings.JMS_BROKER_CLASS,
                     jmsHost.getProperty(Constants.JMS_CLASS_PROPERTY));
 
@@ -357,16 +359,20 @@ public class Host {
     }
 
     /** Override a value in settings.xml. This will remove all settings for
-     * this key.
+     * this key, if there is a value already.
      *
      * @param key The key, as taken from the definitions in Settings
      * @param value The new value to set it to.
      */
     void overrideSetting(String key, String value) {
-        settingsXml.update(key, value);
+        if (settingsXml.hasKey(key)) {
+            settingsXml.update(key, value);
+        } else {
+            settingsXml.add(key, value);
+        }
     }
 
-   /** Append a suffix to a value in settings.xml.
+    /** Append a suffix to a value in settings.xml.
      *
      * @param key The key, as taken from the definitions in Settings
      * @param suffix The suffix to append to the current value.
@@ -438,7 +444,7 @@ public class Host {
         ArgumentNotValid.checkNotNull(dir, "File dir");
         ArgumentNotValid.checkNotNull(locations, "List<String> locations");
         
-        File res = new File(dir, "start_harvestdefinition.sh");
+        File res = new File(dir, "start_guiapplication.sh");
         writeStandardStart(res,
                            GUIApplication.class.getName());
 

@@ -661,5 +661,6 @@
     <logging>
       <historySize>100</historySize>
     </logging>
+    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
   </monitor>
 </settings>

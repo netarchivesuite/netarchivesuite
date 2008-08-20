@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /home/dev/UNITTEST/conf
-if [ -e ./start_harvestdefinition.sh ]; then
-    ./start_harvestdefinition.sh 
+if [ -e ./start_guiapplication.sh ]; then
+    ./start_guiapplication.sh 
 fi
 if [ -e ./start_arcrepository.sh ]; then
     ./start_arcrepository.sh 

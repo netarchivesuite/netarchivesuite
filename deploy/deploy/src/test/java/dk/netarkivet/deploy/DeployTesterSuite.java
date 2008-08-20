@@ -40,7 +40,6 @@ public class DeployTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(DeployTester.class);
         suite.addTestSuite(HostTester.class);
-        suite.addTestSuite(JmxHostsDeploymentBuilderTester.class);
     }
 
     public static void main(String args[])

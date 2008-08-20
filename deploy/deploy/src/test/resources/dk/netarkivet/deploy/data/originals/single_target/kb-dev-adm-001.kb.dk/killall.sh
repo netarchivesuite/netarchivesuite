@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /home/dev/UNITTEST/conf
-if [ -e ./kill_harvestdefinition.sh ]; then
-    ./kill_harvestdefinition.sh 
+if [ -e ./kill_guiapplication.sh ]; then
+    ./kill_guiapplication.sh 
 fi
 if [ -e ./kill_arcrepository.sh ]; then
     ./kill_arcrepository.sh 

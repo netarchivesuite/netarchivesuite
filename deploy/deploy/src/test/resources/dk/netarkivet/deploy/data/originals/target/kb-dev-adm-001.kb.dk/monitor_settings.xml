@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<settings xmlns="http://www.netarkivet.dk/schemas/monitor_settings">
-  <monitor>
-    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
-  </monitor>
-</settings>
-

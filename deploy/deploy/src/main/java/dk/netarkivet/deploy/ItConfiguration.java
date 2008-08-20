@@ -47,16 +47,20 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.viewerproxy.ViewerProxySettings;
 
 /**
  * Loads the IT configuration from an xml description and creates a list of host
  * definitions.
  *
- * This is split up in steps that should always be carried out in order: 1)
- * Create class to parse file 2) Set environment name 3) Calculate default
- * settings (from it-conf parsing) 4) Load default settings (from settings file
- * template) 5) Write settings 6) Write install scripts
+ * This is split up in steps that should always be carried out in order: <br>
+ * 1) Create class to parse file <br>
+ * 2) Set environment name <br>
+ * 3) Calculate default settings (from it-conf parsing)<br>
+ * 4) Load default settings (from settings file template)<br>
+ * 5) Write settings </br>
+ * 6) Write install scripts
  *
  * Please note that the parameters used for calling methods for all of this must
  * be consistent. Serious work ought to be done here!
@@ -116,14 +120,7 @@ public class ItConfiguration {
     private static final String JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER =
             "JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER";
 
-    /** monitorSettingsContents. (jmx information inserted into
-     * monitor_settings.xml on admin server).
-     * This add-on is produced in the constructor, and inserted later on
-     * in the writeSettings() method.
-     * */
-    private String monitorSettingsContent;
-
-    /** How long to wait for large index generation jobs to time out */
+    /** How long to wait for large index generation jobs to time out. */
     private long largeIndexTimeout;
 
     /**
@@ -150,15 +147,8 @@ public class ItConfiguration {
             SAXParser parser = factory.newSAXParser();
             DefaultHandler handler = new ItConfSAXHandler();
             parser.parse(f, handler);
-
-            // parse file again to retrieve JMX information
-            StringBuilder result = new StringBuilder();
-            DeploymentBuilder builder = new JmxHostsDeploymentBuilder(result);
-            ItConfigParser itconfigHandler = new ItConfigParser(builder);
-            parser.parse(f, itconfigHandler);
-            builder.done(); // output from builder is now written to result
-            monitorSettingsContent = result.toString();
-        } catch (Exception e) {
+            
+         } catch (Exception e) {
             log.warn("Could not parse XML file '" + f.getAbsolutePath()
                         + "': " + e);
             throw new IOFailure("Could not parse XML file: '"
@@ -335,27 +325,25 @@ public class ItConfiguration {
                 }
 
                 if (host.isType(Host.Type.admin)) {
-                    // write monitorSettingsContents to
-                    // <admin-host-dir>/monitor_settings.xml'
-                    File monitorSettingsFile
-                            = new File(subDir, "monitor_settings.xml");
-                    if (monitorSettingsFile.exists()) {
-                        monitorSettingsFile.delete();
-                    }
-                    List<String> monitorContentsAsList = new ArrayList<String>();
-                    monitorContentsAsList.add(monitorSettingsContent);
-                    FileUtils.writeCollectionToFile(monitorSettingsFile, monitorContentsAsList);
-
+                    host.overrideSetting(
+                            MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING, 
+                            jmxMonitorRolePassword);
+                    // Update settings.xml for guiapplication
+                    host.getSettingsXml().save(
+                            new File(subDir, "settings.xml"));
+                    
                     // create settings files for the two monitors
-                    // TODO: Make bamons ports not be hardcoded
+                    // TODO Make bamons ports not be hardcoded
                     int locationPort = 8081;
-                    for (String l : locations) {
-                        host.overrideSetting(CommonSettings.ENVIRONMENT_THIS_LOCATION,
-                                             l.toUpperCase());
+                    for (String location : locations) {
+                        host.overrideSetting(
+                                CommonSettings.ENVIRONMENT_THIS_LOCATION,
+                                location.toUpperCase());
                         host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER,
                                              Integer.toString(locationPort));
                         host.getSettingsXml().save(
-                                new File(subDir, "settings_bamonitor_" + l + ".xml"));
+                                new File(subDir, "settings_bamonitor_"
+                                        + location + ".xml"));
                         locationPort++;
                     }
 
@@ -363,21 +351,29 @@ public class ItConfiguration {
                 }
 
                 if (host.isType(Host.Type.harvesters)) {
-                    List<String> ports = host.getProperties().get("highpriport");
+                    List<String> ports 
+                        = host.getProperties().get("highpriport");
                     if (ports != null) {
                         for (String port : ports) {
                             // create settings files for each harvester to start
-                            host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
-                                    host.getInstallDir() + "/harvester_" + port);
+                                    CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE,
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_SERVERDIR,
+                                    host.getInstallDir() 
+                                        + "/harvester_" + port);
+                            host.overrideSetting(
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_ISRUNNING_FILE,
                                     "./hcsRunning" + port + ".tmp");
-                            host.overrideSetting(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
-                            "HIGHPRIORITY");
+                            host.overrideSetting(
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_PRIORITY,
+                                    "HIGHPRIORITY");
                             host.getSettingsXml().save(new File(
-                                    subDir, "settings_harvester_" + port + ".xml"));
+                                    subDir, "settings_harvester_"
+                                        + port + ".xml"));
                             host.writeStartHarvesterApps(new File(
                                     subDir, "start_harvester_" + port + ".sh"),
                                     "conf/settings_harvester_" + port + ".xml");
@@ -387,25 +383,33 @@ public class ItConfiguration {
                     if (ports != null) {
                         for (String port : ports) {
                             // create settings files for each harvester to start
-                            host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
-                                    host.getInstallDir() + "/harvester_" + port);
+                                    CommonSettings.HTTP_PORT_NUMBER, port);
                             host.overrideSetting(
-                                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE,
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_SERVERDIR,
+                                    host.getInstallDir() + "/harvester_"
+                                        + port);
+                            host.overrideSetting(
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_ISRUNNING_FILE,
                                     "./hcsRunning" + port + ".tmp");
-                            host.overrideSetting(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY,
-                            "LOWPRIORITY");
+                            host.overrideSetting(
+                                    HarvesterSettings
+                                        .HARVEST_CONTROLLER_PRIORITY,
+                                    "LOWPRIORITY");
                             /*
                              * set indexRequestTimeout to a larger value for big
                              * jobs.
                              */
                             if (largeIndexTimeout != 0) {
-                                host.overrideSetting(IndexRequestClient.INDEXREQUEST_TIMEOUT,
+                                host.overrideSetting(
+                                        IndexRequestClient.INDEXREQUEST_TIMEOUT,
                                         Long.toString(largeIndexTimeout));
                             }
                             host.getSettingsXml().save(new File(
-                                    subDir, "settings_harvester_" + port + ".xml"));
+                                    subDir, "settings_harvester_"
+                                        + port + ".xml"));
                             host.writeStartHarvesterApps(new File(
                                     subDir, "start_harvester_" + port + ".sh"),
                                     "conf/settings_harvester_" + port + ".xml");
@@ -416,20 +420,24 @@ public class ItConfiguration {
                 if (host.isType(Host.Type.access)) {
                     List<String> ports = host.getProperties().get("port");
                     final String viewerproxyBasedirPrefix =
-                        host.getSettingsXml().getString(ViewerProxySettings.VIEWERPROXY_DIR);
+                        host.getSettingsXml().getString(
+                                ViewerProxySettings.VIEWERPROXY_DIR);
                     for (String port : ports) {
                         // create settings files for each viewerproxy to start
-                        host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, port);
-                        // append "_PORT" (e.g _8077) to original value of viewerproxy.baseDir
+                        host.overrideSetting(
+                                CommonSettings.HTTP_PORT_NUMBER, port);
+                        // append "_PORT" (e.g _8077) to original value of
+                        // viewerproxy.baseDir 
                         // This solves bug 828
-                        host.overrideSetting(ViewerProxySettings.VIEWERPROXY_DIR,
+                        host.overrideSetting(
+                                ViewerProxySettings.VIEWERPROXY_DIR,
                                 viewerproxyBasedirPrefix + "_" + port);
                         String vpSettings = "settings_viewerproxy_" + port
                                             + ".xml";
-                        host.getSettingsXml().save
-                                (new File(subDir, vpSettings));
-                        host.writeStartAccessApps(new File
-                                (subDir,"start_viewerproxy_" + port + ".sh"),
+                        host.getSettingsXml().save(
+                                new File(subDir, vpSettings));
+                        host.writeStartAccessApps(new File(
+                                subDir, "start_viewerproxy_" + port + ".sh"),
                                 "conf/" + vpSettings);
                     }
                 }
@@ -438,7 +446,8 @@ public class ItConfiguration {
                     if (app.getType().equals(Application.Type.indexserver)) {
                         // create settings for starting index server
                         // It doesn't use the HTTP port at all.
-                        host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER, "9999");
+                        host.overrideSetting(
+                                CommonSettings.HTTP_PORT_NUMBER, "9999");
                     }
                     String appSettings = "settings_" + app.getType() + ".xml";
                     host.getSettingsXml().save(
@@ -528,7 +537,8 @@ public class ItConfiguration {
                         String unzip = "unzip -q -o " + dir + "/$1 -d " + dir
                                        + "/" + environmentName;
                         String confDir = host.getInstallDir() + "/conf/";
-                        boolean isWindows = host.getOS().equals(Host.OS.WINDOWS);
+                        boolean isWindows = host.getOS().equals(
+                                Host.OS.WINDOWS);
                         String ext = ".sh";
 
                         if (isWindows) {
@@ -578,18 +588,19 @@ public class ItConfiguration {
                             pw.println("ssh " + destination + " \"chmod 400 "
                                     + confDir + "/jmxremote.password\"");
                         }
-                        pw.println(
-                                "echo --------------------------------------------");
+                        pw.println("echo " + StringUtils.repeat("----", 11));
 
                         // Update StartAll script
-                        pwStart.println(
-                                "echo --------------------------------------------");
-                        pwKill.println(
-                                "echo --------------------------------------------");
+                        
+                        pwStart.println("echo " 
+                                + StringUtils.repeat("----", 11));
+                        pwKill.println("echo "
+                                + StringUtils.repeat("----", 11));
 
                         pwStart.println("echo starting at:"
                                         + startScriptDestination);
-                        pwKill.println("echo kill at " + startScriptDestination);
+                        pwKill.println("echo kill at "
+                                + startScriptDestination);
                         if (ext.equals(".sh")) {
                             pwStart.println("ssh " + startScriptDestination
                                             + " \". /etc/profile; "
@@ -613,10 +624,10 @@ public class ItConfiguration {
                                            + "\\conf\\killall" + ext + " \" ");
                         }
 
-                        pwStart.println(
-                                "echo --------------------------------------------");
-                        pwKill.println(
-                                "echo --------------------------------------------");
+                        pwStart.println("echo " 
+                                + StringUtils.repeat("----", 11));
+                        pwKill.println("echo " 
+                                + StringUtils.repeat("----", 11));
                     }
 
                 }
@@ -645,7 +656,7 @@ public class ItConfiguration {
      */
     public String toString() {
         //Note no separator: hosts end with newline already.
-        return "It configuration:\n" + StringUtils.conjoin("",hostlist );
+        return "It configuration:\n" + StringUtils.conjoin("", hostlist );
     }
 
     /** Write security policy files in dir that allows our code
@@ -663,10 +674,13 @@ public class ItConfiguration {
             if (!host.isServiceHost()) {
                 File subDir = new File(dir, host.getName());
                 FileUtils.createDir(subDir);
-                final File securityFile = new File(subDir,
-                                                   Constants.SECURITY_POLICY_FILE_NAME);
-                FileUtils.copyFile(new File(confDir, Constants.SECURITY_POLICY_FILE_NAME),
-                                   securityFile);
+                final File securityFile = new File(
+                        subDir,
+                        Constants.SECURITY_POLICY_FILE_NAME);
+                FileUtils.copyFile(new File(
+                        confDir,
+                        Constants.SECURITY_POLICY_FILE_NAME),
+                        securityFile);
                 host.updateSecurityFile(securityFile);
             }
         }

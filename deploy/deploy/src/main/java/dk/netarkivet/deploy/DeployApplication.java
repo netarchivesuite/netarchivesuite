@@ -32,13 +32,13 @@ public class DeployApplication {
      *
      * @param args Command-line arguments:
      *
-     * First arg is the it-conf.xml file to base the installation on.
-     * Second arg is the settings.xml file to use as base.
-     * Third arg is the name of the environment this will be used in,
+     * First argument is the it-conf.xml file to base the installation on.
+     * Second argument is the settings.xml file to use as base.
+     * Third argument is the name of the environment this will be used in,
      * e.g. test or prod.
-     * Fourth (optional) arg is the directory to output files to.  If not given,
-     * files will be placed in a subdirectory of the current directory named the
-     * same as the envorinment arg.
+     * Fourth (optional) argument is the directory to output files to. 
+     * If not given, the files will be placed in a sub-directory of the
+     * current directory named the same as the environment argument.
      */
     public static void main(String[] args) {
 
@@ -71,10 +71,11 @@ public class DeployApplication {
         itConfig.writeSettings(subdir);
         itConfig.writeSecurityPolicies(confDir, subdir);
         for (String loc : itConfig.locations) {
-            itConfig.writeInstallAllSSH(new File(subdir, "install_" + loc + ".sh"),
-                                        new File(subdir, "startall_" + loc + ".sh"),
-                                        new File(subdir, "killall_" + loc + ".sh"),
-                                        loc);
+            itConfig.writeInstallAllSSH(
+                    new File(subdir, "install_" + loc + ".sh"),
+                    new File(subdir, "startall_" + loc + ".sh"),
+                    new File(subdir, "killall_" + loc + ".sh"),
+                    loc);
         }
     }
 }
