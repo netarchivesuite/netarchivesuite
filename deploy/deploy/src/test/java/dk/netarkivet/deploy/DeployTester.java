@@ -32,7 +32,6 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class DeployTester extends TestCase {
@@ -65,9 +64,6 @@ public class DeployTester extends TestCase {
      * output files.
      */
     public void testDeploy() {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         String it_conf_xml_name = TestInfo.IT_CONF_FILE.getPath();
         //String it_conf_xml_name = TestInfo.IT_CONF_TEST_FILE.getPath();
         String settings_xml_name = TestInfo.SETTINGS_FILE.getPath();
@@ -112,9 +108,6 @@ public class DeployTester extends TestCase {
      *
      */
     public void testDeploySingle() {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         String it_conf_xml_name = TestInfo.IT_CONF_SINGLE_FILE.getPath();
         //String it_conf_xml_name = TestInfo.IT_CONF_TEST_FILE.getPath();
         String settings_xml_name = TestInfo.SETTINGS_FILE.getPath();
@@ -150,8 +143,10 @@ public class DeployTester extends TestCase {
         // XSD-test them
         for (File f : settingsFiles) {
             System.setProperty("dk.netarkivet.settings.file",
-                               f.getAbsolutePath());
-            //TODO test here
+                    f.getAbsolutePath());
+            Settings.reload();
+            Settings.validateWithXSD(new File(
+                    "./lib/data-definitions/settings.xsd"));
         }
 
     }

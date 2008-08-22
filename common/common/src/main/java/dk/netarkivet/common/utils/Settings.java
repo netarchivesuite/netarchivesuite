@@ -364,7 +364,7 @@ public class Settings {
                     validator.validate(new DOMSource(document));
                 } catch (SAXException e) {
                     // instance document is invalid!
-                    final String msg = "Settings file '" + getSettingsFiles()
+                    final String msg = "Settings file '" + settingsFile
                             + "' does not validate using '" + xsdFile + "'";
                     log.warn(msg, e);
                     throw new ArgumentNotValid(msg, e);

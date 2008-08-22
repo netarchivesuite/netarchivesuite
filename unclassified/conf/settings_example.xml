@@ -340,7 +340,7 @@
             <tld>mt</tld>
             <tld>mu</tld>
             <tld>museum</tld>
-7            <tld>mv</tld>
+            <tld>mv</tld>
             <tld>mw</tld>
             <tld>mx</tld>
             <tld>my</tld>
@@ -490,7 +490,6 @@
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <batchLocation>KB</batchLocation>
         </locations>
-        <!-- For archiving applications, which bit archive are you part of?-->
         <thisPhysicalLocation>SB</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
@@ -499,19 +498,19 @@
     <harvester>
         <datamodel>
             <domain>
-	            <!-- Default seed list to use when new domains are created -->
-	            <defaultSeedlist>defaultseeds</defaultSeedlist>
-	            <!-- The name of a configuration that is created by default and
-	                 which is initially used for snapshot harvests-->
-	            <defaultConfig>defaultconfig</defaultConfig>
-	            <!-- Name of order xml template used for domains if nothing
-	             else is specified (e.g. newly created configrations use this) -->
-	            <defaultOrderxml>default_orderxml</defaultOrderxml>
-	            <!-- Default download rate for domain configuration.
-	             Not currently enforced. -->
-	            <defaultMaxrate>100</defaultMaxrate>
-	            <!-- Default byte limit for domain configuration. -->
-	            <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <!-- Default seed list to use when new domains are created -->
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <!-- The name of a configuration that is created by default and
+                     which is initially used for snapshot harvests-->
+                <defaultConfig>defaultconfig</defaultConfig>
+                <!-- Name of order xml template used for domains if nothing
+                 else is specified (e.g. newly created configrations use this) -->
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <!-- Default download rate for domain configuration.
+                 Not currently enforced. -->
+                <defaultMaxrate>100</defaultMaxrate>
+                <!-- Default byte limit for domain configuration. -->
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
             </domain>
         </datamodel>
         <scheduler>
@@ -526,7 +525,7 @@
                  great a possible factor we will permit a harvest to be larger
                  then the expectation, when basing the expectation on previous
                  uncompleted harvests or no harvest data at all. -->
-            <errorFactorBestGuess>20</errorFactorBestGuess>
+            <errorFactorBestGuess>2</errorFactorBestGuess>
             <!-- How many bytes the average object is expected to be on domains
                  where we don't know any better.  This number should grow over
                  time, as of end of 2005 empirical data shows 38000 -->
@@ -660,6 +659,8 @@
         <baseDir>viewerproxy</baseDir>
     </viewerproxy>
     <monitor>
+        <!--  the password used to connect to the all Mbeanservers started by the application. This password must be same as the one in jmxremote.password -->
+        <jmxMonitorRolePassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxMonitorRolePassword>
         <logging>
             <historySize>100</historySize>
         </logging>

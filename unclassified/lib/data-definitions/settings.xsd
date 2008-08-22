@@ -60,10 +60,10 @@
                 </complexType>
             </element>
             <element name="webinterface" type="set:webinterface"/>
-            <element name="topLevelDomains" type="set:topLevelDomains">
+            <element name="topLevelDomains" type="set:topLevelDomains"/>
             <element name="database" type="set:database"/>
             <element name="repository" type="set:repository"/>
-            <element name="locations" type="locations"/>
+            <element name="locations" type="set:locations"/>
             <element name="thisPhysicalLocation" type="string"/>
             <element name="monitorApplicationName" type="string"/>
         </all>
@@ -142,7 +142,7 @@
 
     <complexType name="monitor">
         <all>
-            <element name="applicationName" type="string"/>
+            <element name="jmxMonitorRolePassword" type="string"/>
             <element name="logging">
                 <complexType>
                     <all>
@@ -341,14 +341,6 @@
     <complexType name="arcrepository">
         <sequence>
             <element name="baseDir" type="set:directoryPath"/>
-            <element name="location" maxOccurs="unbounded">
-                <complexType>
-                    <all>
-                        <element name="name" type="string"/>
-                    </all>
-                </complexType>
-            </element>
-            <element name="batchLocation" type="string"/>
         </sequence>
     </complexType>
 
