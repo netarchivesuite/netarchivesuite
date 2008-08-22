@@ -32,24 +32,24 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.harvester.datamodel.Named;
 
-/**
- * lc forgot to comment this!
- *
- */
 
+/** 
+ * Utilities for doing asserts on collections. 
+ */
 public class CollectionAsserts {
+    
     /** Test that two iterators contain the same objects in the same order.
      * The objects are tested using equals().  The iterators will be used
      * by this.
      *
-     * @param msg
-     * @param i1
-     * @param i2
+     * @param msg Failure message
+     * @param i1 First iterator
+     * @param i2 Second iterator
      */
-    public static void assertIteratorEquals(String msg, Iterator i1, Iterator i2) {
+    public static <T> void assertIteratorEquals(String msg, Iterator<T> i1, Iterator<T> i2) {
         while (i1.hasNext() && i2.hasNext()) {
-            Object o1 = i1.next();
-            Object o2 = i2.next();
+            T o1 = i1.next();
+            T o2 = i2.next();
             TestCase.assertEquals(msg, o1, o2);
         }
         if (i1.hasNext()) {
@@ -69,22 +69,24 @@ public class CollectionAsserts {
     public static void assertIteratorNamedEquals(String message, Iterator i1, Iterator i2) {
         String[] a1 = getSortedArray(i1, message);
         String[] a2 = getSortedArray(i2, message);
-        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " + Arrays.asList(a1), Arrays.equals(a1, a2));
+        TestCase.assertTrue(message + "\n List 1: " + Arrays.asList(a1) + "\n List 2: " 
+                + Arrays.asList(a1), Arrays.equals(a1, a2));
     }
 
     private static String[] getSortedArray(Iterator i1, String message) {
-        List l1 = new ArrayList();
+        List<String> l1 = new ArrayList<String>();
         while(i1.hasNext()) {
             Object o = i1.next();
             if (o instanceof Named) {
                 l1.add(((Named) o).getName());
             } else if (o instanceof String) {
-                l1.add(o);
+                l1.add((String) o);
             } else {
-                TestCase.fail(message + "(iterator of wrong kind of object '" + o + "' - " + o.getClass() + ")");
+                TestCase.fail(message + "(iterator of wrong kind of object '" 
+                        + o + "' - " + o.getClass() + ")");
             }
         }
-        String[] a1 = (String [])l1.toArray(new String[]{});
+        String[] a1 = l1.toArray(new String[]{});
         Arrays.sort(a1);
         return a1;
     }

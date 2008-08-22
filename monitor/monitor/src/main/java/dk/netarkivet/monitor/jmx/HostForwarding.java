@@ -44,6 +44,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.management.SingleMBeanObject;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.monitor.registry.MonitorRegistry;
 
@@ -85,7 +86,9 @@ public class HostForwarding<T> {
      */
     private final Class<T> asInterface;
     /**
-     * The password for JMX read from settings.
+     * The password for JMX read from either a System property, 
+     * the overriding settings given by the installer, 
+     * or the default value stored in src/dk/netarkivet/monitor/settings.xml.
      */
     private String jmxPassword;
 
@@ -152,17 +155,23 @@ public class HostForwarding<T> {
     
     /** 
      * Gets the list of hosts and corresponding JMX ports from the
-     * monitor regsitry.
+     * monitor registry.
      * For all unknown hosts, it registers proxies to all Mbeans registered
      * on the remote MBeanservers in the given MBeanserver.
-     * JmxHosts removed from the deploy_settings.xml are currently not removed
      */
     private synchronized void updateJmx() {
-        // update variable jmxPassword
-        jmxPassword = Settings.get(
-                MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING);
-        log.trace("Setting '" + MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING
-                  + "' has been updated");
+        // Update variable jmxPassword if the 
+        // MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING is changed
+        String newJmxPassword = Settings.get(
+                MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING); 
+        if (jmxPassword == null || jmxPassword.equals(newJmxPassword)) {
+            jmxPassword = newJmxPassword;
+            log.info("Setting '" 
+                    + MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING
+                    + "' has been updated with value from a System property "
+                    + "or one of the files: " + StringUtils.conjoin(",",
+                            Settings.getSettingsFiles()));
+        }
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
         for (Map.Entry<String, Set<HostEntry>> entries
