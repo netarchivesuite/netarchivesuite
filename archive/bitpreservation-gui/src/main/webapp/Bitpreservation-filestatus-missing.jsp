@@ -105,6 +105,9 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
     // For all files
     int rowCount = 0;
     for (String filename : missingFiles) {
+        %>
+        <fmt:message key="status"/>
+        <%
         //Print a row for the file with info
         BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
         // If info for file exists, output it

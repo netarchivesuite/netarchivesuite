@@ -94,9 +94,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             %>
             <!-- Table for presenting checksums -->
             <fmt:message key="state.of.file"/><%=HTMLUtils.escapeHtmlValues(filename)%>
-
-            // Print information about the file
             <% 
+            // Print information about the file
             BitpreserveFileState.printFileState(out, fs, response.getLocale());
             %>
 

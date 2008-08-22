@@ -525,7 +525,6 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
         ArgumentNotValid.checkNotNull(fs, "FilePreservationState fs");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
-        out.println(I18N.getString(locale, "status"));
 
         //Table headers for info table
         out.println("<table>");
