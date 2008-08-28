@@ -95,7 +95,8 @@ public class DBUtils {
         PreparedStatement s = null;
         try {
             s = DBUtils.prepareStatement(c, query, args);
-            // We do not test for 0-values here, already tested in selectIntValue(s)
+            // We do not test for 0-values here, already tested in
+            // selectIntValue(s)
             return selectIntValue(s);
         } catch (SQLException e) {
             throw new IOFailure("SQL error preparing statement "
@@ -147,7 +148,8 @@ public class DBUtils {
         PreparedStatement s = null;
         try {
             s = DBUtils.prepareStatement(c, query, args);
-            // We do not test for 0-values here, already tested in selectLongValue(s)
+            // We do not test for 0-values here, already tested in
+            // selectLongValue(s)
             return selectLongValue(s);
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement "
@@ -259,7 +261,7 @@ public class DBUtils {
      * @throws SQLException If this query fails
      * @return the list of strings -> id mappings
      */
-    public static Map<String,Long> selectStringLongMap(String query,
+    public static Map<String, Long> selectStringLongMap(String query,
                                                        Object... args)
             throws SQLException {
         Connection c = DBConnect.getDBConnection();
@@ -267,7 +269,7 @@ public class DBUtils {
         try {
             s = prepareStatement(c, query, args);
             ResultSet result = s.executeQuery();
-            Map<String,Long> results = new HashMap<String,Long>();
+            Map<String, Long> results = new HashMap<String, Long>();
             while (result.next()) {
                 String resultString = result.getString(1);
                 long resultLong = result.getLong(2);
@@ -294,8 +296,9 @@ public class DBUtils {
      *  @return the list of Long-objects in its resultset
      *  @throws SQLException If this query fails
      */
-    public static List<Long> selectLongList(String query,
-                                            Object... args) throws SQLException {
+    public static List<Long> selectLongList(
+            String query,
+            Object... args) throws SQLException {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
@@ -403,13 +406,13 @@ public class DBUtils {
             throws SQLException {
         if (contents != null) {
             if (contents.length() > maxSize) {
-            	log.warn(fieldname + " of " + o
+                log.warn(fieldname + " of " + o
                         + " is longer than the allowed " + maxSize
                         + " characters. The contents is truncated to length "
                         + maxSize
                         + ". The untruncated contents was: " + contents);
-            	// truncate to length maxSize
-            	contents = contents.substring(0, maxSize);
+                // truncate to length maxSize
+                contents = contents.substring(0, maxSize);
             }
             s.setString(fieldNum, contents);
         } else {
@@ -427,16 +430,16 @@ public class DBUtils {
      * @throws PermissionDenied If length of o.getComments() is larger than
      * Constants.MAX_COMMENT_SIZE
      */
-    public static void setComments(PreparedStatement s, int fieldNum, Named o, int maxFieldSize)
-            throws SQLException {
-    	if (o.getComments().length() > maxFieldSize) {
-    		throw new PermissionDenied("Length of comments ("
-    				+ o.getComments().length()
-    				+ ") is larger than allowed. Max length is "
-    				+ maxFieldSize);
-    	}
-        setStringMaxLength(s, fieldNum, o.getComments(), maxFieldSize,
-                o, "comments");
+    public static void setComments(PreparedStatement s, int fieldNum, Named o,
+            int maxFieldSize) throws SQLException {
+        if (o.getComments().length() > maxFieldSize) {
+            throw new PermissionDenied("Length of comments ("
+                    + o.getComments().length()
+                    + ") is larger than allowed. Max length is "
+                    + maxFieldSize);
+        }
+        setStringMaxLength(s, fieldNum, o.getComments(), maxFieldSize, o,
+                "comments");
     }
 
     /** Set the name of a Named object into the given field.
@@ -447,16 +450,15 @@ public class DBUtils {
      * @throws PermissionDenied If length of o.getName() is larger than
      * Constants.MAX_NAME_SIZE
      */
-    public static void setName(PreparedStatement s, int fieldNum, Named o, int maxFieldSize)
-            throws SQLException {
-    	if (o.getName().length() > maxFieldSize) {
-    		throw new PermissionDenied("Length of name ("
-    				+ o.getName().length()
-    				+ ") is larger than allowed. Max length is "
-    				+ maxFieldSize);
-    	}
-        setStringMaxLength(s, fieldNum, o.getName(), maxFieldSize,
-                o, "name");
+    public static void setName(PreparedStatement s, int fieldNum, Named o,
+            int maxFieldSize) throws SQLException {
+        if (o.getName().length() > maxFieldSize) {
+            throw new PermissionDenied("Length of name ("
+                    + o.getName().length()
+                    + ") is larger than allowed. Max length is "
+                    + maxFieldSize);
+        }
+        setStringMaxLength(s, fieldNum, o.getName(), maxFieldSize, o, "name");
     }
 
     /** Set the Date into the given field of a statement.
@@ -466,8 +468,8 @@ public class DBUtils {
      * @param date the date (may be null)
      * @throws SQLException
      */
-    public static void setDateMaybeNull(PreparedStatement s, int fieldNum, Date date)
-            throws SQLException {
+    public static void setDateMaybeNull(
+            PreparedStatement s, int fieldNum, Date date) throws SQLException {
         if (date != null) {
             s.setTimestamp(fieldNum, new Timestamp(date.getTime()));
         } else {
@@ -533,24 +535,25 @@ public class DBUtils {
      * @throws SQLException
      */
     public static void setClobMaxLength(PreparedStatement s, int fieldNum,
-                                        String contents, long maxSize,
-                                        Object o, String fieldName)
+            String contents, long maxSize, Object o, String fieldName)
             throws SQLException {
         if (contents != null) {
             if (contents.length() > maxSize) {
-            	log.warn(fieldName + " of " + o
+                log.warn(
+                        fieldName + " of " + o
                         + " is longer than the allowed " + maxSize
-                        + " characters. The contents is now truncated to length " + maxSize
-                        +		". The untruncated contents was: " + contents);
-               	// truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
-            	// else truncate to length Integer.MAX_VALUE
-            	if (maxSize > Integer.MAX_VALUE) {
-            		maxSize = Integer.MAX_VALUE;
-            	}
-            	contents = contents.substring(0, (int) maxSize);
+                        + " characters. The contents is now truncated to "
+                        + "length " + maxSize
+                        + ". The untruncated contents was: " + contents);
+                // truncate to length maxSize (if maxSize <= Integer.MAX_VALUE)
+                // else truncate to length Integer.MAX_VALUE
+                if (maxSize > Integer.MAX_VALUE) {
+                    maxSize = Integer.MAX_VALUE;
+                }
+                contents = contents.substring(0, (int) maxSize);
             }
-            s.setCharacterStream(fieldNum, new StringReader(contents),
-                    contents.length());
+            s.setCharacterStream(fieldNum, new StringReader(contents), contents
+                    .length());
             s.setString(fieldNum, contents);
         } else {
             s.setNull(fieldNum, Types.CLOB);
@@ -630,7 +633,8 @@ public class DBUtils {
      * @param args Any objects that may be used to prepare the select statement.
      * @throws PermissionDenied if the object has usages.
      */
-    public static void checkForUses(String select, Object victim, Object... args) {
+    public static void checkForUses(
+            String select, Object victim, Object... args) {
         String usages = DBUtils.getUsages(select, victim, args);
         if (usages != null) {
             String message = "Cannot delete " + victim
@@ -643,9 +647,9 @@ public class DBUtils {
             s = prepareStatement(c, select, args);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                List<String> used_in = new ArrayList<String>();
+                List<String> usedIn = new ArrayList<String>();
                 do {
-                    used_in.add(res.getString(1));
+                    usedIn.add(res.getString(1));
                 } while (res.next());
             }
         } catch (SQLException e) {
@@ -657,7 +661,7 @@ public class DBUtils {
         }
     }
 
-    /** Return a description of where an object is used otherwhere in the
+    /** Return a description of where an object is used elsewhere in the
      * database, or null.
      *
      * @param select A select statement finding the names of other uses.  The
@@ -666,18 +670,19 @@ public class DBUtils {
      * @param args Any objects that may be used to prepare the select statement.
      * @return A string describing the usages, or null if no usages were found.
      */
-    public static String getUsages(String select, Object victim, Object ... args) {
+    public static String getUsages(
+            String select, Object victim, Object ... args) {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
             s = prepareStatement(c, select, args);
             ResultSet res = s.executeQuery();
             if (res.next()) {
-                List<String> used_in = new ArrayList<String>();
+                List<String> usedIn = new ArrayList<String>();
                 do {
-                    used_in.add(res.getString(1));
+                    usedIn.add(res.getString(1));
                 } while (res.next());
-                return used_in.toString();
+                return usedIn.toString();
             }
             return null;
         } catch (SQLException e) {
@@ -696,7 +701,7 @@ public class DBUtils {
      * @throws IllegalState if the version isn't as expected.
      */
     public static void checkTableVersion(String tablename, int desiredVersion) {
-        ArgumentNotValid.checkNotNullOrEmpty(tablename,"String tablename");
+        ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablename");
         ArgumentNotValid.checkPositive(desiredVersion, "int desiredVersion");
         int actualVersion = getTableVersion(tablename);
         if (actualVersion != desiredVersion) {
@@ -715,7 +720,8 @@ public class DBUtils {
      * @param query a query with ? for parameters
      * @param args parameters of type string, int, long or boolean
      * @return The string result
-     * @throws IOFailure if the statement didn't result in exactly one string value
+     * @throws IOFailure if the statement didn't result in exactly one string
+     * value
      */
     public static String selectStringValue(String query, Object... args) {
         Connection c = DBConnect.getDBConnection();
@@ -808,7 +814,7 @@ public class DBUtils {
         try {
             c.setAutoCommit(false);
             for (String update : updates) {
-            	s = update;
+                s = update;
                 log.debug("Executing SQL-statement: " + update);
                 st = prepareStatement(c, update);
                 st.executeUpdate();
@@ -816,7 +822,7 @@ public class DBUtils {
             }
             c.setAutoCommit(true);
             log.debug("Updated database using updates '" 
-            		 + StringUtils.conjoin(";", updates) + "'.");
+                    + StringUtils.conjoin(";", updates) + "'.");
         } catch (SQLException e) {
             String msg = "SQL error updating database with sql: " + s;
             log.warn(msg, e);
