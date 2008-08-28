@@ -104,10 +104,12 @@ public class JobDAOTester extends DataModelTestCase {
     /**
      * This test creates (and stores) a new job and reads it back again
      * Verifies that state of stored job equals state of original job
+     * @throws SQLException 
      */
-    public void testJobRead() {
+    public void testJobRead() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
         DomainConfiguration dc = TestInfo.getDRConfiguration();
+        addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
 
         dao.create(job);
@@ -148,16 +150,39 @@ public class JobDAOTester extends DataModelTestCase {
         // Job.getSettingsXMLfiles() is probably obsolete
         // No decided if we need Job.getActualStart() and Job.getActualStop() - but we probably do (at least nice to have)
     }
-
+    
+    /**
+     * Test that JobDAO.create does not allow Job with unknown harvestId.
+     */
+    public void testCreateJobWithUnknownHarvestId() {
+        JobDAO dao = JobDAO.getInstance();
+        HarvestDefinitionDAO hdd = HarvestDefinitionDAO.getInstance();
+        assertFalse("Harvestdefinition should not exist with ID= "
+                + TestInfo.UNKNOWN_HARVESTID,
+                hdd.exists(TestInfo.UNKNOWN_HARVESTID));
+        
+        /* Create Job to update. */
+        DomainConfiguration dc = TestInfo.getDRConfiguration();
+        Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
+        try { 
+            dao.create(job);
+            fail("Should throw UnknownID given job with unknown HarvestID");
+        } catch (UnknownID e) {
+            // Expected
+        }
+    }
 
     /**
-     * This test creates (and stores) a new job, modifies it, and checks that the modified job can be retrieved
+     * This test creates (and stores) a new job, modifies it, and checks that
+     * the modified job can be retrieved.
+     * @throws SQLException 
      */
-    public void testJobUpdate() {
+    public void testJobUpdate() throws SQLException {
         JobDAO dao = JobDAO.getInstance();
 
         /* Create Job to update */
         DomainConfiguration dc = TestInfo.getDRConfiguration();
+        addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
         dao.create(job);
 
@@ -196,7 +221,7 @@ public class JobDAOTester extends DataModelTestCase {
         assertTrue("The retrieved job should have status " + JobStatus.DONE
                    + ", but has status " + jobUpdated.getStatus(), jobUpdated.getStatus() == JobStatus.DONE);
 
-        Map domainConfigurationMap = jobUpdated.getDomainConfigurationMap();
+        Map<String, String> domainConfigurationMap = jobUpdated.getDomainConfigurationMap();
 
         assertTrue("The DomainConfigurationMap of the retrieved job does not match that of the original job "
                    + " - domain name " + dc.getDomain().getName() + " not found",
@@ -218,12 +243,13 @@ public class JobDAOTester extends DataModelTestCase {
 
     /**
      * Test that the max objects per domain attribute can be updated in persistent storage.
-     * @throws IOException
+     * @throws Exception
      */
-    public void testJobUpdateForceMaxObjectsPerDomain() throws IOException {
+    public void testJobUpdateForceMaxObjectsPerDomain() throws Exception {
         JobDAO dao = JobDAO.getInstance();
 
         /* Create Job to update */
+        addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         DomainConfiguration dc = TestInfo.getDRConfiguration();
         Job job = Job.createSnapShotJob(TestInfo.HARVESTID, dc, TestInfo.MAX_OBJECTS_PER_DOMAIN, -1, 0);
         dao.create(job);
@@ -304,10 +330,11 @@ public class JobDAOTester extends DataModelTestCase {
         assertJobsFound("only started and failed jobs", 0, 0, 2, 3, 0);
     }
 
-    public void testPersistenseOfPriority() {
+    public void testPersistenseOfPriority() throws SQLException {
         //create two jobs with different priority
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
+        addHarvestDefinitionToDatabaseWithId(1);
         Job job0 = Job.createJob(new Long(1), d.getDefaultConfiguration(), 0);
         assertEquals("A new job should have high priority", JobPriority.HIGHPRIORITY,
                      job0.getPriority());
@@ -341,9 +368,10 @@ public class JobDAOTester extends DataModelTestCase {
     }
 
     /** Test that the job error info is stored correctly. */
-    public void testPersistenceOfJobErrors() {
+    public void testPersistenceOfJobErrors() throws Exception {
         Domain d = Domain.getDefaultDomain("testdomain.dk");
         DomainDAO.getInstance().create(d);
+        addHarvestDefinitionToDatabaseWithId(1);
         Job j = Job.createJob(new Long(1), d.getDefaultConfiguration(), 0);
         JobDAO dao = JobDAO.getInstance();
         dao.create(j);

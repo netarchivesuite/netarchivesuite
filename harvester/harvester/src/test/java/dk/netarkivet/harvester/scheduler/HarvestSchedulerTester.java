@@ -254,6 +254,7 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("Should be at least one domain in domains table",
                 domainsIterator.hasNext());
         DomainConfiguration cfg = domainsIterator.next().getDefaultConfiguration();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(7000L);
         Job bad = Job.createJob(7000L, cfg, 1);
         bad.setStatus(JobStatus.NEW);
         bad.setActualStart(new Date());
@@ -330,6 +331,7 @@ public class HarvestSchedulerTester extends TestCase {
         DomainConfiguration dc2 = d.getDefaultConfiguration();
 
         //Make a job from dr.dk and kb.dk
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(5678L);
         Job job = Job.createJob(
                 5678L, dc1, 0);
         job.addConfiguration(dc2);

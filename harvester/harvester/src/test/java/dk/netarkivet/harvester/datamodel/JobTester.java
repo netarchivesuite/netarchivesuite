@@ -803,10 +803,12 @@ public class JobTester extends DataModelTestCase {
                 -1L, maxBytesXML);
     }
 
-    public void testMaxBytesBug652() {
+    public void testMaxBytesBug652() throws Exception {
         DomainConfiguration defaultConfig =
             TestInfo.getDefaultConfig(TestInfo.getDefaultDomain());
         defaultConfig.setMaxBytes(-1);
+        
+        addHarvestDefinitionToDatabaseWithId(TestInfo.HARVESTID);
         Job j = Job.createSnapShotJob(
                 TestInfo.HARVESTID,
                 defaultConfig,

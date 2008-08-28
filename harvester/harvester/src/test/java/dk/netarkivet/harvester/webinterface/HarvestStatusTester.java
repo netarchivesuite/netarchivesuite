@@ -30,6 +30,7 @@ import java.util.Map;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
@@ -61,6 +62,7 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(42L);
         Job job = Job.createJob(42L, DomainDAO.getInstance().read(
                 "netarkivet.dk").getDefaultConfiguration(), 0);
         jobDAO.create(job);

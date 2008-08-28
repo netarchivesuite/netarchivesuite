@@ -106,6 +106,7 @@ public class TestInfo {
     // Job test information
     public static final Long JOBID = new Long(1234);
     public static final Long HARVESTID = new Long(5678);
+    public static final Long UNKNOWN_HARVESTID = new Long(5678);
     public static final File ORDERXMLFILE = new File(BASE_DIR_ORDER_XML_TEMPLATES,
             "OneLevel-order.xml");
     public static File[] SETTINGSXMLFILES = {

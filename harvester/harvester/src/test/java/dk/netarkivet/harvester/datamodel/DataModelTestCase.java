@@ -26,6 +26,8 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +40,7 @@ import junit.framework.TestCase;
 import org.dom4j.Document;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -231,4 +234,23 @@ public class DataModelTestCase extends TestCase {
                 + "Please update unit test to reflect.", endJobId,
                 j15.getJobID().longValue());
     }
+    
+    public static void addHarvestDefinitionToDatabaseWithId(long id) throws SQLException {
+        Connection con = DBConnect.getDBConnection();
+        final String sqlInsert = "INSERT INTO harvestdefinitions ("
+            + "harvest_id, name, comments, numevents, submitted,isactive,edition)"
+            + "VALUES(?,?,?,?,?,?,?)";
+        PreparedStatement statement = con.prepareStatement(sqlInsert);
+        statement.setLong(1, id);
+        statement.setString(2, "name"+  id);
+        statement.setString(3, "NoComments");
+        statement.setInt(4, 0);
+        statement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+        statement.setInt(6,0);
+        statement.setInt(7,1);
+        int rows = statement.executeUpdate();
+        ArgumentNotValid.checkTrue(rows == 1, "Insert was not successful");
+    }
+    
+    
 }
