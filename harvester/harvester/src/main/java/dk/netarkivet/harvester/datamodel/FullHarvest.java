@@ -66,8 +66,9 @@ public class FullHarvest extends HarvestDefinition {
      * @param comments       comments
      * @param previousHarvestDefinitionOid This harvestDefinition is used to
      * create this Fullharvest definition.
-     * @param maxCountObjects Limit for how many objects can be
-     * @param maxBytes
+     * @param maxCountObjects Limit for how many objects can be fetched per
+     * domain
+     * @param maxBytes Limit for how many bytes can be fetched per domain
      */
     public FullHarvest(String harvestDefName,
                        String comments,
@@ -109,7 +110,7 @@ public class FullHarvest extends HarvestDefinition {
     }
 
     /** Set the previous HarvestDefinition which is used to base this.
-     *  @param prev
+     *  @param prev The id of a HarvestDefinition
      */
     public void setPreviousHarvestDefinition(Long prev) {
         previousHarvestDefinitionOid = prev;
@@ -171,7 +172,7 @@ public class FullHarvest extends HarvestDefinition {
         // 3) that are current aliases of another domain
         //
         // and get domain configurations for the rest.
-        return new FilterIterator<HarvestInfo,DomainConfiguration>(i) {
+        return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
             protected DomainConfiguration filter(HarvestInfo harvestInfo) {
                 if (harvestInfo.getStopReason()
                      == StopReason.DOWNLOAD_COMPLETE) {
@@ -183,8 +184,9 @@ public class FullHarvest extends HarvestDefinition {
                 = getConfigurationFromPreviousHarvest(harvestInfo, dao);
                 if (harvestInfo.getStopReason()
                         == StopReason.CONFIG_SIZE_LIMIT) {
-                    // Check if MaxBytes limit for DomainConfiguration have been raised
-                    // since previous harvest.  If this is the case, return the configuration
+                    // Check if MaxBytes limit for DomainConfiguration have
+                    // been raised since previous harvest.
+                    // If this is the case, return the configuration
                     int compare = NumberUtils.compareInf(config.getMaxBytes(),
                             harvestInfo.getSizeDataRetrieved());
                     if (compare < 1){
@@ -215,8 +217,8 @@ public class FullHarvest extends HarvestDefinition {
      * @return A configuration if found and the download in this harvestinfo
      * was complete, null otherwise
      */
-    private DomainConfiguration getConfigurationFromPreviousHarvest
-            (final HarvestInfo harvestInfo, DomainDAO dao) {
+    private DomainConfiguration getConfigurationFromPreviousHarvest(
+            final HarvestInfo harvestInfo, DomainDAO dao) {
         //For each bit of harvest info that did not complete
         try {
             Domain domain = dao.read(harvestInfo.getDomainName());

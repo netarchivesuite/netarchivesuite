@@ -62,10 +62,10 @@ public abstract class HarvestDefinition implements Named {
      */
     protected long edition = -1;
 
-    /** Determines if the harvest defintion is active and ready
+    /** Determines if the harvest definition is active and ready
      * for scheduling. When true the jobs should be scheduled
-     * otherwise the scheduler should ignore the defintion.
-     * Initally a definition is assumed active - the original behaviour
+     * otherwise the scheduler should ignore the definition.
+     * Initially a definition is assumed active - the original behaviour
      * before the isActive flag was introduced.
      * */
     protected boolean isActive = true;
@@ -92,12 +92,13 @@ public abstract class HarvestDefinition implements Named {
      * @param schedule             the harvest definition schedule
      * @param harvestDefName       the name of the harvest definition
      * @param comments             comments
-     * @return PartialHarvest
+     * @return the newly created PartialHarvest
      */
-    public static PartialHarvest createPartialHarvest(List<DomainConfiguration> domainConfigurations,
-                                                      Schedule schedule,
-                                                      String harvestDefName,
-                                                      String comments) {
+    public static PartialHarvest createPartialHarvest(
+            List<DomainConfiguration> domainConfigurations,
+            Schedule schedule,
+            String harvestDefName,
+            String comments) {
 
         return new PartialHarvest(domainConfigurations,
                                   schedule,
@@ -116,12 +117,13 @@ public abstract class HarvestDefinition implements Named {
      * in this harvestdefinition.
      *
      * @param harvestDefName  the name of the harvest definition
-     * @param comments        describition of the harvestdefinition
+     * @param comments        description of the harvestdefinition
      * @param prevHarvestOid  an id of a previous harvest to use as
      *                        basis for this definition, ignored when null.
-     * @param maxCountObjects the maxium number of objects harvested from
+     * @param maxCountObjects the maximum number of objects harvested from
      *                        any domain
-     * @param maxBytes
+     * @param maxBytes        the maximum number of bytes harvested from
+     *                        any domain  
      * @return a snapshot harvestdefinition
      */
     public static FullHarvest createFullHarvest(String harvestDefName,
@@ -166,7 +168,7 @@ public abstract class HarvestDefinition implements Named {
     /**
      * Set the submission date.
      *
-     * @param submissionDate
+     * @param submissionDate the time when the harvestdefinition was created
      */
     public void setSubmissionDate(Date submissionDate) {
         this.submissionDate = submissionDate;
@@ -219,7 +221,7 @@ public abstract class HarvestDefinition implements Named {
     /**
      * Set the edition number.
      *
-     * @param theEdition
+     * @param theEdition the new edition of the harvestdefinition
      */
     public void setEdition(long theEdition) {
         edition = theEdition;
@@ -239,8 +241,7 @@ public abstract class HarvestDefinition implements Named {
      * Set the number of times this harvest definition has been run so far.
      *
      * @param numEvents The number.
-     * @throws dk.netarkivet.common.exceptions.ArgumentNotValid
-     *          if numbEvents is negative
+     * @throws ArgumentNotValid if numEvents is negative
      */
     void setNumEvents(int numEvents) {
         ArgumentNotValid.checkNotNegative(numEvents, "numEvents");
@@ -265,7 +266,7 @@ public abstract class HarvestDefinition implements Named {
     }
 
     /**
-     * Returns a iterator of domain configurations for this harvest definition
+     * Returns a iterator of domain configurations for this harvest definition.
      *
      * @return Iterator containing information about the domain configurations
      */
@@ -319,7 +320,8 @@ public abstract class HarvestDefinition implements Named {
      * @param cfglist the configurations to use to create the jobs
      * @return The number of jobs created
      * @throws ArgumentNotValid if any of the parameters is null
-     *                          or if the cfglist does not contain any configurations
+     *                          or if the cfglist does not contain any
+     *                          configurations
      */
     protected int makeJobs(Iterator<DomainConfiguration> cfglist) {
         int jobsMade = 0;
@@ -389,8 +391,10 @@ public abstract class HarvestDefinition implements Named {
         final HarvestDefinition harvestDefinition = (HarvestDefinition) o;
 
         if (!comments.equals(harvestDefinition.comments)) return false;
-        if (!harvestDefName.equals(harvestDefinition.harvestDefName)) return false;
-        if (oid != null ? !oid.equals(harvestDefinition.oid) : harvestDefinition.oid != null) return false;
+        if (!harvestDefName.equals(harvestDefinition.harvestDefName))
+            return false;
+        if (oid != null ? !oid.equals(harvestDefinition.oid)
+                : harvestDefinition.oid != null) return false;
 
         return true;
     }
@@ -424,13 +428,13 @@ public abstract class HarvestDefinition implements Named {
      */
     public abstract boolean isSnapShot();
 
-    /** Returns how many objects to harvest pr. domain, or 0 for no limit.
-     * @return how many objects to harvest pr. domain
+    /** Returns how many objects to harvest per domain, or 0 for no limit.
+     * @return how many objects to harvest per domain
      */
     protected abstract long getMaxCountObjects();
 
-    /** Returns how many bytes to harvest pr. domain, or -1 for no limit.
-     * @return how many bytes to harvest pr. domain
+    /** Returns how many bytes to harvest per domain, or -1 for no limit.
+     * @return how many bytes to harvest per domain
      */
     protected abstract long getMaxBytes();
 
@@ -441,8 +445,6 @@ public abstract class HarvestDefinition implements Named {
      * 3) expected number of object a harvest of the configuration will produce.
      * The comparison will put the largest configuration first (with respect
      * to 2) and 3))
-     *
-     *
      */
     private static class CompareConfigsDesc
             implements Comparator<DomainConfiguration> {

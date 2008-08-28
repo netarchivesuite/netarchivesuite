@@ -29,18 +29,28 @@ import java.util.Date;
  * A simple tuple to deliver information on the status of jobs.
  *
  */
-
 public class JobStatusInfo {
+    /** The ID of the job. */
     private final long jobID;
+    /** The current status of the Job. */
     private final JobStatus status;
+    /** The Id of the harvestdefinition behind this job. */
     private final long harvestDefinitionID;
+    /** The name of the harvestdefinition behind this job. */
     private final String harvestDefinition;
+    /** The number of times a harvestdefinition has been performed. */
     private final int harvestNum;
+    /** Any errors encountered during the actual harvest. */
     private final String harvestErrors;
+    /** Any errors encountered during the upload of the result files. */
     private final String uploadErrors;
+    /** The name of the Heritrix Template used by this job. */
     private final String orderXMLname;
+    /** The number of domain-configurations used for this job. */
     private final int configCount;
+    /** The time when this job started. */
     private final Date startDate;
+    /** The time when this job finished. */
     private final Date endDate;
 
     JobStatusInfo(long jobID, JobStatus status,
@@ -61,46 +71,79 @@ public class JobStatusInfo {
         this.endDate = endDate;
     }
 
+    /**
+     * @return the ID of the job.
+     */
     public long getJobID() {
         return jobID;
     }
-
+    
+    /**
+     * @return the current status of the Job
+     */
     public JobStatus getStatus() {
         return status;
     }
-
+    
+    /**
+     * @return The Id of the harvestdefinition behind the job
+     */
     public long getHarvestDefinitionID() {
         return harvestDefinitionID;
     }
-
+    
+    /**
+     * @return The name of the harvestdefinition behind the job.
+     */
     public String getHarvestDefinition() {
         return harvestDefinition;
     }
-
+    
+    /**
+     * @return the harvest number
+     */
     public int getHarvestNum() {
         return harvestNum;
     }
 
+    /**
+     * @return Any errors encountered during the actual harvest
+     */
     public String getHarvestErrors() {
         return harvestErrors;
     }
 
+    /**
+     * @return Any errors encountered during the upload of the result files.
+     */
     public String getUploadErrors() {
         return uploadErrors;
     }
 
+    /**
+     * @return The name of the Heritrix Template used by the job.
+     */
     public String getOrderXMLname() {
         return orderXMLname;
     }
 
+    /**
+     * @return The number of domain-configurations used for the job.
+     */
     public int getConfigCount() {
         return configCount;
     }
 
+    /**
+     * @return The time when the job started
+     */
     public Date getStartDate() {
         return startDate;
     }
 
+    /**
+     * @return The time when the job finished
+     */
     public Date getEndDate() {
         return endDate;
     }
