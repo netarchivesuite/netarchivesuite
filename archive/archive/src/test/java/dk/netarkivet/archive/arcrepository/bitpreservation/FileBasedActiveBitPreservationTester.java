@@ -74,7 +74,6 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -480,9 +479,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     }
 
     public void testGetBitarchiveChecksum() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
         final Map<Location, String> results = new HashMap<Location, String>();
@@ -559,9 +555,9 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 0, fps.getBitarchiveChecksum(KB).size());
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileContains("Should have warning about SB",
-                "while asking 'Location SB'", TestInfo.LOG_FILE);
+                "while asking location 'Location SB'", TestInfo.LOG_FILE);
         FileAsserts.assertFileContains("Should have warning about KB",
-                "while asking 'Location KB'", TestInfo.LOG_FILE);
+                "while asking location 'Location KB'", TestInfo.LOG_FILE);
 
         // Test extra checksums
         results.clear();
@@ -575,9 +571,9 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 3, fps.getBitarchiveChecksum(KB).size());
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileContains("Should have warning about SB",
-                "while asking 'Location SB'", TestInfo.LOG_FILE);
+                "while asking location 'Location SB'", TestInfo.LOG_FILE);
         FileAsserts.assertFileContains("Should have warning about KB",
-                "while asking 'Location KB'", TestInfo.LOG_FILE);
+                "while asking location 'Location KB'", TestInfo.LOG_FILE);
 
         // TODO: More funny cases
     }

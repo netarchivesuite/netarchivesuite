@@ -42,7 +42,7 @@ public class ReflectUtils {
      * @return Method object, accessible for calling.
      * @throws NoSuchMethodException
      */
-    public static Method getPrivateMethod(Class c, String name, Class... args)
+    public static Method getPrivateMethod(Class<?> c, String name, Class<?>... args)
             throws NoSuchMethodException {
         Method m = c.getDeclaredMethod(name, args);
         m.setAccessible(true);
@@ -57,7 +57,7 @@ public class ReflectUtils {
      * @throws NoSuchFieldException If there is no such field declared in
      *  the class.
      */
-    public static <T> Field getPrivateField(Class c, String fieldName)
+    public static <T> Field getPrivateField(Class<?> c, String fieldName)
             throws NoSuchFieldException {
         Field f = c.getDeclaredField(fieldName);
         f.setAccessible(true);
@@ -73,7 +73,7 @@ public class ReflectUtils {
      * @throws NoSuchMethodException
      */
     public static <T> Constructor<T> getPrivateConstructor(Class<T> c,
-                                                           Class... args)
+                                                           Class<?>... args)
             throws NoSuchMethodException {
         Constructor<T> con = c.getDeclaredConstructor(args);
         con.setAccessible(true);
