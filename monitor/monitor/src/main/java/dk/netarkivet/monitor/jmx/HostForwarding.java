@@ -274,7 +274,7 @@ public class HostForwarding<T> {
     /**
      * Connects to the given host, and lists all mbeans matching the query. For
      * each of these mbeans, registers a proxymbean, that on any invocation will
-     * connect to the remote host, and return the result of invocing the method
+     * connect to the remote host, and return the result of invoking the method
      * on the remote object.
      *
      * @param hostEntry The host to connect to.
@@ -336,7 +336,7 @@ public class HostForwarding<T> {
     /**
      * An invocation handler for the mbeans registered when a host does not
      * respond. This handler will on any invocation attempt to reconnect, and
-     * then return a string with the result. Unsuccesfully connecting, it will
+     * then return a string with the result. Unsuccessfully connecting, it will
      * unregister the mbean.
      */
     private class NoHostInvocationHandler implements InvocationHandler {
@@ -370,13 +370,13 @@ public class HostForwarding<T> {
         }
 
         /**
-         * Retries connecting to the host. On succes, returns a string with
-         * succes, and unregisters. On failure, returns a string with failure.
+         * Retries connecting to the host. On success, returns a string with
+         * success, and unregisters. On failure, returns a string with failure.
          *
-         * @param proxy  The error mbean that invoced this, ignored.
+         * @param proxy  The error mbean that invoked this, ignored.
          * @param method The method attempted invoked, ignored.
          * @param args   The arguments for the method, ignored.
-         * @return A string with succes or failure.
+         * @return A string with success or failure.
          * @throws Throwable Shouldn't throw exceptions.
          */
         public Object invoke(Object proxy, Method method, Object[] args)
@@ -433,7 +433,7 @@ public class HostForwarding<T> {
          * @return Whatever the remote mbean returns.
          * @throws IOFailure On trouble establishing the connection.
          * @throws javax.management.RuntimeMBeanException On exceptions in the
-         * mbean invokations
+         * mbean invocations
          * @throws Throwable What ever the remote mbean has thrown.
          */
         public Object invoke(Object proxy, Method method, Object[] args)

@@ -49,10 +49,10 @@ import dk.netarkivet.common.utils.SystemUtils;
  *
  * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html
  *
- * TODO: This implementation is not robust and could be improved.
- * TODO: Forinstance: - Singleton behaviour
- * TODO:                -Reuse of already created registry
- * TODO: Usage of access rights (for readonly mbeans) (see reference above)
+ * TODO This implementation is not robust and could be improved.
+ * TODO For instance: - Singleton behaviour
+ * TODO                -Reuse of already created registry
+ * TODO Usage of access rights (for read-only mbeans) (see reference above)
  *
  */
 
