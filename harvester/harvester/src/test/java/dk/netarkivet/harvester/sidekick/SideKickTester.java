@@ -39,21 +39,20 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * csr forgot to comment this!
+ * Unit tests for the SideKick class.
  *
  */
-
 public class SideKickTester extends TestCase {
 
     public static final String path = "./tests/dk/netarkivet/harvester/sidekick/data/";
-    public static final String originalpath = path+"originals/";
-    public static final String workingpath = path+"working/";
-    public static final String linuxScript  = path+"linux.sh";
-    public static final String windowsScript  = path+"windows.bat";
+    public static final String originalpath = path + "originals/";
+    public static final String workingpath = path + "working/";
+    public static final String linuxScript  = path + "linux.sh";
+    public static final String windowsScript  = path + "windows.bat";
 
-    public static final String tempFile = workingpath+"tempfile.txt";
-    public static final String linuxStarterScript = path+"linuxstarter.sh";
-    public static final String windowsStarterScript = path+"windowsstarter.bat";
+    public static final String tempFile = workingpath + "tempfile.txt";
+    public static final String linuxStarterScript = path + "linuxstarter.sh";
+    public static final String windowsStarterScript = path + "windowsstarter.bat";
 
     public static boolean isFinished;
 
@@ -75,7 +74,6 @@ public class SideKickTester extends TestCase {
      * @throws InterruptedException
      */
     public void testProcessDeadlocks() throws InterruptedException {
-        String os = System.getProperty("os.name");
         Thread t = new Thread() {
             public void run() {
                 try {
@@ -260,7 +258,7 @@ public class SideKickTester extends TestCase {
 
     /**
      * Helper class.
-         */
+     */
     public static class TestMonitorHook extends DefaultMonitorHook {
 
         public boolean running = false;

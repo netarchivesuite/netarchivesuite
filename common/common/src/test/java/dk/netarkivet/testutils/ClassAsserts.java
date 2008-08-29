@@ -36,10 +36,10 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.CleanupIF;
 
 /**
- * csr forgot to comment this!
- *
+ * Utility class containing various method for making assertions on 
+ * Class objects.
+ * 
  */
-
 public class ClassAsserts {
 
     /**

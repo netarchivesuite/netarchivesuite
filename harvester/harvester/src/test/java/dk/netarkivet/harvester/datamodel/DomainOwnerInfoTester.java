@@ -22,17 +22,15 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.util.Date;
-
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
+/**
+ * 
+ * Unit tests for the DomainOwner class.
+ *
+ */
 public class DomainOwnerInfoTester extends TestCase {
     public DomainOwnerInfoTester(String s) {
         super(s);

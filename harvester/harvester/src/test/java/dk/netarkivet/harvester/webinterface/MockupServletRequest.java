@@ -39,8 +39,18 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
- * lc forgot to comment this!
- *
+ * A ServletRequest used by unit tests.
+ * It is only a partial implementation of ServletRequest.
+ * Only implements the 8 methods:
+ *  public void setAttribute(String string, Object object)
+ *  public void removeAttribute(String string)
+ *  public Object getAttribute(String string)
+ *  public Enumeration getAttributeNames() 
+ *  public String getParameter(String string)
+ *  public Enumeration<String> getParameterNames()
+ *  public String[] getParameterValues(String string)
+ *  public Map<String, String[]> getParameterMap()
+ *  
  */
 class MockupServletRequest implements ServletRequest {
     Map<String, String[]> parameters = new HashMap<String, String[]>();
@@ -51,7 +61,8 @@ class MockupServletRequest implements ServletRequest {
         String[] oldParameters = parameters.get(key);
         if (oldParameters != null) {
             String[] newParameters = new String[oldParameters.length + 1];
-            System.arraycopy(oldParameters, 0, newParameters, 0, oldParameters.length);
+            System.arraycopy(oldParameters, 0, newParameters, 0,
+                    oldParameters.length);
             newParameters[newParameters.length - 1] = value;
             parameters.put(key, newParameters);
         } else {

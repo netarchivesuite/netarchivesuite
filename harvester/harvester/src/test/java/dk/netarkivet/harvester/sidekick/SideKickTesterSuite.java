@@ -28,10 +28,8 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * csr forgot to comment this!
- *
+ * Unit testing suite for classes in the sidekick package.
  */
-
 public class SideKickTesterSuite {
         public static Test suite() {
         TestSuite suite;

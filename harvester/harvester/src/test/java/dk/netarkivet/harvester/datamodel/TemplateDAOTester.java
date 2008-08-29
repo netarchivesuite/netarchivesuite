@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.io.File;
 import java.util.Iterator;
 
@@ -39,6 +35,10 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.StringAsserts;
 
 
+/**
+ * Unit tests for the class TemplateDAO.
+ *
+ */
 public class TemplateDAOTester extends DataModelTestCase {
     public TemplateDAOTester(String s) {
         super(s);

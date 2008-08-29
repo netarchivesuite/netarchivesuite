@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.deploy;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -50,7 +47,10 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 
-
+/**
+ * Unit tests for the Host class.
+ *
+ */
 public class HostTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
@@ -86,9 +86,9 @@ public class HostTester extends TestCase {
                 "dk.netarkivet.archive.jar",
                 "dk.netarkivet.monitor.jar"
         });
-        List<String> monitorJars = Arrays.asList(new String[]{
-                "dk.netarkivet.monitor.jar"
-        });
+        //List<String> monitorJars = Arrays.asList(new String[]{
+        //        "dk.netarkivet.monitor.jar"
+        //});
         Host host = new Host("bar", "foo", Host.Type.bitarchive);
         assertEquals("Should get right jar for harvestdefinition",
                      harvestJars,

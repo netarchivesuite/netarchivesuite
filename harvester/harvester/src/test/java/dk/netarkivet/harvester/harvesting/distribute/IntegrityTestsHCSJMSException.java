@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -51,10 +52,9 @@ import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- * lc forgot to comment this!
- *
+ * An integrity test that tests for how the HarvestControllerClient reacts
+ * to the occurrence of an JMSException.
  */
-
 public class IntegrityTestsHCSJMSException extends TestCase{
 
     TestInfo info = new TestInfo();
@@ -122,12 +122,8 @@ public class IntegrityTestsHCSJMSException extends TestCase{
 
     /**
      * Test that a Harvester will not die immediately a JMSException is received.
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws JMSException
-     * @throws InterruptedException
      */
-    public void testJMSExceptionWhileCrawling() throws NoSuchFieldException, IllegalAccessException, JMSException, InterruptedException {
+    public void testJMSExceptionWhileCrawling() throws Exception {
        if (!TestUtils.runningAs("CSR")) {
                    return;
                }
@@ -138,7 +134,9 @@ public class IntegrityTestsHCSJMSException extends TestCase{
         QueueConnection qc = (QueueConnection) queueConnectionField.get(con);
         ExceptionListener qel = qc.getExceptionListener();
         //Start a harvest
-        Job j = TestInfo.getJob();
+        Job j = TestInfo.getJob(); 
+        DataModelTestCase.addHarvestDefinitionToDatabaseWithId(
+                j.getOrigHarvestDefinitionID());
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
         hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
