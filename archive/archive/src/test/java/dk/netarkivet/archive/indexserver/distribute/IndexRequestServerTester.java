@@ -25,8 +25,10 @@ package dk.netarkivet.archive.indexserver.distribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -37,6 +39,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -100,8 +103,8 @@ public class IndexRequestServerTester extends TestCase {
 
     /**
      * Verify that visit()
-     * - throws exception on null msg or msg that is not ok
-     * - returns a non-ok msg if handler fails with exception
+     * - throws exception on null message or message that is not ok
+     * - returns a non-ok message if handler fails with exception
      *   or no handler registered
      */
     public void testVisitFailures() throws InterruptedException {
@@ -163,10 +166,10 @@ public class IndexRequestServerTester extends TestCase {
 
     /**
      * Verify that visit()
-     *  - extracts correct info from msg
-     *  - calls the approapriate handler
+     *  - extracts correct info from message
+     *  - calls the appropriate handler
      *  - encodes the return value appropriately
-     *  - sends msg back as reply
+     *  - sends message back as reply
      */
     public void testVisitNormal() throws IOException, InterruptedException {
         for (RequestType t : RequestType.values()) {
@@ -219,21 +222,29 @@ public class IndexRequestServerTester extends TestCase {
                 msg.isIndexIsStoredInDirectory());
         RemoteFile resultFile = msg.getResultFile();
         resultFile.copyTo(extractFile);
+        
+        // Order in the JOB_SET and the extract file can't be guaranteed
+        // So we are comparing between the contents of the two sets, not 
+        // the order, which is dubious in relation to sets anyway.
+        
+        Set<Long> longFromExtractFile = new HashSet<Long>();
         FileInputStream fis = new FileInputStream(extractFile);
-        for (Long id : JOB_SET) {
-            assertEquals("File should contain right content",
-                         id.intValue(), fis.read());
+        for (int i = 0; i < JOB_SET.size(); i++) {
+            longFromExtractFile.add(new Long(fis.read()));
         }
         assertEquals("End of file expected after this",
-                     -1, fis.read());
-
+                -1, fis.read());
+        
+        assertTrue("JOBSET, and the contents of extractfile should be identical",
+                longFromExtractFile.containsAll(JOB_SET));
+        
         FileUtils.remove(mmfbc.getCacheFile(JOB_SET));
     }
 
     /**
-     * Verify that a msg sent to the index server queue
-     * is dispatched to appropriate handler if non-null and ok.
-     * Verify that no call is made if msg is null or not ok.
+     * Verify that a message sent to the index server queue
+     * is dispatched to the appropriate handler if non-null and ok.
+     * Verify that no call is made if message is null or not ok.
      */
     public void testIndexServerListener() throws InterruptedException {
         //Start server and set a handler
@@ -360,8 +371,8 @@ public class IndexRequestServerTester extends TestCase {
         assertEquals("Should have replies from both messages",
                      2, listener.messagesReceived.size());
 
-        //Now, we test that the threads have actually run simultanously, and
-        //woken eachother; not just timed out.
+        //Now, we test that the threads have actually run simultaneously, and
+        //have awaken each other; not just timed out.
         assertTrue("Threads should have been woken up", mmfbc.woken);
     }
 
