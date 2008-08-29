@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.sidekick;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
+ * Default implementation of the MonitorHook interface.
  */
 public abstract class DefaultMonitorHook implements MonitorHook {
 
@@ -42,9 +43,7 @@ public abstract class DefaultMonitorHook implements MonitorHook {
      *
      * @return true if the application is running
      */
-    public boolean isRunning() {
-        return true;
-    }
+    public abstract boolean isRunning();
 
     /**
      * Not implemented!

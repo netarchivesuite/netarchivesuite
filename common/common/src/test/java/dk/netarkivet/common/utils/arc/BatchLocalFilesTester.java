@@ -124,17 +124,21 @@ public class BatchLocalFilesTester extends TestCase {
                 private boolean done = false;
 
                 public boolean processFile(File file, OutputStream os) {
-                    if ((processed == 2) && !done) {
-                        done = true;
-                        throw new RuntimeException(
-                            "testOneJob_ExceptionInProcess");
+                    try {
+                        if ((processed == 2) && !done) {
+                            done = true;
+                            throw new RuntimeException(
+                                "testOneJob_ExceptionInProcess");
+                        }
+                    } catch (RuntimeException e) {
+                        addException(file, 0, 0, e);
                     }
                     return super.processFile(file, new ByteArrayOutputStream());
                 }
             };
         blf.run(job, os);
         assertEquals("Should have called initialize", 1, initialized);
-        assertEquals("Should have called process twice", 2, processed);
+        assertEquals("Should have called process twice", 3, processed);
         assertEquals("Should have called finish", 1, finished);
         assertEquals("Should have one exception collected",
                 1, job.getExceptions().size());
@@ -146,13 +150,18 @@ public class BatchLocalFilesTester extends TestCase {
     public void testOneJob_ExceptionInFinish() {
         FileBatchJob job = new TestBatchJob() {
                 public void finish(OutputStream os) {
-                    throw new RuntimeException("testOneJob_ExceptionInFinish");
+                    try {
+                        throw new RuntimeException("testOneJob_ExceptionInFinish");
+                    } catch (RuntimeException e) {
+                        addException(new File("."), 0, 0, e);
+                    }
                 }
             };
         blf.run(job, os);
         assertEquals("Should have called initialize", 1, initialized);
         assertEquals("Should have processed all files", FILES, processed);
         assertEquals("Should not have counted finish call", 0, finished);
+        assertEquals("Should have one exception collected", 1, job.getExceptions().size());
     }
     /**
      * Verify that batch jobs sequentially does not disturb the results
