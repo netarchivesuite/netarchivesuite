@@ -50,7 +50,7 @@ asked if they should be created.
                     domainName);
             if (matchingDomains.isEmpty()) {//No matching domains
                 HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                        "errormsg.no.matching.domains", domainName);
+                        "errormsg;no.matching.domains.for.0", domainName);
                 return;
             } else {
                 HTMLUtils.generateHeader(pageContext);

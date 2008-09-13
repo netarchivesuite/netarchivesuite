@@ -164,7 +164,7 @@ public class HostForwarding<T> {
         // MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING is changed
         String newJmxPassword = Settings.get(
                 MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING); 
-        if (jmxPassword == null || jmxPassword.equals(newJmxPassword)) {
+        if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
             jmxPassword = newJmxPassword;
             log.info("Setting '" 
                     + MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING

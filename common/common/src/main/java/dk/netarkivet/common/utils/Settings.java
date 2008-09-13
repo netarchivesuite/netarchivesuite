@@ -343,7 +343,10 @@ public class Settings {
         List<File> settingsFiles = getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             try {
-                DocumentBuilder parser = DocumentBuilderFactory.newInstance()
+                DocumentBuilderFactory builderFactory
+                        = DocumentBuilderFactory.newInstance();
+                builderFactory.setNamespaceAware(true);
+                DocumentBuilder parser = builderFactory
                         .newDocumentBuilder();
                 Document document = parser.parse(settingsFile);
 

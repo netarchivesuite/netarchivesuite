@@ -37,7 +37,7 @@
         </arcrepositoryClient>
         <monitorregistryClient xsi:type="jmsmonitorregistryclient">
             <!-- The class instantiated to register JMX urls at a registry. -->
-            <class>dk.netarkivet.common.distribute.monitorregistry.JMSMonitorRegistryClient</class>
+            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
         </monitorregistryClient>
         <indexClient xsi:type="indexrequestclient">
             <!-- The class instantiated to give access to indices.  Will be

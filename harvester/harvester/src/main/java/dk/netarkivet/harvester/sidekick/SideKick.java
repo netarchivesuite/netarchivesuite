@@ -49,6 +49,7 @@ public class SideKick implements Runnable {
     private boolean seenRunning;
     /** Script for restarting the application. */
     private String shellScript;
+    private static final int WATCH_PERIOD = 5000;
 
     public SideKick(String monitorClass, String theShellScript) {
         log.info("Creating sidekick for script: " + theShellScript);
@@ -86,22 +87,29 @@ public class SideKick implements Runnable {
      */
     public void run() {
         while (true) {
-            if (mh.isRunning()) {
-                if (!seenRunning) {
-                    log.info(mh + " is running.");
-                    seenRunning = true;
-                }
-            } else {
-                if (seenRunning) {
-                    log.info(mh + " has terminated.");
-                    runShellScript();
-                    log.info(mh + " has been restarted.");
-                    seenRunning = false;
-                }
-            }
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
+                if (mh.isRunning()) {
+                    if (!seenRunning) {
+                        log.info(mh + " is running.");
+                        seenRunning = true;
+                    }
+                } else {
+                    if (seenRunning) {
+                        log.info(mh + " has terminated.");
+                        runShellScript();
+                        log.info(mh + " has been restarted.");
+                        seenRunning = false;
+                    }
+                }
+                try {
+                    Thread.sleep(WATCH_PERIOD);
+                } catch (InterruptedException e) {
+                    //Interupted early? Just go on!
+                }
+            } catch (Exception e) {
+                log.warn("Error while trying to restart " + mh
+                         + ". Will retry in " + WATCH_PERIOD + " milliseconds.",
+                         e);
             }
         }
     }
