@@ -109,6 +109,14 @@ public class LoadableFileBatchJobTester extends TestCase {
         assertFalse("Hacked file should not exist", FNORD_FILE.exists());
     }
 
+    public void testToString() {
+        FileBatchJob job = new LoadableFileBatchJob(
+                new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
+        assertEquals("Should have name ",
+                "dk.netarkivet.common.utils.arc.LoadableFileBatchJob processing LoadableTestJob.class", 
+                job.toString());
+    }    
+    
     public void testFinish() {
         FileBatchJob job = new LoadableFileBatchJob(
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
