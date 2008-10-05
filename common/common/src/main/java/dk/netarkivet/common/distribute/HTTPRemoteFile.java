@@ -51,6 +51,11 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     private static String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
@@ -65,6 +70,11 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     protected final String checksum;
     /** The logger for this class. */
     private static final Log log = LogFactory.getLog(AbstractRemoteFile.class);
+
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
+
     /** HTTP remotefile port number. */
     public static String HTTPREMOTEFILE_PORT_NUMBER
             = "settings.common.remoteFile.port";

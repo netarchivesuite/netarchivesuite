@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.archive;
 
-import java.util.Arrays;
-import java.util.List;
-
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -35,17 +32,20 @@ public class ArchiveSettings {
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/archive/settings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
         );
     }
 
-    /**
-     * The fields of this class that don't actually correspond to settings.
-     */
-    public static List<String> EXCLUDED_FIELDS = Arrays.asList(
-            "DEFAULT_SETTINGS_CLASSPATH");
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
 
     /**
      * Absolute/relative path to where the "central list of files and
@@ -58,7 +58,7 @@ public class ArchiveSettings {
      * The minimum amount of bytes left *in any dir* that we will allow a
      * bitarchive machine to accept uploads with.  When no dir has more space
      * than this, the bitarchive machine stops listening for uploads.  This
-     * values should at the very least be greater than the largest ARC file
+     * value should at the very least be greater than the largest ARC file
      * you expect to receive.
      */
     public static String BITARCHIVE_MIN_SPACE_LEFT
@@ -66,6 +66,7 @@ public class ArchiveSettings {
     /**
      * These are the directories where ARC files are stored (in a subdir).
      * If more than one is given, they are used from one end.
+     * This setting may be repeated, to define multiple directories. 
      */
     public static String BITARCHIVE_SERVER_FILEDIR
             = "settings.archive.bitarchive.fileDir";
@@ -91,15 +92,15 @@ public class ArchiveSettings {
     public static String BITARCHIVE_BATCH_JOB_TIMEOUT
             = "settings.archive.bitarchive.batchMessageTimeout";
     /**
-     * Absolute or relative path to dir containing results of
-     * file-list-batch-jobs and checksumming batch jobs for bit preservation
-     */
-    public static String DIR_ARCREPOSITORY_BITPRESERVATION
-            = "settings.archive.bitpreservation.baseDir";
-    /**
      * Credentials to enter in the GUI for "deleting" ARC files in
      * this bit archive.
      */
     public static String ENVIRONMENT_THIS_CREDENTIALS
             = "settings.archive.bitarchive.thisCredentials";
+    /**
+     * Absolute or relative path to dir containing results of
+     * file-list-batch-jobs and checksumming batch jobs for bit preservation
+     */
+    public static String DIR_ARCREPOSITORY_BITPRESERVATION
+            = "settings.archive.bitpreservation.baseDir";
 }

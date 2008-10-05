@@ -42,7 +42,65 @@ import dk.netarkivet.common.utils.Settings;
  * This class encapsulates the bitarchive locations.  It guarantees that
  * there is only one Location object per location name.
  */
-public class Location {
+public class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Location {
     /** the class log. */
     private static Log log = LogFactory.getLog(Location.class.getName());
     /** The name of this location. */

@@ -60,6 +60,11 @@ public class JMSConnectionSunMQ extends JMSConnection {
     private static String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
@@ -84,6 +89,11 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * has been shutdown. This errorcode is issued by the JMS-client.
      */
     final static String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
+
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
+
     /** The JMS broker host contacted by the JMS connection. */
     public static final String JMS_BROKER_HOST = "settings.common.jms.broker";
     /** The port the JMS connection should use. */

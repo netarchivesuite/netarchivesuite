@@ -55,6 +55,11 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
@@ -96,6 +101,11 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
 
     /** If useChecksums is true, contains the file checksum. */
     protected final String checksum;
+
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
+
     /** The default FTP-server used. */
     public static String FTP_SERVER_NAME
             = "settings.common.remoteFile.serverName";

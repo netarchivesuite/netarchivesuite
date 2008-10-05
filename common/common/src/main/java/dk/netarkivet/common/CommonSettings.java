@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.common;
 
-import java.util.Arrays;
-import java.util.List;
-
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -35,20 +32,20 @@ public class CommonSettings {
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/settings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
         );
     }
 
-    /**
-     * The fields of this class that don't actually correspond to settings,
-     * or are pluggable settings not always present.
-     */
-    public static List<String> EXCLUDED_FIELDS = Arrays.asList(
-            "DEFAULT_SETTINGS_CLASSPATH");
-
-    /* The setting names used should be declared and documented here */
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
 
     /** Common temporary directory for all applications. */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";

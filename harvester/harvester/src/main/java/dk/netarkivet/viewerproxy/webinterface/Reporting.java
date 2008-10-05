@@ -64,7 +64,7 @@ public class Reporting {
     public static List<String> getFilesForJob(int jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob fileListJob = new FileListJob();
-        fileListJob.processOnlyFilesMatching(jobid + "-.*.arc(.gz)?");
+        fileListJob.processOnlyFilesMatching(jobid + "-.*\\.arc(\\.gz)?");
         File f;
         try {
             f = File.createTempFile(jobid + "-files", ".txt",
@@ -95,13 +95,13 @@ public class Reporting {
     public static List<CDXRecord> getMetdataCDXRecordsForJob(int jobid) {
         ArgumentNotValid.checkPositive(jobid, "jobid");
         FileBatchJob cdxJob = new ExtractCDXJob(false);
-        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+.arc(.gz)?");
+        cdxJob.processOnlyFilesMatching(jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
         File f;
         try {
             f = File.createTempFile(jobid + "-reports", ".cdx",
                                     FileUtils.getTempDir());
         } catch (IOException e) {
-            throw new IOFailure("Could not create temorary file", e);
+            throw new IOFailure("Could not create temporary file", e);
         }
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
@@ -142,7 +142,7 @@ public class Reporting {
         FileBatchJob urlsForDomainBatchJob
                 = new HarvestedUrlsForDomainBatchJob(domain);
         urlsForDomainBatchJob.processOnlyFilesMatching(
-                jobid + "-metadata-[0-9]+.arc(.gz)?");
+                jobid + "-metadata-[0-9]+\\.arc(\\.gz)?");
         File f;
         File fsorted;
         try {

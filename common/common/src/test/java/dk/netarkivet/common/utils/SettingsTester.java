@@ -23,6 +23,7 @@
 package dk.netarkivet.common.utils;
 
 import java.io.File;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -226,14 +227,16 @@ public class SettingsTester extends TestCase  {
                 new File(TestInfo.TEMPDIR, "settings-full.xml").getAbsolutePath());
         Settings.reload();
         Settings.validateStrings(CommonSettings.class,
-                                                CommonSettings.EXCLUDED_FIELDS);
+                                 Arrays.asList(
+            "DEFAULT_SETTINGS_CLASSPATH"));
         // Should throw no exceptions on a generated Settings file.
         System.setProperty(Settings.SYSTEM_PROPERTY,
                 new File(TestInfo.TEMPDIR, "settings-missing-entry.xml").getAbsolutePath());
         Settings.reload();
         try {
             Settings.validateStrings(CommonSettings.class,
-                                                    CommonSettings.EXCLUDED_FIELDS);
+                                     Arrays.asList(
+            "DEFAULT_SETTINGS_CLASSPATH"));
             fail("Should have failed string validation on xml with missing entry");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -243,6 +246,7 @@ public class SettingsTester extends TestCase  {
                 new File(TestInfo.TEMPDIR, "settings-generated.xml").getAbsolutePath());
         Settings.reload();
         Settings.validateStrings(CommonSettings.class,
-                                                    CommonSettings.EXCLUDED_FIELDS);
+                                 Arrays.asList(
+            "DEFAULT_SETTINGS_CLASSPATH"));
     }
 }

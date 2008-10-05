@@ -22,9 +22,6 @@
  */
 package dk.netarkivet.harvester;
 
-import java.util.Arrays;
-import java.util.List;
-
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -35,17 +32,20 @@ public class HarvesterSettings {
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/harvester/settings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
         );
     }
 
-    /**
-     * The fields of this class that don't actually correspond to settings.
-     */
-    public static List<String> EXCLUDED_FIELDS = Arrays.asList(
-            "DEFAULT_SETTINGS_CLASSPATH");
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
 
     /** Default seed list to use when new domains are created. */
     public static String DEFAULT_SEEDLIST

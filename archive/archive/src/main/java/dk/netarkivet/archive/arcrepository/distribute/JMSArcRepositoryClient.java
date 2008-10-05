@@ -62,6 +62,11 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
         ArcRepositoryClient {
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings("dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml");
     }
@@ -87,6 +92,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** The length of time to wait for a get reply before giving up. */
     private long getTimeout;
+
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
+
     /**
      * How many milliseconds we will wait before giving up on a lookup request
      * to the Arcrepository

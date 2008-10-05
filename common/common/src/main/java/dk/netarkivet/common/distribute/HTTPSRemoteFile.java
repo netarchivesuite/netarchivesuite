@@ -39,11 +39,20 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml";
 
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
         );
     }
+
+    // NOTE: The constants defining setting names below are left non-final on
+    // purpose! Otherwise, the static initialiser that loads default values
+    // will not run.
 
     /** The keystore file used for HTTPS remotefiles. */
     public static String HTTPSREMOTEFILE_KEYSTORE_FILE
