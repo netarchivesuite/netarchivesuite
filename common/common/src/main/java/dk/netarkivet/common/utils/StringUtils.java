@@ -27,17 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Utilities for working with strings.
  */
 public class StringUtils {
-    public static final Log log = LogFactory.getLog(StringUtils.class);
-
     /** Utillity class, do not initialise. */
     private StringUtils() {}
 

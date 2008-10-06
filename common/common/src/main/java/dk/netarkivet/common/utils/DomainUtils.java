@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 
@@ -35,12 +38,16 @@ import dk.netarkivet.common.Constants;
  * Utilities for working with domain names.
  */
 public class DomainUtils {
+    private static final Log log = LogFactory.getLog(DomainUtils.class);
+
     /** Invalid characters in a domain name, according to RFC3490 */
     public static final String DOMAINNAME_CHAR_REGEX_STRING
             = "[^\\0000-,.-/:-@\\[-`{-\\0177]+";
+
     /** A string for a regexp recognising a TLD read from settings */
     public static final String TLD_REGEX_STRING = "\\.(" + StringUtils.conjoin(
             "|", readTlds()) + ")";
+
     /**
      * Regexp for matching a valid domain, that is a single domainnamepart
      * followed by a TLD from settings, or an IP address.
@@ -50,6 +57,7 @@ public class DomainUtils {
                               + "|" + DOMAINNAME_CHAR_REGEX_STRING + "+"
                               + TLD_REGEX_STRING
                               + ")$");
+
     /**
      * A regular expression matching hostnames, and remembering the hostname
      * in group 1 and the domain in group 2.
@@ -73,7 +81,7 @@ public class DomainUtils {
             }
             if (!tld.matches(DOMAINNAME_CHAR_REGEX_STRING
                              + "(" + DOMAINNAME_CHAR_REGEX_STRING + "|\\.)*")) {
-                StringUtils.log.warn("Invalid tld '" + tld + "', ignoring");
+                log.warn("Invalid tld '" + tld + "', ignoring");
                 continue;
             }
             tlds.add(Pattern.quote(tld));
