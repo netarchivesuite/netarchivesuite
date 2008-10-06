@@ -68,7 +68,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * executes exactly one process that runs exactly one crawl job.
  */
 public class JMXHeritrixController implements HeritrixController {
-    private Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(JMXHeritrixController.class);
 
     /* Commands and attributes from org.archive.crawler.admin.CrawlJob.
      * @see <A href="http://crawler.archive.org/xref/org/archive/crawler/admin/CrawlJob.html">
