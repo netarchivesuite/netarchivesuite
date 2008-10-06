@@ -89,7 +89,6 @@ public class MonitorRegistry {
      * @return All JMX host entries.
      */
     public synchronized Map<String, Set<HostEntry>> getHostEntries() {
-        return Collections.synchronizedMap(
-                new HashMap<String, Set<HostEntry>>((hostEntries)));
+        return new HashMap<String, Set<HostEntry>>((hostEntries));
     }
 }
