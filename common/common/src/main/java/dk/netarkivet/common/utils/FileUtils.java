@@ -1086,12 +1086,13 @@ public class FileUtils {
      * @param tmpCrawlLog The file that the sorted data can be put into.
      * @throws IOFailure if there were errors running the sort process.
      */
-    public static void sortCrawlLog(File file, File tmpCrawlLog) {
+    public static void sortCrawlLog(File file, File toFile) {
         int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
-                // 4b means fourth field (from 1) ignoring leading blanks
+                // -k 4b means fourth field (from 1) ignoring leading blanks
+                // -o means output to (file)
                 "sort", "-k", "4b",
                 file.getAbsolutePath(),
-                "-o", tmpCrawlLog.getAbsolutePath());
+                "-o", toFile.getAbsolutePath());
         if (error != 0) {
             throw new IOFailure("Error code " + error + " sorting crawl log '"
                     + file + "'");
