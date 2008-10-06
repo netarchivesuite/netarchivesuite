@@ -23,7 +23,7 @@
 package dk.netarkivet.common.distribute.monitorregistry;
 
 /**
- * A trivial monitor registry client, that diesn't register anywhere, but simply
+ * A trivial monitor registry client, that doesn't register anywhere, but simply
  * reports where it might be monitored on stdout.
  */
 public class PrintMonitorRegistryClient implements MonitorRegistryClient {
