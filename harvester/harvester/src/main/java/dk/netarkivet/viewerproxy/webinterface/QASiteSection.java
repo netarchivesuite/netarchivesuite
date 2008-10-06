@@ -36,7 +36,7 @@ public class QASiteSection extends SiteSection {
     /**
      * Create a QA SiteSection object.
      *
-     * This initialises the SiteSection object with the page(!) that exists in
+     * This initialises the SiteSection object with the pages that exists in
      * QA.
      */
     public QASiteSection() {
