@@ -150,7 +150,7 @@ public class JMXHeritrixController implements HeritrixController {
     /** The header line (legend) for the statistics report. */
     private String progressStatisticsLegend;
 
-    /* The possible values of a request of the status attrbiute.
+    /* The possible values of a request of the status attribute.
      * Copied from private values in
      * {@link org.archive.crawler.framework.CrawlController} */
     private static final String NASCENT_STATUS = "NASCENT";
@@ -205,6 +205,7 @@ public class JMXHeritrixController implements HeritrixController {
                 settingProperty.append(file.getAbsolutePath());
             }
             if (settingProperty.length() > 0) {
+                //delete last path-separator
                 settingProperty.deleteCharAt(0);
             }
 
@@ -390,9 +391,13 @@ public class JMXHeritrixController implements HeritrixController {
     public boolean isPaused() {
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
         log.debug("Heritrix state: '" + status + "'");
-        // Either Pausing or Paused.
-        return status.equals(PAUSED_STATUS) ||
-               status.equals(PAUSING_STATUS);
+        // Either Pausing or Paused in case of not null
+        if (status == null) {
+            return false;
+        } else {
+            return status.equals(PAUSED_STATUS) ||
+                   status.equals(PAUSING_STATUS);
+        }
     }
 
     /** Check if the crawl has ended, either because Heritrix finished
