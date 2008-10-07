@@ -143,7 +143,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </javac>
         <copy todir="${classdir}">
             <fileset dir="${srcdir}">
+            	<!-- adding Translations*.properties files -->
             	<include name="**/*.properties"/>
+            	<!-- adding default settings files -->
             	<include name="**/*.xml"/>
             </fileset>
         </copy>
@@ -155,11 +157,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                encoding="UTF-8">
             <classpath refid="unittest.jars.path"/>
         </javac>
-        <copy todir="${classdir}">
-            <fileset dir="${testdir}">
-             	<include name="**/*.properties"/>
-             </fileset>
-        </copy>
     </target>
 
     <target name="compileclean" depends="clean,compile"
