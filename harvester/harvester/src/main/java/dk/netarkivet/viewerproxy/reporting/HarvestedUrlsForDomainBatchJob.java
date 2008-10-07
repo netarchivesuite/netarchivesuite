@@ -90,17 +90,40 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
         try {
             for(String line = arcreader.readLine(); line != null;
                 line = arcreader.readLine()) {
-                String[] parts = line.split("\\s+");
-                if (parts.length > 3 && DomainUtils.domainNameFromHostname(
-                        new FixedUURI(parts[3], true).getReferencedHost()).equals(domain)) {
-                    //If 
-                    os.write(line.getBytes("UTF-8"));
-                    os.write('\n');
-                } else if (parts.length > 5 && !parts[5].equals("-")
-                           && DomainUtils.domainNameFromHostname(
-                        new FixedUURI(parts[5], true).getReferencedHost()).equals(domain)) {
-                    os.write(line.getBytes("UTF-8"));
-                    os.write('\n');
+                try {
+                    // Parse a single crawl-log line into parts
+                    // The parts are here separated by white space.
+                    // part 4 of the crawl-line is the url component
+                    // part 6 of the crawl-line is the discovery url component
+                    // Cf. "http://crawler.archive.org/articles/user_manual
+                    // /analysis.html#logs"
+                   
+                    String[] parts = line.split("\\s+");
+                    final int URL_PART_INDEX = 3;
+                    final int DISCOVERY_URL_PART_INDEX = 5;
+                    // The current crawl.log line is written to the outstream 
+                    // in two cases:
+                    // A. If it has a URL component (4th component) and 
+                    //    this URL belongs to the domain in question
+                    // B. If it has a Discovery URL (6th component) and 
+                    //    this URL belongs to the domain in question
+                    if (parts.length > 3 && DomainUtils.domainNameFromHostname(
+                            new FixedUURI(parts[URL_PART_INDEX], 
+                                    true).getReferencedHost()).equals(domain)) {
+                        os.write(line.getBytes("UTF-8"));
+                        os.write('\n');
+                        
+                    } else if (parts.length > 5 && !parts[5].equals("-")
+                            && DomainUtils.domainNameFromHostname(
+                                    new FixedUURI(
+                                            parts[DISCOVERY_URL_PART_INDEX],
+                                            true).getReferencedHost()).equals(
+                                                    domain)) {
+                        os.write(line.getBytes("UTF-8"));
+                        os.write('\n');
+                    }
+                } catch (Exception e) {
+
                 }
             }
         } catch (IOException e) {

@@ -43,7 +43,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * Unit tests for Reporting class
+ * Unit tests for Reporting class.
  */
 public class ReportingTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
@@ -62,6 +62,9 @@ public class ReportingTester extends TestCase {
                 .getViewerInstance();
         dir = (File) ReflectUtils.getPrivateField(
                 TrivialArcRepositoryClient.class, "dir").get(tarc);
+        
+        // Copy the two files "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc" to our local
+        // archive accessed using a TrivalArcRepositoryClient
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, dir);
     }
 
@@ -82,15 +85,16 @@ public class ReportingTester extends TestCase {
             Reporting.getFilesForJob(-1);
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
         try {
             Reporting.getFilesForJob(0);
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
-        CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2), "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc");
+        CollectionAsserts.assertListEquals("Job 2 chould contain two files", Reporting.getFilesForJob(2), 
+                "2-1-20080601120000-00000-dev.arc", "2-metadata-1.arc");
         CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting.getFilesForJob(4));
     }
 
@@ -99,63 +103,82 @@ public class ReportingTester extends TestCase {
             Reporting.getMetdataCDXRecordsForJob(-1);
             fail("Should fail on negative values");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
         try {
             Reporting.getMetdataCDXRecordsForJob(0);
             fail("Should fail on zero");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
         List<CDXRecord> recordsForJob = Reporting.getMetdataCDXRecordsForJob(2);
         assertEquals("Should return the expected number of records", 18, recordsForJob.size());
-        StringAsserts.assertStringMatches("First record should be preharvester metadata dedup", "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
-        StringAsserts.assertStringMatches("Last record should be cdx", "^metadata://netarkivet.dk/crawl/index/cdx.*", recordsForJob.get(recordsForJob.size() - 1).getURL());
-        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", Reporting.getMetdataCDXRecordsForJob(4));
+        StringAsserts.assertStringMatches("First record should be preharvester metadata dedup", 
+                "^metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs.*", recordsForJob.get(0).getURL());
+        StringAsserts.assertStringMatches("Last record should be cdx", 
+                "^metadata://netarkivet.dk/crawl/index/cdx.*", recordsForJob.get(recordsForJob.size() - 1).getURL());
+        CollectionAsserts.assertListEquals("Job 4 not harvested, list should be empty", 
+                Reporting.getMetdataCDXRecordsForJob(4));
     }
 
+    /**
+     * Tests the method getCrawlLogForDomainInJob.
+     * This unit-test also implicitly tests the class HarvestedUrlsForDomainBatchJob
+     * @throws Exception
+     */
     public void testGetCrawlLogForDomainInJob() throws Exception {
+        int jobId = -1;
         try {
-            Reporting.getCrawlLogForDomainInJob("test.dk", -1);
-            fail("Should fail on negative values");
+            Reporting.getCrawlLogForDomainInJob("test.dk", jobId);
+            fail("Should fail on negative job id");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
+        jobId = 0;
         try {
-            Reporting.getCrawlLogForDomainInJob("test.dk", 0);
-            fail("Should fail on zero");
+            Reporting.getCrawlLogForDomainInJob("test.dk", jobId);
+            fail("Should fail on zero jobid");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
+        jobId = 1;        
         try {
-            Reporting.getCrawlLogForDomainInJob("", 1);
+            Reporting.getCrawlLogForDomainInJob("", jobId);
             fail("Should fail on empty domain");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
         try {
-            Reporting.getCrawlLogForDomainInJob(null, 1);
+            Reporting.getCrawlLogForDomainInJob(null, jobId);
             fail("Should fail on null domain");
         } catch (ArgumentNotValid e) {
-            //Expectied
+            //Expected
         }
-        File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", 2);
+        
+        jobId = 2;
+        // Find the crawl-log lines for domain netarkivet.dk in metadata file for job 2
+        File file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", jobId);
         List<String> lines = FileUtils.readListFromFile(file);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
-        StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", "www.netarkivet.dk", lines.get(lines.size() - 1));
+        StringAsserts.assertStringContains("Last line should be www.netarkivet.dk", 
+                "www.netarkivet.dk", lines.get(lines.size() - 1));
         assertEquals("Should have 126 lines (2 dns, 1 netarchive.dk, 121 netarkivet.dk, and 2 www.netarkivet.dk)", 126, lines.size());
-        file = Reporting.getCrawlLogForDomainInJob("kaarefc.dk", 2);
+ 
+        // Find the crawl-log lines for domain kaarefc.dk in metadata file for job 2
+        file = Reporting.getCrawlLogForDomainInJob("kaarefc.dk", jobId);
         lines = FileUtils.readListFromFile(file);
         StringAsserts.assertStringContains("First line should be dns", "dns:", lines.get(0));
         StringAsserts.assertStringContains("Last line should be w3.org", "w3.org", lines.get(lines.size() - 1));
         assertEquals("Should have 44 lines (1 dns, 40 kaarefc.dk, 3 others)", 44, lines.size());
         System.out.println(FileUtils.readFile(file));
-        file = Reporting.getCrawlLogForDomainInJob("doesnotexit.dk",
-                                                         2);
+
+        // Try to find the crawl-log lines for domain doesnotexist.dk in metadata file for job 2
+        file = Reporting.getCrawlLogForDomainInJob("doesnotexist.dk", jobId);
         lines = FileUtils.readListFromFile(file);
         assertEquals("Should be empty, no such domain", 0, lines.size());
-        file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk",
-                                                         4);
+        
+        int nonExistingJobId = 4;
+        file = Reporting.getCrawlLogForDomainInJob("netarkivet.dk", nonExistingJobId);
         lines = FileUtils.readListFromFile(file);
         assertEquals("Should be empty, no job 4", 0, lines.size());
     }
