@@ -264,7 +264,6 @@ if (SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)
     }
     %>
 </p>
-<p><fmt:message key="helptext;select.job.for.qa.with.viewerproxy"/></p>
 <%
 }
 %>

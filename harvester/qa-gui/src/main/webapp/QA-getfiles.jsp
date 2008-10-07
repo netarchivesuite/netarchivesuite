@@ -56,17 +56,14 @@ jobid - The id of the job to show files for.
     }
     HTMLUtils.generateHeader(pageContext);
 %>
-<pre>
     <h3><fmt:message key="pagetitle;files.for.job.0">
         <fmt:param value="<%=jobid%>"/>
     </fmt:message></h3>
+    <p><fmt:message key="helptext;select.job.for.qa.with.viewerproxy"/></p>
     <%
-        for (String filename : lines) {
-            %><p><a href="http://<%=CommandResolver.VIEWERPROXY_COMMAND_NAME%><%=GetDataResolver.GET_FILE_COMMAND%>?<%=GetDataResolver.FILE_NAME_PARAMETER%>=<%=filename%>"><%=filename%></a></p>
+    for (String filename : lines) {
+        %><a href="http://<%=CommandResolver.VIEWERPROXY_COMMAND_NAME%><%=GetDataResolver.GET_FILE_COMMAND%>?<%=GetDataResolver.FILE_NAME_PARAMETER%>=<%=filename%>"><%=filename%></a><br>
     <%
-        }
-    %>
-</pre>
-<%
+    }
     HTMLUtils.generateFooter(out);
 %>
