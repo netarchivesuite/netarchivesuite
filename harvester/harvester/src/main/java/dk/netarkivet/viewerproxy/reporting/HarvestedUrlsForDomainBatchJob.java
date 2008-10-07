@@ -75,9 +75,7 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
     }
 
     /**
-     * Process a record in a file. Will do nothing, unless the record is a
-     * crawl log. If the record is a crawl log, copy lines concerning the given
-     * domain to result.
+     * Process a record on crawl log concerning the given domain to result.
      * @param record The record to process.
      * @param os The output stream for the result.
      *
@@ -95,6 +93,7 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
                 String[] parts = line.split("\\s+");
                 if (parts.length > 3 && DomainUtils.domainNameFromHostname(
                         new FixedUURI(parts[3], true).getReferencedHost()).equals(domain)) {
+                    //If 
                     os.write(line.getBytes("UTF-8"));
                     os.write('\n');
                 } else if (parts.length > 5 && !parts[5].equals("-")
