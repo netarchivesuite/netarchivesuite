@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /home/dev/UNITTEST/conf
-if [ -e ./kill_guiapplication.sh ]; then
-    ./kill_guiapplication.sh 
+if [ -e ./kill_gui.sh ]; then
+    ./kill_gui.sh 
 fi
 if [ -e ./kill_arcrepository.sh ]; then
     ./kill_arcrepository.sh 

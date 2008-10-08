@@ -662,7 +662,7 @@
   </viewerproxy>
   <monitor>
     <!--  the password used to connect to the all Mbeanservers started by the application. This password must be same as the one in jmxremote.password -->
-    <jmxMonitorRolePassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxMonitorRolePassword>
+    <jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
     <logging>
       <historySize>100</historySize>
     </logging>

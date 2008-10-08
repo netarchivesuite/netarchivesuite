@@ -66,7 +66,7 @@ import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 /**
  * The host class represents the machines to install the NetarchiveSuite
  * software onto, *and* the ftp-servers and the jms-broker
- * (ftp and jms should probably be represented by a different class).
+ * TODO ftp and jms should probably be represented by a different class.
  *
  */
 public class Host {
@@ -444,7 +444,7 @@ public class Host {
         ArgumentNotValid.checkNotNull(dir, "File dir");
         ArgumentNotValid.checkNotNull(locations, "List<String> locations");
         
-        File res = new File(dir, "start_guiapplication.sh");
+        File res = new File(dir, "start_gui.sh");
         writeStandardStart(res,
                            GUIApplication.class.getName());
 

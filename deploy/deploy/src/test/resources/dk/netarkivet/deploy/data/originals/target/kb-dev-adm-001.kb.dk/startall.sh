@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /home/test/UNITTEST/conf
-if [ -e ./start_guiapplication.sh ]; then
-    ./start_guiapplication.sh 
+if [ -e ./start_gui.sh ]; then
+    ./start_gui.sh 
 fi
 if [ -e ./start_arcrepository.sh ]; then
     ./start_arcrepository.sh 

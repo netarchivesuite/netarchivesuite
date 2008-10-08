@@ -258,14 +258,18 @@ public class ItConfiguration {
      */
     public void loadDefaultSettings(File f, String environmentName) {
         for (Host host : hostlist) {
-            SimpleXml xml = new SimpleXml(f);
+            SimpleXml xml = new SimpleXml(f);   
             host.setSettingsXml(xml);
-
+            // Update setting for the JMXmonitorRolepassword
+            host.overrideSetting(
+                    MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING, 
+                    jmxMonitorRolePassword);
+            
             host.setLogProperties(defaultLogProperties);
             host.setJmxPasswordFileContents(initialJmxPasswordFileContents
                     .replace(JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER,
                              jmxMonitorRolePassword));
-
+            
             Host ftpServer = getClosestService(Host.Type.ftp, host);
             Host mailServer = getClosestService(Host.Type.mail, host);
             Host jmsServer = getClosestService(Host.Type.jms, host);
@@ -325,13 +329,6 @@ public class ItConfiguration {
                 }
 
                 if (host.isType(Host.Type.admin)) {
-                    host.overrideSetting(
-                            MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING, 
-                            jmxMonitorRolePassword);
-                    // Update settings.xml for guiapplication
-                    host.getSettingsXml().save(
-                            new File(subDir, "settings.xml"));
-                    
                     // create settings files for the two monitors
                     // TODO Make bamons ports not be hardcoded
                     int locationPort = 8081;
@@ -588,14 +585,14 @@ public class ItConfiguration {
                             pw.println("ssh " + destination + " \"chmod 400 "
                                     + confDir + "/jmxremote.password\"");
                         }
-                        pw.println("echo " + StringUtils.repeat("----", 11));
+                        pw.println("echo " + StringUtils.repeat("-", 44));
 
                         // Update StartAll script
                         
                         pwStart.println("echo " 
-                                + StringUtils.repeat("----", 11));
+                                + StringUtils.repeat("-", 44));
                         pwKill.println("echo "
-                                + StringUtils.repeat("----", 11));
+                                + StringUtils.repeat("-", 44));
 
                         pwStart.println("echo starting at:"
                                         + startScriptDestination);
@@ -625,9 +622,9 @@ public class ItConfiguration {
                         }
 
                         pwStart.println("echo " 
-                                + StringUtils.repeat("----", 11));
+                                + StringUtils.repeat("-", 44));
                         pwKill.println("echo " 
-                                + StringUtils.repeat("----", 11));
+                                + StringUtils.repeat("-", 44));
                     }
 
                 }
