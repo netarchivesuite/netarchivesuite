@@ -61,7 +61,7 @@ jobid - The id of the job to show reports for.
     <h3><fmt:message key="pagetitle;reports.for.job.1">
         <fmt:param value="<%=jobid%>"/>
     </fmt:message></h3>
-    <p><fmt:message key="helptext;select.job.for.qa.with.viewerproxy"/></p>
+    <p><fmt:message key="helptext;get.job.qa.information.with.viewerproxy"/></p>
     <%
     for (CDXRecord record : records) {
         %><a href="http://<%=CommandResolver.VIEWERPROXY_COMMAND_NAME%><%=GetDataResolver.GET_RECORD_COMMAND%>?<%=GetDataResolver.FILE_NAME_PARAMETER%>=<%=record.getArcfile()%>&<%=GetDataResolver.FILE_OFFSET_PARAMETER%>=<%=record.getOffset()%>"><%=record.getURL()%></a><br>
