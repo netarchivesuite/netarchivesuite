@@ -32,10 +32,8 @@ Parameters:
 domain - the domain to get the log for
 jobid - the id of the job to get the log for
 --%><%@ page import="java.io.File,
-                 java.io.FileInputStream,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.FileUtils,
-                 dk.netarkivet.common.utils.StreamUtils,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
@@ -67,7 +65,7 @@ jobid - the id of the job to get the log for
 </fmt:message></h3>
 <pre>
 <%
-    StreamUtils.copyInputStreamToOutputStream(new FileInputStream(f), out);
+    out.print(FileUtils.readFile(f));
     FileUtils.remove(f);
 %>
 </pre>
