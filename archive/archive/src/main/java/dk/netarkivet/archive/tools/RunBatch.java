@@ -41,7 +41,11 @@ import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.LoadableFileBatchJob;
+import dk.netarkivet.common.utils.arc.LoadableJarBatchJob;
+import dk.netarkivet.common.utils.arc.FileBatchJob;
 import dk.netarkivet.common.utils.arc.FileBatchJob.ExceptionOccurrence;
+
+import org.apache.commons.cli.*;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
@@ -101,17 +105,20 @@ public class RunBatch extends ToolRunnerBase {
          */
         private ViewerArcRepositoryClient arcrep;
         
-        /** The maximum number of argument accepted by the tool. */
-        private static final int MAX_ARGS_LENGTH = 5;
-        
         /** Default regexp that matches everything. */
         private static final String DEFAULT_REGEXP = ".*";
         
         /** The regular expression that will be matched against
-               file names in the archive, by default .*
+            file names in the archive, by default .*
         */
         private String regexp = DEFAULT_REGEXP;
         
+        /** Bitarchive location where batchjob is to be run. Set to setting 
+         *  batch location as default */
+        private Location batchLocation = Location.get(Settings.get(
+                CommonSettings.ENVIRONMENT_BATCH_LOCATION)
+        );
+
         /**
          * The outputfile, if any was given.
          */
@@ -120,86 +127,226 @@ public class RunBatch extends ToolRunnerBase {
         /** The errorfile, if any was given. */
         private File errorFile;
         
+        /** file types in input parameter */
+        private enum FileType {OTHER, JAR, CLASS};
+        
+        /** 
+         * getting FileType from given file name 
+         * @param fileName The file name to get file type from
+         * @return FileType found from extension of file name
+         */
+        private FileType getFileType(String fileName) {
+            int i = fileName.lastIndexOf(".");
+            if (i > 0) {
+                String s = fileName.substring(i).toLowerCase();
+                if (s.equals(".class")) {
+                    return FileType.CLASS;
+                } else {
+                    if (s.equals(".jar")) {
+                        return FileType.JAR;
+                    } else {
+                        return FileType.OTHER;
+                    }
+                }
+            } else { 
+                return FileType.OTHER;
+            }
+        }
+
+        /** 
+         * getting FileType from given file name 
+         * @param fileName The file name to get file type from
+         * @return FileType found from extension of file name
+         */
+        private boolean checkWriteFile(String fileName, String fileTag) {
+            if (new File(fileName).exists()) {
+                System.err.println(fileTag + " '" + fileName
+                        + "' does already exist");
+                return false;
+            } else {
+                try {
+                    File tmpFile = new File(fileName);
+                    tmpFile.createNewFile();
+                    if (!tmpFile.canWrite()) {
+                        System.err.println(fileTag + " '" + fileName
+                                + "' cannot be written to");
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } catch (IOException e) {
+                    System.err.println(fileTag + " '" + fileName
+                            + "' cannot be created.");
+                    return false;
+                }
+            }
+        }
+        
+        /** 
+         * Type to encapsulate parameters defined by options to batchjob 
+         * based on apache.cli
+         */
+        private class BatchParameters {
+            /**
+             * Options object for parameters
+             */
+            Options options = new Options();      
+            private CommandLineParser parser = new PosixParser();
+            CommandLine cmd;
+            //HelpFormatter only prints directly, thus this is not used at the moment
+            //HelpFormatter formatter = new HelpFormatter();
+            //Instead the method listArguments is defined
+            
+            /**
+             * Initialize options by setting legal parameters for batch jobs
+             */
+            BatchParameters() {
+                options.addOption(
+                    "C", true, "Class file to be run from class file or from "
+                               + "specified jar file (is required)");
+                options.addOption(
+                    "J", true, "Jar file to be run (required if class file " 
+                               + "is in jar file)");
+                options.addOption(
+                    "R", true, "Regular expression for files to be processed "
+                               + "(default: '" + regexp + "')");
+                options.addOption(
+                    "B", true, "Bitarchive location where batch must be run "
+                                + "(default: '" 
+                                + CommonSettings.ENVIRONMENT_BATCH_LOCATION
+                                + "')");
+                options.addOption(
+                    "O", true, "Output file to contain result (default is "
+                               + "stdout)");
+                options.addOption(
+                    "E", true, "Error file to contain errors from run "
+                               + "(default is stderr)");
+            }
+            
+            String parseParameters(String[] args) {
+                try {
+                    // parse the command line arguments
+                    cmd = parser.parse( options, args);
+                }
+                catch(ParseException exp) {
+                    return "Parsing parameters failed.  Reason is: " + exp.getMessage();
+                }
+                return "";
+            }
+            
+            String listArguments() {
+                String s = "\nwith arguments:\n";
+                // add options
+                for (Object o: options.getOptions()) {
+                    Option op = (Option)o;
+                    s += "-" + op.getOpt() + " " + op.getDescription() + "\n";  
+                }
+                //delete last delimitter
+                if (s.length() > 0) {
+                    s = s.substring(0, s.length()-1);
+                }
+                return s;
+            }
+        }
+        
+        
+        /** To contain parameters defined by options to batchjob */
+        private BatchParameters parms = new BatchParameters();
         
         /**
-         * Accept 1 to 5 parameters and checks them for validity.
+         * Accept parameters and checks them for validity.
          * @param args the arguments
          * @return true, if given arguments are valid
          *  returns false otherwise
          */
         public boolean checkArgs(String... args) {
-            if (args.length < 1) {
-                System.err.println("Missing required argument: class file");
+            //Parse arguments to check that the options are valid
+            String msg = parms.parseParameters(args);
+            if (msg.length() > 0) { 
+                System.err.println(msg);
                 return false;
             }
-            if (args.length > MAX_ARGS_LENGTH) {
+            
+            //Check number of arguments
+            if (args.length < 1) {
+                System.err.println("Missing required argument: jar and/or class file");
+                return false;
+            } 
+            if (args.length > parms.cmd.getOptions().length) {
                 System.err.println("Too many arguments");
                 return false;
             }
-            if (!new File(args[0]).canRead()) {
-                System.err.println("File not found: '" + args[0] + "'");
+
+            //Check class file argument
+            String jar = parms.cmd.getOptionValue("J");
+            String cl = parms.cmd.getOptionValue("C");
+            if (cl == null) {
+                msg = "Missing required class file argument ";
+                if (jar == null) { msg += "(-C)"; }
+                else { msg += " to run in jar-file (-C)"; }
+                System.err.println(msg);
+                return false;
+            } 
+            if (!getFileType(cl).equals(FileType.CLASS)) {
+                System.err.println("Argument '"+ cl + "' is not denoting a class file");
                 return false;
             }
-            if (args.length > 1) {
+            if (jar == null) {
+                if (!new File(cl).canRead()) {
+                    System.err.println("Cannot read class file: '" + cl + "'");
+                    return false;
+                }
+            } //else class file is included in jar file
+            
+            //Check jar file argument
+            if (jar != null) {
+                if (!getFileType(jar).equals(FileType.JAR)) {
+                    System.err.println("Argument '"+ jar 
+                                       + "' is not denoting a jar file");
+                    return false;
+                }
+                if (!new File(jar).canRead()) {
+                    System.err.println("Cannot read jar file: '" + jar + "'");
+                    return false;
+                }
+            } 
+
+            //Check regular expression argument
+            String reg = parms.cmd.getOptionValue("R");
+            if (reg != null) {
                 try {
-                    Pattern.compile(args[1]);
+                    Pattern.compile(reg);
                 } catch (PatternSyntaxException e) {
                     System.err.println("Illegal pattern syntax: '"
-                                       + args[1] + "'");
+                                       + reg + "'");
                     return false;
                 }
             }
-            if (args.length > 2
-                    && !Location.isKnownLocation(args[2])) {
-                System.err.println("Unknown location '" + args[2]
-                                   + "', known location are "
-                                   + Location.getKnown());
-                return false;
-            }
-            if (args.length > 3) {
-             // consider 4th argument to be the outputfilename
-                final String outputFileName = args[3];
-                if (new File(outputFileName).exists()) {
-                    System.err.println("Output file '" + outputFileName
-                            + "' does already exist");
+            
+            //Check bitarchive location argument
+            String loc = parms.cmd.getOptionValue("B");
+            if (loc != null) {
+                if (!Location.isKnownLocation(loc)) {
+                    System.err.println("Unknown location '" + loc
+                                       + "', known location are "
+                                       + Location.getKnown());
                     return false;
-                } else {
-                    try {
-                        File tmpFile = new File(outputFileName);
-                        tmpFile.createNewFile();
-                        if (!tmpFile.canWrite()) {
-                            System.err.println("Output file '" + outputFileName
-                                    + "' cannot be written to");
-                            return false;
-                        }
-                    } catch (IOException e) {
-                        System.err.println("Output file '" + outputFileName
-                                + "' cannot be created.");
-                        return false;
-                    }
                 }
             }
-            if (args.length > 4) {
-             // consider 5th argument to be the errorfilename
-                final String errorfilename = args[4];
-                if (new File(errorfilename).exists()) {
-                    System.err.println("Error file '" + errorfilename
-                            + "' does already exist");
+            
+            //Check output file argument
+            String oFile = parms.cmd.getOptionValue("O");
+            if (oFile != null) {
+                if (!checkWriteFile(oFile, "Output file")) {
                     return false;
-                } else {
-                    try {
-                        File tmpFile = new File(errorfilename);
-                        tmpFile.createNewFile();
-                        if (!tmpFile.canWrite()) {
-                            System.err.println("Error file '" + errorfilename
-                                    + "' cannot be written to");
-                            return false;
-                        }
-                    } catch (IOException e) {
-                        System.err.println("Error file '" + errorfilename
-                                + "' cannot be created.");
-                        return false;
-                    }
+                }
+            }
+
+            //Check output file argument
+            String eFile = parms.cmd.getOptionValue("E");
+            if (eFile != null) {
+                if (!checkWriteFile(eFile, "Error file")) {
+                    return false;
                 }
             }
             return true;
@@ -237,56 +384,82 @@ public class RunBatch extends ToolRunnerBase {
          * @param args the arguments
          */
         public void run(String... args) {
-            String filename = args[0];
-            LoadableFileBatchJob job
-                    = new LoadableFileBatchJob(new File(filename));
-            if (args.length > 1) { // assume args[1] is the wanted regexp
-                regexp = args[1];
+            //Arguments are allready checked by checkArgs 
+            String jarName = parms.cmd.getOptionValue("J");
+            String className = parms.cmd.getOptionValue("C");
+            
+            FileBatchJob job;
+
+            if (jarName == null) {
+                LoadableFileBatchJob classJob = new LoadableFileBatchJob(new File(className));
+                job = classJob;
+            } else {
+                LoadableJarBatchJob jarJob = new LoadableJarBatchJob(new File(jarName), className);
+                job = jarJob;
+            }
+            
+            String reg = parms.cmd.getOptionValue("R");
+            if (reg != null) { 
+                regexp = reg;
                 job.processOnlyFilesMatching(regexp);
             }
             
-            Location myLocation = Location.get(Settings.get(
-                    CommonSettings.ENVIRONMENT_THIS_LOCATION)
-            );
-            if (args.length > 2) {
-                myLocation = Location.get(args[2]);
+            String loc = parms.cmd.getOptionValue("B");
+            if (loc != null) { 
+                batchLocation = Location.get(loc);
             }
             
-            if (args.length > 3) {
-                outputFile = new File(args[3]);
+            //Note: if no filename is given, output will be written to stdout
+            String oFile = parms.cmd.getOptionValue("O");
+            if (oFile != null) { 
+                outputFile = new File(oFile);
             }
-            System.out.println("Running batch job '" + filename
-                               + "' on files matching '" + regexp
-                               + "' on location '" + myLocation.getName()
-                               + "'");
-            BatchStatus status = arcrep.batch(job, myLocation.getName());
+            
+            //Note: if no filename is given, errors will be written to stderr
+            String eFile = parms.cmd.getOptionValue("E");
+            if (eFile != null) {
+                errorFile = new File(eFile);
+            }
+
+            System.out.println(
+                "Running batch job '" + className + "' "
+                + ((jarName == null) ? "" : "from jar-file '" + jarName + "' ")
+                + "on files matching '" + regexp + "' "
+                + "on location '" + batchLocation.getName() + "' " 
+                + "output written to " 
+                   + ((oFile == null) ? "stdout " : "file '" + oFile + "' ")
+                + "errors written to " 
+                   + ((eFile == null) ? "stderr " : "file '" + eFile + "' ")
+            );
+            BatchStatus status = arcrep.batch(job, batchLocation.getName());
             final Collection<File> failedFiles = status.getFilesFailed();
             Collection<ExceptionOccurrence> exceptions = status.getExceptions();
+            
             System.out.println("Processed " + status.getNoOfFilesProcessed()
                                + " files with "
                                + failedFiles.size()
                                + " failures");
+            
+            //Write to output file or stdout
             if (outputFile == null) {
                 status.appendResults(System.out);
             } else {
                 status.copyResults(outputFile);
             }
             
-            // Write the errors to the errorfile if defined or to stdout if not
-            if (args.length > 4) {
-                errorFile = new File(args[4]);
-            }
             
-            PrintStream errorOutput = System.out;
+            //Write to error file or stderr
+            PrintStream errorOutput = System.err;
             if (errorFile != null) {
                 try {
-                    System.out.println("Writing errors to file: "
+                    System.err.println("Writing errors to file: "
                             + errorFile.getAbsolutePath());
                     errorOutput = new PrintStream(errorFile);
                 } catch (FileNotFoundException e) {
-                    System.out.println(
+                    //Should not occur since argument is checked
+                    System.err.println(
                             "Unable to to create errorfile for writing: " + e);
-                    System.out.println(
+                    System.err.println(
                             "Writing errors to stdout instead!");                
                 }
             }
@@ -322,7 +495,7 @@ public class RunBatch extends ToolRunnerBase {
          * @return the list of parameters accepted.
          */
         public String listParameters() {
-            return "classfile [regexp [location [outputfile [errrorfile]]]]";
+            return parms.listArguments();
         }
 
     }
