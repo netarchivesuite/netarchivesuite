@@ -425,9 +425,9 @@ public class RunBatch extends ToolRunnerBase {
                 "Running batch job '" + className + "' "
                 + ((jarName == null) ? "" : "from jar-file '" + jarName + "' ")
                 + "on files matching '" + regexp + "' "
-                + "on location '" + batchLocation.getName() + "' " 
+                + "on location '" + batchLocation.getName() + "', " 
                 + "output written to " 
-                   + ((oFile == null) ? "stdout " : "file '" + oFile + "' ")
+                   + ((oFile == null) ? "stdout " : "file '" + oFile + "', ")
                 + "errors written to " 
                    + ((eFile == null) ? "stderr " : "file '" + eFile + "' ")
             );
