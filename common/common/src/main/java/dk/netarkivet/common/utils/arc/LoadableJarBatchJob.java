@@ -142,6 +142,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
         loadedJob.finish(os);
     }
 
+    /** Override of the default toString to include name of loaded jar/class. */
+    public String toString() {
+        return this.getClass().getName() + " processing " + jobClass + " from " + multipleClassLoader.toString();
+    }
 
     /** Override of the default way to serialize this class.
      *
