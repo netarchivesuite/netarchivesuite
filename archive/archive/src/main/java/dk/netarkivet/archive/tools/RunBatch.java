@@ -51,25 +51,29 @@ import org.apache.commons.cli.*;
  * A command-line tool to run batch jobs in the bitarchive.
  *
  * Usage:
- *  java dk.netarkivet.archive.tools.RunBatch \
- *       classfile [regexp [location [outputfile]]
+ *  java dk.netarkivet.archive.tools.RunBatch 
+ *       with arguments as defined in local class BatchParameters 
  *
- * where classfile is a file containing a FileBatchJob implementation
- *       regexp is a regular expression that will be matched against
+ * where -C<classfile> is a file containing a FileBatchJob implementation
+ *       -R<regexp> is a regular expression that will be matched against
  *              file names in the archive, by default .*
- *       location is the bitarchive location this should be run on, by
+ *       -B<location> is the bitarchive location this should be run on, by
  *              default taken from settings.
- *       outputfile is a file where the output from the batch job will be
+ *       -O<outputfile> is a file where the output from the batch job will be
  *              written.  By default, it goes to stdout.
- *       errorFile is a file where the errors from the batch job will be
- *       written. By default, it goes to stdout.
+ *       -E<errorFile> is a file where the errors from the batch job will be
+ *              written. By default, it goes to stderr.
  * Example:
  *
- * java dk.netarkivet.archive.tools.RunBatch FindMime.class 10-*.arc SB mimes
+ * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class -R10-*.arc \
+ *                                           -BSB -omimes
  *
+ * TODO: There are mede preparations for inclusion of jar files in the argument
+ *       list
+ *        
  * Note that you probably want to set the HTTP port setting
- * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its default value to
- * avoid clashing with other channel listeners.
+ * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its 
+ * default value to avoid clashing with other channel listeners.
  */
 public class RunBatch extends ToolRunnerBase {
     /**
@@ -78,12 +82,12 @@ public class RunBatch extends ToolRunnerBase {
      * Management of this, exception handling etc. is delegated to
      * ToolRunnerBase class.
      *
-     * @param argv Takes one to four command line parameters, only the first is
+     * @param argv command line parameters as defined in local class 
+     *        BatchParameters
      * required:
-     *   the name of a file containing an implementation of FileBatchJob
-     *   a regular expression
-     *   a bitarchive location
-     *   a filename for output
+     *   the name of a class-file containing an implementation of FileBatchJob
+     *   TODO: name of jar file which includes class file, if class file is  
+     *         given indirectly via jar file.
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -202,11 +206,14 @@ public class RunBatch extends ToolRunnerBase {
              */
             BatchParameters() {
                 options.addOption(
-                    "C", true, "Class file to be run from class file or from "
-                               + "specified jar file (is required)");
-                options.addOption(
-                    "J", true, "Jar file to be run (required if class file " 
-                               + "is in jar file)");
+                    "C", true, "Class file to be run"
+//                  //TODO jar addition: + "from class file or from "
+                    //           + "specified jar file (is required)"
+                );
+                //TODO jar addition 
+                //options.addOption(
+                //    "J", true, "Jar file to be run (required if class file " 
+                //               + "is in jar file)");
                 options.addOption(
                     "R", true, "Regular expression for files to be processed "
                                + "(default: '" + regexp + "')");
@@ -269,7 +276,11 @@ public class RunBatch extends ToolRunnerBase {
             
             //Check number of arguments
             if (args.length < 1) {
-                System.err.println("Missing required argument: jar and/or class file");
+                System.err.println(
+                        "Missing required argument: "
+//                      //TODO jar addition + "jar and/or "
+                        + "class file"
+                );
                 return false;
             } 
             if (args.length > parms.cmd.getOptions().length) {
@@ -278,7 +289,7 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             //Check class file argument
-            String jar = parms.cmd.getOptionValue("J");
+            String jar = null; //TODO jar addition set to: parms.cmd.getOptionValue("J");
             String cl = parms.cmd.getOptionValue("C");
             if (cl == null) {
                 msg = "Missing required class file argument ";
@@ -385,7 +396,7 @@ public class RunBatch extends ToolRunnerBase {
          */
         public void run(String... args) {
             //Arguments are allready checked by checkArgs 
-            String jarName = parms.cmd.getOptionValue("J");
+            String jarName = null; //TODO jar addition set to: parms.cmd.getOptionValue("J");
             String className = parms.cmd.getOptionValue("C");
             
             FileBatchJob job;
@@ -423,7 +434,8 @@ public class RunBatch extends ToolRunnerBase {
 
             System.out.println(
                 "Running batch job '" + className + "' "
-                + ((jarName == null) ? "" : "from jar-file '" + jarName + "' ")
+              //TODO jar addition: 
+              //+ ((jarName == null) ? "" : "from jar-file '" + jarName + "' ")
                 + "on files matching '" + regexp + "' "
                 + "on location '" + batchLocation.getName() + "', " 
                 + "output written to " 
