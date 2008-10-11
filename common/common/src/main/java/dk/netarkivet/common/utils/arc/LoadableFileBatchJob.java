@@ -41,11 +41,11 @@ import dk.netarkivet.common.utils.FileUtils;
 public class LoadableFileBatchJob extends FileBatchJob {
     transient Log log = LogFactory.getLog(this.getClass().getName());
 
-    /** The job loaded from file */
+    /** The job loaded from file. */
     transient FileBatchJob loadedJob;
-    /** The binary contents of the file before they are turned into a class */
+    /** The binary contents of the file before they are turned into a class. */
     byte[] fileContents;
-    /** The name of the file before they are turned into a class */    
+    /** The name of the file before they are turned into a class. */    
     String fileName;
 
     /** Create a new batch job that runs the loaded class. */
@@ -55,7 +55,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
         fileName = classFile.getName();
     }
 
-    /** Override of the default toString to include name of loaded class. */
+    /** Override of the default toString to include name of loaded class.
+     * @return string representation of this class. */
    public String toString() {
        return this.getClass().getName() + " processing " + fileName;
    }

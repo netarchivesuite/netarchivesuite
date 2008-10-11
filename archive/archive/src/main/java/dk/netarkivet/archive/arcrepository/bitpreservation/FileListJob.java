@@ -38,10 +38,12 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
 /**
  * A batch job which returns a list of all files in the bitarchive in which it
  * runs.
- *
  */
-
 public class FileListJob extends FileBatchJob {
+    
+    /** The class logger. This variable is re-initialized during 
+     * de-serialization.
+     */
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
     /**
@@ -52,11 +54,10 @@ public class FileListJob extends FileBatchJob {
 
     }
 
-
     /**
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
-     * @param s
+     * @param s the ObjectInputStream from which the object is read
      */
     private void readObject(ObjectInputStream s) {
         try {
@@ -76,7 +77,6 @@ public class FileListJob extends FileBatchJob {
     public boolean processFile(File file, OutputStream os) {
         ArgumentNotValid.checkNotNull(file, "file");
         String result = file.getName() + "\n";
-        //++noOfFilesProcessed;
         try {
             os.write(result.getBytes());
         } catch (IOException e) {
@@ -94,16 +94,20 @@ public class FileListJob extends FileBatchJob {
     public void finish(OutputStream os) {
     }
 
+    /**
+     * Return a human-readable representation of a FileListJob.
+     * @return a human-readable representation of a FileListJob
+     */
     public String toString() {
-        int n_failed;
+        int filesFailedCount;
         if (filesFailed == null) {
-            n_failed = 0;
+            filesFailedCount = 0;
         } else {
-            n_failed = filesFailed.size();
+            filesFailedCount = filesFailed.size();
         }
         return ("\nFileList job:\nFiles Processed = "
                 + noOfFilesProcessed
-                + "\nFiles  failed = " + n_failed);
+                + "\nFiles  failed = " + filesFailedCount);
     }
 
 }

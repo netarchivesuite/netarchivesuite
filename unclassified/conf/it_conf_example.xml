@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns="http://www.netarkivet.dk/schemas/deploy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <installtype>test</installtype>
-    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>test</jmxPassword>
     <largeIndexTimeout>43200000</largeIndexTimeout>
     <location name="kb">
         <installdir>/home/test</installdir>

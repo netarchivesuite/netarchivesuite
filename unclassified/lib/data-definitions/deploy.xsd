@@ -50,7 +50,8 @@
         <complexType>
             <sequence>
                 <element name="installtype" type="string" />
-                <element name="jmxMonitorRolePassword" type="string" />
+                <element name="jmxUsername" type="string" />
+                <element name="jmxPassword" type="string" />
                 <element name="largeIndexTimeout" type="integer"/>
                 <element name="location" type="d:location" minOccurs="1" maxOccurs="unbounded"/>
             </sequence>

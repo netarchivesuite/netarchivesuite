@@ -175,7 +175,7 @@ public class HeritrixTemplateTester extends TestCase {
         }
     }
 
-    /** Check that the given values are legal in the xpath given */
+    /** Check that the given values are legal in the xpath given. */
     private void checkLegalValues(String msg, Document doc,
                                   String xpath, String... values) {
         for (String value : values) {

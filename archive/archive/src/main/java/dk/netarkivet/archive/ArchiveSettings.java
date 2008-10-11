@@ -78,7 +78,7 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.heartbeatFrequency";
     /**
      * If we haven't heard from a bit archive within this many milliseconds,
-     * we don't excpect it to be online and won't wait for them to reply on a
+     * we don't expect it to be online and won't wait for them to reply on a
      * batch job.  This number should be significantly greater than
      * heartbeatFrequency to account for temporary network congestion.
      */

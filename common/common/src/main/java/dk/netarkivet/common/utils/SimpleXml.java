@@ -47,12 +47,12 @@ import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
  * Utility class to load and save data from/to XML files using a
- *         very simple XML format.
+ * very simple XML format.
  */
 public class SimpleXml {
     protected final Log log = LogFactory.getLog(getClass().getName());
 
-    /** The underlying XML Document object that we give access to */
+    /** The underlying XML Document object that we give access to. */
     private Document xmlDoc;
 
     /** The file that this XML was read from, or a fixed string if it
@@ -60,7 +60,7 @@ public class SimpleXml {
      */
     private String source;
 
-    /** Create a new SimpleXml object by loading a file
+    /** Create a new SimpleXml object by loading a file.
      *
      * @param f XML file to load
      */
@@ -80,18 +80,20 @@ public class SimpleXml {
         source = "Newly creating XML file with root '" + rootElement + "'";
     }
 
-    /** Create a new SimpleXml object by loading a file
+    /** Create a new SimpleXml object by loading a file.
      *
      * @param resourceAsStream XML file to load
      */
     public SimpleXml(InputStream resourceAsStream) {
+        ArgumentNotValid.checkNotNull(resourceAsStream,
+                "InputStream resourceAsStream");
         load(resourceAsStream);
     }
 
     /**
      * Loads an xml stream.
      *
-     * @param resourceAsStream
+     * @param resourceAsStream a XML stream to load.
      */
     private void load(InputStream resourceAsStream) {
         xmlDoc = XmlUtils.getXmlDoc(resourceAsStream);
@@ -101,7 +103,7 @@ public class SimpleXml {
     /**
      * Loads an xml file.
      *
-     * @param f
+     * @param f a XML file
      */
     private void load(File f) {
         source = f.toString();
@@ -176,13 +178,14 @@ public class SimpleXml {
     }
 
     /** Add another element either right after the last of its kind in
-     * currentNode or at the end of currentNode
+     * currentNode or at the end of currentNode.
      *
      * @param currentNode A node that the new element will be a sub-node of
      * @param elementName The name of the new element
      * @return The new element, which is now placed under currentNode
      */
-    private Element addAfterSameElement(Element currentNode, String elementName) {
+    private Element addAfterSameElement(Element currentNode,
+            String elementName) {
         Element newElement = currentNode.addElement(elementName);
         newElement.detach();
         // If there are already nodes of this type, add straight after them.
@@ -216,7 +219,8 @@ public class SimpleXml {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         ArgumentNotValid.checkNotNull(values, "String... values");
         for (int i = 0; i < values.length; i++) {
-            ArgumentNotValid.checkNotNull(values[i], "String values[" + i + "]");
+            ArgumentNotValid.checkNotNull(
+                    values[i], "String values[" + i + "]");
         }
         if (!hasKey(key)) {
             throw new UnknownID("No key registered with the name: '" + key
@@ -273,7 +277,7 @@ public class SimpleXml {
     /**
      * Checks if a setting with the specified key exists.
      *
-     * @param key
+     * @param key a key for a setting
      * @return true if the key exists
      * @throws ArgumentNotValid
      *             if key is null or empty
@@ -325,6 +329,7 @@ public class SimpleXml {
      * @throws UnknownID If the path does not exist in the tree or is ambiguous
      */
     public StringTree<String> getTree(String path) {
+        ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
         XPath xpath = getXPath(path);
         List<Node> nodes = xpath.selectNodes(xmlDoc);
         if (nodes == null || nodes.size() == 0) {

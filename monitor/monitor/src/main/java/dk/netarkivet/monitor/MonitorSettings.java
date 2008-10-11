@@ -49,9 +49,16 @@ public class MonitorSettings {
 
     /* The setting names used should be declared and documented here */
 
-    /** The password needed to connect as 'monitorRole' to the MBeanservers. */
-    public static String JMX_MONITOR_ROLE_PASSWORD_SETTING
-            = "settings.monitor.jmxMonitorRolePassword";
+    /** The username used to connect to the MBeanservers. */
+    public static String JMX_USERNAME_SETTING
+        = "settings.monitor.jmxUsername";
+    
+    /** The password needed to connect to the MBeanservers. */
+    public static String JMX_PASSWORD_SETTING
+            = "settings.monitor.jmxPassword";
+    
+    
+    
     /**
      * The number of logmessages from each application visible in the
      * monitor.

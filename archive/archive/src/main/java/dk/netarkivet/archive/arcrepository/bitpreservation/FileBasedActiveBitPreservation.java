@@ -252,8 +252,8 @@ public class FileBasedActiveBitPreservation
                       + StringUtils.conjoin(",", filenames));
             
             for (String filename : filenames) {
-                // Update 'checksummaps' datastructure with the checksums received
-                // from Location 'ba'.
+                // Update 'checksummaps' datastructure with the checksums
+                // received from Location 'ba'.
                 
                 // locationMap: map ([location] 
                 //  -> [list of checksums for one filename]).
@@ -753,7 +753,7 @@ public class FileBasedActiveBitPreservation
         // preservationStates: map [filename]->[filepreservationstate]
         // Initialized here to contain an entry for each filename in vargargs
         // 'filenames'.
-        Map<String,FilePreservationState> preservationStates
+        Map<String, FilePreservationState> preservationStates
             =  getFilePreservationStateMap(filenames);
         
         // For each given filename, try to reestablish it on
@@ -925,7 +925,10 @@ public class FileBasedActiveBitPreservation
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
         removeAndGetFile(filename, location, checksum, credentials);
+        // The file named 'filename' is fetched from the reference location
+        // and uploaded to this location
         uploadMissingFiles(location, filename);
+        // Remove filename from the WRONG_FILES list
         FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
                 location,
                 WorkFiles.WRONG_FILES));

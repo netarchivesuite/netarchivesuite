@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
+import javax.servlet.jsp.JspWriter;
+
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -42,6 +44,29 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Utilities for handling streams.
  */
 public class StreamUtils {
+    
+    public static void copyInputStreamToJspWriter(InputStream in, JspWriter out) {
+        ArgumentNotValid.checkNotNull(in, "InputStream in");
+        ArgumentNotValid.checkNotNull(out, "JspWriter out");
+
+        byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
+        int read = 0;
+        try {
+            try {
+                while (read != -1) {
+                    read = in.read(buf);
+                    // out.write(buf, 0, read);
+                }
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Trouble copying inputstream " + in
+                    + " to JspWriter " + out, e);
+        }
+    }
+   
+    
     /**
      * Will copy everything from input stream to output stream, closing input
      * stream afterwards.

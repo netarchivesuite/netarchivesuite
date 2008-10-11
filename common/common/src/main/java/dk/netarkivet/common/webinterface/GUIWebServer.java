@@ -71,19 +71,15 @@ public class GUIWebServer implements CleanupIF {
             throw new IOFailure(
                     "Port must be in the range 1025-65535, not " + port);
         }
-        //TODO: Replace with just one setting. See feature request 1204
+        //TODO Replace with just one setting. See feature request 1204
         String[] webApps = Settings.getAll(
                 CommonSettings.SITESECTION_WEBAPPLICATION);
-        String[] deployDirs = Settings.getAll(
-                CommonSettings.SITESECTION_DEPLOYPATH);
         String[] classes = Settings.getAll(CommonSettings.SITESECTION_CLASS);
-        if (webApps.length != deployDirs.length
-            || webApps.length != classes.length) {
+        if (webApps.length != classes.length) {
             throw new IOFailure(
-                    "Number of webapplications and number of directories to "
-                    + "deploy them in and classes defining webapps do not match. "
+                    "Number of webapplications and number of classes defining "
+                    + "the webapps do not match. "
                     + "Webapps: [" + StringUtils.conjoin(",", webApps) + "]. "
-                    + "Deploydirs: [" + StringUtils.conjoin(",", deployDirs)
                     + "]. Classes: [" + StringUtils.conjoin(",", classes)
                     + "]");
         }
@@ -91,8 +87,6 @@ public class GUIWebServer implements CleanupIF {
         log.info("Starting webserver. Port: " + port
                  + " deployment directories: '"
                  + StringUtils.conjoin(",", webApps)
-                 + "' webapplication directories: '"
-                 + StringUtils.conjoin(",", deployDirs) + "'"
                  + "' classes: '"
                  + StringUtils.conjoin(",", classes) + "'");
 
@@ -103,7 +97,7 @@ public class GUIWebServer implements CleanupIF {
         try {
             for (int i = 0; i < webApps.length;
                  i++) {
-                addWebApplication(webApps[i], deployDirs[i]);
+                addWebApplication(webApps[i]);
             }
         } catch (Exception e) {
             throw new IOFailure(
@@ -132,26 +126,31 @@ public class GUIWebServer implements CleanupIF {
     /**
      * Adds a directory with jsp files on the given basepath of the web server.
      * Note: This must be done BEFORE starting the server.
+     * The webbase is deduced from the name of the webapp.
      *
      * @param webapp  a directory with jsp files or a war file.
-     * @param webbase the base path on the webserver where the directory should
-     *                be exported. Must start with '/'
      * @throws IOFailure        if directory is not found.
      * @throws ArgumentNotValid if either argument is null or empty or if
      *                          webbase doesn't start with '/'.
      * @throws PermissionDenied if the server is already running.
      */
-    private void addWebApplication(String webapp, String webbase)
+    private void addWebApplication(String webapp)
             throws IOFailure, ArgumentNotValid, PermissionDenied {
-        if (!webbase.trim().startsWith("/")) {
-            throw new ArgumentNotValid(
-                    "Webbase " + webbase +
-                    " is not a valid webbase - must start with '/'");
-        }
+        
         if (!new File(webapp).exists()) {
             throw new IOFailure(
                     "Web application '" + webapp + "' not found");
         }
+        
+        // Construct webbase from the name of the webapp.
+        // (1) If the webapp is webpages/History, the webbase is /History
+        // (2) If the webapp is webpages/History.war, the webbase is /History
+        String webappFilename = new File(webapp).getName();
+        String webbase = "/" + webappFilename;
+        if (webappFilename.toLowerCase().endsWith(".war")) {
+            webbase = "/" + webappFilename.substring(0, webappFilename.length() - 4);
+        }
+        
         for (SiteSection section : SiteSection.getSections()) {
             if (webbase.equals("/" + section.getDirname())) {
                 section.initialize();

@@ -18,6 +18,7 @@
 
     <complexType name="common">
         <all>
+            <element name="environmentName" type="string"/>
             <element name="tempDir" type="set:directoryPath"/>
             <element name="remoteFile" type="set:remotefile"/>
             <element name="jms" type="set:jms"/>
@@ -65,7 +66,7 @@
             <element name="repository" type="set:repository"/>
             <element name="locations" type="set:locations"/>
             <element name="thisPhysicalLocation" type="string"/>
-            <element name="monitorApplicationName" type="string"/>
+            <element name="applicationName" type="string"/>
         </all>
     </complexType>
 
@@ -79,7 +80,7 @@
     <complexType name="database">
         <sequence>
             <element name="url" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="specificsclass" type="set:classname"/>
+            <element name="class" type="set:classname"/>
         </sequence>
     </complexType>
 
@@ -142,7 +143,8 @@
 
     <complexType name="monitor">
         <all>
-            <element name="jmxMonitorRolePassword" type="string"/>
+            <element name="jmxUsername" type="string"/>
+            <element name="jmxPassword" type="string"/>
             <element name="logging">
                 <complexType>
                     <all>
@@ -200,7 +202,6 @@
             <element name="class" type="set:classname"/>
             <element name="broker" type="set:hostname" />
             <element name="port" type="set:userPort" />
-            <element name="environmentName" type="string"/>
         </all>
     </complexType>
 
@@ -331,7 +332,6 @@
                     <all>
                         <element name="class" type="set:classname"/>
                         <element name="webapplication" type="set:directoryPath"/>
-                        <element name="deployPath" type="string"/>
                     </all>
                 </complexType>
             </element>

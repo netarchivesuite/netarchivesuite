@@ -226,7 +226,7 @@ public class HostTester extends TestCase {
         itConfig.calculateDefaultSettings(
                 TestInfo.SETTINGS_FILE.getParentFile());
         Field pwdField = ReflectUtils.getPrivateField(ItConfiguration.class,
-                                                      "jmxMonitorRolePassword");
+                                                      "jmxPassword");
         pwdField.set(itConfig, "TestPassword");
         itConfig.loadDefaultSettings(TestInfo.SETTINGS_FILE, environmentName);
         Field hostlist = ReflectUtils.getPrivateField(ItConfiguration.class,
@@ -236,7 +236,7 @@ public class HostTester extends TestCase {
             File confDir = new File(new File(TestInfo.TMPDIR, h.getName()),
                                     "conf");
             confDir.mkdirs(); // This is normally created outside writeJMXPwd
-            h.writeJMXPassword(confDir);
+            h.writeJMXPasswordFile(confDir);
             FileAsserts.assertFileContains("Should have pwd from it-conf",
                                            "monitorRole TestPassword",
                                            new File(confDir,

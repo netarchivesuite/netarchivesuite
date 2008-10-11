@@ -105,9 +105,11 @@ public class ItConfiguration {
      */
     private String initialJmxPasswordFileContents;
 
-    /** The password to access JMX monitor role.
-     */
-    private String jmxMonitorRolePassword;
+    /** The username (role) to access JMX. */
+    private String jmxUsername;
+    
+    /** The password to access JMX. */
+    private String jmxPassword;
 
     /** The list of known locations. This gets built during XML parsing.
      */
@@ -126,7 +128,6 @@ public class ItConfiguration {
     /**
      * Loads an xml file. During parsing, the instance variables above are set
      * to currect values, using a customized SAX parser.
-     * The JMX-add-on string is produced here as well.
      *
      * @param f the file to load
      */
@@ -260,15 +261,20 @@ public class ItConfiguration {
         for (Host host : hostlist) {
             SimpleXml xml = new SimpleXml(f);   
             host.setSettingsXml(xml);
-            // Update setting for the JMXmonitorRolepassword
+            // Update setting for the JMXUsername and the JMXPassword
+            
             host.overrideSetting(
-                    MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING, 
-                    jmxMonitorRolePassword);
+                    MonitorSettings.JMX_USERNAME_SETTING,
+                    jmxUsername);
+            
+            host.overrideSetting(
+                    MonitorSettings.JMX_PASSWORD_SETTING,
+                    jmxPassword);
             
             host.setLogProperties(defaultLogProperties);
             host.setJmxPasswordFileContents(initialJmxPasswordFileContents
                     .replace(JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER,
-                             jmxMonitorRolePassword));
+                             jmxPassword));
             
             Host ftpServer = getClosestService(Host.Type.ftp, host);
             Host mailServer = getClosestService(Host.Type.mail, host);
@@ -318,7 +324,7 @@ public class ItConfiguration {
                 }
                 host.getSettingsXml().save(settingsfile);
 
-                host.writeJMXPassword(subDir);
+                host.writeJMXPasswordFile(subDir);
 
                 String ext = ".sh";
                 if (host.isType(Host.Type.bitarchive)) {
@@ -872,11 +878,16 @@ public class ItConfiguration {
                 return;
             }
 
-            if (qname.equals("jmxMonitorRolePassword")) {
-                jmxMonitorRolePassword = currentValue;
+            if (qname.equals("jmxUsername")) {
+                jmxUsername = currentValue;
+                return;
+            }
+            if (qname.equals("jmxPassword")) {
+                jmxPassword = currentValue;
                 return;
             }
 
+            
             if (qname.equals("largeIndexTimeout")) {
                 try {
                     largeIndexTimeout = Long.parseLong(currentValue);

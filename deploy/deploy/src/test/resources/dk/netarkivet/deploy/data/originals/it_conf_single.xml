@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <installtype>dev</installtype>
-    <jmxMonitorRolePassword>DetErIkkeVoresSkyld</jmxMonitorRolePassword>
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>DetErIkkeVoresSkyld</jmxPassword>
     <location name="kb">
         <installdir>/home/dev</installdir>
         <installdirwindows>c:\Documents and Settings\dev</installdirwindows>

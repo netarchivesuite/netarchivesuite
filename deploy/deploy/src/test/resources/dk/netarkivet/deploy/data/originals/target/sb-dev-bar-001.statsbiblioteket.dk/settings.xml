@@ -2,6 +2,10 @@
 
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <common>
+    <!-- The name of the environment in which this code is running, e.g.
+                 PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
+                  -->
+    <environmentName>UNITTEST</environmentName>
     <!-- Common temporary directory for all applications. Some subdirs of
              this directory  must be set to have AllPermision in the
              conf/security.conf file, or the web pages won't work. -->
@@ -31,10 +35,6 @@
       <broker>kb-dev-adm-001.kb.dk</broker>
       <!-- The port the JMS connection should use -->
       <port>7676</port>
-      <!-- The name of the environment in which this code is running, e.g.
-                 PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
-                  -->
-      <environmentName>UNITTEST</environmentName>
     </jms>
     <http>
       <!-- The *unique* (per host) port number that may or may not be
@@ -128,8 +128,6 @@
         <!-- The directory or war-file containing the web application
                      for this site section.-->
         <webapplication>webpages/HarvestDefinition.war</webapplication>
-        <!-- The URL path for this section of the web interface. -->
-        <deployPath>/HarvestDefinition</deployPath>
       </siteSection>
       <siteSection>
         <!-- A subclass of SiteSection that defines this part of the
@@ -138,8 +136,6 @@
         <!-- The directory or war-file containing the web application
                      for this site section.-->
         <webapplication>webpages/History.war</webapplication>
-        <!-- The URL path for this section of the web interface. -->
-        <deployPath>/History</deployPath>
       </siteSection>
       <siteSection>
         <!-- A subclass of SiteSection that defines this part of the
@@ -148,8 +144,6 @@
         <!-- The directory or war-file containing the web application
                      for this site section.-->
         <webapplication>webpages/BitPreservation.war</webapplication>
-        <!-- The URL path for this section of the web interface. -->
-        <deployPath>/BitPreservation</deployPath>
       </siteSection>
       <siteSection>
         <!-- A subclass of SiteSection that defines this part of the
@@ -158,8 +152,6 @@
         <!-- The directory or war-file containing the web application
                      for this site section.-->
         <webapplication>webpages/QA.war</webapplication>
-        <!-- The URL path for this section of the web interface. -->
-        <deployPath>/QA</deployPath>
       </siteSection>
       <siteSection>
         <!-- A subclass of SiteSection that defines this part of the
@@ -168,8 +160,6 @@
         <!-- The directory or war-file containing the web application
                      for this site section.-->
         <webapplication>webpages/Status.war</webapplication>
-        <!-- The URL path for this section of the web interface. -->
-        <deployPath>/Status</deployPath>
       </siteSection>
     </webinterface>
     <topLevelDomains>
@@ -467,7 +457,7 @@
                  baseDir and class.-->
       <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
       <!-- The class that handles DB-specific methods -->
-      <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
+      <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
       <!-- The earliest time of day backup will be initiated, 0..24
                  hours.  At a time shortly after this, a consistent backup
                  copy of the database will be created -->
@@ -494,7 +484,7 @@
     <thisPhysicalLocation>SB</thisPhysicalLocation>
     <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
-    <monitorApplicationName>NA</monitorApplicationName>
+    <applicationName>NA</applicationName>
   </common>
   <harvester>
     <datamodel>
@@ -659,8 +649,10 @@
     <baseDir>viewerproxy</baseDir>
   </viewerproxy>
   <monitor>
-    <!--  the password used to connect to the all Mbeanservers started by the application. This password must be same as the one in jmxremote.password -->
-    <jmxMonitorRolePassword>test</jmxMonitorRolePassword>
+    <!--  the username and password used to connect to the all Mbeanservers started by the application. This must be 
+          same as the one in jmxremote.password -->
+    <jmxUsername>monitorRole</jmxUsername>
+    <jmxPassword>test</jmxPassword>
     <logging>
       <historySize>100</historySize>
     </logging>

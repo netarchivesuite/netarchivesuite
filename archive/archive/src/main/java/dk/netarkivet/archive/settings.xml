@@ -1,4 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--  
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+-->
+<!-- 
+	This file contains the default settings used by the archive module.
+-->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <archive>
         <arcrepository>
@@ -13,20 +40,18 @@
                  dir has more space than this, the bitarchive machine stops
                  listening for uploads.  This values should at the very least
                  be greater than the largest ARC file you expect to receive.
+                 The default value amounts to 190 MBytes. 
             -->
             <minSpaceLeft>200000000</minSpaceLeft>
             <!-- These are the directories where ARC files are stored
                  (in a subdir). If more than one is given, they are used from
                  one end. -->
-            <fileDir>m:\bitarchive</fileDir>
-            <fileDir>n:\bitarchive</fileDir>
-            <fileDir>o:\bitarchive</fileDir>
-            <fileDir>p:\bitarchive</fileDir>
+            <fileDir>bitarchive</fileDir>
             <!-- The frequency in milliseconds of heartbeats that are sent by
                  each BitarchiveServer to the BitarchiveMonitor. -->
             <heartbeatFrequency>1000</heartbeatFrequency>
             <!-- If we haven't heard from a bit archive within this many
-                 milliseconds, we don't excpect it to be online and won't wait
+                 milliseconds, we don't expect it to be online and won't wait
                  for them to reply on a batch job.  This number should be
                  significantly greater than heartbeatFrequency to account for
                  temporary network congestion. -->
@@ -34,7 +59,8 @@
             <!-- The BitarchiveMonitorServer will listen for BatchEndedMessages
                  for this many milliseconds before it decides that a batch job
                  is taking too long and returns just the replies it has
-                 received at that point. -->
+                 received at that point. The default value amounts to 14 days.
+            -->
             <batchMessageTimeout>1209600000</batchMessageTimeout>
             <!-- Credentials to enter in the GUI for "deleting" ARC files in
                  this bit archive -->

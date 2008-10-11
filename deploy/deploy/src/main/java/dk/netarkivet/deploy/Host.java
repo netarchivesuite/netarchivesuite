@@ -1011,7 +1011,7 @@ public class Host {
      *
      * @param confDir The directory that the password file should be written to.
      */
-    public void writeJMXPassword(File confDir) {
+    public void writeJMXPasswordFile(File confDir) {
         ArgumentNotValid.checkNotNull(confDir, "File confDir");
         ArgumentNotValid.checkTrue(confDir.isDirectory(),
                 "conf dir must exist");

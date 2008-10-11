@@ -50,7 +50,9 @@ public class CommonSettings {
     /** Common temporary directory for all applications. */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";
 
-    /** The class to use for RemoteFile objects. */
+    /** The class to use for RemoteFile objects. This class must extend the
+     * class dk.netarkivet.common.distribute.RemoteFile. 
+     */
     public static String REMOTE_FILE_CLASS
             = "settings.common.remoteFile.class";
 
@@ -59,11 +61,12 @@ public class CommonSettings {
     public static String JMS_BROKER_CLASS = "settings.common.jms.class";
 
     /**
-     * The name of the environment in which this code is running, e.g.
-     * PROD, RELEASETEST, NHC, ... Common prefix to all JMS channels.
+     * The name of the environment in which this code is running.
+     * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS channels.
+     * created in a NetarchiveSuite installation.
      */
     public static String ENVIRONMENT_NAME
-            = "settings.common.jms.environmentName";
+            = "settings.common.environmentName";
 
     /**
      * The *unique* (per host) port number that may or may not be used to serve
@@ -72,15 +75,19 @@ public class CommonSettings {
     public static String HTTP_PORT_NUMBER = "settings.common.http.port";
 
     /**
-     * The class that implements the ArcRepositoryClient.  This class will
-     * be instantiated by the ArcRepositoryClientFactory.
+     * The class that implements the ArcRepositoryClient. The class must
+     * implement the interface 
+     * dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient
+     * This class will be instantiated by the ArcRepositoryClientFactory.
      */
     public static String ARC_REPOSITORY_CLIENT
             = "settings.common.arcrepositoryClient.class";
 
     /**
-     * The class instantiated to give access to indices.  Will be created
-     * by IndexClientFactory.
+     * The class instantiated to give access to indices.  The class must
+     * implement the interface 
+     * dk.netarkivet.common.distribute.indexserver.JobIndexCache
+     * The class instantiations are manufactored by IndexClientFactory.
      */
     public static String INDEXSERVER_CLIENT
             = "settings.common.indexClient.class";
@@ -92,23 +99,21 @@ public class CommonSettings {
      */
     public static String CACHE_DIR = "settings.common.cacheDir";
 
-    // TODO: Currently only used by heritrix shutdown - move to harvester
+    // TODO Currently only used by heritrix shutdown - move to harvester
     // settings?
     /** The number of milliseconds we wait for processes to react to
      *  shutdown requests. */
     public static String PROCESS_TIMEOUT
             = "settings.common.processTimeout";
 
-    // TODO: Currently only used by harvestscheduler - move to harvester
+    // TODO Currently only used by harvestscheduler - move to harvester
     // settings?
-    /** The class that defines DB-specific methods */
+    /** The class that defines DB-specific methods. This class must  */
     public static String DB_SPECIFICS_CLASS
-            = "settings.common.database.specificsclass";
+            = "settings.common.database.class";
 
     /**
-     * URL to use to connect to the database.  If absent or empty, the URL
-     * will be constructed in a derby-specific way based on DB_NAME and
-     * HARVESTDEFINITION_BASEDIR.
+     * URL to use to connect to the database.
      */
     public static String DB_URL
             = "settings.common.database.url";
@@ -120,7 +125,6 @@ public class CommonSettings {
      */
     public static String DB_BACKUP_INIT_HOUR
             = "settings.common.database.backupInitHour";
-
 
     /**
      * The subclass of SiteSection that defines a part of the
@@ -136,32 +140,29 @@ public class CommonSettings {
     public static String SITESECTION_WEBAPPLICATION
             = "settings.common.webinterface.siteSection.webapplication";
 
-    /** The URL path for this site section. */
-    public static String SITESECTION_DEPLOYPATH
-            = "settings.common.webinterface.siteSection.deployPath";
-
-    /** The entire webinterface structure */
+    /** The entire webinterface structure. */
     public static String WEBINTERFACE_SETTINGS
             = "settings.common.webinterface";
 
     /**
      * The names of all bit archive locations in the
-     * environment, e.g., "KB" and "SB".
+     * environment, like "locationOne" and "locationTwo".
      */
     public static String ENVIRONMENT_LOCATION_NAMES
             = "settings.common.locations.location.name";
 
-    /** Default bit archive to use for batch jobs (if none is specified) */
+    /** Default bit archive to use for batch jobs (if none is specified). */
     public static String ENVIRONMENT_BATCH_LOCATION
             = "settings.common.locations.batchLocation";
 
-    /** For archiving applications, which bit archive are you part of? */
+    /** For archiving applications, determines which bit archive you are
+     * part of. */
     public static String ENVIRONMENT_THIS_LOCATION
             = "settings.common.thisPhysicalLocation";
 
     /** The name of the application, fx. "BitarchiveServerApplication". */
     public static String APPLICATIONNAME
-            = "settings.common.monitorApplicationName";
+            = "settings.common.applicationName";
 
     /**
      * The mail server to use when sending mails. Currently only used for
@@ -204,8 +205,7 @@ public class CommonSettings {
     public static String TLDS = "settings.common.topLevelDomains.tld";
     /**
      * When the length record exceeds this number, the contents of the record
-     * will be transferred using a RemoteFile. Currently set to 31 MB
-     * ( Integer.MAX_VALUE / 64) -->
+     * will be transferred using a RemoteFile.
      */
     public static String BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
             = "settings.common.repository.limitForRecordDatatransferInFile";

@@ -33,6 +33,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -46,39 +47,45 @@ public class XmlUtils {
    /** Read and parse an XML-file, and return
      * a Document object representing this object.
      * @param f a given xml file
-     * @return a Document representing the xml-file
-     * @throws IOFailure if unable to read the xml-file
+     * @return a Document representing the xml file
+     * @throws IOFailure if unable to read the xml file
      *          or unable to parse the file as XML
      */
     public static Document getXmlDoc(File f) throws IOFailure {
+        ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
         if (!f.canRead()) {
-            log.debug("Could not read file: " + f);
-            throw new IOFailure("Could not read file:" + f);
+            log.debug("Could not read file: '" + f + "'");
+            throw new IOFailure("Could not read file: '" + f + "'");
         }
 
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            log.warn("Could not parse file as XML: " + f, e);
-            throw new IOFailure("Could not parse file as XML:" + f, e);
+            log.warn("Could not parse the file as XML: '" + f + "'", e);
+            throw new IOFailure(
+                    "Could not parse the file as XML: '" + f + "'", e);
         }
    }
 
-    /** Read and parse an XML-stream, and return
+    /** Read and parse an XML stream, and return
      * a Document object representing this object.
      * @param resourceAsStream a given xml document
-     * @return a Document representing the xml-document
-     * @throws IOFailure if unable to read the xml-document
+     * @return a Document representing the xml document
+     * @throws IOFailure if unable to read the xml document
      *          or unable to parse the document as XML
      */
     public static Document getXmlDoc(InputStream resourceAsStream) {
+        ArgumentNotValid.checkNotNull(resourceAsStream,
+                "InputStream resourceAsStream");
         SAXReader reader = new SAXReader();
         try {
             return reader.read(resourceAsStream);
         } catch (DocumentException e) {
-            log.warn("Could not parse file as XML: " + resourceAsStream, e);
-            throw new IOFailure("Could not parse file as XML:"
+            log.warn("Could not parse inputstream as XML: "
+                    + resourceAsStream, e);
+            throw new IOFailure(
+                    "Could not parse inputstream as XML:"
                                 + resourceAsStream, e);
         }
     }
@@ -89,12 +96,18 @@ public class XmlUtils {
      * @param doc   the Document, which is being modified
      * @param xpath the given XPath
      * @param value the given value
+     * @throws IOFailure If the given XPath was not found in the document
      */
     public static void setNode(Document doc, String xpath, String value) {
+        ArgumentNotValid.checkNotNull(doc, "Document doc");
+        ArgumentNotValid.checkNotNullOrEmpty(xpath, "String xpath");
+        ArgumentNotValid.checkNotNull(value, "String value");
+        
+        
         Node xpathNode = doc.selectSingleNode(xpath);
         if (xpathNode == null) {
-            throw new IOFailure("Element " + xpath
-                                + "could not be found in the document '"
+            throw new IOFailure("Element '" + xpath
+                                + "' could not be found in the document '"
                                 + doc.getRootElement().getName() + "'!");
         }
         xpathNode.setText(value);

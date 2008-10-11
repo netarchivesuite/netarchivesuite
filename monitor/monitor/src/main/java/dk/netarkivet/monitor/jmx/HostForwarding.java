@@ -65,11 +65,6 @@ public class HostForwarding<T> {
         new HashMap<String, Set<HostEntry>>();
 
     /**
-     * The username used to connect to the MBeanservers.
-     */
-    public static final String JMX_MONITOR_ROLE_USERNAME = "monitorRole";
-
-    /**
      * The RMI port is presently set to the JMX-port + this increment.
      */
     public static final int JMX_RMI_INCREMENT = 100;
@@ -85,6 +80,14 @@ public class HostForwarding<T> {
      * The interface the remote mbeans should implement.
      */
     private final Class<T> asInterface;
+    
+    /**
+     * The username for JMX read from either a System property, 
+     * the overriding settings given by the installer, 
+     * or the default value stored in src/dk/netarkivet/monitor/settings.xml.
+     */
+    private String jmxUsername;
+    
     /**
      * The password for JMX read from either a System property, 
      * the overriding settings given by the installer, 
@@ -160,15 +163,16 @@ public class HostForwarding<T> {
      * on the remote MBeanservers in the given MBeanserver.
      */
     private synchronized void updateJmx() {
-        // Update variable jmxPassword if the 
-        // MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING is changed
-        String newJmxPassword = Settings.get(
-                MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING); 
-        if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
-            jmxPassword = newJmxPassword;
-            log.info("Setting '" 
-                    + MonitorSettings.JMX_MONITOR_ROLE_PASSWORD_SETTING
-                    + "' has been updated with value from a System property "
+        // Update username/password setting, if either of the settings
+        // MonitorSettings.JMX_PASSWORD_SETTING,
+        // MonitorSettings.JMX_USERNAME_SETTING have changed
+        
+        boolean changed = updateJmxUsernameAndPassword();
+        if (changed) {
+            log.info("Settings '" 
+                    + MonitorSettings.JMX_USERNAME_SETTING
+                    + "' and '" +  MonitorSettings.JMX_PASSWORD_SETTING + 
+                    "' has been updated with value from a System property "
                     + "or one of the files: " + StringUtils.conjoin(",",
                             Settings.getSettingsFiles()));
         }
@@ -211,6 +215,31 @@ public class HostForwarding<T> {
             log.info("Found " + newJmxHosts.size() + " new JMX hosts");
             registerRemoteMbeans(newJmxHosts);
         }
+    }
+    
+    /** 
+     * Update JMX username and password.
+     * 
+     * @return true if the username and/or the password were changed
+     */
+    private boolean updateJmxUsernameAndPassword() {
+        boolean changed = false;
+        String newJmxUsername = Settings.get(
+                MonitorSettings.JMX_USERNAME_SETTING);
+        
+        String newJmxPassword = Settings.get(
+                MonitorSettings.JMX_PASSWORD_SETTING);
+
+        if (jmxUsername == null || !jmxUsername.equals(newJmxUsername)) {
+            jmxUsername = newJmxUsername;
+            changed = true;
+        }
+        
+        if (jmxPassword == null || !jmxPassword.equals(newJmxPassword)) {
+            jmxPassword = newJmxPassword;
+            changed = true;
+        }
+        return changed;
     }
 
     /**
@@ -287,7 +316,7 @@ public class HostForwarding<T> {
                 hostEntry.getName(),
                 hostEntry.getJmxPort(),
                 hostEntry.getRmiPort(),
-                JMX_MONITOR_ROLE_USERNAME, jmxPassword);
+                jmxUsername, jmxPassword);
 
         remoteObjectNames = (Set<ObjectName>) connection.query(mBeanQuery);
         for (ObjectName name : remoteObjectNames) {
@@ -445,7 +474,7 @@ public class HostForwarding<T> {
                         hostEntry.getName(),
                         hostEntry.getJmxPort(),
                         hostEntry.getRmiPort(),
-                        JMX_MONITOR_ROLE_USERNAME, jmxPassword);
+                        jmxUsername, jmxPassword);
             } catch (Exception e) {
                 throw new IOFailure("Could not connect to host '"
                        + hostEntry.getName() + ":" + hostEntry.getJmxPort()

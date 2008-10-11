@@ -57,7 +57,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.HARVESTDEFINITION_JSP_DIR);
-        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.HARVESTDEFINITION_WEBBASE);
+        //Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.HARVESTDEFINITION_WEBBASE);
         Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
     }
@@ -96,16 +96,6 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         try {
             gui = GUIWebServer.getInstance();
             fail("Should throw an error on invalid port number");
-        } catch (IOFailure e) {
-            //expected
-        }
-    }
-
-    public void testSettingsWrongContext() {
-        Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, "not_a_context");
-        try {
-            gui = GUIWebServer.getInstance();
-            fail("Should throw an error on invalid context");
         } catch (IOFailure e) {
             //expected
         }
