@@ -484,7 +484,7 @@
         <thisPhysicalLocation>SB</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
-        <applicationName>NA</monitorApplicationName>
+        <applicationName>NA</applicationName>
     </common>
     <harvester>
         <datamodel>

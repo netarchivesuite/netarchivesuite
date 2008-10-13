@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+-->
+<!-- 
+	This file contains the settings needed to run our unittests.
+-->
+<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<common> 
+        <tempDir>./tests/commontempdir</tempDir>
+        <locations>
+            <!-- The names of all bit archive locations in the
+                 environment, e.g., "KB" and "SB". -->
+            <location>
+                <name>SB</name>
+            </location>
+            <location>
+                <name>KB</name>
+            </location>
+            <!-- Default bit archive to use for batch jobs (if none is specified) -->
+            <batchLocation>KB</batchLocation>
+        </locations>
+        <thisPhysicalLocation>SB</thisPhysicalLocation>
+        <!-- The name of the application, fx. "BitarchiveServerApplication".
+             The monitor puts this with each log message -->
+        <applicationName>NA</applicationName>
+    </common>
+</settings>
