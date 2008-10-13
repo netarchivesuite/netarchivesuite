@@ -156,7 +156,7 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
         log.debug("Getting a connection to server '" + server 
                 + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
-                + " using username/passwd=" + userName + "/" +  password);
+                + " using username=" + userName);
         JMXServiceURL jmxServiceUrl = getUrl(server, jmxPort, rmiPort);
         Map<String,String[]> credentials =
             packageCredentials(userName, password);

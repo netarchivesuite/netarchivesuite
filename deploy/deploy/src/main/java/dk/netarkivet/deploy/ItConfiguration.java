@@ -97,13 +97,13 @@ public class ItConfiguration {
 
     /**
      * Name of the logging properties template file. Set by method
-     * "calculateDefaultSettings".
+     * calculateDefaultSettings().
      */
     private String defaultLogProperties;
 
     /** The default contents of the JMX passwords file.
      */
-    private String initialJmxPasswordFileContents;
+    private List<String> initialJmxPasswordFileContents;
 
     /** The username (role) to access JMX. */
     private String jmxUsername;
@@ -111,16 +111,9 @@ public class ItConfiguration {
     /** The password to access JMX. */
     private String jmxPassword;
 
-    /** The list of known locations. This gets built during XML parsing.
+    /** The list of known locations. This list gets built during XML parsing.
      */
     List<String> locations = new ArrayList<String>();
-
-    /** The text in the default JMX password file that will be replaced in
-     * loadDefaultSettings() with the actual password for the monitor role as
-     * read from it_conf.xml.
-     */
-    private static final String JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER =
-            "JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER";
 
     /** How long to wait for large index generation jobs to time out. */
     private long largeIndexTimeout;
@@ -201,8 +194,8 @@ public class ItConfiguration {
         }
         try {
             initialJmxPasswordFileContents =
-                FileUtils.readFile(jmxPasswordsFile);
-        } catch (IOException e) {
+                FileUtils.readListFromFile(jmxPasswordsFile);
+        } catch (IOFailure e) {
             throw new IOFailure("Could not read JMX password file", e);
         }
     }
@@ -272,9 +265,23 @@ public class ItConfiguration {
                     jmxPassword);
             
             host.setLogProperties(defaultLogProperties);
-            host.setJmxPasswordFileContents(initialJmxPasswordFileContents
-                    .replace(JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER,
-                             jmxPassword));
+            
+            //Remove any existing line in initialJmxPasswordFileContents
+            //starting with the given username.
+            //And append to the file a line "username  password"
+            StringBuffer jmxPasswordFilecontents = new StringBuffer();
+            for (String line: initialJmxPasswordFileContents) {
+                if (!(line.trim().startsWith(jmxUsername))) {
+                    jmxPasswordFilecontents.append(line);
+                    jmxPasswordFilecontents.append("\n");
+                }
+            }
+            jmxPasswordFilecontents.append(jmxUsername);
+            jmxPasswordFilecontents.append(" ");
+            jmxPasswordFilecontents.append(jmxPassword);
+            jmxPasswordFilecontents.append("\n");
+            
+            host.setJmxPasswordFileContents(jmxPasswordFilecontents.toString());
             
             Host ftpServer = getClosestService(Host.Type.ftp, host);
             Host mailServer = getClosestService(Host.Type.mail, host);
@@ -659,7 +666,7 @@ public class ItConfiguration {
      */
     public String toString() {
         //Note no separator: hosts end with newline already.
-        return "It configuration:\n" + StringUtils.conjoin("", hostlist );
+        return "It configuration:\n" + StringUtils.conjoin("", hostlist);
     }
 
     /** Write security policy files in dir that allows our code

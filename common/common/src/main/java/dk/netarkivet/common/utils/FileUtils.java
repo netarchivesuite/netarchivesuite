@@ -1083,7 +1083,7 @@ public class FileUtils {
      * the Unix sort() command.
      *
      * @param file The file containing the unsorted data.
-     * @param tmpCrawlLog The file that the sorted data can be put into.
+     * @param toFile The file that the sorted data can be put into.
      * @throws IOFailure if there were errors running the sort process.
      */
     public static void sortCrawlLog(File file, File toFile) {

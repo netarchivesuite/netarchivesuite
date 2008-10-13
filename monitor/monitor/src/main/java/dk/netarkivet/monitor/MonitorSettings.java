@@ -57,8 +57,6 @@ public class MonitorSettings {
     public static String JMX_PASSWORD_SETTING
             = "settings.monitor.jmxPassword";
     
-    
-    
     /**
      * The number of logmessages from each application visible in the
      * monitor.
