@@ -114,7 +114,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @return A JMSConnection
      * @throws IOFailure when connection to JMS broker failed
      */
-    public static synchronized JMSConnectionSunMQ getInstance() throws UnknownID, IOFailure {
+    public static synchronized JMSConnectionSunMQ getInstance()
+    throws UnknownID, IOFailure {
         if (instance == null) {
             instance = new JMSConnectionSunMQ();
         }
@@ -202,7 +203,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Close the connection and reset the singleton
+     * Close the connection and reset the singleton.
      */
     public void cleanup() {
         synchronized (JMSConnectionSunMQ.class) {
@@ -210,11 +211,21 @@ public class JMSConnectionSunMQ extends JMSConnection {
             super.cleanup();
         }
     }
-
+    
+    /**
+     * Get the host where the currently used JMSbroker resides.
+     * Only used by logging
+     * @return the host where the currently used JMSbroker resides
+     */
     public String getHost()  {
         return Settings.get(JMS_BROKER_HOST);
     }
-
+    
+    /**
+     * Get the number of the port which the currently used JMSbroker uses.
+     * Only used by logging
+     * @return the number of the port which the currently used JMSbroker uses.
+     */
     public int getPort()  {
         return Settings.getInt(JMS_BROKER_PORT);
     }
@@ -243,7 +254,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 || errorcode.equals(RECEIVED_GOODBYE_FROM_BROKER)) {
             performReconnect();
         } else {
-            log.warn("Exception not handled. Don't know how to handle exceptions with errorcode "
+            log.warn("Exception not handled. "
+                    + "Don't know how to handle exceptions with errorcode "
                     + errorcode);
         }
     }
@@ -275,7 +287,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 log.warn("Nr #" + tries
                         + " attempt at reconnect failed with exception. ", e);
                 if (tries < JMS_MAXTRIES) {
-                    log.debug("Will sleep a while before trying to reconnect again");
+                    log.debug("Will sleep a while before trying to"
+                        + "reconnect again");
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
@@ -284,7 +297,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
         if (!operationSuccessful) {
             // Tell everybody, that we are not trying to reconnect any longer
             reconnectInProgress.compareAndSet(true, false);
-            throw new IOFailure("Reconnect failed with exception ", lastException);
+            throw new IOFailure("Reconnect failed with exception ",
+                    lastException);
         }
 
         // Add listeners already stored in the consumers map
@@ -295,15 +309,19 @@ public class JMSConnectionSunMQ extends JMSConnection {
                 boolean isTopic = Channels.isTopic(channelName);
                 MessageConsumer mc = consumers.get(consumerkey);
                 if (isTopic) {
-                    TopicSubscriber myTopicSubscriber = myTSess.createSubscriber(getTopic(channelName));
-                    myTopicSubscriber.setMessageListener(mc.getMessageListener());
+                    TopicSubscriber myTopicSubscriber 
+                        = myTSess.createSubscriber(getTopic(channelName));
+                    myTopicSubscriber.setMessageListener(
+                            mc.getMessageListener());
                 } else {
                     Queue queue = getQueue(channelName);
-                    QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
+                    QueueReceiver myQueueReceiver
+                        = myQSess.createReceiver(queue);
                     myQueueReceiver.setMessageListener(mc.getMessageListener());
                 }
             }
-            log.debug("Using this() as exceptionhandler for the two JMS Connections");
+            log.debug("Using this() as exceptionhandler for the two JMS"
+                + "Connections");
             myQConn.setExceptionListener(this);
             myTConn.setExceptionListener(this);
         } catch (JMSException e) {
@@ -324,29 +342,25 @@ public class JMSConnectionSunMQ extends JMSConnection {
         try {
             myQSess.close();
         } catch (Exception e) {
-            // Ignore warnings: It does not matter at this time
-            // Whether or not we can't close the previous session.
+            log.debug("Unable to close current Queue Session", e);
         }
 
         try {
             myQConn.close();
         } catch (Exception e) {
-            // Ignore warnings: It does not matter at this time
-            // Whether or not we can't close the previous connection.
+            log.debug("Unable to close current Queue Connection", e);
         }
 
         try {
             myTSess.close();
         } catch (Exception e) {
-            // Ignore warnings: It does not matter at this time
-            // Whether or not we can't close the previous session.
+            log.debug("Unable to close current Topic Session", e);
         }
 
         try {
             myTConn.close();
         } catch (Exception e) {
-            // Ignore warnings: It does not matter at this time
-            // Whether or not we can't close the previous connection.
+            log.debug("Unable to close current Topic Connection", e);
         }
 
         establishConnectionAndSessions();

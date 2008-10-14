@@ -79,12 +79,13 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
      */
     private String ftpServerName = Settings.get(FTP_SERVER_NAME);
 
+    /** The ftp-server port. */
     private final int ftpServerPort = Settings.getInt(
             FTP_SERVER_PORT);
-
+    /** The username used to connect to the ftp-server. */
     private final String ftpUserName = Settings.get(
             FTP_USER_NAME);
-
+    /** The password used to connect to the ftp-server. */
     private final String ftpUserPassword = Settings.get(
             FTP_USER_PASSWORD);
 
@@ -106,21 +107,21 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The default FTP-server used. */
+    /** The setting for the FTP-server used. */
     public static String FTP_SERVER_NAME
             = "settings.common.remoteFile.serverName";
-    /** The default FTP-server port used. */
+    /** The setting for the FTP-server port used. */
     public static String FTP_SERVER_PORT
             = "settings.common.remoteFile.serverPort";
-    /** The default FTP username. */
+    /** The setting for the FTP username. */
     public static String FTP_USER_NAME
             = "settings.common.remoteFile.userName";
-    /** The default FTP password. * */
+    /** The setting for the FTP password. * */
     public static String FTP_USER_PASSWORD
             = "settings.common.remoteFile.userPassword";
     /**
-     * The number of times FTPRemoteFile should try before giving up a copyTo
-     * operation.
+     * The setting for the number of times FTPRemoteFile should try before
+     * giving up a copyTo operation.
      */
     public static final String FTP_COPYTO_RETRIES_SETTINGS
             = "settings.common.remoteFile.retries";

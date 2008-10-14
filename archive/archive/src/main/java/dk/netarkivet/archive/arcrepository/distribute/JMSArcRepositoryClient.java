@@ -62,13 +62,18 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
         ArcRepositoryClient {
+    
+    /** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml";
+    
     /*
      * The static initialiser is called when the class is loaded.
      * It will add default values for all settings defined in this class, by
      * loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings("dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml");
+        Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
 
     /** the one and only JMSArcRepositoryClient instance. */
@@ -98,20 +103,20 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     // will not run.
 
     /**
-     * How many milliseconds we will wait before giving up on a lookup request
-     * to the Arcrepository
+     * The setting for how many milliseconds we will wait before giving up
+     * on a lookup request to the Arcrepository.
      */
     public static final String ARCREPOSITORY_GET_TIMEOUT
             = "settings.common.arcrepositoryClient.getTimeout";
     /**
-     * Number of times to try sending a store message before failing,
-     * including the first attempt.
+     * The setting for the number of times to try sending a store message
+     * before failing, including the first attempt.
      */
     public static String ARCREPOSITORY_STORE_RETRIES
             = "settings.common.arcrepositoryClient.storeRetries";
     /**
-     * Timeout in milliseconds before retrying when calling
-     * ArcRepositoryClient.store()
+     * the setting for the timeout in milliseconds before retrying when calling
+     * {@link ArcRepositoryClient#store(File)}.
      */
     public static final String ARCREPOSITORY_STORE_TIMEOUT
             = "settings.common.arcrepositoryClient.storeTimeout";
@@ -432,9 +437,10 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param credentials The credentials used to delete the file
      * @throws ArgumentNotValid if arguments are null or
      *  equal to the empty string
-     * @throws IOFailure if we could not delete the remote file, or 
+     * @throws IOFailure if we could not delete the remote file, ors
      * there was no response to our RemoveAndGetFileMessage within the allotted
-     * time defined by the setting {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
+     * time defined by the setting 
+     * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      * @return The file that was removed
      */
     public File removeAndGetFile(String fileName, String bitarchiveName,

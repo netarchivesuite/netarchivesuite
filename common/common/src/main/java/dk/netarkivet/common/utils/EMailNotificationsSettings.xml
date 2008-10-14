@@ -24,14 +24,16 @@
  */
 -->
 <!-- 
-	This file contains the default settings used by the viewerproxy module.
+	This file contains the default settings used by the EmailNotifications class.
 -->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <viewerproxy>
-        <!-- The main directory for the ViewerProxy, used for storing the Lucene
-             index for the jobs being viewed. This directory can be used by multiple
-     		 ViewerProxy applications running on the same machine.
-     	-->
-        <baseDir>viewerproxy</baseDir>
-    </viewerproxy>
+    <common>
+    	<!-- Default settings for the EmailNotifications class -->
+    	<notifications>
+            <!-- The receiver of emails -->
+            <receiver>root@localhost</receiver>
+            <!-- The stated sender of emails  (and receiver of bounces)-->
+            <sender>root@localhost</sender>
+        </notifications>
+    </common>
 </settings>

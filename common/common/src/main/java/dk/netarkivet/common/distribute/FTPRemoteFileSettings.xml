@@ -35,9 +35,9 @@
             <!-- The default FTP-server port used -->
             <serverPort>21</serverPort>
             <!-- The default FTP username -->
-            <userName>exampleusername</userName>
+            <userName>anonymous</userName>
             <!-- The default FTP password -->
-            <userPassword>examplepassword</userPassword>
+            <userPassword>anonymous</userPassword>
             <!-- The number of times FTPRemoteFile should try before giving up
                  a copyTo operation. We augment FTP with checksum checks. -->
             <retries>3</retries>

@@ -37,20 +37,18 @@
              this directory  must be set to have AllPermision in the
              conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
-        <!-- FTP connection data-->
-        <remoteFile xsi:type="ftpremotefile">
-            <!-- The class to use for RemoteFile objects. -->
-            <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+    	<!-- Defines the method for transferring files around. The default is using http  -->
+        <remoteFile xsi:type="httpremotefile">
+            <!-- The class to use for RemoteFile objects. This class must implement
+            the dk.netarkivet.common.distribute.RemoteFile interface 
+            -->
+            <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
         </remoteFile>
         <!-- Connection data for JMS-->
         <jms>
             <!-- Selects the broker class to be used. Must be a subclass of
             dk.netarkivet.common.distribute.JMSConnection. -->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
-            <!-- The JMS broker host contacted by the JMS connection -->
-            <broker>localhost</broker>
-            <!-- The port the JMS connection should use -->
-            <port>7676</port>
         </jms>
         <http>
             <!-- The *unique* (per host) port number that may or may not be
@@ -71,10 +69,6 @@
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
-            <!-- The amount of time, in milliseconds, we should wait for replies
-                 when issuing a call to generate an index over som jobs.
-             -->
-            <indexRequestTimeout>43200000</indexRequestTimeout>
         </indexClient>
         <!-- The name of the directory where cache data global to the entire
              machine can be stored.  Various kinds of caches should be stored in
@@ -87,10 +81,6 @@
         <notifications>
             <!-- Which class to instantiate to handle error notifications -->
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
-            <!-- The receiver of emails -->
-            <receiver>root@localhost</receiver>
-            <!-- The stated sender of emails  (and receiver of bounces)-->
-            <sender>root@localhost</sender>
         </notifications>
         <!-- Settings for sending email. Currently mail is only used for email
          notifications. -->

@@ -30,10 +30,25 @@ import dk.netarkivet.common.CommonSettings;
 
 /**
  * Handles serious errors by sending email.
- *
  */
 
 public class EMailNotifications extends Notifications {
+    
+    /** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/common/utils/EmailNotificationsSettings.xml";
+
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+    
     /** The email receiver of the errors. */
     private static final String MAIL_RECEIVER = Settings.get(
             CommonSettings.MAIL_RECEIVER);

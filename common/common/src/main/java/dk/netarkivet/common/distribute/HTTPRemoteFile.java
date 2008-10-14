@@ -62,7 +62,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
         );
     }
 
-    /** The host name this file orignated on. */
+    /** The name of the host this file originated on. */
     protected final String hostname;
     /** The url that exposes this remote file. */
     protected final URL url;
@@ -75,7 +75,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** HTTP remotefile port number. */
+    /** The setting for the HTTP remotefile port number. */
     public static String HTTPREMOTEFILE_PORT_NUMBER
             = "settings.common.remoteFile.port";
 
@@ -185,7 +185,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
      * If the file is not set to be able to be transferred multiple times, it is
      * cleaned up after the transfer.
      * @return An input stream for the remote file.
-     * @throws IOFailure on I/O trouble gemerating inputstream for remote file.
+     * @throws IOFailure on I/O trouble generating inputstream for remote file.
      * Also, the returned remote file will throw IOFailure on close, if
      * checksums are requested, but do not match.
      */

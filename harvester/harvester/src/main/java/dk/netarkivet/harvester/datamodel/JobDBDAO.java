@@ -92,7 +92,8 @@ public class JobDBDAO extends JobDAO {
         }
         
         if (job.getJobID() != null) {
-            // If not, we're still migrating from XML.
+            log.warn("The jobId for the job is already set. "
+                + "This should probably never happen.");
         } else {
             job.setJobID(generateNextID());
         }

@@ -58,6 +58,22 @@ import dk.netarkivet.common.utils.ZipUtils;
  */
 public class IndexRequestClient extends MultiFileBasedCache<Long>
         implements JobIndexCache {
+    
+    /** The default place in classpath where the settings file can be found. */
+    private static String DEFAULT_SETTINGS_CLASSPATH
+            = "dk/netarkivet/archive/indexserver/distribute/IndexRequestClientSettings.xml";
+
+    /*
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
+    static {
+        Settings.addDefaultClasspathSettings(
+                DEFAULT_SETTINGS_CLASSPATH
+        );
+    }
+    
     /**
      * Synchronizer used to make requests.
      */
@@ -78,8 +94,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      */
     private Log log = LogFactory.getLog(getClass().getName());
     /**
-     * The amount of time, in milliseconds, we should wait for replies when
-     * issuing a call to generate an index over som jobs.
+     * Setting for the amount of time, in milliseconds, we should wait for replies when
+     * issuing a call to generate an index over some jobs.
      */
     public static final String INDEXREQUEST_TIMEOUT
             = "settings.common.indexClient.indexRequestTimeout";
