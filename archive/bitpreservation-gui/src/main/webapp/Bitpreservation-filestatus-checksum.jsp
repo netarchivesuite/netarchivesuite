@@ -110,6 +110,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <%
             if (fs.isAdminCheckSumOk()) {
                 List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
+                // Check that at most one checksum were returned from 
+                // location 'bitarchive' for this file, and that this checksum 
+                // is NOT equal to the one stored in admin data.
                 if (checksum.size() == 1 
                     && !checksum.get(0).equals(fs.getAdminChecksum())) {
                    // Remove file action
@@ -119,13 +122,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                     <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
                     <input type="submit" value="<fmt:message key="replace.file.in.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
                     <%
+                    // Either (1) no checksums or more than one checksum were returned from location 'bitarchive' for this file
+                    // Or (2) the checksum returned is equal to the one stored in admin data
                 } else {
+                	// Check that case (2) is not true 
                     if (!(checksum.size() == 1 
                           && checksum.get(0).equals(fs.getAdminChecksum()))) {
                         %>
                         <fmt:message key="unable.to.correct"/>
                         <%
-                    } else { //checksum is corrected and ok
+                    } else { //case (2): checksum is already correct and ok
                         //remove file from wrongFiles list
                     }
                 }
