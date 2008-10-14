@@ -444,9 +444,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
             printsummary="withOutAndErr">
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
-            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
-            <jvmarg value="-Ddk.netarkivet.environment.environmentName=CLOVER"/>
-        	<jvmarg value="-Ddk.netarkivet.ftp.serverName=localhost"/>
+            <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
+            <jvmarg value="-Dsettings.common.jms.broker=localhost"/>
+            <jvmarg value="-Dsettings.common.environmentName=CLOVER"/>
+            <jvmarg value="-Ddk.netarkivet.ftp.serverName=localhost"/>
             <jvmarg value="-Ddk.netarkivet.testutils.runningAs=CLOVER"/>
             <classpath refid="clover.jars.path"/>
             <formatter type="brief" usefile="false"/>
