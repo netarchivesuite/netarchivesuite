@@ -30,13 +30,15 @@
     <harvester>
         <datamodel>
             <domain>
-                <!-- Default seed list to use when new domains are created -->
+                <!-- Default name of the seed list to use when new domains are created -->
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
                 <!-- The name of a configuration that is created by default and
                      which is initially used for snapshot harvests-->
                 <defaultConfig>defaultconfig</defaultConfig>
                 <!-- Name of order xml template used for domains if nothing
-                 else is specified (e.g. newly created configrations use this) -->
+                 else is specified. The newly created configurations use this.
+                 This template must exist before harvesting can commence. 
+                -->
                 <defaultOrderxml>default_orderxml</defaultOrderxml>
                 <!-- Default download rate for domain configuration.
                  Not currently enforced. -->
@@ -62,25 +64,32 @@
                  where we don't know any better.  This number should grow over
                  time, as of end of 2005 empirical data shows 38000 -->
             <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-            <!-- Initial guess of #objects in an unknown domain -->
+            <!--  The initial guess of the domain size(number of objects) of
+     			an unknown domain.
+     		-->
             <maxDomainSize>5000</maxDomainSize>
             <jobs><!-- One Job corresponds to a Heritrix run -->
                 <!-- The maximum allowed relative difference in expected number
-                     of objects retrieved in a single job definition.  Set to
-                     MAX_LONG for no splitting -->
+                     of objects retrieved in a single job definition. 
+                     To avoid job splitting, set the value as Long.MAX_VALUE.
+                     -->
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
                 <!-- Size differences for jobs below this threshold are ignored,
                      regardless of the limits for the relative size difference.
-                     Set to MAX_LONG for no splitting. -->
+                     To avoid job splitting, set the value as Long.MAX_VALUE.
+                     -->
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
                 <!-- When this limit is exceeded no more configurations may be
-                     added to a job. Set to MAX_LONG for no splitting. -->
+                     added to a job. 
+                     To avoid job splitting, set the value as Long.MAX_VALUE.
+                     -->
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <!-- How many domain configurations we will process in one go before
                  making jobs out of them.  This amount of domains will be stored
-                 in memory at the same time.  Set to MAX_LONG for no job
-                 splitting. -->
+                 in memory at the same time.  
+                 To avoid job splitting, set the value as Long.MAX_VALUE.
+            -->
             <configChunkSize>10000</configChunkSize>
         </scheduler>
         <harvesting>
@@ -97,9 +106,11 @@
                  here if any data remains, either due to failed uploads or
                  because it wasn't attempted uploaded. -->
             <oldjobsDir>oldjobs</oldjobsDir>
-            <!-- Pool to take jobs from -->
+            <!-- Pool to take jobs from. There are two pools to choose from: 
+            	HIGHPRIORITY (pool for selective harvest jobs), 
+            	and LOWPRIORITY (pool for snapshot harvest jobs)
+            -->
             <queuePriority>HIGHPRIORITY</queuePriority>
-            <!-- When to stop Heritrix, timeouts in ms. -->
             <heritrix>
                 <!-- The timeout setting for aborting a crawl based on
                     crawler-inactivity. If the crawler is inactive for this

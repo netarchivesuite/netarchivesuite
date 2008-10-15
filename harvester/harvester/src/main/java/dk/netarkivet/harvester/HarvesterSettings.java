@@ -40,6 +40,7 @@ public class HarvesterSettings {
     static {
         Settings.addDefaultClasspathSettings(
                 DEFAULT_SETTINGS_CLASSPATH
+           
         );
     }
 
@@ -47,7 +48,7 @@ public class HarvesterSettings {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** Default seed list to use when new domains are created. */
+    /** Default name of the seedlist to use when new domains are created. */
     public static String DEFAULT_SEEDLIST
             = "settings.harvester.datamodel.domain.defaultSeedlist";
     /**
@@ -58,7 +59,8 @@ public class HarvesterSettings {
             = "settings.harvester.datamodel.domain.defaultConfig";
     /**
      * Name of order xml template used for domains if nothing
-     * else is specified (e.g. newly created configrations use this)
+     * else is specified. The newly created configurations use this.
+     * This template must exist before harvesting can commence
      */
     public static String DOMAIN_DEFAULT_ORDERXML
             = "settings.harvester.datamodel.domain.defaultOrderxml";
@@ -96,32 +98,37 @@ public class HarvesterSettings {
      */
     public static String EXPECTED_AVERAGE_BYTES_PER_OBJECT
             = "settings.harvester.scheduler.expectedAverageBytesPerObject";
-    /** Initial guess of #objects in an unknown domain */
+    
+    /** The initial guess of the domain size(number of objects) of
+     * an unknown domain. */
     public static String MAX_DOMAIN_SIZE
-            = "settings.harvester.scheduler.maxDomainSize";
+            = "settings.harvester.scheduler.maxDomainSize";   
+    
     /**
      * The maximum allowed relative difference in expected number of objects
-     * retrieved in a single job definition.  Set to MAX_LONG for no splitting.
-     */
+     * retrieved in a single job definition.
+     * To avoid job splitting, set the value as Long.MAX_VALUE.
+     */ 
     public static String JOBS_MAX_RELATIVE_SIZE_DIFFERENCE
             = "settings.harvester.scheduler.jobs.maxRelativeSizeDifference";
     /**
      * Size differences for jobs below this threshold are ignored,
-     * regardless of the limits for the relative size difference.  Set to
-     * MAX_LONG for no splitting.
+     * regardless of the limits for the relative size difference. 
+     * To avoid job splitting, set the value as Long.MAX_VALUE.
      */
     public static String JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE
             = "settings.harvester.scheduler.jobs.minAbsoluteSizeDifference";
     /**
      * When this limit is exceeded no more configurations may be added to a job.
-     * Set to MAX_LONG for no splitting.
+     * To avoid job splitting, set the value as Long.MAX_VALUE.
      */
     public static String JOBS_MAX_TOTAL_JOBSIZE
             = "settings.harvester.scheduler.jobs.maxTotalSize";
     /**
      * How many domain configurations we will process in one go before
      * making jobs out of them.  This amount of domains will be stored in
-     * memory at the same time.  Set to MAX_LONG for no job splitting.
+     * memory at the same time.  To avoid job splitting, set this
+     * value as Long.MAX_VALUE.
      */
     public static String MAX_CONFIGS_PER_JOB_CREATION
             = "settings.harvester.scheduler.configChunkSize";
@@ -132,11 +139,11 @@ public class HarvesterSettings {
     public static String HARVEST_CONTROLLER_SERVERDIR
             = "settings.harvester.harvesting.serverDir";
     /**
-     * Check, that the serverdir has an adequate amount of bytes
-     * available before accepting any harvest-jobs.
+     * The minimum amount of free bytes in the serverDir
+       required before accepting any harvest-jobs.
      */
     public static String HARVEST_SERVERDIR_MINSPACE
-    		= "settings.harvester.harvesting.minSpaceLeft";
+            = "settings.harvester.harvesting.minSpaceLeft";
     /**
      * The directory in which data from old jobs is kept after uploading.  Each
      * directory from serverDir will be moved to here if any data remains,
@@ -144,7 +151,10 @@ public class HarvesterSettings {
      */
     public static String HARVEST_CONTROLLER_OLDJOBSDIR
             = "settings.harvester.harvesting.oldjobsDir";
-    /** Pool to take jobs from */
+    /** Pool to take jobs from. There are two pools to choose from, labelled
+     *  "HIGHPRIORITY" (pool for selective harvest jobs), 
+     *  and "LOWPRIORITY" (pool for snapshot harvest jobs) respectively.
+     */
     public static String HARVEST_CONTROLLER_PRIORITY
             = "settings.harvester.harvesting.queuePriority";
     /**
@@ -162,14 +172,17 @@ public class HarvesterSettings {
      */
     public static String CRAWLER_TIMEOUT_NON_RESPONDING
             = "settings.harvester.harvesting.heritrix.noresponseTimeout";
-    /** The name used to access the Heritrix GUI */
+    /** The name used to access the Heritrix GUI. */
     public static String HERITRIX_ADMIN_NAME
             = "settings.harvester.harvesting.heritrix.adminName";
-    /** The password used to access the Heritrix GUI */
+    /** The password used to access the Heritrix GUI. */
     public static String HERITRIX_ADMIN_PASSWORD
             = "settings.harvester.harvesting.heritrix.adminPassword";
     /** Port used to access the Heritrix web user interface.
-     *  This port must not be used by anything else on the machine. */
+     *  This port must not be used by anything else on the machine. 
+     *  Note that apart from pausing a job, modifications done directly on
+     *  Heritrix may cause unexpected breakage.
+     */
     public static String HERITRIX_GUI_PORT
             = "settings.harvester.harvesting.heritrix.guiPort";
     /** The port that Heritrix uses to expose its JMX interface.  This port

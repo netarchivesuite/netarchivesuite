@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
+    	<!-- The name of the environment in which this code is running, e.g.
+                 PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
+                  -->
+        <environmentName>DEV</environmentName>
         <!-- Common temporary directory for all applications. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
@@ -27,10 +31,6 @@
             <broker>localhost</broker>
             <!-- The port the JMS connection should use -->
             <port>7676</port>
-            <!-- The name of the environment in which this code is running, e.g.
-                 PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
-                  -->
-            <environmentName>DEV</environmentName>
         </jms>
         <http>
             <!-- The *unique* (per host) port number that may or may not be
@@ -125,8 +125,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/HarvestDefinition</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
-                <deployPath>/HarvestDefinition</deployPath>
             </siteSection>
             <siteSection>
                 <!-- The subclass of SiteSection that defines this part of the
@@ -136,8 +134,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/History</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
-                <deployPath>/History</deployPath>
             </siteSection>
             <siteSection>
                 <!-- The subclass of SiteSection that defines this part of the
@@ -147,8 +143,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/BitPreservation</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
-                <deployPath>/BitPreservation</deployPath>
             </siteSection>
             <siteSection>
                 <!-- The subclass of SiteSection that defines this part of the
@@ -158,8 +152,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/QA</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
-                <deployPath>/QA</deployPath>
             </siteSection>
             <siteSection>
                 <!-- The subclass of SiteSection that defines this part of the
@@ -169,8 +161,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/Status</webapplication>
-                <!-- The URL prefix for this section of the web interface. -->
-                <deployPath>/Status</deployPath>
             </siteSection>
         </webinterface>
         <topLevelDomains>
@@ -468,7 +458,7 @@
                  baseDir and class.-->
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <!-- The class that handles DB-specific methods -->
-            <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
             <!-- The earliest time of day backup will be initiated, 0..24
                  hours.  At a time shortly after this, a consistent backup
                  copy of the database will be created -->
@@ -496,7 +486,7 @@
         <thisPhysicalLocation>SB</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
-        <monitorApplicationName>NA</monitorApplicationName>
+        <applicationName>NA</applicationName>
     </common>
     <harvester>
         <datamodel>

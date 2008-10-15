@@ -52,6 +52,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.EMailNotifications;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SimpleXml;
@@ -332,9 +333,9 @@ public class Host {
 
         if (mailHost != null) {
             overrideSetting(CommonSettings.MAIL_SERVER, mailHost.getName());
-            overrideSetting(CommonSettings.MAIL_RECEIVER,
+            overrideSetting(EMailNotifications.MAIL_RECEIVER_SETTING,
                     mailHost.getProperty(Constants.MAIL_RECEIVER_PROPERTY));
-            overrideSetting(CommonSettings.MAIL_SENDER,
+            overrideSetting(EMailNotifications.MAIL_SENDER_SETTING,
                     mailHost.getProperty(Constants.MAIL_SENDER_PROPERTY));
         }
 
@@ -613,7 +614,7 @@ public class Host {
             try {
                 pw = new PrintWriter(new FileWriter(res));
                 String JVMARGS = "-Xmx1536m";
-                String SETTINGSFILE = "-D" + Settings.SYSTEM_PROPERTY
+                String SETTINGSFILE = "-D" + Settings.SETTINGS_FILE_PROPERTY
                                       + "=" + settingsfn;
                 String LOGFILE
                     = "-Dorg.apache.commons.logging.Log="
@@ -744,7 +745,7 @@ public class Host {
                                       installDirWindows + "\\lib\\", ";"));
 
                 String settingsFile = "-D"
-                                      + Settings.SYSTEM_PROPERTY
+                                      + Settings.SETTINGS_FILE_PROPERTY
                                       + "=\"" + settingsfn + "\"";
                 String logFile 
                     = "-Dorg.apache.commons.logging.Log="

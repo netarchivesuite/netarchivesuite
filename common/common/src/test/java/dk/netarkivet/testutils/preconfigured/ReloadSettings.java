@@ -7,6 +7,7 @@ import dk.netarkivet.common.utils.Settings;
 public class ReloadSettings implements TestConfigurationIF {
     private File f;
     private String oldSettingsFilenames;
+    private String settingsFileProperty = Settings.SETTINGS_FILE_PROPERTY;
 
     public ReloadSettings() {
 
@@ -17,18 +18,18 @@ public class ReloadSettings implements TestConfigurationIF {
     }
 
     public void setUp() {
-        oldSettingsFilenames = System.getProperty(Settings.SYSTEM_PROPERTY);
+        oldSettingsFilenames = System.getProperty(settingsFileProperty);
         if (f != null) {
-            System.setProperty(Settings.SYSTEM_PROPERTY, f.getAbsolutePath());
+            System.setProperty(settingsFileProperty, f.getAbsolutePath());
         }
         Settings.reload();
     }
 
     public void tearDown() {
         if (oldSettingsFilenames != null) {
-            System.setProperty(Settings.SYSTEM_PROPERTY, oldSettingsFilenames);
+            System.setProperty(settingsFileProperty, oldSettingsFilenames);
         } else {
-            System.clearProperty(Settings.SYSTEM_PROPERTY);
+            System.clearProperty(settingsFileProperty);
         }
         Settings.reload();
     }

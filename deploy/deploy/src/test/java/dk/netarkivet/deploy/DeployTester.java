@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -99,7 +100,7 @@ public class DeployTester extends TestCase {
             System.setProperty("dk.netarkivet.settings.file",
                     f.getAbsolutePath());
             Settings.reload();
-            Settings.validateWithXSD(new File(
+            XmlUtils.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
         }
     }
@@ -145,7 +146,7 @@ public class DeployTester extends TestCase {
             System.setProperty("dk.netarkivet.settings.file",
                     f.getAbsolutePath());
             Settings.reload();
-            Settings.validateWithXSD(new File(
+            XmlUtils.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
         }
 

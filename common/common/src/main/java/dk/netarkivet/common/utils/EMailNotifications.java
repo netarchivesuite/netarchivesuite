@@ -26,8 +26,6 @@ package dk.netarkivet.common.utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.common.CommonSettings;
-
 /**
  * Handles serious errors by sending email.
  */
@@ -36,7 +34,7 @@ public class EMailNotifications extends Notifications {
     
     /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/common/utils/EmailNotificationsSettings.xml";
+            = "dk/netarkivet/common/utils/EMailNotificationsSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -48,13 +46,21 @@ public class EMailNotifications extends Notifications {
                 DEFAULT_SETTINGS_CLASSPATH
         );
     }
+
+    /** The setting for the receiver of email notifications. */
+    public static String MAIL_RECEIVER_SETTING
+            = "settings.common.notifications.receiver";
+
+    /** The setting for the sender of email notifications. */
+    public static String MAIL_SENDER_SETTING
+            = "settings.common.notifications.sender";
     
     /** The email receiver of the errors. */
     private static final String MAIL_RECEIVER = Settings.get(
-            CommonSettings.MAIL_RECEIVER);
+            MAIL_RECEIVER_SETTING);
     /** The email sender of the errors. */
     private static final String MAIL_SENDER = Settings.get(
-            CommonSettings.MAIL_SENDER);
+            MAIL_SENDER_SETTING);
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
 

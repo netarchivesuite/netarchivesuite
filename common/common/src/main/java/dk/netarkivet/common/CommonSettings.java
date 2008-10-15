@@ -170,14 +170,6 @@ public class CommonSettings {
      */
     public static String MAIL_SERVER = "settings.common.mail.server";
 
-    /** The receiver of email notifications. */
-    public static String MAIL_RECEIVER
-            = "settings.common.notifications.receiver";
-
-    /** The sender of email notifications. */
-    public static String MAIL_SENDER
-            = "settings.common.notifications.sender";
-
     /** The implementation class for notifications. */
     public static String NOTIFICATIONS_CLASS
             = "settings.common.notifications.class";

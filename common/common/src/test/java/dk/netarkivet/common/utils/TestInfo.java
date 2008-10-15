@@ -32,7 +32,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import dk.netarkivet.common.distribute.JMSConnectionSunMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 
 /**
@@ -48,9 +50,10 @@ public class TestInfo {
     public static final String SETTINGSFILENAME =
             new File(TEMPDIR, "settings.xml").getAbsolutePath();
     public static final String DEFAULTSEEDLIST
-            = "settings.harvester.datamodel.domain.defaultSeedlist";
+            = HarvesterSettings.DEFAULT_SEEDLIST;
     public static final String DEFAULTSEEDLIST_VALUE = "defaultseeds";
-    public static final String PORT = "settings.common.jms.port";
+    public static final String PORT = JMSConnectionSunMQ.JMS_BROKER_PORT;
+    
     public static final String PORTVALUE = "7676";
     public static final String TIMEOUT = "settings.common.arcrepositoryClient.timeout";
     public static final String FIVE_HUNDRED_MEGA_FILE_ZIPPED = "500-mega.zip";
@@ -80,7 +83,6 @@ public class TestInfo {
 
     public static final File NON_EXISTING_FILE = new File("/no/such/file");
     public static final File SETTINGS_FILE = new File(TEMPDIR, "settings.xml");
-
 
     /**
      * This method unzips the

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://www.netarkivet.dk/schemas/monitor_settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<monitor>
-<!--  the password used to connect to the all Mbeanservers started by the application. This password must be same as the one in jmxremote.password -->
-<jmxMonitorRolePassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxMonitorRolePassword>
-</monitor>
-</settings>
-

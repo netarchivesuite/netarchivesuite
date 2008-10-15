@@ -57,23 +57,24 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * to be packaged in the jar files, to provide a fallback for settings.
  * 2) Overriding settings in XML files in file systems. These are intended to
  * override the necessary values with minimal XML files. The location of these
- * files are either specified by the system property {@link #SYSTEM_PROPERTY},
+ * files are either specified by the system property {@link #SETTINGS_FILE_PROPERTY},
  * multiple files can be separated by {@link File#pathSeparator}, that is
  * ':' on linux and ';' on windows; or if that property is not set, the
  * default location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
     static {
+        // Perform an initial loading of the settings.
         reload();
     }
 
     /** Logger for this class. */
     private static final Log log
             = LogFactory.getLog(Settings.class.getName());
-    /** The object representing the contents of the settings xml file. */
+    /** The objects representing the contents of the settings xml files. */
     private static List<SimpleXml> fileSettingsXmlList;
     /**
-     * The object srepresenting the contents of the default settings xml files
+     * The objects representing the contents of the default settings xml files
      * in classpath.
      */
     private static List<SimpleXml> defaultClasspathSettingsXmlList
@@ -83,11 +84,11 @@ public class Settings {
      * settings files. If more files are specified, they should be separated by
      * {@link File#pathSeparatorChar}
      */
-    public static final String SYSTEM_PROPERTY = "dk.netarkivet.settings.file";
+    public static final String SETTINGS_FILE_PROPERTY = "dk.netarkivet.settings.file";
 
     /**
-     * The file path to look for settings in, if the system property above is
-     * not set.
+     * The file path to look for settings in, if the system property
+     * {@link #SETTINGS_FILE_PROPERTY} is not set.
      */
     public static final String DEFAULT_SETTINGS_FILEPATH = "conf/settings.xml";
     /**
@@ -104,7 +105,7 @@ public class Settings {
      * @return The settings file.
      */
     public static List<File> getSettingsFiles() {
-        String[] pathList = System.getProperty(SYSTEM_PROPERTY, DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
+        String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY, DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
         List<File> result = new ArrayList<File>();
         for (String path : pathList) {
             if (path.trim().length() != 0) {
@@ -116,20 +117,29 @@ public class Settings {
         }
         return result;
     }
-
+    
     /**
      * Gets a setting.
-     * First System.property is checked, if the key is registered here the
-     * registered value is returned, otherwise the data loaded from the
-     * settings xml files are checked. If value is there, it is returned,
-     * otherwise default settings from classpath are checked.
+     * The search order for a given setting is as follows:
+     * 
+     * First it is checked, if the argument key is set as a System
+     * property. If yes, return this value. If no, we continue the search.
+     * 
+     * Secondly, we check, if the setting is in one of the loaded settings
+     * xml files. If the value is there, it is returned. If no, we continue
+     * the search.
+     * 
+     * Finally, we check if the setting is in one of default settings 
+     * files from classpath. If the value is there, it is returned.
+     * Otherwise an UnknownId exception is thrown.
+     *
+     * Note: The retrieved value can be the empty string
      *
      * @param key name of the setting to retrieve
      * @return the retrieved value
      *
      * @throws ArgumentNotValid if key is null or the empty string
      * @throws UnknownID        if no setting loaded matches key
-     * @throws IOFailure        if no settings loaded.
      */
     public static String get(String key)
             throws UnknownID, IOFailure, ArgumentNotValid {
@@ -157,48 +167,46 @@ public class Settings {
 
     /**
      * Gets a setting as an int.
-     * This method calls get(key) and then parses the value to int.
+     * This method calls get(key) and then parses the value as integer.
      *
      * @param key name of the setting to retrieve
      * @return the retrieved int
      *
      * @throws ArgumentNotValid if key is null, the empty string or key is not
-     *                          parseable to int
+     *                          parseable as an integer
      * @throws UnknownID        if no setting loaded matches key
-     * @throws IOFailure        if no settings loaded.
      */
     public static int getInt(String key)
-            throws UnknownID, IOFailure, ArgumentNotValid {
+            throws UnknownID, ArgumentNotValid {
         String value = get(key);
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             String msg = "Invalid setting. Value '" + value + "' for key '"
-                         + key + "' could not be parsed as int.";
+                         + key + "' could not be parsed as an integer.";
             throw new ArgumentNotValid(msg, e);
         }
     }
 
     /**
      * Gets a setting as a long.
-     * This method calls get(key) and then parses the value to long.
+     * This method calls get(key) and then parses the value as a long.
      *
      * @param key name of the setting to retrieve
      * @return the retrieved long
      *
      * @throws ArgumentNotValid if key is null, the empty string or key is not
-     *                          parseable to long
+     *                          parseable as a long
      * @throws UnknownID        if no setting loaded matches key
-     * @throws IOFailure        if no settings loaded.
      */
     public static long getLong(String key)
-            throws UnknownID, IOFailure, ArgumentNotValid {
+            throws UnknownID, ArgumentNotValid {
         String value = get(key);
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
             String msg = "Invalid setting. Value '" + value + "' for key '"
-                         + key + "' could not be parsed as long.";
+                         + key + "' could not be parsed as a long.";
             throw new ArgumentNotValid(msg, e);
         }
     }
@@ -211,37 +219,46 @@ public class Settings {
      * @return the retrieved file
      *
      * @throws ArgumentNotValid if key is null, the empty string
-     * @throws UnknownID        if no setting loaded matches key
-     * @throws IOFailure        if no settings loaded.
+     * @throws UnknownID        if no setting loaded matches ke
      */
     public static File getFile(String key) {
+        ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         return new File(get(key));
     }
-
     /**
      * Gets a list of settings.
-     * First System.property is checked, if the key is registered here the
-     * registered value is returned in a list of length 1, otherwise the data
-     * loaded from the settings xml files are checked. If value is there, it is
-     * returned in a list, otherwise default settings from classpath are
-     * checked. Note that the values will not be concatenated, the first
+     * First it is checked, if the key is registered as a System property.
+     * If yes, registered value is returned in a list of length 1.
+     * If no, the data loaded from the settings xml files are examined. 
+     * If value is there, it is returned in a list.
+     * If not, the default settings from classpath are
+     * examined. If values for this setting are found here, they
+     * are returned.
+     * Otherwise, an UnknownId exception is thrown.
+     *  
+     * Note that the values will not be concatenated, the first
      * place with a match will define the entire list.
+     * Furthemore the list cannot be empty.
      *
      * @param key name of the setting to retrieve
-     * @return the retrieved values
+     * @return the retrieved values (as a non-empty String array)
      *
      * @throws ArgumentNotValid if key is null or the empty string
      * @throws UnknownID        if no setting loaded matches key
-     * @throws IOFailure        if no settings loaded.
      */
     public static String[] getAll(String key)
-            throws UnknownID, IOFailure, ArgumentNotValid {
+            throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(key, "key");
+        log.debug("Searching for a setting for key: " + key);
         String val = System.getProperty(key);
         if (val != null) {
+            log.debug("value for key found in property:" + val);
             return new String[]{val};
         }
-
+        if (fileSettingsXmlList.isEmpty()) {
+            log.warn("The list of loaded data settings is empty."
+                + "Is this OK?");
+        }
         // Key not in System.properties try loaded data instead
         for (SimpleXml settingsXml : fileSettingsXmlList) {
             List<String> result
@@ -249,6 +266,8 @@ public class Settings {
             if (result.size() == 0) {
                 continue;
             }
+            log.debug("Value found in loaded data: " 
+                    + StringUtils.conjoin(",", result));
             return result.toArray(new String[result.size()]);
         }
 
@@ -259,14 +278,21 @@ public class Settings {
             if (result.size() == 0) {
                 continue;
             }
+            log.debug("Value found in classpath data: " 
+                    + StringUtils.conjoin(",", result));
             return result.toArray(new String[result.size()]);
         }
         throw new UnknownID("No match for key '" + key + "' in settings");
     }
 
     /**
-     * Sets the key to one or more values. The key must exist beforehand.
-     *
+     * Sets the key to one or more values. 
+     * Calls to this method are forgotten
+     * whenever the {@link #reload()} is executed.
+     * 
+     * TODO write these values to its own simpleXml structure,
+     * that are not reset during reload.
+     * 
      * @param key     The settings key to add this under, legal keys are
      *                fields in this class.
      * @param values  The (ordered) list of values to put under this key.
@@ -298,6 +324,9 @@ public class Settings {
         List<File> settingsFiles = getSettingsFiles();
         for (File settingsFile : settingsFiles) {
             if (settingsFile.lastModified() > lastModified) {
+                log.info("Do reload of settings, as the file '"
+                    + settingsFile.getAbsolutePath() 
+                    + "' has changed since last reload");
                 reload();
                 return;
             }
@@ -307,6 +336,10 @@ public class Settings {
     /**
      * Reloads the settings. This will reload the settings from disk, and forget
      * all settings that were set with {@link #set}
+     * 
+     * The field {@link #lastModified} is updated to timestamp
+     * of the settings file that has been changed most recently.
+     * 
      * @throws IOFailure if settings cannot be loaded
      * @see #conditionalReload()
      */
@@ -317,6 +350,10 @@ public class Settings {
         for (File settingsFile : settingsFiles) {
             if (settingsFile.isFile()) {
                 simpleXmlList.add(new SimpleXml(settingsFile));
+            } else {
+                log.warn ("The file '"
+                        + settingsFile.getAbsolutePath()
+                        + "' is not a file, and therefore not loaded");
             }
             if (settingsFile.lastModified() > lastModified) {
                 lastModified = settingsFile.lastModified();
@@ -324,108 +361,25 @@ public class Settings {
         }
         fileSettingsXmlList = simpleXmlList;
     }
-
+    
+    /**
+     * Add the settings file represented by this path to the
+     * list of default classpath settings.
+     * 
+     * @param defaultClasspathSettingsPath the given default classpath setting.
+     */
     public static void addDefaultClasspathSettings(
             String defaultClasspathSettingsPath) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                defaultClasspathSettingsPath,
+                "String defaultClasspathSettingsPath");
         InputStream stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(defaultClasspathSettingsPath);
         if (stream != null) {
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
-        }
-    }
-
-    /**
-     * Validate that the settings xml file conforms to the XSD.
-     *
-     * @param xsdFile Schema to check settings against.
-     */
-    public static void validateWithXSD(File xsdFile) {
-        List<File> settingsFiles = getSettingsFiles();
-        for (File settingsFile : settingsFiles) {
-            try {
-                DocumentBuilderFactory builderFactory
-                        = DocumentBuilderFactory.newInstance();
-                builderFactory.setNamespaceAware(true);
-                DocumentBuilder parser = builderFactory
-                        .newDocumentBuilder();
-                Document document = parser.parse(settingsFile);
-
-                // create a SchemaFactory capable of understanding WXS schemas
-                SchemaFactory factory = SchemaFactory
-                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-                // load a WXS schema, represented by a Schema instance
-                Source schemaFile = new StreamSource(xsdFile);
-                Schema schema = factory.newSchema(schemaFile);
-
-                // create a Validator instance, which can be used to validate an
-                // instance document
-                Validator validator = schema.newValidator();
-
-                // validate the DOM tree
-                try {
-                    validator.validate(new DOMSource(document));
-                } catch (SAXException e) {
-                    // instance document is invalid!
-                    final String msg = "Settings file '" + settingsFile
-                            + "' does not validate using '" + xsdFile + "'";
-                    log.warn(msg, e);
-                    throw new ArgumentNotValid(msg, e);
-                }
-            } catch (IOException e) {
-                throw new IOFailure("Error while validating: ", e);
-            } catch (ParserConfigurationException e) {
-                final String msg = "Error validating settings file '"
-                        + settingsFile + "'";
-                log.warn(msg, e);
-                throw new ArgumentNotValid(msg, e);
-            } catch (SAXException e) {
-                final String msg = "Error validating settings file '"
-                        + settingsFile + "'";
-                log.warn(msg, e);
-                throw new ArgumentNotValid(msg, e);
-            }
-        }
-    }
-
-    /**
-     * Validate that the strings defined in the given class are present in
-     * the settings xml file.
-     * Checks all static String fields that are not explicitly excluded above.
-     * This asserts the correspondence between the settings we think we have
-     * and those defined in the XSD/.xml file.
-     *
-     * @param classToCheck   The class defining the constants to check
-     * @param excludedFields Fields not to check, even thoug they are constants
-     *                       in that class.
-     */
-    public static void validateStrings(Class classToCheck,
-                                List<String> excludedFields) {
-        Field[] fields = classToCheck.getDeclaredFields();
-        for (Field f : fields) {
-            if (!excludedFields.contains(f.getName())
-                    && f.getType().equals(String.class) && Modifier
-                    .isStatic(f.getModifiers())) {
-                String xmlKey;
-                try {
-                    xmlKey = (String) f.get(null);
-                } catch (IllegalAccessException e) {
-                    final String msg
-                            = "Internal error while checking settings for key '"
-                              + f.getName() + "' ";
-                    log.warn(msg, e);
-                    throw new ArgumentNotValid(msg, e);
-                }
-                try {
-                    get(xmlKey);
-                } catch (UnknownID e) {
-                    final String msg = "Setting '" + xmlKey + "' ('"
-                            + f.getName() + "') is undefined in '"
-                            + getSettingsFiles() + "'";
-                    log.warn(msg);
-                    throw new ArgumentNotValid(msg, e);
-                }
-            }
+        } else {
+            log.warn("Unable to read the settings file represented by path: '"
+                    + defaultClasspathSettingsPath + "'");
         }
     }
 

@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--  
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+-->
+<!-- 
+	This file contains the settings used by the NetarchiveSuite Quick Start
+	system.
+-->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
+        <!-- The name of the environment in which this code is running, e.g.
+             PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
+         -->
+        <environmentName>DEV</environmentName>
+
         <!-- Common temporary directory for all applications. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
@@ -19,10 +52,6 @@
             <broker>localhost</broker>
             <!-- The port the JMS connection should use -->
             <port>7676</port>
-            <!-- The name of the environment in which this code is running, e.g.
-                 PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
-                  -->
-            <environmentName>DEV</environmentName>
         </jms>
         <http>
             <!-- The *unique* (per host) port number that may or may not be
@@ -116,8 +145,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>../../webpages/HarvestDefinition.war</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/HarvestDefinition</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -126,8 +153,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>../../webpages/History.war</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/History</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -136,8 +161,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>../../webpages/BitPreservation.war</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/BitPreservation</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -146,8 +169,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>../../webpages/QA.war</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/QA</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -156,8 +177,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>../../webpages/Status.war</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/Status</deployPath>
             </siteSection>
         </webinterface>
         <topLevelDomains>
@@ -455,7 +474,7 @@
                  baseDir and class.-->
             <url>jdbc:derby:data/working/harvestdefinitionbasedir/fullhddb</url>
             <!-- The class that handles DB-specific methods -->
-            <specificsclass>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</specificsclass>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
             <!-- The earliest time of day backup will be initiated, 0..24
                  hours.  At a time shortly after this, a consistent backup
                  copy of the database will be created -->
@@ -480,7 +499,7 @@
         <thisPhysicalLocation>SH</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
-        <monitorApplicationName>NA</monitorApplicationName>
+        <applicationName>NA</applicationName>
     </common>
     <harvester>
         <datamodel>

@@ -24,7 +24,20 @@
 package dk.netarkivet.common.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +45,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.xml.sax.SAXException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -112,4 +126,63 @@ public class XmlUtils {
         }
         xpathNode.setText(value);
     }
+    
+    /**
+     * Validate that the settings xml files conforms to the XSD.
+     *
+     * @param xsdFile Schema to check settings against.
+     * @throws ArgumentNotValid if unable to validate the settings files
+     * @throws IOFailure If unable to read the settings files and/or 
+     * the xsd file.
+     */
+    public static void validateWithXSD(File xsdFile) {
+        ArgumentNotValid.checkNotNull(xsdFile, "File xsdFile");
+        List<File> settingsFiles = Settings.getSettingsFiles();
+        for (File settingsFile : settingsFiles) {
+            try {
+                DocumentBuilderFactory builderFactory
+                        = DocumentBuilderFactory.newInstance();
+                builderFactory.setNamespaceAware(true);
+                DocumentBuilder parser = builderFactory
+                        .newDocumentBuilder();
+                org.w3c.dom.Document document = parser.parse(settingsFile);
+
+                // create a SchemaFactory capable of understanding WXS schemas
+                SchemaFactory factory = SchemaFactory
+                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+                // load a WXS schema, represented by a Schema instance
+                Source schemaFile = new StreamSource(xsdFile);
+                Schema schema = factory.newSchema(schemaFile);
+
+                // create a Validator instance, which can be used to validate an
+                // instance document
+                Validator validator = schema.newValidator();
+
+                // validate the DOM tree
+                try {
+                    validator.validate(new DOMSource(document));
+                } catch (SAXException e) {
+                    // instance document is invalid!
+                    final String msg = "Settings file '" + settingsFile
+                            + "' does not validate using '" + xsdFile + "'";
+                    log.warn(msg, e);
+                    throw new ArgumentNotValid(msg, e);
+                }
+            } catch (IOException e) {
+                throw new IOFailure("Error while validating: ", e);
+            } catch (ParserConfigurationException e) {
+                final String msg = "Error validating settings file '"
+                        + settingsFile + "'";
+                log.warn(msg, e);
+                throw new ArgumentNotValid(msg, e);
+            } catch (SAXException e) {
+                final String msg = "Error validating settings file '"
+                        + settingsFile + "'";
+                log.warn(msg, e);
+                throw new ArgumentNotValid(msg, e);
+            }
+        }
+    }
+    
 }

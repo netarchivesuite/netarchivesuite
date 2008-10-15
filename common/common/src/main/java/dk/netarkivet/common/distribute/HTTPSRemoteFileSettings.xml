@@ -30,7 +30,7 @@
     <common>
         <!-- HTTPS connection data-->
         <remoteFile xsi:type="httpsremotefile">
-            <!-- The default HTTP port used -->
+            <!-- The default HTTPS port used -->
             <port>8100</port>
             <!-- The path for the keystore containing the certificate. -->
             <certificateKeyStore>conf/keystore</certificateKeyStore>

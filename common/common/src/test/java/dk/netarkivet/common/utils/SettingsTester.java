@@ -23,7 +23,10 @@
 package dk.netarkivet.common.utils;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -35,7 +38,7 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
- *
+ * Unit tests for the Settings class.
  */
 public class SettingsTester extends TestCase  {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
@@ -65,7 +68,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Verify the simple read and write functionality
+     * Verify the simple read and write functionality.
      */
     public void testReadAndWrite() {
         String defaultseed = Settings.get(TestInfo.DEFAULTSEEDLIST);
@@ -91,7 +94,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test that reload functionality resets settings to original values
+     * Test that reload functionality resets settings to original values.
      */
     public void testReload(){
         String backup_value = Settings.get(HarvesterSettings.DEFAULT_SEEDLIST);
@@ -104,7 +107,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test that setting a non-existent key will just add it
+     * Test that setting a non-existent key will just add it.
      */
     public void testSetNonExistentKey() {
         Settings.set("settings.no.such.key", "hest");
@@ -113,7 +116,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test that creating a key that already exists throws an exception
+     * Test that creating a key that already exists throws an exception.
      */
     public void testCreatePreExistingKey() {
         Settings.set(HarvesterSettings.DOMAIN_CONFIG_MAXRATE, "hest");
@@ -122,16 +125,16 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test that getAll can get a value set in a system property
+     * Test that getAll can get a value set in a system property.
      */
     public void testGetAllFromSysprop() {
-        String[] val = Settings.getAll(Settings.SYSTEM_PROPERTY);
-        assertTrue("Expected singke value but got " + val.length, val.length == 1);
+        String[] val = Settings.getAll(Settings.SETTINGS_FILE_PROPERTY);
+        assertTrue("Expected single value but got " + val.length, val.length == 1);
         assertEquals("Value was not as expected: ", TestInfo.SETTINGSFILENAME, val[0]);
     }
 
     /**
-     * Test that we can get an array of strings for a key value
+     * Test that we can get an array of strings for a key value.
      */
     public void testGetAllFromSetting() {
         String key = "settings.for.test.purposes";
@@ -144,7 +147,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test that getAll fails for an unknown key
+     * Test that getAll fails for an unknown key.
      */
     public void testGetAllFailure() {
         String key = "just.for.test.purposes2";
@@ -157,7 +160,7 @@ public class SettingsTester extends TestCase  {
     }
 
     /**
-     * Test getLong works
+     * Test getLong works.
      */
     public void testGetLongWorks() {
        String key = "settings.for.test.purposes3";
@@ -182,39 +185,40 @@ public class SettingsTester extends TestCase  {
     }
 
     public void testValidateWithXSD() throws Exception {
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        String settingsFileProperty = Settings.SETTINGS_FILE_PROPERTY;
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-full.xml").getAbsolutePath());
-        Settings.validateWithXSD(new File(
+        XmlUtils.validateWithXSD(new File(
                 "./lib/data-definitions/settings.xsd"));
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-generated.xml").getAbsolutePath());
-        Settings.validateWithXSD(new File(
+        XmlUtils.validateWithXSD(new File(
                 "./lib/data-definitions/settings.xsd"));
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-bad-entry.xml").getAbsolutePath());
         Settings.reload();
         try {
-            Settings.validateWithXSD(new File(
+            XmlUtils.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
             fail("Should have failed XSD validation on xml with wrong type entry");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-missing-entry.xml").getAbsolutePath());
         Settings.reload();
         try {
-            Settings.validateWithXSD(new File(
+            XmlUtils.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
             fail("Should have failed XSD validation on xml with missing entry");
         } catch (ArgumentNotValid e) {
             // Expected
         }
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-extra-entry.xml").getAbsolutePath());
         Settings.reload();
         try {
-            Settings.validateWithXSD(new File(
+            XmlUtils.validateWithXSD(new File(
                     "./lib/data-definitions/settings.xsd"));
             fail("Should have failed XSD validation on xml with extra entry");
         } catch (ArgumentNotValid e) {
@@ -223,18 +227,19 @@ public class SettingsTester extends TestCase  {
     }
 
     public void testValidateStrings() throws Exception {
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        String settingsFileProperty = Settings.SETTINGS_FILE_PROPERTY;
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-full.xml").getAbsolutePath());
         Settings.reload();
-        Settings.validateStrings(CommonSettings.class,
+        validateStrings(CommonSettings.class,
                                  Arrays.asList(
             "DEFAULT_SETTINGS_CLASSPATH"));
         // Should throw no exceptions on a generated Settings file.
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-missing-entry.xml").getAbsolutePath());
         Settings.reload();
         try {
-            Settings.validateStrings(CommonSettings.class,
+            validateStrings(CommonSettings.class,
                                      Arrays.asList(
             "DEFAULT_SETTINGS_CLASSPATH"));
             fail("Should have failed string validation on xml with missing entry");
@@ -242,11 +247,57 @@ public class SettingsTester extends TestCase  {
             // Expected
         }
         // Should throw no exceptions on the standard Settings file.
-        System.setProperty(Settings.SYSTEM_PROPERTY,
+        System.setProperty(settingsFileProperty,
                 new File(TestInfo.TEMPDIR, "settings-generated.xml").getAbsolutePath());
         Settings.reload();
-        Settings.validateStrings(CommonSettings.class,
+        validateStrings(CommonSettings.class,
                                  Arrays.asList(
             "DEFAULT_SETTINGS_CLASSPATH"));
     }
+    /**
+     * Validate that the strings defined in the given class are present in
+     * the settings xml file.
+     * Checks all static String fields that are not explicitly excluded above.
+     * This asserts the correspondence between the settings we think we have
+     * and those defined in the XSD/.xml file.
+     *
+     * @param classToCheck   The class defining the constants to check
+     * @param excludedFields Fields not to check, even though they are constants
+     *                       in that class.
+     */
+    public static void validateStrings(Class classToCheck,
+                                List<String> excludedFields) {
+        ArgumentNotValid.checkNotNull(classToCheck, "Class classToCheck");
+        ArgumentNotValid.checkNotNull(
+                    excludedFields,
+                    "List<String> excludedFields");
+        Field[] fields = classToCheck.getDeclaredFields();
+        for (Field f : fields) {
+            if (!excludedFields.contains(f.getName())
+                    && f.getType().equals(String.class) && Modifier
+                    .isStatic(f.getModifiers())) {
+                String xmlKey;
+                try {
+                    xmlKey = (String) f.get(null);
+                } catch (IllegalAccessException e) {
+                    final String msg
+                            = "Internal error while checking settings for key '"
+                              + f.getName() + "' ";
+                    throw new ArgumentNotValid(msg, e);
+                }
+                try {
+                    Settings.get(xmlKey);
+                } catch (UnknownID e) {
+                    final String msg = "Setting '" + xmlKey + "' ('"
+                            + f.getName() + "') is undefined in '"
+                            + Settings.getSettingsFiles() + "'";
+                    throw new ArgumentNotValid(msg, e);
+                }
+            }
+        }
+    }
+
+    
+    
+    
 }

@@ -99,7 +99,7 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.thisCredentials";
     /**
      * Absolute or relative path to dir containing results of
-     * file-list-batch-jobs and checksumming batch jobs for bit preservation
+     * file-list-batch-jobs and checksumming batch jobs for bit preservation.
      */
     public static String DIR_ARCREPOSITORY_BITPRESERVATION
             = "settings.archive.bitpreservation.baseDir";

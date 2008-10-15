@@ -224,7 +224,6 @@ rm -rf $ARCREP_HOME/hcs*.sh
 ## JVM arguments for all processes
 ## Includes a simple indicator of the fact that this is a simple_harvest process
 JVM_ARGS="-Xmx1512m -Ddk.netarkivet.settings.file=$ARCREP_HOME/settings.xml \
-   -Ddk.netarkivet.monitorsettings.file=$ARCREP_HOME/monitor_settings.xml \
    -Dsimple.harvest.indicator=0"
 
 ## Classpath
@@ -259,8 +258,8 @@ startApp ArcRepository archive.arcrepository.ArcRepositoryApplication
 ## Start IndexServer
 startApp IndexServer archive.indexserver.IndexServerApplication
 
-## Start HarvestDefinitionGui
-startApp HarvestDefinition common.webinterface.GUIApplication
+## Start GUIApplication
+startApp GUIApplication common.webinterface.GUIApplication
 
 # Start viewerproxy
 startApp Viewerproxy viewerproxy.ViewerProxyApplication
