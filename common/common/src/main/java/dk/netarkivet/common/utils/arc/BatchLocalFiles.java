@@ -118,5 +118,4 @@ public class BatchLocalFiles {
             job.filesFailed.add(file);
         }
     }
-
 }
