@@ -38,7 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
-    /** The list of files to run batch jobs on. */
+    /** The list of files to run batch jobs on: */
     private File[] files;
     private Log log = LogFactory.getLog(BatchLocalFiles.class);
 
@@ -82,17 +82,12 @@ public class BatchLocalFiles {
             }
         } catch (Exception e) {
             log.warn("Exception while initializing job " + job, e);
-            job.addInitializeException(
-                    FileBatchJob.ExceptionOccurrence.UNKNOWN_OFFSET, e);
         } finally {
             // Finally, allow the job to finish: */
             try {
                 job.finish(os);
             } catch (Exception e) {
                 log.warn("Exception while finishing job " + job, e);
-                job.addFinishException(
-                        FileBatchJob.ExceptionOccurrence.UNKNOWN_OFFSET, e);
-
             }
         }
     }
@@ -110,12 +105,11 @@ public class BatchLocalFiles {
         } catch (Exception e) {
             log.warn("Exception while processing file " + file
                      + " with job " + job, e);
-            job.addException(file, FileBatchJob.ExceptionOccurrence.UNKNOWN_OFFSET,
-                    FileBatchJob.ExceptionOccurrence.UNKNOWN_OFFSET, e);
         }
         job.noOfFilesProcessed++;
         if (!success) {
             job.filesFailed.add(file);
         }
     }
+
 }
