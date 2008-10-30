@@ -54,7 +54,6 @@ import org.dom4j.io.XMLWriter;
 import org.dom4j.util.XMLErrorHandler;
 import org.xml.sax.SAXException;
 
-import dk.netarkivet.archive.indexserver.CrawlLogIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
@@ -731,10 +730,8 @@ public class HeritrixTests extends TestCase {
         //File orgCrawlog = new File(TestInfo.HERITRIX_TEMP_DIR, "logs/crawl.log");
         File orgCrawlog = new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, "logs/crawl.log");
         assertTrue("File does not exist", orgCrawlog.exists());
-        Method sortCrawlLog = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "sortCrawlLog", File.class, File.class);
         File sortedCrawlLog = new File(scratchpadDir, "sorted-crawl.log");
-        sortCrawlLog.invoke(null, orgCrawlog, sortedCrawlLog);
+        FileUtils.sortCrawlLog(orgCrawlog, sortedCrawlLog);
 
         //File arcsDir = new File(TestInfo.HERITRIX_TEMP_DIR, "arcs");
         File arcsDir = new File(TestInfo.TEST_LAUNCH_HARVEST_DIR, "arcs");
@@ -865,10 +862,8 @@ public class HeritrixTests extends TestCase {
                 cdxstream.close();
             }
         }
-        Method sortCDX = ReflectUtils.getPrivateMethod(CrawlLogIndexCache.class,
-                "sortCDX", File.class, File.class);
         File readable = File.createTempFile("sorted", "cdx", TestInfo.WORKING_DIR);
-        sortCDX.invoke(null, cdxfile, readable);
+        FileUtils.sortCDX(cdxfile, readable);
         BufferedReader cr = new BufferedReader(new FileReader(readable));
         return cr;
     }

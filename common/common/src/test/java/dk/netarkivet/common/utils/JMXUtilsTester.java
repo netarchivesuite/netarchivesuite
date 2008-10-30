@@ -92,7 +92,7 @@ public class JMXUtilsTester extends TestCase {
         assertTrue("Should take at least 2^" + JMXUtils.MAX_TRIES
                    + " milliseconds, but was " + time + ", should be "
                    + Math.pow(2, JMXUtils.MAX_TRIES),
-                   time > Math.pow(2, JMXUtils.MAX_TRIES));
+                   time >= Math.pow(2, JMXUtils.MAX_TRIES));
         assertEquals("Should have been called " + JMXUtils.MAX_TRIES + " times.",
                     1,
                     connection.failCount);

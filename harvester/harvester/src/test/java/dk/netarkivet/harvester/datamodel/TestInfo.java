@@ -90,7 +90,7 @@ public class TestInfo {
     public static final String PASSWORD_LIST = "passwords.xml";
 
     public static final int GUI_WEB_SERVER_PORT = 4242;
-    public static final String GUI_WEB_SERVER_WEBBASE = "/test";
+    public static final String GUI_WEB_SERVER_WEBBASE = "/jsp";
     public static final String GUI_WEB_SERVER_JSP_DIRECTORY = "tests/dk/netarkivet/harvester/datamodel/data/jsp";
     public static HourlyFrequency FREQUENCY = new HourlyFrequency(1);
     public static File HARVEST_DEFINITIONS_DIR = new File(TEMPDIR,

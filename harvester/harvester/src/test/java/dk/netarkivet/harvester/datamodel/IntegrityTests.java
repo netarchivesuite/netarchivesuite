@@ -76,7 +76,7 @@ public class IntegrityTests extends DataModelTestCase {
         if (gui != null) {
             gui.cleanup();
         }
-        ReloadSettings rs = new ReloadSettings();
+        rs.tearDown();
     }
 
     public void testRun() throws IOException, SAXException {

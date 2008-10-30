@@ -27,7 +27,12 @@
 	This file contains the settings needed to run our unittests.
 -->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<common> 
+<common>
+    <remoteFile>
+        <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+        <userName>jms</userName>
+        <userPassword>jms*ftp</userPassword>
+    </remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
         <locations>
             <!-- The names of all bit archive locations in the
