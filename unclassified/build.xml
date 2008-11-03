@@ -177,8 +177,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             </fileset>
         </chmod>
         <chmod perm="0600">
-            <fileset dir="conf/jmxremote.password">
-                <include name="*.sh"/>
+            <fileset dir="conf">
+                <include name="jmxremote.password"/>
             </fileset>
         </chmod>
         <junit fork="true">
