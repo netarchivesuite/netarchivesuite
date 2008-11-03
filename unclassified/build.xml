@@ -176,12 +176,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="*.sh"/>
             </fileset>
         </chmod>
+        <chmod perm="0600">
+            <fileset dir="conf/jmxremote.password">
+                <include name="*.sh"/>
+            </fileset>
+        </chmod>
         <junit fork="true">
             <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
+            <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
-            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
             <jvmarg value="-Djava.security.manager"/>
             <jvmarg value="-Djava.security.policy=conf/test.policy"/>
+            <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
             <formatter type="brief" usefile="false"/>
             <test name="dk.netarkivet.UnitTesterSuite"/>
@@ -192,10 +199,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Run unit and integrity tests on a clean compile">
         <junit fork="true">
             <jvmarg value="-Xmx512m"/>
+            <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
+            <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
-            <jvmarg value="-Ddk.netarkivet.jms.broker=localhost"/>
             <jvmarg value="-Djava.security.manager"/>
             <jvmarg value="-Djava.security.policy=conf/test.policy"/>
+            <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
             <formatter type="brief" usefile="false"/>
             <test name="dk.netarkivet.FullTesterSuite"/>
