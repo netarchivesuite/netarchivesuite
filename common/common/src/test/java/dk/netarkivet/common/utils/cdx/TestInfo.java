@@ -26,16 +26,21 @@ package dk.netarkivet.common.utils.cdx;
 import java.io.File;
 
 /**
- * Constants for the tests in this package
- *
+ * Constants for the tests in this package.
  */
-
 public class TestInfo {
     //Reference to test input file:
     static final File ARC_DIR = new File("tests/dk/netarkivet/common/utils/cdx/data/input/");
+    static final File WARC_DIR = new File("tests/dk/netarkivet/common/utils/cdx/data/input/warcs");
+    
     static final File ARC_FILE1 = new File(ARC_DIR, "fyensdk.arc");
     static final File ARC_FILE2 = new File(ARC_DIR, "input-2.arc");
     static final File ARC_FILE3 = new File(ARC_DIR, "input-3.arc");
+   
+    static final File WARC_FILE1 = new File(WARC_DIR, "netarkivet-20081105135926-00000.warc");
+    static final File WARC_FILE2 = new File(WARC_DIR, "netarkivet-20081105135926-00001.warc");
+    static final File WARC_FILE3 = new File(WARC_DIR, "netarkivet-20081105140044-00002.warc");        
+    
     // This file may or may not reflect the ARC_FILE
     static final File SORTED_CDX_FILE = new File(ARC_DIR, "fyensdk.cdx");
     //Reference to test output file:
