@@ -29,9 +29,12 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
 
-
+/**
+ * 
+ * Unit tests for the StreamUtils class.
+ *
+ */
 public class StreamUtilsTester extends TestCase {
     public StreamUtilsTester(String s) {
         super(s);

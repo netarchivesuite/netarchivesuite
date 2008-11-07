@@ -28,10 +28,9 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Sweet suite of util tests.
+ * Sweet suite of utility tests.
  *
  */
-
 public class UtilsTesterSuite {
     public static Test suite() {
         TestSuite suite;
@@ -45,22 +44,24 @@ public class UtilsTesterSuite {
         suite.addTestSuite(ExceptionUtilsTester.class);
         suite.addTestSuite(FileUtilsTester.class);
         suite.addTestSuite(FilterIteratorTester.class);
-        suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
         suite.addTestSuite(JMXUtilsTester.class);
+        suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
+        
         suite.addTestSuite(MD5Tester.class);
         suite.addTestSuite(ProcessUtilsTester.class);
         suite.addTestSuite(SettingsFactoryTester.class);
         suite.addTestSuite(SimpleXmlTester.class);
-        //suite.addTestSuite(StreamUtilsTester.class);
+        suite.addTestSuite(StreamUtilsTester.class);
         suite.addTestSuite(StringUtilsTester.class);
         suite.addTestSuite(SystemUtilsTester.class);
+        suite.addTestSuite(TimeUtilsTester.class);
         suite.addTestSuite(XmlTreeTester.class);
         suite.addTestSuite(XmlUtilsTester.class);
         suite.addTestSuite(ZipUtilsTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", UtilsTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", UtilsTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

@@ -32,6 +32,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
+ * Basic unit tests for the StoreMessage.
+ * TODO do test methods for the getters.
+ * 
  */
 public class StoreMessageTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();

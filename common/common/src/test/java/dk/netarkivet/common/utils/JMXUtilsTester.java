@@ -52,7 +52,11 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
+/**
+ * 
+ * Unit tests for the JMXUtils class.
+ *
+ */
 public class JMXUtilsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
     
@@ -62,7 +66,9 @@ public class JMXUtilsTester extends TestCase {
 
     public void setUp() {
         // Set JMX_timeout to 1 second
-        Settings.set(CommonSettings.JMX_TIMEOUT, "1");
+        Settings.set(CommonSettings.JMX_TIMEOUT, "2");
+        // Note: adding the following statement speeds up the unittest enormously!
+        int JMXMaxtries = JMXUtils.MAX_TRIES;
         rs.setUp();
     }
 
