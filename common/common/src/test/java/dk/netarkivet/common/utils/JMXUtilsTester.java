@@ -65,10 +65,15 @@ public class JMXUtilsTester extends TestCase {
     }
 
     public void setUp() {
-        // Set JMX_timeout to 1 second
-        Settings.set(CommonSettings.JMX_TIMEOUT, "2");
-        // Note: adding the following statement speeds up the unittest enormously!
+        
+        // Set JMX_timeout to 1 second.
+        // When run as part of the unittestersuite, it has no
+        // effect.
+        
+        Settings.set(CommonSettings.JMX_TIMEOUT, "1");
+        // Note: without the next statement, the former statement has no effect!
         int JMXMaxtries = JMXUtils.MAX_TRIES;
+        
         rs.setUp();
     }
 

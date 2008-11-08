@@ -28,6 +28,10 @@
 -->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <common>
+	<jmx>
+	<!-- to reduce running time of our unittests -->
+	<timeout>2</timeout>
+	</jmx>
     <remoteFile>
         <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
         <userName>jms</userName>

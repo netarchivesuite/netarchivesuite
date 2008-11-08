@@ -278,7 +278,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
             assertEquals("nextDate should be changed after changing", testDate,
                          ((PartialHarvest) hd2).getNextDate());
         }
-        // Check that number of events were cahnged
+        // Check that number of events were changed
         assertEquals("numEvents should be changed after changing", numEvents,
                      hd2.getNumEvents());
     }
@@ -333,7 +333,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Test that we can get jobs created from HDs
+     * Test that we can get jobs created from HDs.
      *
      * @throws Exception
      */
@@ -369,18 +369,18 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         Domain domain = DomainDAO.getInstance().read("netarkivet.dk");
         cfgs.add(domain.getDefaultConfiguration());
         final ScheduleDAO sdao = ScheduleDAO.getInstance();
-        HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(cfgs,
-                                                                       sdao.read(
-                                                                               "Hver hele time"),
-                                                                       "Hele time",
-                                                                       "");
+        HarvestDefinition hd1 = HarvestDefinition.createPartialHarvest(
+                cfgs, 
+                sdao.read("Hver hele time"),
+                "Hele time",
+                "");
         hd1.setSubmissionDate(new Date());
         hddao.create(hd1);
-        HarvestDefinition hd2 = HarvestDefinition.createPartialHarvest(cfgs,
-                                                                       sdao.read(
-                                                                               "Hver nat kl 4.00"),
-                                                                       "Kl. 4",
-                                                                       "");
+        HarvestDefinition hd2 = HarvestDefinition.createPartialHarvest(
+                cfgs,
+                sdao.read("Hver nat kl 4.00"),
+                "Kl. 4",
+                "");
         hd2.setSubmissionDate(new Date());
         hddao.create(hd2);
         runGenerateJobs(hddao, now, 0);
@@ -471,7 +471,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         Thread.enumerate(threads);
         int count = 0;
         for (int i = 0; i < threads.length; i++) {
-            // This is a subthread.
+            // This is a sub-thread.
             if (threads[i] != null
                 && threads[i].getName().startsWith(threadPrefix)) {
                 count++;
@@ -588,11 +588,11 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
 
         List<DomainConfiguration> dcs = IteratorUtils.toList(hddao
                 .getSnapShotConfigurations());
-        HarvestDefinition newHd = HarvestDefinition.createPartialHarvest(dcs,
-                                                                         sdao.read(
-                                                                                 "DefaultSchedule"),
-                                                                         "RunInfo",
-                                                                         "");
+        HarvestDefinition newHd = HarvestDefinition.createPartialHarvest(
+                dcs,
+                sdao.read("DefaultSchedule"),
+                "RunInfo",
+                "");
         newHd.setActive(false); // Can't have it doing stuff behind our backs
         hddao.create(newHd);
 
