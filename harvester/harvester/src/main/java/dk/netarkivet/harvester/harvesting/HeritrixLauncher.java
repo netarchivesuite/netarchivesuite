@@ -214,8 +214,9 @@ public class HeritrixLauncher {
         long lastTimeReceivedData = System.currentTimeMillis();
         while (!heritrixController.crawlIsEnded()) {
             log.info("Job ID: " + files.getJobID()
-                     + ", Harvest ID: " + this.files.getHarvestID()
-                     +  "\n" + heritrixController.getProgressStats());
+                            + ", Harvest ID: " + files.getHarvestID()
+                            + ", " + heritrixController.getHarvestInformation()
+                            + "\n" + heritrixController.getProgressStats());
             // Note that we don't check for timeout while paused.
             if (heritrixController.getCurrentProcessedKBPerSec() > 0 ||
                 heritrixController.isPaused()) {

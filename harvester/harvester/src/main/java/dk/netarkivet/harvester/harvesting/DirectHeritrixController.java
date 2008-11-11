@@ -191,6 +191,15 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
+     * This version just returns a string that tells the harvester is running
+     * inline.
+     * @return running inline.
+     */
+    public String getHarvestInformation() {
+        return "(running inline)";
+    }
+
+    /**
      * Class for handling callbacks from Heritrix. Except for logging, all that
      * happens is that - the constructor sets the value of crawlIsEnded to false
      * - crawlEnded() callback method sets the value of crawlIsEnded to true.

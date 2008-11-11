@@ -127,4 +127,10 @@ public interface HeritrixController {
     /** Release any resources kept by the class.
      */
     void cleanup();
+
+    /**
+     * Get harvest information, like where to access.
+     * @return information about the harvest process.
+     */
+    String getHarvestInformation();
 }

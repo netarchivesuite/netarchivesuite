@@ -498,6 +498,15 @@ public class JMXHeritrixController implements HeritrixController {
         } while (attempt++ < JMXUtils.MAX_TRIES);
     }
 
+    /**
+     * Return the URL for monitoring this instance.
+     * @return the URL for monitoring this instance.
+     */
+    public String getHarvestInformation() {
+        return "http://" + getHostName() + ":" + getGUIPort();
+
+    }
+
     /** Change an environment to be suitable for running Heritrix.
      *
      * At the moment, this involves the following:

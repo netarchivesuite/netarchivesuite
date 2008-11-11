@@ -231,13 +231,15 @@ public class JMXSummaryUtils {
      */
     public static String generateMessage(String logMessage, Locale l) {
         StringBuilder msg = new StringBuilder();
+        logMessage = HTMLUtils.escapeHtmlValues(logMessage);
+        logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)", "<a href=\"$1\">$1</a>");
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");
         int lineno = 0;
         String line;
         try {
             while (lineno < 5 && (line = sr.readLine()) != null) {
-                msg.append(HTMLUtils.escapeHtmlValues(line));
+                msg.append(line);
                 msg.append('\n');
                 ++lineno;
             }
