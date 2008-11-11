@@ -25,15 +25,11 @@ package dk.netarkivet.common.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +46,6 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -65,11 +60,12 @@ public class FileUtilsTester extends TestCase{
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
-    private final static File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
-    private final static File ORIGINALS = new File(BASE_DIR, "fileutils_data");
-    private final static File WORKING = new File(BASE_DIR, "working");
-    private final static File NO_SUCH_FILE = new File(WORKING, "no_file");
-    private final static File SUBDIR = new File(WORKING, "subdir");
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
+    private static final File ORIGINALS = new File(BASE_DIR, "fileutils_data");
+    private static final File WORKING = new File(BASE_DIR, "working");
+    private static final File NO_SUCH_FILE = new File(WORKING, "no_file");
+    private static final File SUBDIR = new File(WORKING, "subdir");
+    private static final File EMPTY = new File(WORKING, "emptyfile.txt");
 
     public void setUp() {
         rs.setUp();
@@ -139,16 +135,15 @@ public class FileUtilsTester extends TestCase{
      */
     public void testGetBytesFree() throws Exception {
         long free1 = FileUtils.getBytesFree(NO_SUCH_FILE);
-        assertTrue("Should have at least *some* bytes free, not " + free1,
-                free1 > 0);
-        long free2 = FileUtils.getBytesFree(WORKING);
-        assertTrue("Should also get a value on a directory", free2 > 0);
-        try {
-            FileUtils.getBytesFree(new File("/does/not/exist"));
-            fail("Should have failed to get bytes free on bad dir");
-        } catch (IOFailure e) {
-            // Expected case
-        }
+        assertEquals("Should report 0 on non-existing file", 0,
+                free1);
+        long free2 = FileUtils.getBytesFree(EMPTY);
+        assertTrue("Should get a value on a file", free2 > 0);
+        long free3 = FileUtils.getBytesFree(WORKING);
+        assertTrue("Should get a value on a directory", free3 > 0);
+        long free4 = FileUtils.getBytesFree(new File("/does/not/exist"));
+        assertEquals("Should report 0 on non-existing dir", 0,
+                free4);
     }
 
     public void testCreateDir() throws InterruptedException {
@@ -214,40 +209,6 @@ public class FileUtilsTester extends TestCase{
                 break;
             }
         }
-    }
-
-    public void testGetFreeSpaceOnWindows() throws Exception {
-        checkNoScriptInTemp();
-        Method m = ReflectUtils.getPrivateMethod(FileUtils.class,
-                "getFreeSpaceOnWindows", File.class);
-        try {
-            m.invoke(null, TestInfo.MD5_EMPTY_FILE);
-        } catch (InvocationTargetException e) {
-            // Expected -- cannot run Windows things on Linux.
-        }
-        checkNoScriptInTemp();
-    }
-
-    private void checkNoScriptInTemp() {
-        // Check that no script files are left
-        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        File[] scriptsfiles = tmpdir.listFiles(new FilenameFilter() {
-
-            /**
-             * Tests if a specified file should be included in a file list.
-             *
-             * @param dir  the directory in which the file was found.
-             * @param name the name of the file.
-             * @return <code>true</code> if and only if the name should be
-             *         included in the file list; <code>false</code> otherwise.
-             */
-            public boolean accept(File dir, String name) {
-                return name.startsWith("getBytesFree") &&
-                        name.endsWith(".bat");
-            }
-        });
-        assertEquals("Should have no batch files left",
-                Collections.emptyList(), Arrays.asList(scriptsfiles));
     }
 
     public void testCDXFilter(){

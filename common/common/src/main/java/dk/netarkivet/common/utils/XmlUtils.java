@@ -23,11 +23,6 @@
 
 package dk.netarkivet.common.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +33,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -184,5 +184,28 @@ public class XmlUtils {
             }
         }
     }
-    
+
+    /**
+     * Write document tree to file.
+     *
+     * @param doc the document tree to save.
+     * @param f the file to write the document to.
+     * @throws IOFailure On trouble writing XML file to disk.
+     */
+    public static void writeXmlToFile(Document doc, File f) throws IOFailure {
+        FileOutputStream fos = null;
+        try {
+            try {
+                fos = new FileOutputStream(f);
+                StreamUtils.writeXmlToStream(doc, fos);
+            } finally {
+                if (fos != null) {
+                    fos.close();
+                }
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Unable to write XML to file '"
+                                + f.getAbsolutePath() + "'", e);
+        }
+    }
 }

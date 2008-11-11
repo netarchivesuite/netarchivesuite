@@ -22,11 +22,9 @@
  */
 package dk.netarkivet.common.utils;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -36,27 +34,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import java.io.StringReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
@@ -127,8 +120,6 @@ public class FileUtils {
      * to protect us from getting filenames too long for the filesystem.
      */
     public static final int MAX_IDS_IN_FILENAME = 4;
-    /** The size of a block as reported by a POSIX compliant utility. */
-    private static final int POSIX_BLOCK_SIZE = 512;
 
     /**
      * Remove a file and any subfiles in case of directories.
@@ -141,7 +132,7 @@ public class FileUtils {
      *                           java.lang.SecurityManager#checkDelete}</code>
      *             method denies delete access to the file
      */
-    public static final boolean removeRecursively(File f) {
+    public static boolean removeRecursively(File f) {
         if (!f.exists()) {
             return false;
         }
@@ -178,7 +169,7 @@ public class FileUtils {
      *                           java.lang.SecurityManager#checkDelete}</code>
      *             method denies delete access to the file
      */
-    public static final boolean remove(File f) {
+    public static boolean remove(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
         if (!f.exists()) {
             return false;
@@ -219,6 +210,7 @@ public class FileUtils {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
+                    // Just ignore it
                 }
                 if (tried < tries) {
                     deleteFile(file, tries, tried + 1);
@@ -229,7 +221,7 @@ public class FileUtils {
 
     /**
      * Returns a valid filename for most filesystems. Exchanges the following
-     * characters: <p/> " " -> "_" ":" -> "_"
+     * characters: <p/> " " -> "_" ":" -> "_" "+" -> "_"
      *
      * @param filename
      *            the filename to format correctly
@@ -282,17 +274,17 @@ public class FileUtils {
      * @param filename -
      *            file to load
      * @return file content loaded into text string
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
+     * @throws java.io.FileNotFoundException if the file cannot be found.
+     * @throws java.io.IOException on IO trouble reading the file.
      */
-    public static final String readFile(File filename)
-            throws FileNotFoundException, IOException {
+    public static String readFile(File filename)
+            throws IOException {
         StringBuffer sb = new StringBuffer();
 
         BufferedReader br = new BufferedReader(new FileReader(filename));
 
         try {
-            int i = -1;
+            int i;
 
             while ((i = br.read()) != -1) {
                 sb.append((char) i);
@@ -314,7 +306,7 @@ public class FileUtils {
      *            destination of copy
      * @throws IOFailure if an io error occurs while copying file.
      */
-    public static final void copyFile(File from, File to) {
+    public static void copyFile(File from, File to) {
         try {
             FileInputStream inStream = null;
             FileOutputStream outStream = null;
@@ -364,9 +356,9 @@ public class FileUtils {
      * @param to
      *            Destination directory, i.e. the 'new name' of the copy of the
      *            from directory.
-     * @throws IOFailure
+     * @throws IOFailure On IO trouble copying files.
      */
-    public static final void copyDirectory(File from, File to) throws IOFailure {
+    public static void copyDirectory(File from, File to) throws IOFailure {
         if (from.isFile()) {
             try {
                 copyFile(from, to);
@@ -405,7 +397,7 @@ public class FileUtils {
      * @param file
      *            A file to be read.
      * @return A byte array with the contents of the file.
-     * @throws IOFailure
+     * @throws IOFailure on IO trouble reading the file
      */
     public static byte[] readBinaryFile(File file) throws IOFailure {
         if (file.length() > Integer.MAX_VALUE) {
@@ -515,30 +507,6 @@ public class FileUtils {
             throw new IOFailure(msg, e);
         }
         return lines;
-    }
-
-    /**
-     * Write document tree to file.
-     *
-     * @param doc the document tree to save.
-     * @param f the file to write the document to.
-     * @throws IOFailure On trouble writing XML file to disk.
-     */
-    public static void writeXmlToFile(Document doc, File f) throws IOFailure {
-        FileOutputStream fos = null;
-        try {
-            try {
-                fos = new FileOutputStream(f);
-                StreamUtils.writeXmlToStream(doc, fos);
-            } finally {
-                if (fos != null) {
-                    fos.close();
-                }
-            }
-        } catch (IOException e) {
-            throw new IOFailure("Unable to write XML to file '"
-                                + f.getAbsolutePath() + "'", e);
-        }
     }
 
     /** Writes a collection of strings to a file, each string on one line.
@@ -652,190 +620,18 @@ public class FileUtils {
 
     /**
      * Returns the number of bytes free on the file system that the given file
-     * resides on. Warning: Slow method, and only works on Linux, Windows,
-     * and Mac OS X!
+     * resides on. Will return 0 on non-existing files.
      *
-     * @param f
-     *            a given file
+     * @param f a given file
      * @return the number of bytes free on the file system where file f resides.
+     * 0 if the file cannot be found.
      */
     public static long getBytesFree(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
-
-        final String os = System.getProperty("os.name");
-        if (os.toLowerCase().startsWith("windows")) {
-            return getFreeSpaceOnWindows(f);
-        } else if (os.toLowerCase().startsWith("linux")
-                   || os.toLowerCase().startsWith("mac os x")
-                   || os.toLowerCase().startsWith("sunos")) {
-            return getBytesPosix(f);
-        } else {
-            throw new NotImplementedException("getBytesFree not implemented "
-                    + " for operating system '" + os + "'");
+        if (!f.exists()) {
+            return 0;
         }
-    }
-
-    /**
-     * Return the number of bytes free on the disk that the given file resides
-     * on. This method only works on POSIX-compliant systems. Assumes that
-     * df -P "filename" gives output of the format
-     * <pre>
-     * Filesystem 512-blocks Used Available Use%
-     * Mounted on /dev/sda3 9852805120 5572796416 3779502080 60% /
-     * </pre>
-     * Method is slow - starts an external process.
-     *
-     * @param f A file.
-     * @return Number of bytes free on the disk that the file is on
-     */
-    private static long getBytesPosix(File f) {
-        try {
-            // Want to be able to test on a file we're about to make, so
-            // use parent dir if not already a dir.
-            if (!f.isDirectory()) {
-                f = f.getAbsoluteFile().getParentFile();
-            }
-            Map<String, String> environment
-                    = new HashMap<String, String>(System.getenv());
-            environment.put("POSIXLY_CORRECT", "true");
-            String[] env = new String[environment.size()];
-            int i = 0;
-            for (Map.Entry<String, String> entry : environment.entrySet()) {
-                env[i] = entry.getKey() + "=" + entry.getValue();
-                i++;
-            }
-
-            Process p = Runtime.getRuntime().exec(
-                    new String[] {"df", "-P", f.getAbsolutePath() }, env);
-            final int exitValue = p.waitFor();
-            String outputText = readProcessOutput(p.getInputStream());
-            String errorText = readProcessOutput(p.getErrorStream());
-            if (exitValue != 0) {
-                throw new IOFailure("Error running df: status " + exitValue
-                        + ", stderr '" + errorText + "'");
-            }
-            // Problem declaring a new BufferedReader directly on InputStream:
-            BufferedReader lines = new BufferedReader(new StringReader(
-                    outputText));
-            // Skip the line going "Filesystem 1-blocks Used" etc
-            lines.readLine();
-            String kline = lines.readLine();
-            String[] lineparts = kline.split("\\s+");
-            if (lineparts.length < 6) {
-                throw new IOFailure("Bogus output from df: " + kline);
-            }
-
-            return Long.parseLong(lineparts[3]) * POSIX_BLOCK_SIZE;
-        } catch (NumberFormatException e) {
-            throw new IOFailure("Unable to parse output from df", e);
-        } catch (IOException e) {
-            throw new IOFailure("Error while querying for bytes free", e);
-        } catch (InterruptedException e) {
-            throw new IOFailure("Interrupted while waiting for df to finish",
-                    e);
-        }
-    }
-
-    /**
-     * Return the number of bytes free on the disk that the given file resides
-     * on. This method only works on Windows. <p/> Method is slow - creates a
-     * file and starts an external process.
-     *
-     * @param f
-     *            A file.
-     * @return Number of bytes free on the disk that the file is on
-     */
-    private static long getFreeSpaceOnWindows(File f) {
-        // Name of temp. script file used to retrieve free bytes on Windows file
-        // system
-        final String scriptFileName = "getBytesFree";
-        String outputText = null;
-        File scriptFile = null;
-        try {
-            if (!f.isDirectory()) {
-                f = f.getAbsoluteFile().getParentFile();
-            }
-
-            // create a .bat file to run a directory command
-            // On Windows we cannot invoke cmd.exe or command.com as
-            // an external process - thus a script file must be created:
-            scriptFile = File.createTempFile(scriptFileName, ".bat");
-            PrintWriter writer = new PrintWriter(new FileWriter(scriptFile,
-                    false));
-            // /-C parameter removes thousands separators
-            writer.println("dir /-C \"" + f.getAbsolutePath() + "\"");
-            writer.close();
-
-            // get the output from running the .bat file
-            Process p = Runtime.getRuntime().exec(scriptFile.getAbsolutePath());
-            InputStream reader = new BufferedInputStream(p.getInputStream());
-            try {
-                StringBuffer buffer = new StringBuffer();
-                for (;;) {
-                    int c = reader.read();
-                    if (c == -1) {
-                        break;
-                    }
-                    buffer.append((char) c);
-                }
-                outputText = buffer.toString();
-            } finally {
-                reader.close();
-            }
-
-            /**
-             *  Parse the output text for the bytes free info
-             */
-
-            String[] lineparts = outputText.split("\n");
-
-            // get the last line:
-            String[] lastLineParts = lineparts[lineparts.length - 1].split(" ");
-            for (int i = 0; i < lastLineParts.length; i++) {
-                // See if line contains the bytes free information:
-                // Disgustingly non-portable - only known to run on Danish
-                // and English Windows installs
-                if (i > 0 && lastLineParts[i].endsWith("bytes")) {
-                    return Long.parseLong(lastLineParts[i - 1].replaceAll(",",
-                            ""));
-                }
-            }
-
-            throw new IOFailure("Malformed output in query for bytes free:\n"
-                    + outputText);
-
-        } catch (NumberFormatException e) {
-            throw new IOFailure("Unable to parse output:\n" + outputText, e);
-
-        } catch (IOException e) {
-            throw new IOFailure("Error while querying for bytes free", e);
-        } finally {
-            scriptFile.delete();
-        }
-    }
-
-    /**
-     * Read and return the output from a process. Due to oddities in the Process
-     * handling, this has to be done char by char.
-     *
-     * @param inputStream
-     *            A stream to read up to end of file. This stream is closed at
-     *            return time.
-     * @return A String with the contents.
-     * @throws IOException
-     *             If any error occurs while reading.
-     */
-    private static String readProcessOutput(final InputStream inputStream)
-            throws IOException {
-        InputStream reader = new BufferedInputStream(inputStream);
-        StringBuffer buffer = new StringBuffer();
-        int c;
-        while ((c = reader.read()) != -1) {
-            buffer.append((char) c);
-        }
-        String outputText = buffer.toString();
-        reader.close();
-        return outputText;
+        return f.getUsableSpace();
     }
 
     /**
@@ -956,15 +752,11 @@ public class FileUtils {
      *
      * @param filename The file to create the File object from
      * @return A valid, non-null File object.
-     * @throws IOFailure
+     * @throws IOFailure if file cannot be created.
      */
     public static File makeValidFileFromExisting(String filename)
             throws IOFailure {
         File res = new File(filename);
-        if (res == null) {
-            throw new IOFailure("Error creating a File object from filename '"
-                                + filename + "'");
-        }
         if (!res.isFile()) {
             throw new IOFailure("Error: File object created from filename '"
                                 + filename

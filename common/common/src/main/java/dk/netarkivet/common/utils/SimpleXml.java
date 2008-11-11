@@ -319,7 +319,7 @@ public class SimpleXml {
      */
     public void save(File f) {
         ArgumentNotValid.checkNotNull(f, "f");
-        FileUtils.writeXmlToFile(xmlDoc, f);
+        XmlUtils.writeXmlToFile(xmlDoc, f);
     }
 
 

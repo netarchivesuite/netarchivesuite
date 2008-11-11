@@ -36,6 +36,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.XmlUtils;
 
 /**
  * This class encapsulates all the files that Heritrix gets from our system,
@@ -167,7 +168,7 @@ public class HeritrixFiles {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         ArgumentNotValid.checkTrue(doc.hasContent(), "XML document must not be empty");
         log.debug("Writing order-file to disk as file: " + getOrderXmlFile().getAbsolutePath());
-        FileUtils.writeXmlToFile(doc, getOrderXmlFile());
+        XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
     }
 
     /**
