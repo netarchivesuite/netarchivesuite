@@ -28,8 +28,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * A Simple CDXRecordFilter to be extended.
- * It implements the filtername methods
- * The processmethod is a dummy method that always returns true
+ * It only implements the filtername method.
  */
 public abstract class SimpleCDXRecordFilter implements CDXRecordFilter{
 
@@ -56,12 +55,10 @@ public abstract class SimpleCDXRecordFilter implements CDXRecordFilter{
         return this.filtername;
     }
 
-    /**
-     *
-     * @param cdxrec - the record to be processed
-     * @return this is a dummy method to be overridden - it always returns true
+    /*
+     * (non-Javadoc)
+     * @see dk.netarkivet.common.utils.cdx.CDXRecordFilter#process(
+     * dk.netarkivet.common.utils.cdx.CDXRecord)
      */
-    public boolean process(CDXRecord cdxrec) {
-        return true;
-    }
+    public abstract boolean process(CDXRecord cdxrec);
 }
