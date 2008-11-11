@@ -23,14 +23,13 @@
 
 package dk.netarkivet.common.utils;
 
+import javax.servlet.jsp.JspWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-
-import javax.servlet.jsp.JspWriter;
 
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
@@ -45,6 +44,15 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class StreamUtils {
     
+    /**
+     * Will copy everything from input stream to jsp writer, closing input
+     * stream afterwards. Charset UTF-8 is assumed.
+     *
+     * @param in  Inputstream to copy from
+     * @param out JspWriter to copy to
+     * @throws ArgumentNotValid if either parameter is null
+     * @throws IOFailure if a read or write error happens during copy
+     */
     public static void copyInputStreamToJspWriter(InputStream in, JspWriter out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
@@ -55,7 +63,7 @@ public class StreamUtils {
             try {
                 while (read != -1) {
                     read = in.read(buf);
-                    // out.write(buf, 0, read);
+                    out.write(new String(buf, "UTF-8"), 0, read);
                 }
             } finally {
                 in.close();
