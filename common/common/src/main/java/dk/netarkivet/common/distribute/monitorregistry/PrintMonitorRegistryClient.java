@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.common.distribute.monitorregistry;
 
+import dk.netarkivet.common.utils.JMXUtils;
+
 /**
  * A trivial monitor registry client, that doesn't register anywhere, but simply
  * reports where it might be monitored on stdout.
@@ -34,8 +36,8 @@ public class PrintMonitorRegistryClient implements MonitorRegistryClient {
      * @param rmiPort RMI port communication will happen on. 
      */
     public void register(String hostName, int jmxPort, int rmiPort) {
-        System.out.println("This client may be monitored on host '"
-                           + hostName + "' port '" + jmxPort
-                           + "' (RMI callback on port '" + rmiPort + "')");
+        System.out.println("This client may be monitored on '"
+                           + JMXUtils.getUrl(hostName, jmxPort, rmiPort)
+                           + "'");
     }
 }
