@@ -41,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
-import dk.netarkivet.common.utils.FileUtils;
 
 /** This implementation of FileBatchJob is a bridge to a jar file given as a
  * File object.
@@ -74,8 +73,11 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
 
         public Class findClass(String className) throws ClassNotFoundException {
-            if (binaryData.containsKey(className)) {
-                final byte[] bytes = binaryData.get(className);
+            // replace all dots in the className before looking it up in the hashmap
+            // Note: The class is stored in the hashmap with a .class extension
+            String realClassName = className.replace('.', '/') + ".class";
+            if (binaryData.containsKey(realClassName)) {
+                final byte[] bytes = binaryData.get(realClassName);
                 return defineClass(className, bytes, 0, bytes.length);
             } else {
                 return super.findClass(className);
@@ -96,7 +98,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
     }
 
     /**
-     * Initialize the job before runnning. This is called before the
+     * Initialize the job before running. This is called before the
      * processFile() calls.
      *
      * @param os the OutputStream to which output should be written
