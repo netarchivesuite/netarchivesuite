@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.NoSuchMethodException;
 import java.lang.IllegalAccessException;
-import java.lang.reflect.InvocationTargetException;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;

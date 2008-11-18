@@ -163,7 +163,8 @@ public class BitarchiveServerTester extends TestCase {
      * We currently don't resend the message, but just reply.
      */
     public void testVisitUploadMessage() {
-        // Set to just over the minimum size guaranteed.
+        SERVER1.mkdirs();
+        // Set to just over the minimum size guaranteed.        
         Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(SERVER1) - 12000));
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());

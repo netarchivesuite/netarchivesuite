@@ -26,13 +26,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-
-
-
-public class ArcUtilsTesterSuite
-{
-    public static Test suite()
-    {
+/**
+ * Suite of unittests for the classes in the 
+ * dk.netarkivet.commons.utils.arc package.
+ */
+public class ArcUtilsTesterSuite {
+    public static Test suite() {
         TestSuite suite;
         suite = new TestSuite("ArcUtilsTesterSuite");
 
@@ -48,14 +47,16 @@ public class ArcUtilsTesterSuite
         suite.addTestSuite(ARCUtilsTester.class);
         suite.addTestSuite(BatchFilterTester.class);
         suite.addTestSuite(BatchLocalFilesTester.class);
+        suite.addTestSuite(ByteClassLoaderTester.class);
         suite.addTestSuite(FileBatchJobTester.class);
         suite.addTestSuite(LoadableFileBatchJobTester.class);
+        suite.addTestSuite(LoadableJarBatchJobTester.class);
         suite.addTestSuite(ShareableARCRecordTester.class);
     }
 
-    public static void main(String args[])
-    {
-        String args2[] = {"-noloading", "dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite"};
+    public static void main(String args[]) {
+        String args2[] = { "-noloading",
+                "dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite" };
         TestRunner.main(args2);
     }
 }

@@ -39,6 +39,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 
@@ -53,9 +54,12 @@ public class LoadableJarBatchJob extends FileBatchJob {
     private String jobClass;
 
     static class ByteJarLoader extends ClassLoader implements Serializable {
+        transient Log log = LogFactory.getLog(this.getClass().getName());
         Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
 
         public ByteJarLoader(File file) {
+            ArgumentNotValid.checkNotNull(file, "File file");
+            ArgumentNotValid.checkTrue(file.isFile(), "Not a regular file");
             try {
                 JarFile jarFile = new JarFile(file);
                 for (Enumeration<JarEntry> e = jarFile.entries();
@@ -63,8 +67,10 @@ public class LoadableJarBatchJob extends FileBatchJob {
                     JarEntry entry = e.nextElement();
                     String name = entry.getName();
                     InputStream in = jarFile.getInputStream(entry);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream((int)entry.getSize());
+                    ByteArrayOutputStream out = new ByteArrayOutputStream(
+                            (int)entry.getSize());
                     StreamUtils.copyInputStreamToOutputStream(in, out);
+                    log.info("Entering data for class: " + name);
                     binaryData.put(name, out.toByteArray());
                 }
             } catch (IOException e) {
@@ -73,9 +79,14 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
 
         public Class findClass(String className) throws ClassNotFoundException {
+            ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
             // replace all dots in the className before looking it up in the hashmap
             // Note: The class is stored in the hashmap with a .class extension
             String realClassName = className.replace('.', '/') + ".class";
+            
+            if (binaryData.isEmpty()) {
+                log.warn("No data loaded!!!!!");
+            }
             if (binaryData.containsKey(realClassName)) {
                 final byte[] bytes = binaryData.get(realClassName);
                 return defineClass(className, bytes, 0, bytes.length);
@@ -93,7 +104,11 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * subclass of FileBatchJob
      */
     public LoadableJarBatchJob(File jarFile, String jobClass) {
+        ArgumentNotValid.checkNotNull(jarFile, "File jarFile");
+        ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
         this.jobClass = jobClass;
+        log.info("Loading loadableJarBatchJob using jarfile = '" 
+                + jarFile + "' and jobClass=" + jobClass);
         multipleClassLoader = new ByteJarLoader(jarFile);
     }
 
@@ -132,6 +147,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(os, "OutputStream os");
         return loadedJob.processFile(file, os);
     }
 
@@ -141,12 +158,14 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * @param os the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
+        ArgumentNotValid.checkNotNull(os, "OutputStream os");
         loadedJob.finish(os);
     }
 
     /** Override of the default toString to include name of loaded jar/class. */
     public String toString() {
-        return this.getClass().getName() + " processing " + jobClass + " from " + multipleClassLoader.toString();
+        return this.getClass().getName() + " processing " 
+        + jobClass + " from " + multipleClassLoader.toString();
     }
 
     /** Override of the default way to serialize this class.

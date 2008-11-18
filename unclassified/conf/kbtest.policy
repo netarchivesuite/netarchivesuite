@@ -32,6 +32,7 @@ grant codeBase "file:/opt/IntelliJ-IDEA-7.0.1/-" {
 /* These permissions allow third-party batch classes to read the bitarchive */
 grant {
   permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
+  permission java.util.PropertyPermission "user.dir", "read";
   permission java.io.FilePermission "${user.dir}/tests/dk/netarkivet/archive/bitarchive/data/working/filedir/*", "read";
   permission java.io.FilePermission "${user.dir}/tests/dk/netarkivet/common/utils/arc/data/working/*", "read";
 };
