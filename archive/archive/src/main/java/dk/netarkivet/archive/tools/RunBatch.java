@@ -54,7 +54,8 @@ import org.apache.commons.cli.*;
  *  java dk.netarkivet.archive.tools.RunBatch 
  *       with arguments as defined in local class BatchParameters 
  *
- * where -C<classfile> is a file containing a FileBatchJob implementation
+ * where -J<jarfile> is a file containing all the classes needed by a BatchJob
+ *       -C<classfile> is a file containing a FileBatchJob implementation
  *       -R<regexp> is a regular expression that will be matched against
  *              file names in the archive, by default .*
  *       -B<location> is the bitarchive location this should be run on, by
@@ -63,13 +64,15 @@ import org.apache.commons.cli.*;
  *              written.  By default, it goes to stdout.
  *       -E<errorFile> is a file where the errors from the batch job will be
  *              written. By default, it goes to stderr.
- * Example:
+ *       -N<className> is the name of the primary class to be loaded when doing 
+ *              a LoadableJarBatchJob       
+ * Examples:
  *
- * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class -R10-*.arc \
- *                                           -BSB -omimes
- *
- * TODO: There are mede preparations for inclusion of jar files in the argument
- *       list
+ * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ 
+ *                          -R10-*.arc -BSB -Omimes
+ * 
+ * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ 
+ *                          -R10-*.arc -BSB -Omimes
  *        
  * Note that you probably want to set the HTTP port setting
  * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its 
@@ -85,9 +88,8 @@ public class RunBatch extends ToolRunnerBase {
      * @param argv command line parameters as defined in local class 
      *        BatchParameters
      * required:
-     *   the name of a class-file containing an implementation of FileBatchJob
-     *   TODO: name of jar file which includes class file, if class file is  
-     *         given indirectly via jar file.
+     *   The name of a class-file containing an implementation of FileBatchJob
+     *   Name of jar file which includes the class file, and the className
      */
     public static void main(String[] argv) {
         RunBatch instance = new RunBatch();
@@ -113,7 +115,7 @@ public class RunBatch extends ToolRunnerBase {
         private static final String DEFAULT_REGEXP = ".*";
         
         /** The regular expression that will be matched against
-            file names in the archive, by default .*
+            file names in the archive, by default ".*".
         */
         private String regexp = DEFAULT_REGEXP;
         
@@ -131,11 +133,11 @@ public class RunBatch extends ToolRunnerBase {
         /** The errorfile, if any was given. */
         private File errorFile;
         
-        /** file types in input parameter */
+        /** file types in input parameter. */
         private enum FileType {OTHER, JAR, CLASS};
         
         /** 
-         * getting FileType from given file name 
+         * Getting FileType from given file name. 
          * @param fileName The file name to get file type from
          * @return FileType found from extension of file name
          */
@@ -158,9 +160,11 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /** 
-         * getting FileType from given file name 
-         * @param fileName The file name to get file type from
-         * @return FileType found from extension of file name
+         * Check, if you can write a file named fileName to CWD.
+         * @param fileName The file name
+         * @param fileTag a tag for the fileName
+         * @return true, if you can write such a file;
+         * False, if the file already exists, or you cannot create the file
          */
         private boolean checkWriteFile(String fileName, String fileTag) {
             if (new File(fileName).exists()) {
@@ -188,32 +192,33 @@ public class RunBatch extends ToolRunnerBase {
         
         /** 
          * Type to encapsulate parameters defined by options to batchjob 
-         * based on apache.cli
+         * based on apache.commons.cli.
          */
         private class BatchParameters {
             /**
-             * Options object for parameters
+             * Options object for parameters.
              */
-            Options options = new Options();      
+            Options options = new Options();
             private CommandLineParser parser = new PosixParser();
             CommandLine cmd;
-            //HelpFormatter only prints directly, thus this is not used at the moment
+            //HelpFormatter only prints directly, thus this is not used at
+            //the moment
             //HelpFormatter formatter = new HelpFormatter();
             //Instead the method listArguments is defined
             
             /**
-             * Initialize options by setting legal parameters for batch jobs
+             * Initialize options by setting legal parameters for batch jobs.
              */
             BatchParameters() {
                 options.addOption(
-                    "C", true, "Class file to be run"
-//                  //TODO jar addition: + "from class file or from "
-                    //           + "specified jar file (is required)"
-                );
-                //TODO jar addition 
-                //options.addOption(
-                //    "J", true, "Jar file to be run (required if class file " 
-                //               + "is in jar file)");
+                    "C", true, "Class file to be run");
+                options.addOption(
+                    "J", true, "Jar file to be run (required if class file " 
+                               + "is in jar file)");
+                options.addOption(
+                        "N", true, "Name of the primary class to be run. Only " 
+                                   + "needed when using the Jar-file option");
+                    
                 options.addOption(
                     "R", true, "Regular expression for files to be processed "
                                + "(default: '" + regexp + "')");
@@ -233,10 +238,10 @@ public class RunBatch extends ToolRunnerBase {
             String parseParameters(String[] args) {
                 try {
                     // parse the command line arguments
-                    cmd = parser.parse( options, args);
-                }
-                catch(ParseException exp) {
-                    return "Parsing parameters failed.  Reason is: " + exp.getMessage();
+                    cmd = parser.parse(options, args);
+                } catch(ParseException exp) {
+                    return "Parsing parameters failed.  Reason is: "
+                        + exp.getMessage();
                 }
                 return "";
             }
@@ -245,7 +250,7 @@ public class RunBatch extends ToolRunnerBase {
                 String s = "\nwith arguments:\n";
                 // add options
                 for (Object o: options.getOptions()) {
-                    Option op = (Option)o;
+                    Option op = (Option) o;
                     s += "-" + op.getOpt() + " " + op.getDescription() + "\n";  
                 }
                 //delete last delimitter
@@ -257,7 +262,7 @@ public class RunBatch extends ToolRunnerBase {
         }
         
         
-        /** To contain parameters defined by options to batchjob */
+        /** To contain parameters defined by options to batchjob. */
         private BatchParameters parms = new BatchParameters();
         
         /**
@@ -278,7 +283,7 @@ public class RunBatch extends ToolRunnerBase {
             if (args.length < 1) {
                 System.err.println(
                         "Missing required argument: "
-//                      //TODO jar addition + "jar and/or "
+                        + "jar or "
                         + "class file"
                 );
                 return false;
@@ -289,28 +294,44 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             //Check class file argument
-            String jar = null; //TODO jar addition set to: parms.cmd.getOptionValue("J");
-            String cl = parms.cmd.getOptionValue("C");
-            if (cl == null) {
+            String jar = parms.cmd.getOptionValue("J");
+            String className = parms.cmd.getOptionValue("N");
+            String classFileName = parms.cmd.getOptionValue("C");
+          
+            if (classFileName == null && jar == null) {
                 msg = "Missing required class file argument ";
-                if (jar == null) { msg += "(-C)"; }
-                else { msg += " to run in jar-file (-C)"; }
+                msg += "(-C) or Jarfile argument (-J)"; 
                 System.err.println(msg);
                 return false;
             } 
-            if (!getFileType(cl).equals(FileType.CLASS)) {
-                System.err.println("Argument '"+ cl + "' is not denoting a class file");
+            // Check, that option -C and -J is not used simultaneously
+            if (classFileName != null && jar != null) {
+                msg = "Cannot use option -J and -C at the same time";
+                System.err.println(msg);
                 return false;
             }
-            if (jar == null) {
-                if (!new File(cl).canRead()) {
-                    System.err.println("Cannot read class file: '" + cl + "'");
+            
+            if (classFileName != null && jar == null) { // -C is used and not -J
+                if (!getFileType(classFileName).equals(FileType.CLASS)) {
+                    System.err.println("Argument '"+ classFileName 
+                            + "' is not denoting a class file");
                     return false;
                 }
-            } //else class file is included in jar file
+                if (!new File(classFileName).canRead()) {
+                    System.err.println("Cannot read class file: '"
+                            + classFileName + "'");
+                    return false;
+                }
+            }
             
-            //Check jar file argument
+            //Check jar file arguments
             if (jar != null) {
+                if (className == null) {
+                    msg = "Using option -J also requires"
+                        + "option -N (the name of the class).";
+                    System.err.println(msg);
+                    return false;
+                }
                 if (!getFileType(jar).equals(FileType.JAR)) {
                     System.err.println("Argument '"+ jar 
                                        + "' is not denoting a jar file");
@@ -320,6 +341,8 @@ public class RunBatch extends ToolRunnerBase {
                     System.err.println("Cannot read jar file: '" + jar + "'");
                     return false;
                 }
+                
+                //TODO Validate class name
             } 
 
             //Check regular expression argument
@@ -396,16 +419,20 @@ public class RunBatch extends ToolRunnerBase {
          */
         public void run(String... args) {
             //Arguments are allready checked by checkArgs 
-            String jarName = null; //TODO jar addition set to: parms.cmd.getOptionValue("J");
-            String className = parms.cmd.getOptionValue("C");
+            String jarName = parms.cmd.getOptionValue("J");
+            String classFileName = parms.cmd.getOptionValue("C");
+            String className = parms.cmd.getOptionValue("N");
+
             
             FileBatchJob job;
 
             if (jarName == null) {
-                LoadableFileBatchJob classJob = new LoadableFileBatchJob(new File(className));
+                LoadableFileBatchJob classJob = new LoadableFileBatchJob(
+                        new File(classFileName));
                 job = classJob;
             } else {
-                LoadableJarBatchJob jarJob = new LoadableJarBatchJob(new File(jarName), className);
+                LoadableJarBatchJob jarJob = new LoadableJarBatchJob(
+                        new File(jarName), className);
                 job = jarJob;
             }
             
@@ -433,9 +460,10 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             System.out.println(
-                "Running batch job '" + className + "' "
-              //TODO jar addition: 
-              //+ ((jarName == null) ? "" : "from jar-file '" + jarName + "' ")
+                "Running batch job '" 
+               + ((classFileName == null)? "" : classFileName + "' ")
+               + ((jarName == null) ? "" : className + " from jar-file '"
+                       + jarName + "' ")
                 + "on files matching '" + regexp + "' "
                 + "on location '" + batchLocation.getName() + "', " 
                 + "output written to " 
@@ -472,7 +500,7 @@ public class RunBatch extends ToolRunnerBase {
                     System.err.println(
                             "Unable to to create errorfile for writing: " + e);
                     System.err.println(
-                            "Writing errors to stdout instead!");                
+                            "Writing errors to stdout instead!");
                 }
             }
             
@@ -487,12 +515,18 @@ public class RunBatch extends ToolRunnerBase {
                 errorOutput.println("Failed files that produced exceptions("
                         + exceptions.size() + "):");
                 for (ExceptionOccurrence occurrence : exceptions) {
-                    errorOutput.println("File: " + occurrence.getFileName());
-                    errorOutput.println("Offset: " +  occurrence.getFileOffset());
-                    errorOutput.println("OutputOffset: " +  occurrence.getOutputOffset());
-                    errorOutput.println("Class name: " +  occurrence.getClass().getName());
-                    errorOutput.println("Was exception during initialize: " + occurrence.isInitializeException());
-                    errorOutput.println("Was exception during finish: " + occurrence.isFinishException());
+                    errorOutput.println("File: "
+                            + occurrence.getFileName());
+                    errorOutput.println("Offset: "
+                            + occurrence.getFileOffset());
+                    errorOutput.println("OutputOffset: "
+                            + occurrence.getOutputOffset());
+                    errorOutput.println("Class name: "
+                            + occurrence.getClass().getName());
+                    errorOutput.println("Was exception during initialize: "
+                            + occurrence.isInitializeException());
+                    errorOutput.println("Was exception during finish: "
+                            + occurrence.isFinishException());
                     errorOutput.println("Exception w/stacktrace: ");
                     occurrence.getException().printStackTrace(errorOutput);
                 }
