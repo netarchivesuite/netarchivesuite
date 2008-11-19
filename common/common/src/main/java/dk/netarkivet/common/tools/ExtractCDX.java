@@ -29,7 +29,7 @@ import java.util.List;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 
 /**

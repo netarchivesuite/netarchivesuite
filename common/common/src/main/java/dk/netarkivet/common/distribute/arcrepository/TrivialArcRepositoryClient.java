@@ -42,8 +42,8 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A minimal implementation of ArcRepositoryClient that just has one local

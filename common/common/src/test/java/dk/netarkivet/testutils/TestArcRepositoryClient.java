@@ -45,7 +45,7 @@ import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A local-file based arc repository client.  Given one or more directories

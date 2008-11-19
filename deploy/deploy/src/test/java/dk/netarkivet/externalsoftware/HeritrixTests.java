@@ -59,7 +59,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.XmlUtils;
-import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 import dk.netarkivet.harvester.datamodel.StopReason;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
@@ -856,7 +856,7 @@ public class HeritrixTests extends TestCase {
         OutputStream cdxstream = null;
         try {
             cdxstream = new FileOutputStream(cdxfile);
-            ExtractCDX.writeCDXInfo(arcfile, cdxstream);
+            CDXUtils.writeCDXInfo(arcfile, cdxstream);
         } finally {
             if (cdxstream != null) {
                 cdxstream.close();

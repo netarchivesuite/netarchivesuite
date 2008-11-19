@@ -52,7 +52,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Client side usage of an arc repository.

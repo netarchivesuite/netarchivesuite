@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A batch job which returns a list of all files in the bitarchive in which it

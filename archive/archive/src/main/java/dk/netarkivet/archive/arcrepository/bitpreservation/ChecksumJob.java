@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 
 /**

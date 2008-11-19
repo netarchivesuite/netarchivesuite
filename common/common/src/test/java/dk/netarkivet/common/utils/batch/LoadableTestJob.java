@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import java.lang.IllegalAccessException;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /** This class is used for loading by LoadableFileBatchJobTester.  The compiled
  * class file should be placed under data/originals.

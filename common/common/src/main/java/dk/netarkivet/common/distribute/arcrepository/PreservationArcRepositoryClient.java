@@ -26,7 +26,7 @@ import java.io.File;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Implements the Facade pattern to shield off the methods in

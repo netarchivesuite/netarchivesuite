@@ -46,7 +46,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.cdx.CDXReader;
-import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -188,7 +188,7 @@ public class CreateLogsMetadataFileTester extends TestCase {
         pss.tearDown();
 
         // test the contents of the 4-metadata-2.arc file
-        ExtractCDX.writeCDXInfo(metadataArcFile, new FileOutputStream(cdxFile));
+        CDXUtils.writeCDXInfo(metadataArcFile, new FileOutputStream(cdxFile));
         assertTrue("The file 4-metadata-2.cdx should exist now", cdxFile.exists());
         assertEquals("Number of CDXlines should be 15", FileUtils.countLines(cdxFile), 15L);
         FileUtils.makeSortedFile(cdxFile, cdxFileSorted);

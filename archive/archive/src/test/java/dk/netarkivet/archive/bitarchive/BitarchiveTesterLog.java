@@ -30,7 +30,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.arc.BatchFilter;
+import dk.netarkivet.common.utils.batch.BatchFilter;
 import dk.netarkivet.testutils.FileAsserts;
 
 

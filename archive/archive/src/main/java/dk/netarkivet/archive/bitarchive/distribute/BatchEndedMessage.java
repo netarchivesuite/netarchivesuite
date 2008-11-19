@@ -33,7 +33,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * An instance of this class is sent by a bitarchive machine (Bitarchive class)

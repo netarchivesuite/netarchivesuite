@@ -51,7 +51,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Class representing the monitor for bitarchives. The monitor is used for

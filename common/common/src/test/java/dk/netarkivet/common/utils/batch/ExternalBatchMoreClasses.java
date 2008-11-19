@@ -21,8 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.utils.arc;
-//dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A batch job which returns following statistical information about all files
@@ -48,6 +47,11 @@ import dk.netarkivet.common.utils.arc.FileBatchJob;
  *  - date taken from process report line
  *  - section with statistical data taken from the arc-file consisting of 
  *    <#urls> <#bytes> <mime-types>
+ *    
+ *    
+ *    This is the class which is used to generate the two jarfiles
+ *    ExternalBatchSeveralClassesNoPackage.jar
+ *    ExternalBatchSeveralClassesWithPackage.jar
  */
 
 public class ExternalBatchMoreClasses extends FileBatchJob {

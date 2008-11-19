@@ -27,7 +27,7 @@ import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 
 /**

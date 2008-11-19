@@ -24,7 +24,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.arc.BatchFilter;
+import dk.netarkivet.common.utils.batch.BatchFilter;
 
 import java.io.IOException;
 import java.io.OutputStream;

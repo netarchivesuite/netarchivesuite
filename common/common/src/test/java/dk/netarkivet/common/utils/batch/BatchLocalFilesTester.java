@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestUtils;
 
 import junit.framework.TestCase;

@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.harvester.harvesting.HarvestDocumentation;

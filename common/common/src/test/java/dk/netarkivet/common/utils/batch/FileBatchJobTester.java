@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.Serial;
 

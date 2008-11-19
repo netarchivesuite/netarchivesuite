@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
 /**
  * Utility class for creating CDX-files.
@@ -43,8 +43,8 @@ import dk.netarkivet.common.utils.arc.BatchLocalFiles;
  *
  */
 
-public class ExtractCDX {
-    private static Log log = LogFactory.getLog(ExtractCDX.class.getName());
+public class CDXUtils {
+    private static Log log = LogFactory.getLog(CDXUtils.class.getName());
 
     /**
      * Add cdx info for a given ARC file to a given OutputStream.

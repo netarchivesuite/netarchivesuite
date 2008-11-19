@@ -57,7 +57,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Class handling integrity check of the arcrepository. <p/> This class must

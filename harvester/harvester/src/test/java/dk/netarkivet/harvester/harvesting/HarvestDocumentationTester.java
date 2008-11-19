@@ -44,7 +44,7 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.ARCTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
@@ -288,7 +288,7 @@ public class HarvestDocumentationTester extends TestCase {
     public void testCreateCDXFile() throws IOException {
         OutputStream cdxstream = new ByteArrayOutputStream();
         cdxstream.write("BEFORE\n".getBytes());
-        ExtractCDX.writeCDXInfo(TestInfo.ARC_FILE_1, cdxstream);
+        CDXUtils.writeCDXInfo(TestInfo.ARC_FILE_1, cdxstream);
         assertEquals("Stream should have expected content",
                      "BEFORE\n" + FileUtils.readFile(TestInfo.CDX_FILE),
                      cdxstream.toString());
@@ -297,7 +297,7 @@ public class HarvestDocumentationTester extends TestCase {
         //Testing on a non-arc file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Start\n".getBytes());
-        ExtractCDX.writeCDXInfo(TestInfo.SEEDS_FILE, cdxstream);
+        CDXUtils.writeCDXInfo(TestInfo.SEEDS_FILE, cdxstream);
         assertEquals("Stream should have no new content",
                      "Start\n",
                      cdxstream.toString());
@@ -305,7 +305,7 @@ public class HarvestDocumentationTester extends TestCase {
         //Testing on a gzipped file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Begin\n".getBytes());
-        ExtractCDX.writeCDXInfo(TestInfo.ARC_FILE2, cdxstream);
+        CDXUtils.writeCDXInfo(TestInfo.ARC_FILE2, cdxstream);
         assertEquals("Stream should have expected new content",
                      "Begin\n" + FileUtils.readFile(TestInfo.CDX_FILE2),
                      cdxstream.toString());
@@ -316,50 +316,50 @@ public class HarvestDocumentationTester extends TestCase {
      */
     public void testGenerateCDX() throws IOException {
         try {
-            ExtractCDX.generateCDX(null, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(null, TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(TestInfo.ARC_REAL_DIR, null);
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, null);
             fail("Should throw exception on null argument");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(TestInfo.ARC_FILE_1, TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.ARC_FILE_1);
             fail("Should throw exception on non-directory");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(new File("foo"), TestInfo.CDX_WORKING_DIR);
+            CDXUtils.generateCDX(new File("foo"), TestInfo.CDX_WORKING_DIR);
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(TestInfo.ARC_REAL_DIR, new File("foo"));
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("foo"));
             fail("Should throw exception on non-existing");
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            ExtractCDX.generateCDX(TestInfo.ARC_REAL_DIR, new File("/"));
+            CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, new File("/"));
             fail("Should throw exception on non-writable");
         } catch (ArgumentNotValid e) {
             //Expected
         }
 
         TestInfo.CDX_WORKING_DIR.mkdirs();
-        ExtractCDX.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
+        CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
         File [] originalFiles
                 = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
         File [] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();
@@ -373,7 +373,7 @@ public class HarvestDocumentationTester extends TestCase {
             assertTrue("Should be a cdx file with correct name for '"
                        + original + "'", cdxfile.isFile());
             OutputStream content = new ByteArrayOutputStream();
-            ExtractCDX.writeCDXInfo(original, content);
+            CDXUtils.writeCDXInfo(original, content);
             assertEquals("File '" + cdxfile.getAbsolutePath()
                          + "' should contain expected content",
                          content.toString(), FileUtils.readFile(cdxfile));

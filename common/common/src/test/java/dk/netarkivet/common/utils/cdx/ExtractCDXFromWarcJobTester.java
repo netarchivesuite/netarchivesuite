@@ -41,8 +41,8 @@ import org.archive.io.ArchiveReaderFactory;
 import org.archive.io.ArchiveRecord;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
-import dk.netarkivet.common.utils.arc.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 /**
  * Test class used for investigating CDX generation from WARC-files 

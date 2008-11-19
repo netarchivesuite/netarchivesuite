@@ -45,7 +45,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;

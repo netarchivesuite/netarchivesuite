@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.arc.BatchFilter;
+import dk.netarkivet.common.utils.batch.BatchFilter;
 
 /**
  * Batchjob that extracts lines referring to a specific domain from a crawl log.

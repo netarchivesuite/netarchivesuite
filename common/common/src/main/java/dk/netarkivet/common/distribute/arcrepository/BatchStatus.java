@@ -30,8 +30,8 @@ import java.util.List;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
-import dk.netarkivet.common.utils.arc.FileBatchJob.ExceptionOccurrence;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 
 /**

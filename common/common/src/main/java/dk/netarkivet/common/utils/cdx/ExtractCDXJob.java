@@ -25,7 +25,7 @@ package dk.netarkivet.common.utils.cdx;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.arc.BatchFilter;
+import dk.netarkivet.common.utils.batch.BatchFilter;
 
 import java.io.IOException;
 import java.io.InputStream;

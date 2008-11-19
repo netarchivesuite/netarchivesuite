@@ -32,7 +32,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
 
 /**

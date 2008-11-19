@@ -1,6 +1,6 @@
-/* File:                 $Id$
-* Revision:         $Revision$
-* Author:                $Author$
+/* File:    $Id$
+* Revision: $Revision$
+* Author:   $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -19,9 +19,11 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
 import org.archive.io.arc.ARCRecord;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 import java.awt.datatransfer.MimeTypeParseException;
 import java.io.Serializable;
@@ -30,78 +32,113 @@ import java.util.regex.Pattern;
 
 /** A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
- *
- * accept() is given an ARCRecord rather than a ShareableARCRecord to
- * avoid unnecessary reading and copying of data of records
- * not accepted by filter.
  */
 public abstract class BatchFilter implements Serializable {
-    /** A default filter: Accepts everything */
+    
+    /** The name of the BatchFilter. */
+    private String name;
+    
+    /** A default filter: Accepts everything. */
     public static final BatchFilter NO_FILTER = new BatchFilter("NO_FILTER") {
             public boolean accept(ARCRecord record) {
                 return true;
             }
         };
-
-    private static final String EXCLUDE_FILE_HEADERS_FILEDESC_PREFIX = "filedesc";
-    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME = "EXCLUDE_FILE_HEADERS";
-    /** A default filter: Accepts all but the first file */
+    
+    /** The ARCRecord url for the filedesc record (the header record of every 
+     * ARC File).
+     */    
+    private static final String FILE_HEADERS_FILEDESC_PREFIX
+        = "filedesc";
+    /** The name of the filter that filters out the filedesc record. */
+    private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME
+        = "EXCLUDE_FILE_HEADERS";
+    /** A default filter: Accepts all but the first file. */
     public static final BatchFilter EXCLUDE_FILE_HEADERS = new BatchFilter(
             EXCLUDE_FILE_HEADERS_FILTER_NAME) {
             public boolean accept(ARCRecord record) {
-                return !record.getMetaData().getUrl().startsWith(EXCLUDE_FILE_HEADERS_FILEDESC_PREFIX);
+                return !record.getMetaData().getUrl().startsWith(
+                        FILE_HEADERS_FILEDESC_PREFIX);
             }
         };
 
-    private static final String EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX = "http:";
-    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME = "ONLY_HTTP_ENTRIES";
+    /** Prefix for the url in HTTP records. */    
+    private static final String HTTP_ENTRIES_HTTP_PREFIX = "http:";
+    /** The name of th filter accepting only HTTP entries. */
+    private static final String ONLY_HTTP_ENTRIES_FILTER_NAME
+        = "ONLY_HTTP_ENTRIES";
+    /**
+     * Filter that only accepts records where the url starts with http.
+     */
     public static final BatchFilter ONLY_HTTP_ENTRIES = new BatchFilter(
             ONLY_HTTP_ENTRIES_FILTER_NAME) {
             public boolean accept(ARCRecord record) {
-                return record.getMetaData().getUrl().startsWith(EXCLUDE_HTTP_ENTRIES_HTTP_PREFIX);
+                return record.getMetaData().getUrl().startsWith(
+                        HTTP_ENTRIES_HTTP_PREFIX);
             }
         };
-
-    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX = "MimetypeBatchFilter-";
-
+    
+    /** The name-prefix for mimetype filters. */    
+    private static final String MIMETYPE_BATCH_FILTER_NAME_PREFIX
+        = "MimetypeBatchFilter-";
+    /** Regexp for mimetypes. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
-    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
+    /** Pattern for mimetypes. */
+    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(
+            MIMETYPE_REGEXP);
 
-    /** Create a new filter with the given name
+    /** Create a new filter with the given name.
      *
       * @param name The name of this filter, for debugging mostly.
      */
     protected BatchFilter(String name) {
-        /* TODO: Either use the name or remove it. */
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
+        this.name = name;
     }
 
     /**
+     * Get the name of the filter.
+     * @return the name of the filter.
+     */
+    protected String getName() {
+        return this.name;
+    }
+    
+    /**
      * @param mimetype String denoting the mimetype this filter represents
-     * @return a BatchFilter that filters out all ARCRecords, that does not have this mimetype
-     * @throws java.awt.datatransfer.MimeTypeParseException (if mimetype is invalid)
+     * @return a BatchFilter that filters out all ARCRecords, that does not 
+     *  have this mimetype
+     * @throws MimeTypeParseException If mimetype is invalid
      */
     public static BatchFilter getMimetypeBatchFilter(final String mimetype)
         throws MimeTypeParseException {
         if (!mimetypeIsOk(mimetype)) {
-            throw new MimeTypeParseException("Mimetype argument '" + mimetype +
-                "' is invalid");
+            throw new MimeTypeParseException("Mimetype argument '" + mimetype
+                + "' is invalid");
         }
 
         return new BatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
                 public boolean accept(ARCRecord record) {
-                    return record.getMetaData().getMimetype().startsWith(mimetype);
+                    return record.getMetaData().getMimetype().startsWith(
+                            mimetype);
                 }
             };
     }
 
     /**
-    * Check, if a certain mimetype is valid
-    * @param mimetype
+    * Check, if a certain mimetype is valid.
+    * @param mimetype a given mimetype
     * @return boolean true, if mimetype matches word/word, otherwise false
     */
     public static boolean mimetypeIsOk(String mimetype) {
+        ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         return MIMETYPE_PATTERN.matcher(mimetype).matches();
     }
 
+    /**
+     * Check if a given record is accepted (not filtered out) by this filter.
+     * @param record a given ARCRecord
+     * @return true, if the given record is accepted by this filter
+     */
     public abstract boolean accept(ARCRecord record);
 }

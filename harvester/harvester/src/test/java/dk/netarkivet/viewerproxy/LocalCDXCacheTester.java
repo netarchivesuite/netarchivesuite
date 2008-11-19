@@ -52,7 +52,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;

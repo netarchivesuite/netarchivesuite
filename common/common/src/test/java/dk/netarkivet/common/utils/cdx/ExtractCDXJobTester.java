@@ -40,7 +40,7 @@ import junit.framework.TestCase;
 import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
 public class ExtractCDXJobTester extends TestCase {
     

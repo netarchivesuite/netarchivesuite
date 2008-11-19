@@ -49,8 +49,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
-import dk.netarkivet.common.utils.arc.TestJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.TestJob;
 
 /**
  *

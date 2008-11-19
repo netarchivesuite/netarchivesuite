@@ -20,20 +20,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
+import dk.netarkivet.common.utils.batch.BatchFilterTester;
+import dk.netarkivet.common.utils.batch.BatchLocalFilesTester;
+import dk.netarkivet.common.utils.batch.ByteClassLoaderTester;
+import dk.netarkivet.common.utils.batch.FileBatchJobTester;
+import dk.netarkivet.common.utils.batch.LoadableFileBatchJobTester;
+import dk.netarkivet.common.utils.batch.LoadableJarBatchJobTester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
  * Suite of unittests for the classes in the 
- * dk.netarkivet.commons.utils.arc package.
+ * dk.netarkivet.commons.utils.batch package.
  */
-public class ArcUtilsTesterSuite {
+public class BatchUtilsTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite("ArcUtilsTesterSuite");
+        suite = new TestSuite("BatchUtilsTesterSuite");
 
         addToSuite(suite);
 
@@ -41,15 +47,17 @@ public class ArcUtilsTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ARCBatchJobTester.class);
-        suite.addTestSuite(ARCKeyTester.class);
-        suite.addTestSuite(ARCReaderTester.class);
-        suite.addTestSuite(ARCUtilsTester.class);
+        suite.addTestSuite(BatchFilterTester.class);
+        suite.addTestSuite(BatchLocalFilesTester.class);
+        suite.addTestSuite(ByteClassLoaderTester.class);
+        suite.addTestSuite(FileBatchJobTester.class);
+        suite.addTestSuite(LoadableFileBatchJobTester.class);
+        suite.addTestSuite(LoadableJarBatchJobTester.class);
     }
 
     public static void main(String args[]) {
         String args2[] = { "-noloading",
-                "dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite" };
+                "dk.netarkivet.common.utils.batch.BatchUtilsTesterSuite" };
         TestRunner.main(args2);
     }
 }

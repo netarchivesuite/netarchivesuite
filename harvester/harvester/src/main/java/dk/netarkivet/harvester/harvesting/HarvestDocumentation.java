@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.arc.ARCUtils;
-import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
@@ -181,7 +181,7 @@ public class HarvestDocumentation {
                 // TODO: Place results in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
-                ExtractCDX.generateCDX(arcFilesDir, cdxFilesDir);
+                CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
 
                 //For each CDX file...
                 File[] cdxFiles

@@ -36,8 +36,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.arc.BatchFilter;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
 

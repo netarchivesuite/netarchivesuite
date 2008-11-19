@@ -71,7 +71,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;

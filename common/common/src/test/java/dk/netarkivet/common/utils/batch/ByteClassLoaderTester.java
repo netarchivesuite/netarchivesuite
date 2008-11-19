@@ -20,14 +20,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
-
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
+import junit.framework.TestCase;
+
+import dk.netarkivet.common.utils.arc.TestInfo;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 public class ByteClassLoaderTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -50,7 +49,7 @@ public class ByteClassLoaderTester extends TestCase {
                 = new ByteClassLoader(new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
         Class<LoadableTestJob> c = loader.defineClass();
         assertEquals("Class name should be correct",
-                     "dk.netarkivet.common.utils.arc.LoadableTestJob",
+                     "dk.netarkivet.common.utils.batch.LoadableTestJob",
                      c.getName());
         // Note that we can't cast it to a LoadableTestJob, as we've already
         // loaded that class through a different classloader, so they aren't

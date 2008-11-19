@@ -20,7 +20,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,6 +34,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.arc.TestInfo;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.LoadableFileBatchJob;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 
@@ -113,7 +116,7 @@ public class LoadableFileBatchJobTester extends TestCase {
         FileBatchJob job = new LoadableFileBatchJob(
                 new File(TestInfo.WORKING_DIR, "LoadableTestJob.class"));
         assertEquals("Should have name ",
-                "dk.netarkivet.common.utils.arc.LoadableFileBatchJob processing LoadableTestJob.class", 
+                "dk.netarkivet.common.utils.batch.LoadableFileBatchJob processing LoadableTestJob.class", 
                 job.toString());
     }    
     

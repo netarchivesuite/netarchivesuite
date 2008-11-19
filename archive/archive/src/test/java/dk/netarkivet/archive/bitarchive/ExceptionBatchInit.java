@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /** This class throws an exception. */
 public class ExceptionBatchInit extends FileBatchJob {

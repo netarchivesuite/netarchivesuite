@@ -36,8 +36,9 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unit tests for the class ARCBatchJob.

@@ -47,8 +47,8 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * A simple implementation of ArcRepositoryClient that just has a number of

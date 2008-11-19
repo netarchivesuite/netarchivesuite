@@ -39,7 +39,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
 import dk.netarkivet.common.utils.cdx.ExtractCDXJob;
 import dk.netarkivet.viewerproxy.reporting.HarvestedUrlsForDomainBatchJob;

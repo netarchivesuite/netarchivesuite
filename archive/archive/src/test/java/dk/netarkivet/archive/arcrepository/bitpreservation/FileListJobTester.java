@@ -30,7 +30,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
 

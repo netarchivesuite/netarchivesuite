@@ -43,7 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.cdx.CDXReader;
 import dk.netarkivet.common.utils.cdx.CDXRecord;
-import dk.netarkivet.common.utils.cdx.ExtractCDX;
+import dk.netarkivet.common.utils.cdx.CDXUtils;
 
 /**
  * Utilities to extract contents from arcfiles.
@@ -70,7 +70,7 @@ public class ARCReaderUtils {
 
            File cdxFile = File.createTempFile("reader-utils", "");
            File cdxFileSorted = File.createTempFile("reader-utils", "");
-           ExtractCDX.writeCDXInfo(ArcFile, new FileOutputStream(cdxFile));
+           CDXUtils.writeCDXInfo(ArcFile, new FileOutputStream(cdxFile));
            FileUtils.makeSortedFile(cdxFile, cdxFileSorted);
            FileUtils.copyFile(cdxFileSorted, new File("/tmp/svc/index/"));
            CDXReader cdxReader = new CDXReader(cdxFileSorted);

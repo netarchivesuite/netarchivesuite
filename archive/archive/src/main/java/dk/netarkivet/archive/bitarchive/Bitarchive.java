@@ -43,8 +43,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.arc.BatchLocalFiles;
-import dk.netarkivet.common.utils.arc.FileBatchJob;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * The central class in the bit archive. Implements the API: upload(), get(),

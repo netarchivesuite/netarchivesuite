@@ -59,8 +59,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 public class IntegrityTestsFTP extends TestCase {
     private static final File TESTLOGPROP = new File(
             "tests/dk/netarkivet/testlog.prop");
-    private static final File LOGFILE = new File(
-            "tests/testlogs/netarkivtest.log");
+    //private static final File LOGFILE = new File(
+    //        "tests/testlogs/netarkivtest.log");
     private static final String FILE_1_CONTENTS = "The contents of file 1";
     private static final String FILE_2_CONTENTS = "File 2 contains\n" +
             "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
@@ -147,7 +147,7 @@ public class IntegrityTestsFTP extends TestCase {
 
     public void tearDown() throws IOException {
         /** delete all uploaded files on ftp-server and then disconnect. */
-        Iterator fileIterator = upLoadedFiles.iterator();
+        Iterator<String> fileIterator = upLoadedFiles.iterator();
 
         while (fileIterator.hasNext()) {
             String currentUploadedFile = (String) fileIterator.next();
@@ -168,7 +168,7 @@ public class IntegrityTestsFTP extends TestCase {
 
         theFTPClient.disconnect();
 
-        Iterator ftpIterator = upLoadedFTPRemoteFiles.iterator();
+        Iterator<RemoteFile> ftpIterator = upLoadedFTPRemoteFiles.iterator();
 
         while (ftpIterator.hasNext()) {
             FTPRemoteFile currentUploadedFile = (FTPRemoteFile) ftpIterator.next();
@@ -347,6 +347,8 @@ public class IntegrityTestsFTP extends TestCase {
      * @throws IOException
      */
     public void testDoubleUpload() throws IOException {
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
+        "dk.netarkivet.common.distribute.FTPRemoteFile");
         File testFile = TestInfo.TESTXML;
         PrintWriter write1 = new PrintWriter(new FileWriter(testFile));
         write1.print(FILE_1_CONTENTS);
@@ -439,6 +441,8 @@ public class IntegrityTestsFTP extends TestCase {
     }
 
     public void testWrongChecksumThrowsError() throws Exception {
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
+                "dk.netarkivet.common.distribute.FTPRemoteFile");
         RemoteFile rf = RemoteFileFactory.getInstance(testFile2, true, false,
                                                       true);
         //upload error to ftp server
