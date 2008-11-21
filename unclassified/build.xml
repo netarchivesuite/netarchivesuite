@@ -183,7 +183,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="jmxremote.password"/>
             </fileset>
         </chmod>
-        <junit fork="true">
+        <junit fork="true" timeout="300000">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
@@ -452,10 +452,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="unittest.with.clover" depends="with.clover, compiletestsclean"
             description="Run all unit tests with clover reporting">
-        <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m"
+        <junit haltonerror="no" haltonfailure="no" fork="on" maxmemory="512m" timeout="300000"
             printsummary="withOutAndErr">
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
+            <jvmarg value="-Djava.security.manager"/>
+            <jvmarg value="-Djava.security.policy=conf/test.policy"/>
             <jvmarg value="-Dsettings.common.jms.broker=localhost"/>
             <jvmarg value="-Dsettings.common.environmentName=CLOVER"/>
             <jvmarg value="-Ddk.netarkivet.ftp.serverName=localhost"/>
