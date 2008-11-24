@@ -30,6 +30,11 @@ grant codeBase "file:/usr/local/apache-ant-1.7.1/-" {
 	permission java.security.AllPermission;
 };
 
+grant codebase "file:/home/konfig/.ant/lib/-" {
+        permission java.security.AllPermission;
+};
+
+
 /* These permissions allow third-party batch classes to read the bitarchive */
 grant {
   permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
