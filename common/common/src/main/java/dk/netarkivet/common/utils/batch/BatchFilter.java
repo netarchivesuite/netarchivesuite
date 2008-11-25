@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 
 /** A filter class for batch entries.  Allows testing whether or not
  * to process an entry without loading the entry data first.
+ * The class in itself is abstract but contains implementation of several
+ * filters.
  */
 public abstract class BatchFilter implements Serializable {
     

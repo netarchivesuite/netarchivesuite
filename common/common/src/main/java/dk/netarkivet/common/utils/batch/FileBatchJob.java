@@ -36,7 +36,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
- *
  * Interface defining a batch job to run on a set of files.
  * The job is initialized by calling initialize(), executed on
  * a file by calling processFile() and any cleanup is

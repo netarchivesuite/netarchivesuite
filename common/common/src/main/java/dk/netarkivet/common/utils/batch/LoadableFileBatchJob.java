@@ -116,6 +116,8 @@ public class LoadableFileBatchJob extends FileBatchJob {
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
+        log.debug("Started processing of file '" +  file.getAbsolutePath()
+                + "'.");
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         return loadedJob.processFile(file, os);

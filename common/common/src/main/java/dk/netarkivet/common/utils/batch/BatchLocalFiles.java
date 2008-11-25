@@ -38,7 +38,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * FileBatchJob and applies it to each file in turn.
  */
 public class BatchLocalFiles {
-    /** The list of files to run batch jobs on: */
+    /** The list of files to run batch jobs on. */
     private File[] files;
     private Log log = LogFactory.getLog(BatchLocalFiles.class);
 
@@ -46,18 +46,18 @@ public class BatchLocalFiles {
      * Given an array of files, constructs a BatchLocalFiles instance
      * to be used in running a batch job over those files
      *
-     * @param in_files - the files that should be used for batching.
+     * @param incomingFiles The files that should be used for batching.
      * @throws ArgumentNotValid if in_files is null or contains a null entry
      */
-    public BatchLocalFiles(File[] in_files) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(in_files, "in_files");
-        for (int i = 0; i < in_files.length; i++) {
-            if (in_files[i] == null) {
+    public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
+        for (int i = 0; i < incomingFiles.length; i++) {
+            if (incomingFiles[i] == null) {
                 throw new ArgumentNotValid("Null element at index " + i +
                         " in file list for batch.");
             }
         }
-        this.files = in_files;
+        this.files = incomingFiles;
     }
 
     /**
@@ -99,6 +99,8 @@ public class BatchLocalFiles {
      * @param os Where to put the output.
      */
     private void processFile(FileBatchJob job, final File file, OutputStream os) {
+        log.debug("Started processing of file '" +  file.getAbsolutePath()
+                + "'.");
         boolean success = false;
         try {
             success = job.processFile(file, os);

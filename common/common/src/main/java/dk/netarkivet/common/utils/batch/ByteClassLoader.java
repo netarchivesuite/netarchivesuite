@@ -30,7 +30,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /** A subclass of ClassLoader that can take a byte[] containing a class file.
  */
 public class ByteClassLoader extends ClassLoader {
-    /** Binary class data loaded from file */
+    /** Binary class data loaded from file. */
     byte[] binaryData;
 
     /** Constructor that reads data from a file
