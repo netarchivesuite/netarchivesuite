@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -63,8 +64,8 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
     private static final String FILE_2_CONTENTS = "File 2 contains\n" +
             "this and this\nit also has\nsome more\nlike this\nBurma-Shave";
     private FTPClient theFTPClient;
-    private ArrayList<String> upLoadedFTPRemoteFiles = new ArrayList<String>();
-    private ArrayList<String> upLoadedFiles = new ArrayList<String>();
+    private List<RemoteFile> upLoadedFTPRemoteFiles = new ArrayList<RemoteFile>();
+    private List<String> upLoadedFiles = new ArrayList<String>();
 
     /** testFile1-3 represents duplicates of TestInfo.TESTXML */
     private File testFile1;
@@ -112,7 +113,7 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
             fail("Could not setup configuration for");
         }
 
-        /** Read ftp-related settings from settings.xml */
+        /** Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
                 FTPRemoteFile.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
@@ -121,7 +122,7 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
         final String ftpUserPassword = Settings.get(
                 FTPRemoteFile.FTP_USER_PASSWORD);
 
-        /** Connect to test ftp-server */
+        /** Connect to test ftp-server. */
         theFTPClient = new FTPClient();
 
         try {
@@ -146,7 +147,7 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
 
     public void tearDown() throws IOException {
         /** delete all uploaded files on ftp-server and then disconnect */
-        Iterator fileIterator = upLoadedFiles.iterator();
+        Iterator<String> fileIterator = upLoadedFiles.iterator();
 
         while (fileIterator.hasNext()) {
             String currentUploadedFile = (String) fileIterator.next();
@@ -167,8 +168,8 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
 
         theFTPClient.disconnect();
 
-        Iterator ftpIterator = upLoadedFTPRemoteFiles.iterator();
-
+        Iterator<RemoteFile> ftpIterator = upLoadedFTPRemoteFiles.iterator();
+            
         while (ftpIterator.hasNext()) {
             FTPRemoteFile currentUploadedFile = (FTPRemoteFile) ftpIterator.next();
 
@@ -267,7 +268,9 @@ public class IntegrityTestsFTPRemoteFile extends TestCase {
      * Test for bug #289
      * @throws IOException
      */
-    public void testContentsNotOverwritter() throws IOException {
+    public void testContentsNotOverwriter() throws IOException {
+        Settings.set(CommonSettings.REMOTE_FILE_CLASS, 
+        "dk.netarkivet.common.distribute.FTPRemoteFile");
         FileUtils.writeBinaryFile(testFile2, "another simple string".getBytes());
         String originalContents = FileUtils.readFile(testFile1);
         RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false,

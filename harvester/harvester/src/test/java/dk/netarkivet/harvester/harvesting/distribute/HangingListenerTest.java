@@ -63,7 +63,8 @@ public class HangingListenerTest extends TestCase {
         //JMSConnection.getInstance();
         ChannelsTester.resetChannels();
         /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                RememberNotifications.class.getName());
     }
 
     public void tearDown() {
@@ -123,9 +124,12 @@ public class HangingListenerTest extends TestCase {
             String host = Settings.get(JMSConnectionSunMQ.JMS_BROKER_HOST);
             String port = Settings.get(JMSConnectionSunMQ.JMS_BROKER_PORT);
             QueueConnectionFactory cFactory = new QueueConnectionFactory();
-            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqBrokerHostName, host);
-            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqBrokerHostPort, String.valueOf(port));
-            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqConsumerFlowLimit, "1");
+            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
+                    com.sun.messaging.ConnectionConfiguration.imqBrokerHostName, host);
+            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
+                    com.sun.messaging.ConnectionConfiguration.imqBrokerHostPort, String.valueOf(port));
+            ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(
+                    com.sun.messaging.ConnectionConfiguration.imqConsumerFlowLimit, "1");
             myQConn = cFactory.createQueueConnection();
             myQSess = myQConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             myQConn.start();

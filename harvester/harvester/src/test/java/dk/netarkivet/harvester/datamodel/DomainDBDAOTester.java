@@ -180,22 +180,26 @@ public class DomainDBDAOTester extends DataModelTestCase {
             }
         }
         if (scheduleException[0] != null) {
-            System.out.println("Schedule: " + scheduleException[0]);
-            scheduleException[0].printStackTrace();
+            System.out.println("Schedule: " 
+                    + scheduleException[0]
+                    + scheduleException[0].getStackTrace());
         }
         if (hdException[0] != null) {
-            System.out.println("HarvestDefinition: " + hdException[0]);
-            hdException[0].printStackTrace();
+            System.out.println("HarvestDefinition: "
+                    + hdException[0]
+                    + hdException[0].getStackTrace());
         }
         if (domainException[0] != null) {
-            System.out.println("Domain: " + domainException[0]);
-            domainException[0].printStackTrace();
+            System.out.println("Domain: "
+                    + domainException[0] 
+                    + domainException[0].getStackTrace());
         }
+        
         assertTrue("Should have no exceptions",
                    domainException[0] == null &&
                    hdException[0] == null &&
                    scheduleException[0] == null);
-    }
+        }
 
     /** Test that non-ascii chars are correctly stored in clobs. */
     public void testNonAsciiClob() {
