@@ -28,6 +28,9 @@
 -->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <common>
+        <jms>
+        <class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
+        </jms> 
 	<jmx>
 	<!-- to reduce running time of our unittests -->
 	<timeout>2</timeout>
