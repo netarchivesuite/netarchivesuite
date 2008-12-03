@@ -60,9 +60,8 @@ public class HarvestControllerClient {
     * This clients can communicate with multiple HarvestControllerServers -
     * as the destination.
     *
-    * @throws dk.netarkivet.common.exceptions.IOFailure if no JMS connection could
-    * be established
-    * @throws ArgumentNotValid if mq is null
+    * @throws dk.netarkivet.common.exceptions.IOFailure if no JMS connection
+    * could be established
     */
     private HarvestControllerClient() throws IOFailure {
         con = JMSConnectionFactory.getInstance();
@@ -74,7 +73,7 @@ public class HarvestControllerClient {
      *          If there is a problem making the connection.
      * @return a HarvesterControllerClient instance.
      */
-    static public HarvestControllerClient getInstance() throws IOFailure{
+    public static HarvestControllerClient getInstance() throws IOFailure{
         return new HarvestControllerClient();
     }
 

@@ -134,11 +134,8 @@ function startApp {
     FILETRANSFERPORT=$(( $FILETRANSFERPORT + 1 ))
 }
 
-## Start HarvestController w/SideKick
-## Because of the SideKick system, we need a script that runs the
-## HarvestControllerServer.
-## Additionally, the HarvestControllerServer takes some specific parameters
-## SideKick uses same placement as HarvestController, but separate JMX port
+## Start HarvestController
+## The HarvestControllerServer takes some specific parameters
 # Arg 1 is the consecutive number of this HarvestController
 # Arg 2 is the priority (HIGH or LOW, corresponding to selective or snapshot)
 function startHarvestApp {
@@ -151,7 +148,6 @@ function startHarvestApp {
              -Dsettings.common.http.port=$HTTPPORT \
              -Dsettings.harvester.harvesting.heritrix.guiPort=$HERITRIXPORT \
              -Dsettings.harvester.harvesting.heritrix.jmxPort=$(( $HERITRIXPORT + 1 ))";
-    runsetting=-Dsettings.harvester.harvesting.isrunningFile=./hcs${hcsid}Running.tmp;
     title="Harvest Controller (Priority ${priority})";
     logpropfile="$ARCREP_HOME/log/log.prop.HarvestController-$HTTPPORT"
     sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/HarvestController-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
@@ -160,7 +156,7 @@ function startHarvestApp {
 
     hcstart="$JAVA_CMD `makeCommonOptions` $JVM_ARGS -classpath $CLASSPATH \
       -Djava.util.logging.config.file=\"$logpropfile\" \
-      $prioritysetting $portsetting $runsetting $dirsetting \
+      $prioritysetting $portsetting $dirsetting \
       dk.netarkivet.harvester.harvesting.HarvestControllerApplication";
     scriptfile=./hcs${hcsid}.sh;
     startscript="$XTERM_CMD $XTERM_ARGS -geometry $TERM_SIZE`makeXtermOffset` -title \"$title\" \
@@ -170,19 +166,6 @@ function startHarvestApp {
     $scriptfile;
     JMXPORT=$(( $JMXPORT + 1 ));
     HERITRIXPORT=$(( $HERITRIXPORT + 2 ));
-
-    # This starts a SideKick that re-runs the script made before
-    title=SideKick
-    logpropfile="$ARCREP_HOME/log/log.prop.$title-$HTTPPORT"
-    sed 's!\(java.util.logging.FileHandler.pattern=\).*!\1'$ARCREP_HOME'/log/'$title'-'$HTTPPORT'.log!;' <$ARCREP_HOME/log.prop > "$logpropfile"
-    $XTERM_CMD -geometry 40x12`makeXtermOffset` $HOLD -title $title \
-      -e $JAVA_CMD `makeCommonOptions` $JVM_ARGS \
-      -Djava.util.logging.config.file="$logpropfile" \
-      -classpath $CLASSPATH $runsetting $portsetting \
-      dk.netarkivet.harvester.sidekick.SideKick \
-      dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook \
-      $scriptfile &
-    JMXPORT=$(( $JMXPORT + 1 ));
     WINDOWPOS=$(( $WINDOWPOS + 1 ));
     HTTPPORT=$(( $HTTPPORT + 1 ));
 }
@@ -264,7 +247,7 @@ startApp GUIApplication common.webinterface.GUIApplication
 # Start viewerproxy
 startApp Viewerproxy viewerproxy.ViewerProxyApplication
 
-## Start two harvesters and their sidekicks
+## Start two harvesters
 startHarvestApp 1 LOW
 
 startHarvestApp 2 HIGH

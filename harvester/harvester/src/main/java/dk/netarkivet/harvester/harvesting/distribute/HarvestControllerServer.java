@@ -131,6 +131,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** Min. space required to start a job. */
     private final long minSpaceRequired;
     
+    /** the serverdir, where the harvesting takes place. */
+    private final File serverDir;
+    
     /**
      * In this constructor, the server creates an instance of the
      * HarvestController, uploads any arc-files from incomplete harvests.
@@ -146,75 +149,66 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * priority.
      */
     private HarvestControllerServer() throws IOFailure {
-    	log.info(STARTING_MESSAGE);
+        log.info(STARTING_MESSAGE);
 
-    	// Make sure serverdir (where active crawl-dirs live) and oldJobsDir
-    	// (where old crawl dirs are stored) exist.
-        File serverDir = new File(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
-    	ApplicationUtils.dirMustExist(serverDir);
-    	log.info("Serverdir: '" + serverDir + "'");
-        minSpaceRequired = Settings.getLong(
-                HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
-    	if (minSpaceRequired <= 0L) {
-    		log.warn("Wrong setting of minSpaceLeft read from Settings: "
-    				+ minSpaceRequired);
-    		throw new ArgumentNotValid(
-    				"Wrong setting of minSpaceLeft read from Settings: "
-    				+ minSpaceRequired);
-    	}
-    	log.info("Harvesting requires at least " + minSpaceRequired
-    			+ " bytes free.");
+        // Make sure serverdir (where active crawl-dirs live) and oldJobsDir
+        // (where old crawl dirs are stored) exist.
+        serverDir = new File(Settings
+                .get(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+        ApplicationUtils.dirMustExist(serverDir);
+        log.info("Serverdir: '" + serverDir + "'");
+        minSpaceRequired = Settings
+                .getLong(HarvesterSettings.HARVEST_SERVERDIR_MINSPACE);
+        if (minSpaceRequired <= 0L) {
+            log.warn("Wrong setting of minSpaceLeft read from Settings: "
+                    + minSpaceRequired);
+            throw new ArgumentNotValid(
+                    "Wrong setting of minSpaceLeft read from Settings: "
+                            + minSpaceRequired);
+        }
+        log.info("Harvesting requires at least " + minSpaceRequired
+                + " bytes free.");
 
-    	controller = HarvestController.getInstance();
+        controller = HarvestController.getInstance();
 
-    	// Set properties "heritrix.version" and
-    	// "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy"
-    	System.setProperty(HERITRIX_VERSION_PROPERTY,
-    			Constants.getHeritrixVersionString());
-    	System.setProperty(HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
-    			"org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-    			+ "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-    			+ "org.archive.crawler.frontier.BucketQueueAssignmentPolicy," 
-    			+ "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
-    			+ "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");        
-    	// Get JMS-connection
-    	// Channel THIS_HACO is only used for replies to store messages so
-    	// do not set as listener here. It is registered in the arcrepository
-    	// client.
-    	// Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
-    	// registered below.
-    	con = JMSConnectionFactory.getInstance();
-    	log.debug("Obtained JMS connection.");
+        // Set properties "heritrix.version" and
+        // "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy"
+        System.setProperty(HERITRIX_VERSION_PROPERTY,
+                Constants.getHeritrixVersionString());
+        System.setProperty(
+                        HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
+                        "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
+                      + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+                      + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
+                      + "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
+                      + "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");
+        // Get JMS-connection
+        // Channel THIS_HACO is only used for replies to store messages so
+        // do not set as listener here. It is registered in the arcrepository
+        // client.
+        // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
+        // registered below.
+        con = JMSConnectionFactory.getInstance();
+        log.debug("Obtained JMS connection.");
 
-    	// If any unprocessed jobs are left on the server, process them now
-    	processOldJobs();
+        // If any unprocessed jobs are left on the server, process them now
+        processOldJobs();
 
-    	//Environment and connections are now ready for processing of messages
-        JobPriority p = JobPriority.valueOf(
-                Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-    	switch (p) {
-    	case HIGHPRIORITY:
-    		jobChannel = Channels.getAnyHighpriorityHaco();
-    		break;
-    	case LOWPRIORITY:
-    		jobChannel = Channels.getAnyLowpriorityHaco();
-    		break;
-    	default:
-    		throw new UnknownID(p + " is not a valid priority");
-    	}
-    	// Only listen for harvesterjobs if enough available space
-    	long availableSpace = FileUtils.getBytesFree(serverDir);
-    	if (availableSpace > minSpaceRequired) {
-    		log.info("Starts to listen to new jobs on '" + jobChannel + "'");
-    		con.setListener(jobChannel, this);
-    		log.info(STARTED_MESSAGE);
-    	} else {
-    		String PAUSED_MESSAGE = "Not enough available diskspace. Only "
-    			+ availableSpace + " bytes available. Harvester is paused.";
-    		log.warn(PAUSED_MESSAGE);
-    		NotificationsFactory.getInstance().errorEvent(PAUSED_MESSAGE);
-    	}
+        // Environment and connections are now ready for processing of messages
+        JobPriority p = JobPriority.valueOf(Settings
+                .get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        switch (p) {
+        case HIGHPRIORITY:
+            jobChannel = Channels.getAnyHighpriorityHaco();
+            break;
+        case LOWPRIORITY:
+            jobChannel = Channels.getAnyLowpriorityHaco();
+            break;
+        default:
+            throw new UnknownID(p + " is not a valid priority");
+        }
+        // Only listen for harvesterjobs if enough available space
+        beginListeningIfSpaceAvailable();
     }
 
     /**
@@ -290,23 +284,21 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * Checks that we're available to do a crawl, and if so, marks us as
      * unavailable, checks that the job message is well-formed, and starts
      * the thread that the crawl happens in.  If an error occurs starting the
-     * crawl, we will start listening for messages again, otherwise the VM will
-     * eventually get shut down.
+     * crawl, we will start listening for messages again.
      *
-     * The sequence of actions involved in a crawl are:
-     * 1. If we are already running, resend the job to the queue and return
-     * 2. Check the job for validity
-     * 3. Send a CrawlStatus message that crawl has STARTED
-     * In a separate thread:
-     * 6. Unregister this HACO as listener
-     * 4. Create a new crawldir (based on the JobID and a timestamp)
-     * 5. Write a harvestInfoFile (using JobID and crawldir) and metadata
-     * 7. Instantiate a new HeritrixLauncher
-     * 8. Start a crawl
+     * The sequence of actions involved in a crawl are:</br>
+     * 1. If we are already running, resend the job to the queue and return</br>
+     * 2. Check the job for validity</br>
+     * 3. Send a CrawlStatus message that crawl has STARTED</br>
+     * In a separate thread:</br>
+     * 4. Unregister this HACO as listener</br>
+     * 5. Create a new crawldir (based on the JobID and a timestamp)</br>
+     * 6. Write a harvestInfoFile (using JobID and crawldir) and metadata</br>
+     * 7. Instantiate a new HeritrixLauncher</br>
+     * 8. Start a crawl</br>
      * 9. Store the generated arc-files and metadata in the known bit-archives
-     * 10. _Always_ send CrawlStatus DONE or FAILED
-     * 11. Move crawldir into oldJobs dir
-     * 12. Exit the VM.
+     * </br>10. _Always_ send CrawlStatus DONE or FAILED</br>
+     * 11. Move crawldir into oldJobs dir</br>
 
      * @see #visit(DoOneCrawlMessage) for more details
      * @param msg The crawl job
@@ -322,7 +314,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         // Only one doOneCrawl at a time. Returning should almost never happen,
         // since we deregister the listener, but we may receive another message
         // before the listener is removed.  Also, if the job message is
-        // malformed or starting the crawl fails, we read the listener.
+        // malformed or starting the crawl fails, we re-add the listener.
         synchronized (this) {
             if (running) {
                 log.warn("Received crawl request, but sent it back to queue, "
@@ -451,6 +443,21 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         con.removeListener(jobChannel, this);
     }
 
+    /** Start listening for crawls, if space available. */
+    private void beginListeningIfSpaceAvailable() {
+        long availableSpace = FileUtils.getBytesFree(serverDir);
+        if (availableSpace > minSpaceRequired) {
+            log.info("Starts to listen to new jobs on '" + jobChannel + "'");
+            con.setListener(jobChannel, this);
+            log.info(STARTED_MESSAGE);
+        } else {
+            String PAUSED_MESSAGE = "Not enough available diskspace. Only "
+                    + availableSpace + " bytes available. Harvester is paused.";
+            log.warn(PAUSED_MESSAGE);
+            NotificationsFactory.getInstance().errorEvent(PAUSED_MESSAGE);
+        }
+    }
+    
     /** Adds error messages from an exception to the status message errors.
      *
      * @param csm The message we're setting messages on.
@@ -508,11 +515,11 @@ public class HarvestControllerServer extends HarvesterMessageHandler
 
 
     /**
-     * Processes an existing harvestInfoFile:
+     * Processes an existing harvestInfoFile:</br>
      * 1. Retrieve jobID, and crawlDir from the harvestInfoFile
-     *      using class PersistentJobData
-     * 2. finds JobId and arcsdir
-     * 3. calls storeArcFiles
+     *      using class PersistentJobData</br>
+     * 2. finds JobId and arcsdir</br>
+     * 3. calls storeArcFiles</br>
      * 4. moves harvestdir to oldjobs and deletes crawl.log and
      *  other superfluous files.
      *
@@ -648,11 +655,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 String msg = "Fatal error while operating job '" + job + "'";
                 log.fatal(msg, e);
                 NotificationsFactory.getInstance().errorEvent(msg, e);
-                log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
-                System.exit(1);
             } finally {
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
-                System.exit(0);
+                running = false;
+                beginListeningIfSpaceAvailable();
             }
         }
 
@@ -673,7 +679,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                         new File(Settings.get(
                                 HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
                 crawlDir = new File(baseCrawlDir,
-                                    job.getJobID() + "_" + System.currentTimeMillis());
+                                    job.getJobID() + "_"
+                                    + System.currentTimeMillis());
                 FileUtils.createDir(crawlDir);
                 return crawlDir;
             } catch (PermissionDenied e) {

@@ -53,7 +53,6 @@ import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
 import dk.netarkivet.harvester.scheduler.SchedulerTesterSuite;
-import dk.netarkivet.harvester.sidekick.SideKickTesterSuite;
 import dk.netarkivet.harvester.tools.HarvesterToolsTesterSuite;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTesterSuite;
 import dk.netarkivet.monitor.MonitorTesterSuite;
@@ -95,7 +94,6 @@ public class UnitTesterSuite {
         MonitorTesterSuite.addToSuite(suite);
         MonitorJMXTesterSuite.addToSuite(suite);
         SchedulerTesterSuite.addToSuite(suite);
-        SideKickTesterSuite.addToSuite(suite);
         ToolsTesterSuite.addToSuite(suite);
         HarvesterToolsTesterSuite.addToSuite(suite);
         UtilsTesterSuite.addToSuite(suite);

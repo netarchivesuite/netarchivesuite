@@ -59,8 +59,6 @@ import dk.netarkivet.common.utils.SimpleXml;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.GUIApplication;
 import dk.netarkivet.harvester.harvesting.HarvestControllerApplication;
-import dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook;
-import dk.netarkivet.harvester.sidekick.SideKick;
 import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.viewerproxy.ViewerProxyApplication;
 
@@ -487,9 +485,7 @@ public class Host {
      * Create the start scripts for the harvester applications. Expected to be
      * called once for each harvester instance.
      *
-     * @param res   The file to write the harvester script to. Note that this
-     *              filename, with "harvester" replaced by "sidekick" will also
-     *              be used to write the sidekick start script.
+     * @param res   The file to write the harvester script to.
      * @param setfn the name of the settings file to use.
      */
     public void writeStartHarvesterApps(File res, String setfn) {
@@ -503,17 +499,6 @@ public class Host {
                    HarvestControllerApplication.class.getName(),
                    settingsfn, logdir, logProperties,
                    getHeritrixUiPortArgs() + " " + getHeritrixJmxPortArgs());
-
-
-        String sidekick = SideKick.class.getName() + " "
-                          + HarvestControllerServerMonitorHook.class.getName()
-                          + " ./conf/" + res.getName() + " ";
-
-        File dir = res.getAbsoluteFile().getParentFile();
-        String fn = res.getName().replaceAll("harvester", "sidekick");
-        writeStart(new File(dir, fn), sidekick, settingsfn,
-                   logdir, logProperties, "");
-
     }
 
     /**
@@ -869,10 +854,7 @@ public class Host {
     public List<String> getJarFiles(String appName) {
         ArgumentNotValid.checkNotNullOrEmpty(appName, "appName");
         if (appName.startsWith(HarvestControllerApplication.class.getName())
-                || appName.startsWith(GUIApplication.class.getName())
-                || appName.startsWith(SideKick.class.getName())
-                || appName.startsWith(
-                        HarvestControllerServerMonitorHook.class.getName())) {
+                || appName.startsWith(GUIApplication.class.getName())) {
             return Arrays.asList("dk.netarkivet.harvester.jar",
                                  "dk.netarkivet.archive.jar",
                                  "dk.netarkivet.viewerproxy.jar",
@@ -914,8 +896,8 @@ public class Host {
         }
         int myPort = Integer.valueOf(available.remove(0));
         return "-Dsettings.common.jmx.port=" + myPort
-               + " -Dsettings.common.jmx.rmiPort="
-               + (myPort + HostForwarding.JMX_RMI_INCREMENT);
+            + " -Dsettings.common.jmx.rmiPort="
+            + (myPort + HostForwarding.JMX_RMI_INCREMENT);
     }
 
     /** Get a fresh http file transfer port that no other application on this

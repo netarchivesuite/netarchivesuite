@@ -39,8 +39,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.webinterface.GUIApplication;
 import dk.netarkivet.harvester.harvesting.HarvestControllerApplication;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
-import dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook;
-import dk.netarkivet.harvester.sidekick.SideKick;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
@@ -97,20 +95,6 @@ public class HostTester extends TestCase {
                      harvestJars,
                      host.getJarFiles(
                              HarvestControllerApplication.class.getName()));
-        assertEquals("Should get right jar for sidekick",
-                     harvestJars,
-                     host.getJarFiles(SideKick.class.getName()));
-        assertEquals("Should get right jar for sidekick monitorhook",
-                     harvestJars,
-                     host.getJarFiles(
-                             HarvestControllerServerMonitorHook.class.getName()));
-        assertEquals("Should get right jar for sidekick extended string",
-                     harvestJars,
-                     host.getJarFiles(
-                             "dk.netarkivet.harvester.sidekick.SideKick "
-                             + "dk.netarkivet.harvester.sidekick.HarvestControllerServerMonitorHook "
-                             + " ./conf/someharvester "));
-
         assertEquals("Should get right jar for arcrepository",
                      archiveJars,
                      host.getJarFiles(
@@ -172,9 +156,9 @@ public class HostTester extends TestCase {
                 } else if (h.isType(Host.Type.harvesters)) {
                     if (h.getName().equals("kb-dev-har-001.kb.dk")) {
                         // This one has two harvesters running.
-                        checkJMXPorts(h, 4);
-                    } else {
                         checkJMXPorts(h, 2);
+                    } else {
+                        checkJMXPorts(h, 1);
                     }
                 } else if (h.isType(Host.Type.ftp)) {
                     checkJMXPorts(h, 0);
@@ -187,26 +171,34 @@ public class HostTester extends TestCase {
                 } else if (h.isType(Host.Type.bitarchive)) {
                     checkJMXPorts(h, 1);
                 } else if (h.isType(Host.Type.harvesters)) {
-                    checkJMXPorts(h, 2);
+                    checkJMXPorts(h, 1);
                 }
             }
         }
     }
 
-    /** Check that the expected number of ports is available */
+    /** Check that the expected number of ports is available. */
     private void checkJMXPorts(Host h, int numPorts) throws
                                                      NoSuchMethodException,
                                                      IllegalAccessException,
                                                      InvocationTargetException {
         Method getJMXPortParameter = ReflectUtils.getPrivateMethod(Host.class,
-                                                                   "getJMXPortParameter");
-        for (int i = 8100; i < 8100 + numPorts; i++) {
-            String result = (String) getJMXPortParameter.invoke(h);
-            assertEquals("Must have port " + i,
+            "getJMXPortParameter");
+        int count = 0;
+        try {
+            for (int i = 8100; i < 8100 + numPorts; i++) {
+                String result = (String) getJMXPortParameter.invoke(h);
+                count++;
+                assertEquals("Must have port " + i,
                          "-Dsettings.common.jmx.port=" + i
                          + " -Dsettings.common.jmx.rmiPort=" + (i + 100),
                          result);
-        }
+            }
+       } catch(InvocationTargetException e) {
+           fail("Should have been " + numPorts + " for host '" +  h.getName()
+                   + "', but there was only " + count);
+       }
+                
         try {
             String result = (String) getJMXPortParameter.invoke(h);
             fail("No ports should be left behind on " + h
@@ -215,7 +207,7 @@ public class HostTester extends TestCase {
             StringAsserts.assertStringContains("Should mention host",
                                                h.toString(),
                                                e.getCause().getMessage());
-        }
+        } 
     }
 
     public void testWriteJMXPassword() throws Exception {

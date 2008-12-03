@@ -28,7 +28,7 @@ package dk.netarkivet.deploy;
  *
  */
 public class Constants {
-    /** The name of the file that JMX reads passwords from */
+    /** The name of the file that JMX reads passwords from. */
     static final String JMX_PASSWORD_FILENAME = "jmxremote.password";
     /** The ports used for our JMX connections.  Each <em>application</em>
      * should have one of these
@@ -37,28 +37,28 @@ public class Constants {
     /** Property used to specify a Java class. */
     static final String JMS_CLASS_PROPERTY = "class";
     /** Property used to specify the user name used in FTP, if RemoteFile uses
-     * FTP */
+     * FTP. */
     static final String FTP_USER_PROPERTY = "user";
     /** Property used to specify the password used in FTP, if RemoteFile uses
-     * FTP */
+     * FTP. */
     static final String FTP_PASSWORD_PROPERTY = "pw";
-    /** Property used to specify the mail address for mails on errors */
+    /** Property used to specify the mail address for mails on errors. */
     static final String MAIL_RECEIVER_PROPERTY = "receiver";
     /** Property used to specify the mail address used as the sender on
      * error mails. */
     static final String MAIL_SENDER_PROPERTY = "sender";
     /** Property used to specify the directory used to store files in the
-     * bitarchive */
+     * bitarchive. */
     static final String BITARCHIVE_FILEDIR_PROPERTY = "filedir";
     /** Property used to specify the port used for HTTP file transfer, if
      * RemoteFile uses HTTP. */
     static final String HTTPFILETRANSFERPORT_PROPERTY = "remotefilePort";
     /** Property used to specify the port where the Heritrix gui for a
-     * harvester is accessible */
+     * harvester is accessible. */
     static final String HERITRIX_GUI_PORT_PROPERTY = "heritrixGuiPort";
     /** Property used to specify the port where the Heritrix JMX for a
-     * harvester is accessible */
+     * harvester is accessible. */
     static final String HERITRIX_JMX_PORT_PROPERTY = "heritrixJmxPort";
-    /** Name of the default security policy file */
+    /** Name of the default security policy file. */
     static final String SECURITY_POLICY_FILE_NAME = "security.policy";
 }

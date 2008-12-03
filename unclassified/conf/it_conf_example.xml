@@ -62,18 +62,14 @@
             <host name="kb-dev-har-001.kb.dk">
                 <lowpriport>8081</lowpriport>
                 <jmxport>8100</jmxport><!-- harvester -->
-                <jmxport>8101</jmxport><!-- sidekick -->
                 <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8101</remotefilePort><!-- sidekick  8081 -->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
             </host>
             <host name="kb-dev-har-002.kb.dk">
                 <lowpriport>8081</lowpriport>
                 <jmxport>8100</jmxport><!-- harvester -->
-                <jmxport>8101</jmxport><!-- sidekick -->
                 <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8301</remotefilePort><!-- sidekick 8081-->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
             </host>

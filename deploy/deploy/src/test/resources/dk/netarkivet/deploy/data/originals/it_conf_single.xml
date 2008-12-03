@@ -77,17 +77,11 @@
                 <lowpriport>8082</lowpriport>
                 <lowpriport>8083</lowpriport>
                 <jmxport>8100</jmxport><!-- harvester 8081 -->
-                <jmxport>8101</jmxport><!-- sidekick 8081-->
-                <jmxport>8102</jmxport><!-- harvester 8082 -->
-                <jmxport>8103</jmxport><!-- sidekick 8082-->
-                <jmxport>8104</jmxport><!-- harvester 8083 -->
-                <jmxport>8105</jmxport><!-- sidekick 8083-->
-                <remotefilePort>8106</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8107</remotefilePort><!-- sidekick 8081-->
-                <remotefilePort>8108</remotefilePort><!-- harvester 8082 -->
-                <remotefilePort>8109</remotefilePort><!-- sidekick 8082-->
-                <remotefilePort>8110</remotefilePort><!-- harvester 8083 -->
-                <remotefilePort>8111</remotefilePort><!-- sidekick 8083-->
+                <jmxport>8101</jmxport><!-- harvester 8082 -->
+                <jmxport>8102</jmxport><!-- harvester 8083 -->
+                <remotefilePort>8103</remotefilePort><!-- harvester 8081 -->
+                <remotefilePort>8104</remotefilePort><!-- harvester 8082 -->
+                <remotefilePort>8105</remotefilePort><!-- harvester 8083 -->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
                 <heritrixGuiPort>8092</heritrixGuiPort>
@@ -100,17 +94,11 @@
                 <lowpriport>8082</lowpriport>
                 <lowpriport>8083</lowpriport>
                 <jmxport>8100</jmxport><!-- harvester 8081 -->
-                <jmxport>8101</jmxport><!-- sidekick 8081-->
-                <jmxport>8102</jmxport><!-- harvester 8082 -->
-                <jmxport>8103</jmxport><!-- sidekick 8082-->
-                <jmxport>8104</jmxport><!-- harvester 8083 -->
-                <jmxport>8105</jmxport><!-- sidekick 8083-->
-                <remotefilePort>8106</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8107</remotefilePort><!-- sidekick 8081-->
-                <remotefilePort>8108</remotefilePort><!-- harvester 8082 -->
-                <remotefilePort>8109</remotefilePort><!-- sidekick 8082-->
-                <remotefilePort>8110</remotefilePort><!-- harvester 8083 -->
-                <remotefilePort>8111</remotefilePort><!-- sidekick 8083-->
+                <jmxport>8101</jmxport><!-- harvester 8082 -->         
+                <jmxport>8102</jmxport><!-- harvester 8083 -->              
+                <remotefilePort>8103</remotefilePort><!-- harvester 8081 -->                
+                <remotefilePort>8104</remotefilePort><!-- harvester 8082 -->                
+                <remotefilePort>8105</remotefilePort><!-- harvester 8083 -->           
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
                 <heritrixGuiPort>8092</heritrixGuiPort>

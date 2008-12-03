@@ -36,13 +36,9 @@
                 <lowpriport>8081</lowpriport>
                 <highpriport>8082</highpriport>
                 <jmxport>8100</jmxport><!-- harvester -->
-                <jmxport>8101</jmxport><!-- sidekick -->
-                <jmxport>8102</jmxport><!-- harvester -->
-                <jmxport>8103</jmxport><!-- sidekick -->
+                <jmxport>8101</jmxport><!-- harvester -->
                 <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8301</remotefilePort><!-- sidekick  8081 -->
-                <remotefilePort>8302</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8303</remotefilePort><!-- sidekick  8081 -->
+                <remotefilePort>8301</remotefilePort><!-- harvester 8082 -->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
                 <heritrixGuiPort>8092</heritrixGuiPort>
@@ -51,9 +47,7 @@
             <host name="kb-dev-har-002.kb.dk">
                 <lowpriport>8081</lowpriport>
                 <jmxport>8100</jmxport><!-- harvester -->
-                <jmxport>8101</jmxport><!-- sidekick -->
                 <remotefilePort>8300</remotefilePort><!-- harvester 8081 -->
-                <remotefilePort>8301</remotefilePort><!-- sidekick 8081-->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
             </host>
@@ -64,7 +58,7 @@
                 <jmxport>8100</jmxport><!-- viewerproxy -->
                 <jmxport>8101</jmxport><!-- indexserver -->
                 <remotefilePort>8300</remotefilePort><!-- viewerproxy -->
-                <remotefilePort>8301</remotefilePort><!-- viewerproxy -->
+                <remotefilePort>8301</remotefilePort><!-- indexserver -->
             </host>
         </access>
         <ftp>
@@ -100,9 +94,7 @@
             <host name="sb-dev-har-001.statsbiblioteket.dk">
                 <highpriport>8081</highpriport>
                 <jmxport>8100</jmxport><!-- harvester -->
-                <jmxport>8101</jmxport><!-- sidekick -->
                 <remotefilePort>8300</remotefilePort><!-- harvester -->
-                <remotefilePort>8301</remotefilePort><!-- sidekick -->
                 <heritrixGuiPort>8090</heritrixGuiPort>
                 <heritrixJmxPort>8091</heritrixJmxPort>
             </host>
