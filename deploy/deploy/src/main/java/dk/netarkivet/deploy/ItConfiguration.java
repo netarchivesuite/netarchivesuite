@@ -375,10 +375,6 @@ public class ItConfiguration {
                                         + "/harvester_" + port);
                             host.overrideSetting(
                                     HarvesterSettings
-                                        .HARVEST_CONTROLLER_ISRUNNING_FILE,
-                                    "./hcsRunning" + port + ".tmp");
-                            host.overrideSetting(
-                                    HarvesterSettings
                                         .HARVEST_CONTROLLER_PRIORITY,
                                     "HIGHPRIORITY");
                             host.getSettingsXml().save(new File(
@@ -400,10 +396,6 @@ public class ItConfiguration {
                                         .HARVEST_CONTROLLER_SERVERDIR,
                                     host.getInstallDir() + "/harvester_"
                                         + port);
-                            host.overrideSetting(
-                                    HarvesterSettings
-                                        .HARVEST_CONTROLLER_ISRUNNING_FILE,
-                                    "./hcsRunning" + port + ".tmp");
                             host.overrideSetting(
                                     HarvesterSettings
                                         .HARVEST_CONTROLLER_PRIORITY,

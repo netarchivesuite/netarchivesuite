@@ -65,7 +65,7 @@ public class IntegrityTests extends TestCase {
     /** The files that are uploaded during the tests and that must be removed
      * afterwards.
      */
-    private static final List UPLOADED_FILES =
+    private static final List<String> UPLOADED_FILES =
             Arrays.asList(new String[] { "Upload1.ARC",
                                          "Upload2.ARC",
                                          "Upload3.ARC" });

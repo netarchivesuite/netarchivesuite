@@ -198,10 +198,5 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_HEAP_SIZE
             = "settings.harvester.harvesting.heritrix.heapSize";
-    /**
-     * The file used to signal that the harvest controller is running.
-     * Sidekick starts HarvestController if this file is not present
-     */
-    public static String HARVEST_CONTROLLER_ISRUNNING_FILE
-            = "settings.harvester.harvesting.isrunningFile";
 }
+

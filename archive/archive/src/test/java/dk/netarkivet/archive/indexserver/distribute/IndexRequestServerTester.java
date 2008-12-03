@@ -25,10 +25,8 @@ package dk.netarkivet.archive.indexserver.distribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -39,7 +37,6 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;

@@ -22,20 +22,15 @@
  */
 package dk.netarkivet.standalone;
 
-import java.io.File;
-import java.io.IOException;
-
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.archive.indexserver.IndexServer;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerServer;
 import dk.netarkivet.viewerproxy.ViewerProxy;
 
@@ -73,20 +68,6 @@ public class StandaloneApplication {
         ApplicationUtils.startApp(BitarchiveServer.class, args);
         ApplicationUtils.startApp(ArcRepository.class, args);
         ApplicationUtils.startApp(IndexServer.class, args);
-
-        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8081");
-
-        try {
-            File file = new
-                    File(Settings.get(
-                    HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE));
-            file.createNewFile();
-            file.deleteOnExit();
-        } catch (IOException e) {
-            throw new IOFailure("Couldn't create temporary file " +
-                                Settings.get(
-                                        HarvesterSettings.HARVEST_CONTROLLER_ISRUNNING_FILE), e);
-        }
 
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8081");
         ApplicationUtils.startApp(ViewerProxy.class, args);

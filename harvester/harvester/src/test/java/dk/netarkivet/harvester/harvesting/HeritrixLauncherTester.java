@@ -55,7 +55,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.ReflectUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 

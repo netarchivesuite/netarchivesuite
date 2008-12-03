@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.scheduler;
 import java.io.File;
 import java.sql.SQLException;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.DomainDAO;

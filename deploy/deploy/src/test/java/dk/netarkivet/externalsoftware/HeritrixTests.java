@@ -785,9 +785,9 @@ public class HeritrixTests extends TestCase {
      * @param anElement
      */
     private void iterateChildren(Element anElement) {
-        Iterator elementIterator = anElement.elementIterator();
+        Iterator<Element> elementIterator = anElement.elementIterator();
         while(elementIterator.hasNext()){
-            Element element = (Element) elementIterator.next();
+            Element element = elementIterator.next();
 
             if (element.attribute("class") != null) {
                 //System.out.println("This element (" + element.getName() +") contains a class-name");

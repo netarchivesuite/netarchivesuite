@@ -592,10 +592,6 @@
                      512M, 2G etc.-->
         <heapSize>1598M</heapSize>
       </heritrix>
-      <!-- The file used to signal that the harvest controller is running.
-                 Sidekick starts HarvestController if this file is not present
-                 -->
-      <isrunningFile>./hcsRunning.tmp</isrunningFile>
     </harvesting>
   </harvester>
   <archive>

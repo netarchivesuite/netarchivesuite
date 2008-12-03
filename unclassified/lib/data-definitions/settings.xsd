@@ -341,7 +341,6 @@
         			</restriction>
         		</simpleType>
         	</element>
-        	<element name="isrunningFile" type="set:directoryPath" />
         </all>
     </complexType>
 

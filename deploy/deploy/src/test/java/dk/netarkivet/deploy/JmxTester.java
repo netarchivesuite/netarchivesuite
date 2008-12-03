@@ -67,8 +67,8 @@ public class JmxTester extends TestCase{
         for (ObjectName anObjectName: jmxBeans) {
             System.out.println("Mbean is instance of " +  anObjectName.getClass().getName());
             System.out.println("ObjectName: " + anObjectName.getCanonicalName());
-            Hashtable table = anObjectName.getKeyPropertyList();
-            for (Object key: table.keySet()) {
+            Hashtable<String,String> table = anObjectName.getKeyPropertyList();
+            for (String key: table.keySet()) {
                 System.out.println("key: " + key);
             }
         }

@@ -38,6 +38,7 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.Location;
 import dk.netarkivet.common.utils.Settings;
@@ -71,6 +72,12 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        // This will fail, if the Location class has already been initialized
+        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "KB", "SB");
+
+        if (!Location.isKnownLocation("KB") || !Location.isKnownLocation("SB")) {
+            fail("These tests assume, that KB and SB are known locations");
+        }
         super.setUp();
     }
 
@@ -113,7 +120,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
                     new String[]{Location.get(ba1).getName()});
         request.setupGetParameterMap(args);
-        request.setupGetParameterNames(new Vector(args.keySet()).elements());
+        request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
         Map<String, FilePreservationState> status =
                 BitpreserveFileState.processMissingRequest(getDummyPageContext(
                         defaultLocale, request),
