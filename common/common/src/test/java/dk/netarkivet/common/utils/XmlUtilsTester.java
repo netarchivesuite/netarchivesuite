@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.utils;
-/**
- * lc forgot to comment this!
- */
 
 import junit.framework.TestCase;
 import org.dom4j.Document;
@@ -32,6 +29,9 @@ import org.dom4j.Node;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 
+/**
+ * Unit tests for the class XmlUtils.
+ */
 public class XmlUtilsTester extends TestCase {
     private final MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR,
             TestInfo.TEMPDIR);

@@ -70,11 +70,6 @@
         <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
         <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
         <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
-        <deployPath>/HarvestDefinition</deployPath>
-        <deployPath>/History</deployPath>
-        <deployPath>/BitPreservation</deployPath>
-        <deployPath>/QA</deployPath>
-        <deployPath>/Status</deployPath>
         <webapplication>webpages/HarvestDefinition.war</webapplication>
         <webapplication>webpages/History.war</webapplication>
         <webapplication>webpages/BitPreservation.war</webapplication>
@@ -124,7 +119,6 @@
     <harvesting>
       <serverDir>server</serverDir>
       <oldjobsDir>oldjobs</oldjobsDir>
-      <isrunningFile>./hcsRunning.tmp</isrunningFile>
       <queuePriority>HIGHPRIORITY</queuePriority>
       <heritrix>
         <noresponseTimeout>1800</noresponseTimeout>

@@ -83,12 +83,14 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /** Logger for this class. */
     private final Log log = LogFactory.getLog(getClass());
+    /** The embedded webserver. */ 
     protected Server server;
+    /** The shutdown hook. */
     private CleanupHook cleanupHook;
 
     /** Initialise the registry. This includes registering an HTTP server for
      * getting the files from this machine.
-     * @throws IOFailure if it cannot initalise.
+     * @throws IOFailure if it cannot be initialised.
      */
     protected HTTPRemoteFileRegistry() {
         port = Settings.getInt(HTTPRemoteFile.HTTPREMOTEFILE_PORT_NUMBER);
@@ -103,7 +105,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
 
     /** Start the server, including a handler that responds with registered
      * files, removes registered files on request, and gives 404 otherwise.
-     * @throws IOFailure if it cannot initalise.
+     * @throws IOFailure if it cannot be initialised.
      */
     protected void startServer() {
         server = new Server();
@@ -114,12 +116,14 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         try {
             server.start();
         } catch (Exception e) {
-            throw new IOFailure("Cannot start HTTPRemoteFile registry", e);
+            throw new IOFailure(
+                    "Cannot start HTTPRemoteFile registry on port "
+                    + port, e);
         }
     }
 
     /**
-     * Get the protocol part of URLs, that is HTTP
+     * Get the protocol part of URLs, that is HTTP.
      * @return "http", the protocol.
      */
     protected String getProtocol() {
@@ -129,7 +133,7 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
     /** Get the unique instance.
      * @return The unique instance.
      */
-    public synchronized static HTTPRemoteFileRegistry getInstance() {
+    public static synchronized HTTPRemoteFileRegistry getInstance() {
         if (instance == null) {
             instance = new HTTPRemoteFileRegistry();
         }
@@ -170,17 +174,24 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         return url;
     }
 
-    /** Get the url for cleaning up after a remote file registered under some
+    /**
+     * Get the url for cleaning up after a remote file registered under some
      * URL.
+     * @param url some URL
+     * 
      * @return the cleanup url.
+     * @throws MalformedURLException If unable to construct the cleanup url
      */
-    URL getCleanupUrl(URL url) throws MalformedURLException {
+    URL getCleanupUrl(URL url) throws MalformedURLException {        
         return new URL(url.getProtocol(), url.getHost(), url.getPort(),
                   url.getPath() + UNREGISTER_URL_POSTFIX);
     }
 
     /** Open a connection to an URL in a registry.
-     * @param url The URL to open connection to. */
+     * @param url The URL to open connection to.
+     * @throws IOException If unable to open the connection.
+     * @return a connection to an URL in a registry
+     */
     protected URLConnection openConnection(URL url) throws IOException {
         return url.openConnection();
     }
@@ -230,7 +241,8 @@ public class HTTPRemoteFileRegistry implements CleanupIF {
         /**
          * A method for handling Jetty requests.
          *
-         * @see AbstractHandler#handle(String, HttpServletRequest, HttpServletResponse, int)
+         * @see AbstractHandler#handle(String, HttpServletRequest,
+         * HttpServletResponse, int)
          *
          * @param string Unused domain.
          * @param httpServletRequest request object.

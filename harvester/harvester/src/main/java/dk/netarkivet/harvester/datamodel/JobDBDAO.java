@@ -64,7 +64,8 @@ public class JobDBDAO extends JobDAO {
         
         int jobVersion = DBUtils.getTableVersion("jobs");
         if (jobVersion == 3) {
-            log.info("Migrate tabel 'jobs' to version 4");
+            log.info("Migrate table" +
+            		" 'jobs' to version 4");
             DBSpecifics.getInstance().updateTable("jobs", 4);
         }
         

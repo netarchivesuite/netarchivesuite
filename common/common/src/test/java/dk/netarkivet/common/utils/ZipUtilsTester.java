@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.utils;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.io.FileFilter;
@@ -47,7 +44,9 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
-
+/**
+ * Unit tests for the class ZipUtils.
+ */
 public class ZipUtilsTester extends TestCase {
     public ZipUtilsTester(String s) {
         super(s);

@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.common.utils;
 
-/**
- * lc forgot to comment this!
- */
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +33,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
+/**
+ * Unittests for the MD5 class. 
+ */
 public class MD5Tester extends TestCase {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
     private static final String EMPTY_STRING_MD5 = "d41d8cd98f00b204e9800998ecf8427e";

@@ -33,6 +33,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 
+/**
+ * Unit tests for the class SimpleXml.
+ */
 public class SimpleXmlTester extends TestCase {
     public SimpleXmlTester(String sTestName) {
         super(sTestName);

@@ -1,11 +1,3 @@
-package dk.netarkivet.common.utils;
-
-import java.util.BitSet;
-
-import junit.framework.TestCase;
-
-import dk.netarkivet.testutils.StringAsserts;
-
 /* $Id$
 * $Revision$
 * $Date$
@@ -28,6 +20,14 @@ import dk.netarkivet.testutils.StringAsserts;
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package dk.netarkivet.common.utils;
+
+import java.util.BitSet;
+
+import junit.framework.TestCase;
+
+import dk.netarkivet.testutils.StringAsserts;
+
 
 public class SparseBitSetTester extends TestCase {
     public SparseBitSetTester(String s) {

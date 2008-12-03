@@ -24,7 +24,13 @@ package dk.netarkivet.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+
+import javax.servlet.jsp.JspWriter;
+
+import com.mockobjects.servlet.MockJspWriter;
 
 import junit.framework.TestCase;
 
@@ -85,4 +91,16 @@ public class StreamUtilsTester extends TestCase {
 
         // TODO: Test with streams that cause errors if closed.
     }
+    
+    /** test that method copyInputStreamToJspWriter works. */
+    public void testCopyInputStreamToJspWriter() throws Exception {
+        MockJspWriter writer = new MockJspWriter();
+        
+        writer.setExpectedData(FileUtils.readFile(new File("/tmp/build.xml")));
+        StreamUtils.copyInputStreamToJspWriter(new FileInputStream(new File("/tmp/build.xml")), writer);
+        
+    }
+    
+    
+    
 }

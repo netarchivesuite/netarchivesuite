@@ -48,7 +48,7 @@ public class MonitorRegistryServer extends MonitorMessageHandler
     private MonitorRegistryServer() {
         JMSConnectionFactory.getInstance().setListener(
                 Channels.getTheMonitorServer(), this);
-        log.info("MonitorRegsitryServer listening for messages on channel '"
+        log.info("MonitorRegistryServer listening for messages on channel '"
                  + Channels.getTheMonitorServer() + "'");
     }
 

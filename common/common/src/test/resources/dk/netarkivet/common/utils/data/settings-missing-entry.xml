@@ -3,7 +3,6 @@
 
         <common>
 
-
         <!-- Common temporary directory for all applications. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
@@ -92,8 +91,6 @@
                     <!-- The directory or war-file containing the web application
                  for this site section.-->
                     <webapplication>webpages/HarvestDefinition</webapplication>
-                    <!-- The URL prefix for this section of the web interface. -->
-                    <deployPath>/HarvestDefinition</deployPath>
                 </siteSection>
                 <siteSection>
                     <!-- The subclass of SiteSection that defines this part of the
@@ -103,8 +100,6 @@
                     <!-- The directory or war-file containing the web application
                  for this site section.-->
                     <webapplication>webpages/History</webapplication>
-                    <!-- The URL prefix for this section of the web interface. -->
-                    <deployPath>/History</deployPath>
                 </siteSection>
                 <siteSection>
                     <!-- The subclass of SiteSection that defines this part of the
@@ -114,8 +109,6 @@
                     <!-- The directory or war-file containing the web application
                  for this site section.-->
                     <webapplication>webpages/BitPreservation</webapplication>
-                    <!-- The URL prefix for this section of the web interface. -->
-                    <deployPath>/BitPreservation</deployPath>
                 </siteSection>
                 <siteSection>
                     <!-- The subclass of SiteSection that defines this part of the
@@ -125,8 +118,6 @@
                     <!-- The directory or war-file containing the web application
                  for this site section.-->
                     <webapplication>webpages/QA</webapplication>
-                    <!-- The URL prefix for this section of the web interface. -->
-                    <deployPath>/QA</deployPath>
                 </siteSection>
                 <siteSection>
                     <!-- The subclass of SiteSection that defines this part of the
@@ -136,8 +127,6 @@
                     <!-- The directory or war-file containing the web application
                  for this site section.-->
                     <webapplication>webpages/Status</webapplication>
-                    <!-- The URL prefix for this section of the web interface. -->
-                    <deployPath>/Status</deployPath>
                 </siteSection>
             </webinterface>
             <topLevelDomains>
@@ -534,10 +523,6 @@
                      web servers. -->
                 <noresponseTimeout>1800</noresponseTimeout>
             </heritrix>
-            <!-- The file used to signal that the harvest controller is running.
-                 Sidekick starts HarvestController if this file is not present
-                 -->
-            <isrunningFile>./hcsRunning.tmp</isrunningFile>
         </harvesting>
     </harvester>
     <archive>

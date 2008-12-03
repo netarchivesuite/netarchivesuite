@@ -81,6 +81,8 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         for (String fileName : fileDirs) {
             File f = new File(fileName);
             FileUtils.createDir(f);
+            log.info("directory '" +  f.getAbsolutePath() 
+                    + "' is part of this local archive repository");
             storageDirs.add(f);
         }
     }

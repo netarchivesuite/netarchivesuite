@@ -21,16 +21,15 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.utils;
-/**
- * lc forgot to comment this!
- */
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
+/**
+ * Unit tests for the SettingsFactory class.
+ */
 public class SettingsFactoryTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 

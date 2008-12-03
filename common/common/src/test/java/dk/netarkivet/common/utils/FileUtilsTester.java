@@ -51,11 +51,10 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
-/**
- * csr forgot to comment this!
- *
- */
 
+/**
+ * Unit tests for the FileUtils class.
+ */
 public class FileUtilsTester extends TestCase{
     private UseTestRemoteFile rf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();

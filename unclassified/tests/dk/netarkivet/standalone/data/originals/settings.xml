@@ -127,8 +127,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/HarvestDefinition</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/HarvestDefinition</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -137,8 +135,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/History</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/History</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -147,8 +143,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/BitPreservation</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/BitPreservation</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -157,8 +151,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/QA</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/QA</deployPath>
             </siteSection>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
@@ -167,8 +159,6 @@
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/Status</webapplication>
-                <!-- The URL path for this section of the web interface. -->
-                <deployPath>/Status</deployPath>
             </siteSection>
         </webinterface>
         <topLevelDomains>
@@ -601,10 +591,6 @@
                      512M, 2G etc.-->
                 <heapSize>1598M</heapSize>
             </heritrix>
-            <!-- The file used to signal that the harvest controller is running.
-                 Sidekick starts HarvestController if this file is not present
-                 -->
-            <isrunningFile>./hcsRunning.tmp</isrunningFile>
         </harvesting>
     </harvester>
     <archive>

@@ -58,6 +58,8 @@ import dk.netarkivet.harvester.webinterface.WebinterfaceTesterSuite;
 import dk.netarkivet.monitor.MonitorTesterSuite;
 import dk.netarkivet.monitor.jmx.MonitorJMXTesterSuite;
 import dk.netarkivet.monitor.logging.LoggingTesterSuite;
+import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
+import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
 import dk.netarkivet.viewerproxy.ViewerProxyTesterSuite;
 import dk.netarkivet.viewerproxy.distribute.ViewerproxyDistributeTesterSuite;
 
@@ -93,6 +95,8 @@ public class UnitTesterSuite {
         ManagementTesterSuite.addToSuite(suite);
         MonitorTesterSuite.addToSuite(suite);
         MonitorJMXTesterSuite.addToSuite(suite);
+        MonitorRegistryTesterSuite.addToSuite(suite);
+        MonitorWebinterfaceTesterSuite.addToSuite(suite);
         SchedulerTesterSuite.addToSuite(suite);
         ToolsTesterSuite.addToSuite(suite);
         HarvesterToolsTesterSuite.addToSuite(suite);

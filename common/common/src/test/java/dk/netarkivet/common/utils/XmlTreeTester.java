@@ -36,6 +36,9 @@ import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
+/**
+ * Unit tests for the class XmlTree.
+ */
 public class XmlTreeTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATADIR,
                                                   TestInfo.TEMPDIR);

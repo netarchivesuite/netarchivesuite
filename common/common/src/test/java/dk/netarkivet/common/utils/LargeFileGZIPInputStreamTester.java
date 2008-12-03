@@ -30,8 +30,6 @@ import junit.framework.TestCase;
 /**
  * Test the worked-around GZIPInputStream on some small files.
  */
-
-
 public class LargeFileGZIPInputStreamTester extends TestCase {
     private final static File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
     private final static File ORIGINALS = new File(BASE_DIR, "data");

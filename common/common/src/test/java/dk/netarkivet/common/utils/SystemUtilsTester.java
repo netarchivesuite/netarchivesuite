@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+/**
+ * Unit tests for the class SystemUtils.
+ */
 public class SystemUtilsTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
