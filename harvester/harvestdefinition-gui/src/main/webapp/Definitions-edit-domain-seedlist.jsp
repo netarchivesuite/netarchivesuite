@@ -134,7 +134,7 @@ Display all the form information for this domain
         </div>
     </div>
     <br/>
-    <input type="submit" value="<fmt:message key="harvestdefinition.seedlist.edit.update"/>"/>
+    <input type="submit" value="<fmt:message key="save"/>"/>
 </form>
 <%
     HTMLUtils.generateFooter(out);

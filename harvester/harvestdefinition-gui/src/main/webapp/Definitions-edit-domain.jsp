@@ -277,7 +277,7 @@ Display all the form information for this domain
 <br/>
 <br/>
 <br/>
-<input type="submit" value="<fmt:message key="update.domain"/>"/>
+<input type="submit" value="<fmt:message key="save"/>"/>
 </form>
 <br/>
 <br/>
