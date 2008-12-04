@@ -1,7 +1,7 @@
-/*$Id: FrequencyTester.java 407 2008-05-28 17:30:37Z svc $
-* $Revision: 407 $
-* $Date: 2008-05-28 19:30:37 +0200 (Wed, 28 May 2008) $
-* $Author: svc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
