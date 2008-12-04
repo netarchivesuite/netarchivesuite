@@ -39,6 +39,20 @@ public class TLDInfoTester extends TestCase {
 
     public void tearDown() {
     }
+    
+    public void testConstructor() {
+        TLDInfo info = new TLDInfo("dk");
+        assertEquals("dk", info.getName());
+        assertEquals(0, info.getCount());
+        assertFalse(info.isIP());
+        info = new TLDInfo("IP Address");
+        assertTrue(info.isIP());
+        assertEquals("IP Address", info.getName());
+        assertEquals(0, info.getCount());
+    }
+    
+    
+    
     public void testAddSubdomain() {
         TLDInfo i = new TLDInfo("um");
         assertEquals("Should know no subdomains to start with",

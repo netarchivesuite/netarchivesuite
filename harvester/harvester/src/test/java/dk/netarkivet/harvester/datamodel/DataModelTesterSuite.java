@@ -59,7 +59,7 @@ public class DataModelTesterSuite {
         suite.addTestSuite(DomainTester.class);
         suite.addTestSuite(FrequencyTester.class);
         suite.addTestSuite(FullHarvestTester.class);
-        // TODO  move elsewehere
+        // TODO  move elsewhere
         suite.addTestSuite(GUIWebServerTester.class);
         suite.addTestSuite(HarvestDefinitionDAOTester.class);
         suite.addTestSuite(HarvestDefinitionGUITester.class);
@@ -68,6 +68,7 @@ public class DataModelTesterSuite {
         suite.addTestSuite(HeritrixTemplateTester.class);
         suite.addTestSuite(HourlyFrequencyTester.class);
         suite.addTestSuite(JobDAOTester.class);
+        suite.addTestSuite(JobStatusTester.class);
         suite.addTestSuite(JobTester.class);
         suite.addTestSuite(JobPriorityTester.class);
         suite.addTestSuite(MonthlyFrequencyTester.class);

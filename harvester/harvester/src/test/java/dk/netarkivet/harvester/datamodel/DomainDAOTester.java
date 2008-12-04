@@ -39,7 +39,7 @@ import dk.netarkivet.testutils.StringAsserts;
 
 
 /**
- * Test the persistence framework for Domain
+ * Test the persistence framework for Domain.
  */
 public class DomainDAOTester extends DataModelTestCase {
     private static final int NUM_DOMAINS = 4;
@@ -62,7 +62,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
     /**
-     * Check that creation of a new Domain instance succeeds
+     * Check that creation of a new Domain instance succeeds.
      */
     public void testCreateAndRead() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -109,7 +109,7 @@ public class DomainDAOTester extends DataModelTestCase {
         }
     }
 
-    /** Test deletion of WebDomains */
+    /** Test deletion of WebDomains. */
     public void testDelete() {
         // create domain to delete
         DomainDAO dao = DomainDAO.getInstance();
@@ -160,7 +160,7 @@ public class DomainDAOTester extends DataModelTestCase {
                      original_count, dao2.getCountDomains());
     }
 
-    /** Check check updating of an existing entry */
+    /** Check check updating of an existing entry. */
     public void testUpdate() {
         DomainDAO dao = DomainDAO.getInstance();
 
@@ -199,7 +199,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
 
     /** Check that updating an entry that has already been modified
-     *  results in an IOFailure
+     *  results in an IOFailure.
      *  */
     public void testOptimisticLocking() {
         DomainDAO dao = DomainDAO.getInstance();
@@ -220,7 +220,7 @@ public class DomainDAOTester extends DataModelTestCase {
 
         // updating the first instance should succeed
         // notice that an update of an unmodified instance still
-        // is expected to increnment the edition counter
+        // is expected to increment the edition counter
         dao.update(inst1);
 
         try {
@@ -233,7 +233,7 @@ public class DomainDAOTester extends DataModelTestCase {
     }
 
 
-    /** Test retrieval of all domains */
+    /** Test retrieval of all domains. */
     public void testGetAllDomains() {
         DomainDAO dao = DomainDAO.getInstance();
 
@@ -305,7 +305,7 @@ public class DomainDAOTester extends DataModelTestCase {
         DomainDAO.resetSingleton();
     }
 
-    /** Set the domain DAO to a specific object */
+    /** Set the domain DAO to a specific object. */
     public static void setDomainDAO(DomainDAO dao) throws NoSuchFieldException,
             IllegalAccessException {
         Field f = ReflectUtils.getPrivateField(DomainDAO.class, "instance");
@@ -817,5 +817,36 @@ public class DomainDAOTester extends DataModelTestCase {
             reference = next;
         }
     }
+    
+    /** Check constructor of DomainHarvestInfo(). */
+    public void testDomainHarvestInfoConstructor() {
+        int jobId = 42; //FIXME jobID should be represented by a long (not an int)
+        String domain = "netarkivet.dk";
+        String harvestName = "TestHarvest";
+        long harvestId = 1L;
+        int harvestNum = 0;
+        String configName = "defaultconfig";
+        Date startDate = new Date();
+        Date endDate = new Date();
+        long bytesDownloaded = 42000L;
+        long docsdownloaded = 995L;
+        StopReason theReason = StopReason.DOWNLOAD_COMPLETE;
+        DomainHarvestInfo dhi = new DomainHarvestInfo(domain, jobId,
+                harvestName, harvestId, harvestNum, configName, startDate, 
+                endDate, bytesDownloaded, docsdownloaded, theReason);
+        assertEquals(domain, dhi.getDomain());
+        assertEquals(jobId, dhi.getJobID());
+        assertEquals(harvestName, dhi.getHarvestName());
+        assertEquals(harvestId, dhi.getHarvestID());
+        
+        assertEquals(harvestNum, dhi.getHarvestNum());
+        assertEquals(configName, dhi.getConfigName());
+        assertEquals(startDate, dhi.getStartDate());
+        assertEquals(endDate, dhi.getEndDate());  
+        assertEquals(bytesDownloaded, dhi.getBytesDownloaded());
+        assertEquals(docsdownloaded, dhi.getDocsDownloaded());
+        assertEquals(theReason, dhi.getStopReason());
+    }
+    
 }
 

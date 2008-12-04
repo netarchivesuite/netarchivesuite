@@ -47,6 +47,8 @@ import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.TestFileUtils;
 
 /**
+ * unit tests for the abstract class DomainHarvestReport and its concrete
+ * implementation HeritrixDomainHarvestReport.
  */
 public class HeritrixDomainHarvestReportTester extends TestCase {
 
@@ -123,8 +125,9 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
                             TestInfo.NO_OF_TEST_DOMAINS, //Expected value
                             hostReport.getDomainNames().size() );
 
-        // Check if set of domain names contains normalized domian name TestInfo.TEST_DOMAIN:
-        assertTrue("hostReport.getDomainNames() should contain domain name " + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
+        // Check if set of domain names contains normalized domain name TestInfo.TEST_DOMAIN:
+        assertTrue("hostReport.getDomainNames() should contain domain name " 
+                + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
                    hostReport.getDomainNames().contains(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
@@ -136,6 +139,9 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
                      + TestInfo.NO_OF_OBJECTS_TEST,
                      TestInfo.NO_OF_OBJECTS_TEST, //Expected value
                      (long) hostReport.getObjectCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+        assertNull("DomainHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null",
+                hostReport.getObjectCount("bibliotek.dk"));
+        
     }
 
 
@@ -146,10 +152,12 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
                      + TestInfo.NO_OF_BYTES_TEST,
                      TestInfo.NO_OF_BYTES_TEST, //Expected value
                      (long) hostReport.getByteCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+        assertNull("DomainHarvestReport.getByteCount('bibliotek.dk')) expected to return Null",
+                hostReport.getByteCount("bibliotek.dk"));
     }
 
     /**
-     * Test solution to bugs 391 - hosts report with long values
+     * Test solution to bugs 391 - hosts report with long values.
      */
     public void testLongValues() {
         File testFile = TestInfo.LONG_REPORT_FILE;
@@ -162,7 +170,7 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
     }
 
     /**
-     * Test solution to bugs 392 - hosts report with byte counts which add to a long value
+     * Test solution to bugs 392 - hosts report with byte counts which add to a long value.
      */
     public void testAddLongValues() {
         File testFile = TestInfo.ADD_LONG_REPORT_FILE;
@@ -171,7 +179,7 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
     }
 
     /**
-     * Test stop reason
+     * Test stop reason.
      */
     public void testStopReason() {
         File testFile = TestInfo.STOP_REASON_REPORT_FILE;
@@ -179,12 +187,15 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
         assertEquals("kb.dk is unfinished",
                 StopReason.DOWNLOAD_COMPLETE,
                 hr.getStopReason("kb.dk"));
-        assertEquals("netarkivet.dk is reached byte limit",
+        assertEquals("netarkivet.dk reached byte limit",
                 StopReason.SIZE_LIMIT,
                 hr.getStopReason("netarkivet.dk"));
-        assertEquals("statsbiblioteket.dk is reached object limit",
+        assertEquals("statsbiblioteket.dk reached object limit",
                 StopReason.OBJECT_LIMIT,
                 hr.getStopReason("statsbiblioteket.dk"));
+        assertEquals("no information about bibliotek.dk",
+                null,
+                hr.getStopReason("bibliotek.dk"));
     }
 
     /** Tests object can be serialized and deserialized preserving state.

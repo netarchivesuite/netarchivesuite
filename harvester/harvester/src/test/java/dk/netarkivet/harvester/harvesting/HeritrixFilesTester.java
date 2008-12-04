@@ -60,7 +60,7 @@ public class HeritrixFilesTester extends TestCase {
     }
 
     /**
-     * Test correct behaviour of the HeritrixFiles contructor.
+     * Test correct behaviour of the HeritrixFiles constructor.
      *
      */
     public void testConstructor() {
@@ -161,4 +161,14 @@ public class HeritrixFilesTester extends TestCase {
                         dk.netarkivet.common.Constants.ARCDIRECTORY_NAME),
                         arcsdir);
     }
+    
+    /** Check the getHeritrixOutput method */
+    public void testGetHeritrixOutput() {
+        TestInfo.HERITRIX_TEMP_DIR.mkdir();
+        HeritrixFiles hf =
+            new HeritrixFiles(TestInfo.HERITRIX_TEMP_DIR, 42, 42);
+        File output = hf.getHeritrixOutput();
+        assertEquals("Wrong heritrixOutputDir", new File(hf.getCrawlDir(), "heritrix.out"), output);
+    }
+    
 }

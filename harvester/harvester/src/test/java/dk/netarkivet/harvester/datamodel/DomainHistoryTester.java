@@ -49,7 +49,10 @@ public class DomainHistoryTester extends TestCase {
      * Tests the getmostRecentHarvestInfo() method.
      */
     public void testGetMostRecentHarvestInfo() {
-        DomainHistory h = setupHarvestInfos();
+        DomainHistory h = new DomainHistory();
+        assertNull("Should be no most recent harvestInfo at construction time",
+                h.getMostRecentHarvestInfo("bar"));
+        h = setupHarvestInfos();
         assertEquals("Most recent harvest info for bar must be #2",
                 new Long(2), h.getMostRecentHarvestInfo("bar").getHarvestID());
         HarvestInfo hi = h.getMostRecentHarvestInfo("baz");

@@ -749,7 +749,7 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         final HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         SparsePartialHarvest sph = hddao
                 .getSparsePartialHarvest("Testhøstning");
-        assertTrue("Should find a SparseFullHarvest for harvestname: "
+        assertTrue("Should find a SparsePartialHarvest for harvestname: "
                    + "Tværhøstning", sph != null);
         assertEquals("Should be the right partial harvest", new Long(42L), sph
                 .getOid());
@@ -802,15 +802,15 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
         SparseFullHarvest sph = hddao.getSparseFullHarvest(harvestName);
         assertTrue("Should find a SparseFullHarvest for harvestname: "
                    + harvestName, sph != null);
-        assertEquals("Should be the right partial harvest", new Long(43L), sph
+        assertEquals("Should be the right full harvest", new Long(43L), sph
                 .getOid());
-        assertEquals("Should be the right partial harvest", harvestName,
+        assertEquals("Should be the right full harvest", harvestName,
                      sph.getName());
-        assertEquals("Should be the right partial harvest", true, sph
+        assertEquals("Should be the right full harvest", true, sph
                 .isActive());
-        assertEquals("Should be the right partial harvest", 1,
+        assertEquals("Should be the right full harvest", 1,
                      sph.getEdition());
-        assertEquals("Should be the right partial harvest", 0, sph
+        assertEquals("Should be the right full harvest", 0, sph
                 .getNumEvents());
         assertEquals("Should be the right object limit", 2000L, sph
                 .getMaxCountObjects());
@@ -818,6 +818,10 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
                      500000000, sph.getMaxBytes());
         assertEquals("Should be the right previous harvest", null, sph
                 .getPreviousHarvestDefinitionOid());
+        assertEquals("Should be the right full harvest", "Test dette",
+                sph.getComments());
+        
+        
         assertNull("Should be null on unknown harvestdefinition", hddao
                 .getSparseFullHarvest("Fnord"));
     }
