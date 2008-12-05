@@ -294,24 +294,24 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             //Check class file argument
-            String jar = parms.cmd.getOptionValue("J");
+            String jars = parms.cmd.getOptionValue("J");
             String className = parms.cmd.getOptionValue("N");
             String classFileName = parms.cmd.getOptionValue("C");
           
-            if (classFileName == null && jar == null) {
+            if (classFileName == null && jars == null) {
                 msg = "Missing required class file argument ";
                 msg += "(-C) or Jarfile argument (-J)"; 
                 System.err.println(msg);
                 return false;
             } 
             // Check, that option -C and -J is not used simultaneously
-            if (classFileName != null && jar != null) {
+            if (classFileName != null && jars != null) {
                 msg = "Cannot use option -J and -C at the same time";
                 System.err.println(msg);
                 return false;
             }
             
-            if (classFileName != null && jar == null) { // -C is used and not -J
+            if (classFileName != null && jars == null) { // -C is used and not -J
                 if (!getFileType(classFileName).equals(FileType.CLASS)) {
                     System.err.println("Argument '"+ classFileName 
                             + "' is not denoting a class file");
@@ -325,21 +325,26 @@ public class RunBatch extends ToolRunnerBase {
             }
             
             //Check jar file arguments
-            if (jar != null) {
+            if (jars != null) {
                 if (className == null) {
                     msg = "Using option -J also requires"
                         + "option -N (the name of the class).";
                     System.err.println(msg);
                     return false;
                 }
-                if (!getFileType(jar).equals(FileType.JAR)) {
-                    System.err.println("Argument '"+ jar 
-                                       + "' is not denoting a jar file");
-                    return false;
-                }
-                if (!new File(jar).canRead()) {
-                    System.err.println("Cannot read jar file: '" + jar + "'");
-                    return false;
+
+                String[] jarList = jars.split(",");
+                for(String jar : jarList) {
+                	if (!getFileType(jar).equals(FileType.JAR)) {
+                		System.err.println("Argument '"+ jar 
+                				+ "' is not denoting a jar file");
+                		return false;
+                	}
+
+                	if(!new File(jar).canRead()) {
+                		System.err.println("Cannot read jar file: '" + jar + "'");
+                		return false;
+                	}
                 }
                 
                 //TODO Validate class name
@@ -419,20 +424,30 @@ public class RunBatch extends ToolRunnerBase {
          */
         public void run(String... args) {
             //Arguments are allready checked by checkArgs 
-            String jarName = parms.cmd.getOptionValue("J");
+            String jarArgs = parms.cmd.getOptionValue("J");
             String classFileName = parms.cmd.getOptionValue("C");
             String className = parms.cmd.getOptionValue("N");
 
             
             FileBatchJob job;
 
-            if (jarName == null) {
+            if (jarArgs == null) {
                 LoadableFileBatchJob classJob = new LoadableFileBatchJob(
                         new File(classFileName));
                 job = classJob;
             } else {
-                LoadableJarBatchJob jarJob = new LoadableJarBatchJob(
-                        new File(jarName), className);
+            	// split jar argument into jar file names 
+            	String[] jarNames = jarArgs.split(",");
+//            	System.out.println("Number of jar files: " + jarNames.length);
+            	
+            	// get jar files an put them into an array
+            	File[] jarFiles = new File[jarNames.length];
+            	for(int i=0; i<jarNames.length; i++) {
+            		jarFiles[i] = new File(jarNames[i]);
+            	}
+
+            	LoadableJarBatchJob jarJob = new LoadableJarBatchJob(className,
+                        jarFiles);
                 job = jarJob;
             }
             
@@ -462,8 +477,8 @@ public class RunBatch extends ToolRunnerBase {
             System.out.println(
                 "Running batch job '" 
                + ((classFileName == null)? "" : classFileName + "' ")
-               + ((jarName == null) ? "" : className + " from jar-file '"
-                       + jarName + "' ")
+               + ((jarArgs == null) ? "" : className + " from jar-file '"
+                       + jarArgs + "' ")
                 + "on files matching '" + regexp + "' "
                 + "on location '" + batchLocation.getName() + "', " 
                 + "output written to " 

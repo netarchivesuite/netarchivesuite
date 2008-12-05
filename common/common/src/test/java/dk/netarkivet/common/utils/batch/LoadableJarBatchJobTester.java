@@ -57,8 +57,9 @@ public class LoadableJarBatchJobTester extends TestCase {
 
     public void testInitialize() {
         FileBatchJob job = new LoadableJarBatchJob(
-                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
-                "dk.netarkivet.common.utils.batch.LoadableTestJob");
+        		"dk.netarkivet.common.utils.batch.LoadableTestJob",
+                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
+                );
         OutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         assertEquals("Should have message from loaded class",
@@ -66,8 +67,9 @@ public class LoadableJarBatchJobTester extends TestCase {
 
         try {
             job = new LoadableJarBatchJob(
-                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
-                "dk.netarkivet.common.utils.batch.LoadableTestJob$InnerClass");
+            		"dk.netarkivet.common.utils.batch.LoadableTestJob$InnerClass",
+                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
+                );
             job.initialize(os);
             fail("Should not be possible to load non-batchjob class");
         } catch (IOFailure e) {
@@ -75,8 +77,9 @@ public class LoadableJarBatchJobTester extends TestCase {
         }
 
         job = new LoadableJarBatchJob(
-                new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar"),
-                "dk.netarkivet.common.utils.batch.LoadableTestJob$InnerBatchJob");
+        		"dk.netarkivet.common.utils.batch.LoadableTestJob$InnerBatchJob",
+        		new File(TestInfo.WORKING_DIR, "LoadableTestJob.jar")
+                );
         os = new ByteArrayOutputStream();
         job.initialize(os);
         assertEquals("Should have message from loaded class",
@@ -85,8 +88,9 @@ public class LoadableJarBatchJobTester extends TestCase {
     
     public void testLoadingJobWithoutPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
-                new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesNoPackage.jar"),
-                "ExternalBatchSeveralClassesNoPackage");
+        		"ExternalBatchSeveralClassesNoPackage",
+                new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesNoPackage.jar")
+                );
         OutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         
@@ -95,8 +99,9 @@ public class LoadableJarBatchJobTester extends TestCase {
     }
     public void testLoadingJobWithPackage() {
         FileBatchJob job = new LoadableJarBatchJob(
-                new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesWithPackage.jar"),
-                "batch.ExternalBatchSeveralClassesWithPackage");
+        		"batch.ExternalBatchSeveralClassesWithPackage",
+                new File(TestInfo.WORKING_DIR, "ExternalBatchSeveralClassesWithPackage.jar")
+                );
         OutputStream os = new ByteArrayOutputStream();
         job.initialize(os);
         

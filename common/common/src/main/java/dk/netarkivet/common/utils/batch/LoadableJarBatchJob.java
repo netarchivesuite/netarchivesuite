@@ -57,24 +57,29 @@ public class LoadableJarBatchJob extends FileBatchJob {
         transient Log log = LogFactory.getLog(this.getClass().getName());
         Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
 
-        public ByteJarLoader(File file) {
-            ArgumentNotValid.checkNotNull(file, "File file");
-            ArgumentNotValid.checkTrue(file.isFile(), "Not a regular file");
-            try {
-                JarFile jarFile = new JarFile(file);
-                for (Enumeration<JarEntry> e = jarFile.entries();
-                     e.hasMoreElements(); ) {
-                    JarEntry entry = e.nextElement();
-                    String name = entry.getName();
-                    InputStream in = jarFile.getInputStream(entry);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream(
-                            (int)entry.getSize());
-                    StreamUtils.copyInputStreamToOutputStream(in, out);
-                    log.info("Entering data for class: " + name);
-                    binaryData.put(name, out.toByteArray());
-                }
-            } catch (IOException e) {
-                throw new IOFailure("Failed to load jar file '" + file + "'");
+        public ByteJarLoader(File ...files) {
+        	
+            ArgumentNotValid.checkNotNull(files, "File ... files");
+            ArgumentNotValid.checkTrue(files.length !=0,
+            		"Should not be empty array");
+            for(File file : files) {
+            	try {
+            		JarFile jarFile = new JarFile(file);
+            		for (Enumeration<JarEntry> e = jarFile.entries();
+            		e.hasMoreElements(); ) {
+            			JarEntry entry = e.nextElement();
+            			String name = entry.getName();
+            			InputStream in = jarFile.getInputStream(entry);
+            			ByteArrayOutputStream out = new ByteArrayOutputStream(
+            					(int)entry.getSize());
+            			StreamUtils.copyInputStreamToOutputStream(in, out);
+            			log.debug("Entering data for class: " + name);
+            			binaryData.put(name, out.toByteArray());
+            		}
+            	} catch (IOException e) {
+            		throw new IOFailure("Failed to load jar file '" + file
+            				+ "': " + e);
+            	}
             }
         }
 
@@ -103,13 +108,17 @@ public class LoadableJarBatchJob extends FileBatchJob {
      * @param jobClass The class to load initially.  This must be a
      * subclass of FileBatchJob
      */
-    public LoadableJarBatchJob(File jarFile, String jobClass) {
-        ArgumentNotValid.checkNotNull(jarFile, "File jarFile");
+    public LoadableJarBatchJob(String jobClass, File ... jarFiles) {
+        ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
         this.jobClass = jobClass;
-        log.info("Loading loadableJarBatchJob using jarfile = '" 
-                + jarFile + "' and jobClass=" + jobClass);
-        multipleClassLoader = new ByteJarLoader(jarFile);
+        StringBuffer res = new StringBuffer("Loading loadableJarBatchJob using jarfiles: ");
+        for (File jarFile : jarFiles) {
+        	res.append(jarFile.getName());
+    	}
+        res.append(" and jobclass '" + jobClass);
+        log.info(res.toString());
+    	multipleClassLoader = new ByteJarLoader(jarFiles);
     }
 
     /**

@@ -149,11 +149,11 @@ public class FileUtils {
             }
         }
         if (!f.delete()) {
-            deleteFile(f, 10, 0);
-            if (f.exists()) {
-                throw new IOFailure("Couldn't remove file "
-                                    + f.getAbsolutePath());
-            }
+        	boolean success = remove(f);
+        	if (!success) {
+        		throw new IOFailure("Unable to remove file: '" 
+        				+ f.getAbsolutePath() + "'");
+        	}
         }
 
         return true;
@@ -178,47 +178,14 @@ public class FileUtils {
             return false; //Do not attempt to delete a directory
         }
         if (!f.delete()) {
-            deleteFile(f, 10, 0);
-            if (f.exists()) {
-                throw new IOFailure("Couldn't remove file "
-                        + f.getAbsolutePath());
-            }
+        	// Hack to remove file on windows!
+        	File delFile = new File(f.getAbsolutePath());
+        	delFile.delete();
         }
+
         return true;
     }
-
-
-    /**
-     * Windows workaround! Use this to delete files throughout. Windows don't
-     * allow deletion of files if streams haven't been closed. File locks are
-     * released after a few seconds and sometimes only if objects using file
-     * locks have been garbage collected.
-     *
-     * @param file
-     *            the file to be deleted.
-     * @param tries
-     *            how many tries to delete the file.
-     * @param tried
-     *            used for recursion, should be set to 0 (zero),
-     *            when this method is called initially.
-     *
-     */
-    private static void deleteFile(File file, int tries, int tried) {
-        if (!file.delete()) {
-            System.gc();
-            if (!file.delete()) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    // Just ignore it
-                }
-                if (tried < tries) {
-                    deleteFile(file, tries, tried + 1);
-                }
-            }
-        }
-    }
-
+    
     /**
      * Returns a valid filename for most filesystems. Exchanges the following
      * characters: <p/> " " -> "_" ":" -> "_" "+" -> "_"
