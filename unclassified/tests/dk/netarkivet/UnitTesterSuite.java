@@ -46,6 +46,7 @@ import dk.netarkivet.common.management.ManagementTesterSuite;
 import dk.netarkivet.common.tools.ToolsTesterSuite;
 import dk.netarkivet.common.utils.UtilsTesterSuite;
 import dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite;
+import dk.netarkivet.common.utils.batch.BatchUtilsTesterSuite;
 import dk.netarkivet.common.utils.cdx.CdxUtilsTesterSuite;
 import dk.netarkivet.deploy.DeployTesterSuite;
 import dk.netarkivet.harvester.datamodel.DataModelTesterSuite;
@@ -75,6 +76,7 @@ public class UnitTesterSuite {
         ArcrepositoryDistributeTesterSuite.addToSuite(suite);
         ArcRepositoryTesterSuite.addToSuite(suite);
         ArcUtilsTesterSuite.addToSuite(suite);
+        BatchUtilsTesterSuite.addToSuite(suite);
         BitarchiveDistributeTesterSuite.addToSuite(suite);
         BitarchiveTesterSuite.addToSuite(suite);
         BitPreservationTesterSuite.addToSuite(suite);

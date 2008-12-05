@@ -35,6 +35,7 @@ import com.mockobjects.servlet.MockJspWriter;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.TestUtils;
 
 /**
  * 
@@ -94,6 +95,9 @@ public class StreamUtilsTester extends TestCase {
     
     /** test that method copyInputStreamToJspWriter works. */
     public void testCopyInputStreamToJspWriter() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            return;
+        }
         MockJspWriter writer = new MockJspWriter();
         
         writer.setExpectedData(FileUtils.readFile(new File("/tmp/build.xml")));
