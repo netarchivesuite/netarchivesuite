@@ -55,7 +55,16 @@ inactive or vice-versa.
                     flipactive);
             return;
         } else {
-            hd.setActive(!hd.getActive());
+        	// disallow going to active mode, if no domainconfigurations 
+        	// associated with this harvestdefinition
+        	if (!hd.getActive()) {
+        		if (!hd.getDomainConfigurations().hasNext()) {
+					            HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                    "errormsg;harvestdefinition.0.cannot.be.activated",
+                    "No domains currently associated with this harvestdefinition");
+            return;
+        	}
+	        hd.setActive(!hd.getActive());
             HarvestDefinitionDAO.getInstance().update(hd);
             response.sendRedirect("Definitions-selective-harvests.jsp");
             return;
