@@ -117,6 +117,13 @@
                 <!-- Native name of the language for this locale -->
                 <name>English</name>
             </language>
+            <!-- Language settings -->
+            <language>
+                <!-- A locale the GUI is available as -->
+                <locale>de</locale>
+                <!-- Native name of the language for this locale -->
+                <name>Deutsch</name>
+            </language>
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
