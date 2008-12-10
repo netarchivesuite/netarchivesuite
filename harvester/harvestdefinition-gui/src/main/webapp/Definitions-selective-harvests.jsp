@@ -60,9 +60,11 @@ inactive or vice-versa.
         	if (!hd.getActive()) {
         		if (!hd.getDomainConfigurations().hasNext()) {
 					            HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;harvestdefinition.0.cannot.be.activated",
-                    "No domains currently associated with this harvestdefinition");
-            return;
+                    "errormsg;harvestdefinition.0.cannot.be.activated;"
+                    + "no.domains.selected.for.harvesting",
+                    hd.getName());
+            	return;
+            	}
         	}
 	        hd.setActive(!hd.getActive());
             HarvestDefinitionDAO.getInstance().update(hd);
