@@ -28,14 +28,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javax.servlet.jsp.JspWriter;
-
 import com.mockobjects.servlet.MockJspWriter;
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * 
@@ -43,16 +43,28 @@ import dk.netarkivet.testutils.TestUtils;
  *
  */
 public class StreamUtilsTester extends TestCase {
-    public StreamUtilsTester(String s) {
-        super(s);
-    }
+    
+    private UseTestRemoteFile rf = new UseTestRemoteFile();
+    ReloadSettings rs = new ReloadSettings();
 
+    private static final File BASE_DIR = new File("tests/dk/netarkivet/common/utils");
+    private static final File ORIGINALS = new File(BASE_DIR, "fileutils_data");
+    private static final File WORKING = new File(BASE_DIR, "working");
+    private static final File TESTFILE = new File(WORKING, "streamutilstestfile.txt");
+    
     public void setUp() {
+        rs.setUp();
+        FileUtils.removeRecursively(WORKING);
+        TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
+        rf.setUp();
     }
 
     public void tearDown() {
+        FileUtils.removeRecursively(WORKING);
+        rf.tearDown();
+        rs.tearDown();
     }
-
+  
     public void testCopyInputStreamToOutputStream() throws IOException {
         ByteArrayInputStream in = new ByteArrayInputStream("foobar\n".getBytes());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -95,16 +107,23 @@ public class StreamUtilsTester extends TestCase {
     
     /** test that method copyInputStreamToJspWriter works. */
     public void testCopyInputStreamToJspWriter() throws Exception {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
-        MockJspWriter writer = new MockJspWriter();
+        StringBuffer buf = new StringBuffer();
+        MyMockJspWriter writer = new MyMockJspWriter(buf);
+        String testfileAsString = FileUtils.readFile(TESTFILE);
+        StreamUtils.copyInputStreamToJspWriter(new FileInputStream(TESTFILE), writer);
         
-        writer.setExpectedData(FileUtils.readFile(new File("/tmp/build.xml")));
-        StreamUtils.copyInputStreamToJspWriter(new FileInputStream(new File("/tmp/build.xml")), writer);
-        
+        assertEquals(testfileAsString, buf.toString());
     }
     
-    
-    
+    private class MyMockJspWriter extends MockJspWriter {
+        private StringBuffer buf;
+        
+        public MyMockJspWriter(StringBuffer buf) {
+            this.buf = buf;
+        }
+        
+        public void write(String str, int off, int len) {
+            buf.append(str.substring(off, len));
+        }
+      }
 }

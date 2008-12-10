@@ -61,8 +61,7 @@ public class StreamUtils {
         int read = 0;
         try {
             try {
-                while (read != -1) {
-                    read = in.read(buf);
+                while ((read = in.read(buf)) != -1) {
                     out.write(new String(buf, "UTF-8"), 0, read);
                 }
             } finally {
