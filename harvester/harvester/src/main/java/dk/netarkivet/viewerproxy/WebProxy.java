@@ -125,8 +125,10 @@ public class WebProxy extends DefaultHandler
         HttpResponse netarkivetResponse = new HttpResponse(response);
         HttpRequest netarkivetRequest = new HttpRequest(request);
         try {
+            //The following is a bad idea because it hides where the
+            //failure actually happens in the code
             //Generate URI to enforce fail-early of illegal URIs 
-            uri = new URI(request.getRequestURL().toString());
+            //uri = new URI(request.getRequestURL().toString());
             uriResolver.lookup(netarkivetRequest, netarkivetResponse);
             ((org.mortbay.jetty.Request)request).setHandled(true);
         } catch (Exception e) {

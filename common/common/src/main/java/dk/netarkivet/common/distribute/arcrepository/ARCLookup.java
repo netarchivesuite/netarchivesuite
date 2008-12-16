@@ -111,6 +111,8 @@ public class ARCLookup {
      */
     public InputStream lookup(URI uri) {
         ArgumentNotValid.checkNotNull(uri, "uri");
+        //TODO if we have encoded the uri in anyway (e.g. for { and }) then we
+        //must decode here before calling lookup
         ARCKey key = luceneLookup(uri.toString());
         if (key == null) {
             return null; // key not found
