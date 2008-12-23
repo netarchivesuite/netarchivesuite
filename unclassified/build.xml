@@ -30,8 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <property name="releasetestdir" value="${user.home}/tmp_releasetest"/>
     <property name="depcheckdir" value="${user.home}/tmp_dependencycheck"/>
     <property name="jarclasspath" value="
-    db/derby-10.1.1.0.jar
-    db/derbyclient-10.1.1.0.jar
+    db/derby-10.4.2.0.jar
+    db/derbyclient-10.4.2.0.jar
     commons-cli-1.0.jar	
     commons-fileupload-1.0.jar
     commons-net-1.4.1.jar
@@ -68,8 +68,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <pathelement path="${classdir}"/>
         <fileset dir="lib">
             <patternset id="jars.path.set">
-                <include name="db/derby-10.1.1.0.jar"/>
-            	<include name="db/derbyclient-10.1.1.0.jar"/>
+                <include name="db/derby-10.4.2.0.jar"/>
+            	<include name="db/derbyclient-10.4.2.0.jar"/>
             	<include name="commons-cli-1.0.jar"/>
                 <include name="commons-fileupload-1.0.jar"/>
                 <include name="commons-net-1.4.1.jar"/>

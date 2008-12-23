@@ -23,14 +23,18 @@
 
 package dk.netarkivet.harvester.distribute;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.TestObjectMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -38,6 +42,8 @@ import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvesterMessageHandlerTester extends TestCase {
@@ -51,6 +57,11 @@ public class HarvesterMessageHandlerTester extends TestCase {
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         JMSConnectionTestMQ.clearTestQueues();
         tmh = new TestMessageHandler();
+        // Allow reading of the log
+        FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
+        LogManager.getLogManager().reset();
+        LogManager.getLogManager().readConfiguration(fis);
+        fis.close();
     }
 
     protected void tearDown() throws Exception {
@@ -63,6 +74,16 @@ public class HarvesterMessageHandlerTester extends TestCase {
         JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
         tmh.onMessage(new TestObjectMessage(testMessage));
         assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
+        // test that tmh.onMessage issues a "Invalid message type" warning, if the message embeddded in the TestObjectMessage is not a
+        // HarvesterMessage
+        IllegalTestMessage illegalMessage = new IllegalTestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "43");
+        JMSConnectionTestMQ.updateMsgID(illegalMessage, "ID90");
+        
+        tmh.onMessage(new TestObjectMessage(illegalMessage));
+        File logfile = new File("tests/testlogs/netarkivtest.log");
+        LogUtils.flushLogs(HarvesterMessageHandler.class.getName());
+        FileAsserts.assertFileContains("Log should have given warning",
+                "WARNING: Invalid message type", logfile);
     }
 
     /*
@@ -117,4 +138,26 @@ public class HarvesterMessageHandlerTester extends TestCase {
             return testID;
         }
     }
+    
+    private static class IllegalTestMessage extends NetarkivetMessage {
+        private String testID;
+        public int acceptCalled = 0;
+
+        public IllegalTestMessage(ChannelID to, ChannelID replyTo, String testID) {
+            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            this.testID = testID;
+        }
+
+        public void accept(HarvesterMessageVisitor v) {
+            acceptCalled++;
+        }
+
+        public String getTestID() {
+            return testID;
+        }
+    }
+
+    
+    
+    
 }
