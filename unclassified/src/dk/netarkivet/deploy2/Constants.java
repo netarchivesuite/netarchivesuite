@@ -9,7 +9,7 @@ public class Constants {
 	static final String COMMON_BRANCH = "common";
 	/** Path to the environment name branch in the common branch */
 	static final String ENVIRONMENT_NAME_BRANCH = "environmentName";
-	/** The total path to the environment name from beyond the settings branch */
+	/** The total path to the environment name from an entity branch */
 	static final String[] ENVIRONMENT_NAME_TOTAL_PATH_BRANCH = 
 			{SETTINGS_BRANCH, COMMON_BRANCH, ENVIRONMENT_NAME_BRANCH};
 	/** The path to the environment name from the settings branch */
@@ -24,8 +24,8 @@ public class Constants {
 	/** The path to the optional installation directory */
 	static final String PARAMETER_INSTALL_DIR_BRANCH = "deployInstallDir";
 	/** The path to the machine user name */
-	static final String PARAMETER_MACHINE_USER_NAME_BRANCH = "deployMachineUserName";
-	
+	static final String PARAMETER_MACHINE_USER_NAME_BRANCH = 
+		"deployMachineUserName";
 
 	// traversing the XML tree
 	/** The path to physical locations in from the global scope */
@@ -37,22 +37,35 @@ public class Constants {
 
 	// physical location specific
 	/** The path to name in a physical location instance */
-	static final String PHYSICAL_LOCATION_NAME_BRANCH = "name";
+	static final String PHYSICAL_LOCATION_NAME_ATTRIBUTES = "name";
 	
 	// machine specific
 	/** The path to name in a machine instance */
-	static final String MACHINE_NAME_BRANCH = "name";
+	static final String MACHINE_NAME_ATTRIBUTE = "name";
 	/** The path to the operating system variable */
-	static final String MACHINE_OPERATING_SYSTEM_BRANCH = "os";
+	static final String MACHINE_OPERATING_SYSTEM_ATTRIBUTE = "os";
 
 	// application specific
 	/** The path to name in a application instance */
-	static final String APPLICATION_NAME_BRANCH = "name";
+	static final String APPLICATION_NAME_ATTRIBUTE = "name";
 	/** The path to the instance id for the application */
-	static final String APPLICATION_INSTANCE_ID_BRANCH = "applicationInstanceId";
+	static final String APPLICATION_INSTANCE_ID_BRANCH = 
+		"applicationInstanceId";
 	
+	// operating system specific
+	/** The operating system attribute for windows */
+	static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
+	/** The call for running a batch script in windows */
+	static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
+		"\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=\"";
 	
-	// name for windows platform
-	/** The operating system attribute for windows*/
-	static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "\"windows\"";
+	// jmx remote password specific
+	/** The path from settings to the monitor branch */
+	static final String JMX_PASSWORD_MONITOR_BRANCH = "monitor";
+	/** The path from monitor to the jmxUsername leaf */
+	static final String JMX_PASSWORD_NAME_BRANCH = "jmxUsername";
+	/** The path from monitor to the jmxPassword leaf */
+	static final String JMX_PASSWORD_PASSWORD_BRANCH = "jmxPassword";
+	/** */
+	static final String JMX_FILE_NAME = "jmxremote.password";
 }

@@ -127,6 +127,15 @@ public class XmlStructure {
 		return root.getText();
 	}
 	
+	/**
+	 * Retrieves the XML code for this entire branch.
+	 * 
+	 * @return The XML code.
+	 */
+	public String GetXML() {
+		return root.asXML();
+	}
+	
 	/** 
 	 * Retrieves the value of a 
 	 * Simple version of GetSubChildValue()
@@ -183,6 +192,17 @@ public class XmlStructure {
 		}
 	}
 	
+	/**
+	 * Gets the a specific attribute of this branch
+	 * @param name The name of the attribute
+	 * @return The value of the attribute
+	 */
+	public String GetAttribute(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name,"String name");
+		
+        return root.attributeValue(name);
+	}
+	
 	/** 
 	 * Displays the XML document
 	 */
@@ -202,6 +222,8 @@ public class XmlStructure {
         
 		try {
 			OverWriting(root, overwriter);
+		} catch (IllegalState e) {
+			log.trace("Overwriting illegal area: " + e);
 		} catch(Exception e) {
 			log.warn("Error in overwritting an XML tree: " + e);
 		}

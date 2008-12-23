@@ -1,10 +1,15 @@
 package dk.netarkivet.deploy2;
 
+import java.io.File;
+import java.io.PrintWriter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 public class Application {
 	// the log, for logging stuff instead of displaying them directly. 
@@ -15,10 +20,12 @@ public class Application {
 	/** The specific settings for this instance, inherited and overwritten */
 	private XmlStructure settings;
 	/** parameters */
-	private Parameters machineParameters;
+	public Parameters machineParameters;
 	
 	/** Name of this instance */
 	private String name;
+	/** The total name of this instance */
+	private String nameWithNamePath;
 	/** application instance id 
 	 * (optional, used when two application has same name)
 	 * */
@@ -64,23 +71,35 @@ public class Application {
 	 * Currently, this is the name and the optional applicationId.
 	 */
 	private void ExtractVariables() {
-		Element elem = null;
+		try {
+			
+			// retrieve name
+			Attribute at = applicationRoot.attribute(
+					Constants.APPLICATION_NAME_ATTRIBUTE);
+			if(at != null) {
+				// the name is actually the classpath, so the specific class is
+				// set as the name. It is the last element in the classpath.
+				nameWithNamePath = at.getText();
+				// the classpath is is separated by '.'
+				String[] stlist = nameWithNamePath.split("[.]");
+				name = stlist[stlist.length -1];
+			} else {
+				log.debug("Physical location has no name!");
+				name = "";
+				nameWithNamePath = "";
+			}
 
-		// retrieve name
-		elem = applicationRoot.element(Constants.APPLICATION_NAME_BRANCH);
-		if(elem != null) {
-			name = elem.getText();
-		} else {
-			log.debug("Physical location has no name!");
-			name = "";
-		}
-
-		// look for the optional application instance id
-		elem = applicationRoot.element(Constants.APPLICATION_INSTANCE_ID_BRANCH);
-		if(elem != null) {
-			applicationId = elem.getText();
-		} else {
-			applicationId= null;
+			// look for the optional application instance id
+			Element elem = applicationRoot.element(
+					Constants.APPLICATION_INSTANCE_ID_BRANCH);
+			if(elem != null) {
+				applicationId = elem.getText();
+			} else {
+				applicationId = null;
+			}
+		} catch(Exception e) {
+			log.debug("Application variables not extractable! ");
+			throw new IOFailure("Application variables not extractable! ");
 		}
 	}
 
@@ -96,18 +115,79 @@ public class Application {
 		}
 
 		machineParameters.Display();
-// 		settings.Display();
-		System.out.println();
+ 		settings.Display();
 	}
 	
-	public String Write() {
-		// ?? WRITE WHAT ??
-		String res = "";
+	/**
+	 * Uses the name and the optional applicationId to create
+	 * an unique identification for this application
+	 *  
+	 * @return The unique identification of this application.
+	 */
+	public String getIdentification() {
+		String res = name;
 		
-		res += "java ";
-		res += machineParameters.WriteJavaParameters();
+		// apply only applicationId if it exists and has content
+		if(applicationId != null && !applicationId.isEmpty()) {
+			res += "_";
+			res += applicationId;
+		}
 		
-//		System.out.println(res);
-		return "";
+		return res;
+	}
+	
+	/**
+	 * @return the total name with directory path
+	 */
+	public String getTotalName() {
+		return nameWithNamePath;
+	}
+	
+	/**
+	 * Creates the settings file for this application.
+	 * This is extracted from the XMLStructure and put into a specific file.
+	 * The name of the settings file for this application is:
+	 * "settings_" + identification + ".xml"
+	 * 
+	 * @param directory The directory where the settings file should be placed.
+	 */
+	public void createSettingsFile(File directory) {
+		// make file
+		File settingsFile = new File(directory, 
+				"settings_" + getIdentification() + ".xml");
+		try {
+			// initiate writer
+			PrintWriter pw = new PrintWriter(settingsFile);
+			
+			try {
+				// Extract the XML content of the branch for this application
+				pw.println(settings.GetXML());
+			} finally {
+				pw.close();
+			}
+		} catch (Exception e) {
+			log.debug("Error in creating settings file for application: " + e);
+			throw new IOFailure("Cannot create settings file: " + e);
+		}
+	}
+
+	/**
+	 * Makes the install path with linux syntax
+	 * 
+	 * @return The path in linux syntax
+	 */
+	public String installPathLinux() {
+		return machineParameters.installDir.getText() + "/" +
+			settings.GetSubChildValue(Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
+	}
+
+	/**
+	 * Makes the install path with windows syntax.
+	 * 
+	 * @return The path with windows syntax.
+	 */
+	public String installPathWindows() {
+		return machineParameters.installDir.getText() + "\\" +
+			settings.GetSubChildValue(Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
 	}
 }

@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.deploy2;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class DeployApplication {
 
 	/** The configuration for this deploy */
@@ -119,6 +122,7 @@ public class DeployApplication {
 			itConfig.Write();
 
 		} catch (Exception e) {
+			// handle this!
 			System.out.println("ERROR: " + e);
 		}
 	}

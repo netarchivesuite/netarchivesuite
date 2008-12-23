@@ -12,16 +12,24 @@ import dk.netarkivet.common.utils.FileUtils;
 public class DeployConfiguration {
 	
 	// Configuration from XML file
+	/** The configuration structure (deployGlobal) */
 	XmlStructure config;
+	/** The settings branch of the config */
 	XmlStructure settings;
+	/** The parameters for running java */
 	Parameters machineParam;
-	// The physical locations
+	/** The list of the physical locations */
 	private List<PhysicalLocation> physLocs;
 
+	/** The file containing the it-configuration. */
 	private File itConfigFile;
+	/** The NetarchiveSuite file (in .zip). */
 	private File netarchiveSuiteFile;
+	/** The security policy file. */
 	private File secPolicyFile;
+	/** The log property file. */
 	private File logPropFile;
+	/** The directory for output. */
 	private File outputDir;
 
 	/**
@@ -38,10 +46,14 @@ public class DeployConfiguration {
 			String secPolicyFileName, 
 			String logPropFileName,
 			String outputDirName) {
-		ArgumentNotValid.checkNotNullOrEmpty(itConfigFileName, "No config file");
-		ArgumentNotValid.checkNotNullOrEmpty(netarchiveSuiteFileName, "No installation file");
-		ArgumentNotValid.checkNotNullOrEmpty(secPolicyFileName, "No security file");
-		ArgumentNotValid.checkNotNullOrEmpty(logPropFileName, "No log file");
+		ArgumentNotValid.checkNotNullOrEmpty(
+				itConfigFileName, "No config file");
+		ArgumentNotValid.checkNotNullOrEmpty(
+				netarchiveSuiteFileName, "No installation file");
+		ArgumentNotValid.checkNotNullOrEmpty(
+				secPolicyFileName, "No security file");
+		ArgumentNotValid.checkNotNullOrEmpty(
+				logPropFileName, "No log file");
 		
 		itConfigFile = new File(itConfigFileName);
 		netarchiveSuiteFile = new File(netarchiveSuiteFileName);
@@ -50,10 +62,12 @@ public class DeployConfiguration {
 		
 		// get configuration tree, settings and parameters
 		config = new XmlStructure(itConfigFile);
-		settings = new XmlStructure(config.GetChild(Constants.SETTINGS_BRANCH));
+		settings = new XmlStructure(
+				config.GetChild(Constants.SETTINGS_BRANCH));
 		machineParam = new Parameters(config);
 		
-		// if a outputDir has not been given as argument, it is the output directory
+		// if a outputDir has not been given as argument, 
+		// it is the output directory
 		if(outputDirName == null) {
 			// Load output directory from config file
 			outputDirName = "./" 
@@ -65,44 +79,51 @@ public class DeployConfiguration {
 		// make directory outputDir
 		FileUtils.createDir(outputDir);
 
+		ExtractElements();
+		
+//		Display();
+	}
+
+	/**
+	 * Extracts the physical locations and put them into the list
+	 */
+	private void ExtractElements() {
 		// initialise physical location array
 		physLocs = new ArrayList<PhysicalLocation>();
-		
-		List<Element> physList = config.GetChildren(Constants.PHYSICAL_LOCATION_BRANCH);
+
+		// get the list from the XML tree
+		List<Element> physList = config.GetChildren(
+				Constants.PHYSICAL_LOCATION_BRANCH);
 
 		// get all physical locations into the list
 		for(Element elem : physList) {
-			physLocs.add(new PhysicalLocation(elem, settings, machineParam, netarchiveSuiteFile.getName()));
+			physLocs.add(new PhysicalLocation(elem, settings, machineParam,
+					netarchiveSuiteFile.getName(), logPropFile, 
+					secPolicyFile));
 		}
 		
-		Display();
 	}
 	
 	/**
 	 * Show the value of all the variables
 	 */
 	public void Display() {
-		System.out.println("Config         : " + itConfigFile.getAbsolutePath());
-		System.out.println("NetarchiveSuite: " + netarchiveSuiteFile.getAbsolutePath());
-		System.out.println("Security policy: " + secPolicyFile.getAbsolutePath());
-		System.out.println("Log file       : " + logPropFile.getAbsolutePath());
-		System.out.println("OutputDir      : " + outputDir.getAbsolutePath());
-/*		
-		machineParam.Display();
-		settings.Display();
-		
-		for(PhysicalLocation pl : physLocs) {
-			pl.Display();
-		}
-/* */
+		System.out.println("Config         : " + 
+				itConfigFile.getAbsolutePath());
+		System.out.println("NetarchiveSuite: " + 
+				netarchiveSuiteFile.getAbsolutePath());
+		System.out.println("Security policy: " + 
+				secPolicyFile.getAbsolutePath());
+		System.out.println("Log file       : " + 
+				logPropFile.getAbsolutePath());
+		System.out.println("OutputDir      : " + 
+				outputDir.getAbsolutePath());
 	}
 	
+	/**
+	 * Makes every physical location create their scripts.
+	 */
 	public void Write() {
-		// make scripts in output directory
-//		List<File> killall;
-		
-		// ?? write what ??
-		
 		// write all physical locations
 		for(PhysicalLocation pl : physLocs) {
 			pl.Write(outputDir);

@@ -135,11 +135,18 @@ public class Parameters {
 		}
 		
 		// display install directory
-		System.out.println("Install directory: " + installDir.getText());
+		System.out.println("Install directory: ");
+		System.out.println(installDir.getText());
 		// display machine user name
-		System.out.println("Machine user name: " + machineUserName.getText());
+		System.out.println("Machine user name: ");
+		System.out.println(machineUserName.getText());
 	}
 	
+	/**
+	 * Make a string with the parameters to be applied to java when run.
+	 * 
+	 * @return The parameters given to java as argument when run
+	 */
 	public String WriteJavaParameters() {
 		String res = "";
 		
@@ -161,5 +168,21 @@ public class Parameters {
 		}
 		
 		return res;
+	}
+	
+	/**
+	 * Makes all the java options into a single String
+	 * 
+	 * @return All the java options
+	 */
+	public String WriteJavaOptions() {
+		String res = "";
+		
+		// apply the java options
+		for(Element e : javaOptions) {
+			res += e.getText() + " ";
+		}
+		
+		return res;		
 	}
 }
