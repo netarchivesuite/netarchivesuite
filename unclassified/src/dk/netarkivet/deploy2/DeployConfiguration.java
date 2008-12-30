@@ -76,12 +76,10 @@ public class DeployConfiguration {
 				+ "/";
 		}
 		outputDir = new File(outputDirName);
-		// make directory outputDir
+		// make sure that directory outputDir exists
 		FileUtils.createDir(outputDir);
 
 		ExtractElements();
-		
-//		Display();
 	}
 
 	/**
