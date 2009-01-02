@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page displays a list of all jobs.
 Parameters:
 resubmit - jobID of a job to resubmit.
---%><%@ page import="java.util.List,
+--%><%@ page import="java.util.List, java.util.Set,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -57,26 +57,26 @@ resubmit - jobID of a job to resubmit.
     //parameters for search of jobs
     HarvestStatus.DefaultedRequest dfltRequest =
         new HarvestStatus.DefaultedRequest(request);
-    int selectedJobStatusCode = HarvestStatus.getSelectedJobStatusCode(
+    Set<Integer> selectedJobStatusCodes = HarvestStatus.getSelectedJobStatusCodes(
                                     dfltRequest
                                 );
     String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
 
     //list of information to be shown
     List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(
-                                            selectedJobStatusCode, 
+                                            selectedJobStatusCodes, 
                                             selectedSortOrder
                                         );
 %>
 
-<%--Make line with comboboxes with job status and order to be shown--%>
+<%--Make line with comboboxes with job status and order to be shown --%>
 <form method="get" action="Harveststatus-alljobs.jsp">
 <h4>
 <fmt:message key="status.0.sort.order.1.job.choice">
 <fmt:param>
-<select name="<%= Constants.JOBSTATUS_PARAM %>" size="1">
+<select multiple name="<%= Constants.JOBSTATUS_PARAM %>" size="<%= JobStatus.values().length %>">
     <%
-    String selected = (selectedJobStatusCode == -1)
+    String selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
                       ? "selected=\"selected\""
                       : "";
     %>
@@ -86,7 +86,7 @@ resubmit - jobID of a job to resubmit.
     <%
     for (JobStatus st : JobStatus.values()) {
     	selected = "";
-        if (selectedJobStatusCode == st.ordinal()) {
+    	if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
             selected = "selected=\"selected\"";
         }
     %>

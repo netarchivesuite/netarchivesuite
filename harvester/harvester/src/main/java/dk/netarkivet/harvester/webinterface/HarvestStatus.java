@@ -23,7 +23,10 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -33,6 +36,7 @@ import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -116,16 +120,24 @@ public class HarvestStatus {
      *         (job statuses)
      * @throws ArgumentNotValid, IllegalArgumentException
      */
-    public static int getSelectedJobStatusCode(DefaultedRequest dfltRequest) {
+    public static Set<Integer> getSelectedJobStatusCodes(DefaultedRequest dfltRequest) {
         ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
-
-        String s = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM); 
-       
-        if (s.equals(JOBSTATUS_ALL)) { 
-        	return -1; 
-        } else {
-        	return JobStatus.valueOf(s).ordinal();
-        }       
+        String[] values = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM);       
+        if (values == null || values.length == 0) {
+            throw new ArgumentNotValid("No Jobstatus selected");
+        }
+        Set<Integer> selectedJobStatusCodesSet = new HashSet<Integer>();
+        for (String value: values) {
+            if (value.equals(JOBSTATUS_ALL)) {
+                selectedJobStatusCodesSet = new HashSet<Integer>(
+                        JobStatus.ALL_STATUS_CODE);
+                break;
+            } else {
+                selectedJobStatusCodesSet.add(
+                        JobStatus.valueOf(value).ordinal());
+            }
+        }
+        return selectedJobStatusCodesSet;
     }
 
     /** Find sort order of job ids to be shown based on parameters
@@ -136,8 +148,15 @@ public class HarvestStatus {
      */
     public static String getSelectedSortOrder(DefaultedRequest dfltRequest) {
         ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
-
-        String s = dfltRequest.getParameter(Constants.JOBIDORDER_PARAM); 
+        // Only one JOBIDORDER value allowed at any one time.
+        String[] selectedSortOrders = dfltRequest.getParameter(
+                Constants.JOBIDORDER_PARAM);
+        if (selectedSortOrders.length != 1) {
+            throw new ArgumentNotValid(
+                    "Multiple values for order parameter selected: " 
+                    + StringUtils.conjoin(",", selectedSortOrders)); 
+        }
+        String s = selectedSortOrders[0]; 
 
         if (s.equals(SORTORDER_ASCENDING) || s.equals(SORTORDER_DESCENDING)) {
             return s; 
@@ -148,28 +167,42 @@ public class HarvestStatus {
 
     /** Calculate list of job information to be shown
      *
-     * @param selectedJobStatusCode integer code for job statuses to be shown
+     * @param selectedJobStatusCodes integer codes for job statuses to be shown
      * @param selectedSortOrder string code whether job ids should come in asc.
      *        or desc. order
      * @return list of job (status) information to be shown
      * @throws ArgumentNotValid
      */
     public static List<JobStatusInfo> getjobStatusList(
-    		                             int selectedJobStatusCode, 
+    		                             Set<Integer> selectedJobStatusCodes, 
     		                             String selectedSortOrder
     		                          ) {
+        ArgumentNotValid.checkNotNullOrEmpty(selectedJobStatusCodes, 
+                "selectedJobStatusCodes");
+        ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
+                "selectedSortOrder");
+        
         boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
         if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) { 
             throw new ArgumentNotValid(
                          "Invalid sort Order " + selectedSortOrder
                       );
         }
-        if (selectedJobStatusCode==-1) { 
+        
+        if (selectedJobStatusCodes.contains(
+                new Integer(JobStatus.ALL_STATUS_CODE))) { 
             return JobDAO.getInstance().getStatusInfo(asc); 
         } else {
-            JobStatus sortJobStatus = 
-                JobStatus.fromOrdinal(selectedJobStatusCode);
-            return JobDAO.getInstance().getStatusInfo(sortJobStatus, asc); 
+            List<JobStatus> selectedJobStates = new ArrayList<JobStatus>();
+            for (Integer jobcode : selectedJobStatusCodes) {
+                JobStatus sortJobStatus = 
+                    JobStatus.fromOrdinal(jobcode);
+                selectedJobStates.add(sortJobStatus);
+            }
+            
+            JobStatus[] jobstatusArray = new JobStatus[selectedJobStates.size()];
+            return JobDAO.getInstance().getStatusInfo(
+                    asc, selectedJobStates.toArray(jobstatusArray)); 
         }
     }
 
@@ -194,15 +227,15 @@ public class HarvestStatus {
          * @return The parameter or the default value; never null.
          * @throws ArgumentNotValid
          */
-        public String getParameter(String paramName) {
+        public String[] getParameter(String paramName) {
             ArgumentNotValid.checkNotNull(paramName, "paramName");
-            String value = req.getParameter(paramName);
-            if (value == null || value.length() == 0) {
+            String[] values = req.getParameterValues(paramName);
+            if (values == null || values.length == 0) {
                 if (paramName.equals(Constants.JOBSTATUS_PARAM)) {
-                    return DEFAULT_JOBSTATUS;
+                    return new String[]{DEFAULT_JOBSTATUS};
                 } else {
                     if (paramName.equals(Constants.JOBIDORDER_PARAM)) {
-                        return DEFAULT_SORTORDER;
+                        return new String[]{ DEFAULT_SORTORDER };
                     } else {
                         throw new ArgumentNotValid(
                                      "Invalid parameter name " + paramName
@@ -210,7 +243,7 @@ public class HarvestStatus {
                     }
                 } 
             } else {
-                return value;  
+                return values;  
             }
         }
     }

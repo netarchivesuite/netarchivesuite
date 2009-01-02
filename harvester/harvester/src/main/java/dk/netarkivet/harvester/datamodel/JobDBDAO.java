@@ -31,9 +31,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -354,9 +356,9 @@ public class JobDBDAO extends JobDAO {
             long forceMaxCount = result.getLong(4);
             long forceMaxBytes = result.getLong(5);
             String orderxml = result.getString(6);
+            
             Clob clob = result.getClob(7);
-            SAXReader reader = new SAXReader();
-            Document orderXMLdoc = reader.read(clob.getCharacterStream());
+            Document orderXMLdoc = getOrderXMLdocFromClob(clob);
             clob = result.getClob(8);
             String seedlist = clob.getSubString(1, (int)clob.length());
             int harvestNum = result.getInt(9);
@@ -412,6 +414,24 @@ public class JobDBDAO extends JobDAO {
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
+    }
+
+    /** Try to extract an orderxmldoc from a given Clob. 
+     * @param clob a given Clob returned from the database
+     * @return a Document object based on the data in the Clob 
+     */
+    private Document getOrderXMLdocFromClob(Clob clob) throws SQLException,
+        DocumentException {
+        Document doc = null;
+        try {
+            SAXReader reader = new SAXReader();
+            doc = reader.read(clob.getCharacterStream());
+        } catch (DocumentException e) {
+            log.warn("Failed to read the contents of the clob as XML:"
+                    +  clob.getSubString(1, (int) clob.length()));
+            throw e;
+        }
+        return doc;
     }
 
     /**
@@ -565,7 +585,7 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo() {
-        return getStatusInfo(-1, true);
+        return getStatusInfo(JobStatus.ALL_STATUS_CODE, true);
     }
 
     /**
@@ -593,14 +613,14 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo(boolean asc) {
-        return getStatusInfo(-1, asc);
+        return getStatusInfo(JobStatus.ALL_STATUS_CODE, asc);
     }
 
     /**
      * Get a list of small and immediately usable status information for given
      * job status and in given job id order.
      *
-     * @param status The status asked for.
+     * @param states The states (one or more) asked for.
      * @param asc True if result must be given in ascending order, false
      *        if result must be given in descending order
      * @return List of JobStatusInfo objects for all jobs with given job status
@@ -608,10 +628,75 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid for invalid jobStatusCode
      * @throws IOFailure on trouble getting data from database
      */
-    public List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc) {
-        ArgumentNotValid.checkNotNull(status, "status");
-        return getStatusInfo(status.ordinal(), asc);
+    public List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ...states) {
+        ArgumentNotValid.checkNotNull(states, "states");
+        if (states.length != 0) {
+            return getStatusInfo(asc);
+        } else {
+            Set<Integer> codes = new HashSet<Integer>();
+            for (JobStatus status: states) {
+                codes.add(status.ordinal());
+            }
+            return getStatusInfo(codes, asc);
+        }
     }
+    
+    private List<JobStatusInfo> getStatusInfo(Set<Integer> codes, boolean asc) {
+        String sql;
+        sql = "SELECT jobs.job_id, status, jobs.harvest_id, "
+            + "harvestdefinitions.name, harvest_num, harvest_errors,"
+            + " upload_errors, orderxml, num_configs, startdate, enddate"
+            + " FROM jobs, harvestdefinitions "
+            + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
+        if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
+            if (codes.size() == 1) {
+                sql = sql + " AND status = " + ((Integer[]) codes.toArray())[0];
+            } else {
+                Iterator<Integer> it = codes.iterator();
+                Integer nextInt = it.next();
+                String res = "AND (status = " + nextInt;
+                while (it.hasNext()) {
+                    nextInt = it.next();
+                    res = res + " OR status = " + nextInt;
+                }
+                res = res + ") ";
+                sql = sql + res;
+            }
+        }
+        sql = sql + " ORDER BY jobs.job_id";
+        if (!asc)  {
+            sql = sql + " DESC";
+        }
+
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            s = c.prepareStatement(sql);
+            ResultSet res = s.executeQuery();
+            List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
+            while (res.next()) {
+                joblist.add(
+                    new JobStatusInfo(
+                            res.getLong(1),
+                            JobStatus.fromOrdinal(res.getInt(2)),
+                            res.getLong(3), res.getString(4), res.getInt(5),
+                            res.getString(6), res.getString(7),
+                            res.getString(8), res.getInt(9),
+                            DBUtils.getDateMaybeNull(res, 10),
+                            DBUtils.getDateMaybeNull(res, 11)
+                ));
+            }
+            return joblist;
+        } catch (SQLException e) {
+            String message
+                       = "SQL error asking for job status list in database";
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+
 
     /**
      * Get a list of small and immediately usable status information for

@@ -195,14 +195,14 @@ public abstract class JobDAO implements Iterable<Job> {
 
     /** Return status information for all jobs with given job status.
      *
-     * @param status The status asked for.
+     * @param states The states asked for.
      * @param asc True if result must be given in ascending order, false
      *        if result must be given in descending order
      * @return A list of status objects with the pertinent information for 
      *         all jobs with given job status and in given job id order.
      * @throws IOFailure on trouble in database access
      */
-    public abstract List<JobStatusInfo> getStatusInfo(JobStatus status, boolean asc);
+    public abstract List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ... states );
 
     /** Return status information for all jobs with given job status.
      *

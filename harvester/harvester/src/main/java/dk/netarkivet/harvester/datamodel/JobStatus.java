@@ -66,6 +66,9 @@ public enum JobStatus {
     /** Internationalisation object. */
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
+    
+    /** Constant representing ALL states. */
+    public static final int ALL_STATUS_CODE = -1;
 
     /** Helper method that gives a proper object from e.g. a DB-stored value.
      *
