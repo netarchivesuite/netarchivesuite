@@ -630,7 +630,7 @@ public class JobDBDAO extends JobDAO {
      */
     public List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ...states) {
         ArgumentNotValid.checkNotNull(states, "states");
-        if (states.length != 0) {
+        if (states.length == 0) {
             return getStatusInfo(asc);
         } else {
             Set<Integer> codes = new HashSet<Integer>();
@@ -650,7 +650,8 @@ public class JobDBDAO extends JobDAO {
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
         if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
             if (codes.size() == 1) {
-                sql = sql + " AND status = " + ((Integer[]) codes.toArray())[0];
+                Integer theWantedStatus = codes.iterator().next();
+                sql = sql + " AND status = " + theWantedStatus.intValue();
             } else {
                 Iterator<Integer> it = codes.iterator();
                 Integer nextInt = it.next();
@@ -667,7 +668,7 @@ public class JobDBDAO extends JobDAO {
         if (!asc)  {
             sql = sql + " DESC";
         }
-
+        
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
