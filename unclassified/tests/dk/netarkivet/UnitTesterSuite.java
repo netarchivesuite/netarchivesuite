@@ -84,6 +84,7 @@ public class UnitTesterSuite {
         CommonsTesterSuite.addToSuite(suite);
         DataModelTesterSuite.addToSuite(suite);
         DeployTesterSuite.addToSuite(suite);
+        dk.netarkivet.deploy2.DeployTesterSuite.addToSuite(suite);
         DistributeArcrepositoryTesterSuite.addToSuite(suite);
         DistributeIndexserverTesterSuite.addToSuite(suite);
         DistributeTesterSuite.addToSuite(suite);
