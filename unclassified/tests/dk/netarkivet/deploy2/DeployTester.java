@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -50,7 +49,7 @@ public class DeployTester extends TestCase {
     }
 
     public void tearDown() {
-        //FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // reset Settings to before
         rs.tearDown();
     }
@@ -58,10 +57,11 @@ public class DeployTester extends TestCase {
     /**
      * This test invokes the deploy application and verifies that all files
      * (settings.xml, scripts, bats) created by the script matches the target
-     * files stored in CVS Any change to the output files, will break this test.
+     * files stored in SVN.
+     * Any change to the output files, will break this test.
      * When the test is broken: Verify that all differences reported by this
      * test are intended and correct, when all output files are verified
-     * correct, replace the target files in CVS with the new set of
+     * correct, replace the target files in SVN with the new set of
      * output files.
      */
     public void testDeploy() {
@@ -71,16 +71,17 @@ public class DeployTester extends TestCase {
         String securityPolicyFile = TestInfo.TEST_SECURITY_POLICY.getPath();
         String testLogPropFile = TestInfo.TEST_LOG_PROP.getPath();
         
-        String environmentName = "UNITTEST";
+        //String environmentName = "UNITTEST";
         String nullzipName = "null.zip";
         
         String output_dir = TestInfo.TMPDIR.getPath();
-        String[] args =
-                {it_conf_xml_name,
-                        nullzipName,
-                        securityPolicyFile,
-                        testLogPropFile,
-                        output_dir};
+        String[] args = {
+                    it_conf_xml_name,
+                    nullzipName,
+                    securityPolicyFile,
+                    testLogPropFile,
+                    output_dir
+                    };
         DeployApplication.main(args);
         // compare the resulting output files with the target files
         String differences =
@@ -120,10 +121,15 @@ public class DeployTester extends TestCase {
         String settings_xml_name = TestInfo.SETTINGS_FILE.getPath();
         String environmentName = "UNITTEST";
         String output_dir = TestInfo.TMPDIR.getPath();
-        String[] args =
-                {it_conf_xml_name,
-                 settings_xml_name,
-                 environmentName,
+        String nullzipName = "null.zip";
+        String securityPolicyFile = TestInfo.TEST_SECURITY_POLICY.getPath();
+        String testLogPropFile = TestInfo.TEST_LOG_PROP.getPath();
+        
+        String[] args = {
+                it_conf_xml_name,
+                nullzipName,
+                securityPolicyFile,
+                testLogPropFile,
                  output_dir};
         DeployApplication.main(args);
         // compare the resulting output files with the target files
@@ -152,8 +158,8 @@ public class DeployTester extends TestCase {
             System.setProperty("dk.netarkivet.settings.file",
                     f.getAbsolutePath());
             Settings.reload();
-            XmlUtils.validateWithXSD(new File(
-                    "./lib/data-definitions/settings.xsd"));
+            // XmlUtils.validateWithXSD(new File(
+            //  "./lib/data-definitions/settings.xsd"));
         }
 
     }

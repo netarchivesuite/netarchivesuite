@@ -133,6 +133,7 @@ public class FileUtils {
      *             method denies delete access to the file
      */
     public static boolean removeRecursively(File f) {
+        ArgumentNotValid.checkNotNull(f, "File f");
         if (!f.exists()) {
             return false;
         }
@@ -149,17 +150,28 @@ public class FileUtils {
             }
         }
         if (!f.delete()) {
-        	boolean success = remove(f);
-        	if (!success) {
-        		throw new IOFailure("Unable to remove file: '" 
-        				+ f.getAbsolutePath() + "'");
-        	}
+            boolean isDir = f.isDirectory();
+            if (!isDir) {
+                log.debug("Try once more deleting file '" 
+                        + f.getAbsolutePath());
+                final boolean success = remove(f);
+                if (!success) {
+                        throw new IOFailure("Unable to remove file: '" 
+                                        + f.getAbsolutePath() + "'");
+                }
+            } else {
+                String errMsg = "Problem with deletion of directory: '" 
+                    + f.getAbsolutePath() + "'.";
+                log.debug(errMsg);
+                throw new IOFailure(errMsg);
+            }
         }
 
         return true;
     }
+    
     /**
-     * Remove a file .
+     * Remove a file.
      * @param f
      *            A file to completely and utterly remove.
      * @return true if the file did exist, false otherwise.
@@ -178,9 +190,13 @@ public class FileUtils {
             return false; //Do not attempt to delete a directory
         }
         if (!f.delete()) {
-        	// Hack to remove file on windows!
-        	File delFile = new File(f.getAbsolutePath());
-        	delFile.delete();
+            // Hack to remove file on windows! Works only sometimes!
+            File delFile = new File(f.getAbsolutePath());
+            delFile.delete();
+            if (delFile.exists()) {
+                throw new IOFailure("Unable to delete file '"
+                        + f.getAbsolutePath());
+            }
         }
 
         return true;
@@ -195,6 +211,7 @@ public class FileUtils {
      * @return a new formatted filename
      */
     public static String formatFilename(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         String formattedFilename = filename;
 
         // remove spaces
@@ -222,7 +239,16 @@ public class FileUtils {
      *            ".ARC")
      * @return A list of files from directory 'dir' and all its subdirectories
      */
-    public static List getFilesRecursively(String dir, List<File> files, String type) {
+    public static List<File> getFilesRecursively(
+            String dir, List<File> files, String type) {
+        ArgumentNotValid.checkNotNullOrEmpty(dir, "String dir");
+        File theDirectory = new File(dir);
+        ArgumentNotValid.checkTrue(theDirectory.isDirectory(),
+                "File '" + theDirectory.getAbsolutePath()
+                + "' does not represent a directory");
+        ArgumentNotValid.checkNotNull(files, "files");
+        ArgumentNotValid.checkNotNull(type, "type");
+         
         File[] top = new File(dir).listFiles();
         for (File aTop : top) {
             if (aTop.isDirectory()) {
@@ -238,17 +264,16 @@ public class FileUtils {
     /**
      * Load file content into text string.
      *
-     * @param filename -
-     *            file to load
+     * @param file The file to load
      * @return file content loaded into text string
      * @throws java.io.FileNotFoundException if the file cannot be found.
      * @throws java.io.IOException on IO trouble reading the file.
      */
-    public static String readFile(File filename)
-            throws IOException {
+    public static String readFile(File file) throws IOException {
+        ArgumentNotValid.checkNotNull(file, "File file");
         StringBuffer sb = new StringBuffer();
 
-        BufferedReader br = new BufferedReader(new FileReader(filename));
+        BufferedReader br = new BufferedReader(new FileReader(file));
 
         try {
             int i;
@@ -274,6 +299,8 @@ public class FileUtils {
      * @throws IOFailure if an io error occurs while copying file.
      */
     public static void copyFile(File from, File to) {
+        ArgumentNotValid.checkNotNull(from, "File from");
+        ArgumentNotValid.checkNotNull(to, "File to");
         try {
             FileInputStream inStream = null;
             FileOutputStream outStream = null;
@@ -326,6 +353,8 @@ public class FileUtils {
      * @throws IOFailure On IO trouble copying files.
      */
     public static void copyDirectory(File from, File to) throws IOFailure {
+        ArgumentNotValid.checkNotNull(from, "File from");
+        ArgumentNotValid.checkNotNull(to, "File to");
         if (from.isFile()) {
             try {
                 copyFile(from, to);
@@ -361,12 +390,13 @@ public class FileUtils {
      * Read an entire file, byte by byte, into a byte array, ignoring any locale
      * issues.
      *
-     * @param file
-     *            A file to be read.
+     * @param file A file to be read.
      * @return A byte array with the contents of the file.
      * @throws IOFailure on IO trouble reading the file
      */
     public static byte[] readBinaryFile(File file) throws IOFailure {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        
         if (file.length() > Integer.MAX_VALUE) {
             throw new IndexOutOfBoundsException(
                     "File too long to fit in array: " + file.length()
@@ -380,8 +410,9 @@ public class FileUtils {
                 in = new FileInputStream(file);
                 int bytesRead;
                 for (int i = 0;
-                     i < result.length &&
-                             (bytesRead = in.read(result, i, result.length - i)) != -1;
+                     i < result.length 
+                         && (bytesRead = in.read(result, i, result.length - i))
+                                  != -1;
                      i += bytesRead) {
                 }
             } finally {
@@ -405,6 +436,8 @@ public class FileUtils {
      *            The byte array to write to the file
      */
     public static void writeBinaryFile(File file, byte[] b) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(b, "byte[] b");
         FileOutputStream out = null;
         try {
             try {
@@ -453,6 +486,7 @@ public class FileUtils {
      * @throws IOFailure on trouble reading the file.
      */
     public static List<String> readListFromFile(File file) {
+        ArgumentNotValid.checkNotNull(file, "File file");
         List<String> lines = new ArrayList<String>();
         BufferedReader in = null;
         try {
@@ -485,7 +519,8 @@ public class FileUtils {
      * @throws IOFailure if any error occurs writing to the file.
      * @throws ArgumentNotValid if file or collection is null.
      */
-    public static void writeCollectionToFile(File file, Collection<String> collection) {
+    public static void writeCollectionToFile(
+            File file, Collection<String> collection) {
         ArgumentNotValid.checkNotNull(file, "file");
         ArgumentNotValid.checkNotNull(collection, "collection");
         try {
@@ -516,6 +551,8 @@ public class FileUtils {
      * @param sortedOutput The file to sort into
      */
     public static void makeSortedFile(File unsortedFile, File sortedOutput) {
+        ArgumentNotValid.checkNotNull(unsortedFile, "File unsortedFile");
+        ArgumentNotValid.checkNotNull(sortedOutput, "File sortedOutput");
         List<String> lines;
         lines = readListFromFile(unsortedFile);
         Collections.sort(lines);
@@ -633,7 +670,7 @@ public class FileUtils {
         }
 
         // check, at the path prefix is the same
-        List sublist = filePathList.subList(crawlDirPath.size() - 2,
+        List<String> sublist = filePathList.subList(crawlDirPath.size() - 2,
                 filePathList.size());
         if (!crawlDirPath.equals(sublist)) {
             // System.out.println("is not equal");
@@ -714,8 +751,8 @@ public class FileUtils {
     }
 
     /**
-     * Makes a valid file from filename passed in String. Ensures that the File object returned is not null,
-     * and that isFile() returns true.
+     * Makes a valid file from filename passed in String. Ensures that the File
+     * object returned is not null, and that isFile() returns true.
      *
      * @param filename The file to create the File object from
      * @return A valid, non-null File object.
@@ -723,6 +760,8 @@ public class FileUtils {
      */
     public static File makeValidFileFromExisting(String filename)
             throws IOFailure {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        
         File res = new File(filename);
         if (!res.isFile()) {
             throw new IOFailure("Error: File object created from filename '"
@@ -801,6 +840,9 @@ public class FileUtils {
      * @param toFile The target
      */
     public static void moveFile(File fromFile, File toFile) {
+        ArgumentNotValid.checkNotNull(fromFile, "File fromFile");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        
         if (!fromFile.renameTo(toFile)) {
             copyFile(fromFile, toFile);
             remove(fromFile);
@@ -846,6 +888,9 @@ public class FileUtils {
      * @throws IOFailure if there were errors running the sort process.
      */
     public static void sortCrawlLog(File file, File toFile) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        
         int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
                 // -k 4b means fourth field (from 1) ignoring leading blanks
                 // -o means output to (file)
@@ -865,7 +910,10 @@ public class FileUtils {
      * @param toFile The file that the result will be put into.
      */
     public static void sortCDX(File file, File toFile) {
-        int error = ProcessUtils.runProcess(new String[] { "LANG=C"} ,
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        
+        int error = ProcessUtils.runProcess(new String[] {"LANG=C"},
                 "sort", file.getAbsolutePath(),
                 "-o", toFile.getAbsolutePath());
         if (error != 0) {
@@ -886,18 +934,25 @@ public class FileUtils {
         private static final Pattern FILE_NAME_PATTERN =
             Pattern.compile("(\\d+)\\-(\\d+)\\-(\\d+)\\-(\\d+)\\-.*");
 
+        /** pattern group containing the Job ID. */
         private static final int JOB_ID = 1;
+        /** pattern group containing the harvest ID. */
         private static final int HARVEST_ID = 2;
+        /** pattern group containing the timestamp. */
         private static final int TIME_STAMP = 3;
+        /** pattern group containing the serial number. */
         private static final int SERIAL_NO = 4;
 
-        /** Fields containing parsed values. */
+        /** Field containing the parsed harvest ID. */
         private final String harvestID;
+        /** Field containing the parsed job Id. */
         private final String jobID;
+        /** Field containing the timestamp. */
         private final String timeStamp;
+        /** Field containing the serial number. */
         private final String serialNo;
 
-        /** Field containing the original filename */
+        /** Field containing the original filename. */
         private final String filename;
         /**
          * Parser the name of the given file.
@@ -906,6 +961,7 @@ public class FileUtils {
          * Netarkivets convention.
          */
         public FilenameParser(File file) throws UnknownID {
+            ArgumentNotValid.checkNotNull(file, "File file");
             try {
                 filename = file.getName();
                 Matcher m = FILE_NAME_PATTERN.matcher(file.getName());
@@ -921,18 +977,43 @@ public class FileUtils {
                 throw new UnknownID("Could not parse " + file.getName(), e);
             }
         }
+        
+        /** 
+         * Get the harvestID.
+         * @return the harvestID.
+         */
         public String getHarvestID() {
             return harvestID;
         }
+        
+        /** 
+         * Get the job ID.
+         * @return the Job ID.
+         */
         public String getJobID() {
             return jobID;
         }
+        
+        /** 
+         * Get the timestamp.
+         * @return the timestamp.
+         */
         public String getTimeStamp() {
             return timeStamp;
         }
+        
+        /** 
+         * Get the serial number.
+         * @return the serial number.
+         */
         public String getSerialNo() {
             return serialNo;
         }
+        
+        /** 
+         * Get the filename.
+         * @return the filename.
+         */
         public String getFilename() {
             return filename;
         }
@@ -962,7 +1043,7 @@ public class FileUtils {
                 inDir + " must be a directory");
         ArgumentNotValid.checkTrue(inDir.canWrite(),
                 inDir + " must be writeable");
-        for (int tries = 0; tries < MAX_RETRIES; tries ++) {
+        for (int tries = 0; tries < MAX_RETRIES; tries++) {
             File newDir;
             try {
                 newDir = File.createTempFile(prefix, null, inDir);
@@ -1033,9 +1114,12 @@ public class FileUtils {
      *
      * @param file A file to append to.
      * @param lines The lines to write.
-     * @throws IOFailure if anything goes wrong writing.
+     * @throws IOFailure if anything goes wrong during the writing process
      */
     public static void appendToFile(File file, String... lines) {
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNull(lines, "String... lines");
+        
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(file, true));
@@ -1043,8 +1127,8 @@ public class FileUtils {
                 writer.println(line);
             }
         } catch (IOException e) {
-            log.warn("Error appending " + lines.length + " lines to file '" +
-                    file + "'",
+            log.warn("Error appending " + lines.length + " lines to file '"
+                    + file + "'",
                      e);
         } finally {
             if (writer != null) {

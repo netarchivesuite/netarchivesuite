@@ -41,10 +41,13 @@ public class TestInfo {
             = "kb-dev-adm-001.kb.dk";
     public static final int TEST_JMX_HOSTS = 9;
     public static final String TEST_JMX_PASSWORD = "test";
+    
     public static final File IT_CONF_SINGLE_FILE
-        = new File(WORKING_DIR, "it_conf_single.xml");
+        = new File(WORKING_DIR, "it_conf_test_single.xml");
+    
     public static final File SINGLE_TARGET_DIR 
         = new File(WORKING_DIR, "single_target");
+    
 	public static final File TEST_SECURITY_POLICY = new File(WORKING_DIR, 
 			"security.policy");
 	public static final File TEST_LOG_PROP = new File(WORKING_DIR, 
