@@ -18,15 +18,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -40,16 +39,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * variables.
  */
 public class Parameters {
-    /** the log, for logging stuff instead of displaying them directly.*/
-    protected final Log log = LogFactory.getLog(getClass().getName());
     /** The class paths.*/
-    protected List<Element> classPaths;
+    private List<Element> classPaths;
     /** The options for java.*/
-    protected List<Element> javaOptions;
+    private List<Element> javaOptions;
     /** Install directory.*/
-    protected Element installDir;
+    private Element installDir;
     /** The machine user name.*/
-    protected Element machineUserName;
+    private Element machineUserName;
 
     /**
      * Constructor.
@@ -143,5 +140,41 @@ public class Parameters {
             res += e.getText() + " ";
         }
         return res;
+    }
+    
+    /**
+     * For retrieving the install directory parameter.
+     * 
+     * @return The install directory element.
+     */
+    public Element getInstallDir() {
+        return installDir;
+    }
+    
+    /**
+     * For retrieving the machine user name parameter.
+     * 
+     * @return The machine user name.
+     */
+    public Element getMachineUserName() {
+        return machineUserName;
+    }
+    
+    /**
+     * For retrieving the list of class paths.
+     * 
+     * @return The list of class paths.
+     */
+    public List<Element> getClassPaths() {
+        return classPaths;
+    }
+    
+    /**
+     * For retrieving the list of java options.
+     * 
+     * @return The list of java options.
+     */
+    public List<Element> getJavaOptions() {
+        return javaOptions;
     }
 }

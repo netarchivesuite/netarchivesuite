@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -41,9 +42,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
  */
 public class XmlStructure {
     /** the log, for logging stuff instead of displaying them directly.*/
-    protected final Log log = LogFactory.getLog(getClass().getName());
-    /** The root of this branch in the XML tree */
-    Element root;
+    private final Log log = LogFactory.getLog(getClass().getName());
+    /** The root of this branch in the XML tree.*/
+    private Element root;
 
     /**
      * Constructor.
@@ -78,7 +79,7 @@ public class XmlStructure {
      * 
      * @return The root element
      */
-    public Element GetRoot() {
+    public Element getRoot(){
         return root;
     }
 
@@ -127,7 +128,7 @@ public class XmlStructure {
     @SuppressWarnings("unchecked")
     public List<Element> GetChildren(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        return root.elements(name);		
+        return root.elements(name);
     }
 
     /**
@@ -165,7 +166,8 @@ public class XmlStructure {
      * Simple version of GetSubChildValue()
      * 
      * @param name The name of the child.
-     * @return The value of the leaf or null if the branch does not exists or is a tree.
+     * @return The value of the leaf or null if the branch does not exists 
+     * or is a tree.
      */
     public String GetChildValue(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String ...name");
@@ -183,8 +185,10 @@ public class XmlStructure {
      * Retrieves the content of a branch deep in tree structure.
      *  
      * @param name Specifies the path in the tree (e.g. in HTML: 
-     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of a HTML document)
-     * @return The content of the leaf. If it is not a leaf, the entire XML-branch is returned.
+     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
+     * a HTML document)
+     * @return The content of the leaf. If it is not a leaf, the entire 
+     * XML-branch is returned.
      * Returns 'null' if the path to the branch cannot be found.   
      */
     public String GetSubChildValue(String ...name ) {
@@ -249,8 +253,10 @@ public class XmlStructure {
      * this function will be run recursively on these subtrees.
      * 
      * @param current The base element
-     * @param overwriter The element to have its values overwrite the base element
-     * @throws IllegalState If a leaf in current is about to be replaced by a tree
+     * @param overwriter The element to have its values overwrite 
+     * the base element
+     * @throws IllegalState If a leaf in current is about to be replaced 
+     * by a tree
      */
     @SuppressWarnings("unchecked")
     public void overWriting(Element current, Element overwriter) 

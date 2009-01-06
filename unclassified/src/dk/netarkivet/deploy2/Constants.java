@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -92,4 +93,9 @@ public class Constants {
     static final String JMX_PASSWORD_PASSWORD_BRANCH = "jmxPassword";
     /** The name of the JMX remote password file.*/
     static final String JMX_FILE_NAME = "jmxremote.password";
+    
+    // other constants
+    /** Number of '-' repeat in scripts. */
+    static final int SCRIPT_DASH_NUM_REPEAT = 44;
+
 }

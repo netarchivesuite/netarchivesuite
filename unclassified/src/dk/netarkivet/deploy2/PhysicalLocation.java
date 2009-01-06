@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -42,32 +43,35 @@ import dk.netarkivet.common.utils.StringUtils;
  */
 public class PhysicalLocation {
     /** the log, for logging stuff instead of displaying them directly.*/ 
-    protected final Log log = LogFactory.getLog(getClass().getName());
+    private final Log log = LogFactory.getLog(getClass().getName());
     /** The root for the branch of this element in the XML-tree.*/
-    protected Element physLocRoot;
+    private Element physLocRoot;
     /** The settings structure.*/
-    protected XmlStructure settings;
+    private XmlStructure settings;
     /** The parameters for java.*/
-    protected Parameters machineParameters;
+    private Parameters machineParameters;
     /** The list of the machines.*/
-    protected List<Machine> machines;
+    private List<Machine> machines;
     /** The name of this physical location.*/
-    protected String name;
+    private String name;
     /** The inherited name for the NetarchiveSuite file.*/
-    protected String netarchiveSuiteFileName;
+    private String netarchiveSuiteFileName;
     /** The inherited log property file.*/
-    protected File logPropFile;
+    private File logPropFile;
     /** The inherited security file.*/
-    protected File securityPolicyFile;
+    private File securityPolicyFile;
 
     /**
      * The physical locations is referring to the position in the real world
-     * where the computers are located. 
-     * One physical location can contain many machines.   
+     * where the computers are located.
+     * One physical location can contain many machines.
      * 
-     * @param elem
-     * @param parentSettings
-     * @param param
+     * @param elem The root of this branch in the XML structure.
+     * @param parentSettings The settings of the parent (it-config).
+     * @param param The parameters of the parent (it-config).
+     * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
+     * @param logProp The logging property file.
+     * @param securityPolicy The security policy file.
      */
     public PhysicalLocation(Element elem, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
@@ -82,7 +86,7 @@ public class PhysicalLocation {
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
         // make a copy of parent, don't use it directly.
-        settings = new XmlStructure(parentSettings.GetRoot());
+        settings = new XmlStructure(parentSettings.getRoot());
         physLocRoot = elem;
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
@@ -93,7 +97,7 @@ public class PhysicalLocation {
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
-            settings.OverWrite(tmpSet);	
+            settings.OverWrite(tmpSet);
         }
         // check if new machine parameters
         machineParameters.newParameters(physLocRoot);
@@ -122,7 +126,7 @@ public class PhysicalLocation {
 
     /**
      * Extracts the XML for machines from the root, creates the machines,
-     * and puts them into the list  
+     * and puts them into the list.
      */
     @SuppressWarnings("unchecked")
     private void extractMachines() {
@@ -152,7 +156,7 @@ public class PhysicalLocation {
      * @param directory The directory where the files are to be placed.
      */
     public void write(File directory) {
-        ArgumentNotValid.checkNotNull(directory,"File directory");
+        ArgumentNotValid.checkNotNull(directory, "File directory");
         // make the script in the directory!
         makeScripts(directory);
         // write all machine at this location
@@ -170,7 +174,7 @@ public class PhysicalLocation {
      * @param directory The directory where the scripts are to be placed.
      */
     private void makeScripts(File directory) {
-        ArgumentNotValid.checkNotNull(directory,"File directory");
+        ArgumentNotValid.checkNotNull(directory, "File directory");
         // make extension (e.g. '_kb.sh' in the script 'killall_kb.sh')
         String ext = "_" + name + ".sh";
         // make script files
@@ -189,38 +193,44 @@ public class PhysicalLocation {
                 for(Machine mac : machines) {
                     // write install script from machines
                     iWriter.println("echo " 
-                            + StringUtils.repeat("-", 44));
+                            + StringUtils.repeat("-", 
+                                    Constants.SCRIPT_DASH_NUM_REPEAT));
                     iWriter.print(mac.writeToGlobalInstallScript());
                     // write start script from machines
                     sWriter.println("echo " 
-                            + StringUtils.repeat("-", 44));
+                            + StringUtils.repeat("-", 
+                                    Constants.SCRIPT_DASH_NUM_REPEAT));
                     sWriter.print(mac.writeToGlobalStartScript());
                     // write kill script from machines
                     kWriter.println("echo " 
-                            + StringUtils.repeat("-", 44));
+                            + StringUtils.repeat("-", 
+                                    Constants.SCRIPT_DASH_NUM_REPEAT));
                     kWriter.print(mac.writeToGlobalKillScript());
                 }
             } finally {
                 // close writers
                 kWriter.println("echo " 
-                        + StringUtils.repeat("-", 44));
+                        + StringUtils.repeat("-", 
+                                Constants.SCRIPT_DASH_NUM_REPEAT));
                 kWriter.close();
                 iWriter.println("echo " 
-                        + StringUtils.repeat("-", 44));
+                        + StringUtils.repeat("-", 
+                                Constants.SCRIPT_DASH_NUM_REPEAT));
                 iWriter.close();
                 sWriter.println("echo " 
-                        + StringUtils.repeat("-", 44));
+                        + StringUtils.repeat("-", 
+                                Constants.SCRIPT_DASH_NUM_REPEAT));
                 sWriter.close();
             }
         } catch (IOException e) {
             log.trace("Cannot create physical location scripts: " + e);
-            throw new IOFailure("Problems creating the scripts for the" +
-                    "physical locations: " + e);
+            throw new IOFailure("Problems creating the scripts for the"
+                    + "physical locations: " + e);
         } catch(Exception e) {
             // ERROR
             log.trace("Unknown error: " + e);
-            System.out.println("Error in creating the scripts for the" +
-                    "physical locations: " + e);
+            System.out.println("Error in creating the scripts for the"
+                    + "physical locations: " + e);
         }
     }
 }

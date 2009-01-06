@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -37,6 +38,23 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * This class only contains the operating system specific functions.
  */
 public class WindowsMachine extends Machine {
+    /**
+     * The constructor. 
+     * Starts by initialising the parent abstract class, then sets the 
+     * operating system dependent variables.
+     * 
+     * @param e The XML root element.
+     * @param parentSettings The Settings to be inherited from the 
+     * PhysicalLocation, where this machine is placed.
+     * @param param The machine parameters to be inherited from the 
+     * PhysicalLocation.
+     * @param netarchiveSuiteSource The name of the NetarchiveSuite package 
+     * file. Must be '.zip'.
+     * @param logProp The logging property file, to be copied into 
+     * machine directory.
+     * @param securityPolicy The security policy file, to be copied into
+     * machine directory.
+     */
     public WindowsMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
                 File logProp, File securityPolicy) {
@@ -47,29 +65,36 @@ public class WindowsMachine extends Machine {
         scriptExtension = ".bat";
     }
 
+    /**
+     * Creates the operation system specific installation script for 
+     * this machine.
+     * 
+     * @return Operation system specific part of the installscript
+     */
     @Override
     protected String osInstallScript() {
         String res = "";
-        // pw.println("echo copying $1 to:" + host.getName());
+        // echo copying null.zip to:kb-test-bar-011.bitarkiv.kb.dk
         res += "echo copying ";
         res += netarchiveSuiteFileName;
         res += " to:";
         res += name;
         res += "\n";
-        // pw.println("scp $1 " + destination + ":" + dir);
+        // scp null.zip dev@kb-test-bar-011.bitarkiv.kb.dk:
         res += "scp ";
         res += netarchiveSuiteFileName;
         res += " ";
         res += machineUserLogin();
         res += ":";
         res += "\n";
-        // pw.println("echo unzipping $1 at:" + host.getName());
+        // echo unzipping null.zip at:kb-test-bar-011.bitarkiv.kb.dk
         res += "echo unzipping ";
         res += netarchiveSuiteFileName;
         res += " at:";
         res += name;
         res += "\n";
-        // pw.println("ssh " + destination + " " + unzip);
+        // ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST 
+        // -o null.zip
         res += "ssh ";
         res += machineUserLogin();
         res += " cmd /c unzip.exe -q -d ";
@@ -77,11 +102,12 @@ public class WindowsMachine extends Machine {
         res += " -o ";
         res += netarchiveSuiteFileName;
         res += "\n";
-        // pw.println("echo copying settings and scripts");
+        // echo copying settings and scripts
         res += "echo copying settings and scripts";
         res += "\n";
-        // pw.println("scp -r " + host.getName() + "/* "
-        // 			+ destination + ":" + confDir);
+        // scp -r kb-test-bar-011.bitarkiv.kb.dk/* 
+        // dev@kb-test-bar-011.bitarkiv.kb.dk:
+        // ""c:\\Documents and Settings\\dev\\TEST\\conf\\""
         res += "scp -r ";
         res += name;
         res += "/* ";
@@ -90,38 +116,32 @@ public class WindowsMachine extends Machine {
         res += changeToScriptPath(getConfDirPath());
         res += "\"\"";
         res += "\n";
-        // pw.println("echo make scripts executable");
+        // echo make scripts executable
         res += "echo make scripts executable";
         res += "\n";
-        // if (!isWindows) {
-        // 		pw.println("ssh  " + destination + " \"chmod +x "
-        //					+ confDir + "*.sh \"");
-        // }
-        res += "";
         // pw.println("echo make password files readonly");
         res += "echo make password files readonly";
         res += "\n";
-        // 	if (isWindows) {
-        //		pw.println("echo Y | ssh " + destination
-        //		            + " cmd /c cacls " + confDir
-        //		            + "jmxremote.password /P BITARKIV\\\\"
-        //		            + user + ":R");
-        //	} else {
-        //		pw.println("ssh " + destination + " \"chmod 400 "
-        //		            + confDir + "/jmxremote.password\"");
-        //	}
+        // echo Y | ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls 
+        // ""c:\\Documents and Settings\\dev\\TEST\\conf\\jmxremote.password"" 
+        // /P BITARKIV\\dev:R
         res += "echo Y | ssh ";
         res += machineUserLogin();
         res += " cmd /c cacls \"\"";
         res += changeToScriptPath(getConfDirPath());
         res += "jmxremote.password\"\" /P BITARKIV\\\\";
-        res += machineParameters.machineUserName.getText();
+        res += machineParameters.getMachineUserName().getText();
         res += ":R";
         res += "\n";
-        // end
+        // END OF SCRIPT
         return res;
     }
 
+    /**
+     * Creates the operation system specific killing script for this machine.
+     * 
+     * @return Operation system specific part of the killscript.
+     */
     @Override
     protected String osKillScript() {
         String res = "";
@@ -135,6 +155,11 @@ public class WindowsMachine extends Machine {
         return res + "\n";
     }
 
+    /**
+     * Creates the operation system specific starting script for this machine.
+     * 
+     * @return Operation system specific part of the startscript.
+     */
     @Override
     protected String osStartScript() {
         String res = "";
@@ -148,25 +173,42 @@ public class WindowsMachine extends Machine {
         return res + "\n";
     }
 
+    /** 
+     * The operation system specific path to the installation directory.
+     *  
+     * @return Install path.
+     */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.installDir.getText() + "\\" 
+        return machineParameters.getInstallDir().getText() + "\\" 
                 + getEnvironmentName();
     }
 
+    /**
+     * The operation system specific path to the conf directory.
+     * 
+     * @return Conf path.
+     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + "\\conf\\";
     }
 
+    /**
+     * This function creates the script to kill all applications on this 
+     * machine.
+     * The scripts calls all the kill script for each application. 
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createOSLocalKillAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the kill all script file
-        File KillAllScript = new File(directory, "killall" + scriptExtension);
+        File killAllScript = new File(directory, "killall" + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(KillAllScript);
+            PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
                 killPrinter.println("echo Killing all applications at: " 
                         + name);
@@ -174,8 +216,8 @@ public class WindowsMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "kill_" + 
-                    app.getIdentification() + scriptExtension;
+                    String appScript = "kill_"
+                            + app.getIdentification() + scriptExtension;
                     killPrinter.print(
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     killPrinter.print(appScript);
@@ -198,15 +240,22 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     * This function creates the script to start all applications on this 
+     * machine.
+     * The scripts calls all the start script for each application. 
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createOSLocalStartAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the start all script file
-        File StartAllScript = new File(directory, "startall" + 
-                scriptExtension);
+        File startAllScript = new File(directory, "startall"
+                + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(StartAllScript);
+            PrintWriter startPrinter = new PrintWriter(startAllScript);
             try {
                 startPrinter.println("echo Starting all applications at: " 
                         + name);
@@ -214,8 +263,8 @@ public class WindowsMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "start_" + 
-                    app.getIdentification() + scriptExtension;
+                    String appScript = "start_"
+                            + app.getIdentification() + scriptExtension;
                     startPrinter.print(
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     startPrinter.print(appScript);
@@ -238,6 +287,11 @@ public class WindowsMachine extends Machine {
         }
     }
 
+    /**
+     * Creates the kill scripts for all the applications.
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createApplicationKillScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
@@ -268,11 +322,16 @@ public class WindowsMachine extends Machine {
         } catch(Exception e) {
             // ERROR
             log.trace("Unknown error: " + e);
-            System.out.println("Error in creating kill script for " +
-                        "applications: " + e);
+            System.out.println("Error in creating kill script for "
+                        + "applications: " + e);
         }
     }
 
+    /**
+     * Creates the start scripts for all the applications.
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createApplicationStartScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
@@ -291,44 +350,44 @@ public class WindowsMachine extends Machine {
                     try {
                         // get the content for the start script of 
                         // this application
-                        appPrint.println("#echo START WINDOWS APPLICATION: " +
-                                app.getIdentification());
-                        appPrint.println("cd \"" +
-                                app.installPathWindows() + "\"");
-                        appPrint.println("cscript .\\conf\\" + 
-                                "start_" + app.getIdentification() + ".vbs");
-                        vbsPrint.println("Set WshShell= " +
-                        "CreateObject(\"WScript.Shell\")");
+                        appPrint.println("#echo START WINDOWS APPLICATION: "
+                                + app.getIdentification());
+                        appPrint.println("cd \""
+                                + app.installPathWindows() + "\"");
+                        appPrint.println("cscript .\\conf\\"
+                                + "start_" + app.getIdentification() + ".vbs");
+                        vbsPrint.println("Set WshShell= "
+                                + "CreateObject(\"WScript.Shell\")");
                         vbsPrint.println(
-                                "Set oExec = WshShell.exec( \"" +
-                                "java " + app.getMachineParameters()
-                                .writeJavaOptions() + 
-                                " -classpath \"\"" + 
-                                osGetClassPath(app) + "\"\"" + 
-                                " -Ddk.netarkivet.settings.file=\"\"" +
-                                changeToScriptPath(getConfDirPath()) + 
-                                "settings_" + app.getIdentification() + 
-                                ".xml\"\"" +
-                                " -Dorg.apache.commons.logging.Log="+
-                                "org.apache.commons.logging.impl.Jdk14Logger" +
-                                " -Djava.util.logging.config.file=\"\"" +
-                                changeToScriptPath(getConfDirPath()) + "log_" 
-                                + app.getIdentification() + ".prop\"\"" +
-                                " -Djava.security.manager" +
-                                " -Djava.security.policy=\"\"" +
-                                changeToScriptPath(getConfDirPath()) + 
-                                "security.policy\"\" " + 
-                                app.getTotalName() + "\")" );
-                        vbsPrint.println("set fso= " +
-                        "CreateObject(\"Scripting.FileSystemObject\")");
+                                "Set oExec = WshShell.exec( \""
+                                + "java " + app.getMachineParameters()
+                                .writeJavaOptions()
+                                + " -classpath \"\""
+                                + osGetClassPath(app) + "\"\""
+                                + " -Ddk.netarkivet.settings.file=\"\""
+                                + changeToScriptPath(getConfDirPath())
+                                + "settings_" + app.getIdentification()
+                                + ".xml\"\""
+                                + " -Dorg.apache.commons.logging.Log="
+                                + "org.apache.commons.logging.impl.Jdk14Logger"
+                                + " -Djava.util.logging.config.file=\"\""
+                                + changeToScriptPath(getConfDirPath()) + "log_"
+                                + app.getIdentification() + ".prop\"\""
+                                + " -Djava.security.manager"
+                                + " -Djava.security.policy=\"\""
+                                + changeToScriptPath(getConfDirPath())
+                                + "security.policy\"\" "
+                                + app.getTotalName() + "\")");
+                        vbsPrint.println("set fso= "
+                        + "CreateObject(\"Scripting.FileSystemObject\")");
                         // open the kill batch file for this application
-                        vbsPrint.println("set f=fso.OpenTextFile(\".\\conf\\" +
-                                "kill_" + app.getIdentification() +
-                        ".bat\",2,True)");
+                        vbsPrint.println("set f=fso.OpenTextFile(\".\\conf\\"
+                                + "kill_" + app.getIdentification()
+                        + ".bat\",2,True)");
                         // write the process in the kill batch file for 
                         // this application
-                        vbsPrint.println("f.WriteLine \"taskkill /F /PID \"" +
-                                        " & oExec.ProcessID");
+                        vbsPrint.println("f.WriteLine \"taskkill /F /PID \""
+                                        + " & oExec.ProcessID");
                         // close the kill batch file
                         vbsPrint.println("f.close");
                     } finally {
@@ -338,26 +397,34 @@ public class WindowsMachine extends Machine {
                     }
                 } catch (IOException e) {
                     log.trace("Cannot create the start script for application: "
-                            + app.getIdentification() + ", at machine: " + 
-                            name);
-                    throw new IOFailure("Problems creating local " +
-                                "start all script: " + e);
+                            + app.getIdentification() + ", at machine: "
+                            + name);
+                    throw new IOFailure("Problems creating local "
+                                + "start all script: " + e);
                 } 
             }
         } catch(Exception e) {
             // ERROR
             log.trace("Unknown error: " + e);
-            System.out.println("Error in creating start script " +
-                        "for applications: " + e);
+            System.out.println("Error in creating start script "
+                        + "for applications: " + e);
         }
     }
 
+    /**
+     * Makes all the class paths into the operation system specific syntax,
+     * and puts them into a string where they are separated by the operation
+     * system specific separator (':' for linux, ';' for windows).
+     * 
+     * @param app The application which has the class paths.
+     * @return The class paths in operation system specific syntax.
+     */
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
         String res = "";
         // get all the classpaths (change from '\' to '\\')
-        for(Element cp : app.getMachineParameters().classPaths) {
+        for(Element cp : app.getMachineParameters().getClassPaths()) {
             // insert the path to the install directory
             res += getInstallDirPath().replaceAll("[\\\\]", "\\\\\\\\");
             res += "\\\\";
@@ -368,13 +435,14 @@ public class WindowsMachine extends Machine {
         return res;
     }
 
-    /** 
+    /**
+     * Changes a string into correct formatted style.
      * The '.vbs' script needs '\\' instead of '\', which is quite annoying 
      * when using regular expressions, since a final '\' in regular expressions
-     *  is '\\\\', thus '\\' = '\\\\\\\\' (8)
+     *  is '\\\\', thus '\\' = '\\\\\\\\' (8).
      *   
-     * @param path The directory path to change to appropriate format
-     * @return The formatted path
+     * @param path The directory path to change to appropriate format.
+     * @return The formatted path.
      */
     private String changeToScriptPath(String path) {
         ArgumentNotValid.checkNotNull(path, "String path");

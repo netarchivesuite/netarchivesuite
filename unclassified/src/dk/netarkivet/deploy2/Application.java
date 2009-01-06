@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -38,7 +39,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class Application {
     /** the log, for logging stuff instead of displaying them directly.*/ 
-    protected final Log log = LogFactory.getLog(getClass().getName());
+    private final Log log = LogFactory.getLog(getClass().getName());
 
     /** the root-branch for this application in the XML tree.*/
     private Element applicationRoot;
@@ -68,7 +69,7 @@ public class Application {
         ArgumentNotValid.checkNotNull(parentSettings, 
                 "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
-        settings = new XmlStructure(parentSettings.GetRoot());
+        settings = new XmlStructure(parentSettings.getRoot());
         applicationRoot = e;
         machineParameters = new Parameters(param);
         // retrieve the specific settings for this instance 
@@ -76,7 +77,7 @@ public class Application {
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
-            settings.OverWrite(tmpSet);	
+            settings.OverWrite(tmpSet);
         }
         // check if new machine parameters
         machineParameters.newParameters(applicationRoot);
@@ -176,8 +177,8 @@ public class Application {
      * @return The path in linux syntax.
      */
     public String installPathLinux() {
-        return machineParameters.installDir.getText() + "/" +
-            settings.GetSubChildValue(
+        return machineParameters.getInstallDir().getText() + "/"
+            + settings.GetSubChildValue(
                     Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
     }
 
@@ -187,8 +188,8 @@ public class Application {
      * @return The path with windows syntax.
      */
     public String installPathWindows() {
-        return machineParameters.installDir.getText() + "\\" +
-            settings.GetSubChildValue(
+        return machineParameters.getInstallDir().getText() + "\\"
+            + settings.GetSubChildValue(
                     Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
     }
 

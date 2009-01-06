@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.deploy2;
 
@@ -64,44 +65,51 @@ public class LinuxMachine extends Machine {
         scriptExtension = ".sh";
     }
 
+    /**
+     * Creates the operation system specific installation script for 
+     * this machine.
+     * 
+     * @return Operation system specific part of the installscript
+     */
     @Override
     protected String osInstallScript() {
         String res = "";
-        // pw.println("echo copying $1 to:" + host.getName());
+        // echo copying null.zip to:kb-test-adm-001.kb.dk
         res += "echo copying ";
         res += netarchiveSuiteFileName;
         res += " to:";
         res += name;
         res += "\n";
-        // pw.println("scp $1 " + destination + ":" + dir);
+        // scp null.zip dev@kb-test-adm-001.kb.dk:/home/dev
         res += "scp ";
         res += netarchiveSuiteFileName;
         res += " ";
         res += machineUserLogin();
         res += ":";
-        res += machineParameters.installDir.getText();
+        res += machineParameters.getInstallDir().getText();
         res += "\n";
-        // pw.println("echo unzipping $1 at:" + host.getName());
+        // echo unzipping null.zip at:kb-test-adm-001.kb.dk
         res += "echo unzipping ";
         res += netarchiveSuiteFileName;
         res += " at:";
         res += name;
         res += "\n";
-        // pw.println("ssh " + destination + " " + unzip);
+        // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d 
+        // /home/dev/TEST
         res += "ssh ";
         res += machineUserLogin();
         res += " unzip -q -o ";
-        res += machineParameters.installDir.getText();
+        res += machineParameters.getInstallDir().getText();
         res += "/";
         res += netarchiveSuiteFileName;
         res += " -d ";
         res += getInstallDirPath();
         res += "\n";
-        // pw.println("echo copying settings and scripts");
+        // echo copying settings and scripts
         res += "echo copying settings and scripts";
         res += "\n";
-        // pw.println("scp -r " + host.getName() + "/* "
-        // 			+ destination + ":" + confDir);
+        // scp -r kb-test-adm-001.kb.dk/* 
+        // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
         res += "scp -r ";
         res += name;
         res += "/* ";
@@ -109,31 +117,21 @@ public class LinuxMachine extends Machine {
         res += ":";
         res += getConfDirPath();
         res += "\n";
-        // pw.println("echo make scripts executable");
+        // echo make scripts executable
         res += "echo make scripts executable";
         res += "\n";
-        // if (!isWindows) {
-        // 		pw.println("ssh  " + destination + " \"chmod +x "
-        //					+ confDir + "*.sh \"");
-        // }
+        // ssh dev@kb-test-adm-001.kb.dk "chmod +x /home/dev/TEST/conf/*.sh "
         res += "ssh ";
         res += machineUserLogin();
         res += " \"chmod +x ";
         res += getConfDirPath();
         res += "*.sh \"";
         res += "\n";
-        // pw.println("echo make password files readonly");
+        // echo make password files readonly
         res += "echo make password files readonly";
         res += "\n";
-        // 	if (isWindows) {
-        //		pw.println("echo Y | ssh " + destination
-        //		            + " cmd /c cacls " + confDir
-        //		            + "jmxremote.password /P BITARKIV\\\\"
-        //		            + user + ":R");
-        //	} else {
-        //		pw.println("ssh " + destination + " \"chmod 400 "
-        //		            + confDir + "/jmxremote.password\"");
-        //	}
+        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
+        // /home/dev/TEST/conf/jmxremote.password"
         res += "ssh ";
         res += machineUserLogin();
         res += " \"chmod 400 ";
@@ -144,6 +142,11 @@ public class LinuxMachine extends Machine {
         return res;
     }
 
+    /**
+     * Creates the operation system specific killing script for this machine.
+     * 
+     * @return Operation system specific part of the killscript.
+     */
     @Override
     protected String osKillScript() {
         String res = "";
@@ -157,6 +160,11 @@ public class LinuxMachine extends Machine {
         return res + "\n";
     }
 
+    /**
+     * Creates the operation system specific starting script for this machine.
+     * 
+     * @return Operation system specific part of the startscript.
+     */
     @Override
     protected String osStartScript() {
         String res = "";
@@ -172,25 +180,42 @@ public class LinuxMachine extends Machine {
         return res + "\n";
     }
 
+    /** 
+     * The operation system specific path to the installation directory.
+     *  
+     * @return Install path.
+     */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.installDir.getText() + "/" 
+        return machineParameters.getInstallDir().getText() + "/" 
                 + getEnvironmentName();
     }
 
+    /**
+     * The operation system specific path to the conf directory.
+     * 
+     * @return Conf path.
+     */
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + "/conf/";
     }
 
+    /**
+     * This function creates the script to kill all applications on this 
+     * machine.
+     * The scripts calls all the kill script for each application. 
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createOSLocalKillAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the kill all script file
-        File KillAllScript = new File(directory, "killall" + scriptExtension);
+        File killAllScript = new File(directory, "killall" + scriptExtension);
         try {
             // Initialise script
-            PrintWriter killPrinter = new PrintWriter(KillAllScript);
+            PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
                 killPrinter.println("echo Killing all applications at: " 
                         + name);
@@ -199,11 +224,11 @@ public class LinuxMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "./kill_" + 
-                            app.getIdentification() + scriptExtension;
+                    String appScript = "./kill_"
+                            + app.getIdentification() + scriptExtension;
                     // check if file exists
-                    killPrinter.println("if [ -e " +
-                                appScript + "]; then ");
+                    killPrinter.println("if [ -e "
+                                + appScript + "]; then ");
                     killPrinter.println("      " + appScript);
                     killPrinter.println("fi");
                 }
@@ -213,8 +238,8 @@ public class LinuxMachine extends Machine {
             }
         } catch (IOException e) {
             log.trace("Cannot create local kill all script.");
-            throw new IOFailure("Problems creating local kill all script: " + 
-                    e);
+            throw new IOFailure("Problems creating local kill all script: "
+                    + e);
         } catch(Exception e) {
             // ERROR
             log.trace("Unknown error: " + e);
@@ -223,15 +248,22 @@ public class LinuxMachine extends Machine {
         }
     }
 
+    /**
+     * This function creates the script to start all applications on this 
+     * machine.
+     * The scripts calls all the start script for each application. 
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createOSLocalStartAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the start all script file
-        File StartAllScript = new File(directory, "startall" + 
-                scriptExtension);
+        File startAllScript = new File(directory, "startall"
+                + scriptExtension);
         try {
             // Initialise script
-            PrintWriter startPrinter = new PrintWriter(StartAllScript);
+            PrintWriter startPrinter = new PrintWriter(startAllScript);
         try {
                 startPrinter.println("echo Starting all applications at: " 
                         + name);
@@ -240,11 +272,11 @@ public class LinuxMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "./start_" + 
-                    app.getIdentification() + scriptExtension;
+                    String appScript = "./start_"
+                            + app.getIdentification() + scriptExtension;
                     // check if file exists
-                    startPrinter.println("if [ -e " +
-                            appScript + " ]; then ");
+                    startPrinter.println("if [ -e "
+                            + appScript + " ]; then ");
                     startPrinter.println("      " + appScript);
                     startPrinter.println("fi");
                 }
@@ -263,6 +295,11 @@ public class LinuxMachine extends Machine {
         }
     }
 
+    /**
+     * Creates the kill scripts for all the applications.
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createApplicationKillScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
@@ -279,11 +316,11 @@ public class LinuxMachine extends Machine {
                     // initialise bash
                     appPrint.println("#!/bin/bash");
                     // Get the process ID for this application
-                    appPrint.println("PIDS=$(ps -wwfe | grep " +
-                            app.getTotalName() + " | grep -v grep | grep " +
-                            getConfDirPath() + "settings_" + 
-                            app.getIdentification() + ".xml" +
-                    " | awk \"{print \\$2}\")");
+                    appPrint.println("PIDS=$(ps -wwfe | grep "
+                            + app.getTotalName() + " | grep -v grep | grep "
+                            + getConfDirPath() + "settings_"
+                            + app.getIdentification() + ".xml"
+                            + " | awk \"{print \\$2}\")");
                     // If the process ID exists, then kill the process
                     appPrint.println("if [ -n \"$PIDS\" ] ; then");
                     appPrint.println("    kill -9 $PIDS");
@@ -294,8 +331,8 @@ public class LinuxMachine extends Machine {
                 }
             } catch (IOException e) {
                 log.trace("Cannot create application kill script.");
-                throw new IOFailure("Problems creating application kill " +
-                        "script: " + e);
+                throw new IOFailure("Problems creating application kill "
+                        + "script: " + e);
             } catch(Exception e) {
                 // ERROR
                 log.trace("Unknown error: " + e);
@@ -305,6 +342,11 @@ public class LinuxMachine extends Machine {
         }
     }
 
+    /**
+     * Creates the start scripts for all the applications.
+     * 
+     * @param directory The directory for this machine (use global variable?).
+     */
     @Override
     protected void createApplicationStartScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
@@ -317,57 +359,65 @@ public class LinuxMachine extends Machine {
                 PrintWriter appPrint = new PrintWriter(appStartScript);
                 try {
                     // get the content for the start script of this application
-                    appPrint.println("echo START LINUX APPLICATION: "+
-                            app.getIdentification());
+                    appPrint.println("echo START LINUX APPLICATION: "
+                            + app.getIdentification());
                             appPrint.println("#!/bin/bash");
                     // apply class path
-                    appPrint.println("export CLASSPATH=" +
-                            osGetClassPath(app) +
-                    "$CLASSPATH;");
+                    appPrint.println("export CLASSPATH="
+                            + osGetClassPath(app)
+                            + "$CLASSPATH;");
                     // move to directory
                     appPrint.println("cd "
                             + app.installPathLinux());
                     // Run the java program
                     appPrint.println(
-                            "java " +
-                            app.getMachineParameters().writeJavaOptions() +
-                            " -Ddk.netarkivet.settings.file=" +
-                            getConfDirPath() + "settings_" +
-                            app.getIdentification() + ".xml" +
-                            " -Dorg.apache.commons.logging.Log="+
-                            "org.apache.commons.logging.impl.Jdk14Logger" +
-                            " -Djava.util.logging.config.file=" +
-                            getConfDirPath() + "log_" + 
-                            app.getIdentification() + ".prop" +
-                            " -Djava.security.manager" +
-                            " -Djava.security.policy=" +
-                            getConfDirPath() + "security.policy " +
-                            app.getTotalName() + " < /dev/null > " +
-                            "start_" + app.getIdentification() + ".sh.log" +
-                            " 2>&1 &" );
+                            "java "
+                            + app.getMachineParameters().writeJavaOptions()
+                            + " -Ddk.netarkivet.settings.file="
+                            + getConfDirPath() + "settings_"
+                            + app.getIdentification() + ".xml"
+                            + " -Dorg.apache.commons.logging.Log="
+                            + "org.apache.commons.logging.impl.Jdk14Logger"
+                            + " -Djava.util.logging.config.file="
+                            + getConfDirPath() + "log_"
+                            + app.getIdentification() + ".prop"
+                            + " -Djava.security.manager"
+                            + " -Djava.security.policy="
+                            + getConfDirPath() + "security.policy "
+                            + app.getTotalName() + " < /dev/null > "
+                            + "start_" + app.getIdentification() + ".sh.log"
+                            + " 2>&1 &");
                 } finally {
                     // close file
                     appPrint.close();
                 }
             } catch (IOException e) {
                 log.trace("Cannot create application kill script.");
-                throw new IOFailure("Problems creating application start" +
-                        "script: " + e);
+                throw new IOFailure("Problems creating application start"
+                        + "script: " + e);
             } catch(Exception e) {
                 // ERROR
                 log.trace("Unknown error: " + e);
-                System.out.println("Error in creating application start" +
-                        "script: " + e);
+                System.out.println("Error in creating application start"
+                        + "script: " + e);
             }
         }
     }
 
+    /**
+     * Makes all the class paths into the operation system specific syntax,
+     * and puts them into a string where they are separated by the operation
+     * system specific separator (':' for linux, ';' for windows).
+     * 
+     * @param app The application which has the class paths.
+     * @return The class paths in operation system specific syntax.
+     */
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
         String res = "";
         // get all the classpaths
-        for(Element cp : app.getMachineParameters().classPaths) {
+        for(Element cp : app.getMachineParameters().getClassPaths()) {
             res += getInstallDirPath() + "/" + cp.getText() + ":";
         }
         return res;
