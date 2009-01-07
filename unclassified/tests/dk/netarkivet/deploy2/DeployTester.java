@@ -164,7 +164,7 @@ public class DeployTester extends TestCase {
     }
     
     /**
-     * Tests if non-existing argument is given
+     * tests if non-existing argument is given
      */
     public void testDeployArguments1() {
 	String[] args = {
@@ -178,7 +178,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -204,7 +204,7 @@ public class DeployTester extends TestCase {
 	DeployApplication.main(args);
 
 	// get message and exit value
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 	int pseVal = pse.getExitValue();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
@@ -222,7 +222,7 @@ public class DeployTester extends TestCase {
 	DeployApplication.main(args);
 
 	// get message and exit value
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 	int pseVal = pse.getExitValue();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
@@ -231,7 +231,7 @@ public class DeployTester extends TestCase {
     }
 
     /**
-     * tests config file with wrong extension is given.
+     * tests configuration file argument with wrong extension.
      */
     public void testDeployArgumentsExtension1() {
 	String[] args = {
@@ -245,7 +245,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -253,7 +253,7 @@ public class DeployTester extends TestCase {
     }
 
     /**
-     * tests NetarchiveSuite file with wrong extension is given.
+     * tests NetarchiveSuite file argument with wrong extension.
      */
     public void testDeployArgumentsExtension2() {
 	String[] args = {
@@ -267,7 +267,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -275,7 +275,7 @@ public class DeployTester extends TestCase {
     }
 
     /**
-     * tests security file with wrong extension is given.
+     * tests security policy file argument with wrong extension.
      */
     public void testDeployArgumentsExtension3() {
 	String[] args = {
@@ -289,7 +289,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -297,7 +297,7 @@ public class DeployTester extends TestCase {
     }
 
     /**
-     * tests log property file with wrong extension is given.
+     * tests log property file argument with wrong extension.
      */
     public void testDeployArgumentsExtension4() {
 	String[] args = {
@@ -311,7 +311,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -319,7 +319,31 @@ public class DeployTester extends TestCase {
     }
     
     /**
-     * tests when enough arguments are given, but config file is missing.
+     * tests database file argument with wrong extension.
+     */
+    public void testDeployArgumentsExtension5() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+		TestInfo.ARGUMENT_DATABASE_FILE + "database.ERROR"
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_DATABASE_EXTENSION, pssMsg);
+    }
+    
+    /**
+     * tests when enough arguments are given, but configuration file 
+     * is missing.
      */
     public void testDeployArgumentsLack1() {
 	String[] args = {
@@ -333,7 +357,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -356,7 +380,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -364,7 +388,8 @@ public class DeployTester extends TestCase {
     }
 
     /**
-     * tests when enough arguments are given, but the security file is missing.
+     * tests when enough arguments are given, but the security file 
+     * is missing.
      */
     public void testDeployArgumentsLack3() {
 	String[] args = {
@@ -378,7 +403,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
@@ -401,7 +426,7 @@ public class DeployTester extends TestCase {
 
 	// get message and exit value
 	int pseVal = pse.getExitValue();
-	String pssMsg = pss.getOut();
+	String pssMsg = pss.getErr();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 

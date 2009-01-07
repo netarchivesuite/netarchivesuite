@@ -119,35 +119,38 @@ public class Constants {
     // messages
     /** The error message for error in parsing the arguments.*/
     public static final String MSG_ERROR_PARSE_ARGUMENTS = 
-	"WARNING: wrong arguments given.";
+	"WARNING: wrong arguments given.\n";
     /** The error message when too many arguments are given.*/
     public static final String MSG_ERROR_TOO_MANY_ARGUMENTS = 
-	"Too many arguments given.";
+	"Too many arguments given.\n";
     /** The error message when not enough arguments are given.*/
     public static final String MSG_ERROR_NOT_ENOUGH_ARGUMENTS = 
-	"Not enough arguments given.";
+	"Not enough arguments given.\n";
     /** The error message when no it-config file is given.*/
     public static final String MSG_ERROR_NO_CONFIG_FILE = 
-	"No config file is given. (Must end with '.xml')";
+	"No config file is given: -C (Must end with '.xml').\n";
     /** The error message when no NetarchiveSuite file is given.*/
     public static final String MSG_ERROR_NO_NETARCHIVESUITE_FILE = 
-	"No NetarchiveSuite file is given. (Must end with '.zip')";
+	"No NetarchiveSuite file is given: -Z (Must end with '.zip').\n";
     /** The error message when no security file is given.*/
     public static final String MSG_ERROR_NO_SECURITY_FILE = 
-	"No security file is given. (Must end with '.policy')";
+	"No security file is given: -S (Must end with '.policy').\n";
     /** The error message when no log property file is given.*/
     public static final String MSG_ERROR_NO_LOG_PROPERTY_FILE = 
-	"No log property file is given. (Must end with '.prop')";
+	"No log property file is given: -L (Must end with '.prop').\n";
     /** The error message for wrong it-config file extension.*/
     public static final String MSG_ERROR_CONFIG_EXTENSION = 
-	"Config file must be '.xml'!";
+	"Config file must be '.xml'!.\n";
     /** The error message for wrong NetarchiveSuite file extension.*/
     public static final String MSG_ERROR_NETARCHIVESUITE_EXTENSION = 
-	"NetarchiveSuite file must be '.zip'";
+	"NetarchiveSuite file must be '.zip'.\n";
     /** The error message for wrong security file extension.*/
     public static final String MSG_ERROR_SECURITY_EXTENSION = 
-	"Security policy file must be '.policy'";
+	"Security policy file must be '.policy'.\n";
     /** The error message for wrong log property file extension.*/
     public static final String MSG_ERROR_LOG_PROPERTY_EXTENSION = 
-	"Log property file must be '.prop'";
+	"Log property file must be '.prop'.\n";
+    /** The error message for wrong database extension.*/
+    public static final String MSG_ERROR_DATABASE_EXTENSION = 
+	"Database file must have extension '.jar' or '.zip'";
 }
