@@ -98,4 +98,42 @@ public class Constants {
     /** Number of '-' repeat in scripts. */
     static final int SCRIPT_DASH_NUM_REPEAT = 44;
 
+    // Parameters as constants.
+    /** For initiating a argument. */
+    public static final String ARG_INIT_ARG = "-";
+    /** For giving the configuration file as argument. */
+    public static final String ARG_CONFIG_FILE = "C";
+    /** For giving the NetarchiveSuite package file as argument. */
+    public static final String ARG_NETARCHIVE_SUITE_FILE = "Z";
+    /** For giving the security file as argument. */
+    public static final String ARG_SECURITY_FILE = "S";
+    /** For giving the log property file as argument. */
+    public static final String ARG_LOG_PROPERTY_FILE = "L";
+    /** For giving the optional output directory as argument. */
+    public static final String ARG_OUTPUT_DIRECTORY = "O";
+    /** For giving the optional database file as argument. */
+    public static final String ARG_DATABASE_FILE = "D";
+    
+    // messages
+    /** The error message for error in parsing the arguments.*/
+    public static final String MSG_ERROR_PARSE_ARGUMENTS = 
+	"WARNING: wrong arguments given.";
+    /** The error when too many arguments are given.*/
+    public static final String MSG_ERROR_TOO_MANY_ARGUMENTS = 
+	"Too many arguments given.";
+    /** */
+    public static final String MSG_ERROR_NOT_ENOUGH_ARGUMENTS = 
+	"Not enough arguments given.";
+    /** The error message for wrong it-config file extension.*/
+    public static final String MSG_ERROR_CONFIG_EXTENSION = 
+	"Config file must be '.xml'!";
+    /** The error message for wrong NetarchiveSuite file extension.*/
+    public static final String MSG_ERROR_NETARCHIVESUITE_EXTENSION = 
+	"NetarchiveSuite file must be '.zip'";
+    /** The error message for wrong security file extension.*/
+    public static final String MSG_ERROR_SECURITY_EXTENSION = 
+	"Security policy file must be '.policy'";
+    /** The error message for wrong log property file extension.*/
+    public static final String MSG_ERROR_LOG_PROPERTY_EXTENSION = 
+	"Log property file must be '.prop'";
 }

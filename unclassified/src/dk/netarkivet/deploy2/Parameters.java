@@ -58,10 +58,10 @@ public class Parameters {
     public Parameters(XmlStructure root) {
         ArgumentNotValid.checkNotNull(root, "XmlStructure root");
         // initialise variables
-        classPaths = root.GetChildren(Constants.CLASS_PATH_BRANCH);
-        javaOptions = root.GetChildren(Constants.JAVA_OPTIONS_BRANCH);
-        installDir = root.GetChild(Constants.PARAMETER_INSTALL_DIR_BRANCH);
-        machineUserName = root.GetChild(
+        classPaths = root.getChildren(Constants.CLASS_PATH_BRANCH);
+        javaOptions = root.getChildren(Constants.JAVA_OPTIONS_BRANCH);
+        installDir = root.getChild(Constants.PARAMETER_INSTALL_DIR_BRANCH);
+        machineUserName = root.getChild(
                 Constants.PARAMETER_MACHINE_USER_NAME_BRANCH);
     }
 

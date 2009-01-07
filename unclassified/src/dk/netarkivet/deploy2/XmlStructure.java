@@ -57,7 +57,7 @@ public class XmlStructure {
         ArgumentNotValid.checkTrue(f.exists(), "File f : " + f.getName() 
                 + " does not exist!");
         // get into 'document' format
-        Document doc = LoadDocument(f);
+        Document doc = loadDocument(f);
         // get root node
         root = doc.getRootElement();
     }
@@ -90,7 +90,7 @@ public class XmlStructure {
      * @return The XML file loaded into the document data structure
      * @throws IOFailure If the file was not correctly read
      */
-    private Document LoadDocument(File f) throws IOFailure {
+    private Document loadDocument(File f) throws IOFailure {
         ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
         if (!f.canRead()) {
@@ -112,7 +112,7 @@ public class XmlStructure {
      * @param name The name of the branch
      * @return The child element of the XML tree structure
      */
-    public Element GetChild(String name) {
+    public Element getChild(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return root.element(name);
     }
@@ -126,7 +126,7 @@ public class XmlStructure {
      * @see GetChildren() 
      */
     @SuppressWarnings("unchecked")
-    public List<Element> GetChildren(String name) {
+    public List<Element> getChildren(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return root.elements(name);
     }
@@ -138,7 +138,7 @@ public class XmlStructure {
      * @see GetChildren(String name)
      */
     @SuppressWarnings("unchecked")
-    public List<Element> GetChildren() {
+    public List<Element> getChildren() {
         return root.elements();
     }
 
@@ -148,7 +148,7 @@ public class XmlStructure {
      * 
      * @return The text value of this element 
      */
-    public String GetValue() {
+    public String getValue() {
         return root.getText();
     }
 
@@ -157,7 +157,7 @@ public class XmlStructure {
      * 
      * @return The XML code.
      */
-    public String GetXML() {
+    public String getXML() {
         return root.asXML();
     }
 
@@ -169,7 +169,7 @@ public class XmlStructure {
      * @return The value of the leaf or null if the branch does not exists 
      * or is a tree.
      */
-    public String GetChildValue(String name) {
+    public String getChildValue(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String ...name");
         Element e = root.element(name);
         if(e != null && e.isTextOnly()) {
@@ -191,7 +191,7 @@ public class XmlStructure {
      * XML-branch is returned.
      * Returns 'null' if the path to the branch cannot be found.   
      */
-    public String GetSubChildValue(String ...name ) {
+    public String getSubChildValue(String ...name ) {
         // if no arguments, the XML is returned
         ArgumentNotValid.checkNotNull(name, "String ...name");
         Element e = root;
@@ -220,7 +220,7 @@ public class XmlStructure {
      * @param name The name of the attribute
      * @return The value of the attribute
      */
-    public String GetAttribute(String name) {
+    public String getAttribute(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return root.attributeValue(name);
     }
@@ -232,8 +232,8 @@ public class XmlStructure {
      * 
      * @param overwriter The settings instance for the current element
      */
-    public void OverWrite(Element overwriter) {
-        ArgumentNotValid.checkNotNull(overwriter,"Element overwriter");
+    public void overWrite(Element overwriter) {
+        ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
         try {
             overWriting(root, overwriter);
         } catch (IllegalState e) {

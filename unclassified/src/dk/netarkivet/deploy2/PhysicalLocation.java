@@ -97,7 +97,7 @@ public class PhysicalLocation {
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
-            settings.OverWrite(tmpSet);
+            settings.overWrite(tmpSet);
         }
         // check if new machine parameters
         machineParameters.newParameters(physLocRoot);

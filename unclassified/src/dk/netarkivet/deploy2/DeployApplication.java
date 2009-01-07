@@ -43,46 +43,38 @@ public class DeployApplication {
     /**
      * Run the new deploy.
      * 
-     * @param args The Command-line arguments in the following order:
+     * @param args The Command-line arguments in no particular order:
      * 
-     * 1: The it-configuration file (ends with .xml).
-     * 2: The NetarchiveSuite file to be unpacked (ends with .zip).
-     * 3: The security policy file (ends with .policy).
-     * 4: The logging property file (ends with .prop).
-     * 5: [OPTIONAL] The output directory
+     * -C  The it-configuration file (ends with .xml).
+     * -Z  The NetarchiveSuite file to be unpacked (ends with .zip).
+     * -S  The security policy file (ends with .policy).
+     * -L  The logging property file (ends with .prop).
+     * -O  [OPTIONAL] The output directory
+     * -D  [OPTIONAL] The database
      */
     public static void main(String[] args) {
         try {
-/*            System.out.println("Arguments: ");
-            for(String st : args) {
-                System.out.println(st);
-            }
-            System.out.println();
-/* */
             // Make sure the arguments can be parsed.
             if(!ap.parseParameters(args)) {
-                System.out.println("ERROR!");
+                System.out.print(Constants.MSG_ERROR_PARSE_ARGUMENTS);
                 System.exit(0);
             }
 
             // RESTRUCTURE
             // Check arguments
             if(args.length < 4) {
-                System.out.println(
+        	System.out.print(
+        		Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS);
+                System.err.println(
                         "Use DeployApplication with following arguments:");
-                System.out.println("config file: -C");
-                System.out.println("NetarchiveSuite package file: -Z");
-                System.out.println("security policy file: -S");
-                System.out.println("log property file: -L");
-                System.out.println("[OPTIONAL] output directory: -O");
-                System.out.println("[OPTIONAL] database file: -D");
-                System.out.println(
+                System.err.println(ap.listArguments());
+                System.err.println(
                         "outputdir defaults to "
                         + "./environmentName (set in config file)");
-                System.out.println(
+                System.err.println(
                         "Database defaults to "
                         + "?? (from NetarchiveSuite.zip)");
-                System.out.println(
+                System.err.println(
                         "Example: DeployApplication "
                         + "-C./conf/it-config.xml "
                         + "-Z./NetarchiveSuite-1.zip "
@@ -90,55 +82,59 @@ public class DeployApplication {
                         + "-L./conf/log.prop");
                 System.exit(0);
             }
-            if (args.length > ap.cmd.getOptions().length) {
-                System.err.println("Too many arguments");
-                System.err.println("Maximum " + ap.cmd.getOptions().length 
+            // test if more arguments than options is given 
+            if (args.length > ap.options.getOptions().size()) {
+                System.out.print(
+                	Constants.MSG_ERROR_TOO_MANY_ARGUMENTS);
+                System.err.println("Maximum " + ap.options.getOptions().size() 
                         + "arguments.");
                 System.exit(0);
             }
-            
+           
             // Retrieving the configuration filename
-            String itConfigFileName = ap.cmd.getOptionValue("C");
+            String itConfigFileName = ap.cmd.getOptionValue(
+        	    Constants.ARG_CONFIG_FILE);
             // Retrieving the NetarchiveSuite filename
-            String netarchiveSuiteFileName = ap.cmd.getOptionValue("Z");
+            String netarchiveSuiteFileName = ap.cmd.getOptionValue(
+        	    Constants.ARG_NETARCHIVE_SUITE_FILE);
             // Retrieving the security policy filename
-            String secPolicyFileName = ap.cmd.getOptionValue("S");
+            String secPolicyFileName = ap.cmd.getOptionValue(
+        	    Constants.ARG_SECURITY_FILE);
             // Retrieving the log property filename
-            String logPropFileName = ap.cmd.getOptionValue("L");
+            String logPropFileName = ap.cmd.getOptionValue(
+        	    Constants.ARG_LOG_PROPERTY_FILE);
             // Retrieving the output directory name
-            String outputDir = ap.cmd.getOptionValue("O");
+            String outputDir = ap.cmd.getOptionValue(
+        	    Constants.ARG_OUTPUT_DIRECTORY);
             // Retrieving the database filename
-            String databaseName = ap.cmd.getOptionValue("D");
+            String databaseName = ap.cmd.getOptionValue(
+        	    Constants.ARG_DATABASE_FILE);
             
             // check whether it-config file has correct extensions
             if(!itConfigFileName.endsWith(".xml")) {
-                System.out.println("Config file must be '.xml'!");
+                System.out.print(
+                	Constants.MSG_ERROR_CONFIG_EXTENSION);
                 System.exit(0);
             }
             // check whether the NetarchiveSuite file has correct extensions
             if(!netarchiveSuiteFileName.endsWith(".zip")) {
-                System.out.println("NetarchiveSuite file must be '.zip'");
+                System.out.print(
+                	Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
                 System.exit(0);
             }
             // check whether security policy file has correct extensions
             if(!secPolicyFileName.endsWith(".policy")) {
-                System.out.println("Security policy file must be '.policy'");
+                System.out.print(
+                	Constants.MSG_ERROR_SECURITY_EXTENSION);
                 System.exit(0);
             }
             // check whether the log property file has correct extensions
             if(!logPropFileName.endsWith(".prop")) {
-                System.out.println("Log property file must be '.prop'");
+                System.out.print(
+                	Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
                 System.exit(0);
             }
-/*
-            System.out.println("itConfigFileName: " + itConfigFileName);
-            System.out.println("netarchiveSuiteFileName: " 
-                    + netarchiveSuiteFileName);
-            System.out.println("secPolicyFileName: " + secPolicyFileName);
-            System.out.println("logPropFileName: " + logPropFileName);
-            System.out.println("outputDir: " + outputDir);
-            System.out.println("database: " + databaseName);
-/* */
+
             // Make the configuration based on the input data
             itConfig = new DeployConfiguration(
                     itConfigFileName,
@@ -151,35 +147,38 @@ public class DeployApplication {
             itConfig.write();
         } catch (Exception e) {
             // handle exceptions?
-            System.out.println("ERROR: " + e);
+            System.err.println("DEPLOY APPLICATION ERROR: " + e);
         }
     }
     
     /**
      * Handles the incoming arguments.
+     * 
      */
     private static class ArgumentParameters {
         /** Options object for parameters.*/
-        private Options options = new Options();
+        public Options options = new Options();
         /** Parser for parsing the command line arguments.*/
         private CommandLineParser parser = new PosixParser();
         /** The command line.*/
         public CommandLine cmd;
-        //HelpFormatter only prints directly, thus this is not used at
-        //the moment
-        //HelpFormatter formatter = new HelpFormatter();
-        //Instead the method listArguments is defined
-        
+         
         /**
-         * Initialize options by setting legal parameters for batch jobs.
+         * Initialise options by setting legal parameters for batch jobs.
          */
         ArgumentParameters() {
-            options.addOption("C", true, "Config file.");
-            options.addOption("Z", true, "The NetarchiveSuite package file.");
-            options.addOption("S", true, "Security property file.");
-            options.addOption("L", true, "Log property file.");
-            options.addOption("O", true, "[OPTIONAL] output directory.");
-            options.addOption("D", true, "[OPTIONAL] Database.");
+            options.addOption(Constants.ARG_CONFIG_FILE, 
+        	    true, "Config file.");
+            options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, 
+        	    true, "The NetarchiveSuite package file.");
+            options.addOption(Constants.ARG_SECURITY_FILE, 
+        	    true, "Security property file.");
+            options.addOption(Constants.ARG_LOG_PROPERTY_FILE, 
+        	    true, "Log property file.");
+            options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
+        	    true, "[OPTIONAL] output directory.");
+            options.addOption(Constants.ARG_DATABASE_FILE, 
+        	    true, "[OPTIONAL] Database.");
         }
         
         /**
@@ -204,15 +203,11 @@ public class DeployApplication {
          * @return The list describing the possible arguments.
          */
         String listArguments() {
-            String s = "\nwith arguments:\n";
+            String s = "\n" + "Arguments:";
             // add options
             for (Object o: options.getOptions()) {
                 Option op = (Option) o;
-                s += "-" + op.getOpt() + " " + op.getDescription() + "\n";
-            }
-            //delete last delimitter
-            if (s.length() > 0) {
-                s = s.substring(0, s.length()-1);
+                s += "\n" + "-" + op.getOpt() + " " + op.getDescription();
             }
             return s;
         }

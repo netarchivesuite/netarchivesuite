@@ -77,7 +77,7 @@ public class Application {
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
-            settings.OverWrite(tmpSet);
+            settings.overWrite(tmpSet);
         }
         // check if new machine parameters
         machineParameters.newParameters(applicationRoot);
@@ -161,7 +161,7 @@ public class Application {
             PrintWriter pw = new PrintWriter(settingsFile);
             try {
                 // Extract the XML content of the branch for this application
-                pw.println(settings.GetXML());
+                pw.println(settings.getXML());
             } finally {
                 pw.close();
             }
@@ -178,7 +178,7 @@ public class Application {
      */
     public String installPathLinux() {
         return machineParameters.getInstallDir().getText() + "/"
-            + settings.GetSubChildValue(
+            + settings.getSubChildValue(
                     Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
     }
 
@@ -189,7 +189,7 @@ public class Application {
      */
     public String installPathWindows() {
         return machineParameters.getInstallDir().getText() + "\\"
-            + settings.GetSubChildValue(
+            + settings.getSubChildValue(
                     Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
     }
 
