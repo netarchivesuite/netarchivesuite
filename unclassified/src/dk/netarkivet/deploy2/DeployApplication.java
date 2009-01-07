@@ -60,9 +60,8 @@ public class DeployApplication {
                 System.exit(0);
             }
 
-            // RESTRUCTURE
             // Check arguments
-            if(args.length < 4) {
+            if(args.length < Constants.ARGUMENTS_REQUIRED) {
         	System.out.print(
         		Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS);
                 System.err.println(
@@ -110,10 +109,22 @@ public class DeployApplication {
             String databaseName = ap.cmd.getOptionValue(
         	    Constants.ARG_DATABASE_FILE);
             
+            // check whether it-config file name is given as argument
+            if(itConfigFileName == null) {
+                System.out.print(
+                	Constants.MSG_ERROR_NO_CONFIG_FILE);
+                System.exit(0);
+            }
             // check whether it-config file has correct extensions
             if(!itConfigFileName.endsWith(".xml")) {
                 System.out.print(
                 	Constants.MSG_ERROR_CONFIG_EXTENSION);
+                System.exit(0);
+            }
+            // check whether NetarchiveSuite file name is given as argument
+            if(netarchiveSuiteFileName == null) {
+                System.out.print(
+                	Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE);
                 System.exit(0);
             }
             // check whether the NetarchiveSuite file has correct extensions
@@ -122,10 +133,22 @@ public class DeployApplication {
                 	Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
                 System.exit(0);
             }
+            // check whether security policy file name is given as argument
+            if(secPolicyFileName == null) {
+                System.out.print(
+                	Constants.MSG_ERROR_NO_SECURITY_FILE);
+                System.exit(0);
+            }
             // check whether security policy file has correct extensions
             if(!secPolicyFileName.endsWith(".policy")) {
                 System.out.print(
                 	Constants.MSG_ERROR_SECURITY_EXTENSION);
+                System.exit(0);
+            }
+            // check whether log property file name is given as argument
+            if(logPropFileName == null) {
+                System.out.print(
+                	Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE);
                 System.exit(0);
             }
             // check whether the log property file has correct extensions
@@ -145,9 +168,12 @@ public class DeployApplication {
 
             // Write the scripts, directories and everything
             itConfig.write();
+        } catch (SecurityException e) {
+            System.err.println("SECURITY ERROR: " + e);
         } catch (Exception e) {
             // handle exceptions?
             System.err.println("DEPLOY APPLICATION ERROR: " + e);
+            System.exit(0);
         }
     }
     

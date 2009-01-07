@@ -97,6 +97,8 @@ public class Constants {
     // other constants
     /** Number of '-' repeat in scripts. */
     static final int SCRIPT_DASH_NUM_REPEAT = 44;
+    /** The minimum number of arguments required.*/
+    static final int ARGUMENTS_REQUIRED = 4;
 
     // Parameters as constants.
     /** For initiating a argument. */
@@ -118,12 +120,24 @@ public class Constants {
     /** The error message for error in parsing the arguments.*/
     public static final String MSG_ERROR_PARSE_ARGUMENTS = 
 	"WARNING: wrong arguments given.";
-    /** The error when too many arguments are given.*/
+    /** The error message when too many arguments are given.*/
     public static final String MSG_ERROR_TOO_MANY_ARGUMENTS = 
 	"Too many arguments given.";
-    /** */
+    /** The error message when not enough arguments are given.*/
     public static final String MSG_ERROR_NOT_ENOUGH_ARGUMENTS = 
 	"Not enough arguments given.";
+    /** The error message when no it-config file is given.*/
+    public static final String MSG_ERROR_NO_CONFIG_FILE = 
+	"No config file is given. (Must end with '.xml')";
+    /** The error message when no NetarchiveSuite file is given.*/
+    public static final String MSG_ERROR_NO_NETARCHIVESUITE_FILE = 
+	"No NetarchiveSuite file is given. (Must end with '.zip')";
+    /** The error message when no security file is given.*/
+    public static final String MSG_ERROR_NO_SECURITY_FILE = 
+	"No security file is given. (Must end with '.policy')";
+    /** The error message when no log property file is given.*/
+    public static final String MSG_ERROR_NO_LOG_PROPERTY_FILE = 
+	"No log property file is given. (Must end with '.prop')";
     /** The error message for wrong it-config file extension.*/
     public static final String MSG_ERROR_CONFIG_EXTENSION = 
 	"Config file must be '.xml'!";

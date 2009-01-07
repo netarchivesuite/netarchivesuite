@@ -176,6 +176,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getOut();
 
@@ -202,6 +203,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	String pssMsg = pss.getOut();
 	int pseVal = pse.getExitValue();
 
@@ -219,6 +221,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	String pssMsg = pss.getOut();
 	int pseVal = pse.getExitValue();
 
@@ -240,6 +243,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getOut();
 
@@ -261,6 +265,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getOut();
 
@@ -282,6 +287,7 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getOut();
 
@@ -303,11 +309,102 @@ public class DeployTester extends TestCase {
 	};
 	DeployApplication.main(args);
 
+	// get message and exit value
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getOut();
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
 		Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION, pssMsg);
+    }
+    
+    /**
+     * tests when enough arguments are given, but config file is missing.
+     */
+    public void testDeployArgumentsLack1() {
+	String[] args = {
+//		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getOut();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_CONFIG_FILE, pssMsg);
+    }
+
+    /**
+     * tests when enough arguments are given, but NetarchiveSuite file 
+     * is missing.
+     */
+    public void testDeployArgumentsLack2() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+//		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getOut();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE, pssMsg);
+    }
+
+    /**
+     * tests when enough arguments are given, but the security file is missing.
+     */
+    public void testDeployArgumentsLack3() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+//		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getOut();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_SECURITY_FILE, pssMsg);
+    }
+
+    /**
+     * tests when enough arguments are given, but the log property file 
+     * is missing.
+     */
+    public void testDeployArgumentsLack4() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+//		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getOut();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE, pssMsg);
     }
 }
