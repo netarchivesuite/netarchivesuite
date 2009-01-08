@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -132,53 +132,12 @@ public class XmlStructure {
     }
 
     /**
-     * For receiving a list of all branches.
-     * 
-     * @return The children of this XML branch
-     * @see GetChildren(String name)
-     */
-    @SuppressWarnings("unchecked")
-    public List<Element> getChildren() {
-        return root.elements();
-    }
-
-    /**
-     * Retrieving the text of this branch.
-     * If the branch is a leaf, the value is returned 
-     * 
-     * @return The text value of this element 
-     */
-    public String getValue() {
-        return root.getText();
-    }
-
-    /**
      * Retrieves the XML code for this entire branch.
      * 
      * @return The XML code.
      */
     public String getXML() {
         return root.asXML();
-    }
-
-    /** 
-     * Retrieves the value of a 
-     * Simple version of GetSubChildValue()
-     * 
-     * @param name The name of the child.
-     * @return The value of the leaf or null if the branch does not exists 
-     * or is a tree.
-     */
-    public String getChildValue(String name) {
-        ArgumentNotValid.checkNotNullOrEmpty(name, "String ...name");
-        Element e = root.element(name);
-        if(e != null && e.isTextOnly()) {
-            return e.getText();
-        } else {
-            log.warn("Element is not accessible for reading " +
-            "(either not existing or not leaf)! ");
-            return null;
-        }
     }
 
     /**
@@ -213,16 +172,6 @@ public class XmlStructure {
             log.debug("Element is not text");
             return e.asXML();
         }
-    }
-
-    /**
-     * Gets the a specific attribute of this branch
-     * @param name The name of the attribute
-     * @return The value of the attribute
-     */
-    public String getAttribute(String name) {
-        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        return root.attributeValue(name);
     }
 
     /**

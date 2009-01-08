@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -54,12 +54,13 @@ public class LinuxMachine extends Machine {
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
+     * @param dbFileName The name of the database file.
      */
     public LinuxMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy) {
+            File logProp, File securityPolicy, String dbFileName) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy);
+                logProp, securityPolicy, dbFileName);
         // set operating system
         OS = "linux";
         scriptExtension = ".sh";
@@ -86,7 +87,7 @@ public class LinuxMachine extends Machine {
         res += " ";
         res += machineUserLogin();
         res += ":";
-        res += machineParameters.getInstallDir().getText();
+        res += machineParameters.getInstallDirValue();
         res += "\n";
         // echo unzipping null.zip at:kb-test-adm-001.kb.dk
         res += "echo unzipping ";
@@ -99,7 +100,7 @@ public class LinuxMachine extends Machine {
         res += "ssh ";
         res += machineUserLogin();
         res += " unzip -q -o ";
-        res += machineParameters.getInstallDir().getText();
+        res += machineParameters.getInstallDirValue();
         res += "/";
         res += netarchiveSuiteFileName;
         res += " -d ";
@@ -108,6 +109,8 @@ public class LinuxMachine extends Machine {
         // echo copying settings and scripts
         res += "echo copying settings and scripts";
         res += "\n";
+        // DATABASE!
+        res += osInstallDatabase();
         // scp -r kb-test-adm-001.kb.dk/* 
         // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
         res += "scp -r ";
@@ -187,7 +190,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.getInstallDir().getText() + "/" 
+        return machineParameters.getInstallDirValue() + "/" 
                 + getEnvironmentName();
     }
 
@@ -420,6 +423,74 @@ public class LinuxMachine extends Machine {
         for(Element cp : app.getMachineParameters().getClassPaths()) {
             res += getInstallDirPath() + "/" + cp.getText() + ":";
         }
+        return res;
+    }
+
+    /**
+     * Checks if a specific directory for the database is given in the settings,
+     * and thus if the database should be installed on this machine.
+     * 
+     * If no specific database is given (databaseFileName = null) then use the 
+     * standard database extracted from NetarchiveSuite.zip.
+     * Else send the given new database to the standard database location.
+     * 
+     * Extract the database in the standard database location to the specified
+     * database directory.
+     * 
+     * @return The script for installing the database (if needed).
+     */
+    @Override
+    protected String osInstallDatabase() {
+        String res = "";
+
+        String databaseDir = machineParameters.getDatabaseDirValue();
+        // Do not install if no proper database directory.
+        if(databaseDir == null || databaseDir == "") {
+            return res;
+        }
+
+        // copy to final destination if database argument.
+        if(databaseFileName != null) {
+            // echo Copying database
+            res += "echo Copying database" + "\n";
+            // scp database.jar user@machine:dbDir/db
+            res += "scp ";
+            res += databaseFileName;
+            res += " ";
+            res += machineUserLogin();
+            res += ":";
+            res += getInstallDirPath();
+            res += "/";
+            res += Constants.DATABASE_BASE_PATH;
+            res += "\n";
+        }
+        // unzip database.
+        res += "echo Unzipping database" + "\n";
+        // ssh user@machine cd dir; if [ -d databaseDir ]; then ""; 
+        // else mkdir databaseDir; fi; if [ "$(ls -A databaseDir)" ]; 
+        // then echo Database directory not empty; 
+        // else unzip dbDir/db databaseDir/.; fi;
+        res += "ssh ";
+        res += machineUserLogin();
+        res += " cd ";
+        res += getInstallDirPath();
+        res += "; if [ -d ";
+        res += databaseDir;
+        res += " ]; then echo \"\"; else mkdir ";
+        res += databaseDir;
+        res += "; fi; if [ \"$(ls -A ";
+        res += databaseDir;
+        res += ")\" ]; then echo ";
+        res += Constants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY;
+        res += "; else unzip -q -o ";
+        res += Constants.DATABASE_BASE_PATH;
+        res += " -d ";
+        res += databaseDir;
+        res += "/.; fi;";
+        res += "\n";
+
+         System.out.println("Install database: ");
+         System.out.println(res);
         return res;
     }
 }

@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -22,6 +22,8 @@
  *   USA
  */
 package dk.netarkivet.deploy2;
+
+import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -112,7 +114,7 @@ public class DeployApplication {
             // check whether it-config file name is given as argument
             if(itConfigFileName == null) {
                 System.err.print(
-                        Constants.MSG_ERROR_NO_CONFIG_FILE);
+                        Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
                 System.exit(0);
             }
             // check whether it-config file has correct extensions
@@ -121,10 +123,19 @@ public class DeployApplication {
                         Constants.MSG_ERROR_CONFIG_EXTENSION);
                 System.exit(0);
             }
+            // get the file
+            File itConfigFile = new File(itConfigFileName);
+            // check whether the it-config file exists.
+            if(!itConfigFile.exists()) {
+                System.err.print(
+                        Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
+                System.exit(0);
+            }
+            
             // check whether NetarchiveSuite file name is given as argument
             if(netarchiveSuiteFileName == null) {
                 System.err.print(
-                        Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE);
+                        Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG);
                 System.exit(0);
             }
             // check whether the NetarchiveSuite file has correct extensions
@@ -133,10 +144,19 @@ public class DeployApplication {
                         Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
                 System.exit(0);
             }
+            // get the file
+            File netarchiveSuiteFile = new File(netarchiveSuiteFileName);
+            // check whether the NetarchiveSuite file exists.
+            if(!netarchiveSuiteFile.exists()) {
+                System.err.print(
+                        Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
+                System.exit(0);
+            }
+
             // check whether security policy file name is given as argument
             if(secPolicyFileName == null) {
                 System.err.print(
-                        Constants.MSG_ERROR_NO_SECURITY_FILE);
+                        Constants.MSG_ERROR_NO_SECURITY_FILE_ARG);
                 System.exit(0);
             }
             // check whether security policy file has correct extensions
@@ -145,10 +165,19 @@ public class DeployApplication {
                         Constants.MSG_ERROR_SECURITY_EXTENSION);
                 System.exit(0);
             }
+            // get the file
+            File secPolicyFile = new File(secPolicyFileName);
+            // check whether the security policy file exists.
+            if(!secPolicyFile.exists()) {
+                System.err.print(
+                        Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
+                System.exit(0);
+            }
+
             // check whether log property file name is given as argument
             if(logPropFileName == null) {
                 System.err.print(
-                        Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE);
+                        Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG);
                 System.exit(0);
             }
             // check whether the log property file has correct extensions
@@ -157,23 +186,42 @@ public class DeployApplication {
                         Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
                 System.exit(0);
             }
+            // get the file
+            File logPropFile = new File(logPropFileName);
+            // check whether the log property file exists.
+            if(!logPropFile.exists()) {
+                System.err.print(
+                        Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND);
+                System.exit(0);
+            }
+
             // check the extension on the database, if it is given as argument 
             if(databaseName != null) {
-        	if(!databaseName.endsWith(".jar") 
-        		&& !databaseName.endsWith(".zip")) {
-        	    System.err.print(
-        		    Constants.MSG_ERROR_DATABASE_EXTENSION);
-        	    System.exit(0);
-        	}
+                if(!databaseName.endsWith(".jar") 
+                        && !databaseName.endsWith(".zip")) {
+                    System.err.print(
+                            Constants.MSG_ERROR_DATABASE_EXTENSION);
+                    System.exit(0);
+                }
+                
+                // get the file
+                File databaseFile = new File(databaseName);
+                // check whether the database file exists.
+                if(!databaseFile.exists()) {
+                    System.err.print(
+                                Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
+                    System.exit(0);
+                }
             }
 
             // Make the configuration based on the input data
             itConfig = new DeployConfiguration(
-                    itConfigFileName,
-                    netarchiveSuiteFileName,
-                    secPolicyFileName,
-                    logPropFileName,
-                    outputDir); 
+                    itConfigFile,
+                    netarchiveSuiteFile,
+                    secPolicyFile,
+                    logPropFile,
+                    outputDir,
+                    databaseName); 
 
             // Write the scripts, directories and everything
             itConfig.write();

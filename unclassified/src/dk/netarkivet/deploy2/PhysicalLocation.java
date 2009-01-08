@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -60,6 +60,8 @@ public class PhysicalLocation {
     private File logPropFile;
     /** The inherited security file.*/
     private File securityPolicyFile;
+    /** The inherited database file name.*/
+    private String databaseFileName;
 
     /**
      * The physical locations is referring to the position in the real world
@@ -72,10 +74,11 @@ public class PhysicalLocation {
      * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
+     * @param dbFileName The name of the database.
      */
     public PhysicalLocation(Element elem, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-        File securityPolicy) {
+        File securityPolicy, String dbFileName) {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(elem, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, 
@@ -85,6 +88,7 @@ public class PhysicalLocation {
         "String netarchiveSuite");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
+        
         // make a copy of parent, don't use it directly.
         settings = new XmlStructure(parentSettings.getRoot());
         physLocRoot = elem;
@@ -92,6 +96,7 @@ public class PhysicalLocation {
         netarchiveSuiteFileName = netarchiveSuiteSource;
         logPropFile = logProp;
         securityPolicyFile = securityPolicy;
+        databaseFileName = dbFileName;
         // retrieve the specific settings for this instance 
         Element tmpSet = physLocRoot.element(Constants.SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
@@ -141,11 +146,11 @@ public class PhysicalLocation {
                     Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile));
+                        securityPolicyFile, databaseFileName));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile));
+                        securityPolicyFile, databaseFileName));
             }
         }
     }

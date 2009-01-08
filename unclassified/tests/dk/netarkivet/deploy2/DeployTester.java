@@ -45,11 +45,12 @@ public class DeployTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
 
     // define standard arguments
-    private String it_conf_xml_name = TestInfo.IT_CONF_FILE.getPath();
-    private String securityPolicyFile = TestInfo.TEST_SECURITY_POLICY.getPath();
-    private String testLogPropFile = TestInfo.TEST_LOG_PROP.getPath();
-    private String nullzipName = "null.zip";
+    private String itConfXmlName = TestInfo.IT_CONF_FILE.getPath();
+    private String securityPolicyName = TestInfo.FILE_SECURITY_POLICY.getPath();
+    private String testLogPropName = TestInfo.FILE_LOG_PROP.getPath();
+    private String nullzipName = TestInfo.FILE_NETATCHIVE_SUITE.getPath();
     private String output_dir = TestInfo.TMPDIR.getPath();
+    private String databaseName = TestInfo.FILE_DATABASE.getPath();
     
     public void setUp() {
         rs.setUp();
@@ -82,11 +83,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeploy() {
         String[] args = {
-                    TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+                    TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
                     TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-                    TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-                    TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-                    TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+                    TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+                    TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+                    TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                    TestInfo.ARGUMENT_DATABASE_FILE + databaseName
                     };
         DeployApplication.main(args);
         // compare the resulting output files with the target files
@@ -127,9 +129,10 @@ public class DeployTester extends TestCase {
         String[] args = {
         	TestInfo.ARGUMENT_CONFIG_FILE + single_it_conf_xml_name,
         	TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-        	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-        	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-        	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+        	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+        	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+        	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
                 };
         DeployApplication.main(args);
         // compare the resulting output files with the target files
@@ -168,11 +171,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArguments1() {
 	String[] args = {
-		"-ERROR" + it_conf_xml_name,
+		"-ERROR" + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -190,12 +194,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArguments2() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-		TestInfo.ARGUMENT_DATABASE_FILE + "ERROR", 
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + "ERROR", 
 		TestInfo.ARGUMENT_CONFIG_FILE + "ERROR", 
 		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR", 
@@ -217,7 +221,7 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArguments3() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 	};
 	DeployApplication.main(args);
 
@@ -237,9 +241,10 @@ public class DeployTester extends TestCase {
 	String[] args = {
 		TestInfo.ARGUMENT_CONFIG_FILE + "config.ERROR",
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -257,11 +262,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsExtension2() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "null.ERROR",
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -279,11 +285,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsExtension3() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
 		TestInfo.ARGUMENT_SECURITY_FILE + "security.ERROR",
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -301,11 +308,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsExtension4() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "log.ERROR",
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -323,10 +331,10 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsExtension5() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
 		TestInfo.ARGUMENT_DATABASE_FILE + "database.ERROR"
 	};
@@ -349,9 +357,10 @@ public class DeployTester extends TestCase {
 	String[] args = {
 //		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -361,7 +370,7 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_CONFIG_FILE, pssMsg);
+		Constants.MSG_ERROR_NO_CONFIG_FILE_ARG, pssMsg);
     }
 
     /**
@@ -370,11 +379,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsLack2() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 //		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -384,7 +394,7 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE, pssMsg);
+		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG, pssMsg);
     }
 
     /**
@@ -393,11 +403,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsLack3() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
 //		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
-		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -407,7 +418,7 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_SECURITY_FILE, pssMsg);
+		Constants.MSG_ERROR_NO_SECURITY_FILE_ARG, pssMsg);
     }
 
     /**
@@ -416,11 +427,12 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArgumentsLack4() {
 	String[] args = {
-		TestInfo.ARGUMENT_CONFIG_FILE + it_conf_xml_name,
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
-		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyFile,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 //		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropFile,
-		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
 	};
 	DeployApplication.main(args);
 
@@ -430,6 +442,121 @@ public class DeployTester extends TestCase {
 
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE, pssMsg);
+		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG, pssMsg);
+    }
+
+    /**
+     * tests when config file argument refers to non-existing file.
+     */
+    public void testDeployFileExist1() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + "ERROR.xml",
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND, pssMsg);
+    }
+
+    /**
+     * tests when NetarchiveSuite file argument refers to non-existing file.
+     */
+    public void testDeployFileExist2() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR.zip",
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND, pssMsg);
+    }
+
+    /**
+     * tests when security file argument refers to non-existing file.
+     */
+    public void testDeployFileExist3() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR.policy",
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND, pssMsg);
+    }
+
+    /**
+     * tests when log property file argument refers to non-existing file.
+     */
+    public void testDeployFileExist4() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR.prop",
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND, pssMsg);
+    }
+
+    /**
+     * tests when database file argument refers to non-existing file.
+     */
+    public void testDeployFileExist5() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + "ERROR.jar"
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND, pssMsg);
     }
 }

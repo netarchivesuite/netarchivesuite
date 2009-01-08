@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -177,9 +177,9 @@ public class Application {
      * @return The path in linux syntax.
      */
     public String installPathLinux() {
-        return machineParameters.getInstallDir().getText() + "/"
+        return machineParameters.getInstallDirValue() + "/"
             + settings.getSubChildValue(
-                    Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
+                    Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
     }
 
     /**
@@ -188,9 +188,9 @@ public class Application {
      * @return The path with windows syntax.
      */
     public String installPathWindows() {
-        return machineParameters.getInstallDir().getText() + "\\"
+        return machineParameters.getInstallDirValue() + "\\"
             + settings.getSubChildValue(
-                    Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
+                    Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
     }
 
     /** 

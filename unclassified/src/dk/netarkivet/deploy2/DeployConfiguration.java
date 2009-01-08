@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -45,7 +45,6 @@ public class DeployConfiguration {
     private Parameters machineParam;
     /** The list of the physical locations.*/
     private List<PhysicalLocation> physLocs;
-
     /** The file containing the it-configuration.*/
     private File itConfigFile;
     /** The NetarchiveSuite file (in .zip).*/
@@ -56,6 +55,8 @@ public class DeployConfiguration {
     private File logPropFile;
     /** The directory for output.*/
     private File outputDir;
+    /** The name of the database.*/
+    private String databaseFileName;
 
     /**
      *  Initialise everything.
@@ -63,28 +64,31 @@ public class DeployConfiguration {
      * @param itConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
-     * @param logPropFileName Name of the log file.
+     * @param logPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
+     * @param dbFileName Name of the database.
      */
-    public DeployConfiguration(String itConfigFileName, 
-            String netarchiveSuiteFileName, 
-            String secPolicyFileName, 
-            String logPropFileName,
-            String outputDirName) {
-        ArgumentNotValid.checkNotNullOrEmpty(
+    public DeployConfiguration(File itConfigFileName, 
+            File netarchiveSuiteFileName, 
+            File secPolicyFileName,
+            File logPropFileName,
+            String outputDirName,
+            String dbFileName) {
+        ArgumentNotValid.checkNotNull(
                 itConfigFileName, "No config file");
-        ArgumentNotValid.checkNotNullOrEmpty(
+        ArgumentNotValid.checkNotNull(
                 netarchiveSuiteFileName, "No installation file");
-        ArgumentNotValid.checkNotNullOrEmpty(
+        ArgumentNotValid.checkNotNull(
                 secPolicyFileName, "No security file");
-        ArgumentNotValid.checkNotNullOrEmpty(
+        ArgumentNotValid.checkNotNull(
                 logPropFileName, "No log file");
 
-        itConfigFile = new File(itConfigFileName);
-        netarchiveSuiteFile = new File(netarchiveSuiteFileName);
-        secPolicyFile = new File(secPolicyFileName);
-        logPropFile = new File(logPropFileName);
-
+        itConfigFile = itConfigFileName;
+        netarchiveSuiteFile = netarchiveSuiteFileName;
+        secPolicyFile = secPolicyFileName;
+        logPropFile = logPropFileName;
+        databaseFileName = dbFileName;
+        
         // get configuration tree, settings and parameters
         config = new XmlStructure(itConfigFile);
         settings = new XmlStructure(
@@ -97,7 +101,7 @@ public class DeployConfiguration {
             // Load output directory from config file
             outputDirName = "./" 
                 + config.getSubChildValue(
-                        Constants.ENVIRONMENT_NAME_TOTAL_PATH_BRANCH)
+                        Constants.ENVIRONMENT_NAME_TOTAL_PATH_LEAF)
                         + "/";
         }
         outputDir = new File(outputDirName);
@@ -119,7 +123,7 @@ public class DeployConfiguration {
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
                     netarchiveSuiteFile.getName(), logPropFile, 
-                    secPolicyFile));
+                    secPolicyFile, databaseFileName));
         }
     }
 

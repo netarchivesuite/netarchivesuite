@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -68,6 +68,8 @@ public abstract class Machine {
     protected File inheritedLogPropFile;
     /** The inherited security.policy file.*/
     protected File inheritedSecurityPolicyFile;
+    /** The inherited database file name.*/
+    protected String databaseFileName;
     /** The directory for this machine.*/
     protected File machineDirectory;
 
@@ -83,10 +85,11 @@ public abstract class Machine {
      * package file.
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
+     * @param dbFileName The name of the database file.
      */
     public Machine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy) {
+            File logProp, File securityPolicy, String dbFileName) {
         ArgumentNotValid.checkNotNull(e, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
@@ -102,6 +105,7 @@ public abstract class Machine {
         netarchiveSuiteFileName = netarchiveSuiteSource;
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
+        databaseFileName = dbFileName;
 
         // retrieve the specific settings for this instance 
         Element tmpSet = machineRoot.element(Constants.SETTINGS_BRANCH);
@@ -387,7 +391,7 @@ public abstract class Machine {
      */
     protected String getEnvironmentName() {
         return settings.getSubChildValue(
-                Constants.ENVIRONMENT_NAME_SETTING_PATH_BRANCH);
+                Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
     }
 
     /**
@@ -467,4 +471,19 @@ public abstract class Machine {
      * @return The class paths in operation system specific syntax.
      */
     abstract protected String osGetClassPath(Application app);
+    
+    /**
+     * Checks if a specific directory for the database is given in the settings,
+     * and thus if the database should be installed on this machine.
+     * 
+     * If no specific database is given (databaseFileName = null) then use the 
+     * standard database extracted from NetarchiveSuite.zip.
+     * Else send the given new database to the standard database location.
+     * 
+     * Extract the database in the standard database location to the specified
+     * database directory.
+     * 
+     * @return The script for installing the database (if needed).
+     */
+    abstract protected String osInstallDatabase();
 }

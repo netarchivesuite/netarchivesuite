@@ -25,34 +25,31 @@ package dk.netarkivet.deploy2;
 import java.io.File;
 
 public class TestInfo {
+    // directories
     public static final File DATA_DIR 
     = new File("tests/dk/netarkivet/deploy2/data");
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File TMPDIR = new File(WORKING_DIR, "tmpdir");
     public static final File TARGETDIR = new File(WORKING_DIR,"target");
+    public static final File SINGLE_TARGET_DIR = new File(
+	    WORKING_DIR, "single_target");
 
+    // argument files
     public static final File IT_CONF_FILE  = new File(
 	    WORKING_DIR, "it_conf_test_new-v10.xml");
+    public static final File IT_CONF_SINGLE_FILE = new File(
+	    WORKING_DIR, "it_conf_test_single.xml");
+    public static final File FILE_NETATCHIVE_SUITE = new File(
+            WORKING_DIR, "null.zip");
+    public static final File FILE_SECURITY_POLICY = new File(
+	    WORKING_DIR, "security.policy");
+    public static final File FILE_LOG_PROP = new File(
+	    WORKING_DIR, "log.prop");
+    public static final File FILE_DATABASE = new File(
+	    WORKING_DIR, "fullhddb.jar");
 
-    public static final File SETTINGS_FILE = new File(
-	    WORKING_DIR, "settings.xml");
-    public static final String TEST_SYSTEM_ADMIN_HOSTNAME 
-    = "kb-dev-adm-001.kb.dk";
-    public static final int TEST_JMX_HOSTS = 9;
-    public static final String TEST_JMX_PASSWORD = "test";
-
-    public static final File IT_CONF_SINGLE_FILE
-    = new File(WORKING_DIR, "it_conf_test_single.xml");
-
-    public static final File SINGLE_TARGET_DIR 
-    = new File(WORKING_DIR, "single_target");
-
-    public static final File TEST_SECURITY_POLICY = new File(WORKING_DIR, 
-    "security.policy");
-    public static final File TEST_LOG_PROP = new File(WORKING_DIR, 
-    "log.prop");
-
+    // arguments
     public static final String ARGUMENT_CONFIG_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_CONFIG_FILE;
     public static final String ARGUMENT_NETARCHIVE_SUITE_FILE = 

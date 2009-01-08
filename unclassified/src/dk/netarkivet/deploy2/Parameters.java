@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -47,6 +47,8 @@ public class Parameters {
     private Element installDir;
     /** The machine user name.*/
     private Element machineUserName;
+    /** The directory for the database.*/
+    private Element databaseDir;
 
     /**
      * Constructor.
@@ -63,6 +65,7 @@ public class Parameters {
         installDir = root.getChild(Constants.PARAMETER_INSTALL_DIR_BRANCH);
         machineUserName = root.getChild(
                 Constants.PARAMETER_MACHINE_USER_NAME_BRANCH);
+        databaseDir = root.getChild(Constants.PARAMETER_DATABASE_DIR_BRANCH);
     }
 
     /**
@@ -95,6 +98,12 @@ public class Parameters {
         } else {
             machineUserName = null;
         }
+        // copy parent database dir (if any)
+        if(parent.databaseDir != null) {
+            databaseDir = parent.databaseDir;
+        } else {
+            databaseDir = null;
+        }
     }
 
     /**
@@ -126,6 +135,11 @@ public class Parameters {
         if(tmp.size() > 0) {
             machineUserName = tmp.get(0);
         }
+        // check if new database dir to overwrite existing
+        tmp = root.elements(Constants.PARAMETER_DATABASE_DIR_BRANCH);
+        if(tmp.size() > 0) {
+            databaseDir = tmp.get(0);
+        }
     }
 
     /**
@@ -147,8 +161,25 @@ public class Parameters {
      * 
      * @return The install directory element.
      */
-    public Element getInstallDir() {
-        return installDir;
+    public String getInstallDirValue() {
+        if(installDir != null) {
+            return installDir.getText();
+        } else {
+            return "";
+        }
+    }
+    
+    /** 
+     * For retrieving the directory for the database.
+     * 
+     * @return The database directory element.
+     */
+    public String getDatabaseDirValue() {
+        if(databaseDir != null) {
+            return databaseDir.getText();
+        } else {
+            return "";
+        }
     }
     
     /**
@@ -167,14 +198,5 @@ public class Parameters {
      */
     public List<Element> getClassPaths() {
         return classPaths;
-    }
-    
-    /**
-     * For retrieving the list of java options.
-     * 
-     * @return The list of java options.
-     */
-    public List<Element> getJavaOptions() {
-        return javaOptions;
     }
 }

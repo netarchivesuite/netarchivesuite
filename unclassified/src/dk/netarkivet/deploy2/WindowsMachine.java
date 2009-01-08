@@ -1,7 +1,7 @@
-/* $Id: Deploy.java 470 2008-08-20 16:08:30Z svc $
- * $Revision: 470 $
- * $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
- * $Author: svc $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -54,12 +54,13 @@ public class WindowsMachine extends Machine {
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
+     * @param dbFileName The name of the database file.
      */
     public WindowsMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-                File logProp, File securityPolicy) {
+                File logProp, File securityPolicy, String dbFileName) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy);
+                logProp, securityPolicy, dbFileName);
         // set operating system
         OS = "windows";
         scriptExtension = ".bat";
@@ -180,7 +181,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.getInstallDir().getText() + "\\" 
+        return machineParameters.getInstallDirValue() + "\\" 
                 + getEnvironmentName();
     }
 
@@ -448,6 +449,25 @@ public class WindowsMachine extends Machine {
         ArgumentNotValid.checkNotNull(path, "String path");
         String res = path;
         res = res.replaceAll("\\\\", "\\\\\\\\");
+        return res;
+    }
+
+    /**
+     * Checks if a specific directory for the database is given in the settings,
+     * and thus if the database should be installed on this machine.
+     * 
+     * If no specific database is given (databaseFileName = null) then use the 
+     * standard database extracted from NetarchiveSuite.zip.
+     * Else send the given new database to the standard database location.
+     * 
+     * Extract the database in the standard database location to the specified
+     * database directory.
+     * 
+     * @return The script for installing the database (if needed).
+     */
+    @Override
+    protected String osInstallDatabase() {
+        String res = "";
         return res;
     }
 }
