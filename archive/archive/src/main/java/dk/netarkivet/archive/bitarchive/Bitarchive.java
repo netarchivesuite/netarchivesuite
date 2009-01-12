@@ -283,7 +283,16 @@ public class Bitarchive {
                 = admin.getTemporaryPath(fileName, arcfile.getSize());
         File destination = null;
         try {
+            //The file is first copied to a temporary destination on the same
+            //mount. The reason for this is to eliminate that there are files
+            //in the file-directory that are currupted because of upload 
+            //errors. For example if the there is a break down after only half 
+            //the file is uploaded. It also means that we do not need to clean 
+            //up in the file directory, in case of failure - only the temporary 
+            //destination needs clean up.
             arcfile.copyTo(temp_destination);
+            //Note that the move operation is a constant time operation within
+            //the same mount
             destination = admin.moveToStorage(temp_destination);
         } catch (Throwable e) {
             // destination is known to be null here, so don't worry about it.
