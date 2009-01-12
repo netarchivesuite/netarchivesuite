@@ -98,6 +98,7 @@ public class DeployTester extends TestCase {
         if (differences.length() > 0) {
             System.out.println(differences);
         }
+
         assertEquals("No differences expected", 0, differences.length());
 
         // find all settings*.xml files
@@ -143,29 +144,56 @@ public class DeployTester extends TestCase {
             System.out.println(differences);
         }
         assertEquals("No differences expected", 0, differences.length());
-
-        // find all settings*.xml files
-        List<File> settingsFiles = TestFileUtils.findFiles(
-                TestInfo.TMPDIR,
-                new FileFilter() {
-                    Pattern settingsPattern = Pattern.compile(
-                            "^settings.*\\.xml$");
-                    public boolean accept(File pathname) {
-                        return settingsPattern.matcher(
-                                pathname.getName()).matches();
-                    }
-                 }
-        );
-        // XSD-test them
-        for (File f : settingsFiles) {
-            System.setProperty("dk.netarkivet.settings.file",
-                    f.getAbsolutePath());
-            Settings.reload();
-            // XmlUtils.validateWithXSD(new File(
-            //  "./lib/data-definitions/settings.xsd"));
-        }
     }
     
+    /** 
+     * Test that we can deploy with a single location.
+     */
+    public void testDeployDatabase() {
+        String database_it_conf_xml_name = 
+            TestInfo.IT_CONF_DATABASE_FILE.getPath();
+        
+        String[] args = {
+        	TestInfo.ARGUMENT_CONFIG_FILE + database_it_conf_xml_name,
+        	TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+        	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+        	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+        	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                };
+        DeployApplication.main(args);
+        // compare the resulting output files with the target files
+        String differences =
+                TestFileUtils.compareDirsText(TestInfo.DATABASE_TARGET_DIR,
+                                              TestInfo.TMPDIR);
+        assertEquals("No differences expected", 0, differences.length());
+    }
+    
+    /**
+     * tests The test arguments for argument errors.
+     */
+    public void testTestArgumentArguments() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_TEST + TestInfo.ARGUMENT_TEST_ARG
+	};
+        pss.tearDown();
+        pse.tearDown();
+        DeployApplication.main(args);
+        // compare the resulting output files with the target files
+        String differences =
+                TestFileUtils.compareDirsText(TestInfo.TEST_TARGET_DIR,
+                                              TestInfo.TMPDIR);
+        assertEquals("No differences expected", 0, differences.length());
+        pse.setUp();
+        pss.setUp();
+    }
+
     /**
      * tests if non-existing argument is given
      */
@@ -558,5 +586,54 @@ public class DeployTester extends TestCase {
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
 		Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND, pssMsg);
+    }
+
+    /**
+     * tests The test arguments for errors.
+     */
+    public void testTestArgument() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_TEST + "ERROR"
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_TEST_ARGUMENTS, pssMsg);
+    }
+
+    /**
+     * tests the test argument for too large difference between the offset 
+     * and HTTP port.
+     */
+    public void testTestArgument1() {
+	String[] args = {
+		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_TEST + "1000,2000,test,test@kb.dk"
+	};
+	DeployApplication.main(args);
+
+	// get message and exit value 
+	int pseVal = pse.getExitValue();
+	String pssMsg = pss.getErr();
+
+	assertEquals("Exit value asserted 0.", 0, pseVal);
+	assertEquals("Correct error message expected.", 
+		Constants.MSG_ERROR_TEST_OFFSET, pssMsg);
     }
 }

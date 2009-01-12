@@ -34,12 +34,18 @@ public class TestInfo {
     public static final File TARGETDIR = new File(WORKING_DIR,"target");
     public static final File SINGLE_TARGET_DIR = new File(
 	    WORKING_DIR, "single_target");
+    public static final File DATABASE_TARGET_DIR = new File(
+	    WORKING_DIR, "database_target");
+    public static final File TEST_TARGET_DIR = new File(
+	    WORKING_DIR, "test_target");
 
     // argument files
     public static final File IT_CONF_FILE  = new File(
 	    WORKING_DIR, "it_conf_test_new-v10.xml");
     public static final File IT_CONF_SINGLE_FILE = new File(
 	    WORKING_DIR, "it_conf_test_single.xml");
+    public static final File IT_CONF_DATABASE_FILE = new File(
+	    WORKING_DIR, "it_conf_test_database.xml");
     public static final File FILE_NETATCHIVE_SUITE = new File(
             WORKING_DIR, "null.zip");
     public static final File FILE_SECURITY_POLICY = new File(
@@ -62,4 +68,7 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
     public static final String ARGUMENT_DATABASE_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
+    public static final String ARGUMENT_TEST = 
+	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
+    public static final String ARGUMENT_TEST_ARG = "1000,1001,test,test@kb.dk";
 }
