@@ -74,75 +74,75 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osInstallScript() {
-        String res = "";
+        StringBuilder res = new StringBuilder("");
         // echo copying null.zip to:kb-test-adm-001.kb.dk
-        res += "echo copying ";
-        res += netarchiveSuiteFileName;
-        res += " to:";
-        res += name;
-        res += "\n";
+        res.append("echo copying ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" to:");
+        res.append(name);
+        res.append("\n");
         // scp null.zip dev@kb-test-adm-001.kb.dk:/home/dev
-        res += "scp ";
-        res += netarchiveSuiteFileName;
-        res += " ";
-        res += machineUserLogin();
-        res += ":";
-        res += machineParameters.getInstallDirValue();
-        res += "\n";
+        res.append("scp ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" ");
+        res.append(machineUserLogin());
+        res.append(":");
+        res.append(machineParameters.getInstallDirValue());
+        res.append("\n");
         // echo unzipping null.zip at:kb-test-adm-001.kb.dk
-        res += "echo unzipping ";
-        res += netarchiveSuiteFileName;
-        res += " at:";
-        res += name;
-        res += "\n";
+        res.append("echo unzipping ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" at:");
+        res.append(name);
+        res.append("\n");
         // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d 
         // /home/dev/TEST
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " unzip -q -o ";
-        res += machineParameters.getInstallDirValue();
-        res += "/";
-        res += netarchiveSuiteFileName;
-        res += " -d ";
-        res += getInstallDirPath();
-        res += "\n";
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" unzip -q -o ");
+        res.append(machineParameters.getInstallDirValue());
+        res.append("/");
+        res.append(netarchiveSuiteFileName);
+        res.append(" -d ");
+        res.append(getInstallDirPath());
+        res.append("\n");
         // echo copying settings and scripts
-        res += "echo copying settings and scripts";
-        res += "\n";
+        res.append("echo copying settings and scripts");
+        res.append("\n");
         // DATABASE!
-        res += osInstallDatabase();
+        res.append(osInstallDatabase());
         // scp -r kb-test-adm-001.kb.dk/* 
         // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
-        res += "scp -r ";
-        res += name;
-        res += "/* ";
-        res += machineUserLogin();
-        res += ":";
-        res += getConfDirPath();
-        res += "\n";
+        res.append("scp -r ");
+        res.append(name);
+        res.append("/* ");
+        res.append(machineUserLogin());
+        res.append(":");
+        res.append(getConfDirPath());
+        res.append("\n");
         // echo make scripts executable
-        res += "echo make scripts executable";
-        res += "\n";
+        res.append("echo make scripts executable");
+        res.append("\n");
         // ssh dev@kb-test-adm-001.kb.dk "chmod +x /home/dev/TEST/conf/*.sh "
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \"chmod +x ";
-        res += getConfDirPath();
-        res += "*.sh \"";
-        res += "\n";
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"chmod +x ");
+        res.append(getConfDirPath());
+        res.append("*.sh \"");
+        res.append("\n");
         // echo make password files readonly
-        res += "echo make password files readonly";
-        res += "\n";
+        res.append("echo make password files readonly");
+        res.append("\n");
         // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
         // /home/dev/TEST/conf/jmxremote.password"
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \"chmod 400 ";
-        res += getConfDirPath();
-        res += "jmxremote.password\"";
-        res += "\n";
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"chmod 400 ");
+        res.append(getConfDirPath());
+        res.append("jmxremote.password\"");
+        res.append("\n");
         // 
-        return res;
+        return res.toString();
     }
 
     /**
@@ -152,15 +152,16 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osKillScript() {
-        String res = "";
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \". /etc/profile; ";
-        res += getConfDirPath();
-        res += "killall";
-        res += scriptExtension;
-        res += "\";";
-        return res + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \". /etc/profile; ");
+        res.append(getConfDirPath());
+        res.append("killall");
+        res.append(scriptExtension);
+        res.append("\";");
+        res.append("\n");
+        return res.toString();
     }
 
     /**
@@ -170,17 +171,18 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osStartScript() {
-        String res = "";
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \". /etc/profile; ";
-        res += getConfDirPath();
-        res += "startall";
-        res += scriptExtension;
-        res += "; sleep 5; cat ";
-        res += getInstallDirPath();
-        res += "/*.log\"";
-        return res + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \". /etc/profile; ");
+        res.append(getConfDirPath());
+        res.append("startall");
+        res.append(scriptExtension);
+        res.append("; sleep 5; cat ");
+        res.append(getInstallDirPath());
+        res.append("/*.log\"");
+        res.append("\n");
+        return res.toString();
     }
 
     /** 
@@ -418,12 +420,12 @@ public class LinuxMachine extends Machine {
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
-        String res = "";
+        StringBuilder res = new StringBuilder("");
         // get all the classpaths
         for(Element cp : app.getMachineParameters().getClassPaths()) {
-            res += getInstallDirPath() + "/" + cp.getText() + ":";
+            res.append(getInstallDirPath() + "/" + cp.getText() + ":");
         }
-        return res;
+        return res.toString();
     }
 
     /**
@@ -441,56 +443,58 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osInstallDatabase() {
-        String res = "";
+        StringBuilder res = new StringBuilder();
 
         String databaseDir = machineParameters.getDatabaseDirValue();
         // Do not install if no proper database directory.
         if(databaseDir == null || databaseDir == "") {
-            return res;
+            return "";
         }
 
         // copy to final destination if database argument.
         if(databaseFileName != null) {
             // echo Copying database
-            res += "echo Copying database" + "\n";
+            res.append("echo Copying database" + "\n");
             // scp database.jar user@machine:dbDir/db
-            res += "scp ";
-            res += databaseFileName;
-            res += " ";
-            res += machineUserLogin();
-            res += ":";
-            res += getInstallDirPath();
-            res += "/";
-            res += Constants.DATABASE_BASE_PATH;
-            res += "\n";
+            res.append("scp ");
+            res.append(databaseFileName);
+            res.append(" ");
+            res.append(machineUserLogin());
+            res.append(":");
+            res.append(getInstallDirPath());
+            res.append("/");
+            res.append(Constants.DATABASE_BASE_PATH);
+            res.append("\n");
         }
         // unzip database.
-        res += "echo Unzipping database" + "\n";
-        // ssh user@machine cd dir; if [ -d databaseDir ]; then ""; 
-        // else mkdir databaseDir; fi; if [ "$(ls -A databaseDir)" ]; 
-        // then echo Database directory not empty; 
-        // else unzip dbDir/db databaseDir/.; fi;
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " cd ";
-        res += getInstallDirPath();
-        res += "; if [ -d ";
-        res += databaseDir;
-        res += " ]; then echo \"\"; else mkdir ";
-        res += databaseDir;
-        res += "; fi; if [ \"$(ls -A ";
-        res += databaseDir;
-        res += ")\" ]; then echo ";
-        res += Constants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY;
-        res += "; else unzip -q -o ";
-        res += Constants.DATABASE_BASE_PATH;
-        res += " -d ";
-        res += databaseDir;
-        res += "/.; fi;";
-        res += "\n";
+        res.append("echo Unzipping database" + "\n");
+        // ssh user@machine "
+        // cd dir; if [ -d databaseDir ]; then echo ; 
+        // else mkdir databaseDir; fi; if [ $(ls -A databaseDir) ]; 
+        // then echo ERROR MESSAGE: DIR NOT EMPTY; 
+        // else unzip -q -o dbDir/db -d databaseDir/.; fi; exit;
+        // "
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"cd ");
+        res.append(getInstallDirPath());
+        res.append("; if [ -d ");
+        res.append(databaseDir);
+        res.append(" ]; then echo ; else mkdir ");
+        res.append(databaseDir);
+        res.append("; fi; if [ $(ls -A ");
+        res.append(databaseDir);
+        res.append(") ]; then echo ");
+        res.append(Constants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
+        res.append("; else unzip -q -o ");
+        res.append(Constants.DATABASE_BASE_PATH);
+        res.append(" -d ");
+        res.append(databaseDir);
+        res.append("/.; fi; exit; \"");
+        res.append("\n");
 
-         System.out.println("Install database: ");
-         System.out.println(res);
-        return res;
+//         System.out.println("Install database: ");
+//        System.out.println(res);
+        return res.toString();
     }
 }

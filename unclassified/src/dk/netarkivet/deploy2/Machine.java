@@ -193,11 +193,13 @@ public abstract class Machine {
      * @return The script to kill this machine.
      */
     public String writeToGlobalKillScript() {
-        String res = "";
-        res += "echo KILLING MACHINE: " + machineUserLogin() + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("echo KILLING MACHINE: ");
+        res.append(machineUserLogin());
+        res.append("\n");
         // write the operating system dependent part of the kill script
-        res += osKillScript();
-        return res;
+        res.append(osKillScript());
+        return res.toString();
     }
 
     /**
@@ -207,11 +209,13 @@ public abstract class Machine {
      * @return The script to make the installation on this machine
      */
     public String writeToGlobalInstallScript() {
-        String res = "";
-        res += "echo INSTALLING TO MACHINE: " + machineUserLogin() + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("echo INSTALLING TO MACHINE: ");
+        res.append(machineUserLogin());
+        res.append("\n");
         // write the operating system dependent part of the install script
-        res += osInstallScript();
-        return res;
+        res.append(osInstallScript());
+        return res.toString();
     }
 
     /**
@@ -221,11 +225,13 @@ public abstract class Machine {
      * @return The script to start this machine.
      */
     public String writeToGlobalStartScript() {
-        String res = "";
-        res += "echo STARTING MACHINE: " + machineUserLogin() + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("echo STARTING MACHINE: ");
+        res.append(machineUserLogin());
+        res.append("\n");
         // write the operating system dependent part of the start script
-        res += osStartScript();
-        return res;
+        res.append(osStartScript());
+        return res.toString();
     }
 
     /**
@@ -351,15 +357,15 @@ public abstract class Machine {
                 jw.println("#");
 
                 // get the monitor name and password
-                String monitor = "";
-                monitor += settings.getSubChildValue(
+                StringBuilder monitor = new StringBuilder("");
+                monitor.append(settings.getSubChildValue(
                         Constants.JMX_PASSWORD_MONITOR_BRANCH,
-                        Constants.JMX_PASSWORD_NAME_BRANCH);
-                monitor += " ";
-                monitor += settings.getSubChildValue(
+                        Constants.JMX_PASSWORD_NAME_BRANCH));
+                monitor.append(" ");
+                monitor.append(settings.getSubChildValue(
                         Constants.JMX_PASSWORD_MONITOR_BRANCH,
-                        Constants.JMX_PASSWORD_PASSWORD_BRANCH);
-                jw.print(monitor);
+                        Constants.JMX_PASSWORD_PASSWORD_BRANCH));
+                jw.print(monitor.toString());
             } finally {
                 jw.close();
             }

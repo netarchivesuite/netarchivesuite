@@ -47,7 +47,7 @@ public class Constants {
     /** The path to the database directory from the settings branch.*/
     static final String[] DATABASE_URL_SETTING_LEAF_PATH = 
         {COMMON_BRANCH, DATABASE_BRANCH, DATABASE_URL_BRANCH};
-
+    
     // parameter specific
     /** The path to the class path branches.*/
     static final String CLASS_PATH_BRANCH = "deployClassPath";
@@ -68,6 +68,46 @@ public class Constants {
     static final String MACHINE_BRANCH = "deployMachine";
     /** The path to applications from a machine.*/
     static final String APPLICATION_BRANCH = "applicationName";
+    
+    /** The path to the HTTP branch from common.*/
+    static final String SETTINGS_HTTP_BRANCH = "http";
+    /** The path to the port branch from the HTTP branch.*/
+    static final String SETTINGS_HTTP_PORT_BRANCH = "port";
+    /** The complete path to the port leaf from beyond settings.*/
+    static final String[] SETTINGS_HTTP_PORT_PATH = {SETTINGS_BRANCH, 
+	COMMON_BRANCH, SETTINGS_HTTP_BRANCH, SETTINGS_HTTP_PORT_BRANCH}; 
+    /** The path to the notification branch under common.*/
+    static final String SETTINGS_NOTIFICATION_BRANCH = "notifications";
+    /** The path to the receiver branch under notification.*/
+    static final String SETTINGS_NOTIFICATION_RECEIVER_BRANCH = "receiver";
+    /** The complete path to the receiver leaf from beyond settings.*/
+    static final String[] SETTINGS_NOTIFICATION_RECEIVER_PATH = 
+        {SETTINGS_BRANCH, COMMON_BRANCH, SETTINGS_NOTIFICATION_BRANCH, 
+	SETTINGS_NOTIFICATION_RECEIVER_BRANCH};
+    /** The name of the new modified configuration file for tests.*/
+    static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
+
+    static final String SETTINGS_JMX_BRANCH = "jmx";
+    static final String SETTINGS_JMX_PORT_BRANCH = "port";
+    static final String SETTINGS_JMX_RMI_PORT_BRANCH = "rmiPort";
+    static final String SETTINGS_HARVESTER_BRANCH = "harvester";
+    static final String SETTINGS_HARVESTER_HARVESTING_BRANCH = "harvesting";
+    static final String SETTINGS_HARVESTER_HERITRIX_BRANCH = "heritrix";
+    static final String SETTINGS_HARVESTER_GUI_PORT_BRANCH = "guiPort";
+    static final String SETTINGS_HARVESTER_JMX_PORT_BRANCH = "jmxPort";
+    
+    static final String[] TEXT_JMX_PORT_PATH = {SETTINGS_BRANCH, COMMON_BRANCH, 
+	SETTINGS_JMX_BRANCH, SETTINGS_JMX_PORT_BRANCH};
+    static final String[] TEXT_JMX_RMI_PORT_PATH = {SETTINGS_BRANCH, 
+	COMMON_BRANCH, SETTINGS_JMX_BRANCH, SETTINGS_JMX_RMI_PORT_BRANCH};
+    static final String[] TEXT_HARVEST_HETRIX_GUI_PORT = {
+	SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
+	SETTINGS_HARVESTER_HARVESTING_BRANCH, 
+	SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_GUI_PORT_BRANCH};
+    static final String[] TEXT_HARVEST_HETRIX_JMX_PORT = {
+	SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
+	SETTINGS_HARVESTER_HARVESTING_BRANCH, 
+	SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_JMX_PORT_BRANCH};
 
     // physical location specific
     /** The path to name in a physical location instance.*/
@@ -111,8 +151,7 @@ public class Constants {
     /** The path to the base database (the two above combined).*/
     static final String DATABASE_BASE_PATH = 
         DATABASE_BASE_DIR + DATABASE_BASE_FILE;
-    /** The message to write when database is trying to overwrite a
-      * non-empty directory· */
+    /** The message when database is trying to overwrite a non-empty dir.*/
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
         "The database directory is not empty as required.";
 
@@ -121,6 +160,8 @@ public class Constants {
     static final int SCRIPT_DASH_NUM_REPEAT = 44;
     /** The minimum number of arguments required.*/
     static final int ARGUMENTS_REQUIRED = 4;
+    /** The exact number of arguments required for test.*/
+    static final int TEST_ARGUMENTS_REQUIRED = 4;
 
     // argument parameters as constants.
     /** For initiating a argument. */
@@ -137,6 +178,8 @@ public class Constants {
     public static final String ARG_OUTPUT_DIRECTORY = "O";
     /** For giving the optional database file as argument. */
     public static final String ARG_DATABASE_FILE = "D";
+    /** For giving the optional test data.*/
+    public static final String ARG_TEST = "T";
     
     // messages
     /** The error message for error in parsing the arguments.*/
@@ -190,4 +233,9 @@ public class Constants {
     /** The error message for wrong database extension.*/
     public static final String MSG_ERROR_DATABASE_EXTENSION = 
         "Database file must have extension '.jar' or '.zip'";
+    /** The error message when test wrong number of test arguments.*/
+    public static final String MSG_ERROR_TEST_ARGUMENTS = 
+        "There have to be " + TEST_ARGUMENTS_REQUIRED + " test arguments.";
+    public static final String MSG_ERROR_TEST_OFFSET = 
+	"Offsetvalue not between 0 and 10, as required.";
 }

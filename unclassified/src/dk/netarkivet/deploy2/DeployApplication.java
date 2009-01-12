@@ -24,6 +24,7 @@
 package dk.netarkivet.deploy2;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -41,6 +42,14 @@ public class DeployApplication {
     private static DeployConfiguration itConfig;
     /** Argument parameter. */
     private static ArgumentParameters ap = new ArgumentParameters();
+    /** The it-config file. */
+    private static File itConfigFile;
+    /** The NetarchiveSuite file.*/
+    private static File netarchiveSuiteFile;
+    /** The security policy file.*/
+    private static File secPolicyFile;
+    /** The log property file.*/
+    private static File logPropFile;
 
     /**
      * Run the new deploy.
@@ -53,18 +62,22 @@ public class DeployApplication {
      * -L  The logging property file (ends with .prop).
      * -O  [OPTIONAL] The output directory
      * -D  [OPTIONAL] The database
+     * -T  [OPTIONAL] The test arguments (httpportoffset, port, 
+     * 				environmentName, mailReciever) 
      */
     public static void main(String[] args) {
         try {
             // Make sure the arguments can be parsed.
             if(!ap.parseParameters(args)) {
                 System.err.print(Constants.MSG_ERROR_PARSE_ARGUMENTS);
+                System.out.println();
                 System.exit(0);
             }
 
             // Check arguments
             if(ap.cmd.getOptions().length < Constants.ARGUMENTS_REQUIRED) {
                 System.err.print(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS);
+                System.out.println();
                 System.out.println(
                         "Use DeployApplication with following arguments:");
                 System.out.println(ap.listArguments());
@@ -87,6 +100,7 @@ public class DeployApplication {
             if (args.length > ap.options.getOptions().size()) {
                 System.err.print(
                         Constants.MSG_ERROR_TOO_MANY_ARGUMENTS);
+                System.out.println();
                 System.out.println("Maximum " + ap.options.getOptions().size() 
                         + "arguments.");
                 System.exit(0);
@@ -108,112 +122,30 @@ public class DeployApplication {
             String outputDir = ap.cmd.getOptionValue(
                     Constants.ARG_OUTPUT_DIRECTORY);
             // Retrieving the database filename
-            String databaseName = ap.cmd.getOptionValue(
+            String databaseFileName = ap.cmd.getOptionValue(
                     Constants.ARG_DATABASE_FILE);
+            // Retrieving the test arguments
+            String testArguments = ap.cmd.getOptionValue(
+        	    Constants.ARG_TEST);
+
+            // check itConfigFileName and retrieve the file
+            initConfigFile(itConfigFileName);
             
-            // check whether it-config file name is given as argument
-            if(itConfigFileName == null) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
-                System.exit(0);
-            }
-            // check whether it-config file has correct extensions
-            if(!itConfigFileName.endsWith(".xml")) {
-                System.err.print(
-                        Constants.MSG_ERROR_CONFIG_EXTENSION);
-                System.exit(0);
-            }
-            // get the file
-            File itConfigFile = new File(itConfigFileName);
-            // check whether the it-config file exists.
-            if(!itConfigFile.exists()) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
-                System.exit(0);
-            }
+            // check netarchiveSuiteFileName and retrieve the file
+            initNetarchiveSuiteFile(netarchiveSuiteFileName);
+
+            // check sePolicyFileName and retrieve the file
+            initSecPolicyFile(secPolicyFileName);
+
+            // check logPropFileName and retrieve the file
+            initLogPropFile(logPropFileName);
+
+            // check database
+            checkDatabase(databaseFileName);
             
-            // check whether NetarchiveSuite file name is given as argument
-            if(netarchiveSuiteFileName == null) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG);
-                System.exit(0);
-            }
-            // check whether the NetarchiveSuite file has correct extensions
-            if(!netarchiveSuiteFileName.endsWith(".zip")) {
-                System.err.print(
-                        Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
-                System.exit(0);
-            }
-            // get the file
-            File netarchiveSuiteFile = new File(netarchiveSuiteFileName);
-            // check whether the NetarchiveSuite file exists.
-            if(!netarchiveSuiteFile.exists()) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
-                System.exit(0);
-            }
-
-            // check whether security policy file name is given as argument
-            if(secPolicyFileName == null) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_SECURITY_FILE_ARG);
-                System.exit(0);
-            }
-            // check whether security policy file has correct extensions
-            if(!secPolicyFileName.endsWith(".policy")) {
-                System.err.print(
-                        Constants.MSG_ERROR_SECURITY_EXTENSION);
-                System.exit(0);
-            }
-            // get the file
-            File secPolicyFile = new File(secPolicyFileName);
-            // check whether the security policy file exists.
-            if(!secPolicyFile.exists()) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
-                System.exit(0);
-            }
-
-            // check whether log property file name is given as argument
-            if(logPropFileName == null) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG);
-                System.exit(0);
-            }
-            // check whether the log property file has correct extensions
-            if(!logPropFileName.endsWith(".prop")) {
-                System.err.print(
-                        Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
-                System.exit(0);
-            }
-            // get the file
-            File logPropFile = new File(logPropFileName);
-            // check whether the log property file exists.
-            if(!logPropFile.exists()) {
-                System.err.print(
-                        Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND);
-                System.exit(0);
-            }
-
-            // check the extension on the database, if it is given as argument 
-            if(databaseName != null) {
-                if(!databaseName.endsWith(".jar") 
-                        && !databaseName.endsWith(".zip")) {
-                    System.err.print(
-                            Constants.MSG_ERROR_DATABASE_EXTENSION);
-                    System.exit(0);
-                }
-                
-                // get the file
-                File databaseFile = new File(databaseName);
-                // check whether the database file exists.
-                if(!databaseFile.exists()) {
-                    System.err.print(
-                                Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
-                    System.exit(0);
-                }
-            }
-
+            // check and apply the test arguments
+            applyTestArguments(testArguments);
+            
             // Make the configuration based on the input data
             itConfig = new DeployConfiguration(
                     itConfigFile,
@@ -221,7 +153,7 @@ public class DeployApplication {
                     secPolicyFile,
                     logPropFile,
                     outputDir,
-                    databaseName); 
+                    databaseFileName); 
 
             // Write the scripts, directories and everything
             itConfig.write();
@@ -232,6 +164,198 @@ public class DeployApplication {
             // handle other exceptions?
             System.err.println("DEPLOY APPLICATION ERROR: " + e);
         }
+    }
+    
+    /** 
+     * Checks the configuration file argument and retrieves the file.
+     * 
+     * @param itConfigFileName The configuration file argument.
+     */
+    private static void initConfigFile(String itConfigFileName) {
+        // check whether it-config file name is given as argument
+        if(itConfigFileName == null) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
+            System.out.println();
+            System.exit(0);
+        }
+        // check whether it-config file has correct extensions
+        if(!itConfigFileName.endsWith(".xml")) {
+            System.err.print(
+                    Constants.MSG_ERROR_CONFIG_EXTENSION);
+            System.out.println();
+            System.exit(0);
+        }
+        // get the file
+        itConfigFile = new File(itConfigFileName);
+        // check whether the it-config file exists.
+        if(!itConfigFile.exists()) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
+            System.out.println();
+            System.exit(0);
+        }
+    }
+
+    /** 
+     * Checks the NetarchiveSuite file argument and retrieves the file.
+     * 
+     * @param netarchiveSuiteFileName The NetarchiveSuite argument.
+     */
+    private static void initNetarchiveSuiteFile(String 
+            netarchiveSuiteFileName) {
+        // check whether NetarchiveSuite file name is given as argument
+        if(netarchiveSuiteFileName == null) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG);
+            System.out.println();
+            System.exit(0);
+        }
+        // check whether the NetarchiveSuite file has correct extensions
+        if(!netarchiveSuiteFileName.endsWith(".zip")) {
+            System.err.print(
+                    Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
+            System.out.println();
+            System.exit(0);
+        }
+        // get the file
+        netarchiveSuiteFile = new File(netarchiveSuiteFileName);
+        // check whether the NetarchiveSuite file exists.
+        if(!netarchiveSuiteFile.exists()) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
+            System.out.println();
+            System.exit(0);
+        }
+    }
+    
+    /** 
+     * Checks the security policy file argument and retrieves the file.
+     * 
+     * @param secPolicyFileName The security policy argument.
+     */
+    private static void initSecPolicyFile(String secPolicyFileName) {
+        // check whether security policy file name is given as argument
+        if(secPolicyFileName == null) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_SECURITY_FILE_ARG);
+            System.out.println();
+            System.exit(0);
+        }
+        // check whether security policy file has correct extensions
+        if(!secPolicyFileName.endsWith(".policy")) {
+            System.err.print(
+                    Constants.MSG_ERROR_SECURITY_EXTENSION);
+            System.out.println();
+            System.exit(0);
+        }
+        // get the file
+        secPolicyFile = new File(secPolicyFileName);
+        // check whether the security policy file exists.
+        if(!secPolicyFile.exists()) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
+            System.out.println();
+            System.exit(0);
+        }
+    }
+    
+    /** 
+     * Checks the log property file argument and retrieves the file.
+     * 
+     * @param logPropFileName The log property argument.
+     */
+    private static void initLogPropFile(String logPropFileName) {
+        // check whether log property file name is given as argument
+        if(logPropFileName == null) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG);
+            System.out.println();
+            System.exit(0);
+        }
+        // check whether the log property file has correct extensions
+        if(!logPropFileName.endsWith(".prop")) {
+            System.err.print(
+                    Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
+            System.out.println();
+            System.exit(0);
+        }
+        // get the file
+        logPropFile = new File(logPropFileName);
+        // check whether the log property file exists.
+        if(!logPropFile.exists()) {
+            System.err.print(
+                    Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND);
+            System.out.println();
+            System.exit(0);
+        }
+    }
+    
+    /**
+     * Checks the database argument (if any) for extension and existence.
+     * 
+     * @param databaseFileName The name of the database file.
+     */
+    private static void checkDatabase(String databaseFileName) {
+        // check the extension on the database, if it is given as argument 
+        if(databaseFileName != null) {
+            if(!databaseFileName.endsWith(".jar") 
+                    && !databaseFileName.endsWith(".zip")) {
+                System.err.print(
+                        Constants.MSG_ERROR_DATABASE_EXTENSION);
+                System.out.println();
+                System.exit(0);
+            }
+            
+            // get the file
+            File databaseFile = new File(databaseFileName);
+            // check whether the database file exists.
+            if(!databaseFile.exists()) {
+                System.err.print(
+                            Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
+                System.out.println();
+                System.exit(0);
+            }
+        }
+    }
+    
+    /**
+     * Applies the test arguments.
+     * 
+     * @param testArguments The test arguments.
+     */
+    private static void applyTestArguments(String testArguments) {
+	if(testArguments == null || testArguments.equalsIgnoreCase("")) {
+	    System.out.println("No test arguments!");
+	    return;
+	}
+	
+	String[] changes = testArguments.split("[,]");
+	if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
+	    System.err.print(
+		    Constants.MSG_ERROR_TEST_ARGUMENTS);
+	    System.exit(0);
+	}
+	
+	try {
+            CreateTestInstance cti = new CreateTestInstance(itConfigFile);
+
+            // apply the arguments
+            cti.applyTestArguments(changes[0], changes[1], changes[2], 
+        	    changes[3]);
+
+            // replace ".xml" with "_test.xml"
+            String tmp = itConfigFile.getPath();
+            String[] configFile = tmp.split("[.]");
+            String nameOfNewConfig =  configFile[0] 
+                    + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
+
+            cti.createSettingsFile(nameOfNewConfig);
+            itConfigFile = new File(nameOfNewConfig);
+	} catch (IOException e) {
+	    System.out.println("Error in test arguments: " + e);
+	    System.exit(0);
+	}
     }
     
     /**
@@ -262,6 +386,8 @@ public class DeployApplication {
                     true, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, 
                     true, "[OPTIONAL] Database.");
+            options.addOption(Constants.ARG_TEST, 
+        	    true, "[OPTIONAL] Tests.");
         }
         
         /**
@@ -286,13 +412,18 @@ public class DeployApplication {
          * @return The list describing the possible arguments.
          */
         String listArguments() {
-            String s = "\n" + "Arguments:";
+            StringBuilder res = new StringBuilder("\n");
+            res.append("Arguments:");
             // add options
             for (Object o: options.getOptions()) {
                 Option op = (Option) o;
-                s += "\n" + "-" + op.getOpt() + " " + op.getDescription();
+                res.append("\n");
+                res.append("-");
+                res.append(op.getOpt());
+                res.append(" ");
+                res.append(op.getDescription());
             }
-            return s;
+            return res.toString();
         }
     }
 }

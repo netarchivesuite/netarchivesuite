@@ -148,12 +148,13 @@ public class Parameters {
      * @return All the java options.
      */
     public String writeJavaOptions() {
-        String res = "";
+        StringBuilder res = new StringBuilder("");
         // apply the java options
         for(Element e : javaOptions) {
-            res += e.getText() + " ";
+            res.append(e.getText());
+            res.append(" ");
         }
-        return res;
+        return res.toString();
     }
     
     /**

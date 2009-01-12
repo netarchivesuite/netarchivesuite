@@ -74,68 +74,68 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osInstallScript() {
-        String res = "";
+        StringBuilder res = new StringBuilder("");
         // echo copying null.zip to:kb-test-bar-011.bitarkiv.kb.dk
-        res += "echo copying ";
-        res += netarchiveSuiteFileName;
-        res += " to:";
-        res += name;
-        res += "\n";
+        res.append("echo copying ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" to:");
+        res.append(name);
+        res.append("\n");
         // scp null.zip dev@kb-test-bar-011.bitarkiv.kb.dk:
-        res += "scp ";
-        res += netarchiveSuiteFileName;
-        res += " ";
-        res += machineUserLogin();
-        res += ":";
-        res += "\n";
+        res.append("scp ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" ");
+        res.append(machineUserLogin());
+        res.append(":");
+        res.append("\n");
         // echo unzipping null.zip at:kb-test-bar-011.bitarkiv.kb.dk
-        res += "echo unzipping ";
-        res += netarchiveSuiteFileName;
-        res += " at:";
-        res += name;
-        res += "\n";
+        res.append("echo unzipping ");
+        res.append(netarchiveSuiteFileName);
+        res.append(" at:");
+        res.append(name);
+        res.append("\n");
         // ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST 
         // -o null.zip
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " cmd /c unzip.exe -q -d ";
-        res += getEnvironmentName();
-        res += " -o ";
-        res += netarchiveSuiteFileName;
-        res += "\n";
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" cmd /c unzip.exe -q -d ");
+        res.append(getEnvironmentName());
+        res.append(" -o ");
+        res.append(netarchiveSuiteFileName);
+        res.append("\n");
         // echo copying settings and scripts
-        res += "echo copying settings and scripts";
-        res += "\n";
+        res.append("echo copying settings and scripts");
+        res.append("\n");
         // scp -r kb-test-bar-011.bitarkiv.kb.dk/* 
         // dev@kb-test-bar-011.bitarkiv.kb.dk:
         // ""c:\\Documents and Settings\\dev\\TEST\\conf\\""
-        res += "scp -r ";
-        res += name;
-        res += "/* ";
-        res += machineUserLogin();
-        res += ":\"\"";
-        res += changeToScriptPath(getConfDirPath());
-        res += "\"\"";
-        res += "\n";
+        res.append("scp -r ");
+        res.append(name);
+        res.append("/* ");
+        res.append(machineUserLogin());
+        res.append(":\"\"");
+        res.append(changeToScriptPath(getConfDirPath()));
+        res.append("\"\"");
+        res.append("\n");
         // echo make scripts executable
-        res += "echo make scripts executable";
-        res += "\n";
+        res.append("echo make scripts executable");
+        res.append("\n");
         // pw.println("echo make password files readonly");
-        res += "echo make password files readonly";
-        res += "\n";
+        res.append("echo make password files readonly");
+        res.append("\n");
         // echo Y | ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls 
         // ""c:\\Documents and Settings\\dev\\TEST\\conf\\jmxremote.password"" 
         // /P BITARKIV\\dev:R
-        res += "echo Y | ssh ";
-        res += machineUserLogin();
-        res += " cmd /c cacls \"\"";
-        res += changeToScriptPath(getConfDirPath());
-        res += "jmxremote.password\"\" /P BITARKIV\\\\";
-        res += machineParameters.getMachineUserName().getText();
-        res += ":R";
-        res += "\n";
+        res.append("echo Y | ssh ");
+        res.append(machineUserLogin());
+        res.append(" cmd /c cacls \"\"");
+        res.append(changeToScriptPath(getConfDirPath()));
+        res.append("jmxremote.password\"\" /P BITARKIV\\\\");
+        res.append(machineParameters.getMachineUserName().getText());
+        res.append(":R");
+        res.append("\n");
         // END OF SCRIPT
-        return res;
+        return res.toString();
     }
 
     /**
@@ -145,15 +145,16 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osKillScript() {
-        String res = "";
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \"cmd /c  ";
-        res += getConfDirPath();
-        res += "killall";
-        res += scriptExtension;
-        res += " \" ";
-        return res + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"cmd /c  ");
+        res.append(getConfDirPath());
+        res.append("killall");
+        res.append(scriptExtension);
+        res.append(" \" ");
+        res.append("\n");
+        return res.toString();
     }
 
     /**
@@ -163,15 +164,16 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osStartScript() {
-        String res = "";
-        res += "ssh ";
-        res += machineUserLogin();
-        res += " \"cmd /c  ";
-        res += getConfDirPath();
-        res += "startall";
-        res += scriptExtension;
-        res += " \" ";
-        return res + "\n";
+        StringBuilder res = new StringBuilder("");
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"cmd /c  ");
+        res.append(getConfDirPath());
+        res.append("startall");
+        res.append(scriptExtension);
+        res.append(" \" ");
+        res.append("\n");
+        return res.toString();
     }
 
     /** 
@@ -423,17 +425,17 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
-        String res = "";
+        StringBuilder res = new StringBuilder("");
         // get all the classpaths (change from '\' to '\\')
         for(Element cp : app.getMachineParameters().getClassPaths()) {
             // insert the path to the install directory
-            res += getInstallDirPath().replaceAll("[\\\\]", "\\\\\\\\");
-            res += "\\\\";
+            res.append(getInstallDirPath().replaceAll("[\\\\]", "\\\\\\\\"));
+            res.append("\\\\");
             // Then insert the class path. 
-            res += cp.getText().replaceAll("[/]", "\\\\\\\\");
-            res += ";";
+            res.append(cp.getText().replaceAll("[/]", "\\\\\\\\"));
+            res.append(";");
         }
-        return res;
+        return res.toString();
     }
 
     /**
@@ -449,10 +451,12 @@ public class WindowsMachine extends Machine {
         ArgumentNotValid.checkNotNull(path, "String path");
         String res = path;
         res = res.replaceAll("\\\\", "\\\\\\\\");
-        return res;
+        return res.toString();
     }
 
     /**
+     * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
+     * 
      * Checks if a specific directory for the database is given in the settings,
      * and thus if the database should be installed on this machine.
      * 
@@ -467,7 +471,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osInstallDatabase() {
-        String res = "";
-        return res;
+        StringBuilder res = new StringBuilder("");
+        return res.toString();
     }
 }

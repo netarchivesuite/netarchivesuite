@@ -128,13 +128,13 @@ public class Application {
      * @return The unique identification of this application.
      */
     public String getIdentification() {
-        String res = name;
+        StringBuilder res = new StringBuilder(name);
         // apply only applicationId if it exists and has content
         if(applicationId != null && !applicationId.isEmpty()) {
-            res += "_";
-            res += applicationId;
+            res.append("_");
+            res.append(applicationId);
         }
-        return res;
+        return res.toString();
     }
 
     /**

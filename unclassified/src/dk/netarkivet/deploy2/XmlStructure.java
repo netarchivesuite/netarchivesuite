@@ -209,7 +209,7 @@ public class XmlStructure {
      */
     @SuppressWarnings("unchecked")
     public void overWriting(Element current, Element overwriter) 
-    throws IllegalState {
+                throws IllegalState {
         ArgumentNotValid.checkNotNull(current, "Element current");
         ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
         // get the attributes to be overwritten
@@ -238,5 +238,57 @@ public class XmlStructure {
                 throw new IllegalState("Tree tries to replace leaf!");
             }
         }
+    }
+    
+    /**
+     * Overwrites the leaf at the end of the path from the branch.
+     * 
+     * @param branch The branch where to begin.
+     * @param value The value to overwrite the leaf with.
+     * @param path The path from the branch to the leaf.
+     */
+    public void overWriteOnly(Element branch, String value, String ... path ) {
+        ArgumentNotValid.checkNotNullOrEmpty(value, "String Value");
+        ArgumentNotValid.checkNotNull(path, "String path");
+        ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
+        
+        // get leaf element
+        Element current = branch;
+        for(String s : path) {
+            current = current.element(s);
+            
+            // Do not overwrite non-existing element.
+            if(current == null) {
+        	return;
+            }
+        }
+        
+        // Set the new value
+        current.setText(value);
+    }
+    
+    public void overWriteOnlyInt(Element branch, int position, char value, 
+	    String ... path) {
+        ArgumentNotValid.checkNotNull(value, "String Value");
+        ArgumentNotValid.checkNotNull(path, "String path");
+        ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
+        ArgumentNotValid.checkPositive(position, "int position");
+        
+        // get leaf element
+        Element current = branch;
+        for(String s : path) {
+            current = current.element(s);
+            
+            // Do not overwrite non-existing element.
+            if(current == null) {
+        	return;
+            }
+        }
+        
+        // Set the new value
+        char[] txt = current.getText().toCharArray();
+        txt[position] = value;
+        String res = new String(txt);
+        current.setText(res);
     }
 }
