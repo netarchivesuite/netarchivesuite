@@ -27,17 +27,32 @@ package dk.netarkivet.viewerproxy;
  */
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletInputStream;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.io.BufferedReader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Enumeration;
+import java.util.Locale;
 import java.util.logging.LogManager;
+import java.security.Principal;
 
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -96,6 +111,11 @@ public class WebProxyTester extends TestCase {
         } catch (IOException e) {
             //expected
         }
+    }
+
+    public void testUriEncode() {
+        String test_string = "{abcd{fgåæka}";
+        assertEquals("Should recover original string after decoding", "%7Babcd%7Bfgåæka%7D", WebProxy.HttpRequest.uriEncode(test_string));
     }
 
     /** Tests constructor. After running the constructor the following should be
@@ -382,6 +402,310 @@ public class WebProxyTester extends TestCase {
                                        LOG_FILE);
     }
 
+    /**
+     * Constructs an instance of the inner class WebProxy.HttpRequest with a
+     * url containing "{" and checks that the resulting uri escapes the
+     * curly brackets correctly.
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public void testGetUri() throws NoSuchMethodException,
+                                    InvocationTargetException,
+                                    IllegalAccessException,
+                                    InstantiationException {
+        Constructor<WebProxy.HttpRequest> ctor = WebProxy.HttpRequest.class.getDeclaredConstructor(HttpServletRequest.class);
+        ctor.setAccessible(true);
+        HttpServletRequest servlet_request = new URIServlet("http://somedomain.dk", "id={12345}");
+        WebProxy.HttpRequest http_request = (WebProxy.HttpRequest) ctor.newInstance(servlet_request);
+        URI uri = http_request.getURI();
+        assertEquals("Expect uri to be escaped", "http://somedomain.dk?id=%7B12345%7D", uri.toString());
+    }
+
+    public static class URIServlet implements HttpServletRequest {
+
+        private String base_url;
+        private String query_string;
+
+        public URIServlet(String base, String query) {
+            base_url = base;
+            query_string = query;
+        }
+
+        public StringBuffer getRequestURL() {
+            return new StringBuffer(base_url);
+        }
+
+        public String getQueryString() {
+            return query_string;
+        }
+
+        public String getAuthType() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Cookie[] getCookies() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public long getDateHeader(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getHeader(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Enumeration getHeaders(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Enumeration getHeaderNames() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getIntHeader(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getMethod() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getPathInfo() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getPathTranslated() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getContextPath() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+
+
+        public String getRemoteUser() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isUserInRole(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Principal getUserPrincipal() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getRequestedSessionId() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getRequestURI() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+
+        public String getServletPath() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public HttpSession getSession(boolean b) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public HttpSession getSession() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isRequestedSessionIdValid() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isRequestedSessionIdFromCookie() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isRequestedSessionIdFromURL() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isRequestedSessionIdFromUrl() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Object getAttribute(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Enumeration getAttributeNames() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getCharacterEncoding() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void setCharacterEncoding(String s)
+                throws UnsupportedEncodingException {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getContentLength() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getContentType() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public ServletInputStream getInputStream() throws IOException {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getParameter(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Enumeration getParameterNames() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String[] getParameterValues(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Map getParameterMap() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getProtocol() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getScheme() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getServerName() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getServerPort() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public BufferedReader getReader() throws IOException {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getRemoteAddr() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getRemoteHost() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void setAttribute(String s, Object o) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void removeAttribute(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Locale getLocale() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public Enumeration getLocales() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isSecure() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public RequestDispatcher getRequestDispatcher(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getRealPath(String s) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getRemotePort() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getLocalName() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getLocalAddr() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getLocalPort() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+    }
+
     public static class TestURIResolver implements URIResolver {
         int lookupCount = 0;
         int totalCount = 0;
@@ -418,4 +742,6 @@ public class WebProxyTester extends TestCase {
             return Collections.emptyMap();
         }
     }
+
+
 }

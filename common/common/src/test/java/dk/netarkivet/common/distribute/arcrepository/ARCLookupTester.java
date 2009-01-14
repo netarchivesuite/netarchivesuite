@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCKey;
@@ -182,6 +184,26 @@ public class ARCLookupTester extends TestCase {
         byte[] wanted = TestUtils.inputStreamToBytes(result.getData(), (int) result.getLength());
         assertEquals("Did not get expected data: ",
                 new String(got), new String(wanted));
+    }
+
+
+    /**
+     * Test that when a uri with escaped characters is looked up, the uri is urldecoded first.
+     * @throws Exception
+     */
+    public void testLookupWithCurlyBrackets() throws Exception {
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, TestInfo.ARCHIVE_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, new File(TestInfo.WORKING_DIR, "serverdir").getAbsolutePath());
+        Field searcher_field = ARCLookup.class.getDeclaredField("luceneSearcher");
+        searcher_field.setAccessible(true);
+        //Set the searcher to null. lookup will then throw a message with the actual URI
+        searcher_field.set(lookup, null);
+        try {
+            lookup.lookup(new URI("http://www.adomain.dk/?key=%7B12345%7D"));
+            fail("Should get IOFailure when lucene lookup is null");
+        } catch (IOFailure e) {
+            assertTrue("Expect error message to contain decoded uri but was '" + e.getMessage() + "'", e.getMessage().contains("http://www.adomain.dk/?key={12345}")) ;
+        }
     }
 
 
