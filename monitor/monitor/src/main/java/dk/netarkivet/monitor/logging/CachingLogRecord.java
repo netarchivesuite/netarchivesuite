@@ -75,7 +75,7 @@ public class CachingLogRecord
     }
 
     /**
-     * Regsiters this object as an mbean.
+     * Registers this object as an mbean.
      */
     private void register() {
         singleMBeanObject
@@ -89,7 +89,7 @@ public class CachingLogRecord
     }
 
     /**
-     * Unregsiters this object as an mbean.
+     * Unregisters this object as an mbean.
      */
     private void unregister() {
         if (singleMBeanObject != null) {
