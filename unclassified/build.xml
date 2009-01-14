@@ -58,7 +58,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     sunjms-lib/imq-4.1-b22g.jar
     sunjms-lib/jms-4.1-b22g.jar
     mail-dependencies/mail-1.4.jar
-    mail-dependencies/activation-1.1.jar
     libidn-0.5.9.jar
     lucene-core-2.0.0.jar
     deduplicator-0.3.0-20061218-patched-20080527.jar
@@ -96,7 +95,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="sunjms-lib/imq-4.1-b22g.jar"/>
                 <include name="sunjms-lib/jms-4.1-b22g.jar"/>
                 <include name="mail-dependencies/mail-1.4.jar"/>
-                <include name="mail-dependencies/activation-1.1.jar"/>
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-2.0.0.jar"/>
                 <include name="deduplicator-0.3.0-20061218-patched-20080527.jar"/>
@@ -291,6 +289,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="derby.properties"/>
             <include name="LICENSE.txt"/>
             <include name="README.txt"/>
+            <!-- Eclipse specific project files --> 
+	    <include name=".project"/>
+	    <include name=".classpath"/>
+	    <include name=".checkstyle"/>
+	    <include name="NetarchiveSuite_checks.xml"/>
+            <!-- Intellij specific project files --> 
+            <include name="netarchivesuite.iml"/>
+	    <include name="netarchivesuite.ipr"/>
         </zip>
     </target>
 
