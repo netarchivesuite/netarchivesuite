@@ -2,9 +2,9 @@
 ||<tablewidth="100%"12% style="vertical-align: top;">'''Software''' ||<9% style="vertical-align: top;">'''Version''' ||<18% style="vertical-align: top;">'''File''' ||<8% style="vertical-align: top;">'''License''' ||<30% style="vertical-align: top;">'''Project usage''' ||<25% style="vertical-align: top;">'''Software home''' ||
 ||[:HeritrixPatches:Heritrix (with patches)] ||1.12.1b ||heritrix-1.12.1b.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Harvesting, ARC file handling ||http://crawler.archive.org ||
 ||Jetty ||6.1.6 ||jetty-6.1.6.jar jetty-util-6.1.6.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Webinterface, Viewerproxy, HTTPRemoteFile ||http://mortbay.org ||
-||Derby ||10.1.1.0 ||derby-10.1.1.0.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Database for harvest definition data ||http://db.apache.org/derby/ ||
+||Derby ||10.4.2.0 ||derby-10.4.2.0.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Database for harvest definition data ||http://db.apache.org/derby/ ||
 ||OpenMQ ||4.1-b22g ||imq-4.1-b22g.jar jmx-4.1-b22g.jar ||[http://www.sun.com/cddl/cddl.html CDDL] ||JMS communication ||http://mq.dev.java.net/ ||
-||[:DeduplicatorPatches:Deduplicator (with patches)] ||0.3.0-20080502 ||deduplicator-0.3.0-20080502.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Deduplicating ||http://deduplicator.sourceforge.net/ ||
+||[:DeduplicatorPatches:Deduplicator (with patches)] ||0.3.0-20061218-patched-20080527 ||deduplicator-0.3.0-20061218-patched-20080527.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Deduplicating ||http://deduplicator.sourceforge.net/ ||
 ||Dom4J ||1.5.2 ||dom4j-1.5.2.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||XML handling ||http://dom4j.org ||
 ||Commons Fileupload ||1.0 ||commons-fileupload-1.0 ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Web interface file uploads ||http://jakarta.apache.org/commons/fileupload/ ||
 ||Java mail ||1.4 ||mail-1.4.jar ||[:JavamailLicense:License] ||Mail notifications ||http://java.sun.com/products/javamail/ ||
@@ -44,30 +44,11 @@
 == Third party software required by Dom4J ==
 ||<tablewidth="100%"12% style="vertical-align: top;">'''Software''' ||<9% style="vertical-align: top;">'''Version''' ||<18% style="vertical-align: top;">'''File''' ||<8% style="vertical-align: top;">'''License''' ||<30% style="vertical-align: top;">'''Project usage''' ||<25% style="vertical-align: top;">'''Software home''' ||
 ||Jaxen ||1.1 ||jaxen-1.1.jar ||[http://jaxen.org/license.html License] || ||http://jaxen.org ||
-== Third party software required by JavaMail ==
-||<tablewidth="100%"12% style="vertical-align: top;">'''Software''' ||<9% style="vertical-align: top;">'''Version''' ||<18% style="vertical-align: top;">'''File''' ||<8% style="vertical-align: top;">'''License''' ||<30% style="vertical-align: top;">'''Project usage''' ||<25% style="vertical-align: top;">'''Software home''' ||
-||Java Activation Framework ||1.1 ||activation-1.1.jar ||[:ActivationLicense:License] || ||http://java.sun.com/products/javabeans/jaf ||
 = Third party software used by NetarchiveSuite tests =
 ||<tablewidth="100%"12% style="vertical-align: top;">'''Software''' ||<10% style="vertical-align: top;">'''Version''' ||<15% style="vertical-align: top;">'''File''' ||<10% style="vertical-align: top;">'''License''' ||<30% style="vertical-align: top;">'''Project usage''' ||<25% style="vertical-align: top;">'''Software home''' ||
-||Derby tools ||10.1.1.0 ||derby-tools-10.1.1.0 ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Tools for inspecting/modifying the Derby database ||http://db.apache.org/derby/ ||
+||Derby tools ||10.4.2.0 ||derby-tools-10.4.2.0 ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Tools for inspecting/modifying the Derby database ||http://db.apache.org/derby/ ||
 ||Mockobjects ||0.09 ||mockobjects-core-0.09.jar mockobjects-jdk1.4-0.09.jar mockobjects-jdk1.4-j2ee1.3-0.09.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Used for making mocks in some unit tests ||http://sourceforge.net/projects/mockobjects/ ||
 ||HTTP Unit ||1.6 ||httpunit-1.6.jar ||[http://httpunit.sourceforge.net/doc/license.html License] ||Used for unit testing HTTP communication ||http://httpunit.sourceforge.net/ ||
 ||Neko HTML ||0.9.4 ||nekohtml-0.9.4.jar ||[http://people.apache.org/~andyc/neko/LICENSE License] ||Used by HTTPUnit to make assertions about returned HTML ||http://people.apache.org/~andyc/neko/doc/html/ ||
+
 ||Jakarta ORO ||2.0.8 ||jakarta-oro-2.0.8.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Used in unit tests for some regexp work ||http://jakarta.apache.org/oro/ ||
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
