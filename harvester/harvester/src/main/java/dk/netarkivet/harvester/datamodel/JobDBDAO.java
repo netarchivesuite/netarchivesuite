@@ -530,8 +530,9 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure on trouble getting data from database
      */
     private List<JobStatusInfo> getStatusInfo(int jobStatusCode, boolean asc) {
-        if (jobStatusCode != -1) {
-            //throws ArgumentNotValid if it is an invalid job status
+        // Validate jobStatusCode
+        // Throws ArgumentNotValid if it is an invalid job status
+        if (jobStatusCode != JobStatus.ALL_STATUS_CODE) {
             JobStatus.fromOrdinal(jobStatusCode);
         }
 
@@ -541,7 +542,7 @@ public class JobDBDAO extends JobDAO {
             + " upload_errors, orderxml, num_configs, startdate, enddate"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
-        if (jobStatusCode != -1)  {
+        if (jobStatusCode != JobStatus.ALL_STATUS_CODE)  {
             sql = sql + " AND status = " + jobStatusCode;
         }
         sql = sql + " ORDER BY jobs.job_id";
@@ -711,43 +712,9 @@ public class JobDBDAO extends JobDAO {
      * @throws IOFailure on trouble getting data from database
      */
     public List<JobStatusInfo> getStatusInfo(long harvestId, long numEvent) {
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
-        try {
-            s = c.prepareStatement(
-                    "SELECT jobs.job_id, status, jobs.harvest_id, "
-                    + "harvestdefinitions.name, harvest_num, harvest_errors,"
-                    + " upload_errors, orderxml, num_configs, startdate, "
-                    +   "enddate"
-                    + " FROM jobs, harvestdefinitions "
-                    + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
-                    + " AND jobs.harvest_id = "
-                    + harvestId
-                    + " AND jobs.harvest_num = "
-                    + numEvent
-                    + " ORDER BY jobs.job_id");
-            ResultSet res = s.executeQuery();
-            List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
-            while (res.next()) {
-                final long jobId = res.getLong(1);
-                joblist.add(
-                        new JobStatusInfo(
-                                jobId, 
-                                JobStatus.fromOrdinal(res.getInt(2)),
-                                res.getLong(3), res.getString(4), res.getInt(5),
-                                res.getString(6), res.getString(7),
-                                res.getString(8), res.getInt(9),
-                                DBUtils.getDateMaybeNull(res, 10),
-                                DBUtils.getDateMaybeNull(res, 11)));
-            }
-            return joblist;
-        } catch (SQLException e) {
-            String message = "SQL error asking for job status list in database";
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
+        Set<Integer>statusCodesSet = new HashSet<Integer>();
+        statusCodesSet.add(JobStatus.ALL_STATUS_CODE);
+        return getStatusInfo(harvestId, numEvent, true, statusCodesSet);
     }
 
     /**
@@ -933,6 +900,82 @@ public class JobDBDAO extends JobDAO {
             DBUtils.rollbackIfNeeded(c, "resubmit job", oldJobID);
         }
         return newJobID;
+    }
+
+    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
+            boolean asc) {
+        Set<Integer>statusCodesSet = new HashSet<Integer>();
+        statusCodesSet.add(JobStatus.ALL_STATUS_CODE);
+        return getStatusInfo(harvestId, harvestNum, asc, statusCodesSet);
+    }
+
+    public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
+            boolean asc, Set<Integer> selectedStatusCodes) {
+        ArgumentNotValid.checkNotNegative(harvestId, "harvestId");
+        ArgumentNotValid.checkNotNegative(harvestNum, "harvestNum");
+        ArgumentNotValid.checkNotNullOrEmpty(selectedStatusCodes, 
+                "selectedStatusCodes");
+        
+        String ascdescString = (asc)? "ASC" : "DESC";
+        String statusSortString = null;
+        if (selectedStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE))) {
+           statusSortString = ""; 
+        } else {
+           if (selectedStatusCodes.size() == 1) {
+               Integer theWantedStatus = selectedStatusCodes.iterator().next();
+               statusSortString = " AND status = " + theWantedStatus.intValue();
+           } else {
+               Iterator<Integer> it = selectedStatusCodes.iterator();
+               Integer nextInt = it.next();
+               String res = "AND (status = " + nextInt;
+               while (it.hasNext()) {
+                   nextInt = it.next();
+                   res = res + " OR status = " + nextInt;
+               }
+               res = res + ") ";
+               statusSortString = res;
+           }
+        }
+            
+        
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            s = c.prepareStatement(
+                    "SELECT jobs.job_id, status, jobs.harvest_id, "
+                    + "harvestdefinitions.name, harvest_num, harvest_errors,"
+                    + " upload_errors, orderxml, num_configs, startdate, "
+                    +   "enddate"
+                    + " FROM jobs, harvestdefinitions "
+                    + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
+                    + " AND jobs.harvest_id = "
+                    + harvestId
+                    + " AND jobs.harvest_num = "
+                    + harvestNum
+                    + statusSortString
+                    + " ORDER BY jobs.job_id " + ascdescString);
+            ResultSet res = s.executeQuery();
+            List<JobStatusInfo> joblist = new ArrayList<JobStatusInfo>();
+            while (res.next()) {
+                final long jobId = res.getLong(1);
+                joblist.add(
+                        new JobStatusInfo(
+                                jobId, 
+                                JobStatus.fromOrdinal(res.getInt(2)),
+                                res.getLong(3), res.getString(4), res.getInt(5),
+                                res.getString(6), res.getString(7),
+                                res.getString(8), res.getInt(9),
+                                DBUtils.getDateMaybeNull(res, 10),
+                                DBUtils.getDateMaybeNull(res, 11)));
+            }
+            return joblist;
+        } catch (SQLException e) {
+            String message = "SQL error asking for job status list in database";
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
     }
 
 }

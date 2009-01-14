@@ -165,7 +165,7 @@ public class HarvestStatus {
         }       
     }
 
-    /** Calculate list of job information to be shown
+    /** Calculate list of job information to be shown.
      *
      * @param selectedJobStatusCodes integer codes for job statuses to be shown
      * @param selectedSortOrder string code whether job ids should come in asc.
@@ -205,6 +205,47 @@ public class HarvestStatus {
                     asc, selectedJobStates.toArray(jobstatusArray)); 
         }
     }
+    
+    
+    /** Calculate list of job information to be shown.
+    *
+    * @param harvestId Select only jobs generated from this harvestdefinition
+    * @param harvestNum Select only jobs with this harvestNumber.
+    * @param selectedJobStatusCodes integer codes for job statuses to be shown
+    * @param selectedSortOrder string code whether job ids should come in asc.
+    *        or desc. order
+    * @return list of job (status) information to be shown
+    * @throws ArgumentNotValid
+    */
+   public static List<JobStatusInfo> getjobStatusList(
+                                          long harvestId,
+                                          long harvestNum,
+                                          Set<Integer> selectedJobStatusCodes, 
+                                          String selectedSortOrder
+                                     ) {
+       ArgumentNotValid.checkNotNullOrEmpty(selectedJobStatusCodes, 
+               "selectedJobStatusCodes");
+       ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
+               "selectedSortOrder");
+       
+       boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
+       if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) { 
+           throw new ArgumentNotValid(
+                        "Invalid sort Order " + selectedSortOrder
+                     );
+       }
+       
+       if (selectedJobStatusCodes.contains(
+               new Integer(JobStatus.ALL_STATUS_CODE))) { 
+           return JobDAO.getInstance().getStatusInfo(
+                   harvestId, harvestNum, asc);
+       } else {
+           return JobDAO.getInstance().getStatusInfo(
+                   harvestId, harvestNum, 
+                   asc, selectedJobStatusCodes); 
+       }
+   }
+    
 
     /** This class encapsulates a request for reload, making non-existing
      * parameters appear as there default value.

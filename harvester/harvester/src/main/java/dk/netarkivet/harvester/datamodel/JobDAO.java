@@ -24,6 +24,7 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -246,4 +247,12 @@ public abstract class JobDAO implements Iterable<Job> {
      * @throws IllegalState if the job with id jobID is not SUBMITTED or FAILED.
      */
     public abstract long rescheduleJob(long oldJobID);
+
+
+    public abstract List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
+            boolean asc);
+
+    public abstract List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
+            boolean asc, Set<Integer> selectedStatusCodes);
+    
 }

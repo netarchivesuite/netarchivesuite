@@ -24,19 +24,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%--
 This page displays harvest details for one harvest definition run
 --%><%@ page import="java.util.ArrayList,
-                 java.util.List,
+                 java.util.List, java.util.Set, 
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.JobDBDAO,
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.JobStatusInfo,
                  dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.webinterface.HarvestStatus"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
@@ -58,7 +58,8 @@ This page displays harvest details for one harvest definition run
                               + request.getParameter(Constants.HARVEST_NUM_PARAM));
         return;
     }
-
+	// Local variables to hold the value of the HARVEST_ID_PARAM and the 
+	// HARVEST_NUM_PARAM
     long harvestID;
     long harvestNum;
     try {
@@ -71,8 +72,24 @@ This page displays harvest details for one harvest definition run
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    List<JobStatusInfo> jobStatusList = JobDBDAO.getInstance()
-            .getStatusInfo(harvestID, harvestNum);
+        
+    
+    //Look for optional parameters for search of jobs
+    HarvestStatus.DefaultedRequest dfltRequest =
+        new HarvestStatus.DefaultedRequest(request);
+    Set<Integer> selectedJobStatusCodes = HarvestStatus.getSelectedJobStatusCodes(
+                                    dfltRequest
+                                );
+    String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
+
+    //list of information to be shown
+    List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(
+                                            harvestID,
+                                            harvestNum,
+                                            selectedJobStatusCodes, 
+                                            selectedSortOrder
+                                        );
+                                        
     final String harvestName
             = HarvestDefinitionDAO.getInstance().getHarvestName(harvestID);
     String harvestLink = "<a href=\"Harveststatus-perhd.jsp?"
@@ -82,6 +99,69 @@ This page displays harvest details for one harvest definition run
                          + "</a>";
     HTMLUtils.generateHeader(pageContext);
 %>
+
+
+<%--Make line with comboboxes with job status and order to be shown --%>
+<form method="get" action="Harveststatus-perharvestrun.jsp">
+<h4>
+<fmt:message key="status.0.sort.order.1.job.choice">
+<fmt:param>
+<select multiple name="<%= Constants.JOBSTATUS_PARAM %>" size="<%= JobStatus.values().length %>">
+    <%
+    String selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
+                      ? "selected=\"selected\""
+                      : "";
+    %>
+        <option <%=selected%>  value="<%=HarvestStatus.JOBSTATUS_ALL%>">
+             <fmt:message key="status.job.all"/>
+        </option>
+    <%
+    for (JobStatus st : JobStatus.values()) {
+        selected = "";
+        if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
+            selected = "selected=\"selected\"";
+        }
+    %>
+        <option <%=selected%> value="<%=st.name()%>">
+            <%=HTMLUtils.escapeHtmlValues(
+                  st.getLocalizedString(response.getLocale())
+               )%>
+        </option>
+    <%
+    }
+    %>
+</select>
+</fmt:param>
+
+<fmt:param>
+<select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
+    <%
+    String selected = 
+               (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
+               ? "selected=\"selected\""
+               : "";
+    %>
+        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_ASCENDING%>">
+             <fmt:message key="sort.order.asc"/>
+        </option>
+    <%
+    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_DESCENDING))
+               ? "selected=\"selected\""
+               : "";
+    %>
+        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_DESCENDING%>">
+             <fmt:message key="sort.order.desc"/>
+        </option>
+</select>
+</fmt:param>
+</fmt:message>
+<input type="submit" name="upload" 
+       value="<fmt:message key="status.sort.order.job.show"/>"/>
+</h4>
+</form>
+
+
+
 <h2 class="page_heading"><fmt:message key="pagetitle;status.for.harvest.0.run.1">
     <fmt:param value="<%=harvestLink%>"/>
     <fmt:param value="<%=harvestNum%>"/>
