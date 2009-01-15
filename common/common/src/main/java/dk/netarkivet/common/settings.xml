@@ -477,17 +477,23 @@
                  environment, e.g., "replicaOne" and "replicaTwo". 
                  NOTE: settings for checksum replicas are not use yet -->
             <replica>
-                <name>replicaOne</name>
+                <replicaId>One</replicaId>
+                <replicaName>replicaOne</replicaName>
+                <replicaType>bitarchive</replicaType>
             </replica>
             <replica>
-                <name>replicaTwo</name>
+                <replicaId>Two</replicaId>
+                <replicaName>replicaTwo</replicaName>
+                <replicaType>bitarchive</replicaType>
             </replica>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <useReplicaId>replicaOne</useReplicaId>
         </replicas>
+        <useReplicaId>replicaOne</useReplicaId>
+        <thisReplicaId></thisReplicaId>
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
+        <applicationInstanceId></applicationInstanceId>
     </common>
 </settings>
