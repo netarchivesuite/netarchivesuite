@@ -57,6 +57,10 @@
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
             <useReplicaId>KB</useReplicaId>
         </replicas>
+        <!--  Remove the following setting when the code is updated to 
+           use the setting common.replicas.useReplicaId instead of common.useReplicaId  
+        -->
+        <useReplicaId>KB</useReplicaId>
         <thisPhysicalLocation>SBL</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
