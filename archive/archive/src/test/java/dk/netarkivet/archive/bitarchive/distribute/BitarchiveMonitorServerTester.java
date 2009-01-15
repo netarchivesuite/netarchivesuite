@@ -196,7 +196,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
                             public void finish(OutputStream os) {
                             }
                         },
-                        Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        //THIS_REPLICA_ID ????
+                        Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         JMSConnectionTestMQ.updateMsgID(result, id);
         return result;
     }
@@ -238,9 +239,10 @@ public class BitarchiveMonitorServerTester extends TestCase {
     public void testBatchReceive() {
         TestJob job = new TestJob(
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
+        //THIS_REPLICA_ID ????
         NetarkivetMessage message = new BatchMessage(THE_BAMON,
                                                      job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -286,9 +288,10 @@ public class BitarchiveMonitorServerTester extends TestCase {
         con.addListener(Channels.getAllBa(), bitarchive);
 
         // send a batch message to the monitor
+        //THIS_REPLICA_ID ????
         BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheArcrepos(),
                                            job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         con.send(bm);
         con.waitForConcurrentTasksToFinish();
 
@@ -366,7 +369,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
      */
     private void testListeningPerReplica(String replicaId,
                                           String otherReplicaId) {
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID, replicaId);
+        //THIS_REPLICA_ID ????
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, replicaId);
         JMSConnectionTestMQ jms
                 = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
         BitarchiveMonitorServer bamon = BitarchiveMonitorServer.getInstance();
@@ -511,10 +515,11 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         TestJob job = new TestJob(
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
+        //THIS_REPLICA_ID ????
         BatchMessage batchMessage = new BatchMessage(THE_BAMON,
                                                      Channels.getTheArcrepos(),
                                                      job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         TestBatchReplyListener batchReplyListener
                 = new TestBatchReplyListener();
@@ -604,10 +609,11 @@ public class BitarchiveMonitorServerTester extends TestCase {
         File output_file = new File(TestInfo.BAMON_WORKING, "batch_output.txt");
 
         //Create a batch message
+        //THIS_REPLICA_ID ????
         BatchMessage bm = new BatchMessage(Channels.getTheBamon(),
                                            Channels.getTheArcrepos(),
                                            new ChecksumJob(), Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         JMSConnectionTestMQ.updateMsgID(bm, "ID50");
 
         //Invent two BitarchiveServers and send heartbeats from them

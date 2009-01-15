@@ -65,9 +65,10 @@ public class MakeIndex {
             ExtractCDXJob cdxjob = new ExtractCDXJob(false);
             // Do index on the first bitarchive found.
             //String baName = wc.getBitarchiveNames()[0];
+            //THIS_REPLICA_ID??
             BatchStatus cdxstatus =
                     arcrep.batch(cdxjob, Settings.get(
-                            CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                            CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             cdxstatus.getResultFile().copyTo(indexfile);
             cdxstatus.getResultFile().cleanup();
             final List<File> filesFailed = new ArrayList<File>(cdxstatus.getFilesFailed());

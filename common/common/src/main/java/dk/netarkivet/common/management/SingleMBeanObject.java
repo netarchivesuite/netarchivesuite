@@ -113,9 +113,9 @@ public class SingleMBeanObject<I> {
                            Settings.get(CommonSettings.APPLICATION_NAME));
         nameProperties.put("applicationistanceid",
                 Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
-nameProperties.put("replica",
+        nameProperties.put("replica",
                 Settings.get(
-                        CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         this.mBeanServer = mBeanServer;
     }
 

@@ -67,7 +67,8 @@ public class RunChecksum {
                 dieWithUsage();
             }
         } else {
-            bitarchive = Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID);
+            //THIS_REPLICA_ID??
+            bitarchive = Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
         }
 
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();

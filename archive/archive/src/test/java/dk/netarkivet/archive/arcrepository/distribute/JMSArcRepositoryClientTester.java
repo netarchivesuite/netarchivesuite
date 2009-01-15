@@ -228,9 +228,10 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 new DummyGetFileMessageReplyServer(ARCDIR);
         String filename = "Upload2.ARC";
         File toFile = new File(WORKING, "newFile.arc");
+        //THIS_REPLICA_ID ????
         Replica replica =
                 Replica.getReplicaFromId(Settings.get(
-                        CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         arc.getFile(filename, replica, toFile);
         assertTrue("Result file should exist", toFile.exists());
         assertEquals("Result file should contain right text",
@@ -398,8 +399,9 @@ public class JMSArcRepositoryClientTester extends TestCase {
          * is given as first parameter
          */
         try {
+            //THIS_REPLICA_ID ????
             arc.batch(null,
-                      Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                      Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             fail("Should throw ArgumentNotValid exception");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -436,8 +438,9 @@ public class JMSArcRepositoryClientTester extends TestCase {
             public void initialize(OutputStream os) {
             }
         };
+        //THIS_REPLICA_ID ????
         BatchStatus lbStatus = arc.batch(batchJob, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         assertEquals("Number of files should have been set by the server to 42",
                      42, lbStatus.getNoOfFilesProcessed());
     }

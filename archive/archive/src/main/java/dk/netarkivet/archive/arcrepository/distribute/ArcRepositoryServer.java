@@ -38,7 +38,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
-import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
@@ -195,7 +195,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
-                Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                Settings.get(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID));
         try {
             bc.get(msg);
         } catch (Throwable t) {
