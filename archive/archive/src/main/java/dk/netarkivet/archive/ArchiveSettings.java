@@ -99,7 +99,11 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.thisCredentials";
 
     /** For archiving applications, determines which bitarchive replica
-     * you are part of. */
+     * you are part of. 
+     * 
+     * NOTE: this one is also used in SingleMBeanObject parsing information
+     * to System state
+     * */
     public static String ENVIRONMENT_THIS_REPLICA_ID
             = "settings.archive.bitarchive.thisReplicaId";
 

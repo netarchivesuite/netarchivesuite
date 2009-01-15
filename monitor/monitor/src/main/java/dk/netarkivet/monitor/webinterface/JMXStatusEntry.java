@@ -104,6 +104,16 @@ public class JMXStatusEntry implements StatusEntry {
                 JMXSummaryUtils.JMXApplicationnameProperty);
     }
 
+    public String getHarvestPriority() {
+        return mBeanName.getKeyProperty(
+                JMXSummaryUtils.JMXHarvestPriorityProperty);
+    }
+
+    public String getArchiveReplicaId() {
+        return mBeanName.getKeyProperty(
+                JMXSummaryUtils.JMXArchiveReplicaIdProperty);
+    }
+
     /**
      * @return the index designated by the key 
      * {@link JMXSummaryUtils#JMXIndexProperty}
@@ -204,6 +214,28 @@ public class JMXStatusEntry implements StatusEntry {
                 return c;
             }
         } else if (getApplicationName() == null) {
+            return -1;
+        } else {
+            return 1;
+        }
+
+        if (getHarvestPriority() != null && o.getHarvestPriority() != null) {
+            c = getHarvestPriority().compareTo(o.getHarvestPriority());
+            if (c != 0) {
+                return c;
+            }
+        } else if (getHarvestPriority() == null) {
+            return -1;
+        } else {
+            return 1;
+        }
+
+        if (getArchiveReplicaId() != null && o.getArchiveReplicaId() != null) {
+            c = getArchiveReplicaId().compareTo(o.getArchiveReplicaId());
+            if (c != 0) {
+                return c;
+            }
+        } else if (getArchiveReplicaId() == null) {
             return -1;
         } else {
             return 1;

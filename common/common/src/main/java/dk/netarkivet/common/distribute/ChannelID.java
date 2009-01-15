@@ -44,13 +44,12 @@ public class ChannelID implements Serializable {
     private final String environmentName =
             Settings.get(CommonSettings.ENVIRONMENT_NAME);
     /**
-     * httpPortNumber is the IP port that is reserved for this application's
-     * HTTP communication (if applicable).
-     * It is used for identifying a specific process on a given machine.
-     * An example value is "8080".
+     * appplciation instance id is a setting for an application's
+     * identification as a specific process on a given machine.
+     * An example value is "BAKB".
      */
-    private static final String httpPortNumber =
-            Settings.get(CommonSettings.HTTP_PORT_NUMBER);
+    private static final String applicationInstanceId =
+            Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
     /**
      * Constants to make the semantics of parameters to our name constructors
      * more explicit.
@@ -74,7 +73,7 @@ public class ChannelID implements Serializable {
     * The constructor is package private because we should never use any
     * channels except the ones constructed by our friend Channels.java
     * @param app The name of the applications listening to the channel.
-    * @param replicaName Name of the replica, or ChannelID.COMMON if
+    * @param replicaId Name of the replica, or ChannelID.COMMON if
     * channel shared by all replicas.
     * @param useNodeId Whether that IP address of the local node should
     * be included in the channel name.
@@ -83,9 +82,9 @@ public class ChannelID implements Serializable {
     * @param isTopic Whether the Channel is a Topic or a Queue.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    ChannelID(String app, String replicaName, boolean useNodeId,
+    ChannelID(String app, String replicaId, boolean useNodeId,
         boolean useProcId, boolean isTopic) {
-        this.name = constructName(app, replicaName, useNodeId, useProcId);
+        this.name = constructName(app, replicaId, useNodeId, useProcId);
         this.isTopic = isTopic;
     }
 
@@ -110,7 +109,7 @@ public class ChannelID implements Serializable {
         if (useNodeId) {
             id = SystemUtils.getLocalIP().replace('.', '_');
             if (useProcId) {
-                id += ("_" + httpPortNumber);
+                id += ("_" + applicationInstanceId);
             }
         }
         return userId + "_" + replicaId + "_" + app

@@ -37,6 +37,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
@@ -81,6 +82,13 @@ public class SingleMBeanObject<I> {
 
     private static Log log = LogFactory.getLog(CommonSettings.class.getName());
 
+    //Following environment constants are defined here in order to avoid
+    //refering to independent modules - the environment values are only
+    //used if defined
+    private String ARCHIVE_ENVIRONMENT_THIS_REPLICA_ID
+        = "settings.archive.bitarchive.thisReplicaId";
+    private static String HARVESTER_HARVEST_CONTROLLER_PRIORITY
+            = "settings.harvester.harvesting.queuePriority";
 
     /**
      * Create a single mbean object. This will fill out nameProperties with
@@ -103,19 +111,29 @@ public class SingleMBeanObject<I> {
         this.domain = domain;
         this.asInterface = asInterface;
         this.o = o;
+        
         nameProperties.put("location",
                            Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION));
+                               CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION));
         nameProperties.put("hostname", SystemUtils.getLocalHostName());
-        nameProperties.put("httpport",
-                           Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         nameProperties.put("applicationname",
                            Settings.get(CommonSettings.APPLICATION_NAME));
-        nameProperties.put("applicationistanceid",
-                Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
-        nameProperties.put("replica",
-                Settings.get(
-                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+        nameProperties.put("httpport",
+                Settings.get(CommonSettings.HTTP_PORT_NUMBER));
+        String val;
+        try {
+            val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
+            nameProperties.put("priority", val);
+        } catch (UnknownID e) {
+            nameProperties.put("priority", "");            
+        }
+        try {
+            val = Settings.get(ARCHIVE_ENVIRONMENT_THIS_REPLICA_ID);
+            nameProperties.put("replica", val);
+        } catch (UnknownID e) {
+            nameProperties.put("replica", "");            
+        }
+
         this.mBeanServer = mBeanServer;
     }
 
@@ -143,7 +161,7 @@ public class SingleMBeanObject<I> {
 
     /**
      * Properties for the ObjectName name. Update these before registering. On
-     * construction, initialised with location, hostname, httpport and
+     * construction, initialised with location, hostname, httpport, priority, replica
      * applicationname.
      */
     public Hashtable<String, String> getNameProperties() {

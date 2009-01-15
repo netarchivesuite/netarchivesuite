@@ -54,7 +54,7 @@
             <!-- The *unique* (per host) port number that may or may not be
                  used to serve http, but is frequently used to identify
                  the process.-->
-            <port>8076</port>
+            <port>0000</port>
         </http>
         <arcrepositoryClient xsi:type="jmsarcrepositoryclient">
             <!-- The class that implements the ArcRepositoryClient.  This class

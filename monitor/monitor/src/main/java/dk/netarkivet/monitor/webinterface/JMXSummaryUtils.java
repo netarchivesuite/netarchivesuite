@@ -48,6 +48,8 @@ public class JMXSummaryUtils {
     public static final String JMXHostnameProperty = "hostname";
     public static final String JMXHttpportProperty = "httpport";
     public static final String JMXApplicationnameProperty = "applicationname";
+    public static final String JMXHarvestPriorityProperty = "priority";
+    public static final String JMXArchiveReplicaIdProperty = "replica";
     public static final String JMXIndexProperty = "index";
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{

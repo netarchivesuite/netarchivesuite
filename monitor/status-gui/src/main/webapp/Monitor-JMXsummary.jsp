@@ -84,6 +84,14 @@ java.util.Locale,
         JMXSummaryUtils.generateShowAllLink(starredRequest,
         	JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
         </th>
+        <th><fmt:message key="tablefield;priority"/> <%=
+        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        	JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
+        </th>
+        <th><fmt:message key="tablefield;replica"/> <%=
+        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        	JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
+        </th>
         <th><fmt:message key="tablefield;index"/> <%=
         JMXSummaryUtils.generateShowAllLink(starredRequest,
         	JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
@@ -114,6 +122,16 @@ java.util.Locale,
                 HTMLUtils.escapeHtmlValues
                         (JMXSummaryUtils.reduceApplicationName(
                                 entry.getApplicationName())))%>
+        </td>
+        <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                JMXSummaryUtils.JMXHarvestPriorityProperty,
+                entry.getHarvestPriority(),
+                HTMLUtils.escapeHtmlValues(entry.getHarvestPriority()))%>
+        </td>
+        <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                JMXSummaryUtils.JMXArchiveReplicaIdProperty,
+                entry.getArchiveReplicaId(),
+                HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaId()))%>
         </td>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                 JMXSummaryUtils.JMXIndexProperty,

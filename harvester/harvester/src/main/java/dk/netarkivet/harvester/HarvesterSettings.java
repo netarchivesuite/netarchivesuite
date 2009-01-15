@@ -151,9 +151,13 @@ public class HarvesterSettings {
      */
     public static String HARVEST_CONTROLLER_OLDJOBSDIR
             = "settings.harvester.harvesting.oldjobsDir";
-    /** Pool to take jobs from. There are two pools to choose from, labelled
-     *  "HIGHPRIORITY" (pool for selective harvest jobs), 
-     *  and "LOWPRIORITY" (pool for snapshot harvest jobs) respectively.
+    /** 
+     * Pool to take jobs from. There are two pools to choose from, labelled
+     * "HIGHPRIORITY" (pool for selective harvest jobs), 
+     * and "LOWPRIORITY" (pool for snapshot harvest jobs) respectively.
+     * 
+     * NOTE: this one is also used in SingleMBeanObject parsing information
+     * to System state
      */
     public static String HARVEST_CONTROLLER_PRIORITY
             = "settings.harvester.harvesting.queuePriority";
