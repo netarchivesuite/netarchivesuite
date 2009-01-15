@@ -489,7 +489,6 @@
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
         </replicas>
         <useReplicaId>replicaOne</useReplicaId>
-        <thisReplicaId></thisReplicaId>
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->

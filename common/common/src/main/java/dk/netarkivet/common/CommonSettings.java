@@ -169,17 +169,12 @@ public class CommonSettings {
 
     /** Default bit archive to use for batch jobs (if none is specified). */
     public static String ENVIRONMENT_USE_REPLICA_ID
-            = "settings.common.replicas.useReplicaId";
+            = "settings.common.useReplicaId";
 
     /** For archiving applications, determines which physical location 
      * you are part of. */
     public static String ENVIRONMENT_THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
-
-    /** For archiving applications, determines which bitarchive replica
-     * you are part of. */
-    public static String ENVIRONMENT_THIS_REPLICA_ID
-            = "settings.common.thisReplicaId";
 
     /** The name of the application, fx. "BitarchiveServerApplication". */
     public static String APPLICATION_NAME
