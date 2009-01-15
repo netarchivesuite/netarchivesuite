@@ -65,8 +65,6 @@ public class Channels {
      * thisReplica is the replica, used for applications
      * that represent a replica. An example value is "KB".
      */
-    private final String thisReplica = Settings.get(
-            CommonSettings.ENVIRONMENT_THIS_REPLICA_ID);
 
     /**
      * useReplica is the replica, used for applications
@@ -75,41 +73,31 @@ public class Channels {
     private final String useReplica = Settings.get(
             CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
 
-    /** The index of this replica in the allReplicas list. */
-    private final int indexOfThisReplica = Arrays.asList(allReplicas)
-            .indexOf(thisReplica);
-
     /** The index of use replica in the allReplicas list. */
     private final int indexOfUseReplica = Arrays.asList(allReplicas)
-            .indexOf(thisReplica);
+            .indexOf(useReplica);
     
     private Channels() {
-        int index = indexOfThisReplica;
-        if (index < 0) {
-            if (indexOfUseReplica < 0) {
-                throw new ArgumentNotValid("Bad replicas " 
-                        + "thisReplica: '" + thisReplica + "'"
+        if (indexOfUseReplica < 0) {
+             throw new ArgumentNotValid("Bad replicas " 
                         + "useReplica: '" + useReplica + "'");
-            } else {
-                index = indexOfUseReplica;
-            }
         }
 
         for (int i = 0; i < allReplicas.length; i++) {
             ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.TOPIC);
         }
-        ALL_BA = ALL_BA_ARRAY[index];
+        ALL_BA = ALL_BA_ARRAY[indexOfUseReplica];
         for (int i = 0; i < allReplicas.length; i++) {
             ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
-        ANY_BA = ANY_BA_ARRAY[index];
+        ANY_BA = ANY_BA_ARRAY[indexOfUseReplica];
         for (int i = 0; i < allReplicas.length; i++) {
             THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
-        THE_BAMON = THE_BAMON_ARRAY[index];
+        THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplica];
     }
 
     /* ******** Sort in order of the Distributed Architecture paper ******** */
