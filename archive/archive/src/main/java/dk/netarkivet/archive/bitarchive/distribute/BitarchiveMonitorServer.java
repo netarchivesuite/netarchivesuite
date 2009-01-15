@@ -123,7 +123,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             BatchMessage outbMsg =
                     new BatchMessage(Channels.getAllBa(), inbMsg.getJob(),
                                      Settings.get(
-                                             CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                             CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             con.send(outbMsg);
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
                         outbMsg.getID());

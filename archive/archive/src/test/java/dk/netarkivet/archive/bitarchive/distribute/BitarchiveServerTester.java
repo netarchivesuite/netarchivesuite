@@ -407,7 +407,7 @@ public class BitarchiveServerTester extends TestCase {
         BatchMessage bm =
                 new BatchMessage(Channels.getTheBamon(),
                         new ChecksumJob(),
-                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
 
         JMSConnectionTestMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -482,11 +482,11 @@ public class BitarchiveServerTester extends TestCase {
                                 }
                             }
                         },
-                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         BatchMessage bm2 =
                 new BatchMessage(Channels.getTheBamon(),
                         new TimedChecksumJob(),
-                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
 
         JMSConnectionTestMQ.updateMsgID(bm1, "ID45");
         JMSConnectionTestMQ.updateMsgID(bm2, "ID46");
@@ -548,7 +548,7 @@ public class BitarchiveServerTester extends TestCase {
      */
     public void testVisitRemoveAndGetFileMessage() throws Exception {
         String arcFile = TestInfo.BA1_FILENAME;
-        String dummyLocation = "KB";
+        String dummyReplicaId = "KB";
         String checksum = TestInfo.BA1_CHECKSUM;
         String credentials = Settings.get(
                 ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS);
@@ -566,7 +566,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoveAndGetFileMessage m1 =
                 new RemoveAndGetFileMessage(
                         arcFile + "-NOT",
-                        dummyLocation,
+                        dummyReplicaId,
                         checksum,
                         credentials);
         bas.visit(m1);
@@ -579,7 +579,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoveAndGetFileMessage m2 =
                 new RemoveAndGetFileMessage(
                         arcFile,
-                        dummyLocation,
+                        dummyReplicaId,
                         checksum + "-NOT",
                         credentials);
         bas.visit(m2);
@@ -597,7 +597,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoveAndGetFileMessage m3 =
                 new RemoveAndGetFileMessage(
                         arcFile,
-                        dummyLocation,
+                        dummyReplicaId,
                         checksum,
                         credentials + "-NOT");
         bas.visit(m3);
@@ -615,7 +615,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoveAndGetFileMessage m4 =
                 new RemoveAndGetFileMessage(
                         arcFile,
-                        dummyLocation,
+                        dummyReplicaId,
                         checksum,
                         credentials);
         long len = baFile.length();

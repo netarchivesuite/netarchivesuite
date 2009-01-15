@@ -40,7 +40,7 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
@@ -73,9 +73,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
         // This will fail, if the Location class has already been initialized
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "KB", "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "KB", "SB");
 
-        if (!Location.isKnownLocation("KB") || !Location.isKnownLocation("SB")) {
+        if (!Replica.isKnownReplicaId("KB") || !Replica.isKnownReplicaId("SB")) {
             fail("These tests assume, that KB and SB are known locations");
         }
         super.setUp();
@@ -116,9 +116,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1 });
         args.put(BITARCHIVE_NAME_PARAM,
-                    new String[]{Location.get(ba1).getName()});
+                    new String[]{Replica.getReplicaFromId(ba1).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                    new String[]{Location.get(ba1).getName()});
+                    new String[]{Replica.getReplicaFromId(ba1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
         Map<String, FilePreservationState> status =
@@ -138,9 +138,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request = new MockHttpServletRequest();
         args.clear();
         args.put(BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba1).getName()});
+                 new String[]{Replica.getReplicaFromId(ba1).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba1).getName()});
+                 new String[]{Replica.getReplicaFromId(ba1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
                 getDummyPageContext(defaultLocale, request), new StringBuilder()
@@ -158,9 +158,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request = new MockHttpServletRequest();
         args.clear();
         args.put(BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba2).getName()});
+                 new String[]{Replica.getReplicaFromId(ba2).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                 new String[]{Location.get(ba2).getName()});
+                 new String[]{Replica.getReplicaFromId(ba2).getName()});
         request.setupAddParameter(ADD_COMMAND,
                 new String[] {
                     ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
@@ -234,9 +234,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
             map.put(key, oldValue);
         }
 
-        public void uploadMissingFiles(Location location, String... filename) {
+        public void uploadMissingFiles(Replica replica, String... filename) {
             addCall(calls, ADD_METHOD,
-                    filename[0] + "," + location.getName());
+                    filename[0] + "," + replica.getId());
         }
 
         public FilePreservationState

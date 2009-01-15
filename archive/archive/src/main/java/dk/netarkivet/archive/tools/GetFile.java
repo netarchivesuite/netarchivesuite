@@ -28,7 +28,7 @@ import java.io.File;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
@@ -77,9 +77,9 @@ public class GetFile extends ToolRunnerBase {
         private ViewerArcRepositoryClient arcrep;
         
         /**
-         * the bitarchive location requested to deliver the file.
+         * the bitarchive replica requested to deliver the file.
          */
-        Location myLocation;
+        Replica myReplica;
 
         /**
          * Accept 1 or 2 parameters.
@@ -100,8 +100,8 @@ public class GetFile extends ToolRunnerBase {
          */
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
-            myLocation = Location.get(Settings.get(
-                    CommonSettings.ENVIRONMENT_THIS_LOCATION));
+            myReplica = Replica.getReplicaFromId(Settings.get(
+                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         }
 
         /**
@@ -135,13 +135,13 @@ public class GetFile extends ToolRunnerBase {
                     destfile = new File(args[1]);
                 }
                 System.out.println("Retrieving file '" + filename
-                        + "' from location '" + myLocation.getName()
+                        + "' from replica '" + myReplica.getName()
                         + "' as file " + destfile.getAbsolutePath());
-                arcrep.getFile(filename, myLocation, destfile);
+                arcrep.getFile(filename, myReplica, destfile);
 
             } catch (NetarkivetException e) {
                 System.out.println("Execution of arcrep.getFile(arcfilename, "
-                        + "location, toFile) failed).");
+                        + "replica, toFile) failed).");
                 e.printStackTrace();
                 System.exit(1);
             }

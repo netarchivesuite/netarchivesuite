@@ -52,12 +52,12 @@ public interface ViewerArcRepositoryClient  {
      * Retrieves a file from an ArcRepository and places it in a local file.
 
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param location The bitarchive to retrieve the data from.
+     * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file
      * could not be found.
      */
-    void getFile(String arcfilename, Location location, File toFile);
+    void getFile(String arcfilename, Replica replica, File toFile);
 
     /**
      * Runs a batch batch job on each file in the ArcRepository.
@@ -67,8 +67,8 @@ public interface ViewerArcRepositoryClient  {
      *  method will be called afterwards. The process() method will be called
      *  with each File entry.
      *
-     * @param locationName The archive to execute the job on.
+     * @param replicaId The archive to execute the job on.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(FileBatchJob job, String locationName);
+    BatchStatus batch(FileBatchJob job, String replicaId);
 }

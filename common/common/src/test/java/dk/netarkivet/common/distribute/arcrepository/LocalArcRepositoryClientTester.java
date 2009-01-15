@@ -112,8 +112,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
         assertFalse("Should have removed sample file original",
                     TestInfo.SAMPLE_FILE_COPY.exists());
         arcrep.getFile(TestInfo.SAMPLE_FILE_COPY.getName(),
-                       Location.get(Settings.get(
-                               CommonSettings.ENVIRONMENT_THIS_LOCATION)),
+                       Replica.getReplicaFromId(Settings.get(
+                               CommonSettings.ENVIRONMENT_THIS_REPLICA_ID)),
                        TestInfo.SAMPLE_FILE_COPY);
         assertTrue("Should have fetched sample file",
                    TestInfo.SAMPLE_FILE_COPY.exists());
@@ -122,8 +122,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
                      FileUtils.readFile(TestInfo.SAMPLE_FILE_COPY));
         try {
             arcrep.getFile("No Such File",
-                           Location.get(Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_LOCATION)),
+                           Replica.getReplicaFromId(Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_REPLICA_ID)),
                            TestInfo.SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
         } catch (IOFailure e) {

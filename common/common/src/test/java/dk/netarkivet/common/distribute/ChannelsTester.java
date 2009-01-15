@@ -64,8 +64,8 @@ public class ChannelsTester extends TestCase {
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB", "KB");
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "KB");
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB", "KB");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID, "KB");
         assertEquals("Channel name must not change just because setting does",
                 env + "_SB_THE_BAMON", Channels.getTheBamon().getName());
         resetChannels();
@@ -81,9 +81,9 @@ public class ChannelsTester extends TestCase {
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_" + Settings.get(
-                        CommonSettings.ENVIRONMENT_THIS_LOCATION)
+                        CommonSettings.ENVIRONMENT_THIS_REPLICA_ID)
                 + "_THE_BAMON", Channels.getTheBamon().getName());
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "NOWHERE");
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID, "NOWHERE");
         try {
             resetChannels();
             Channels.getTheBamon();
@@ -238,15 +238,15 @@ public class ChannelsTester extends TestCase {
     /**
      * Test method to get BAMOn channel for a particular location.
      */
-    public void testGetBAMONForLocation() {
-        ChannelID ch1 = Channels.getBaMonForLocation("KB");
+    public void testGetBAMONForReplica() {
+        ChannelID ch1 = Channels.getBaMonForReplica("KB");
         assertFalse("Should get channel for KB, not " + ch1.getName(),
                 ch1.getName().lastIndexOf("KB") == -1);
-        ChannelID ch2 = Channels.getBaMonForLocation("SB");
+        ChannelID ch2 = Channels.getBaMonForReplica("SB");
         assertFalse("Should get channel for SB, not " + ch2.getName(),
                 ch2.getName().lastIndexOf("SB") == -1);
         try {
-            ChannelID ch3 = Channels.getBaMonForLocation("AB");
+            ChannelID ch3 = Channels.getBaMonForReplica("AB");
             fail("Should throw exception, not return " + ch3.getName());
         } catch (ArgumentNotValid e) {
             //expected
@@ -254,7 +254,7 @@ public class ChannelsTester extends TestCase {
 
         Settings.set(CommonSettings.ENVIRONMENT_NAME, "A_B");
         Channels.reset();
-        ChannelID ch = Channels.getBaMonForLocation("SB");
+        ChannelID ch = Channels.getBaMonForReplica("SB");
         StringAsserts.assertStringContains(
                 "Should find channel even when environment "
                 + "contains underscores",

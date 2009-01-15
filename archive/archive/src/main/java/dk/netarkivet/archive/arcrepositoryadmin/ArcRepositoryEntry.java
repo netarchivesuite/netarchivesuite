@@ -189,21 +189,21 @@ public class ArcRepositoryEntry {
      * @param state the new StoreState for this bitarchive.
      * @param lastchanged the time for when the state was changed
      */
-    void setStoreState(String ba, BitArchiveStoreState state,
+    void setStoreState(String baId, BitArchiveStoreState state,
             Date lastchanged) {
         ArchiveStoreState ass = new ArchiveStoreState(state, lastchanged);
-        storeStates.put(ba, ass);
+        storeStates.put(baId, ass);
     }
 
 
     /**
      * Get the StoreState for this entry for a given bitarchive or null if none.
-     * @param ba a bitarchive
+     * @param baId a bitarchive id
      * @return the StoreState for a given bitarchive.
      */
-    public BitArchiveStoreState getStoreState(String ba) {
-        ArgumentNotValid.checkNotNullOrEmpty(ba, "String ba");
-        ArchiveStoreState ass = storeStates.get(ba);
+    public BitArchiveStoreState getStoreState(String baId) {
+        ArgumentNotValid.checkNotNullOrEmpty(baId, "String baId");
+        ArchiveStoreState ass = storeStates.get(baId);
         if (ass == null) {
             return null;
         }

@@ -57,10 +57,10 @@ public class StandaloneApplication {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
-        Settings.set(CommonSettings.ENVIRONMENT_BATCH_LOCATION, Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, Settings.get(
+                                   CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
 
 
         ApplicationUtils.startApp(BitarchiveMonitorServer.class, args);

@@ -45,8 +45,8 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     private RemoteFile remoteFile;
     /** prefix to identify this message type.*/
     private static final String IDPREFIX = "RemoveAndGetFile";
-    /** This location. */
-    private String locationName;
+    /** This replica id. */
+    private String replicaId;
 
     /** The checksum of the file to remove. */
     private String checksum;
@@ -57,16 +57,16 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     /**
      * Constructor.
      * @param arcfileName The file to retrieve & remove
-     * @param locationName The bitarchive to receive the response
+     * @param replicaId The id of the bitarchive to receive the response
      * @param checksum the checksum of the file to retrieve & remove
      * @param credentials the right credentials for this operation
      */
     public RemoveAndGetFileMessage(String arcfileName,
-                                     String locationName, String checksum,
+                                     String replicaId, String checksum,
                                      String credentials) {
         super(Channels.getTheArcrepos(), Channels.getThisHaco(), IDPREFIX);
         this.arcfileName = arcfileName;
-        this.locationName = locationName;
+        this.replicaId = replicaId;
         this.checksum = checksum;
         this.credentials = credentials;
     }
@@ -109,11 +109,11 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieve the location name.
-     * @return location name
+     * Retrieve the replica id.
+     * @return replica id
      */
-    public String getLocationName() {
-        return locationName;
+    public String getReplicaId() {
+        return replicaId;
     }
 
     /**

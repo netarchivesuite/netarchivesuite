@@ -472,19 +472,20 @@
               -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <locations>
-            <!-- The names of all bit archive locations in the
-                 environment, e.g., "locationOne" and "locationTwo". -->
-            <location>
-                <name>locationOne</name>
-            </location>
-            <location>
-                <name>locationTwo</name>
-            </location>
+        <replicas>
+            <!-- The names of all bitarchive replicas in the
+                 environment, e.g., "replicaOne" and "replicaTwo". 
+                 NOTE: settings for checksum replicas are not use yet -->
+            <replica>
+                <name>replicaOne</name>
+            </replica>
+            <replica>
+                <name>replicaTwo</name>
+            </replica>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <batchLocation>locationOne</batchLocation>
-        </locations>
-        <thisPhysicalLocation>locationOne</thisPhysicalLocation>
+            <useReplicaId>replicaOne</useReplicaId>
+        </replicas>
+        <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>

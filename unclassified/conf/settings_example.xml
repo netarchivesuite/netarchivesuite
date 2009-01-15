@@ -25,6 +25,7 @@
 -->
 <!-- 
 	This file contains an example of a settings.xml file.
+	NOTE that this settings file is NOT necessary if you use deploy 
 -->
 <settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
@@ -496,19 +497,30 @@
               -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <locations>
-            <!-- The names of all bit archive locations in the
-                 environment, e.g., "KB" and "SB". -->
-            <location>
-                <name>SB</name>
-            </location>
-            <location>
-                <name>KB</name>
-            </location>
-            <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <batchLocation>KB</batchLocation>
-        </locations>
-        <thisPhysicalLocation>SB</thisPhysicalLocation>
+        <replicas>
+            <!-- The names of all bitarchive replicas in the
+                 environment, e.g., "KB" and "SB". 
+                 NOTE: settings for checksum replicas are not use yet -->                 
+            <replica>
+                <replicaId>SB</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>SBB</replicaName>
+            </replica>
+            <replica>
+                <replicaId>KB</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>KBB</replicaName>
+            </replica>
+            <replica>
+                <replicaId>CS</replicaId>
+                <replicaType>checksum</replicaType>
+                <replicaName>CS1</replicaName>
+            </replica>
+        </replicas>
+        <!-- Default bit archive to use for batch jobs (if none is specified) -->
+        <useReplicaId>KB</useReplicaId>
+        <!-- Physical location of applications -->
+        <thisPhysicalLocation>SBL</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>

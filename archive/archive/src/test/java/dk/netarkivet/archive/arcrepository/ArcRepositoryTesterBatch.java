@@ -97,8 +97,8 @@ public class ArcRepositoryTesterBatch extends TestCase {
         super.setUp();
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         ChannelsTester.resetChannels();
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
@@ -146,7 +146,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
                                                  Settings.get(
-                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         int processed = batchStatus.getNoOfFilesProcessed();
         assertEquals("Number of files processed: " + processed
                      + " does not equal number of given files",
@@ -161,7 +161,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus lbs = arClient.batch(jobTest,
                                          Settings.get(
-                                                 CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                                 CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         lbs.getResultFile().copyTo(OUTPUT_FILE);
         assertEquals("No exceptions should have happened", 0,
                      jobTest.getFilesFailed().size());
@@ -178,7 +178,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         try {
             arClient.batch(null,
                            Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                   CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             fail("Failed to throw exception on null batch-job argument to Controller.batch()");
         } catch (ArgumentNotValid e) {
             //expected
@@ -192,13 +192,13 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob jobTest = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(jobTest,
                                                  Settings.get(
-                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         assertEquals("First batch should work",
                      testFiles.length, batchStatus.getNoOfFilesProcessed());
 
         batchStatus = arClient.batch(jobTest,
                                      Settings.get(
-                                             CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                             CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         assertEquals("Second batch should work",
                      testFiles.length, batchStatus.getNoOfFilesProcessed());
     }
@@ -215,7 +215,7 @@ public class ArcRepositoryTesterBatch extends TestCase {
         ChecksumJob checkJob = new ChecksumJob();
         BatchStatus batchStatus = arClient.batch(checkJob,
                                                  Settings.get(
-                                                         CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                                         CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         batchStatus.getResultFile().copyTo(OUTPUT_FILE);
         List<String> jobChecksums = new ArrayList<String>();
 

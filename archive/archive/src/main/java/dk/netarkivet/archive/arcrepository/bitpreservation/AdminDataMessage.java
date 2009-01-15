@@ -38,8 +38,8 @@ public class AdminDataMessage extends ArchiveMessage {
     private static final String IDPREFIX = "AdminData";
     /** The filename to be updated in AdminData. */
     private String fileName;
-    /** The name of the bitarchive, where the file resides. */
-    private String bitarchiveName;
+    /** The id of the bitarchive, where the file resides. */
+    private String bitarchiveId;
     /** the new storestate for the filename.
      * Used only when changestorestate is true. */
     private BitArchiveStoreState newvalue;
@@ -57,11 +57,11 @@ public class AdminDataMessage extends ArchiveMessage {
      * @param theBitarchiveName
      * @param newval The new BitarchiveStoreState
      */
-    public AdminDataMessage(String theFileName, String theBitarchiveName,
+    public AdminDataMessage(String theFileName, String theBitarchiveId,
                             BitArchiveStoreState newval) {
         super(Channels.getTheArcrepos(), Channels.getThisHaco(), IDPREFIX);
         fileName = theFileName;
-        bitarchiveName = theBitarchiveName;
+        bitarchiveId = theBitarchiveId;
         newvalue = newval;
         changestorestate = true;
     }
@@ -89,10 +89,10 @@ public class AdminDataMessage extends ArchiveMessage {
     }
 
     /**
-     * @return Returns the bitarchiveName.
+     * @return Returns the bitarchiveId.
      */
-    public String getBitarchiveName() {
-        return bitarchiveName;
+    public String getBitarchiveId() {
+        return bitarchiveId;
     }
 
     /**

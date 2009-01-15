@@ -125,7 +125,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
         job.processOnlyFilesMatching(ID + Constants.METADATA_FILE_PATTERN_SUFFIX);
         BatchStatus b = arcrep.batch(job,
                                      Settings.get(
-                                             CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                                             CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.

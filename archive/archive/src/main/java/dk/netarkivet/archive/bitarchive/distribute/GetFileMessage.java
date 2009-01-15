@@ -46,8 +46,8 @@ public class GetFileMessage extends ArchiveMessage {
     private RemoteFile remoteFile;
     /** prefix to identify this message type. */
     private static final String IDPREFIX = "GetFile";
-    /** This location. */
-    private String locationName;
+    /** This replica id. */
+    private String replicaId;
 
     /**
      * Constructor for get file message
@@ -55,13 +55,13 @@ public class GetFileMessage extends ArchiveMessage {
      * @param to Recepient
      * @param replyTo Original sender
      * @param arcfileName The file to retrieve
-     * @param locationName The bitarchive location to retrieve it from.
+     * @param replicaId The bitarchive replica id to retrieve it from.
      */
     public GetFileMessage(ChannelID to, ChannelID replyTo, String arcfileName,
-                          String locationName) {
+                          String replicaId) {
         super(to, replyTo, IDPREFIX);
         this.arcfileName = arcfileName;
-        this.locationName = locationName;
+        this.replicaId = replicaId;
     }
 
     /**
@@ -100,11 +100,11 @@ public class GetFileMessage extends ArchiveMessage {
     }
 
     /**
-     * Retrieve the location name.
-     * @return location name
+     * Retrieve the replica id.
+     * @return replica id
      */
-    public String getLocationName() {
-        return locationName;
+    public String getReplicaId() {
+        return replicaId;
     }
 
     /**

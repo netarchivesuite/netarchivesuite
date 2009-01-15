@@ -44,7 +44,7 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NetarkivetException;
@@ -222,20 +222,20 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * queue.
      * This is a blocking call.
      * @param arcfilename    Name of the arcfile to retrieve.
-     * @param location   The bitarchive to retrieve the data from.
+     * @param replica   The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file
      * could not be found.
      */
-    public void getFile(String arcfilename, Location location, File toFile) {
+    public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
-        ArgumentNotValid.checkNotNull(location, "location");
+        ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
         
         log.debug("Requesting get of file '" + arcfilename + "' from '"
-                  + location + "'");
+                  + replica + "'");
         GetFileMessage gfMsg = new GetFileMessage(Channels.getTheArcrepos(),
-                replyQ, arcfilename, location.getName());
+                replyQ, arcfilename, replica.getName());
         GetFileMessage getFileMessage
                 = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
         if (getFileMessage == null) {
@@ -354,16 +354,16 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *                   method will be called afterwards.  The process() method
      *                   will be called
      *                   with each File entry.
-     * @param locationName The archive to execute the job on
+     * @param replicaId The id of the archive to execute the job on
      * @return           A local batch status
      * @throws IOFailure if no results can be read at all
      */
-    public BatchStatus batch(FileBatchJob job, String locationName) {
+    public BatchStatus batch(FileBatchJob job, String replicaId) {
         ArgumentNotValid.checkNotNull(job, "job");
-        ArgumentNotValid.checkNotNullOrEmpty(locationName, "locationName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
 
         BatchMessage bMsg = new BatchMessage(Channels.getTheArcrepos(), replyQ,
-                job, locationName);
+                job, replicaId);
         BatchReplyMessage brMsg =
             (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);
         if (!brMsg.isOk()) {
@@ -431,7 +431,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * are correct.
      *
      * @param fileName The name of the file to delete
-     * @param bitarchiveName The name of the bitarchive to delete the file in
+     * @param bitarchiveId The id of the bitarchive to delete the file in
      * (SB or KB)
      * @param checksum The checksum of the deleted file
      * @param credentials The credentials used to delete the file
@@ -443,20 +443,20 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      * @return The file that was removed
      */
-    public File removeAndGetFile(String fileName, String bitarchiveName,
+    public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "filename");
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
+        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveId, "bitarchiveName");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
         
         String msg = "Requesting remove of file '" + fileName
                      + "' with checksum '"
-                     + checksum + "' from bitarchive '" + bitarchiveName + "'";
+                     + checksum + "' from bitarchive '" + bitarchiveId + "'";
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         RemoveAndGetFileMessage aMsg =
-            new RemoveAndGetFileMessage(fileName, bitarchiveName,
+            new RemoveAndGetFileMessage(fileName, bitarchiveId,
                                         checksum, credentials);
         RemoveAndGetFileMessage replyMsg =
             (RemoveAndGetFileMessage)
@@ -478,7 +478,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         } else {
             String message = "Request timed out while requesting remove of "
                              + "file '" + fileName + "' in bitarchive '"
-                             + bitarchiveName + "'";
+                             + bitarchiveId + "'";
             log.warn(message);
             throw new IOFailure(message);
         }

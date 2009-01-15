@@ -84,7 +84,7 @@ public class TrivialArcRepositoryClientTester extends TestCase {
                 TestInfo.SAMPLE_FILE.getName() + "\n",
                 out.toString());
         File f = File.createTempFile("foo", "bar", FileUtils.getTempDir());
-        arcrep.getFile(TestInfo.SAMPLE_FILE.getName(), Location.get("KB"), f);
+        arcrep.getFile(TestInfo.SAMPLE_FILE.getName(), Replica.getReplicaFromId("KB"), f);
         assertEquals("Should have expected contents back",
                 MD5.generateMD5onFile(TestInfo.SAMPLE_FILE_COPY),
                 MD5.generateMD5onFile(f));

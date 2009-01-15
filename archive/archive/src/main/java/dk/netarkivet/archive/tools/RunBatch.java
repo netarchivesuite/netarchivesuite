@@ -35,7 +35,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
@@ -58,8 +58,8 @@ import org.apache.commons.cli.*;
  *       -C<classfile> is a file containing a FileBatchJob implementation
  *       -R<regexp> is a regular expression that will be matched against
  *              file names in the archive, by default .*
- *       -B<location> is the bitarchive location this should be run on, by
- *              default taken from settings.
+ *       -B<replica> is the name of the bitarchive replica this should be run
+ *               on, by default taken from settings.
  *       -O<outputfile> is a file where the output from the batch job will be
  *              written.  By default, it goes to stdout.
  *       -E<errorFile> is a file where the errors from the batch job will be
@@ -119,11 +119,12 @@ public class RunBatch extends ToolRunnerBase {
         */
         private String regexp = DEFAULT_REGEXP;
         
-        /** Bitarchive location where batchjob is to be run. Set to setting 
-         *  batch location as default */
-        private Location batchLocation = Location.get(Settings.get(
-                CommonSettings.ENVIRONMENT_BATCH_LOCATION)
-        );
+        /** Bitarchive replica where batchjob is to be run. Set to setting 
+         *  use replica is as default */
+        private Replica batchReplica = Replica.getReplicaFromId(
+            Settings.get(
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID
+            ));
 
         /**
          * The outputfile, if any was given.
@@ -223,9 +224,12 @@ public class RunBatch extends ToolRunnerBase {
                     "R", true, "Regular expression for files to be processed "
                                + "(default: '" + regexp + "')");
                 options.addOption(
-                    "B", true, "Bitarchive location where batch must be run "
+                    "B", true, "Name of bitarchive replica where batch must " +
+                               "be run "
                                 + "(default: '" 
-                                + CommonSettings.ENVIRONMENT_BATCH_LOCATION
+                                + Replica.getReplicaFromId(
+                                     CommonSettings.ENVIRONMENT_USE_REPLICA_ID
+                                  ).getName()
                                 + "')");
                 options.addOption(
                     "O", true, "Output file to contain result (default is "
@@ -362,13 +366,13 @@ public class RunBatch extends ToolRunnerBase {
                 }
             }
             
-            //Check bitarchive location argument
-            String loc = parms.cmd.getOptionValue("B");
-            if (loc != null) {
-                if (!Location.isKnownLocation(loc)) {
-                    System.err.println("Unknown location '" + loc
-                                       + "', known location are "
-                                       + Location.getKnown());
+            //Check bitarchive replica argument
+            String rep = parms.cmd.getOptionValue("B");
+            if (rep != null) {
+                if (!Replica.isKnownReplicaName(rep)) {
+                    System.err.println("Unknown replica name '" + rep
+                                       + "', known replicas are "
+                                       + Replica.getKnownNames());
                     return false;
                 }
             }
@@ -457,9 +461,9 @@ public class RunBatch extends ToolRunnerBase {
                 job.processOnlyFilesMatching(regexp);
             }
             
-            String loc = parms.cmd.getOptionValue("B");
-            if (loc != null) { 
-                batchLocation = Location.get(loc);
+            String repName = parms.cmd.getOptionValue("B");
+            if (repName != null) { 
+                batchReplica = Replica.getReplicaFromName(repName);
             }
             
             //Note: if no filename is given, output will be written to stdout
@@ -480,13 +484,13 @@ public class RunBatch extends ToolRunnerBase {
                + ((jarArgs == null) ? "" : className + " from jar-file '"
                        + jarArgs + "' ")
                 + "on files matching '" + regexp + "' "
-                + "on location '" + batchLocation.getName() + "', " 
+                + "on replica '" + batchReplica.getName() + "', " 
                 + "output written to " 
                    + ((oFile == null) ? "stdout " : "file '" + oFile + "', ")
                 + "errors written to " 
                    + ((eFile == null) ? "stderr " : "file '" + eFile + "' ")
             );
-            BatchStatus status = arcrep.batch(job, batchLocation.getName());
+            BatchStatus status = arcrep.batch(job, batchReplica.getId());
             final Collection<File> failedFiles = status.getFilesFailed();
             Collection<ExceptionOccurrence> exceptions = status.getExceptions();
             

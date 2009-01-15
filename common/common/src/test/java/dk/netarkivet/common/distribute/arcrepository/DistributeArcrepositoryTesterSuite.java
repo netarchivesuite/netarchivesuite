@@ -54,7 +54,7 @@ public class DistributeArcrepositoryTesterSuite {
         suite.addTestSuite(BatchStatusTester.class);
         suite.addTestSuite(BitarchiveRecordTester.class);
         suite.addTestSuite(LocalArcRepositoryClientTester.class);
-        suite.addTestSuite(LocationTester.class);
+        suite.addTestSuite(ReplicaTester.class);
         suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
     }
 

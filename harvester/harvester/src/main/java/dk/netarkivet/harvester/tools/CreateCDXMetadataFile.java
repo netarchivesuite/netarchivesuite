@@ -155,7 +155,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             job.processOnlyFilesMatching(jobID + REMAINING_ARC_FILE_PATTERN);
             BatchStatus status = arcrep.batch(job,
                                               Settings.get(
-                                                      CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                                                      CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             if (status.hasResultFile()) {
                 File resultFile = null;
                 try {

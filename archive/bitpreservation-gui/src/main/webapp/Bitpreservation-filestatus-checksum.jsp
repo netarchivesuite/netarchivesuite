@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
                  dk.netarkivet.archive.webinterface.BitpreserveFileState,
                  dk.netarkivet.archive.webinterface.Constants,
-                 dk.netarkivet.common.distribute.arcrepository.Location,
+                 dk.netarkivet.common.distribute.arcrepository.Replica,
 		 	     dk.netarkivet.common.exceptions.ForwardedToErrorPage, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     //Note: The parameter has already been checked to be valid in processChecksumRequest()
     String bitarchiveName
             = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-    Location bitarchive = Location.get(bitarchiveName);
+    Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
 
     Iterable<String> wrongFiles;
     try {
@@ -111,7 +111,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             if (fs.isAdminCheckSumOk()) {
                 List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
                 // Check that at most one checksum were returned from 
-                // location 'bitarchive' for this file, and that this checksum 
+                // replica 'bitarchive' for this file, and that this checksum 
                 // is NOT equal to the one stored in admin data.
                 if (checksum.size() == 1 
                     && !checksum.get(0).equals(fs.getAdminChecksum())) {

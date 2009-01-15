@@ -92,12 +92,10 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * The bit archives a connection is established to. Elements in this map
-     * must be connected BitarchiveClients. Most likely, there will be two, so
-     * we hint the map at that. Map<String,ConnectedBitarchive>
+     * must be connected BitarchiveClients. 
      */
     private final Map<String, BitarchiveClient> connectedBitarchives =
-        new HashMap<String, BitarchiveClient>(
-            2);
+        new HashMap<String, BitarchiveClient>();
 
     /**
      * Map from MessageId to arcfiles for which there are outstanding checksum
@@ -290,20 +288,20 @@ public class ArcRepository implements CleanupIF {
      *            The name of the bitarchive, where RemoteFile is to be stored.
      */
     private synchronized void startUpload(RemoteFile rf,
-            BitarchiveClient bitarchiveClient, String bitarchiveName) {
+            BitarchiveClient bitarchiveClient, String bitarchiveId) {
         final String filename = rf.getName();
-        log.debug("Upload started '" + filename + "' at '" + bitarchiveName
+        log.debug("Upload started '" + filename + "' at '" + bitarchiveId
                 + "'");
 
-        if (!ad.hasState(filename, bitarchiveName)) {
+        if (!ad.hasState(filename, bitarchiveId)) {
             // New upload
-            ad.setState(filename, bitarchiveName,
+            ad.setState(filename, bitarchiveId,
                     BitArchiveStoreState.UPLOAD_STARTED);
             bitarchiveClient.upload(rf);
         } else {
             // Recovery from old upload
             BitArchiveStoreState storeState = ad.getState(filename,
-                    bitarchiveName);
+                    bitarchiveId);
             log.trace("Recovery from old upload. StoreState: " + storeState);
             switch (storeState) {
             case UPLOAD_FAILED:
@@ -311,7 +309,7 @@ public class ArcRepository implements CleanupIF {
             case DATA_UPLOADED:
                 // Unknown condition in bitarchive. Test with checksum job.
                 if (storeState == BitArchiveStoreState.UPLOAD_FAILED) {
-                    ad.setState(filename, bitarchiveName,
+                    ad.setState(filename, bitarchiveId,
                             BitArchiveStoreState.UPLOAD_STARTED);
                 }
                 sendChecksumJob(filename, bitarchiveClient);
@@ -437,24 +435,23 @@ public class ArcRepository implements CleanupIF {
     }
 
     /**
-     * Returns a bitarchive client based on a location name.
+     * Returns a bitarchive client based on a replica id.
      *
-     * @param locationName
-     *            the location name
+     * @param replicaId  the replica id
      * @return a bitarchive client a bitarchive client
      * @throws ArgumentNotValid
-     *             if locationName parameter is null
+     *             if replicaId parameter is null
      */
-    public BitarchiveClient getBitarchiveClientFromLocationName(
-            String locationName) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(locationName, "locationName");
+    public BitarchiveClient getBitarchiveClientFromReplicaId(
+            String replicaId) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(replicaId, "replicaId");
 
-        String bitarchiveName = Channels.getBaMonForLocation(locationName)
+        String channelName = Channels.getBaMonForReplica(replicaId)
                 .getName();
-        BitarchiveClient bac = connectedBitarchives.get(bitarchiveName);
+        BitarchiveClient bac = connectedBitarchives.get(channelName);
 
         if (bac == null) {
-            throw new UnknownID("Unknown bitarchive name: " + bitarchiveName);
+            throw new UnknownID("Unknown channe id: " + channelName);
         }
 
         return bac;
@@ -801,8 +798,8 @@ public class ArcRepository implements CleanupIF {
         NotificationsFactory.getInstance().errorEvent(message);
 
         if (msg.isChangeStoreState()) {
-            String bamonname = Channels.getBaMonForLocation(
-                    msg.getBitarchiveName()).getName();
+            String bamonname = Channels.getBaMonForReplica(
+                    msg.getBitarchiveId()).getName();
             ad.setState(msg.getFileName(), bamonname, msg.getNewvalue());
         }
 
@@ -836,13 +833,13 @@ public class ArcRepository implements CleanupIF {
         // checksum ok - try to remove the file
         log.warn("Requesting remove of file '" + msg.getArcfileName()
                  + "' with checksum '" + msg.getCheckSum()
-                 + "' from: '" + msg.getLocationName() + "'");
+                 + "' from: '" + msg.getReplicaId() + "'");
         NotificationsFactory.getInstance().errorEvent("Requesting remove of file '"
                                  + msg.getArcfileName()
                  + "' with checksum '" + msg.getCheckSum()
-                 + "' from: '" + msg.getLocationName() + "'");
-        BitarchiveClient bac = getBitarchiveClientFromLocationName(msg
-                .getLocationName());
+                 + "' from: '" + msg.getReplicaId() + "'");
+        BitarchiveClient bac = getBitarchiveClientFromReplicaId(msg
+                .getReplicaId());
         bac.removeAndGetFile(msg);
 
     }

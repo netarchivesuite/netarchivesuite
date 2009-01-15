@@ -45,8 +45,8 @@ public class BatchMessage extends ArchiveMessage {
     private static final String IDPREFIX = "Batch";
     /** The batch job, this message is sent to initiate. */
     private FileBatchJob job;
-    /** The name of this location. */
-    private String locationName;
+    /** The id of this replica. */
+    private String replicaId;
 
     /**
      * Creates a BatchMessage object which can be used to initiate a batch
@@ -55,11 +55,11 @@ public class BatchMessage extends ArchiveMessage {
      *
      * @param to The channel to which the batch message is to be sent
      * @param job  The batch job to be executed
-     * @param locationName name of this location.
+     * @param replicaId id of this replica.
      */
     public BatchMessage(ChannelID to,
-                        FileBatchJob job, String locationName) {
-        this(to, Channels.getError(), job, locationName);
+                        FileBatchJob job, String replicaId) {
+        this(to, Channels.getError(), job, replicaId);
     }
 
     /**
@@ -69,14 +69,14 @@ public class BatchMessage extends ArchiveMessage {
      * @param to The channel to which the batch message is to be sent
      * @param replyTo The channel whereto the reply to this message is sent.
      * @param job  The batch job to be executed
-     * @param locationName name of this location.
+     * @param replicaId id of this replica.
      */
     public BatchMessage(ChannelID to, ChannelID replyTo,
-                        FileBatchJob job, String locationName) {
+                        FileBatchJob job, String replicaId) {
         super(to, replyTo, IDPREFIX);
         ArgumentNotValid.checkNotNull(job, "job");
         this.job = job;
-        this.locationName = locationName;
+        this.replicaId = replicaId;
     }
 
   /**
@@ -88,11 +88,11 @@ public class BatchMessage extends ArchiveMessage {
     }
 
     /**
-     * Returns the location name.
-     * @return the location name
+     * Returns the replica id.
+     * @return the replica id
      */
-    public String getLocationName() {
-        return locationName;
+    public String getReplicaId() {
+        return replicaId;
     }
 
     /**

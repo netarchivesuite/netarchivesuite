@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -106,30 +106,30 @@ public enum WorkFiles {
 
     /** Get the directory that files of a given type should go into.
      *
-     * @param loc The location that we're doing bitpreservation for.
+     * @param rep The replica that we're doing bitpreservation for.
      * @param fileType The type of file we will be using.
      * @return A directory (created if necessary) under the bitpreservation
      * dir (see settings) for the file to go into.
      */
-    private static File getDir(Location loc, WorkFiles fileType) {
+    private static File getDir(Replica rep, WorkFiles fileType) {
         switch (fileType) {
             case MISSING_FILES_BA:
             case MISSING_FILES_ADMINDATA:
-                return makeRelativeDir(loc, MISSING_FILES_DIR);
+                return makeRelativeDir(rep, MISSING_FILES_DIR);
             case WRONG_STATES:
             case WRONG_FILES:
-                return makeRelativeDir(loc, WRONGFILESDIR);
+                return makeRelativeDir(rep, WRONGFILESDIR);
             case FILES_ON_BA:
-                return getFilelistOutputDir(makeRelativeDir(loc, MISSING_FILES_DIR));
+                return getFilelistOutputDir(makeRelativeDir(rep, MISSING_FILES_DIR));
             case FILES_ON_REFERENCE_BA:
-                return getFilelistOutputDir(makeRelativeDir(loc, BA_LIST_DIR));
+                return getFilelistOutputDir(makeRelativeDir(rep, BA_LIST_DIR));
             case INSERT_IN_ADMIN:
             case DELETE_FROM_ADMIN:
             case UPLOAD_TO_BA:
             case DELETE_FROM_BA:
-                return makeRelativeDir(loc, ACTION_LIST_DIR);
+                return makeRelativeDir(rep, ACTION_LIST_DIR);
             case CHECKSUMS_ON_BA:
-                return getFilelistOutputDir(makeRelativeDir(loc, CHECKSUM_DIR));
+                return getFilelistOutputDir(makeRelativeDir(rep, CHECKSUM_DIR));
         }
         throw new IllegalState("Impossible workfile type " + fileType);
     }
@@ -137,7 +137,7 @@ public enum WorkFiles {
     /** Get the directory that file listings are to live in, creating it if
      * necessary.
      * @param dir The directory that the file listings should live under.
-     * Note that this is not directly derived from the name of the location,
+     * Note that this is not directly derived from the name of the replica,
      * as it can also be used for reference file listings.
      * @return The directory to put file listings in under the given dir.
      */
@@ -151,24 +151,24 @@ public enum WorkFiles {
     /** Get the base dir for all files related to bitpreservation for a
      * given bitarchive.
      *
-     * @param location The name of a bitarchive.
+     * @param replica The name of a bitarchive.
      * @return The directory to place bitpreservation for the archive under.
      */
-    static File getPreservationDir(Location location) {
+    static File getPreservationDir(Replica replica) {
         File base = new File(Settings.get(
                 ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION));
-        return new File(base, location.getName());
+        return new File(base, replica.getId());
     }
 
-    /** Make a directory object relative to an location, creating the
+    /** Make a directory object relative to an replica, creating the
      * directory if necessary.
      *
-     * @param location The location that we're doing bitpreservation for
+     * @param replica The replica that we're doing bitpreservation for
      * @param dirname The name of the directory to create
      * @return An object representing the directory
      */
-    private static File makeRelativeDir(Location location, String dirname) {
-        File dir = getPreservationDir(location);
+    private static File makeRelativeDir(Replica replica, String dirname) {
+        File dir = getPreservationDir(replica);
         File outputDir = new File(dir, dirname);
         FileUtils.createDir(outputDir);
         return outputDir;
@@ -196,45 +196,45 @@ public enum WorkFiles {
     }
 
     /* public interfaces below here */
-    public static void write(Location location, WorkFiles missingFilesBa,
+    public static void write(Replica replica, WorkFiles missingFilesBa,
                              Set<String> files) {
-    	ArgumentNotValid.checkNotNull(location, "location");
+    	ArgumentNotValid.checkNotNull(replica, "replica");
     	ArgumentNotValid.checkNotNull(missingFilesBa, "missingFilesBa");
     	ArgumentNotValid.checkNotNull(files, "files");
-        FileUtils.writeCollectionToFile(getFile(location, missingFilesBa),
+        FileUtils.writeCollectionToFile(getFile(replica, missingFilesBa),
                 files);
     }
 
-    public static File getFile(Location loc, WorkFiles fileType) {
-    	ArgumentNotValid.checkNotNull(loc, "loc");
+    public static File getFile(Replica rep, WorkFiles fileType) {
+    	ArgumentNotValid.checkNotNull(rep, "rep");
     	ArgumentNotValid.checkNotNull(fileType, "fileType");
-        return new File(getDir(loc, fileType), getFileName(fileType));
+        return new File(getDir(rep, fileType), getFileName(fileType));
     }
 
-    public static Date getLastUpdate(Location loc, WorkFiles fileType) {
-    	ArgumentNotValid.checkNotNull(loc, "loc");
+    public static Date getLastUpdate(Replica rep, WorkFiles fileType) {
+    	ArgumentNotValid.checkNotNull(rep, "rep");
     	ArgumentNotValid.checkNotNull(fileType, "fileType");
-        return new Date(getFile(loc, fileType).lastModified());
+        return new Date(getFile(rep, fileType).lastModified());
     }
 
-    public static long getLineCount(Location loc, WorkFiles fileType) {
-    	ArgumentNotValid.checkNotNull(loc, "loc");
+    public static long getLineCount(Replica rep, WorkFiles fileType) {
+    	ArgumentNotValid.checkNotNull(rep, "rep");
     	ArgumentNotValid.checkNotNull(fileType, "fileType");
-        return FileUtils.countLines(getFile(loc, fileType));
+        return FileUtils.countLines(getFile(rep, fileType));
     }
 
-    public static void removeLine(Location loc, WorkFiles fileType, String line) {
-    	ArgumentNotValid.checkNotNull(loc, "loc");
+    public static void removeLine(Replica rep, WorkFiles fileType, String line) {
+    	ArgumentNotValid.checkNotNull(rep, "rep");
     	ArgumentNotValid.checkNotNull(fileType, "fileType");
     	ArgumentNotValid.checkNotNullOrEmpty(line, "line");
-        FileUtils.removeLineFromFile(line, getFile(loc, fileType));
+        FileUtils.removeLineFromFile(line, getFile(rep, fileType));
     }
 
-    public static List<String> getLines(Location location,
+    public static List<String> getLines(Replica replica,
                                         WorkFiles fileType) {
-    	ArgumentNotValid.checkNotNull(location, "location");
+    	ArgumentNotValid.checkNotNull(replica, "replica");
     	ArgumentNotValid.checkNotNull(fileType, "fileType");
-        return FileUtils.readListFromFile(getFile(location, fileType));
+        return FileUtils.readListFromFile(getFile(replica, fileType));
     }
 
 }

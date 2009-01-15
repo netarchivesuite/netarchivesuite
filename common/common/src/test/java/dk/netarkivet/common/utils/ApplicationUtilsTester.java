@@ -163,7 +163,7 @@ public class ApplicationUtilsTester extends TestCase {
         ApplicationUtils.startApp(App3.class, new String[0]);
         assertEquals("Should have correct appName",
                      "dk.netarkivet.common.utils.App3",
-                     Settings.get(CommonSettings.APPLICATIONNAME));
+                     Settings.get(CommonSettings.APPLICATION_NAME));
         LogUtils.flushLogs(ApplicationUtils.class.getName());
         FileAsserts.assertFileContains(
                 "Should have shutdown hook mentioned in log",

@@ -171,8 +171,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         try {
-            BitarchiveClient bc = ar.getBitarchiveClientFromLocationName(
-                    msg.getLocationName());
+            BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
+                    msg.getReplicaId());
             bc.batch(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
@@ -194,8 +194,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        BitarchiveClient bc = ar.getBitarchiveClientFromLocationName(
-                Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+        BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
+                Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         try {
             bc.get(msg);
         } catch (Throwable t) {
@@ -205,7 +205,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         }
     }
 
-    /** Forwards a getfile message to requested bitarchive.
+    /** Forwards a getfile message to requested bitarchive replica.
      *
      * Note that this circumvents the ArcRepository entirely and that the
      * reply goes directly back to whoever set the message.
@@ -217,7 +217,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         BitarchiveClient bc =
-            ar.getBitarchiveClientFromLocationName(msg.getLocationName());
+            ar.getBitarchiveClientFromReplicaId(msg.getReplicaId());
         try {
             bc.getFile(msg);
         } catch (Throwable t) {

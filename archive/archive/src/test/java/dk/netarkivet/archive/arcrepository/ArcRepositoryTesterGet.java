@@ -44,7 +44,7 @@ import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
@@ -113,8 +113,8 @@ public class ArcRepositoryTesterGet extends TestCase {
         rs.setUp();
         ChannelsTester.resetChannels();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         ChannelsTester.resetChannels();
 
         rf.setUp();
@@ -185,9 +185,9 @@ public class ArcRepositoryTesterGet extends TestCase {
         	= new DummyGetFileMessageReplyServer();
         File result = new File(FileUtils.createUniqueTempDir(
         		WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
-        Location location = Location.get(Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
-        client.getFile(GETTABLE_FILES.get(1), location, result);
+        Replica replica = Replica.getReplicaFromId(Settings.get(
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+        client.getFile(GETTABLE_FILES.get(1), replica, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
         ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
                 .waitForConcurrentTasksToFinish();
@@ -212,7 +212,7 @@ public class ArcRepositoryTesterGet extends TestCase {
         		"filedir");
         client.removeAndGetFile((String) GETTABLE_FILES.get(1),
                                 Settings.get(
-                                        CommonSettings.ENVIRONMENT_THIS_LOCATION),
+                                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID),
                                 "42",
                                 MD5.generateMD5onFile(
                                 		new File(bitarchiveFiledir,

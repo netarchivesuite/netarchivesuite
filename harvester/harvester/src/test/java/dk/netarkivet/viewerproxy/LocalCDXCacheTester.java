@@ -342,7 +342,7 @@ public class LocalCDXCacheTester extends TestCase {
 
         // Set up a dummy client that serves files out of the workingdir.
         ArcRepositoryClient dummyARC = new JMSArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String locationName) {
+            public BatchStatus batch(FileBatchJob job, String replicaId) {
                 batchCounter++;
                 if (batchMustDie) {
                     throw new IOFailure("Committing suicide as ordered, SIR!");
@@ -360,7 +360,7 @@ public class LocalCDXCacheTester extends TestCase {
                 try {
                     os = new FileOutputStream(f);
                 } catch (IOException e) {
-                    return new BatchStatus(locationName,
+                    return new BatchStatus(replicaId,
                                            new ArrayList<File>(), 0, null,
                                            job.getExceptions());
                 }
@@ -388,7 +388,7 @@ public class LocalCDXCacheTester extends TestCase {
                 } catch (IOException e) {
                     fail("Error in close: " + e);
                 }
-                return new BatchStatus(locationName,
+                return new BatchStatus(replicaId,
                                        failures, processed, 
                                        new TestRemoteFile(f,
                                                batchMustDie,

@@ -41,7 +41,7 @@ import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -69,9 +69,9 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         tmpDir = FileUtils.getTempDir();
     }
 
-    public void getFile(String arcfilename, Location location, File toFile) {
+    public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
-        ArgumentNotValid.checkNotNull(location, "location");
+        ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
         File actualFile = new File(arcDir, arcfilename);
         try {
@@ -106,7 +106,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
     }
 
 
-    public BatchStatus batch(FileBatchJob job, String locationName) {
+    public BatchStatus batch(FileBatchJob job, String replicaId) {
         batchCounter++;
         if (batchMustDie) {
             throw new IOFailure("Committing suicide as ordered, SIR!");
@@ -124,7 +124,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         try {
             os = new FileOutputStream(f);
         } catch (IOException e) {
-            return new BatchStatus(locationName,
+            return new BatchStatus(replicaId,
                     new ArrayList<File>(), 0, null, job.getExceptions());
         }
         File[] files = arcDir.listFiles(
@@ -151,7 +151,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         } catch (IOException e) {
             throw new IOFailure("Error in close", e);
         }
-        return new BatchStatus(locationName,
+        return new BatchStatus(replicaId,
                 failures, processed, 
                 new TestRemoteFile(f, batchMustDie,
                         batchMustDie,

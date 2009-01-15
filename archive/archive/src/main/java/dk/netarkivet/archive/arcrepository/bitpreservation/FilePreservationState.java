@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -55,7 +55,7 @@ public class FilePreservationState {
      * Normally, there will only be one entry in the list, but it must also
      * handle the case where multiple copies exist in a bitarchive.
      */
-    private Map<Location, List<String>> bitarchive2checksum;
+    private Map<Replica, List<String>> bitarchive2checksum;
 
     /**
      * Create new instance of the preservation status for a file.
@@ -68,7 +68,7 @@ public class FilePreservationState {
      *  or if admindata is null.
      */
     FilePreservationState(String filename, ArcRepositoryEntry admindata,
-                           Map<Location, List<String>> checksumMap) {
+                           Map<Replica, List<String>> checksumMap) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(admindata,
                 "ArcRepositoryEntry admindata");
@@ -83,8 +83,8 @@ public class FilePreservationState {
      * @return The file's checksum, if it is present in the bitarchive, or
      * "" if it either is absent or an error occurred.
      */
-    public List<String> getBitarchiveChecksum(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public List<String> getBitarchiveChecksum(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         if (bitarchive2checksum.containsKey(bitarchive)) {
             return bitarchive2checksum.get(bitarchive);
         } else {
@@ -107,8 +107,8 @@ public class FilePreservationState {
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
-    public String getAdminBitarchiveState(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public String getAdminBitarchiveState(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         BitArchiveStoreState state = getAdminBitarchiveStoreState(bitarchive);
         if (state != null) {
             return state.toString();
@@ -123,8 +123,8 @@ public class FilePreservationState {
      * @return Status that the admin data knows for this file in the bitarchive.
      */
     public BitArchiveStoreState getAdminBitarchiveStoreState(
-            Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+            Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         String bamonname = bitarchive.getChannelID().getName();
         return adminStatus.getStoreState(bamonname);
     }
@@ -151,9 +151,9 @@ public class FilePreservationState {
      */
     public boolean isAdminDataOk() {
         // Check the bitarchive states against the admin information
-        for (Location l : Location.getKnown()) {
-            BitArchiveStoreState adminstate = getAdminBitarchiveStoreState(l);
-            List<String> checksum = getBitarchiveChecksum(l);
+        for (Replica r : Replica.getKnown()) {
+            BitArchiveStoreState adminstate = getAdminBitarchiveStoreState(r);
+            List<String> checksum = getBitarchiveChecksum(r);
 
             // If we find an error, return false, otherwise go on to the rest.
             if (checksum.size() == 0) {
@@ -182,7 +182,7 @@ public class FilePreservationState {
      * @param bitarchive the bitarchive to check
      * @return true if the file is missing from the bitarchive
      */
-    protected boolean fileIsMissing(Location bitarchive) {
+    protected boolean fileIsMissing(Replica bitarchive) {
         return getBitarchiveChecksum(bitarchive).size() == 0;
     }
 
@@ -199,7 +199,7 @@ public class FilePreservationState {
      * @return the name of the reference bitarchive
      *  or null if no reference exists
      */
-    public Location getReferenceBitarchive() {
+    public Replica getReferenceBitarchive() {
         String referenceCheckSum = getReferenceCheckSum();
         log.trace("Reference-checksum for file '" + filename + "' is '"
                 + referenceCheckSum + "'");
@@ -207,12 +207,12 @@ public class FilePreservationState {
             return null;
         }
 
-        for (Location l : Location.getKnown()) {
-            String cs = getUniqueChecksum(l);
+        for (Replica r : Replica.getKnown()) {
+            String cs = getUniqueChecksum(r);
             if (referenceCheckSum.equals(cs)) {
                 log.trace("Reference archive for file '" + filename + "' is '"
-                        + l.getName() + "'");
-                return l;
+                        + r.getName() + "'");
+                return r;
             }
         }
 
@@ -222,15 +222,15 @@ public class FilePreservationState {
 
     /** Get a checksum that the whole bitarchive agrees upon, or else "".
      *
-     * @param l A location to get checksum for this file from
-     * @return The checksum for this file in the location, if all machines
+     * @param r A replica to get checksum for this file from
+     * @return The checksum for this file in the replica, if all machines
      * that have that file agree, otherwise "".  If no checksums are found,
      * also returns "".
      *
      */
-    public String getUniqueChecksum(Location l) {
-        ArgumentNotValid.checkNotNull(l, "Location l");
-        List<String> checksums = bitarchive2checksum.get(l);
+    public String getUniqueChecksum(Replica r) {
+        ArgumentNotValid.checkNotNull(r, "Replica r");
+        List<String> checksums = bitarchive2checksum.get(r);
         String checksum = null;
         for (String s : checksums) {
             if (checksum != null && !checksum.equals(s)) {
@@ -256,8 +256,8 @@ public class FilePreservationState {
         // establish map from checksum to counter of occurences
         Map<String, Integer> checksumCounts = new HashMap<String, Integer>();
         checksumCounts.put(adminStatus.getChecksum(), 1);
-        for (Location baLocation : Location.getKnown()) {
-            String checksum = getUniqueChecksum(baLocation);
+        for (Replica baReplica : Replica.getKnown()) {
+            String checksum = getUniqueChecksum(baReplica);
             if (checksumCounts.containsKey(checksum)) {
                 checksumCounts.put(checksum, checksumCounts.get(checksum) + 1);
             } else {
@@ -266,7 +266,7 @@ public class FilePreservationState {
         }
 
         // Now determine if a checksum obtained at least half of the votes
-        int majorityCount = (Location.getKnown().size() + 1) / 2 + 1;
+        int majorityCount = (Replica.getKnown().size() + 1) / 2 + 1;
         for (Map.Entry<String, Integer> entry : checksumCounts.entrySet()) {
             log.trace("File '" + filename + "' checksum '" + entry.getKey()
                     + "' votes " + entry.getValue()

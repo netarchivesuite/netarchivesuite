@@ -184,7 +184,7 @@ public class LocalCDXCache implements JobIndexCache {
         job.processOnlyFilesMatching(metadataFiles);
         BatchStatus status = arcRepos.batch(job,
                                             Settings.get(
-                                                    CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                                                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         if (status.hasResultFile()) {
             status.appendResults(out);
         }

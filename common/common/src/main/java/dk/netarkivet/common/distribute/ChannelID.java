@@ -74,8 +74,8 @@ public class ChannelID implements Serializable {
     * The constructor is package private because we should never use any
     * channels except the ones constructed by our friend Channels.java
     * @param app The name of the applications listening to the channel.
-    * @param locationName Name of the location, or ChannelID.COMMON if
-    * channel shared by all locations.
+    * @param replicaName Name of the replica, or ChannelID.COMMON if
+    * channel shared by all replicas.
     * @param useNodeId Whether that IP address of the local node should
     * be included in the channel name.
     * @param useProcId Whether process identifier (= IP port# used for
@@ -83,9 +83,9 @@ public class ChannelID implements Serializable {
     * @param isTopic Whether the Channel is a Topic or a Queue.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    ChannelID(String app, String locationName, boolean useNodeId,
+    ChannelID(String app, String replicaName, boolean useNodeId,
         boolean useProcId, boolean isTopic) {
-        this.name = constructName(app, locationName, useNodeId, useProcId);
+        this.name = constructName(app, replicaName, useNodeId, useProcId);
         this.isTopic = isTopic;
     }
 
@@ -93,8 +93,8 @@ public class ChannelID implements Serializable {
     * Constructs a channel name according to the specifications
     * in distributed_architecture.doc.
     * @param app The name of the applications listening to the channel.
-    * @param locationName Name of the location, or ChannelID.COMMON if
-    * channel common to both locations.
+    * @param replicaId Id of the replica, or ChannelID.COMMON if
+    * channel common to all bitarchive replicas.
     * @param useNodeId Whether that IP address of the local node should
     * be included in the channel name.
     * @param useProcId Whether process identifier 
@@ -103,7 +103,7 @@ public class ChannelID implements Serializable {
     * @return The properly concatenated channel name.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    private String constructName(String app, String locationName,
+    private String constructName(String app, String replicaId,
         boolean useNodeId, boolean useProcId) {
         String userId = environmentName;
         String id = "";
@@ -113,7 +113,7 @@ public class ChannelID implements Serializable {
                 id += ("_" + httpPortNumber);
             }
         }
-        return userId + "_" + locationName + "_" + app
+        return userId + "_" + replicaId + "_" + app
             + (id.equals("") ? "" : ("_" + id));
     }
     /**

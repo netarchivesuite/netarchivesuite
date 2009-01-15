@@ -27,7 +27,7 @@ dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservati
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
 dk.netarkivet.archive.webinterface.BitpreserveFileState,
 dk.netarkivet.archive.webinterface.Constants,
-dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"
@@ -50,7 +50,7 @@ dk.netarkivet.common.distribute.arcrepository.Location, dk.netarkivet.common.exc
     //Note: The parameter has already been checked to be valid in processMissingRequest()
     String bitarchiveName =
             request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-    Location bitarchive = Location.get(bitarchiveName);
+    Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
 
     // Make a list of files to make state for:
     Iterable<String> missingFiles;

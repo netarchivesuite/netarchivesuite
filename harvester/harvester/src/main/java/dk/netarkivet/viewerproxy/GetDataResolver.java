@@ -36,7 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -148,7 +148,7 @@ public class GetDataResolver extends CommandResolver {
                 job.processOnlyFilesMatching(id
                         + Constants.METADATA_FILE_PATTERN_SUFFIX);
                 BatchStatus b = client.batch(job, Settings.get(
-                        CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
                 if (b.getNoOfFilesProcessed() > b.getFilesFailed().size()
                         && b.hasResultFile()) {
                     b.appendResults(response.getOutputStream());
@@ -215,9 +215,9 @@ public class GetDataResolver extends CommandResolver {
                 try {
                     tempFile = File.createTempFile("getFile", "download",
                             FileUtils.getTempDir());
-                    client.getFile(fileName, Location.get(
+                    client.getFile(fileName, Replica.getReplicaFromId(
                             Settings.get(
-                                    CommonSettings.ENVIRONMENT_THIS_LOCATION)),
+                                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID)),
                             tempFile);
                     FileUtils.writeFileToStream(tempFile,
                             response.getOutputStream());

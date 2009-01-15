@@ -105,12 +105,17 @@ public class SingleMBeanObject<I> {
         this.o = o;
         nameProperties.put("location",
                            Settings.get(
-                                   CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                                   CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION));
         nameProperties.put("hostname", SystemUtils.getLocalHostName());
         nameProperties.put("httpport",
                            Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         nameProperties.put("applicationname",
-                           Settings.get(CommonSettings.APPLICATIONNAME));
+                           Settings.get(CommonSettings.APPLICATION_NAME));
+        nameProperties.put("applicationistanceid",
+                Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
+nameProperties.put("replica",
+                Settings.get(
+                        CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         this.mBeanServer = mBeanServer;
     }
 

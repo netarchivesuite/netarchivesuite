@@ -122,12 +122,12 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * Retrieves a file from an ArcRepository and places it in a local file.
 
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param location The bitarchive to retrieve the data from.
+     * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file
      * could not be found.
      */
-    public void getFile(String arcfilename, Location location, File toFile) {
+    public void getFile(String arcfilename, Replica replica, File toFile) {
         FileUtils.copyFile(new File(dir, arcfilename), toFile);
     }
 
@@ -139,16 +139,16 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      *  method will be called afterwards. The process() method will be called
      *  with each File entry.
      *
-     * @param locationName The archive to execute the job on.
+     * @param replicaId The archive to execute the job on.
      * @return The status of the batch job after it ended.
      */
-    public BatchStatus batch(final FileBatchJob job, String locationName) {
+    public BatchStatus batch(final FileBatchJob job, String replicaId) {
         OutputStream os = null;
         File resultFile;
         try {
             //List<File> filesFailed = new ArrayList<File>();
             //int filesProcessed = 0;
-            resultFile = File.createTempFile("batch", locationName,
+            resultFile = File.createTempFile("batch", replicaId,
                     FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
             File[] files = dir.listFiles(new FilenameFilter() {
@@ -173,21 +173,21 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
                 }
             }
         }
-        return new BatchStatus(locationName, job.getFilesFailed(),
+        return new BatchStatus(replicaId, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
                 RemoteFileFactory.getMovefileInstance(resultFile), 
                 job.getExceptions());
     }
 
     /** Updates the administrative data in the ArcRepository for a given
-     * file and location.
+     * file and replica.
      *
      * @param fileName The name of a file stored in the ArcRepository.
-     * @param bitarchiveName The name of the location that the administrative
+     * @param bitarchiveid The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
-    public void updateAdminData(String fileName, String bitarchiveName,
+    public void updateAdminData(String fileName, String bitarchiveId,
                                 BitArchiveStoreState newval) {
     }
 
@@ -206,13 +206,13 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * that has been corrupted.
      *
      * @param fileName The name of the file to remove.
-     * @param bitarchiveName The location from which to remove the file.
+     * @param bitarchiveId The id of the replica from which to remove the file.
      * @param checksum The checksum of the file to be removed.
      * @param credentials A string that shows that the user is allowed to
      * perform this operation.
      * @return A local copy of the file removed.
      */
-    public File removeAndGetFile(String fileName, String bitarchiveName,
+    public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now
         File copiedTo = null;

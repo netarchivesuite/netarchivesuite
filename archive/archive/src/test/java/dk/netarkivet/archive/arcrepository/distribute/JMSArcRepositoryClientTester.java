@@ -62,7 +62,7 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -228,10 +228,10 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 new DummyGetFileMessageReplyServer(ARCDIR);
         String filename = "Upload2.ARC";
         File toFile = new File(WORKING, "newFile.arc");
-        Location location =
-                Location.get(Settings.get(
-                        CommonSettings.ENVIRONMENT_THIS_LOCATION));
-        arc.getFile(filename, location, toFile);
+        Replica replica =
+                Replica.getReplicaFromId(Settings.get(
+                        CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
+        arc.getFile(filename, replica, toFile);
         assertTrue("Result file should exist", toFile.exists());
         assertEquals("Result file should contain right text",
                      FileUtils.readFile(new File(ARCDIR, filename)),
@@ -239,7 +239,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
         toFile = new File(WORKING, "newFile2.arc");
         try {
-            arc.getFile("fnord", location, toFile);
+            arc.getFile("fnord", replica, toFile);
             fail("Should throw exception on failure");
         } catch (IOFailure e) {
             // expected
@@ -248,14 +248,14 @@ public class JMSArcRepositoryClientTester extends TestCase {
                     toFile.exists());
 
         try {
-            arc.getFile(null, location, toFile);
+            arc.getFile(null, replica, toFile);
             fail("Should throw exception on null arg");
         } catch (ArgumentNotValid e) {
             //expected
         }
 
         try {
-            arc.getFile("", location, toFile);
+            arc.getFile("", replica, toFile);
             fail("Should throw exception on empty arg");
         } catch (ArgumentNotValid e) {
             //expected
@@ -269,7 +269,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
 
         try {
-            arc.getFile("foo", location, null);
+            arc.getFile("foo", replica, null);
             fail("Should throw exception on null arg");
         } catch (ArgumentNotValid e) {
             //expected
@@ -399,7 +399,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
          */
         try {
             arc.batch(null,
-                      Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                      Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
             fail("Should throw ArgumentNotValid exception");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -437,7 +437,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
             }
         };
         BatchStatus lbStatus = arc.batch(batchJob, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         assertEquals("Number of files should have been set by the server to 42",
                      42, lbStatus.getNoOfFilesProcessed());
     }

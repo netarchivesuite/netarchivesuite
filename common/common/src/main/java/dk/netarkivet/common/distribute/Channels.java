@@ -53,44 +53,44 @@ public class Channels {
     }
 
     /**
-     * The following fields are read from settings.xml. allLocations is the list
-     * of all locations in the environment. It is used for
-     * applications that need to communicate with e.g. all bit archives. An
+     * The following fields are read from settings.xml. allReplicas is the list
+     * of all replicas in the environment. It is used for
+     * applications that need to communicate with e.g. all bitarchives. An
      * example value is {"KB","SB"}.
      */
-    private final String[] allLocations = Settings.getAll(
-            CommonSettings.ENVIRONMENT_LOCATION_NAMES);
+    private final String[] allReplicas = Settings.getAll(
+            CommonSettings.ENVIRONMENT_REPLICA_IDS);
 
     /**
-     * thisLocation is the local location, used for applications
+     * thisReplica is the replica, used for applications
      * that only communicate with local processes. An example value is "KB".
      */
-    private final String thisLocation = Settings.get(
-            CommonSettings.ENVIRONMENT_THIS_LOCATION);
+    private final String thisReplica = Settings.get(
+            CommonSettings.ENVIRONMENT_THIS_REPLICA_ID);
 
-    /** The index of this location in the allLocations list. */
-    private final int indexOfThisLocation = Arrays.asList(allLocations)
-            .indexOf(thisLocation);
+    /** The index of this replica in the allReplicas list. */
+    private final int indexOfThisReplica = Arrays.asList(allReplicas)
+            .indexOf(thisReplica);
 
     private Channels() {
-        if (indexOfThisLocation < 0) {
-            throw new ArgumentNotValid("Bad location '" + thisLocation + "'");
+        if (indexOfThisReplica < 0) {
+            throw new ArgumentNotValid("Bad replica '" + thisReplica + "'");
         }
-        for (int i = 0; i < allLocations.length; i++) {
-            ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allLocations[i],
+        for (int i = 0; i < allReplicas.length; i++) {
+            ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.TOPIC);
         }
-        ALL_BA = ALL_BA_ARRAY[indexOfThisLocation];
-        for (int i = 0; i < allLocations.length; i++) {
-            ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allLocations[i],
+        ALL_BA = ALL_BA_ARRAY[indexOfThisReplica];
+        for (int i = 0; i < allReplicas.length; i++) {
+            ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
-        ANY_BA = ANY_BA_ARRAY[indexOfThisLocation];
-        for (int i = 0; i < allLocations.length; i++) {
-            THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allLocations[i],
+        ANY_BA = ANY_BA_ARRAY[indexOfThisReplica];
+        for (int i = 0; i < allReplicas.length; i++) {
+            THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicas[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
-        THE_BAMON = THE_BAMON_ARRAY[indexOfThisLocation];
+        THE_BAMON = THE_BAMON_ARRAY[indexOfThisReplica];
     }
 
     /* ******** Sort in order of the Distributed Architecture paper ******** */
@@ -166,16 +166,16 @@ public class Channels {
             ChannelID.QUEUE);
 
     /**
-     * Returns BAMON channels for every known bitarchive (location).
+     * Returns BAMON channels for every known bitarchive (replica).
      *
-     * @return An array of BAMON channels - one per bitarchive (location)
+     * @return An array of BAMON channels - one per bitarchive (replica)
      */
     public static final ChannelID[] getAllArchives_BAMONs() {
         return getInstance().THE_BAMON_ARRAY;
     }
 
     private final ChannelID[] THE_BAMON_ARRAY =
-        new ChannelID[allLocations.length];
+        new ChannelID[allReplicas.length];
 
     /**
      * Returns the queue for sending messages to bitarchive monitors.
@@ -204,12 +204,12 @@ public class Channels {
     /**
      * ALL_BA is the topic on which a Bitarchive client publishes get, correct
      * and batch messages to all connected Bitarchive machines. The following is
-     * the list of ALL_BA for all archives (i.e. archive locations).
+     * the list of ALL_BA for all archives (i.e. archive replicas).
      */
-    private final ChannelID[] ALL_BA_ARRAY = new ChannelID[allLocations.length];
+    private final ChannelID[] ALL_BA_ARRAY = new ChannelID[allReplicas.length];
 
     /**
-     * Returns the topic that all bitarchive machines on this location
+     * Returns the topic that all bitarchive machines on this replica
      * are listening on.
      *
      * @return A topic channel that reaches all local bitarchive machines
@@ -237,11 +237,11 @@ public class Channels {
      * Queue on which upload requests are sent out to bitarchive servers. The
      * following is the list of ANY_BA for all archives.
      */
-    private final ChannelID[] ANY_BA_ARRAY = new ChannelID[allLocations.length];
+    private final ChannelID[] ANY_BA_ARRAY = new ChannelID[allReplicas.length];
 
     /**
      * Returns the channel where exactly one of all the bitarchive machines at
-     * this location will get the message.
+     * this replica will get the message.
      *
      * @return A queue channel that reaches one of the local bitarchive
      *         machines.
@@ -269,27 +269,27 @@ public class Channels {
             ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
 
     /**
-     * Given an location, returns the BAMON queue to which batch jobs
-     * must be sent in order to run them on that locations bitarchive.
+     * Given an replica, returns the BAMON queue to which batch jobs
+     * must be sent in order to run them on that bitarchive.
      *
-     * @param location the location
+     * @param replicaid the id of the replica
      * @return the channel
      * @throws ArgumentNotValid
-     *             if the location is null, unknown, or empty string
+     *             if the replicaId is null, unknown, or empty string
      */
-    public static ChannelID getBaMonForLocation(String location)
+    public static ChannelID getBaMonForReplica(String replicaId)
             throws ArgumentNotValid {
-    	ArgumentNotValid.checkNotNullOrEmpty(location, "location");
+    	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
         ChannelID[] bamons = getAllArchives_BAMONs();
         for (ChannelID bamon : bamons) {
             if (bamon.getName().equals(
                     Settings.get(CommonSettings.ENVIRONMENT_NAME)
-                    + "_" + location + "_THE_BAMON")) {
+                    + "_" + replicaId + "_THE_BAMON")) {
                 return bamon;
             }
         }
         throw new ArgumentNotValid("Did not find a BAMON queue for '"
-                + location + "'");
+                + replicaId + "'");
     }
 
     /**

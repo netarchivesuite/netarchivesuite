@@ -326,7 +326,7 @@ public class Host {
                     ftpHost.getProperty(Constants.FTP_PASSWORD_PROPERTY));
         }
 
-        overrideSetting(CommonSettings.ENVIRONMENT_THIS_LOCATION,
+        overrideSetting(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION,
                 location.toUpperCase());
 
         if (mailHost != null) {

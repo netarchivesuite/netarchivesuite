@@ -63,7 +63,7 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -93,8 +93,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
 
-    private static final Location SB = Location.get("SB");
-    private static final Location KB = Location.get("KB");
+    private static final Replica SB = Replica.getReplicaFromId("SB");
+    private static final Replica KB = Replica.getReplicaFromId("KB");
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -163,25 +163,25 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                     "4236be8e67e0c10da2902764ff4b954a");
         ad.addEntry("integrity12.ARC", null,
                     "4236be8e67e0c10da2902764ff4b954a");
-        Location locationKB = Location.get("KB");
+        Replica replicaKB = Replica.getReplicaFromId("KB");
         ad.setState("integrity1.ARC",
-                    locationKB.getChannelID().getName(),
+                replicaKB.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_FAILED);
         ad.setState("integrity7.ARC",
-                    locationKB.getChannelID().getName(),
+                replicaKB.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_COMPLETED);
         ad.setState("integrity12.ARC",
-                    locationKB.getChannelID().getName(),
+                replicaKB.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_COMPLETED);
 
         abp = FileBasedActiveBitPreservation.getInstance();
         abp = FileBasedActiveBitPreservation.getInstance();
-        abp.findChangedFiles(locationKB);
+        abp.findChangedFiles(replicaKB);
 
         // Check that wrong-files file exists and has correct content
         List<String> expectedContent = Arrays.asList(
                 "integrity11.ARC", "integrity12.ARC");
-        File wrong = WorkFiles.getFile(locationKB, WorkFiles.WRONG_FILES);
+        File wrong = WorkFiles.getFile(replicaKB, WorkFiles.WRONG_FILES);
         List<String> actualContent = FileUtils.readListFromFile(wrong);
         Collections.sort(actualContent);
         assertEquals("Wrong state list should be as expected.\n"
@@ -193,7 +193,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         List<String> expectedContent2
                 = Arrays.asList("integrity1.ARC");
         List<String> actualContent2 =
-                WorkFiles.getLines(locationKB, WorkFiles.WRONG_STATES);
+                WorkFiles.getLines(replicaKB, WorkFiles.WRONG_STATES);
         Collections.sort(actualContent2);
         assertEquals("Wrong state list should be as expected.\n"
                      + "Expected " + expectedContent2
@@ -217,18 +217,18 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 "AP1", Collections.<File>emptySet(), 5,
                 RemoteFileFactory.getMovefileInstance(listingDir),
                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
-        Location locationSB = Location.get("SB");
+        Replica replicaSB = Replica.getReplicaFromId("SB");
 
         //Run method.
         FileBasedActiveBitPreservation abp 
             = FileBasedActiveBitPreservation.getInstance();
-        abp.findMissingFiles(locationSB);
+        abp.findMissingFiles(replicaSB);
 
         //Clean up
         MockupArcRepositoryClient.getInstance().overrideBatch = null;
 
         // Check that missing-files file exists and has correct content
-        File missing = WorkFiles.getFile(locationSB,
+        File missing = WorkFiles.getFile(replicaSB,
                                          WorkFiles.MISSING_FILES_BA);
         String[] expectedContent = {"g.arc", "h.arc"};
         String[] actualContent = FileUtils.readFile(missing).split("\n");
@@ -259,25 +259,25 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                    InvocationTargetException, IllegalAccessException {
         Method runChecksumJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class, "runChecksumJob",
-                Location.class);
+                Replica.class);
 
         FileBasedActiveBitPreservation acp 
             = FileBasedActiveBitPreservation.getInstance();
 
         // Test valid parameters:
         try {
-            runChecksumJob.invoke(acp, (Location) null);
-            fail("Argument 'location' must not be null");
+            runChecksumJob.invoke(acp, (Replica) null);
+            fail("Argument 'replica' must not be null");
         } catch (InvocationTargetException e) {
             assertEquals("Should have thrown ANV",
                          ArgumentNotValid.class, e.getCause().getClass());
             // expected
         }
 
-        Location location = Location.get(TestInfo.VALID_LOCATION);
-        runChecksumJob.invoke(acp, location);
+        Replica replica = Replica.getReplicaFromId(TestInfo.VALID_REPLICA_ID);
+        runChecksumJob.invoke(acp, replica);
 
-        File unsortedOutput = WorkFiles.getFile(location,
+        File unsortedOutput = WorkFiles.getFile(replica,
                                                 WorkFiles.CHECKSUMS_ON_BA);
         assertTrue("No output file generated for unsorted output",
                    unsortedOutput.exists());
@@ -325,12 +325,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         Method runBatchJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class,
                 "runBatchJob",
-                FileBatchJob.class, Location.class, List.class, File.class);
+                FileBatchJob.class, Replica.class, List.class, File.class);
 
         abp = FileBasedActiveBitPreservation.getInstance();
         FileListJob job = new FileListJob();
         File outputFile = new File(TestInfo.WORKING_DIR, "outputFile");
-        runBatchJob.invoke(abp, job, Location.get("KB"),
+        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("KB"),
                            null, outputFile);
         assertTrue("Output file should exist after successfull run",
                    outputFile.exists());
@@ -345,7 +345,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                 new ArrayList<FileBatchJob
                                     .ExceptionOccurrence>(0));
         outputFile.delete();
-        runBatchJob.invoke(abp, job, Location.get("KB"),
+        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("KB"),
                            null, outputFile);
         assertFalse("Output file should not exist after failed run",
                     outputFile.exists());
@@ -379,16 +379,16 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                                      InvocationTargetException {
         Method runChecksumJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class,
-                "runChecksumJob", Location.class);
+                "runChecksumJob", Replica.class);
 
         final FileBasedActiveBitPreservation abp
             = FileBasedActiveBitPreservation.getInstance();
         // Make a dummy archive repository client that just drops the name
         // into an array.
-        final String[] location = new String[1];
+        final String[] replica = new String[1];
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String locationName) {
-                location[0] = locationName;
+            public BatchStatus batch(FileBatchJob job, String replicaId) {
+                replica[0] = replicaId;
                 File file = new File(
                         new File(TestInfo.WORKING_DIR, "checksums"),
                         "unsorted.txt");
@@ -398,7 +398,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 } catch (IOException e) {
                     throw new IOFailure("Can't make empty file " + file, e);
                 }
-                return new BatchStatus(locationName, new HashSet<File>(), 0,
+                return new BatchStatus(replicaId, new HashSet<File>(), 0,
                                        new TestRemoteFile(file, to_fail,
                                                            to_fail, to_fail),
                                                            job.getExceptions());
@@ -409,13 +409,13 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             }
         };
         // Try to run "checksumjobs" on both allowable locations
-        runChecksumJob.invoke(abp, Location.get("SB"));
+        runChecksumJob.invoke(abp, Replica.getReplicaFromId("SB"));
 
         assertEquals("Checksum job should have run on SB", "SB",
-                     location[0]);
-        runChecksumJob.invoke(abp, Location.get("KB"));
+                     replica[0]);
+        runChecksumJob.invoke(abp, Replica.getReplicaFromId("KB"));
         assertEquals("Checksum job should have run on KB", "KB",
-                     location[0]);
+                replica[0]);
         abp.close();
     }
 
@@ -438,21 +438,21 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                             IllegalAccessException {
         Method runFilelistJob = ReflectUtils.getPrivateMethod(
                 FileBasedActiveBitPreservation.class, "runFileListJob",
-                Location.class);
+                Replica.class);
 
         FileBasedActiveBitPreservation abp
                 = FileBasedActiveBitPreservation.getInstance();
 
         // Check normal run
-        final String locationName = TestInfo.LOCATION_NAME;
-        Location location = Location.get(locationName);
+        final String replicaId = TestInfo.REPLICA_ID;
+        Replica replica = Replica.getReplicaFromId(replicaId);
         //final String otherLocationName = TestInfo.OTHER_LOCATION_NAME;
         // Location otherLocation = Location.get(otherLocationName);
-        runFilelistJob.invoke(abp, location);
+        runFilelistJob.invoke(abp, replica);
         File normalOutputFile =
-                WorkFiles.getFile(location, WorkFiles.FILES_ON_BA);
+                WorkFiles.getFile(replica, WorkFiles.FILES_ON_BA);
         File referenceOutputFile =
-                WorkFiles.getFile(location, WorkFiles.FILES_ON_REFERENCE_BA);
+                WorkFiles.getFile(replica, WorkFiles.FILES_ON_REFERENCE_BA);
         assertTrue("Output should exist", normalOutputFile.exists());
         assertFalse("Reference output should not exist",
                     referenceOutputFile.exists());
@@ -467,7 +467,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                         + "filelistOutput/unsorted.txt")),
                                         new ArrayList<FileBatchJob
                                             .ExceptionOccurrence>(0));
-        runFilelistJob.invoke(abp, location);
+        runFilelistJob.invoke(abp, replica);
         LogUtils.flushLogs(FileBasedActiveBitPreservation.class.getName());
         FileAsserts.assertFileContains("Should have warning about wrong count",
                                        "Number of files found (" + 6
@@ -481,17 +481,17 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     public void testGetBitarchiveChecksum() throws Exception {
         AdminData.getUpdateableInstance().addEntry("foobar", null, "md5-1");
         AdminData.getUpdateableInstance().addEntry("barfu", null, "klaf");
-        final Map<Location, String> results = new HashMap<Location, String>();
+        final Map<Replica, String> results = new HashMap<Replica, String>();
         // Test standard case
         MockupArcRepositoryClient.instance = new MockupArcRepositoryClient() {
-            public BatchStatus batch(FileBatchJob job, String locationName) {
+            public BatchStatus batch(FileBatchJob job, String replicaId) {
                 if (job.getClass().equals(ChecksumJob.class)) {
 
-                    if (results.containsKey(Location.get(locationName))) {
+                    if (results.containsKey(Replica.getReplicaFromId(replicaId))) {
                         return new BatchStatus("AP1",
                                 Collections.<File>emptyList(), 1,
                                 new StringRemoteFile(
-                                        results.get(Location.get(locationName))),
+                                        results.get(Replica.getReplicaFromId(replicaId))),
                                         new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
                     } else {
                         return new BatchStatus("AP1",
@@ -500,7 +500,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                     }
                 } else {
                     return super.batch(job,
-                                       locationName);
+                            replicaId);
                 }
             }
         };
@@ -597,7 +597,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             try {
                 BatchMessage bMsg = (BatchMessage) JMSConnection.unpack(msg);
                 BatchStatus lbs =
-                        batch(bMsg.getJob(), bMsg.getLocationName(), null);
+                        batch(bMsg.getJob(), bMsg.getReplicaId(), null);
                 conn.reply(
                         new BatchReplyMessage(bMsg.getTo(), bMsg.getReplyTo(),
                                               bMsg.getID(), 4, 
@@ -692,7 +692,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             }
         }
 
-        public void getFile(String arcfilename, Location location, File toFile) {
+        public void getFile(String arcfilename, Replica replica, File toFile) {
             if (overrideGetFile != null) {
                 FileUtils.copyFile(overrideGetFile, toFile);
                 return;
@@ -730,14 +730,14 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             }
         }
 
-        public void updateAdminData(String fileName, String bitarchiveName,
+        public void updateAdminData(String fileName, String bitarchiveId,
                                     BitArchiveStoreState newval) {
             UpdateableAdminData adminData
                     = AdminData.getUpdateableInstance();
             if (!adminData.hasEntry(fileName)) {
                 adminData.addEntry(fileName, null, "xx");
             }
-            adminData.setState(fileName, bitarchiveName, newval);
+            adminData.setState(fileName, bitarchiveId, newval);
         }
 
         public void updateAdminChecksum(String filename, String checksum) {

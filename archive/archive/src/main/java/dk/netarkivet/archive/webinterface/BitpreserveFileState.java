@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -76,14 +76,14 @@ public class BitpreserveFileState {
         if (bitarchiveName == null) { // parameter BITARCHIVE_NAME_PARAM not set
             return;
         }
-        if (!Location.isKnownLocation(bitarchiveName)) {
+        if (!Replica.isKnownReplicaName(bitarchiveName)) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                                               "errormsg;unknown.bitarchive.0",
                                               bitarchiveName);
             throw new ForwardedToErrorPage("Unknown bitarchive: "
                                            + bitarchiveName);
         }
-        Location bitarchive = Location.get(bitarchiveName);
+        Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
 
         String findmissingfiles =
                 request.getParameter(Constants.FIND_MISSING_FILES_PARAM);
@@ -129,10 +129,10 @@ public class BitpreserveFileState {
         HTMLUtils.forwardOnMissingParameter(context,
                                             Constants.BITARCHIVE_NAME_PARAM);
         String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
-        if (!Location.isKnownLocation(bitarchiveName)) {
+        if (!Replica.isKnownReplicaName(bitarchiveName)) {
             HTMLUtils.forwardOnIllegalParameter(
                     context, Constants.BITARCHIVE_NAME_PARAM,
-                    Location.getKnownNames()
+                    Replica.getKnownNames()
             );
         }
         ActiveBitPreservation preserve
@@ -144,7 +144,7 @@ public class BitpreserveFileState {
                 String[] parts = s.split(Constants.STRING_FILENAME_SEPARATOR);
                 checkArgs(context, parts, Constants.ADD_COMMAND, "bitarchive name",
                           "filename");
-                final Location ba = Location.get(parts[0]);
+                final Replica ba = Replica.getReplicaFromName(parts[0]);
                 final String filename = parts[1];
                 try {
                     preserve.uploadMissingFiles(ba, filename);
@@ -245,10 +245,10 @@ public class BitpreserveFileState {
                                             Constants.BITARCHIVE_NAME_PARAM);
         HTMLUtils.forwardOnIllegalParameter(context,
                                             Constants.BITARCHIVE_NAME_PARAM,
-                                            Location.getKnownNames());
+                                            Replica.getKnownNames());
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-        Location bitarchive = Location.get(bitarchiveName);
+        Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
         String filename = request.getParameter(Constants.FILENAME_PARAM);
         String fixadminchecksum =
                 request.getParameter(Constants.FIX_ADMIN_CHECKSUM_PARAM);
@@ -317,7 +317,7 @@ public class BitpreserveFileState {
                     res.append(e.getMessage());
                     res.append("<br/>");
                     log.warn("Attempt at restoring '" + filename
-                             + "' in bitarchive on location '" + bitarchive
+                             + "' in bitarchive on replica '" + bitarchive
                              + "' failed", e);
                 }
             }
@@ -355,21 +355,21 @@ public class BitpreserveFileState {
     }
 
     /**
-     * Print HTML formatted state for missing files on a given location in a
+     * Print HTML formatted state for missing files on a given replica in a
      * given locale.
      *
      * @param out      The writer to write state to.
-     * @param location The location to write state for.
+     * @param replica The replica to write state for.
      * @param locale   The locale to write state in.
      *
      * @throws IOException On IO trouble writing state to the writer.
      */
-    public static void printMissingFileStateForLocation(JspWriter out,
-                                                         Location location,
-                                                         Locale locale)
+    public static void printMissingFileStateForReplica(JspWriter out,
+            Replica replica,
+            Locale locale)
             throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
-        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation activeBitPreservation
                 = FileBasedActiveBitPreservation.getInstance();
@@ -377,7 +377,7 @@ public class BitpreserveFileState {
         //Header
         out.println(I18N.getString(
                 locale, "filestatus.for") + "&nbsp;<b>" + HTMLUtils
-                .escapeHtmlValues(location.getName()) + "</b>");
+                .escapeHtmlValues(replica.getName()) + "</b>");
         out.println("<br/>");
 
         //Number of files, and number of files missing
@@ -386,20 +386,20 @@ public class BitpreserveFileState {
                 "number.of.files")
                     + "&nbsp;"
                     + activeBitPreservation.getNumberOfFiles(
-                location));
+                replica));
         out.println("<br/>");
         out.println(I18N.getString(
                 locale,
                 "missing.files")
                     + "&nbsp;"
                     + activeBitPreservation.getNumberOfMissingFiles(
-                location));
+                replica));
 
-        if (activeBitPreservation.getNumberOfMissingFiles(location) > 0) {
+        if (activeBitPreservation.getNumberOfMissingFiles(replica) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
-                    .encodeAndEscapeHTML(location.getName())) + " \">");
+                    .encodeAndEscapeHTML(replica.getName())) + " \">");
             out.print(I18N.getString(
                     locale, "show.missing.files"));
             out.print("</a>");
@@ -408,7 +408,7 @@ public class BitpreserveFileState {
 
         out.println(I18N.getString(
                 locale, "last.update.at.0",
-                activeBitPreservation.getDateForMissingFiles(location
+                activeBitPreservation.getDateForMissingFiles(replica
                 )));
         out.println("<br/>");
 
@@ -416,27 +416,27 @@ public class BitpreserveFileState {
                     + Constants.FIND_MISSING_FILES_PARAM + "=1&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(location.getName())) + "\">" + I18N
+                .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
                 .getString(locale, "update") + "</a>");
         out.println("<br/><br/>");
     }
 
     /**
-     * Print HTML formatted state for checksum errors on a given location in a
+     * Print HTML formatted state for checksum errors on a given replica in a
      * given locale.
      *
      * @param out      The writer to write state to.
-     * @param location The location to write state for.
+     * @param replica The replica to write state for.
      * @param locale   The locale to write state in.
      *
      * @throws IOException On IO trouble writing state to the writer.
      */
-    public static void printChecksumErrorStateForLocation(JspWriter out,
-                                                           Location location,
+    public static void printChecksumErrorStateForReplica(JspWriter out,
+            Replica replica,
                                                            Locale locale)
             throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
-        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation bitPreservation
                 = FileBasedActiveBitPreservation.getInstance();
@@ -444,20 +444,20 @@ public class BitpreserveFileState {
         //Header
         out.println(I18N.getString(locale, "checksum.status.for")
                     + "&nbsp;<b>"
-                    + HTMLUtils.escapeHtmlValues(location.getName()) + "</b>");
+                    + HTMLUtils.escapeHtmlValues(replica.getName()) + "</b>");
         out.println("<br/>");
 
         //Number of changed files
         out.println(I18N.getString(locale, "number.of.files.with.error")
                     + "&nbsp;"
-                    + bitPreservation.getNumberOfChangedFiles(location));
+                    + bitPreservation.getNumberOfChangedFiles(replica));
 
         //Link to fix-page
-        if (bitPreservation.getNumberOfChangedFiles(location) > 0) {
+        if (bitPreservation.getNumberOfChangedFiles(replica) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_CHECKSUM_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
-                    .encodeAndEscapeHTML(location.getName())) + " \">");
+                    .encodeAndEscapeHTML(replica.getName())) + " \">");
             out.print(I18N.getString(
                     locale, "show.files.with.error"));
             out.print("</a>");
@@ -467,7 +467,7 @@ public class BitpreserveFileState {
         //Time for last update
         out.println(I18N.getString(locale, "last.update.at.0",
                                    bitPreservation.getDateForChangedFiles(
-                                           location)));
+                                           replica)));
         out.println("<br/>");
 
         //Link for running a new job
@@ -475,7 +475,7 @@ public class BitpreserveFileState {
                     + Constants.CHECKSUM_PARAM + "=1&amp;"
                     + (Constants.BITARCHIVE_NAME_PARAM
                        + "=" + HTMLUtils
-                .encodeAndEscapeHTML(location.getName())) + "\">" + I18N
+                .encodeAndEscapeHTML(replica.getName())) + "\">" + I18N
                 .getString(locale, "update") + "</a>");
 
         //Separator
@@ -529,7 +529,7 @@ public class BitpreserveFileState {
         //Table headers for info table
         out.println("<table>");
         out.print(HTMLUtils.makeTableRow(
-        		HTMLUtils.makeTableHeader(I18N.getString(locale, "location")),
+        		HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")),
                 HTMLUtils.makeTableHeader(I18N.getString(locale, "admin.state")),
                 HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
 
@@ -537,7 +537,7 @@ public class BitpreserveFileState {
         printFileStateForAdminData(out, fs, locale);
 
         // Info for all bitarchives
-        for (Location l : Location.getKnown()) {
+        for (Replica l : Replica.getKnown()) {
             printFileStateForBitarchive(out, l, fs, locale);
         }
         out.println("</table>");
@@ -567,22 +567,22 @@ public class BitpreserveFileState {
      * Print a table row with current state of a file in a given bitarchive.
      *
      * @param out    The stream to print state to.
-     * @param baLocation The location of the files.
+     * @param baReplica The replica of the files.
      * @param fs     The file preservation state for that file.
      * @param locale Locale of the labels.
      *
      * @throws IOException
      */
     private static void printFileStateForBitarchive(
-            JspWriter out, Location baLocation,
+            JspWriter out, Replica baReplica,
             FilePreservationState fs, Locale locale) throws IOException {
         log.debug("Printing filestate for bitarchive '"
-                +  baLocation.getName() + "'");
+                +  baReplica.getName() + "'");
         out.print(HTMLUtils.makeTableRow(
-                HTMLUtils.makeTableElement(baLocation.getName()),
-                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(baLocation)),
+                HTMLUtils.makeTableElement(baReplica.getName()),
+                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(baReplica)),
                 HTMLUtils.makeTableElement(presentChecksum(
-                    fs.getBitarchiveChecksum(baLocation), locale))));
+                    fs.getBitarchiveChecksum(baReplica), locale))));
     }
 
     /**

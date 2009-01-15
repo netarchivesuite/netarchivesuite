@@ -51,12 +51,12 @@ public interface PreservationArcRepositoryClient  {
      * Retrieves a file from an ArcRepository and places it in a local file.
 
      * @param arcfilename Name of the arcfile to retrieve.
-     * @param location The bitarchive to retrieve the data from.
+     * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws IOFailure if there are problems getting a reply or the file
      * could not be found.
      */
-    void getFile(String arcfilename, Location location, File toFile);
+    void getFile(String arcfilename, Replica replica, File toFile);
 
     /**
      * Store the given file in the ArcRepository.  After storing, the file is
@@ -78,20 +78,20 @@ public interface PreservationArcRepositoryClient  {
      *  method will be called afterwards. The process() method will be called
      *  with each File entry.
      *
-     * @param locationName The archive to execute the job on.
+     * @param replicaId The archive to execute the job on.
      * @return The status of the batch job after it ended.
      */
-    BatchStatus batch(FileBatchJob job, String locationName);
+    BatchStatus batch(FileBatchJob job, String replicaId);
 
     /** Updates the administrative data in the ArcRepository for a given
-     * file and location.
+     * file and bitarchive replica.
      *
      * @param fileName The name of a file stored in the ArcRepository.
-     * @param bitarchiveName The name of the location that the administrative
+     * @param replicaId The id if the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
-    void updateAdminData(String fileName, String bitarchiveName,
+    void updateAdminData(String fileName, String replicaId,
                          BitArchiveStoreState newval);
 
     /** Updates the checksum kept in the ArcRepository for a given
@@ -108,12 +108,12 @@ public interface PreservationArcRepositoryClient  {
      * that has been corrupted.
      *
      * @param fileName The name of the file to remove.
-     * @param bitarchiveName The location from which to remove the file.
+     * @param replicaId The replica id from which to remove the file.
      * @param checksum The checksum of the file to be removed.
      * @param credentials A string that shows that the user is allowed to
      * perform this operation.
      * @return A local copy of the file removed.
      */
-    File removeAndGetFile(String fileName, String bitarchiveName,
+    File removeAndGetFile(String fileName, String replicaId,
                           String checksum, String credentials);
 }

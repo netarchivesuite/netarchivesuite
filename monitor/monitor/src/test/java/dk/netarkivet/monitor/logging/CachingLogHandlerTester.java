@@ -63,7 +63,7 @@ public class CachingLogHandlerTester extends TestCase {
         //Get the MBean server
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
         //Set Settings to what we expect
-        Settings.set(CommonSettings.APPLICATIONNAME, "TestApp1");
+        Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
 
     }
@@ -341,12 +341,12 @@ public class CachingLogHandlerTester extends TestCase {
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
                               + Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION)
+                CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + ",applicationname="
-                              + Settings.get(CommonSettings.APPLICATIONNAME) + "," + (
+                              + Settings.get(CommonSettings.APPLICATION_NAME) + "," + (
                 index == -1 ? "*" : "index=" + index));
     }
 

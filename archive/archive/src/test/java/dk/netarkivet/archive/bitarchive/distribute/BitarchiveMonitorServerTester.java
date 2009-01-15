@@ -196,7 +196,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                             public void finish(OutputStream os) {
                             }
                         },
-                        Settings.get(CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                        Settings.get(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         JMSConnectionTestMQ.updateMsgID(result, id);
         return result;
     }
@@ -240,7 +240,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
         NetarkivetMessage message = new BatchMessage(THE_BAMON,
                                                      job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
 
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -288,7 +288,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         // send a batch message to the monitor
         BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheArcrepos(),
                                            job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         con.send(bm);
         con.waitForConcurrentTasksToFinish();
 
@@ -351,39 +351,39 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * Test that listener is registered and unregistered properly.
      */
     public void testListening() {
-        testListeningPerLocation("SB", "KB");
-        testListeningPerLocation("KB", "SB");
+        testListeningPerReplica("SB", "KB");
+        testListeningPerReplica("KB", "SB");
     }
 
     /**
      * Verify that the BitarchiveMonitorServer listens to the expected Channel
      * (local THE_BAMON), and that it stops listening after cleanup.
      *
-     * @param locationName  The location for which a BitarchiveMonitorServer is
+     * @param replicaId  The replica for which a BitarchiveMonitorServer is
      *                      constructed and tested.
-     * @param otherLocation A location which the constructed BitarchiveMonitorServer
+     * @param otherReplicaId A replica which the constructed BitarchiveMonitorServer
      *                      should NOT serve.
      */
-    private void testListeningPerLocation(String locationName,
-                                          String otherLocation) {
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, locationName);
+    private void testListeningPerReplica(String replicaId,
+                                          String otherReplicaId) {
+        Settings.set(CommonSettings.ENVIRONMENT_THIS_REPLICA_ID, replicaId);
         JMSConnectionTestMQ jms
                 = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
         BitarchiveMonitorServer bamon = BitarchiveMonitorServer.getInstance();
         assertTrue("The BAMON should listen to THE_BAMON",
-                   jms.getListeners(Channels.getBaMonForLocation(
-                           locationName)).contains(bamon));
+                   jms.getListeners(Channels.getBaMonForReplica(
+                           replicaId)).contains(bamon));
         assertEquals("Only the BAMON should listen to THE_BAMON",
                      1, con.getListeners(
-                Channels.getBaMonForLocation(locationName)).size());
+                Channels.getBaMonForReplica(replicaId)).size());
         assertFalse(
-                "The BAMON should not listen to THE_BAMON for other locations",
-                jms.getListeners(Channels.getBaMonForLocation(
-                        otherLocation)).contains(bamon));
+                "The BAMON should not listen to THE_BAMON for other replicas",
+                jms.getListeners(Channels.getBaMonForReplica(
+                        otherReplicaId)).contains(bamon));
         bamon.cleanup();
         assertTrue("The BAMON should stop listening to THE_BAMON after cleanup",
-                   jms.getListeners(Channels.getBaMonForLocation(
-                           locationName)).isEmpty());
+                   jms.getListeners(Channels.getBaMonForReplica(
+                           replicaId)).isEmpty());
         ChannelsTester.resetChannels();
     }
 
@@ -514,7 +514,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         BatchMessage batchMessage = new BatchMessage(THE_BAMON,
                                                      Channels.getTheArcrepos(),
                                                      job, Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
 
         TestBatchReplyListener batchReplyListener
                 = new TestBatchReplyListener();
@@ -607,7 +607,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         BatchMessage bm = new BatchMessage(Channels.getTheBamon(),
                                            Channels.getTheArcrepos(),
                                            new ChecksumJob(), Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_THIS_REPLICA_ID));
         JMSConnectionTestMQ.updateMsgID(bm, "ID50");
 
         //Invent two BitarchiveServers and send heartbeats from them

@@ -43,7 +43,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -179,13 +179,13 @@ public class FileBasedActiveBitPreservation
             filepreservationStates.put(missing, (FilePreservationState) null);
         }
         // Phase 2: For every filename present in admin data,
-        // construct a map ([location] -> [list of checksums]).
+        // construct a map ([replica] -> [list of checksums]).
         // The resulting map:
-        //  map ([filename] -> map ([location] -> [list of checksums])).
+        //  map ([filename] -> map ([replica] -> [list of checksums])).
         // This takes a long time, as two batchjobs will be sent out to
         // to the bitarchives to compute checksums for the files with these
         // filenames.
-        Map<String, Map<Location, List<String>>> checksumMaps 
+        Map<String, Map<Replica, List<String>>> checksumMaps 
             = getChecksumMaps(adminInfo.keySet());
         
         // Phase 3: construct FilePreservationState objects for subset of
@@ -222,7 +222,7 @@ public class FileBasedActiveBitPreservation
     
     /**
      * Generate a map of checksums for these filenames in the bitarchives (
-     * map ([filename] -> map ([location] -> [list of checksums]))).
+     * map ([filename] -> map ([replica] -> [list of checksums]))).
      * This takes a long time, as a batchjob will be sent out to
      * all the bitarchives to compute checksums for the files with these
      * filenames.
@@ -231,53 +231,53 @@ public class FileBasedActiveBitPreservation
      *
      * @return Map containing the output of checksum jobs from the bitarchives.
      */
-    private Map<String, Map<Location, List<String>>>
+    private Map<String, Map<Replica, List<String>>>
     getChecksumMaps(Set<String> filenames) {
      
-        //checksummaps: map ([filename] -> map ([location] 
+        //checksummaps: map ([filename] -> map ([replica] 
         //  -> [list of checksums])).
         // This datastructure will contain for each filename the computed 
-        // checksums for the file with this filename on all locations
+        // checksums for the file with this filename on all replicas
         // (bitarchives).
-        Map<String, Map<Location, List<String>>> checksummaps =
-                new HashMap<String, Map<Location, List<String>>>();
+        Map<String, Map<Replica, List<String>>> checksummaps =
+                new HashMap<String, Map<Replica, List<String>>>();
         
-        //Only make one checksum job for each location
-        for (Location ba : Location.getKnown()) {
-            // Get the checksum information from Location ba as
+        //Only make one checksum job for each replica
+        for (Replica ba : Replica.getKnown()) {
+            // Get the checksum information from Replica ba as
             // a map ([filename]->[list of checksums]).
             Map<String, List<String>> checksums = getChecksums(ba, filenames);
-            log.debug("Adding checksums for location '"
+            log.debug("Adding checksums for replica '"
                       + ba + "' for filenames: "
                       + StringUtils.conjoin(",", filenames));
             
             for (String filename : filenames) {
                 // Update 'checksummaps' datastructure with the checksums
-                // received from Location 'ba'.
+                // received from Replica 'ba'.
                 
-                // locationMap: map ([location] 
+                // replicaMap: map ([replica] 
                 //  -> [list of checksums for one filename]).
-                Map<Location, List<String>> locationMap;
+                Map<Replica, List<String>> replicaMap;
                 // Get current map in 'checksummaps' datastructure for filename,
                 // if it exists. Otherwise a new one is created, and
                 // stored.
                 if (checksummaps.containsKey(filename)) {
-                    locationMap = checksummaps.get(filename);
+                    replicaMap = checksummaps.get(filename);
                 } else {
-                    locationMap = new HashMap<Location, List<String>>();
-                    checksummaps.put(filename, locationMap);
+                    replicaMap = new HashMap<Replica, List<String>>();
+                    checksummaps.put(filename, replicaMap);
                 }
                 // Extract the list of checksums for the given filename from
                 // the 'checksums' datastructure.
                 List<String> checksumsForFileOnBa = checksums.get(filename);
                 if (checksumsForFileOnBa == null) {
-                    // If no checksums for file was available on location 'ba'
+                    // If no checksums for file was available on replica 'ba'
                     // just add an empty list of checksums.
                     checksumsForFileOnBa = new ArrayList<String>();
                 }
                 // Add the list of checksums for the given file
-                // on Location 'ba' to datastructure 'locationMap'.
-                locationMap.put(ba, checksumsForFileOnBa);
+                // on replica 'ba' to datastructure 'replicaMap'.
+                replicaMap.put(ba, checksumsForFileOnBa);
             }
         }
         return checksummaps;
@@ -285,7 +285,7 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Get the checksum of a list of files in a bitarchive
-     * (map ([filename] -> map ([location] -> [list of checksums])).
+     * (map ([filename] -> map ([replica] -> [list of checksums])).
      *
      * Note that this method runs a batch job on the bitarchives, and therefore
      * may take a long time, depending on network delays.
@@ -299,7 +299,7 @@ public class FileBasedActiveBitPreservation
      * @see ChecksumJob#parseLine(String)
      */
     private Map<String, List<String>> getChecksums(
-            Location ba, Set<String> filenames) {
+            Replica ba, Set<String> filenames) {
         
         // Configure the Checksum batchjob.
         ChecksumJob checksumJob = new ChecksumJob();
@@ -312,7 +312,7 @@ public class FileBasedActiveBitPreservation
         try {
             PreservationArcRepositoryClient arcrep =
                     ArcRepositoryClientFactory.getPreservationInstance();
-            BatchStatus batchStatus = arcrep.batch(checksumJob, ba.getName());
+            BatchStatus batchStatus = arcrep.batch(checksumJob, ba.getId());
             if (batchStatus.hasResultFile()) {
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 batchStatus.appendResults(buf);
@@ -328,7 +328,7 @@ public class FileBasedActiveBitPreservation
             }
         } catch (NetarkivetException e) {
             // Send notification, and return an empty map
-            String errMsg = "Error asking location '" + ba + "' for checksums";
+            String errMsg = "Error asking replica '" + ba + "' for checksums";
             NotificationsFactory.getInstance().errorEvent(errMsg, e);
             log.warn(errMsg, e);
             return Collections.emptyMap();
@@ -351,7 +351,7 @@ public class FileBasedActiveBitPreservation
                             log.debug(
                                     "Got checksum for unexpected file '"
                                     + filename + " while asking "
-                                    + "location '" + ba
+                                    + "replica '" + ba
                                     + "' for checksum of the following files: '"
                                     + filenames + "'");
                         } else {
@@ -367,7 +367,7 @@ public class FileBasedActiveBitPreservation
                         }
                     } catch (ArgumentNotValid e) {
                         log.warn("Got malformed checksum '" + s
-                                 + "' while asking location '" + ba
+                                 + "' while asking replica '" + ba
                                  + "' for checksum of the following files: '"
                                  + filenames + "'");
                     }
@@ -389,8 +389,8 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IllegalState if the file with the list cannot be found.
      */
-    public Iterable<String> getMissingFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public Iterable<String> getMissingFiles(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File missingOutput = WorkFiles.getFile(bitarchive,
                                                WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
@@ -401,7 +401,7 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * This method takes as input the name of a bitarchive location for which we
+     * This method takes as input the name of a bitarchive replica for which we
      * wish to run a FileListJob. It also reads in the known files in the
      * arcrepository from the AdminData directory specified in the Setting
      * DIRS_ARCREPOSITORY_ADMIN. The two file lists are compared and a
@@ -417,23 +417,23 @@ public class FileBasedActiveBitPreservation
      * better suited to be in getMissingFiles, so this method only runs the
      * batch job.
      *
-     * @param location the location to search for missing files
+     * @param replica the replica to search for missing files
      *
      * @throws ArgumentNotValid if the given directory does not contain a file
      *                          filelistOutput/sorted.txt, or the argument
-     *                          location is null
+     *                          replica is null
      * @throws PermissionDenied if the output directory cannot be created
      */
-    public void findMissingFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
-        runFileListJob(location);
+    public void findMissingFiles(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        runFileListJob(replica);
         log.trace("findMissingFile in dir '"
-                  + WorkFiles.getPreservationDir(location) + "'");
+                  + WorkFiles.getPreservationDir(replica) + "'");
         admin.synchronize();
 
         // Create set of file names from bitarchive data
         Set<String> filesInBitarchive = new HashSet<String>(
-                WorkFiles.getLines(location, WorkFiles.FILES_ON_BA));
+                WorkFiles.getLines(replica, WorkFiles.FILES_ON_BA));
 
         // Get set of files in arcrepository
         Set<String> arcrepNameSet = admin.getAllFileNames();
@@ -448,12 +448,12 @@ public class FileBasedActiveBitPreservation
                      + new ArrayList<String>(extraFilesInAdminData).subList(0,
                              Math.min(extraFilesInAdminData.size(), 10))
                      + "' have wrong checksum in the bitarchive listing in '"
-                     + WorkFiles.getPreservationDir(location)
+                     + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
 
         // Write output data
-        WorkFiles.write(location, WorkFiles.MISSING_FILES_BA,
+        WorkFiles.write(replica, WorkFiles.MISSING_FILES_BA,
                         extraFilesInAdminData);
 
         // Find difference set 2
@@ -466,12 +466,12 @@ public class FileBasedActiveBitPreservation
                      + new ArrayList<String>(extraFilesInBA).subList(0,
                              Math.min(extraFilesInBA.size(), 10))
                      + "' have wrong checksum in the bitarchive listing in '"
-                     + WorkFiles.getPreservationDir(location)
+                     + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
 
         // Write output data
-        WorkFiles.write(location, WorkFiles.MISSING_FILES_ADMINDATA,
+        WorkFiles.write(replica, WorkFiles.MISSING_FILES_ADMINDATA,
                         extraFilesInBA);
         log.trace("Findmissing files - done");
     }
@@ -480,21 +480,21 @@ public class FileBasedActiveBitPreservation
      * Method to get a list of all files in a given bitarchive. The result is
      * stored (unsorted) in the area specified by WorkFiles.FILES_ON_BA.
      *
-     * @param location the location where the given bitarchive lies
+     * @param replica the replica where the given bitarchive lies
      *
      * @throws PermissionDenied if the output directories cannot be created
      * @throws IOFailure        if there is a problem writing the output file,
      *                          or if the job fails for some reason
      */
-    private void runFileListJob(Location location) throws IOFailure {
+    private void runFileListJob(Replica replica) throws IOFailure {
         // Pick the right directory to output to
-        File batchOutputFile = WorkFiles.getFile(location,
+        File batchOutputFile = WorkFiles.getFile(replica,
                                                  WorkFiles.FILES_ON_BA);
-        log.trace("runFileListJob for location '" + location
+        log.trace("runFileListJob for replica '" + replica
                   + "', output file '" + batchOutputFile + "'");
 
         // Send filelist batch job
-        runBatchJob(new FileListJob(), location, null, batchOutputFile);
+        runBatchJob(new FileListJob(), replica, null, batchOutputFile);
     }
 
     /**
@@ -506,8 +506,8 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IllegalState if the file with the list cannot be found.
      */
-    public Iterable<String> getChangedFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public Iterable<String> getChangedFiles(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File wrongFilesOutput = WorkFiles.getFile(bitarchive,
                                                   WorkFiles.WRONG_FILES);
 
@@ -531,20 +531,20 @@ public class FileBasedActiveBitPreservation
      * better suited to be in getChangedFiles, so this method only runs the
      * batch job.
      *
-     * @param location the bitarchive location the checksumjob came from
+     * @param replica the bitarchive replica the checksumjob came from
      *
      * @throws IOFailure        On file or network trouble.
      * @throws PermissionDenied if the output directory cannot be created
-     * @throws ArgumentNotValid if argument location is null
+     * @throws ArgumentNotValid if argument replica is null
      */
-    public void findChangedFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
-        runChecksumJob(location);
+    public void findChangedFiles(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        runChecksumJob(replica);
         admin.synchronize();
 
         // Create set of checksums from bitarchive data
         Set<String> bitarchiveChecksumSet = new HashSet<String>(
-                WorkFiles.getLines(location, WorkFiles.CHECKSUMS_ON_BA));
+                WorkFiles.getLines(replica, WorkFiles.CHECKSUMS_ON_BA));
 
         // Get set of files in arcrepository
         Set<String> arcrepChecksumSet = new HashSet<String>();
@@ -559,7 +559,7 @@ public class FileBasedActiveBitPreservation
         // conform to the checksum output.
         Set<String> arcrepCompletedChecksumSet = new HashSet<String>();
         for (String fileName : admin.getAllFileNames(
-                location,
+                replica,
                 BitArchiveStoreState.UPLOAD_COMPLETED)) {
             arcrepCompletedChecksumSet.add(ChecksumJob.makeLine(
                     fileName, admin.getCheckSum(fileName)));
@@ -590,7 +590,7 @@ public class FileBasedActiveBitPreservation
                      + new ArrayList<String>(wrongChecksums).subList(0,
                              Math.min(wrongChecksums.size(), 10))
                      + "' have wrong checksum in the bitarchive listing in '"
-                     + WorkFiles.getPreservationDir(location)
+                     + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
         if (wrongStates.size() > 0) {
@@ -598,7 +598,7 @@ public class FileBasedActiveBitPreservation
                      + new ArrayList<String>(wrongStates).subList(0,
                              Math.min(wrongStates.size(), 10))
                      + "' have wrong states in the bitarchive listing in '"
-                     + WorkFiles.getPreservationDir(location)
+                     + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
 
@@ -617,44 +617,44 @@ public class FileBasedActiveBitPreservation
         }
 
         // Write output data to the files.
-        WorkFiles.write(location, WorkFiles.WRONG_FILES,
+        WorkFiles.write(replica, WorkFiles.WRONG_FILES,
                         wrongChecksumFilenames);
-        WorkFiles.write(location, WorkFiles.WRONG_STATES,
+        WorkFiles.write(replica, WorkFiles.WRONG_STATES,
                         wrongStateFilenames);
     }
 
     /**
-     * Runs a checksum job on the bit archive at the given location. Output is
-     * written to file returned by WorkFiles.getChecksumOutputFile(location).
+     * Runs a checksum job on the bit archive at the given replica. Output is
+     * written to file returned by WorkFiles.getChecksumOutputFile(replica).
      *
-     * @param location One of the bitarchive locations.
+     * @param replica One of the bitarchive replicas.
      *
      * @throws IOFailure If unable to create output dirs or if unable to
      *                   write/read output to files.
      */
-    private void runChecksumJob(Location location) {
-        ArgumentNotValid.checkNotNull(location, "location");
+    private void runChecksumJob(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "replica");
         // Create directories for output
-        File outputFile = WorkFiles.getFile(location,
+        File outputFile = WorkFiles.getFile(replica,
                                             WorkFiles.CHECKSUMS_ON_BA);
 
         // Send checksum batch job
         log.info("Bit integrity check started on bit archive "
-                 + location);
-        runBatchJob(new ChecksumJob(), location, null, outputFile);
+                 + replica);
+        runBatchJob(new ChecksumJob(), replica, null, outputFile);
     }
 
     /**
      * Return the number of files found in the bitarchive. If nothing is known
-     * about the bitarchive location, -1 is returned.
+     * about the bitarchive replica, -1 is returned.
      *
      * @param bitarchive the bitarchive to check
      *
      * @return the number of files found in the bitarchive.  If nothing is known
-     * about the bitarchive location, -1 is returned.
+     * about the bitarchive replica, -1 is returned.
      */
-    public long getNumberOfFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public long getNumberOfFiles(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File unsortedOutput = WorkFiles.getFile(bitarchive,
                                                 WorkFiles.FILES_ON_BA);
 
@@ -667,15 +667,15 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Get the number of missing files in a given bitarchive. If nothing is
-     * known about the bitarchive location, -1 is returned.
+     * known about the bitarchive replica, -1 is returned.
      *
      * @param bitarchive a given bitarchive
      *
      * @return the number of missing files in the given bitarchive. If nothing
-     * is known about the bitarchive location, -1 is returned.
+     * is known about the bitarchive replica, -1 is returned.
      */
-    public long getNumberOfMissingFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public long getNumberOfMissingFiles(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
 
         File missingOutput = WorkFiles.getFile(bitarchive,
                                                WorkFiles.MISSING_FILES_BA);
@@ -688,15 +688,15 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Get the number of wrong files for a bitarchive. If nothing is known
-     * about the bitarchive location, -1 is returned.
+     * about the bitarchive replica, -1 is returned.
      *
      * @param bitarchive a bitarchive
      *
      * @return the number of wrong files for the bitarchive. If nothing is known
-     * about the bitarchive location, -1 is returned.
+     * about the bitarchive replica, -1 is returned.
      */
-    public long getNumberOfChangedFiles(Location bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Location bitarchive");
+    public long getNumberOfChangedFiles(Replica bitarchive) {
+        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File wrongFileOutput = WorkFiles.getFile(bitarchive,
                                                  WorkFiles.WRONG_FILES);
 
@@ -709,33 +709,33 @@ public class FileBasedActiveBitPreservation
 
     /**
      * Get the date for last time the checksum information was updated for
-     * this location.
-     * @param location The location to check last time for.
+     * this replica.
+     * @param replica The replica to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
      */
-    public Date getDateForChangedFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
-        return WorkFiles.getLastUpdate(location, WorkFiles.WRONG_FILES);
+    public Date getDateForChangedFiles(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        return WorkFiles.getLastUpdate(replica, WorkFiles.WRONG_FILES);
     }
 
     /**
      * Get the date for last time the missing files information was updated for
-     * this location.
-     * @param location The location to check last time for.
+     * this replica.
+     * @param replica The replica to check last time for.
      * @return The date for last check. Will return 1970-01-01 for never.
      */
-    public Date getDateForMissingFiles(Location location) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
-        return WorkFiles.getLastUpdate(location, WorkFiles.FILES_ON_BA);
+    public Date getDateForMissingFiles(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        return WorkFiles.getLastUpdate(replica, WorkFiles.FILES_ON_BA);
     }
 
 
     /**
-     * Check that files are indeed missing on the bitarchive location, and
-     * present in admin data and reference location. If so, upload missing files
-     * from reference location to this location.
+     * Check that files are indeed missing on the bitarchive replica, and
+     * present in admin data and reference replica. If so, upload missing files
+     * from reference replica to this replica.
      *
-     * @param location The location to restore files to
+     * @param replica The replica to restore files to
      * @param filenames The names of the files.
      *
      * @throws IllegalState  If one of the files is unknown 
@@ -743,8 +743,8 @@ public class FileBasedActiveBitPreservation
      * @throws IOFailure If some file cannot be reestablished. All files
      *  will be attempted, though.
      */
-    public void uploadMissingFiles(Location location, String... filenames) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
+    public void uploadMissingFiles(Replica replica, String... filenames) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         
         // Contains all files that we couldn't reestablish
@@ -757,7 +757,7 @@ public class FileBasedActiveBitPreservation
             =  getFilePreservationStateMap(filenames);
         
         // For each given filename, try to reestablish it on
-        // location 'location'
+        // Replica 'replica'
         for (String fn: filenames) {
             FilePreservationState fps = preservationStates.get(fn);
             try {
@@ -765,7 +765,7 @@ public class FileBasedActiveBitPreservation
                     throw new IllegalState("No state known about '" + fn + "'");
                 }
                 if (!fps.isAdminDataOk()) {
-                    setAdminDataFailed(fn, location);
+                    setAdminDataFailed(fn, replica);
                     admin.synchronize();
                     fps = getFilePreservationState(fn);
                     if (fps == null) {
@@ -773,10 +773,10 @@ public class FileBasedActiveBitPreservation
                                 + fn + "'");
                     }
                 }
-                reestablishMissingFile(fn, location, fps);
+                reestablishMissingFile(fn, replica, fps);
             } catch (Exception e) {
                 log.warn("Trouble reestablishing file '" + fn
-                        + "' on location " + location.getName() , e);
+                        + "' on replica " + replica.getName() , e);
                 troubleNames.add(fn);
             }
         }
@@ -804,7 +804,7 @@ public class FileBasedActiveBitPreservation
      */
     private void reestablishMissingFile(
             String fileName,
-            Location damagedBitarchive, FilePreservationState fps) {
+            Replica damagedBitarchive, FilePreservationState fps) {
         log.debug("Reestablishing missing file '" + fileName
                   + "' in bitarchive '" + damagedBitarchive + "'.");
         if (!satisfiesMissingFileConditions(fps, damagedBitarchive,
@@ -814,7 +814,7 @@ public class FileBasedActiveBitPreservation
                     + "It is not in the right state.");
         }
         // Retrieve the file from the reference archive
-        Location referenceArchive = fps.getReferenceBitarchive();
+        Replica referenceArchive = fps.getReferenceBitarchive();
         try {
             PreservationArcRepositoryClient arcrep =
                     ArcRepositoryClientFactory.getPreservationInstance();
@@ -857,14 +857,14 @@ public class FileBasedActiveBitPreservation
      * checksum
      *
      * @param state            the status for one file in the bitarchives
-     * @param damagedBitarchive the location where the file is corrupt or
+     * @param damagedBitarchive the replica where the file is corrupt or
      *                          missing
      * @param fileName          the name of the file being considered
      * @return true if all conditions are true, false otherwise.
      */
     private boolean satisfiesMissingFileConditions(
             FilePreservationState state,
-            Location damagedBitarchive,
+            Replica damagedBitarchive,
             String fileName) {
         // condition 1
         if (!state.isAdminDataOk()) {
@@ -875,12 +875,12 @@ public class FileBasedActiveBitPreservation
         // condition 2
         if (!state.fileIsMissing(damagedBitarchive)) {
             log.warn("File '" + fileName
-                     + "' is not missing in bitarchive on location '"
+                     + "' is not missing in bitarchive on replica '"
                      + damagedBitarchive.getName() + "'.");
             return false;
         }
         // conditions 3 and 4
-        Location referenceArchive = state.getReferenceBitarchive();
+        Replica referenceArchive = state.getReferenceBitarchive();
         if (referenceArchive == null) {
             log.warn("No correct version of file '" + fileName
                      + "' exists in any archive");
@@ -899,18 +899,18 @@ public class FileBasedActiveBitPreservation
      *
      * @throws ArgumentNotValid if arguments are null or empty strings
      */
-    private void setAdminDataFailed(String filename, Location ba) {
+    private void setAdminDataFailed(String filename, Replica ba) {
         ArcRepositoryClientFactory.getPreservationInstance()
-                .updateAdminData(filename, ba.getName(),
+                .updateAdminData(filename, ba.getId(),
                                  BitArchiveStoreState.UPLOAD_FAILED);
     }
 
     /**
      * Check that file checksum is indeed different to admin data and reference
-     * location. If so, remove missing file and upload it from reference
-     * location to this location.
+     * replica. If so, remove missing file and upload it from reference
+     * replica to this replica.
      *
-     * @param location The location to restore file to
+     * @param replica The replica to restore file to
      * @param filename The name of the file.
      * @param credentials The credentials used to perform this replace operation
      * @param checksum The expected checksum.
@@ -918,19 +918,19 @@ public class FileBasedActiveBitPreservation
      * @throws IOFailure        if the file cannot be reestablished
      * @throws PermissionDenied if the file is not in correct state
      */
-    public void replaceChangedFile(Location location, String filename,
+    public void replaceChangedFile(Replica replica, String filename,
                                    String credentials, String checksum) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
-        removeAndGetFile(filename, location, checksum, credentials);
-        // The file named 'filename' is fetched from the reference location
-        // and uploaded to this location
-        uploadMissingFiles(location, filename);
+        removeAndGetFile(filename, replica, checksum, credentials);
+        // The file named 'filename' is fetched from the reference replica
+        // and uploaded to this replica
+        uploadMissingFiles(replica, filename);
         // Remove filename from the WRONG_FILES list
         FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
-                location,
+                replica,
                 WorkFiles.WRONG_FILES));
     }
 
@@ -944,10 +944,10 @@ public class FileBasedActiveBitPreservation
      * @param checksum    The checksum of the file.
      * @param credentials Credentials required to run this operation.
      */
-    private void removeAndGetFile(String filename, Location bitarchive,
+    private void removeAndGetFile(String filename, Replica bitarchive,
                                   String checksum, String credentials) {
         ArcRepositoryClientFactory.getPreservationInstance()
-                .removeAndGetFile(filename, bitarchive.getName(), checksum,
+                .removeAndGetFile(filename, bitarchive.getId(), checksum,
                                   credentials);
         FileUtils.appendToFile(WorkFiles.getFile(bitarchive,
                                                  WorkFiles.MISSING_FILES_BA),
@@ -1014,7 +1014,7 @@ public class FileBasedActiveBitPreservation
             ArcRepositoryClientFactory.getPreservationInstance()
                     .updateAdminChecksum(filename, checksum);
         }
-        for (Location l : Location.getKnown()) {
+        for (Replica l : Replica.getKnown()) {
             if (fps.getUniqueChecksum(l).equals(
                     admin.getCheckSum(filename))) {
                 FileUtils.removeLineFromFile(
@@ -1027,25 +1027,25 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * Run any batch job on a location, possibly restricted to a certain set of
+     * Run any batch job on a replica, possibly restricted to a certain set of
      * files, and place the output in the given file.  The results will also be
      * checked to verify that there for each file processed is a line in the
      * output file.
      *
      * @param job             The job to run.
-     * @param location        The location (bitarchive) that the job should run
+     * @param replica        The replica (bitarchive) that the job should run
      *                        on.
      * @param specifiedFiles  The files to run the job on, or null if it should
      *                        run on all files.
      * @param batchOutputFile Where to put the result of the job.
      */
-    private void runBatchJob(FileBatchJob job, Location location,
+    private void runBatchJob(FileBatchJob job, Replica replica,
                              List<String> specifiedFiles,
                              File batchOutputFile) {
         job.processOnlyFilesNamed(specifiedFiles);
         BatchStatus status
                 = ArcRepositoryClientFactory.getPreservationInstance()
-                .batch(job, location.getName());
+                .batch(job, replica.getId());
 
         // Write output to file, if we got any
         if (status.hasResultFile()) {
@@ -1059,7 +1059,7 @@ public class FileBasedActiveBitPreservation
         }
         log.info("FileBatchJob succeeded and processed "
                  + status.getNoOfFilesProcessed() + " files on bitarchive at "
-                 + location);
+                 + replica);
     }
 
     /**

@@ -197,17 +197,19 @@
               -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <locations>
+        <replicas>
             <!-- The names of all institutional bit archive locations in the
                  environment, e.g., "KB" and "SB". -->
-            <location>
-                <name>SH</name>
-            </location>
+            <replica>
+                <replicaId>SH</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>SHB</replicaName>                
+            </replica>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <batchLocation>SH</batchLocation>
-        </locations>
+            <useReplicaId>SH</useReplicaId>
+        </replicas>
         <!-- For archiving applications, which bit archive are you part of?-->
-        <thisPhysicalLocation>SH</thisPhysicalLocation>
+        <thisPhysicalLocation>LOCAL</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>

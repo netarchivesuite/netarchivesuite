@@ -172,14 +172,14 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * Retrieves a file from an ArcRepository and places it in a local file.
      *
      * @param arcfilename Name of the arcfile to retrieve. 
-     * @param location The bitarchive to retrieve the data from.
+     * @param replica The bitarchive to retrieve the data from.
      * @param toFile Filename of a place where the file fetched can be put.
      * @throws ArgumentNotValid if arcfilename is null or empty, or if toFile
      * is null
      * @throws IOFailure if there are problems reading or writing file, or 
      * the file with the given arcfilename could not be found.
      */
-    public void getFile(String arcfilename, Location location, File toFile) {
+    public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "String arcfilename");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         File f = findFile(arcfilename);
@@ -197,18 +197,18 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *  initialize() method will be called before processing and the finish()
      *  method will be called afterwards. The process() method will be called
      *  with each File entry.
-     * @param locationName The archive to execute the job on.
+     * @param replicaId The id of the archive to execute the job on.
      * @return The status of the batch job after it ended.
      *
      */
-    public BatchStatus batch(final FileBatchJob job, String locationName) {
+    public BatchStatus batch(final FileBatchJob job, String replicaId) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
-        ArgumentNotValid.checkNotNullOrEmpty(locationName, 
-                "String locationName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, 
+                "String replicaId");
         OutputStream os = null;
         File resultFile;
         try {
-            resultFile = File.createTempFile("batch", locationName,
+            resultFile = File.createTempFile("batch", replicaId,
                     FileUtils.getTempDir());
             os = new FileOutputStream(resultFile);
             List<File> files = new ArrayList<File>();
@@ -242,7 +242,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
                 }
             }
         }
-        return new BatchStatus(locationName, job.getFilesFailed(),
+        return new BatchStatus(replicaId, job.getFilesFailed(),
                 job.getNoOfFilesProcessed(),
                 RemoteFileFactory.getMovefileInstance(resultFile),
                 //new ArrayList<FileBatchJob.ExceptionOccurrence>(0))
@@ -250,14 +250,14 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /** Updates the administrative data in the ArcRepository for a given
-     * file and location.
+     * file and replica.
      *
      * @param fileName The name of a file stored in the ArcRepository.
-     * @param bitarchiveName The name of the location that the administrative
+     * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */
-    public void updateAdminData(String fileName, String bitarchiveName,
+    public void updateAdminData(String fileName, String bitarchiveId,
                                 BitArchiveStoreState newval) {
     }
 
@@ -276,7 +276,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * that has been corrupted.
      *
      * @param fileName The name of the file to remove.
-     * @param bitarchiveName The location from which to remove the file.
+     * @param bitarchiveId The id of the replica from which to remove the file.
      * Not used in this implementation, may be null.
      * @param checksum The checksum of the file to be removed.
      * @param credentials A string that shows that the user is allowed to
@@ -287,7 +287,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @throws IOFailure On IO trouble.
      * @throws PermissionDenied On wrong MD5 sum or wrong credentials.
      */
-    public File removeAndGetFile(String fileName, String bitarchiveName,
+    public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
         // Ignores bitarchiveName, checksum, and credentials for now
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");

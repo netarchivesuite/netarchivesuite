@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
-import dk.netarkivet.common.distribute.arcrepository.Location;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -179,37 +179,37 @@ public abstract class AdminData {
      * ARC file at the given bit archive.
      *
      * @param arcfileName The file to retrieve the state for
-     * @param bitArchive  The bitarchive to retrieve the state for
+     * @param bitArchiveId  The bitarchive id to retrieve the state for
      * @return true if BitArchiveStoreState is registered, false otherwise.
      */
-    public boolean hasState(String arcfileName, String bitArchive) {
+    public boolean hasState(String arcfileName, String bitArchiveId) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitArchive, "bitArchive");
+        ArgumentNotValid.checkNotNullOrEmpty(bitArchiveId, "bitArchiveId");
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
         if (entry == null) {
             log.warn("No entry found in storeEntries for arcfilename: "
                     + arcfileName);
         }
-        return entry != null && entry.hasStoreState(bitArchive);
+        return entry != null && entry.hasStoreState(bitArchiveId);
     }
 
     /**
      * Retrieves the storage state of a file for a specific bitarchive.
      *
      * @param arcfileName The file to retrieve the state for
-     * @param bitArchive  The bitarchive to retrieve the state for
+     * @param bitArchiveId  The bitarchive id to retrieve the state for
      * @return The storage state
      * @throws UnknownID When no record exists
      */
-    public BitArchiveStoreState getState(String arcfileName, String bitArchive)
+    public BitArchiveStoreState getState(String arcfileName, String bitArchiveId)
             throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitArchive, "bitArchive");
-        if (!hasState(arcfileName, bitArchive)) {
+        ArgumentNotValid.checkNotNullOrEmpty(bitArchiveId, "bitArchiveId");
+        if (!hasState(arcfileName, bitArchiveId)) {
             throw new UnknownID("No store state recorded for '"
-                    + arcfileName + "' in '" + bitArchive + "'");
+                    + arcfileName + "' in '" + bitArchiveId + "'");
         }
-        return storeEntries.get(arcfileName).getStoreState(bitArchive);
+        return storeEntries.get(arcfileName).getStoreState(bitArchiveId);
     }
 
     /**
@@ -521,23 +521,23 @@ public abstract class AdminData {
     }
 
     /**
-     * Returns a set of the names arcfile names that are in a given state for a
+     * Returns a set of the arcfile names that are in a given state for a
      * specific bitarchive in the repository.
      *
-     * @param location the name of the BA
+     * @param replica the object representing the BA
      * @param state the state to look for, e.g.
      *  BitArchiveStoreState.STATE_COMPLETED
      * @return the set of files in the repository with the given state
      */
-    public Set<String> getAllFileNames(Location location,
+    public Set<String> getAllFileNames(Replica replica,
                                        BitArchiveStoreState state) {
-        ArgumentNotValid.checkNotNull(location, "Location location");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(state, "BitArchiveStoreState state");
-        String locationKey = location.getChannelID().getName();
+        String replicaKey = replica.getChannelID().getName();
         Set<String> completedFiles = new HashSet<String>();
         for (Map.Entry<String,ArcRepositoryEntry> entry
                 : storeEntries.entrySet()) {
-            if (entry.getValue().getStoreState(locationKey) == state) {
+            if (entry.getValue().getStoreState(replicaKey) == state) {
                 completedFiles.add(entry.getKey());
             }
         }

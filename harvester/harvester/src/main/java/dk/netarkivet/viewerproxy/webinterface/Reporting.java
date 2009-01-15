@@ -75,7 +75,7 @@ public class Reporting {
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
                 fileListJob,
-                Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         List<String> lines = new ArrayList<String>(
                 FileUtils.readListFromFile(f));
@@ -105,7 +105,7 @@ public class Reporting {
         }
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
-                cdxJob, Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                cdxJob, Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         List<CDXRecord> records;
         try {
@@ -158,7 +158,7 @@ public class Reporting {
         BatchStatus status
                 = ArcRepositoryClientFactory.getViewerInstance().batch(
                 urlsForDomainBatchJob,
-                Settings.get(CommonSettings.ENVIRONMENT_BATCH_LOCATION));
+                Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         status.getResultFile().copyTo(f);
         FileUtils.sortCrawlLog(f, fsorted);
         FileUtils.remove(f);

@@ -171,7 +171,7 @@ public class ArcRepositoryServerTester extends TestCase {
         ArcRepository arc = ArcRepository.getInstance();
         BatchMessage msg = new BatchMessage(Channels.getTheBamon(), Channels
                 .getError(), new TestBatchJobRuns(), Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_LOCATION));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         new ArcRepositoryServer(arc).visit(msg);
 

@@ -104,7 +104,7 @@ public class ArcRepositoryTester extends TestCase {
          * test with null parameter.
          */
         try {
-            a.getBitarchiveClientFromLocationName(null);
+            a.getBitarchiveClientFromReplicaId(null);
             fail("ArgumentNotValid should have been thrown");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -114,7 +114,7 @@ public class ArcRepositoryTester extends TestCase {
          * Test with invalid parameter.
          */
         try {
-            a.getBitarchiveClientFromLocationName("-1");
+            a.getBitarchiveClientFromReplicaId("-1");
             fail("ArgumentNotValid should have been thrown");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -127,9 +127,9 @@ public class ArcRepositoryTester extends TestCase {
     public void testGetBitarchiveClientFromLocationName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
-                CommonSettings.ENVIRONMENT_LOCATION_NAMES);
+                CommonSettings.ENVIRONMENT_REPLICA_IDS);
         for(int n = 0; n<locations.length; n++) {
-            BitarchiveClient bc = a.getBitarchiveClientFromLocationName(
+            BitarchiveClient bc = a.getBitarchiveClientFromReplicaId(
                     locations[n]);
             assertNotNull("Should return a valid BitarchiveClient", bc);
         }

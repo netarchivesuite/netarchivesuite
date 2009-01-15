@@ -117,7 +117,7 @@ public abstract class ApplicationUtils {
      */
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
-        Settings.set(CommonSettings.APPLICATIONNAME, appName);
+        Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n"
                     + Constants.getVersionString());
         log.info("Using settings files '"

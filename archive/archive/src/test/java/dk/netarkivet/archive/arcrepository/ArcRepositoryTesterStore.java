@@ -112,8 +112,8 @@ public class ArcRepositoryTesterStore extends TestCase {
     public void setUp() throws IOException {
         rs.setUp();
         rf.setUp();
-        Settings.set(CommonSettings.ENVIRONMENT_LOCATION_NAMES, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_LOCATION, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ADMINDATA_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
@@ -170,7 +170,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -179,7 +179,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
@@ -240,7 +240,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -248,7 +248,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, "FFFFFFFFFFFFFFFF");
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
@@ -299,7 +299,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -343,7 +343,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
     }
 
     /**
@@ -358,7 +358,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -367,7 +367,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_FAILED);
 
         //Store
@@ -411,7 +411,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
 
 
         //Check log for message
@@ -437,7 +437,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -446,7 +446,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Store
@@ -490,7 +490,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.DATA_UPLOADED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.DATA_UPLOADED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
 
 
         //Check log for message
@@ -516,7 +516,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -525,7 +525,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Store
@@ -569,7 +569,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
 
 
         //Check log for message
@@ -595,7 +595,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -604,7 +604,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Deliver message
@@ -650,7 +650,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.DATA_UPLOADED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.DATA_UPLOADED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
 
     }
 
@@ -666,7 +666,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -676,7 +676,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Deliver message
@@ -719,7 +719,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
     }
 
     /**
@@ -735,7 +735,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -745,7 +745,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
@@ -758,7 +758,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForLocation("SB"), "Msg-id-0", 1,
+                Channels.getTheArcrepos(), Channels.getBaMonForReplica("SB"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-1");
@@ -795,7 +795,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_COMPLETED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_COMPLETED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
     }
 
     /**
@@ -812,7 +812,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -822,7 +822,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
@@ -835,7 +835,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForLocation("SB"), "Msg-id-0", 1,
+                Channels.getTheArcrepos(), Channels.getBaMonForReplica("SB"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false,
                                               true));
@@ -873,7 +873,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
     }
 
     /**
@@ -889,7 +889,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlSBBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForLocation("SB"), gmlSBBaMon);
+        con.setListener(Channels.getBaMonForReplica("SB"), gmlSBBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisHaco(), gmlHaco);
 
@@ -899,7 +899,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForLocation("SB").getName(),
+                           Channels.getBaMonForReplica("SB").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
@@ -912,7 +912,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForLocation("SB"), "Msg-id-0", 0,
+                Channels.getTheArcrepos(), Channels.getBaMonForReplica("SB"), "Msg-id-0", 0,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false,
                                               true));
@@ -950,7 +950,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForLocation("SB").getName()));
+                Channels.getBaMonForReplica("SB").getName()));
     }
 
     //TODO: Check that tests are exhaustive, and check more than one BA

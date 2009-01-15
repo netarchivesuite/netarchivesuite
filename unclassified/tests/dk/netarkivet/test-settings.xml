@@ -41,19 +41,23 @@
         <userPassword>jms*ftp</userPassword>
     </remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
-        <locations>
+        <replicas>
             <!-- The names of all bit archive locations in the
                  environment, e.g., "KB" and "SB". -->
-            <location>
-                <name>SB</name>
-            </location>
-            <location>
-                <name>KB</name>
-            </location>
+            <replica>
+                <replicaId>SB</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>SBB</replicaName>                
+            </replica>
+            <replica>
+                <replicaId>KB</replicaId>
+                <replicaType>bitarchive</replicaType>
+                <replicaName>KBB</replicaName>                
+            </replica>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <batchLocation>KB</batchLocation>
-        </locations>
-        <thisPhysicalLocation>SB</thisPhysicalLocation>
+            <useReplicaId>KB</useReplicaId>
+        </replicas>
+        <thisPhysicalLocation>SBL</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>

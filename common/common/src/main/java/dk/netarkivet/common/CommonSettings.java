@@ -145,24 +145,49 @@ public class CommonSettings {
             = "settings.common.webinterface";
 
     /**
-     * The names of all bit archive locations in the
-     * environment, like "locationOne" and "locationTwo".
+     * The path to settings belonging to a individual replica.
      */
-    public static String ENVIRONMENT_LOCATION_NAMES
-            = "settings.common.locations.location.name";
+    public static String ENVIRONMENT_REPLICAS_PATH
+            = "settings.common.replicas";
+
+    /**
+     * The tags for parts of a replica.
+     */
+    public static String ENVIRONMENT_REPLICAID_TAG
+            = "replicaId";
+    public static String ENVIRONMENT_REPLICANAME_TAG
+            = "replicaName";
+    public static String ENVIRONMENT_REPLICATYPE_TAG
+            = "replicaType";
+
+    /**
+     * The identifiers of all replicas in the
+     * environment, like "replicaOneId" and "replicaTwoId".
+     */
+    public static String ENVIRONMENT_REPLICA_IDS
+            = "settings.common.replicas.replica.replicaId";
 
     /** Default bit archive to use for batch jobs (if none is specified). */
-    public static String ENVIRONMENT_BATCH_LOCATION
-            = "settings.common.locations.batchLocation";
+    public static String ENVIRONMENT_USE_REPLICA_ID
+            = "settings.common.replicas.useReplicaId";
 
-    /** For archiving applications, determines which bit archive you are
-     * part of. */
-    public static String ENVIRONMENT_THIS_LOCATION
+    /** For archiving applications, determines which physical location 
+     * you are part of. */
+    public static String ENVIRONMENT_THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
+    /** For archiving applications, determines which bitarchive replica
+     * you are part of. */
+    public static String ENVIRONMENT_THIS_REPLICA_ID
+            = "settings.common.thisReplicaId";
+
     /** The name of the application, fx. "BitarchiveServerApplication". */
-    public static String APPLICATIONNAME
+    public static String APPLICATION_NAME
             = "settings.common.applicationName";
+
+    /** The name of the application, fx. "BitarchiveServerApplication". */
+    public static String APPLICATION_INSTANCE_ID
+            = "settings.common.applicationInstanceId";
 
     /**
      * The mail server to use when sending mails. Currently only used for
