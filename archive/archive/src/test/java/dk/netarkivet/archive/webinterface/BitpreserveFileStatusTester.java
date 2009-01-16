@@ -72,11 +72,14 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        // This will fail, if the Location class has already been initialized
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "KB", "SB");
+        // This will not have any effect, if the Replica class has already been initialized
+        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "KBB", "SBB");
+        // Force a re-initialization of the Replica.known datastructure
+        Replica.resetKnownList();
 
-        if (!Replica.isKnownReplicaId("KB") || !Replica.isKnownReplicaId("SB")) {
-            fail("These tests assume, that KB and SB are known locations");
+        if (!Replica.isKnownReplicaId("KBB") || !Replica.isKnownReplicaId("SBB")) {
+            fail("These tests assume, that KBB and SBB are known locations. Only known locations are: "
+                    + Replica.getKnownIds());
         }
         super.setUp();
     }
@@ -97,8 +100,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         MockFileBasedActiveBitPreservation mockabp 
             = new MockFileBasedActiveBitPreservation();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        String ba1 = "SB";
-        String ba2 = "KB";
+        String replicaID1 = "SBB";
+        String replicaID2 = "KBB";
         String filename1 = "foo";
         String filename2 = "bar";
         Locale defaultLocale = new Locale("da");
@@ -106,19 +109,19 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         Map<String, String[]> args = new HashMap<String, String[]>();
         args.put(ADD_COMMAND,
                 new String[] {
-                    ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    replicaID1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         request.setupAddParameter(ADD_COMMAND,
                 new String[] {
-                    ba1 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    replicaID1 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         args.put(GET_INFO_COMMAND, new String[] { filename1 });
         request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1 });
         args.put(BITARCHIVE_NAME_PARAM,
-                    new String[]{Replica.getReplicaFromId(ba1).getName()});
+                    new String[]{Replica.getReplicaFromId(replicaID1).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                    new String[]{Replica.getReplicaFromId(ba1).getName()});
+                    new String[]{Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
         Map<String, FilePreservationState> status =
@@ -138,9 +141,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request = new MockHttpServletRequest();
         args.clear();
         args.put(BITARCHIVE_NAME_PARAM,
-                 new String[]{Replica.getReplicaFromId(ba1).getName()});
+                 new String[]{Replica.getReplicaFromId(replicaID1).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                 new String[]{Replica.getReplicaFromId(ba1).getName()});
+                 new String[]{Replica.getReplicaFromId(replicaID1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
                 getDummyPageContext(defaultLocale, request), new StringBuilder()
@@ -158,18 +161,18 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request = new MockHttpServletRequest();
         args.clear();
         args.put(BITARCHIVE_NAME_PARAM,
-                 new String[]{Replica.getReplicaFromId(ba2).getName()});
+                 new String[]{Replica.getReplicaFromId(replicaID2).getName()});
         request.setupAddParameter(BITARCHIVE_NAME_PARAM,
-                 new String[]{Replica.getReplicaFromId(ba2).getName()});
+                 new String[]{Replica.getReplicaFromId(replicaID2).getName()});
         request.setupAddParameter(ADD_COMMAND,
                 new String[] {
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         args.put(ADD_COMMAND,
                 new String[] {
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    ba2 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });
@@ -190,10 +193,18 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                 null, status.get(filename1));
         assertEquals("Should have info for filename2",
                 null, status.get(filename2));
+        
+        
+//        Iterator<String> it = mockabp.calls.get(ADD_METHOD).iterator();
+//        while (it.hasNext()) {
+//            System.out.println(it.next());
+//        }
+        
         CollectionAsserts.assertIteratorEquals("Should have the args given add",
-                Arrays.asList(new String[] { filename1 + "," + ba2,
-                                             filename1 + "," + ba2}).iterator(),
+                Arrays.asList(new String[] { filename1 + "," + replicaID2,
+                                             filename1 + "," + replicaID2}).iterator(),
                 mockabp.calls.get(ADD_METHOD).iterator());
+        
         CollectionAsserts.assertIteratorEquals("Should have the args given info",
                 Arrays.asList(new String[] {
                     filename1, filename2, filename1 }).iterator(),

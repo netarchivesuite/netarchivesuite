@@ -89,7 +89,7 @@ public class BitarchiveClientTester extends TestCase {
     MessageTestHandler handler;
 
     /**
-     * Number of ARC records in the file uploaded
+     * Number of ARC records in the file uploaded.
      */
     private static final int NUM_RECORDS = 13;
     private JMSConnectionTestMQ con;
@@ -103,7 +103,7 @@ public class BitarchiveClientTester extends TestCase {
     public void setUp() {
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-
+        
         rf.setUp();
 
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
@@ -117,6 +117,22 @@ public class BitarchiveClientTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         bam = BitarchiveMonitorServer.getInstance();
+        
+        // Test, that we are communicating through the assumed channels.
+        //ALL_BA: [Topic 'DEV_KB_ALL_BA']
+        //ANY_BA: [Queue 'DEV_KB_ANY_BA']
+        //THE_BAMON: [Queue 'DEV_KB_THE_BAMON']
+        assertEquals("THE_BAMON was different than expected", THE_BAMON.toString(),
+                "[Queue 'DEV_KB_THE_BAMON']"); 
+        
+        System.out.println("THE_BAMON: " + THE_BAMON.toString());
+        System.out.println("ALL_BA: " + ALL_BA.toString());
+        System.out.println("ANY_BA: " + ANY_BA.toString());
+        
+        //private static final ChannelID THE_BAMON = Channels.getTheBamon();
+        //private static final ChannelID ALL_BA = Channels.getAllBa();
+        //private static final ChannelID ANY_BA = Channels.getAnyBa();
+        
     }
 
     /**
@@ -246,10 +262,10 @@ public class BitarchiveClientTester extends TestCase {
     public void testUploadTwice() {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
-
+        
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
-                   FILE_TO_UPLOAD.exists());
-
+                   FILE_TO_UPLOAD.exists());        
+        
         bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
         bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,

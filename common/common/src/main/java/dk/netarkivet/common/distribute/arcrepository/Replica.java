@@ -119,16 +119,15 @@ public class Replica {
      * @return an object representing the replica with the given name
     */
     public static Replica getReplicaFromName(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         initializeKnownList();
         Replica resRep = new Replica("NONE","NONE", ReplicaType.NO_REPLICA_TYPE);
-        boolean found = false;
-        if (name != null) { 
-            for (Replica rep : known.values()) {
-                found = rep.getName().equals(name);
-                if (found) { 
-                    resRep = rep;
-                    break;
-                }
+        boolean found = false; 
+        for (Replica rep : known.values()) {
+            found = rep.getName().equals(name);
+            if (found) { 
+                resRep = rep;
+                break;
             }
         }
         if (!found) {
@@ -249,5 +248,13 @@ public class Replica {
      */
     public String toString() {
         return type.toString() + "Replica (" + id + ") "+ name;
+    }
+    
+    /** This resets the list of known replicas.
+     * This forces a new read of the settings, next time
+     * one of the other static methods are used. 
+     */ 
+    public static void resetKnownList() {
+        known = null;
     }
 }

@@ -30,11 +30,15 @@
 <common>
         <jms>
         <class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
-        </jms> 
+        </jms>
 	<jmx>
 	<!-- to reduce running time of our unittests -->
 	<timeout>2</timeout>
+	<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
 	</jmx>
+	<http>
+    	<port>8076</port>
+    </http>
     <remoteFile>
         <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
         <userName>jms</userName>
@@ -65,8 +69,9 @@
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
         <applicationInstanceId>id</applicationInstanceId>
-    </common>
+     </common>
+   
     <archive>
         <thisReplicaId>SB</thisReplicaId>
-    </archive>
+    </archive>    
 </settings>

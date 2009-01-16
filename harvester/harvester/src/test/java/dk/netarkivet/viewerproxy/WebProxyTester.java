@@ -21,16 +21,11 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.viewerproxy;
-/**
- * Test the WebProxy class
- *
- */
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletInputStream;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
@@ -45,8 +40,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Enumeration;
@@ -74,7 +67,10 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 
-
+/**
+ * Test the WebProxy class
+ *
+ */
 public class WebProxyTester extends TestCase {
     private static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
 
@@ -87,7 +83,11 @@ public class WebProxyTester extends TestCase {
 
     public void setUp() throws IOException {
         //Check port not in use (since this will fail all tests)
+        
         httpPort = Settings.getInt(CommonSettings.HTTP_PORT_NUMBER);
+        if (httpPort < 1025 || httpPort > 65535) {
+            fail("Port must be in the range 1025-65535, not " + httpPort);
+        } 
         try {
             new Socket(InetAddress.getLocalHost(), httpPort);
             fail("Port already in use before unit test");
@@ -115,7 +115,9 @@ public class WebProxyTester extends TestCase {
 
     public void testUriEncode() {
         String test_string = "{abcd{fgåæka}";
-        assertEquals("Should recover original string after decoding", "%7Babcd%7Bfgåæka%7D", WebProxy.HttpRequest.uriEncode(test_string));
+        assertEquals("Should recover original string after decoding", 
+                "%7Babcd%7Bfgåæka%7D",
+                WebProxy.HttpRequest.uriEncode(test_string));
     }
 
     /** Tests constructor. After running the constructor the following should be

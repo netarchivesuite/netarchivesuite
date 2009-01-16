@@ -554,10 +554,17 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         assertEquals("Should have expected size for KB",
                 0, fps.getBitarchiveChecksum(KB).size());
         LogUtils.flushLogs(getClass().getName());
-        FileAsserts.assertFileContains("Should have warning about SB",
-                "while asking location 'Location SB'", TestInfo.LOG_FILE);
-        FileAsserts.assertFileContains("Should have warning about KB",
-                "while asking location 'Location KB'", TestInfo.LOG_FILE);
+        
+        FileAsserts.assertFileContains("Should have warning about SB in logfile: "
+                + FileUtils.readFile(TestInfo.LOG_FILE),
+                //Before: "while asking location 'Location SB'", 
+                "while asking replica 'BITARCHIVEReplica (SB) SBB'",
+                TestInfo.LOG_FILE);
+        FileAsserts.assertFileContains("Should have warning about KB in logfile: "
+                + FileUtils.readFile(TestInfo.LOG_FILE),
+                //Before: "while asking location 'Location KB'",
+                "while asking replica 'BITARCHIVEReplica (KB) KBB'",
+                TestInfo.LOG_FILE);
 
         // Test extra checksums
         results.clear();
@@ -570,10 +577,16 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         assertEquals("Should have expected size for KB",
                 3, fps.getBitarchiveChecksum(KB).size());
         LogUtils.flushLogs(getClass().getName());
-        FileAsserts.assertFileContains("Should have warning about SB",
-                "while asking location 'Location SB'", TestInfo.LOG_FILE);
-        FileAsserts.assertFileContains("Should have warning about KB",
-                "while asking location 'Location KB'", TestInfo.LOG_FILE);
+        FileAsserts.assertFileContains("Should have warning about SB in logfile: "
+                + FileUtils.readFile(TestInfo.LOG_FILE),
+                //Before: "while asking location 'Location SB'",
+                "while asking replica 'BITARCHIVEReplica (SB) SBB'",
+                TestInfo.LOG_FILE);
+        FileAsserts.assertFileContains("Should have warning about KB in logfile: "
+                + FileUtils.readFile(TestInfo.LOG_FILE),
+                //Before: "while asking location 'Location KB'",
+                "while asking replica 'BITARCHIVEReplica (KB) KBB'",
+                TestInfo.LOG_FILE);
 
         // TODO: More funny cases
     }
