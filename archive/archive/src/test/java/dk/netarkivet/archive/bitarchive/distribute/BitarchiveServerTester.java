@@ -407,7 +407,7 @@ public class BitarchiveServerTester extends TestCase {
         BatchMessage bm =
                 new BatchMessage(Channels.getTheBamon(),
                         new ChecksumJob(),
-                        Settings.get(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         JMSConnectionTestMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
@@ -482,11 +482,11 @@ public class BitarchiveServerTester extends TestCase {
                                 }
                             }
                         },
-                        Settings.get(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         BatchMessage bm2 =
                 new BatchMessage(Channels.getTheBamon(),
                         new TimedChecksumJob(),
-                        Settings.get(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                        Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         JMSConnectionTestMQ.updateMsgID(bm1, "ID45");
         JMSConnectionTestMQ.updateMsgID(bm2, "ID46");

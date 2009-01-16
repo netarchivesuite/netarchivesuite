@@ -153,17 +153,17 @@ public class ReplicaTester extends TestCase {
     	boolean found;
     	int i;
     	int j;
-    	String[] kn = Replica.getKnownNames();
+    	String[] ki = Replica.getKnownIds();
 
     	assertTrue(
     		"Differences in sizes of count of known ids",
-        	kn.length == knownTestIds.length
+        	ki.length == knownTestIds.length
         );
 
     	found = false;
     	for (i=0; i< knownTestIds.length; i++) {
-        	for (j=0; j< kn.length; j++) {
-        		if (knownTestIds[i].equals(kn[j])) {
+        	for (j=0; j< ki.length; j++) {
+        		if (knownTestIds[i].equals(ki[j])) {
         			found = true;
         		};
         		if (found) break;
@@ -176,8 +176,8 @@ public class ReplicaTester extends TestCase {
 
     	found = false;
     	for (i=0; i< knownTestIds.length; i++) {
-        	for (j=0; j< kn.length; j++) {
-        		if (knownTestIds[i].equals(kn[j])) {
+        	for (j=0; j< ki.length; j++) {
+        		if (knownTestIds[i].equals(ki[j])) {
         			found = true;
         		};
         		if (found) break;

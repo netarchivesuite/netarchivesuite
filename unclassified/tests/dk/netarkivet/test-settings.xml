@@ -55,15 +55,18 @@
                 <replicaName>KBB</replicaName>                
             </replica>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <useReplicaId>KB</useReplicaId>
         </replicas>
+        <useReplicaId>KB</useReplicaId>
         <!--  Remove the following setting when the code is updated to 
            use the setting common.replicas.useReplicaId instead of common.useReplicaId  
         -->
-        <useReplicaId>KB</useReplicaId>
-        <thisPhysicalLocation>SBL</thisPhysicalLocation>
+        <thisPhysicalLocation>SB</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
+        <applicationInstanceId>id</applicationInstanceId>
     </common>
+    <archive>
+        <thisReplicaId>SB</thisReplicaId>
+    </archive>
 </settings>

@@ -67,7 +67,6 @@ public class RunChecksum {
                 dieWithUsage();
             }
         } else {
-            //THIS_REPLICA_ID??
             bitarchive = Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
         }
 

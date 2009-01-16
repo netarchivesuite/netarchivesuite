@@ -444,7 +444,7 @@ public class ArcRepository implements CleanupIF {
      */
     public BitarchiveClient getBitarchiveClientFromReplicaId(
             String replicaId) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(replicaId, "replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
 
         String channelName = Channels.getBaMonForReplica(replicaId)
                 .getName();

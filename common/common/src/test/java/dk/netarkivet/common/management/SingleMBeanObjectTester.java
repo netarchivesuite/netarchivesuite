@@ -29,6 +29,8 @@ import java.lang.management.ManagementFactory;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -49,7 +51,7 @@ public class SingleMBeanObjectTester extends TestCase {
             name = new ObjectName(
                     "Test:location=NO,hostname="
                     + SystemUtils.getLocalHostName()
-                    + ",httpport=1234,applicationname=TestApp1");
+                    + ",httpport=1234,applicationname=TestApp1,priority=high,replica=SB");
         } catch (MalformedObjectNameException e) {
             //never mind
         }
@@ -64,6 +66,9 @@ public class SingleMBeanObjectTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
         Settings.set(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION, "NO");
+        //Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
+        Settings.set(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID, "SB");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "high");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
 

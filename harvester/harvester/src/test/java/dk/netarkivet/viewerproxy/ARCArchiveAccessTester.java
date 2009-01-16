@@ -142,7 +142,6 @@ public class ARCArchiveAccessTester extends TestCase {
 
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
         Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
-        //THIS_REPLICA_ID??
         Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(WORKING, "admin-data").getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());

@@ -511,11 +511,11 @@
                 <replicaType>bitarchive</replicaType>
                 <replicaName>KBB</replicaName>
             </replica>
-            <replica>
-                <replicaId>CS</replicaId>
-                <replicaType>checksum</replicaType>
-                <replicaName>CS1</replicaName>
-            </replica>
+             <!-- <replica>  -->
+             <!--   <replicaId>CS</replicaId>  -->
+             <!--   <replicaType>checksum</replicaType>  -->
+             <!--   <replicaName>CS1</replicaName>  -->
+             <!-- </replica>  -->
         </replicas>
         <!-- Default bit archive to use for batch jobs (if none is specified) -->
         <useReplicaId>KB</useReplicaId>

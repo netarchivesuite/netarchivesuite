@@ -328,7 +328,6 @@ public class BitarchiveClientTester extends TestCase {
         BatchMessage bMsg = new BatchMessage(THE_BAMON,
                                              Channels.getTheArcrepos(),
                                              new TestBatchJobRuns(),
-                                             //THIS_REPLICA_ID ????
                                              Settings.get(
                                                      CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         bac.batch(bMsg);

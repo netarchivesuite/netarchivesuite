@@ -470,23 +470,28 @@
               -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <locations>
+        <replicas>
             <!-- The names of all institutional bit archive locations in the
                  environment, e.g., "KB" and "SB". -->
-            <location>
-                <name>SB</name>
-            </location>
-            <location>
-                <name>KB</name>
-            </location>
-            <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <batchLocation>KB</batchLocation>
-        </locations>
+            <replica>
+              <replicaId>SB</replicaId>
+              <replicaType>bitarchive</replicaType>
+              <replicaName>SBN</replicaName>
+            </replica>
+            <replica>
+              <replicaId>KB</replicaId>
+              <replicaType>bitarchive</replicaType>
+              <replicaName>KBN</replicaName>
+            </replica>
+        </replicas>
+        <!-- Default bit archive to use for batch jobs (if none is specified) -->
+        <useRelicaId>SB</useRelicaId>
         <!-- For archiving applications, which bit archive are you part of?-->
         <thisPhysicalLocation>SB</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
+        <applicationInstanceId>NA</applicationInstanceId>
     </common>
     <harvester>
         <datamodel>
@@ -607,6 +612,7 @@
             <baseDir>.</baseDir>
         </arcrepository>
         <bitarchive>
+            <thisRelicaId>SB</thisRelicaId>
             <!-- The minimum amount of bytes left *in any dir* that we will
                  allow a bitarchive machine to accept uploads with.  When no
                  dir has more space than this, the bitarchive machine stops

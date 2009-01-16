@@ -3,6 +3,7 @@
 <settings>
   <archive>
     <bitarchive>
+      <thisReplicaId>KB</thisReplicaId>
       <batchMessageTimeout>172800000</batchMessageTimeout>
       <thisCredentials>42</thisCredentials>
       <heartbeatFrequency>1000</heartbeatFrequency>
@@ -29,13 +30,19 @@
       </database>
       <database/>
     <monitorApplicationName>NA</monitorApplicationName>
-    <locations>
-      <batchLocation>KB</batchLocation>
-      <location>
-        <name>SB</name>
-        <name>KB</name>
-      </location>
-    </locations>
+    <replicas>
+      <replica>
+        <replicaId>SB</replicaId>
+        <replicaType>bitarchive</replicaType>
+        <replicaName>SBN</replicaName>
+      </replica>
+      <replica>
+        <replicaId>KB</replicaId>
+        <replicaType>bitarchive</replicaType>
+        <replicaName>KBN</replicaName>
+      </replica>
+    </replicas>
+    <useReplicaId>KB</useReplicaId>
     <thisPhysicalLocation>KB</thisPhysicalLocation>
     <repository>
       <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>

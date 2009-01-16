@@ -57,7 +57,6 @@ public class StandaloneApplication {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        //THIS_REPLICA_ID??
         Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, Settings.get(
                                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         //???Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, Settings.get(

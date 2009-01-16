@@ -29,7 +29,7 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
-import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -62,7 +62,7 @@ public class BatchMessageTester extends TestCase {
      */
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
         BatchMessage bm = new BatchMessage(q1, job, Settings.get(
-                ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID));
+                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
         BatchMessage bm2 = (BatchMessage) Serial.serial(bm);
         assertEquals("Serializability failure for BatchMessage", relevantState(bm), relevantState(bm2));
     }
