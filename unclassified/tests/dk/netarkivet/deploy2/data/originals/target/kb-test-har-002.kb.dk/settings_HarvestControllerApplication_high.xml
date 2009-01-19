@@ -38,8 +38,12 @@
                 </replica>
             </replicas>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <!-- or get and getFile operations, (as well as bitArchive monitor)    -->
+            <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
             <useReplicaId>KB</useReplicaId>
+            <database>
+	        <url/>
+	    </database>
+
         <mail>
                     <server>post.kb.dk</server>
                 </mail><notifications>

@@ -38,8 +38,12 @@
                 </replica>
             </replicas>
             <!-- Default bit archive to use for batch jobs (if none is specified) -->
-            <!-- or get and getFile operations, (as well as bitArchive monitor)    -->
+            <!-- or get and getFile oprations, (as well as bitArchive monitor)    -->
             <useReplicaId>SB</useReplicaId>
+            <database>
+	        <url/>
+	    </database>
+
         <mail>
                     <server>post.statsbiblioteket.dk</server> 
                 </mail><notifications>
@@ -62,7 +66,7 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        <thisReplicaId>SB</thisReplicaId><fileDir>/netarkiv/0002</fileDir></archive>
+        <thisReplicaId>SB</thisReplicaId><fileDir>/netarkiv/0001</fileDir><fileDir>/netarkiv/0002</fileDir></archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            

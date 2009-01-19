@@ -65,7 +65,7 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        <thisReplicaId>SB</thisReplicaId><fileDir>/netarkiv/0002</fileDir></archive>
+        <thisReplicaId>SB</thisReplicaId><fileDir>/netarkiv/0001</fileDir><fileDir>/netarkiv/0002</fileDir></archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            

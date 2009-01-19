@@ -41,7 +41,7 @@ public class TestInfo {
 
     // argument files
     public static final File IT_CONF_FILE  = new File(
-	    WORKING_DIR, "it_conf_test_new-v10.xml");
+	    WORKING_DIR, "it_config.xml");
     public static final File IT_CONF_SINGLE_FILE = new File(
 	    WORKING_DIR, "it_conf_test_single.xml");
     public static final File IT_CONF_DATABASE_FILE = new File(

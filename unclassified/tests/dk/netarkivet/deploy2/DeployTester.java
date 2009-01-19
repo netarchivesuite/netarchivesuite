@@ -22,15 +22,9 @@
 */
 package dk.netarkivet.deploy2;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -40,7 +34,7 @@ public class DeployTester extends TestCase {
 
     String oldSettingsFileName;
     ReloadSettings rs = new ReloadSettings();
-	
+
     private PreserveStdStreams pss = new PreserveStdStreams(true);
     private PreventSystemExit pse = new PreventSystemExit();
 
@@ -73,7 +67,7 @@ public class DeployTester extends TestCase {
 
     /**
      * This test invokes the deploy application and verifies that all files
-     * (settings.xml, scripts, bats) created by the script matches the target
+     * (settings, scripts, bats) created by the script matches the target
      * files stored in SVN.
      * Any change to the output files, will break this test.
      * When the test is broken: Verify that all differences reported by this
@@ -95,30 +89,8 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TARGETDIR,
                                               TestInfo.TMPDIR);
-        if (differences.length() > 0) {
-            System.out.println(differences);
-        }
 
         assertEquals("No differences expected", 0, differences.length());
-
-        // find all settings*.xml files
-        List<File> settingsFiles = TestFileUtils.findFiles(TestInfo.TMPDIR,
-                new FileFilter() {
-                    Pattern settingsPattern = Pattern.compile(
-                            "^settings.*\\.xml$");
-                    public boolean accept(File pathname) {
-                        return settingsPattern.matcher(
-                                pathname.getName()).matches();
-                    }
-                });
-        // XSD-test them
-        for (File f : settingsFiles) {
-            System.setProperty("dk.netarkivet.settings.file",
-                    f.getAbsolutePath());
-            Settings.reload();
-            //XmlUtils.validateWithXSD(new File(
-            //        "./lib/data-definitions/settings.xsd"));
-        }
     }
 
     /** 
@@ -140,9 +112,6 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.SINGLE_TARGET_DIR,
                                               TestInfo.TMPDIR);
-        if (differences.length() > 0) {
-            System.out.println(differences);
-        }
         assertEquals("No differences expected", 0, differences.length());
     }
     
@@ -172,7 +141,7 @@ public class DeployTester extends TestCase {
     /**
      * tests The test arguments for argument errors.
      */
-    public void testTestArgumentArguments() {
+    public void testDeployTest() {
 	String[] args = {
 		TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
@@ -182,16 +151,12 @@ public class DeployTester extends TestCase {
                 TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
                 TestInfo.ARGUMENT_TEST + TestInfo.ARGUMENT_TEST_ARG
 	};
-        pss.tearDown();
-        pse.tearDown();
         DeployApplication.main(args);
         // compare the resulting output files with the target files
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TEST_TARGET_DIR,
                                               TestInfo.TMPDIR);
         assertEquals("No differences expected", 0, differences.length());
-        pse.setUp();
-        pss.setUp();
     }
 
     /**
