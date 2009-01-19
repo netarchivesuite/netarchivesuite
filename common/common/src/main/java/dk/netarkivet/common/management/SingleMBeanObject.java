@@ -85,6 +85,8 @@ public class SingleMBeanObject<I> {
     //Following environment constant are defined here in order to avoid
     //refering to independent modules - the environment values are only
     //used if defined
+    //Note that HARVESTER_HARVEST_CONTROLLER_PRIORITY should be identical to
+    //HarvesterSettings.HARVESTER_HARVEST_CONTROLLER_PRIORITY   
     private static String HARVESTER_HARVEST_CONTROLLER_PRIORITY
             = "settings.harvester.harvesting.queuePriority";
 
