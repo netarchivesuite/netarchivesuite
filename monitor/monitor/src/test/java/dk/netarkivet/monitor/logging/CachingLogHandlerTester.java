@@ -325,7 +325,7 @@ public class CachingLogHandlerTester extends TestCase {
     private static String getLogRecordAtIndex(
             int index,
             MBeanServer mBeanServer) throws JMException {
-
+                    
         return (String) mBeanServer.getAttribute(getObjectName(index),
                                                  "RecordString");
     }
@@ -345,6 +345,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
+                              + ",replica=,priority="
                               + ",applicationname="
                               + Settings.get(CommonSettings.APPLICATION_NAME) + "," + (
                 index == -1 ? "*" : "index=" + index));
