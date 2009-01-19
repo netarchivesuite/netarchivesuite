@@ -38,6 +38,8 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -65,7 +67,9 @@ public class CachingLogHandlerTester extends TestCase {
         //Set Settings to what we expect
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
-
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGH");
+        Settings.set(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID, "KB");
     }
 
     public void tearDown() {
@@ -78,10 +82,10 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Test that the constructor exposes N MBeans, and each can be connected to
      * and returns the empty string. It is tested that the names of the objects
-     * are generated from: "location" = Settings.get(Settings.THIS_LOCATION)
+     * are generated from: "location" = Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
      * "hostname" = InetAddress.getLocalHost().getCanonicalHostName() "httpport"
-     * = Settings.get(Settings.HTTP_PORT_NUMBER) "applicationname" =
-     * Settings.get(Settings.APPLICATIONNAME) "index" = (index in the cache; 0
+     * = Settings.get(CommonSettings.HTTP_PORT_NUMBER) "applicationname" =
+     * Settings.get(CommonSettings.APPLICATIONNAME) "index" = (index in the cache; 0
      * is always the most recent log record)
      *
      * It is also tested that no MBeans were registered before this call.
@@ -345,7 +349,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + ",replica=,priority="
+                              + ",replica=KB,priority=HIGH"
                               + ",applicationname="
                               + Settings.get(CommonSettings.APPLICATION_NAME) + "," + (
                 index == -1 ? "*" : "index=" + index));
