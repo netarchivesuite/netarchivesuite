@@ -75,7 +75,7 @@ public class Constants {
     static final String SETTINGS_HTTP_PORT_BRANCH = "port";
     /** The complete path to the port leaf from beyond settings.*/
     static final String[] SETTINGS_HTTP_PORT_PATH = {SETTINGS_BRANCH, 
-	COMMON_BRANCH, SETTINGS_HTTP_BRANCH, SETTINGS_HTTP_PORT_BRANCH}; 
+        COMMON_BRANCH, SETTINGS_HTTP_BRANCH, SETTINGS_HTTP_PORT_BRANCH}; 
     /** The path to the notification branch under common.*/
     static final String SETTINGS_NOTIFICATION_BRANCH = "notifications";
     /** The path to the receiver branch under notification.*/
@@ -83,32 +83,81 @@ public class Constants {
     /** The complete path to the receiver leaf from beyond settings.*/
     static final String[] SETTINGS_NOTIFICATION_RECEIVER_PATH = 
         {SETTINGS_BRANCH, COMMON_BRANCH, SETTINGS_NOTIFICATION_BRANCH, 
-	SETTINGS_NOTIFICATION_RECEIVER_BRANCH};
+        SETTINGS_NOTIFICATION_RECEIVER_BRANCH};
     /** The name of the new modified configuration file for tests.*/
     static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
 
+    /** The path to jmx branch from common.*/
     static final String SETTINGS_JMX_BRANCH = "jmx";
+    /** The path to jmx port branch from jmx.*/
     static final String SETTINGS_JMX_PORT_BRANCH = "port";
+    /** The path to rmi port branch from jmx.*/
     static final String SETTINGS_JMX_RMI_PORT_BRANCH = "rmiPort";
+    /** The path to harvester branch from settings.*/
     static final String SETTINGS_HARVESTER_BRANCH = "harvester";
+    /** The path to the harvesting branch from harvester.*/
     static final String SETTINGS_HARVESTER_HARVESTING_BRANCH = "harvesting";
+    /** The path to the heritrix branch from harvesting.*/
     static final String SETTINGS_HARVESTER_HERITRIX_BRANCH = "heritrix";
+    /** The path to the guiPort branch from heritrix.*/
     static final String SETTINGS_HARVESTER_GUI_PORT_BRANCH = "guiPort";
+    /** The path to the jmxPort branch from heritrix.*/
     static final String SETTINGS_HARVESTER_JMX_PORT_BRANCH = "jmxPort";
     
+    /** The path to the jmxPort leaf from beyond settings.*/
     static final String[] TEXT_JMX_PORT_PATH = {SETTINGS_BRANCH, COMMON_BRANCH, 
-	SETTINGS_JMX_BRANCH, SETTINGS_JMX_PORT_BRANCH};
+        SETTINGS_JMX_BRANCH, SETTINGS_JMX_PORT_BRANCH};
+    /** The path to the rmiPort leaf from beyond settings.*/
     static final String[] TEXT_JMX_RMI_PORT_PATH = {SETTINGS_BRANCH, 
-	COMMON_BRANCH, SETTINGS_JMX_BRANCH, SETTINGS_JMX_RMI_PORT_BRANCH};
+        COMMON_BRANCH, SETTINGS_JMX_BRANCH, SETTINGS_JMX_RMI_PORT_BRANCH};
+    /** The path to the heritrix guiPort from beyond settings.*/
     static final String[] TEXT_HARVEST_HETRIX_GUI_PORT = {
-	SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
-	SETTINGS_HARVESTER_HARVESTING_BRANCH, 
-	SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_GUI_PORT_BRANCH};
+        SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
+        SETTINGS_HARVESTER_HARVESTING_BRANCH, 
+        SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_GUI_PORT_BRANCH};
+    /** The path to the heritrix jmxPort from beyond settings.*/
     static final String[] TEXT_HARVEST_HETRIX_JMX_PORT = {
-	SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
-	SETTINGS_HARVESTER_HARVESTING_BRANCH, 
-	SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_JMX_PORT_BRANCH};
+        SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
+        SETTINGS_HARVESTER_HARVESTING_BRANCH, 
+        SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_JMX_PORT_BRANCH};
 
+    /** The path to the archive branch from settings.*/
+    static final String SETTINGS_ARCHIVE_BRANCH = "archive";
+    /** The path to the bitpreservation branch from archive.*/
+    static final String SETTINGS_ARCHIVE_BITPRESERVATION_BRANCH = 
+        "bitpreservation";
+    /** The path to the arcrepository branch from archive.*/
+    static final String SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH =
+        "arcrepository";
+    /** The path to the base dir branch from bitpreservation.*/
+    static final String SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH =
+        "baseDir";
+    /** The path to the fileDir branch from settings.*/
+    static final String SETTINGS_FILE_DIR_BRANCH = "fileDir";
+    /** The path to the tempDir branch from settings.*/
+    static final String SETTINGS_TEMP_DIR_BRANCH = "tempDir";
+    /** The path to the serverDir branch from harvester.harvesting.*/
+    static final String SETTINGS_HARVEST_SERVER_DIR_BRANCH = "serverDir";
+    /** The path to the tempDir leaf from settings.*/
+    static final String[] SETTINGS_TEMP_DIR_LEAF = {SETTINGS_TEMP_DIR_BRANCH};
+    /** The path to the fileDir branch from settings.*/
+    static final String[] SETTINGS_FILE_DIR_LEAF = {
+        SETTINGS_ARCHIVE_BRANCH, SETTINGS_FILE_DIR_BRANCH};
+    /** The path to the serverDir leaf from settings.*/
+    static final String[] SETTINGS_HARVEST_SERVER_DIR_LEAF = {
+        SETTINGS_HARVESTER_BRANCH, SETTINGS_HARVESTER_HARVESTING_BRANCH,
+        SETTINGS_HARVEST_SERVER_DIR_BRANCH};
+    /** The path to the bitpreservation base dir leaf from settings.*/
+    static final String[] SETTINGS_ARCHIVE_BP_BASEDIR_LEAF = {
+        Constants.SETTINGS_ARCHIVE_BRANCH,
+        Constants.SETTINGS_ARCHIVE_BITPRESERVATION_BRANCH,
+        Constants.SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH};
+    /** The path to the arcrepository base dir leaf from settings.*/
+    static final String[] SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF = {
+        Constants.SETTINGS_ARCHIVE_BRANCH,
+        Constants.SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH, 
+        Constants.SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH};
+    
     // physical location specific
     /** The path to name in a physical location instance.*/
     static final String PHYSICAL_LOCATION_NAME_ATTRIBUTES = "name";
@@ -131,7 +180,7 @@ public class Constants {
     static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
     /** The call for running a batch script in windows.*/
     static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
-        "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=\"";
+        "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
 
     // jmx remote password specific
     /** The path from settings to the monitor branch.*/
@@ -180,6 +229,8 @@ public class Constants {
     public static final String ARG_DATABASE_FILE = "D";
     /** For giving the optional test data.*/
     public static final String ARG_TEST = "T";
+    /** for giving the optional reset directory argument.*/
+    public static final String ARG_RESET = "R";
     
     // messages
     /** The error message for error in parsing the arguments.*/
@@ -236,6 +287,7 @@ public class Constants {
     /** The error message when test wrong number of test arguments.*/
     public static final String MSG_ERROR_TEST_ARGUMENTS = 
         "There have to be " + TEST_ARGUMENTS_REQUIRED + " test arguments.";
+    /** The error message when offset value are too different from httpport.*/
     public static final String MSG_ERROR_TEST_OFFSET = 
-	"Offsetvalue not between 0 and 10, as required.";
+        "Offsetvalue not between 0 and 10, as required.";
 }

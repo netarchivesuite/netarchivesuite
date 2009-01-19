@@ -62,6 +62,8 @@ public class PhysicalLocation {
     private File securityPolicyFile;
     /** The inherited database file name.*/
     private String databaseFileName;
+    /** The optional choice for resetting tempDir.*/
+    private boolean resetDirectory;
 
     /**
      * The physical locations is referring to the position in the real world
@@ -75,10 +77,11 @@ public class PhysicalLocation {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database.
+     * @param resetDir Whether the temporary directory should be reset.
      */
     public PhysicalLocation(Element elem, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-        File securityPolicy, String dbFileName) {
+        File securityPolicy, String dbFileName, boolean resetDir) {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(elem, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, 
@@ -88,6 +91,7 @@ public class PhysicalLocation {
         "String netarchiveSuite");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
+        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
         
         // make a copy of parent, don't use it directly.
         settings = new XmlStructure(parentSettings.getRoot());
@@ -97,6 +101,8 @@ public class PhysicalLocation {
         logPropFile = logProp;
         securityPolicyFile = securityPolicy;
         databaseFileName = dbFileName;
+        resetDirectory = resetDir;
+        
         // retrieve the specific settings for this instance 
         Element tmpSet = physLocRoot.element(Constants.SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
@@ -146,11 +152,11 @@ public class PhysicalLocation {
                     Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFileName));
+                        securityPolicyFile, databaseFileName, resetDirectory));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFileName));
+                        securityPolicyFile, databaseFileName, resetDirectory));
             }
         }
     }

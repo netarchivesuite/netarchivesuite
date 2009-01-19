@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class applies the test variables.
  * 
  * It creates a new instance of the settings where the variables are changed, 
- * and then writes it out as a new it-config file 
+ * and then writes it out as a new it-configuration file 
  * (does not overwrite the original, but creates a new in same directory).
  */
 public class CreateTestInstance {
@@ -69,7 +69,6 @@ public class CreateTestInstance {
     public CreateTestInstance(File configSource) {
         source = configSource;
         set = new XmlStructure(source);
-
     }
 
     /**
@@ -81,46 +80,46 @@ public class CreateTestInstance {
      * @param mailReceiver The new value for the mailReceiver.
      */
     public void applyTestArguments(String offset, String httpPort, 
-	    String environmentName, String mailReceiver) {
+            String environmentName, String mailReceiver) {
         ArgumentNotValid.checkNotNullOrEmpty(offset, "String offset");
         ArgumentNotValid.checkNotNullOrEmpty(httpPort, "String httpPort");
         ArgumentNotValid.checkNotNullOrEmpty(environmentName, 
-        	"String environmentName");
+                "String environmentName");
         ArgumentNotValid.checkNotNullOrEmpty(mailReceiver, 
-        	"String mailReciever");
+                "String mailReciever");
 
         // calculate offset
-	int offsetInt = (new Integer(httpPort)).intValue() - 
-        (new Integer(offset)).intValue();
-	
-	if(offsetInt > 9 || offsetInt < 0) {
-	    System.err.print(Constants.MSG_ERROR_TEST_OFFSET);
-	    System.out.println();
-	    System.exit(0);
-	}
-	// change integer to string
-	offsetVal = "" + offsetInt;
-	
+        int offsetInt = (new Integer(httpPort)).intValue() 
+                - (new Integer(offset)).intValue();
+
+        if(offsetInt > 9 || offsetInt < 0) {
+            System.err.print(Constants.MSG_ERROR_TEST_OFFSET);
+            System.out.println();
+            System.exit(0);
+        }
+        // change integer to string (easiest way to change integer to String)
+        offsetVal = new String("" + offsetInt);
+
         // Get values
         httpPortVal = httpPort;
         environmentNameVal = environmentName;
-	mailReceiverVal = mailReceiver;
-	
-	// make paths
-	httpPortPath = Constants.SETTINGS_HTTP_PORT_PATH;
-	environmentNamePath = Constants.ENVIRONMENT_NAME_TOTAL_PATH_LEAF;
-	mailReceiverPath = Constants.SETTINGS_NOTIFICATION_RECEIVER_PATH;
-	
-	// make offset paths
-	offsetPaths = new OffsetSystem[] {
-		new OffsetSystem(2, Constants.TEXT_JMX_PORT_PATH),
-		new OffsetSystem(2, Constants.TEXT_JMX_RMI_PORT_PATH),
-		new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_GUI_PORT),
-		new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_JMX_PORT)
-		};
-	
-	// apply the arguments
-	apply();
+        mailReceiverVal = mailReceiver;
+
+        // make paths
+        httpPortPath = Constants.SETTINGS_HTTP_PORT_PATH;
+        environmentNamePath = Constants.ENVIRONMENT_NAME_TOTAL_PATH_LEAF;
+        mailReceiverPath = Constants.SETTINGS_NOTIFICATION_RECEIVER_PATH;
+
+        // make offset paths
+        offsetPaths = new OffsetSystem[] {
+                new OffsetSystem(2, Constants.TEXT_JMX_PORT_PATH),
+                new OffsetSystem(2, Constants.TEXT_JMX_RMI_PORT_PATH),
+                new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_GUI_PORT),
+                new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_JMX_PORT)
+                };
+
+        // apply the arguments
+        apply();
     }
 
     /**
@@ -129,29 +128,29 @@ public class CreateTestInstance {
      */
     @SuppressWarnings("unchecked")
     private void apply() {
-	// apply on root
-	applyOnElement(set.getRoot());
-	
-	List <Element> physLocs = set.getChildren(
-		Constants.PHYSICAL_LOCATION_BRANCH);
+        // apply on root
+        applyOnElement(set.getRoot());
 
-	for(Element pl : physLocs) {
-	    // apply on every physical location
-	    applyOnElement(pl);
+        List <Element> physLocs = set.getChildren(
+                Constants.PHYSICAL_LOCATION_BRANCH);
 
-	    List <Element> machines = pl.elements(Constants.MACHINE_BRANCH);
-	    for(Element mac : machines) {
-		// apply on every machine
-		applyOnElement(mac);
+        for(Element pl : physLocs) {
+            // apply on every physical location
+            applyOnElement(pl);
 
-		List <Element> applications = 
-		    mac.elements(Constants.APPLICATION_BRANCH);
-		for(Element app : applications) {
-		    // apply on every application
-		    applyOnElement(app);
-		}
-	    }
-	}
+            List <Element> machines = pl.elements(Constants.MACHINE_BRANCH);
+            for(Element mac : machines) {
+                // apply on every machine
+                applyOnElement(mac);
+
+                List <Element> applications = 
+                    mac.elements(Constants.APPLICATION_BRANCH);
+                for(Element app : applications) {
+                    // apply on every application
+                    applyOnElement(app);
+                }
+            }
+        }
     }
 
     /**
@@ -160,17 +159,17 @@ public class CreateTestInstance {
      * @param e The element where the variables are to be applied.
      */
     private void applyOnElement(Element e) {
-	// Chech argument valid
-	ArgumentNotValid.checkNotNull(e, "Element e");
-	
-	// Check the following! 
-	set.overWriteOnly(e, httpPortVal, httpPortPath);
-	set.overWriteOnly(e, environmentNameVal, environmentNamePath);
-	set.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
-	
-	for(OffsetSystem ofs : offsetPaths) {
-	    set.overWriteOnlyInt(e, ofs.index, offsetVal.charAt(0), ofs.path);
-	}
+        // Check argument valid
+        ArgumentNotValid.checkNotNull(e, "Element e");
+
+        // Check the following! 
+        set.overWriteOnly(e, httpPortVal, httpPortPath);
+        set.overWriteOnly(e, environmentNameVal, environmentNamePath);
+        set.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
+
+        for(OffsetSystem ofs : offsetPaths) {
+            set.overWriteOnlyInt(e, ofs.index, offsetVal.charAt(0), ofs.path);
+        }
     }
     
     /**
@@ -180,8 +179,8 @@ public class CreateTestInstance {
      * @throws IOException If anything goes wrong.
      */
     public void createSettingsFile(String filename) 
-    	throws IOException {
-	ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        throws IOException {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         File f = new File(filename);
 
         FileWriter fw = new FileWriter(f);
@@ -193,15 +192,20 @@ public class CreateTestInstance {
      * Structure for handling where to apply the new offset value.
      */
     private class OffsetSystem {
-	/** The index of the decimal to be replaced by the offset.*/
-	public int index;
-	/** The path to the leaf where the offset are to be applied.*/
-	public String[] path;
-	
-	/** Constructor.*/
-	public OffsetSystem(int i, String[] p) {
-	    index = i;
-	    path = p;
-	}
+        /** The index of the decimal to be replaced by the offset.*/
+        public int index;
+        /** The path to the leaf where the offset are to be applied.*/
+        public String[] path;
+
+        /**
+         * The constructor.
+         * 
+         * @param i The index variable.
+         * @param p The path variable.
+         */
+        public OffsetSystem(int i, String[] p) {
+            index = i;
+            path = p;
+        }
     }
 }

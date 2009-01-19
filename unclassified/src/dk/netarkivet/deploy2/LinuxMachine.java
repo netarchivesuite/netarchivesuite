@@ -55,12 +55,14 @@ public class LinuxMachine extends Machine {
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
      * @param dbFileName The name of the database file.
+     * @param resetDir Whether the temporary directory should be reset.
      */
     public LinuxMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, String dbFileName) {
+            File logProp, File securityPolicy, String dbFileName,
+            boolean resetDir) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFileName);
+                logProp, securityPolicy, dbFileName, resetDir);
         // set operating system
         OS = "linux";
         scriptExtension = ".sh";
@@ -106,11 +108,11 @@ public class LinuxMachine extends Machine {
         res.append(" -d ");
         res.append(getInstallDirPath());
         res.append("\n");
+        // create other directories.
+        res.append(osInstallScriptCreateDir());
         // echo copying settings and scripts
         res.append("echo copying settings and scripts");
         res.append("\n");
-        // DATABASE!
-        res.append(osInstallDatabase());
         // scp -r kb-test-adm-001.kb.dk/* 
         // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
         res.append("scp -r ");
@@ -120,6 +122,8 @@ public class LinuxMachine extends Machine {
         res.append(":");
         res.append(getConfDirPath());
         res.append("\n");
+        // APPLY DATABASE!
+        res.append(osInstallDatabase());
         // echo make scripts executable
         res.append("echo make scripts executable");
         res.append("\n");
@@ -303,6 +307,24 @@ public class LinuxMachine extends Machine {
     /**
      * Creates the kill scripts for all the applications.
      * 
+     * The script starts by finding all running processes of the application.
+     * If it finds any processes, it kills them. 
+     * 
+     * The kill_app.sh should have the following structure:
+     * 
+     * - echo Killing linux application.
+     * - #!/bin/bash
+     * - PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
+     * path\settings_app.xml | awk "{print \\$2}")
+     * - if [ -n "$PIDS" ]; then
+     * -     kill -9 $PIDS;
+     * - fi
+     * 
+     * where:
+     * path = the path to the ./conf directory.
+     * fullapp = the full name application with path.
+     * app = the name of the application.
+     * 
      * @param directory The directory for this machine (use global variable?).
      */
     @Override
@@ -316,19 +338,22 @@ public class LinuxMachine extends Machine {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appKillScript);
                 try {
-                    // get the content for the kill script of this application
-                    appPrint.println("echo KILL LINUX APPLICATION: ");
-                    // initialise bash
+                    // echo Killing linux application.
+                    appPrint.println("echo Killing linux application.");
+                    // #!/bin/bash
                     appPrint.println("#!/bin/bash");
-                    // Get the process ID for this application
+                    // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
+                    // path\settings_app.xml | awk "{print \\$2}")
                     appPrint.println("PIDS=$(ps -wwfe | grep "
                             + app.getTotalName() + " | grep -v grep | grep "
                             + getConfDirPath() + "settings_"
                             + app.getIdentification() + ".xml"
                             + " | awk \"{print \\$2}\")");
-                    // If the process ID exists, then kill the process
+                    // if [ -n "$PIDS" ]; then
                     appPrint.println("if [ -n \"$PIDS\" ] ; then");
-                    appPrint.println("    kill -9 $PIDS");
+                    //     kill -9 $PIDS;
+                    appPrint.println("    kill -9 $PIDS;");
+                    // fi
                     appPrint.println("fi");
                 } finally {
                     // close file
@@ -350,6 +375,32 @@ public class LinuxMachine extends Machine {
     /**
      * Creates the start scripts for all the applications.
      * 
+     * The application should only be started, if it is not running already.
+     * The script starts by finding all running processes of the application.
+     * If any processes are found, a new application should not be started.
+     * Otherwise start the application.
+     * 
+     * The start_app.sh should have the following structure:
+     * 
+     * - echo Starting linux application.
+     * - cd path
+     * - #!/bin/bash
+     * - PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
+     * path\settings_app.xml | awk "{print \\$2}")
+     * - if [ -n "$PIDS" ]; then
+     * -     echo Application already running.
+     * - else
+     * -     export CLASSPATH = cp:$CLASSPATH;
+     * -     JAVA
+     * - fi
+     * 
+     * where:
+     * path = the path to the install directory.
+     * fullapp = the full name application with path.
+     * app = the name of the application.
+     * cp = the classpaths for the application.
+     * JAVA = the command to run the java application.
+     * 
      * @param directory The directory for this machine (use global variable?).
      */
     @Override
@@ -363,20 +414,29 @@ public class LinuxMachine extends Machine {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appStartScript);
                 try {
-                    // get the content for the start script of this application
-                    appPrint.println("echo START LINUX APPLICATION: "
-                            + app.getIdentification());
-                            appPrint.println("#!/bin/bash");
-                    // apply class path
-                    appPrint.println("export CLASSPATH="
+                    // #!/bin/bash
+                    appPrint.println("echo Starting linux application.");
+                    // cd path
+                    appPrint.println("cd " + app.installPathLinux());
+                    // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
+                    //    path\settings_app.xml | awk "{print \\$2}")
+                    appPrint.println("PIDS=$(ps -wwfe | grep "
+                            + app.getTotalName() + " | grep -v grep | grep "
+                            + getConfDirPath() + "settings_"
+                            + app.getIdentification() + ".xml"
+                            + " | awk \"{print \\$2}\")");
+                    // if [ -n "$PIDS" ]; then
+                    appPrint.println("if [ -n \"$PIDS\" ] ; then");
+                    //     echo Application already running.
+                    appPrint.println("    echo Application already running.");
+                    // else
+                    appPrint.println("else");
+                    //     export CLASSPATH = cp;
+                    appPrint.println("    export CLASSPATH="
                             + osGetClassPath(app)
                             + "$CLASSPATH;");
-                    // move to directory
-                    appPrint.println("cd "
-                            + app.installPathLinux());
-                    // Run the java program
-                    appPrint.println(
-                            "java "
+                    //     JAVA
+                    appPrint.println("    java "
                             + app.getMachineParameters().writeJavaOptions()
                             + " -Ddk.netarkivet.settings.file="
                             + getConfDirPath() + "settings_"
@@ -392,6 +452,8 @@ public class LinuxMachine extends Machine {
                             + app.getTotalName() + " < /dev/null > "
                             + "start_" + app.getIdentification() + ".sh.log"
                             + " 2>&1 &");
+                    // fi
+                    appPrint.println("fi");
                 } finally {
                     // close file
                     appPrint.close();
@@ -447,7 +509,7 @@ public class LinuxMachine extends Machine {
 
         String databaseDir = machineParameters.getDatabaseDirValue();
         // Do not install if no proper database directory.
-        if(databaseDir == null || databaseDir == "") {
+        if(databaseDir == null || databaseDir.equalsIgnoreCase("")) {
             return "";
         }
 
@@ -493,8 +555,142 @@ public class LinuxMachine extends Machine {
         res.append("/.; fi; exit; \"");
         res.append("\n");
 
-//         System.out.println("Install database: ");
-//        System.out.println(res);
         return res.toString();
+    }
+
+    /**
+     * Creates the specified directories in the it-config.
+     * 
+     * Structure
+     * - ssh login cd path; DIRS; CLEANDIR; exit;
+     * 
+     * where:
+     * login = username@machine.
+     * path = path to install directory.
+     * DIRS = the way to create directories. 
+     * CLEANDIR = the command to clean the tempDir (if chosen as optional)
+     * 
+     * The install creation of DIR has the following structure 
+     * for directory dir:
+     * if [ ! -d dir ]; then mkdir dir; fi;  
+     * 
+     * @return The script for creating the directories.
+     */
+    @Override
+    protected String osInstallScriptCreateDir() {
+        StringBuilder res = new StringBuilder("");
+        res.append("echo Creating directories.");
+        res.append("\n");
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \"cd ");
+        res.append(getInstallDirPath());
+        res.append("; ");
+        
+        // go through all directories.
+        String dir;
+        
+        // get archive.bitpresevation.baseDir directory.
+        dir = settings.getLeafValue(
+                Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
+        if(dir != null && !dir.equalsIgnoreCase("") 
+                && !dir.equalsIgnoreCase(".")) {
+            res.append(scriptCreateDir(dir, false));
+        }
+        
+        // get archive.arcrepository.baseDir directory.
+        dir = settings.getLeafValue(
+                Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
+        if(dir != null && !dir.equalsIgnoreCase("")
+                && !dir.equalsIgnoreCase(".")) {
+            res.append(scriptCreateDir(dir, false));
+        }
+        
+        res.append(getAppDirectories());
+        
+        // get tempDir directory.
+        dir = settings.getLeafValue(
+                Constants.SETTINGS_TEMP_DIR_LEAF);
+        if(dir != null && !dir.equalsIgnoreCase("")
+                && !dir.equalsIgnoreCase(".")) {
+            res.append(scriptCreateDir(dir, resetTempDir));
+        }
+
+        res.append("exit; \"\n");
+        
+        return res.toString();
+    }
+    
+    /**
+     * This functions makes the script for creating the new directories.
+     * 
+     * Linux creates directories directly through ssh.
+     * Windows creates an install
+     * 
+     * @param dir The name of the directory to create.
+     * @param clean Whether the directory should be cleaned\reset.
+     * @return The lines of code for creating the directories.
+     * @see createInstallDirScript.
+     */
+    @Override
+    protected String scriptCreateDir(String dir, boolean clean) {
+        StringBuilder res = new StringBuilder();
+        res.append("if [ ! -d ");
+        res.append(dir);
+        res.append(" ]; then mkdir ");
+        res.append(dir);
+        if(clean) {
+            res.append("; else rm -r ");
+            res.append(dir);
+            res.append("; mkdir ");
+            res.append(dir);
+        }
+        res.append("; fi; ");
+
+        return res.toString();
+    }
+    
+    /**
+     * Creates the script for creating the application specified directories.
+     * 
+     * @return The script for creating the application specified directories.
+     */
+    @Override
+    protected String getAppDirectories() {
+        StringBuilder res = new StringBuilder("");
+        String[] dirs;
+
+        for(Application app : applications) {
+            // get archive.fileDir directory.
+            dirs = app.getSettingsValues(
+                    Constants.SETTINGS_FILE_DIR_LEAF);
+            if(dirs != null && dirs.length > 0) {
+                for(String dir : dirs) {
+                    res.append(scriptCreateDir(dir, false));
+                }
+            }
+
+            // get harvester.harvesting.serverDir directory.
+            dirs = app.getSettingsValues(
+                    Constants.SETTINGS_HARVEST_SERVER_DIR_LEAF);
+            if(dirs != null && dirs.length > 0) {
+                for(String dir : dirs) {
+                    res.append(scriptCreateDir(dir, false));
+                }
+            }
+        }
+
+        return res.toString();
+    }
+
+    /**
+     * Dummy function.
+     * This is only used for windows machines!
+     * 
+     * @param dir The directory to put the file
+     */
+    @Override
+    protected void createInstallDirScript(File dir) {
+        return;
     }
 }

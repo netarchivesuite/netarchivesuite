@@ -24,6 +24,7 @@
 package dk.netarkivet.deploy2;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -139,18 +140,8 @@ public class XmlStructure {
     public String getXML() {
         return root.asXML();
     }
-
-    /**
-     * Retrieves the content of a branch deep in tree structure.
-     *  
-     * @param name Specifies the path in the tree (e.g. in HTML: 
-     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
-     * a HTML document)
-     * @return The content of the leaf. If it is not a leaf, the entire 
-     * XML-branch is returned.
-     * Returns 'null' if the path to the branch cannot be found.   
-     */
-    public String getSubChildValue(String ...name ) {
+    
+    public Element getSubChild(String ... name) {
         // if no arguments, the XML is returned
         ArgumentNotValid.checkNotNull(name, "String ...name");
         Element e = root;
@@ -165,13 +156,100 @@ public class XmlStructure {
                 log.debug(errMsg);
                 return null;
             }
-        } 
+        }
+        return e;
+    }
+
+    /**
+     * Retrieves the content of a branch deep in tree structure.
+     *  
+     * @param name Specifies the path in the tree (e.g. in HTML: 
+     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
+     * a HTML document)
+     * @return The content of the leaf. If it is not a leaf, the entire 
+     * XML-branch is returned.
+     * Returns 'null' if the path to the branch cannot be found.   
+     */
+    public String getSubChildValue(String ...name ) {
+        ArgumentNotValid.checkNotNull(name, "String ...name");
+        Element e = getSubChild(name);
+        if(e != null ) {
+            if(e.isTextOnly()) {
+                return e.getText();
+            } else {
+                log.debug("Element is not text");
+                return e.asXML();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves the content of a branch deep in tree structure.
+     *  
+     * @param path Specifies the path in the tree (e.g. in HTML: 
+     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
+     * a HTML document)
+     * @return The content of the leaf. If it is not a leaf, return null.
+     * Returns 'null' if the path to the branch cannot be found.   
+     */
+    public String getLeafValue(String ...path) {
+        ArgumentNotValid.checkNotNull(path, "String ...name");
+        Element e = getSubChild(path);
         if(e != null && e.isTextOnly()) {
             return e.getText();
         } else {
             log.debug("Element is not text");
-            return e.asXML();
+            return null;
         }
+    }
+    
+    /**
+     * Retrieves the content of a the leafs deep in the tree structure.
+     * It only retrieves 
+     * 
+     * @param path Specifies the path in the tree (e.g. in HTML: 
+     * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
+     * a HTML document)
+     * @return The content of the leaf. If it is not a leaf, return null.
+     * Returns 'null' if the path to the branch cannot be found.   
+     */
+    @SuppressWarnings("unchecked")
+    public String[] getLeafValues(String ...path) {
+        // check argument
+        ArgumentNotValid.checkNotNull(path, "String ...path");
+
+        Element e = root;
+        // go through tree to branch before leafs.
+        for(int i=0; i<path.length-1; i++) {
+            String n = path[i];
+            if(e != null) {
+                e = e.element(n);
+            } else {
+                return null;
+            }
+        }
+        // if no wanted branches, return null 
+        if(e == null) {
+            return null;
+        }
+
+        // get results.
+        String[] res = null;
+        List<Element> elemList = e.elements(path[path.length - 1]);
+        // check that any leafs exist.
+        if(elemList.size() < 1) {
+            return null;
+        }
+
+        // extract the value of the elements.
+        res = new String[elemList.size()];
+        for(int i=0; i<elemList.size(); i++) {
+            res[i] = elemList.get(i).getText();
+        }
+
+        return res;
     }
 
     /**
@@ -214,13 +292,18 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
         // get the attributes to be overwritten
         List<Element> attributes = overwriter.elements();
+        List<Element> addElements = new ArrayList<Element>();
+        
+        // add branch if it does not exists
         for(Element e : attributes) {
             // find corresponding attribute in current element
             Element curE = current.element(e.getName());
+            
             // if not existing branch, make branch
+            // this cannot be done directly, otherwise two of new branches of 
+            // same type will overwrite each other.
             if(curE == null) {
-                // append new branch to the tree
-                current.add(e.createCopy());
+                addElements.add(e);
             } else if(e.isTextOnly()) {
                 // overwrite if leaf element
                 // problem if tree is overwritten by leaf
@@ -229,6 +312,7 @@ public class XmlStructure {
                 }
                 // overwrite the text
                 curE.setText(e.getText());
+                
             } else if(!curE.isTextOnly()) {
                 // when both branches are trees (neither are leaf)
                 // overwrite subtrees
@@ -237,6 +321,11 @@ public class XmlStructure {
                 log.error("Cannot replace a leaf with a tree!");
                 throw new IllegalState("Tree tries to replace leaf!");
             }
+        }
+        
+        // add all the new branches to the current branch.
+        for(Element e : addElements) {
+            current.add(e.createCopy());
         }
     }
     
@@ -259,7 +348,7 @@ public class XmlStructure {
             
             // Do not overwrite non-existing element.
             if(current == null) {
-        	return;
+                return;
             }
         }
         
@@ -267,8 +356,18 @@ public class XmlStructure {
         current.setText(value);
     }
     
+    /**
+     * Specific overwrite function for overwriting a specific character in a
+     * string.
+     * 
+     * @param branch The initial branch of the XML tree. 
+     * @param position The position in the String where the character are to be 
+     * changed.
+     * @param value The new value of the character to change.
+     * @param path The path to the leaf of the string to change.
+     */
     public void overWriteOnlyInt(Element branch, int position, char value, 
-	    String ... path) {
+            String ... path) {
         ArgumentNotValid.checkNotNull(value, "String Value");
         ArgumentNotValid.checkNotNull(path, "String path");
         ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
@@ -281,7 +380,7 @@ public class XmlStructure {
             
             // Do not overwrite non-existing element.
             if(current == null) {
-        	return;
+                return;
             }
         }
         

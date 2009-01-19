@@ -72,6 +72,8 @@ public abstract class Machine {
     protected String databaseFileName;
     /** The directory for this machine.*/
     protected File machineDirectory;
+    /** Whether the temp dir should be cleaned.*/
+    protected boolean resetTempDir;
 
     /**
      * A machine is referring to an actual computer at a physical location, 
@@ -86,10 +88,12 @@ public abstract class Machine {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
+     * @param resetDir Whether the temporary directory should be reset.
      */
     public Machine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, String dbFileName) {
+            File logProp, File securityPolicy, String dbFileName, 
+            boolean resetDir) {
         ArgumentNotValid.checkNotNull(e, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
@@ -98,6 +102,7 @@ public abstract class Machine {
                 "String netarchiveSuiteSource");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
+        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
 
         settings = new XmlStructure(parentSettings.getRoot());
         machineRoot = e;
@@ -106,6 +111,7 @@ public abstract class Machine {
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFileName = dbFileName;
+        resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
         Element tmpSet = machineRoot.element(Constants.SETTINGS_BRANCH);
@@ -179,6 +185,8 @@ public abstract class Machine {
         createLogPropertyFiles(machineDirectory);
         // create the jmx remote file
         createJmxRemotePasswordFile(machineDirectory);
+        // create the installCreateDir script
+        createInstallDirScript(parentDirectory);
 
         // write the settings for all application at this machine
         for(Application app : applications) {
@@ -457,9 +465,16 @@ public abstract class Machine {
      * Creates the operation system specific installation script for 
      * this machine.
      * 
-     * @return Operation system specific part of the installscript
+     * @return Operation system specific part of the installscript.
      */
     abstract protected String osInstallScript();
+    
+    /**
+     * Creates the specified directories in the it-config.
+     * 
+     * @return The script for creating the directories.
+     */
+    abstract protected String osInstallScriptCreateDir();
 
     /**
      * Creates the operation system specific starting script for this machine.
@@ -492,4 +507,33 @@ public abstract class Machine {
      * @return The script for installing the database (if needed).
      */
     abstract protected String osInstallDatabase();
+    
+    /**
+     * This functions makes the script for creating the new directories.
+     * 
+     * Linux creates directories directly through ssh.
+     * Windows creates an install
+     * 
+     * @param dir The name of the directory to create.
+     * @param clean Whether the directory should be cleaned\reset.
+     * @return The lines of code for creating the directories.
+     * @see createInstallDirScript.
+     */
+    abstract protected String scriptCreateDir(String dir, boolean clean);
+    
+    /**
+     * Creates the script for creating the application specified directories.
+     * 
+     * @return The script for creating the application specified directories.
+     */
+    abstract protected String getAppDirectories();
+
+    /**
+     * Function to create the script which installs the new directories.
+     * This is only used for windows machines!
+     * 
+     * @param dir The directory to put the file
+     */
+    abstract protected void createInstallDirScript(File dir);
+
 }

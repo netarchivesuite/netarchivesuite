@@ -57,6 +57,8 @@ public class DeployConfiguration {
     private File outputDir;
     /** The name of the database.*/
     private String databaseFileName;
+    /** The optional choice for resetting tempDir.*/
+    private boolean resetDirectory;
 
     /**
      *  Initialise everything.
@@ -67,13 +69,15 @@ public class DeployConfiguration {
      * @param logPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
+     * @param resetDir Whether the temporary directory should be reset.
      */
     public DeployConfiguration(File itConfigFileName, 
             File netarchiveSuiteFileName, 
             File secPolicyFileName,
             File logPropFileName,
             String outputDirName,
-            String dbFileName) {
+            String dbFileName,
+            boolean resetDir) {
         ArgumentNotValid.checkNotNull(
                 itConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(
@@ -82,13 +86,15 @@ public class DeployConfiguration {
                 secPolicyFileName, "No security file");
         ArgumentNotValid.checkNotNull(
                 logPropFileName, "No log file");
+        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
 
         itConfigFile = itConfigFileName;
         netarchiveSuiteFile = netarchiveSuiteFileName;
         secPolicyFile = secPolicyFileName;
         logPropFile = logPropFileName;
         databaseFileName = dbFileName;
-        
+        resetDirectory = resetDir;
+
         // get configuration tree, settings and parameters
         config = new XmlStructure(itConfigFile);
         settings = new XmlStructure(
@@ -123,7 +129,7 @@ public class DeployConfiguration {
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
                     netarchiveSuiteFile.getName(), logPropFile, 
-                    secPolicyFile, databaseFileName));
+                    secPolicyFile, databaseFileName, resetDirectory));
         }
     }
 

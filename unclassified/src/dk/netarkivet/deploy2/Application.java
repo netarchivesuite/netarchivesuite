@@ -200,4 +200,24 @@ public class Application {
     public Parameters getMachineParameters() {
         return machineParameters;
     }
+    
+    /**
+     * For acquiring specific values from the application settings.
+     *  
+     * @param path The path from settings.
+     * @return The content at the leaf at the path in the settings.
+     */
+    public String getSettingsValue(String[] path) {
+        return settings.getLeafValue(path);
+    }
+    
+    /**
+     * For acquiring all the values of the leafs at the end of the path.
+     * 
+     * @param path The path to the branches.
+     * @return The values of the leafs.
+     */
+    public String[] getSettingsValues(String[] path) {
+        return settings.getLeafValues(path);
+    }
 }

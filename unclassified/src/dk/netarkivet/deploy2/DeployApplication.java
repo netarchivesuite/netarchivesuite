@@ -50,6 +50,8 @@ public class DeployApplication {
     private static File secPolicyFile;
     /** The log property file.*/
     private static File logPropFile;
+    /** The arguments for resetting tempDir.*/
+    private static boolean resetDirectory;
 
     /**
      * Run the new deploy.
@@ -63,7 +65,7 @@ public class DeployApplication {
      * -O  [OPTIONAL] The output directory
      * -D  [OPTIONAL] The database
      * -T  [OPTIONAL] The test arguments (httpportoffset, port, 
-     * 				environmentName, mailReciever) 
+     *                                    environmentName, mailReciever) 
      */
     public static void main(String[] args) {
         try {
@@ -126,7 +128,10 @@ public class DeployApplication {
                     Constants.ARG_DATABASE_FILE);
             // Retrieving the test arguments
             String testArguments = ap.cmd.getOptionValue(
-        	    Constants.ARG_TEST);
+                    Constants.ARG_TEST);
+            // Retrieving the reset argument
+            String resetArgument = ap.cmd.getOptionValue(
+                    Constants.ARG_RESET);
 
             // check itConfigFileName and retrieve the file
             initConfigFile(itConfigFileName);
@@ -146,6 +151,9 @@ public class DeployApplication {
             // check and apply the test arguments
             applyTestArguments(testArguments);
             
+            // check reset arguments.
+            checkReset(resetArgument);
+            
             // Make the configuration based on the input data
             itConfig = new DeployConfiguration(
                     itConfigFile,
@@ -153,7 +161,8 @@ public class DeployApplication {
                     secPolicyFile,
                     logPropFile,
                     outputDir,
-                    databaseFileName); 
+                    databaseFileName,
+                    resetDirectory); 
 
             // Write the scripts, directories and everything
             itConfig.write();
@@ -320,42 +329,69 @@ public class DeployApplication {
     }
     
     /**
+     * Checks the arguments for resetting the directory.
+     * Only the arguments 'y' or 'yes' is accepted for resetting 
+     * the temporary directory. 
+     * 
+     * @param resetArgument The argument for resetting given.
+     */
+    private static void checkReset(String resetArgument) {
+        if(resetArgument != null && (resetArgument.equalsIgnoreCase("y")
+                || resetArgument.equalsIgnoreCase("yes"))) {
+            resetDirectory = true;
+        } else {
+            resetDirectory = false;
+        }
+    }
+    
+    /**
      * Applies the test arguments.
+     * 
+     * If the test arguments are given correctly, the configuration file is 
+     * loaded and changed appropriately, then written to a test configuration 
+     * file.
+     * 
+     * The new test configuration file has the same name as the original 
+     * configuration file, except ".xml" is replaced by "_text.xml".
+     * Thus "path/config.xml" -> "path/config_test.xml".  
      * 
      * @param testArguments The test arguments.
      */
     private static void applyTestArguments(String testArguments) {
-	if(testArguments == null || testArguments.equalsIgnoreCase("")) {
-	    System.out.println("No test arguments!");
-	    return;
-	}
-	
-	String[] changes = testArguments.split("[,]");
-	if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
-	    System.err.print(
-		    Constants.MSG_ERROR_TEST_ARGUMENTS);
-	    System.exit(0);
-	}
-	
-	try {
+        // test if any test arguments (if none, don't apply, just stop).
+        if(testArguments == null || testArguments.equalsIgnoreCase("")) {
+            return;
+        }
+
+        String[] changes = testArguments.split("[,]");
+        if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
+            System.err.print(
+                    Constants.MSG_ERROR_TEST_ARGUMENTS);
+            System.exit(0);
+        }
+
+        try {
             CreateTestInstance cti = new CreateTestInstance(itConfigFile);
 
             // apply the arguments
             cti.applyTestArguments(changes[0], changes[1], changes[2], 
-        	    changes[3]);
+                    changes[3]);
 
             // replace ".xml" with "_test.xml"
             String tmp = itConfigFile.getPath();
+            // split this into two ("path/config", ".xml") 
             String[] configFile = tmp.split("[.]");
+            // take the first part and add test ending 
+            // ("path/config" + "_test.xml" = "path/config_test.xml")
             String nameOfNewConfig =  configFile[0] 
                     + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
 
             cti.createSettingsFile(nameOfNewConfig);
             itConfigFile = new File(nameOfNewConfig);
-	} catch (IOException e) {
-	    System.out.println("Error in test arguments: " + e);
-	    System.exit(0);
-	}
+        } catch (IOException e) {
+            System.out.println("Error in test arguments: " + e);
+            System.exit(0);
+        }
     }
     
     /**
@@ -385,11 +421,15 @@ public class DeployApplication {
             options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
                     true, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, 
-                    true, "[OPTIONAL] Database.");
+                    true, "[OPTIONAL] Database file.");
             options.addOption(Constants.ARG_TEST, 
-        	    true, "[OPTIONAL] Tests.");
+                    true, "[OPTIONAL] Tests arguments (offset for http port, "
+                    + "http port, environment name, mail receiver).");
+            options.addOption(Constants.ARG_RESET,
+                    true, "[OPTIONAL] Reset temp directory (y/n - anything "
+                    + "other than 'y' or 'Y' is asserted no).");
         }
-        
+
         /**
          * Parsing the input arguments.
          * 
