@@ -56,7 +56,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Test bitarchive client and server As a number of tests only succeed if both
- * the client and server both operate correctly, both are tested together
+ * the client and server both operate correctly, both are tested together.
  */
 public class BitarchiveClientTester extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
@@ -82,7 +82,7 @@ public class BitarchiveClientTester extends TestCase {
     private static final ChannelID ALL_BA = Channels.getAllBa();
     private static final ChannelID ANY_BA = Channels.getAnyBa();
 
-    /* The client and server used for testing */
+    /* The client and server used for testing. */
     BitarchiveClient bac;
     BitarchiveServer bas;
     BitarchiveMonitorServer bam;
@@ -117,23 +117,7 @@ public class BitarchiveClientTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         bam = BitarchiveMonitorServer.getInstance();
-        
-        // Test, that we are communicating through the assumed channels.
-        //ALL_BA: [Topic 'DEV_KB_ALL_BA']
-        //ANY_BA: [Queue 'DEV_KB_ANY_BA']
-        //THE_BAMON: [Queue 'DEV_KB_THE_BAMON']
-        assertEquals("THE_BAMON was different than expected", THE_BAMON.toString(),
-                "[Queue 'DEV_KB_THE_BAMON']"); 
-        
-        System.out.println("THE_BAMON: " + THE_BAMON.toString());
-        System.out.println("ALL_BA: " + ALL_BA.toString());
-        System.out.println("ANY_BA: " + ANY_BA.toString());
-        
-        //private static final ChannelID THE_BAMON = Channels.getTheBamon();
-        //private static final ChannelID ALL_BA = Channels.getAllBa();
-        //private static final ChannelID ANY_BA = Channels.getAnyBa();
-        
-    }
+ 		}
 
     /**
      * After test is done, remove the "archive".
@@ -167,7 +151,7 @@ public class BitarchiveClientTester extends TestCase {
     }
 
     /**
-     * Verify handling of invalid params for upload correct get and batch
+     * Verify handling of invalid params for upload correct get and batch.
      */
     public void testInvalidParams() {
         try {
@@ -200,7 +184,7 @@ public class BitarchiveClientTester extends TestCase {
 
     /**
      * Initiate upload and verify that corresponding upload message received by
-     * onUpload message handler
+     * onUpload message handler.
      */
     public void testUpload() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
@@ -220,7 +204,7 @@ public class BitarchiveClientTester extends TestCase {
     }
 
     /**
-     * Verify that it is possible to retrieve previously uploaded file
+     * Verify that it is possible to retrieve previously uploaded file.
      */
     public void testGetFile() {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
@@ -257,7 +241,7 @@ public class BitarchiveClientTester extends TestCase {
 
     /**
      * Try to upload the same file twice and verify that corresponding error
-     * message received by onUpload message handler
+     * message received by onUpload message handler.
      */
     public void testUploadTwice() {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
@@ -290,9 +274,10 @@ public class BitarchiveClientTester extends TestCase {
     }
 
     /**
-     * Initiate get request and verify that correct data received by onGet
-     * message handler Initiate get request for data not in the archive and
-     * verify correct error message received by onGet message handler
+     * Initiate get request and verify that correct data was received by onGet
+     * message handler.
+     * Initiate get request for data not in the archive and
+     * verify correct error message was received by onGet message handler.
      *
      * @throws IOException
      */
@@ -336,7 +321,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Test the batch(BatchMessage) method. Initiate batch job and verify that
      * onBatch receives the corresponding message with correct result data from
-     * the batch job
+     * the batch job.
      */
     public void testBatch1() {
         uploadInPreparationOfBatchTest();
@@ -432,7 +417,7 @@ public class BitarchiveClientTester extends TestCase {
     }
 
     /**
-     * Verify that a message has the correct id,destination and origin values
+     * Verify that a message has the correct id,destination and origin values.
      *
      * @param id   Expected id or "" to ignore
      * @param dest Expected destination or "" to ignore
@@ -470,6 +455,7 @@ public class BitarchiveClientTester extends TestCase {
                 = new ArrayList<GetFileMessage>();
 
         public MessageTestHandler() {
+            //System.out.println("MessageTestHandler initiated!");
         }
 
         public void visit(UploadMessage msg) {

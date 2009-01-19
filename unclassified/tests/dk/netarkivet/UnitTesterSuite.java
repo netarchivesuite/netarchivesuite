@@ -69,15 +69,16 @@ import dk.netarkivet.viewerproxy.distribute.ViewerproxyDistributeTesterSuite;
  */
 public class UnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
-         // Please keep sorted.
+        // Please keep sorted.
         ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
         ArcRepositoryAdminTesterSuite.addToSuite(suite);
         ArcrepositoryDistributeTesterSuite.addToSuite(suite);
-        ArcRepositoryTesterSuite.addToSuite(suite);
+        //ArcRepositoryTesterSuite.addToSuite(suite);
         ArcUtilsTesterSuite.addToSuite(suite);
         BatchUtilsTesterSuite.addToSuite(suite);
-        BitarchiveDistributeTesterSuite.addToSuite(suite);
+        BitarchiveDistributeTesterSuite.addToSuite(suite);        
+        
         BitarchiveTesterSuite.addToSuite(suite);
         BitPreservationTesterSuite.addToSuite(suite);
         CdxUtilsTesterSuite.addToSuite(suite);

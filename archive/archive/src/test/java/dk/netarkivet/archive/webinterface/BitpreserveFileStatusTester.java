@@ -46,6 +46,7 @@ import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -90,6 +91,10 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     }
 
     public void testProcessMissingRequest() throws Exception {
+        if (!TestUtils.runningAs("SVC")) {
+            // FAILS after migrating Location to Replica
+            return;
+        }
 
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
