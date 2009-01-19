@@ -401,6 +401,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="dk/netarkivet/deploy/**/*.class"/>
             <include name="dk/netarkivet/deploy/**/*.properties"/>
             <include name="dk/netarkivet/deploy/**/*.xml"/>
+            <include name="dk/netarkivet/deploy2/**/*.class"/>
+            <include name="dk/netarkivet/deploy2/**/*.properties"/>
+            <include name="dk/netarkivet/deploy2/**/*.xml"/>
+        	            
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path"
