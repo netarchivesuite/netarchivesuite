@@ -65,7 +65,6 @@
             <!-- Credentials to enter in the GUI for "deleting" ARC files in
                  this bit archive -->
             <thisCredentials>examplecredentials</thisCredentials>
-            <thisReplicaId></thisReplicaId>
         </bitarchive>
         <bitpreservation>
             <!-- Absolute or relative path to dir containing results of

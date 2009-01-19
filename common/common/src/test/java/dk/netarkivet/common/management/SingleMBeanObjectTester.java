@@ -66,8 +66,7 @@ public class SingleMBeanObjectTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
         Settings.set(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION, "NO");
-        //Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
-        Settings.set(ArchiveSettings.ENVIRONMENT_THIS_REPLICA_ID, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "high");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }

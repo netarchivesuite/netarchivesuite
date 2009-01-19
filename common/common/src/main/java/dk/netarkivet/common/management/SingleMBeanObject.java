@@ -82,11 +82,9 @@ public class SingleMBeanObject<I> {
 
     private static Log log = LogFactory.getLog(CommonSettings.class.getName());
 
-    //Following environment constants are defined here in order to avoid
+    //Following environment constant are defined here in order to avoid
     //refering to independent modules - the environment values are only
     //used if defined
-    private String ARCHIVE_ENVIRONMENT_THIS_REPLICA_ID
-        = "settings.archive.bitarchive.thisReplicaId";
     private static String HARVESTER_HARVEST_CONTROLLER_PRIORITY
             = "settings.harvester.harvesting.queuePriority";
 
@@ -120,19 +118,15 @@ public class SingleMBeanObject<I> {
                            Settings.get(CommonSettings.APPLICATION_NAME));
         nameProperties.put("httpport",
                 Settings.get(CommonSettings.HTTP_PORT_NUMBER));
-        String val;
         try {
+            String val;
             val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
             nameProperties.put("priority", val);
         } catch (UnknownID e) {
             nameProperties.put("priority", "");            
         }
-        try {
-            val = Settings.get(ARCHIVE_ENVIRONMENT_THIS_REPLICA_ID);
-            nameProperties.put("replica", val);
-        } catch (UnknownID e) {
-            nameProperties.put("replica", "");            
-        }
+        nameProperties.put("replica",  
+                               Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
 
         this.mBeanServer = mBeanServer;
     }
