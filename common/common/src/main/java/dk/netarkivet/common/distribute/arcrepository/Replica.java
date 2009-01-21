@@ -249,12 +249,4 @@ public class Replica {
     public String toString() {
         return type.toString() + "Replica (" + id + ") "+ name;
     }
-    
-    /** This resets the list of known replicas.
-     * This forces a new read of the settings, next time
-     * one of the other static methods are used. 
-     */ 
-    public static void resetKnownList() {
-        known = null;
-    }
 }
