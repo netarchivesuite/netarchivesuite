@@ -53,12 +53,12 @@ public class Channels {
     }
 
     /**
-     * The following fields are read from settings.xml. allReplicas is the list
-     * of all replicas in the environment. It is used for
+     * The following fields are read from settings.xml. allReplicaIds is the
+     * list of all replica ids in the environment. It is used for
      * applications that need to communicate with e.g. all bitarchives. An
-     * example value is {"KB","SB"}.
+     * example value is {"One","Two"}.
      */
-    private final String[] allReplicas = Settings.getAll(
+    private final String[] allReplicaIds = Settings.getAll(
             CommonSettings.ENVIRONMENT_REPLICA_IDS);
 
     /**
@@ -74,7 +74,7 @@ public class Channels {
             CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
 
     /** The index of use replica in the allReplicas list. */
-    private final int indexOfUseReplica = Arrays.asList(allReplicas)
+    private final int indexOfUseReplica = Arrays.asList(allReplicaIds)
             .indexOf(useReplica);
     
     private Channels() {
@@ -83,18 +83,18 @@ public class Channels {
                         + "useReplica: '" + useReplica + "'");
         }
 
-        for (int i = 0; i < allReplicas.length; i++) {
-            ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicas[i],
+        for (int i = 0; i < allReplicaIds.length; i++) {
+            ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.TOPIC);
         }
         ALL_BA = ALL_BA_ARRAY[indexOfUseReplica];
-        for (int i = 0; i < allReplicas.length; i++) {
-            ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicas[i],
+        for (int i = 0; i < allReplicaIds.length; i++) {
+            ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
         ANY_BA = ANY_BA_ARRAY[indexOfUseReplica];
-        for (int i = 0; i < allReplicas.length; i++) {
-            THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicas[i],
+        for (int i = 0; i < allReplicaIds.length; i++) {
+            THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
         }
         THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplica];
@@ -182,7 +182,7 @@ public class Channels {
     }
 
     private final ChannelID[] THE_BAMON_ARRAY =
-        new ChannelID[allReplicas.length];
+        new ChannelID[allReplicaIds.length];
 
     /**
      * Returns the queue for sending messages to bitarchive monitors.
@@ -213,7 +213,7 @@ public class Channels {
      * and batch messages to all connected Bitarchive machines. The following is
      * the list of ALL_BA for all archives (i.e. archive replicas).
      */
-    private final ChannelID[] ALL_BA_ARRAY = new ChannelID[allReplicas.length];
+    private final ChannelID[] ALL_BA_ARRAY = new ChannelID[allReplicaIds.length];
 
     /**
      * Returns the topic that all bitarchive machines on this replica
@@ -244,7 +244,7 @@ public class Channels {
      * Queue on which upload requests are sent out to bitarchive servers. The
      * following is the list of ANY_BA for all archives.
      */
-    private final ChannelID[] ANY_BA_ARRAY = new ChannelID[allReplicas.length];
+    private final ChannelID[] ANY_BA_ARRAY = new ChannelID[allReplicaIds.length];
 
     /**
      * Returns the channel where exactly one of all the bitarchive machines at

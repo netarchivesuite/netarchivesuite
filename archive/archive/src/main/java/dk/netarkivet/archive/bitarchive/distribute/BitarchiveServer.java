@@ -452,7 +452,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
     /**
      * Returns a String that identifies this bit archive application
-     * (within the bit archive, i.e. either at KB or SB)
+     * (within the bit archive, i.e. either with id ONE or TWO)
      *
      * @return String with IP address of this host and, if specified, the
      *         HTTP_PORT_NUMBER from settings
@@ -464,7 +464,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
     /**
      * Returns a String that identifies this bit archive application
-     * (within the bit archive, i.e. either at KB or SB).
+     * (within the bit archive, i.e. either with id ONE or TWO).
      * The string has the following form: [hostaddress]_[port]
      * fx. "10.0.0.1_80"
      *

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
@@ -130,9 +132,10 @@ public class BitpreserveFileState {
                                             Constants.BITARCHIVE_NAME_PARAM);
         String bitarchiveName = params.get(Constants.BITARCHIVE_NAME_PARAM)[0];
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
+            List<String> names = new ArrayList<String>();
             HTMLUtils.forwardOnIllegalParameter(
                     context, Constants.BITARCHIVE_NAME_PARAM,
-                    Replica.getKnownNames()
+                    StringUtils.conjoin( ", ", names.toArray(Replica.getKnownNames()))
             );
         }
         ActiveBitPreservation preserve

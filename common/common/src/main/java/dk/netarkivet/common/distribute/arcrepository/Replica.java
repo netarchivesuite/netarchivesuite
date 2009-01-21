@@ -59,8 +59,8 @@ public class Replica {
     /** Private constructor that makes a new Replica object.  These will
      * all be stored in the known map.
      *
-     * @param id Id of the replica (e.g. SB)
-     * @param name Name of the replica (e.g. SBR)
+     * @param id Id of the replica (e.g. One)
+     * @param name Name of the replica (e.g. ReplicaOne)
      * @param type Type of the replica (e.g. biarchive)
      */
     private Replica(String repId, String repName, ReplicaType repType) {

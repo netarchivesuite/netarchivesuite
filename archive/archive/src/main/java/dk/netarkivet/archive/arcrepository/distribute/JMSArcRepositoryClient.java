@@ -432,7 +432,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *
      * @param fileName The name of the file to delete
      * @param bitarchiveId The id of the bitarchive to delete the file in
-     * (SB or KB)
      * @param checksum The checksum of the deleted file
      * @param credentials The credentials used to delete the file
      * @throws ArgumentNotValid if arguments are null or

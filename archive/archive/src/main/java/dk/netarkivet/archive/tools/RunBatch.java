@@ -69,10 +69,10 @@ import org.apache.commons.cli.*;
  * Examples:
  *
  * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ 
- *                          -R10-*.arc -BSB -Omimes
+ *                          -R10-*.arc -BReplicaOne -Omimes
  * 
  * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ 
- *                          -R10-*.arc -BSB -Omimes
+ *                          -R10-*.arc -BReplicaOne -Omimes
  *        
  * Note that you probably want to set the HTTP port setting
  * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its 
