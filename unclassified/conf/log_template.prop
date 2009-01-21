@@ -1,3 +1,9 @@
+#
+# This is a template for the log property file.
+# The following tags should be replaced (automatically replaced by deploy):
+# APPID
+#
+
 #define Handlers
 handlers=java.util.logging.FileHandler,java.util.logging.ConsoleHandler,dk.netarkivet.monitor.logging.CachingLogHandler
 #define default logging level

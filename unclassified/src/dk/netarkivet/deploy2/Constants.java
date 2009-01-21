@@ -192,6 +192,14 @@ public class Constants {
     /** The name of the JMX remote password file.*/
     static final String JMX_FILE_NAME = "jmxremote.password";
     
+    // security policy file specific
+    /** The attachment for the file dir in the security policy file.*/
+    static final String SECURITY_FILE_DIR_ATTACHMENT = "filedir";
+    /** The name of the jmx principal name tag in the security file.*/
+    static final String SECURITY_JMX_PRINCIPAL_NAME_TAG = "ROLE";
+    /** The name of the common temp dir tag in the security policy file.*/
+    static final String SECURITY_COMMON_TEMP_DIR_TAG = "TEMPDIR";
+    
     // database constants
     /** The directory for the database in the unpacked NetarchiveSuite.*/
     static final String DATABASE_BASE_DIR = "harvestdefinitionbasedir/";
@@ -290,4 +298,7 @@ public class Constants {
     /** The error message when offset value are too different from httpport.*/
     public static final String MSG_ERROR_TEST_OFFSET = 
         "Offsetvalue not between 0 and 10, as required.";
+    /** The error message when reset directory has wrong argument.*/
+    public static final String MSG_ERROR_RESET_ARGUMENT = 
+        "Wrong argument for resetting the directory.";
 }

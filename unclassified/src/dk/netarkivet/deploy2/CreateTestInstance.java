@@ -148,6 +148,8 @@ public class CreateTestInstance {
                 for(Element app : applications) {
                     // apply on every application
                     applyOnElement(app);
+                    
+                    applyOnApplication(app);
                 }
             }
         }
@@ -169,6 +171,44 @@ public class CreateTestInstance {
 
         for(OffsetSystem ofs : offsetPaths) {
             set.overWriteOnlyInt(e, ofs.index, offsetVal.charAt(0), ofs.path);
+        }
+    }
+    
+    /**
+     * Applies the environment name on the name of the file-directories.
+     * Thus: fileDir -> fileDir/environmentName
+     * 
+     * @param app The application where this has to be applied.
+     */
+    @SuppressWarnings("unchecked")
+    private void applyOnApplication(Element app) {
+        Element current = app.element(Constants.SETTINGS_BRANCH);
+        // Go through tree to end branch before leafs
+        for(int i = 0; i < Constants.SETTINGS_FILE_DIR_LEAF.length - 1; i++) {
+            // stop if branch does not exist
+            if(current == null) {
+                return;
+            }
+            // get next string
+            String st = Constants.SETTINGS_FILE_DIR_LEAF[i];
+            // go to next branch
+            current = current.element(st);
+        }
+        if(current == null) {
+            return;
+        }
+
+        List<Element> elems = current.elements(Constants.SETTINGS_FILE_DIR_LEAF[
+                           Constants.SETTINGS_FILE_DIR_LEAF.length - 1]);
+        for(Element el : elems) {
+            String content = el.getText();
+            // check if windows format has been used
+            if(content.contains("\\")) {
+                content += "\\" + environmentNameVal;
+            } else {
+                content += "/" + environmentNameVal;
+            }
+            el.setText(content);
         }
     }
     

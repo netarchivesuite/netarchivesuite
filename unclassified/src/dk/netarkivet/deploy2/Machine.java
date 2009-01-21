@@ -24,6 +24,7 @@
 package dk.netarkivet.deploy2;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public abstract class Machine {
     /** The inherited security.policy file.*/
     protected File inheritedSecurityPolicyFile;
     /** The inherited database file name.*/
-    protected String databaseFileName;
+    protected File databaseFile;
     /** The directory for this machine.*/
     protected File machineDirectory;
     /** Whether the temp dir should be cleaned.*/
@@ -92,7 +93,7 @@ public abstract class Machine {
      */
     public Machine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, String dbFileName, 
+            File logProp, File securityPolicy, File dbFileName, 
             boolean resetDir) {
         ArgumentNotValid.checkNotNull(e, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings,
@@ -110,7 +111,7 @@ public abstract class Machine {
         netarchiveSuiteFileName = netarchiveSuiteSource;
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
-        databaseFileName = dbFileName;
+        databaseFile = dbFileName;
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
@@ -250,13 +251,72 @@ public abstract class Machine {
     protected void createSecurityPolicyFile(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make file
-        File secPolFile = new File(directory, "security.policy");
-        // copy inherited securityPolicyFile to local directory
-        FileUtils.copyFile(inheritedSecurityPolicyFile, secPolFile);
+        try {
+            // make file
+            File secPolFile = new File(directory, "security.policy");
+            FileWriter secfw = new FileWriter(secPolFile);
+            String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
+
+            // change the jmx monitor role (if defined in settings)
+            String monitorRole = settings.getLeafValue(
+                    Constants.JMX_PASSWORD_MONITOR_BRANCH,
+                    Constants.JMX_PASSWORD_NAME_BRANCH);
+            if(monitorRole != null) {
+                prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
+                        monitorRole);
+            }
+            
+            // Change the common temp dir (if defined in settings)
+            String ctd = settings.getLeafValue(
+                    Constants.SETTINGS_TEMP_DIR_LEAF);
+            if(monitorRole != null) {
+                prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
+                        ctd);
+            }
+            
+            // write to file.
+            secfw.write(prop);
+            
+            // initialise list of directories to add
+            List<String> dirs = new ArrayList<String>();
+
+            // get all directories to add and put them into the list
+            for(Application app : applications) {
+                // get archive.fileDir directory.
+                String[] tmpDirs = app.getSettingsValues(
+                        Constants.SETTINGS_FILE_DIR_LEAF);
+                if(tmpDirs != null && tmpDirs.length > 0) {
+                    for(String st : tmpDirs) {
+                        dirs.add(st);
+                    }
+                }
+            }
+
+            // append file directories
+            if(dirs.size() > 0) {
+                secfw.write("grant {" + "\n");
+                for(String dir : dirs) {
+                    //   permission java.io.FilePermission "
+                    secfw.write("  permission java.io.FilePermission \"");
+                    // ${/}netarkiv${/}0001${/}JOLF${/}filedir${/};
+                    secfw.write(changeFileDirPathForSecurity(dir));
+                    // -", "read"
+                    secfw.write("-\", \"read\"");
+                    secfw.write(";" + "\n");
+                }
+                secfw.write("};");
+            }
+
+            secfw.close();
+        } catch (IOException e) {
+            log.warn("IOException occoured: " + e);
+        }
     }
 
     /**
-     * Creates a copy of the log property file for every application.
+     * Creates a the log property file for every application.
+     * This is done by taking the inherited log file and changing 
+     * "APPID" in the file into the identification of the application.
      * 
      * @param directory The local directory for this machine
      */
@@ -264,11 +324,22 @@ public abstract class Machine {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make log property file for every application
         for(Application app : applications) {
-            // make file
-            File logProp = new File(directory, 
+            try {
+                // make file
+                File logProp = new File(directory, 
                     "log_" + app.getIdentification() + ".prop");
-            // copy inherited securityPolicyFile to local directory
-            FileUtils.copyFile(inheritedLogPropFile, logProp);
+                FileWriter logfw = new FileWriter(logProp);
+                String prop = FileUtils.readFile(inheritedLogPropFile);
+
+                // append stuff!
+                prop = prop.replace("APPID", app.getIdentification());
+
+                // write to file.
+                logfw.write(prop);
+                logfw.close();
+            } catch (IOException e) {
+                log.warn("IOException occoured: " + e);
+            }
         }
     }
 
@@ -536,4 +607,11 @@ public abstract class Machine {
      */
     abstract protected void createInstallDirScript(File dir);
 
+    /**
+     * Changes the file directory path to the format used in the security 
+     * policy.
+     * @param path The current path.
+     * @return The formatted path.
+     */
+    abstract protected String changeFileDirPathForSecurity(String path);
 }

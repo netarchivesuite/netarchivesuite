@@ -56,7 +56,7 @@ public class DeployConfiguration {
     /** The directory for output.*/
     private File outputDir;
     /** The name of the database.*/
-    private String databaseFileName;
+    private File databaseFileName;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -76,7 +76,7 @@ public class DeployConfiguration {
             File secPolicyFileName,
             File logPropFileName,
             String outputDirName,
-            String dbFileName,
+            File dbFileName,
             boolean resetDir) {
         ArgumentNotValid.checkNotNull(
                 itConfigFileName, "No config file");

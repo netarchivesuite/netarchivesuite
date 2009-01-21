@@ -54,15 +54,15 @@ public class WindowsMachine extends Machine {
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
-     * @param dbFileName The name of the database file.
+     * @param dbFile The name of the database file.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public WindowsMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-                File logProp, File securityPolicy, String dbFileName,
+                File logProp, File securityPolicy, File dbFile,
                 boolean resetDir) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFileName, resetDir);
+                logProp, securityPolicy, dbFile, resetDir);
         // set operating system
         OS = "windows";
         scriptExtension = ".bat";
@@ -117,9 +117,8 @@ public class WindowsMachine extends Machine {
         res.append(name);
         res.append("/* ");
         res.append(machineUserLogin());
-        res.append(":\"\"");
-        res.append(changeToScriptPath(getConfDirPath()));
-        res.append("\"\"");
+        res.append(":");
+        res.append(changeToScriptPath(getLocalConfDirPath()));
         res.append("\n");
         // APPLY DATABASE
         res.append(osInstallDatabase());
@@ -131,9 +130,9 @@ public class WindowsMachine extends Machine {
         // /P BITARKIV\\dev:R
         res.append("echo Y | ssh ");
         res.append(machineUserLogin());
-        res.append(" cmd /c cacls \"\"");
-        res.append(changeToScriptPath(getConfDirPath()));
-        res.append("jmxremote.password\"\" /P BITARKIV\\\\");
+        res.append(" cmd /c cacls ");
+        res.append(changeToScriptPath(getLocalConfDirPath()));
+        res.append("jmxremote.password /P BITARKIV\\\\");
         res.append(machineParameters.getMachineUserName().getText());
         res.append(":R");
         res.append("\n");
@@ -198,6 +197,15 @@ public class WindowsMachine extends Machine {
     @Override
     protected String getConfDirPath() {
         return getInstallDirPath() + "\\conf\\";
+    }
+    
+    /**
+     * Creates the local path to the conf dir.
+     * 
+     * @return The path to the conf dir for ssh.
+     */
+    protected String getLocalConfDirPath() {
+        return getEnvironmentName() + "\\conf\\";
     }
 
     /**
@@ -687,7 +695,7 @@ public class WindowsMachine extends Machine {
         res.append("ssh ");
         res.append(" ");
         res.append(machineUserLogin());
-        res.append(" CMD /C ");
+        res.append(" cmd /c ");
         res.append(getMakeDirectoryName());
         res.append("\n");
 
@@ -695,7 +703,7 @@ public class WindowsMachine extends Machine {
         res.append("ssh ");
         res.append(" ");
         res.append(machineUserLogin());
-        res.append(" DEL ");
+        res.append(" cmd /c del ");
         res.append(getMakeDirectoryName());
         res.append("\n");
 
@@ -832,5 +840,17 @@ public class WindowsMachine extends Machine {
                     throw new IOFailure("Problems creating local "
                                 + "start all script: " + e);
                 }
+    }
+
+    /**
+     * Changes the file directory path to the format used in the security 
+     * policy.
+     * @param path The current path.
+     * @return The formatted path.
+     */
+    @Override
+    protected String changeFileDirPathForSecurity(String path) {
+        path += "\\" + Constants.SECURITY_FILE_DIR_ATTACHMENT + "\\";
+        return path.replace("\\", "${/}");
     }
 }

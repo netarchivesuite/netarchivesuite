@@ -61,7 +61,7 @@ public class PhysicalLocation {
     /** The inherited security file.*/
     private File securityPolicyFile;
     /** The inherited database file name.*/
-    private String databaseFileName;
+    private File databaseFile;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -76,12 +76,12 @@ public class PhysicalLocation {
      * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
-     * @param dbFileName The name of the database.
+     * @param dbFile The name of the database.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public PhysicalLocation(Element elem, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-        File securityPolicy, String dbFileName, boolean resetDir) {
+        File securityPolicy, File dbFile, boolean resetDir) {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(elem, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, 
@@ -100,7 +100,7 @@ public class PhysicalLocation {
         netarchiveSuiteFileName = netarchiveSuiteSource;
         logPropFile = logProp;
         securityPolicyFile = securityPolicy;
-        databaseFileName = dbFileName;
+        databaseFile = dbFile;
         resetDirectory = resetDir;
         
         // retrieve the specific settings for this instance 
@@ -152,11 +152,11 @@ public class PhysicalLocation {
                     Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFileName, resetDirectory));
+                        securityPolicyFile, databaseFile, resetDirectory));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFileName, resetDirectory));
+                        securityPolicyFile, databaseFile, resetDirectory));
             }
         }
     }

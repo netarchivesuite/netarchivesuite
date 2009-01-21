@@ -54,15 +54,15 @@ public class LinuxMachine extends Machine {
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
-     * @param dbFileName The name of the database file.
+     * @param dbFile The name of the database file.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public LinuxMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, String dbFileName,
+            File logProp, File securityPolicy, File dbFile,
             boolean resetDir) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFileName, resetDir);
+                logProp, securityPolicy, dbFile, resetDir);
         // set operating system
         OS = "linux";
         scriptExtension = ".sh";
@@ -514,12 +514,12 @@ public class LinuxMachine extends Machine {
         }
 
         // copy to final destination if database argument.
-        if(databaseFileName != null) {
+        if(databaseFile != null) {
             // echo Copying database
             res.append("echo Copying database" + "\n");
             // scp database.jar user@machine:dbDir/db
             res.append("scp ");
-            res.append(databaseFileName);
+            res.append(databaseFile.getAbsolutePath());
             res.append(" ");
             res.append(machineUserLogin());
             res.append(":");
@@ -692,5 +692,17 @@ public class LinuxMachine extends Machine {
     @Override
     protected void createInstallDirScript(File dir) {
         return;
+    }
+
+    /**
+     * Changes the file directory path to the format used in the security 
+     * policy.
+     * @param path The current path.
+     * @return The formatted path.
+     */
+    @Override
+    protected String changeFileDirPathForSecurity(String path) {
+        path += "/" + Constants.SECURITY_FILE_DIR_ATTACHMENT + "/";
+        return path.replace("/", "${/}");
     }
 }

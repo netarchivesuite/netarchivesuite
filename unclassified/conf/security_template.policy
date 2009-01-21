@@ -1,3 +1,10 @@
+/*
+ * This is a template for the security policy file.
+ * The following variables should be replaced 
+ * (and is automatically replaced by deploy):
+ * TEMPDIR and ROLE.
+ * The file directories should granted read-only access at the end of the file. 
+ */
 grant codeBase "file:lib/-" {
   permission java.security.AllPermission;
 };
@@ -6,7 +13,7 @@ grant codeBase "file:${java.home}/-" {
   permission java.security.AllPermission;
 };
 
-grant principal javax.management.remote.JMXPrincipal "monitorRole" {
+grant principal javax.management.remote.JMXPrincipal "ROLE" {
   permission java.security.AllPermission;
 };
 
@@ -17,7 +24,7 @@ grant codeBase "file:lib/heritrix/lib/-" {
 /* Each web site section requires an AllPermission for the JSP compilation to
  * work, but we don't want to give AllPermission to all of commontempdir, lest
  * third-party classes get that permission, too. */
-grant codeBase "file:tests/commontempdir/Status/jsp/-" {
+grant codeBase "file:TEMPDIR/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 

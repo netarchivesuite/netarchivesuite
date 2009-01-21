@@ -50,6 +50,8 @@ public class DeployApplication {
     private static File secPolicyFile;
     /** The log property file.*/
     private static File logPropFile;
+    /** The database file.*/
+    private static File dbFile;
     /** The arguments for resetting tempDir.*/
     private static boolean resetDirectory;
 
@@ -161,7 +163,7 @@ public class DeployApplication {
                     secPolicyFile,
                     logPropFile,
                     outputDir,
-                    databaseFileName,
+                    dbFile,
                     resetDirectory); 
 
             // Write the scripts, directories and everything
@@ -306,6 +308,7 @@ public class DeployApplication {
      * @param databaseFileName The name of the database file.
      */
     private static void checkDatabase(String databaseFileName) {
+        dbFile = null;
         // check the extension on the database, if it is given as argument 
         if(databaseFileName != null) {
             if(!databaseFileName.endsWith(".jar") 
@@ -317,9 +320,9 @@ public class DeployApplication {
             }
             
             // get the file
-            File databaseFile = new File(databaseFileName);
+            dbFile = new File(databaseFileName);
             // check whether the database file exists.
-            if(!databaseFile.exists()) {
+            if(!dbFile.exists()) {
                 System.err.print(
                             Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
                 System.out.println();
@@ -336,10 +339,22 @@ public class DeployApplication {
      * @param resetArgument The argument for resetting given.
      */
     private static void checkReset(String resetArgument) {
-        if(resetArgument != null && (resetArgument.equalsIgnoreCase("y")
-                || resetArgument.equalsIgnoreCase("yes"))) {
-            resetDirectory = true;
+        if(resetArgument != null) {
+            if(resetArgument.equalsIgnoreCase("y")
+                    || resetArgument.equalsIgnoreCase("yes")) {
+        	// if positive argument, then set to true.
+                resetDirectory = true;
+            } else if (resetArgument.equalsIgnoreCase("n")
+        	    || resetArgument.equalsIgnoreCase("no")) {
+        	// if negative argument, then set to false.
+        	resetDirectory = false;
+            } else {
+        	// if wrong argument, notify and set to false.
+        	System.err.println(Constants.MSG_ERROR_RESET_ARGUMENT);
+        	resetDirectory = false;
+            }
         } else {
+            // if no arguments, then 
             resetDirectory = false;
         }
     }
