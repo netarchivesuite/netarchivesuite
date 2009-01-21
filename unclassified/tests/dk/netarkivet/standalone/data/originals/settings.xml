@@ -469,23 +469,25 @@
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
         <replicas>
-            <!-- The names of all bit archive locations in the
-                 environment, e.g., "KB" and "SB". -->
+            <!-- All bitarcive replicas in the environment, 
+                 e.g., (ONE, "replicaOne", bitarchive) and 
+                 (TWO, "replicaTwo", bitarchive).
+                 NOTE: settings for checksum replicas are not use yet -->
             <replica>
-                <replicaId>SB</replicaName>
-                <replicaName>SBN</replicaName>
+                <replicaId>ONE</replicaName>
+                <replicaName>ReplicaOne</replicaName>
                 <replicaType>bitarchive</replicaType>
             </replica>
             <replica>
-                <replicaId>KB</replicaName>
-                <replicaName>KBN</replicaName>
+                <replicaId>TWO</replicaName>
+                <replicaName>ReplicaTwo</replicaName>
                 <replicaType>bitarchive</replicaType>
             </replica>
         </replicas>
-        <!-- Default bit archive to use for batch jobs (if none is specified) -->
-        <useReplicaId>KB</useReplicaId>
+        <!-- Default bit archive to use for e.g. batch jobs (if none is specified) -->
+        <useReplicaId>TWO</useReplicaId>
         <!-- For archiving applications, which bit archive are you part of?-->
-        <thisPhysicalLocation>SB</thisPhysicalLocation>
+        <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <monitorApplicationName>NA</monitorApplicationName>

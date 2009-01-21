@@ -93,8 +93,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
 
-    private static final Replica SB = Replica.getReplicaFromId("SB");
-    private static final Replica KB = Replica.getReplicaFromId("KB");
+    private static final Replica ONE = Replica.getReplicaFromId("ONE");
+    private static final Replica TWO = Replica.getReplicaFromId("TWO");
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -163,25 +163,25 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                     "4236be8e67e0c10da2902764ff4b954a");
         ad.addEntry("integrity12.ARC", null,
                     "4236be8e67e0c10da2902764ff4b954a");
-        Replica replicaKB = Replica.getReplicaFromId("KB");
+        Replica replicaTwo = Replica.getReplicaFromId("TWO");
         ad.setState("integrity1.ARC",
-                replicaKB.getChannelID().getName(),
+                replicaTwo.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_FAILED);
         ad.setState("integrity7.ARC",
-                replicaKB.getChannelID().getName(),
+                replicaTwo.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_COMPLETED);
         ad.setState("integrity12.ARC",
-                replicaKB.getChannelID().getName(),
+                replicaTwo.getChannelID().getName(),
                     BitArchiveStoreState.UPLOAD_COMPLETED);
 
         abp = FileBasedActiveBitPreservation.getInstance();
         abp = FileBasedActiveBitPreservation.getInstance();
-        abp.findChangedFiles(replicaKB);
+        abp.findChangedFiles(replicaTwo);
 
         // Check that wrong-files file exists and has correct content
         List<String> expectedContent = Arrays.asList(
                 "integrity11.ARC", "integrity12.ARC");
-        File wrong = WorkFiles.getFile(replicaKB, WorkFiles.WRONG_FILES);
+        File wrong = WorkFiles.getFile(replicaTwo, WorkFiles.WRONG_FILES);
         List<String> actualContent = FileUtils.readListFromFile(wrong);
         Collections.sort(actualContent);
         assertEquals("Wrong state list should be as expected.\n"
@@ -193,7 +193,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         List<String> expectedContent2
                 = Arrays.asList("integrity1.ARC");
         List<String> actualContent2 =
-                WorkFiles.getLines(replicaKB, WorkFiles.WRONG_STATES);
+                WorkFiles.getLines(replicaTwo, WorkFiles.WRONG_STATES);
         Collections.sort(actualContent2);
         assertEquals("Wrong state list should be as expected.\n"
                      + "Expected " + expectedContent2
@@ -217,18 +217,18 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 "AP1", Collections.<File>emptySet(), 5,
                 RemoteFileFactory.getMovefileInstance(listingDir),
                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
-        Replica replicaSB = Replica.getReplicaFromId("SB");
+        Replica replicaOne = Replica.getReplicaFromId("ONE");
 
         //Run method.
         FileBasedActiveBitPreservation abp 
             = FileBasedActiveBitPreservation.getInstance();
-        abp.findMissingFiles(replicaSB);
+        abp.findMissingFiles(replicaOne);
 
         //Clean up
         MockupArcRepositoryClient.getInstance().overrideBatch = null;
 
         // Check that missing-files file exists and has correct content
-        File missing = WorkFiles.getFile(replicaSB,
+        File missing = WorkFiles.getFile(replicaOne,
                                          WorkFiles.MISSING_FILES_BA);
         String[] expectedContent = {"g.arc", "h.arc"};
         String[] actualContent = FileUtils.readFile(missing).split("\n");
@@ -330,7 +330,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         abp = FileBasedActiveBitPreservation.getInstance();
         FileListJob job = new FileListJob();
         File outputFile = new File(TestInfo.WORKING_DIR, "outputFile");
-        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("KB"),
+        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("TWO"),
                            null, outputFile);
         assertTrue("Output file should exist after successfull run",
                    outputFile.exists());
@@ -345,7 +345,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                 new ArrayList<FileBatchJob
                                     .ExceptionOccurrence>(0));
         outputFile.delete();
-        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("KB"),
+        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("TWO"),
                            null, outputFile);
         assertFalse("Output file should not exist after failed run",
                     outputFile.exists());
@@ -409,12 +409,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             }
         };
         // Try to run "checksumjobs" on both allowable locations
-        runChecksumJob.invoke(abp, Replica.getReplicaFromId("SB"));
+        runChecksumJob.invoke(abp, Replica.getReplicaFromId("ONE"));
 
-        assertEquals("Checksum job should have run on SB", "SB",
+        assertEquals("Checksum job should have run on ONE", "ONE",
                      replica[0]);
-        runChecksumJob.invoke(abp, Replica.getReplicaFromId("KB"));
-        assertEquals("Checksum job should have run on KB", "KB",
+        runChecksumJob.invoke(abp, Replica.getReplicaFromId("TWO"));
+        assertEquals("Checksum job should have run on TWO", "TWO",
                 replica[0]);
         abp.close();
     }
@@ -504,88 +504,88 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 }
             }
         };
-        results.put(SB, "foobar##md5-1");
-        results.put(KB, "foobar##md5-2");
+        results.put(ONE, "foobar##md5-1");
+        results.put(TWO, "foobar##md5-2");
         FilePreservationState fps 
             = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
-        assertFalse("Should have received result non-null result for SB",
-                fps.getBitarchiveChecksum(SB) == null);        
-        assertEquals("Should have expected size for SB",
-                1, fps.getBitarchiveChecksum(SB).size());
-        assertEquals("Should have expected value for SB",
-                "md5-1", fps.getBitarchiveChecksum(SB).get(0));
+        assertFalse("Should have received result non-null result for ONE",
+                fps.getBitarchiveChecksum(ONE) == null);        
+        assertEquals("Should have expected size for ONE",
+                1, fps.getBitarchiveChecksum(ONE).size());
+        assertEquals("Should have expected value for ONE",
+                "md5-1", fps.getBitarchiveChecksum(ONE).get(0));
         
-        assertFalse("Should have received result non-null result for KB",
-                fps.getBitarchiveChecksum(KB) == null);
-        assertEquals("Should have expected size for KB",
-                1, fps.getBitarchiveChecksum(KB).size());
-        assertEquals("Should have expected value for KB",
-                "md5-2", fps.getBitarchiveChecksum(KB).get(0));
+        assertFalse("Should have received result non-null result for TWO",
+                fps.getBitarchiveChecksum(TWO) == null);
+        assertEquals("Should have expected size for TWO",
+                1, fps.getBitarchiveChecksum(TWO).size());
+        assertEquals("Should have expected value for TWO",
+                "md5-2", fps.getBitarchiveChecksum(TWO).get(0));
 
         // Test fewer checksums
         results.clear();
-        results.put(SB, "");
+        results.put(ONE, "");
 
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
         
-        assertFalse("Should have received result non-null result for SB",
-                fps.getBitarchiveChecksum(SB) == null);
-        assertEquals("Should have expected size for SB",
-                0, fps.getBitarchiveChecksum(SB).size());
-        assertEquals("Should have expected size for KB",
-                0, fps.getBitarchiveChecksum(KB).size());
+        assertFalse("Should have received result non-null result for ONE",
+                fps.getBitarchiveChecksum(ONE) == null);
+        assertEquals("Should have expected size for ONE",
+                0, fps.getBitarchiveChecksum(ONE).size());
+        assertEquals("Should have expected size for TWO",
+                0, fps.getBitarchiveChecksum(TWO).size());
 
         LogUtils.flushLogs(getClass().getName());
-        FileAsserts.assertFileNotContains("Should have no warning about SB",
-                TestInfo.LOG_FILE, "while asking 'Location SB'");
-        FileAsserts.assertFileNotContains("Should have no warning about KB",
-                TestInfo.LOG_FILE, "while asking 'Location KB'");
+        FileAsserts.assertFileNotContains("Should have no warning about ONE",
+                TestInfo.LOG_FILE, "while asking 'Replica ONE'");
+        FileAsserts.assertFileNotContains("Should have no warning about TWO",
+                TestInfo.LOG_FILE, "while asking 'Replica TWO'");
 
         // Test malformed checksums
         results.clear();
-        results.put(SB, "foobar#klaf");
-        results.put(KB, "foobarf##klaff");
+        results.put(ONE, "foobar#klaf");
+        results.put(TWO, "foobarf##klaff");
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
-        assertEquals("Should have expected size for SB",
-                0, fps.getBitarchiveChecksum(SB).size());
-        assertEquals("Should have expected size for KB",
-                0, fps.getBitarchiveChecksum(KB).size());
+        assertEquals("Should have expected size for ONE",
+                0, fps.getBitarchiveChecksum(ONE).size());
+        assertEquals("Should have expected size for TWO",
+                0, fps.getBitarchiveChecksum(TWO).size());
         LogUtils.flushLogs(getClass().getName());
         
-        FileAsserts.assertFileContains("Should have warning about SB in logfile: "
+        FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking location 'Location SB'", 
-                "while asking replica 'BITARCHIVEReplica (SB) SBB'",
+                //Before: "while asking replica 'Replica One'", 
+                "while asking replica 'BITARCHIVEReplica (ONE) ReplicaOne'",
                 TestInfo.LOG_FILE);
-        FileAsserts.assertFileContains("Should have warning about KB in logfile: "
+        FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking location 'Location KB'",
-                "while asking replica 'BITARCHIVEReplica (KB) KBB'",
+                //Before: "while asking replica 'Replica TWO'",
+                "while asking replica 'BITARCHIVEReplica (TWO) ReplicaTwo'",
                 TestInfo.LOG_FILE);
 
         // Test extra checksums
         results.clear();
-        results.put(SB, "barfu#klaf\nbarfu##klyf\nbarfu##knof");
-        results.put(KB, "barfuf##klaff\nbarfu##klof\nbarfu##klof\nbarfu##klof");
+        results.put(ONE, "barfu#klaf\nbarfu##klyf\nbarfu##knof");
+        results.put(TWO, "barfuf##klaff\nbarfu##klof\nbarfu##klof\nbarfu##klof");
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("barfu");
-        assertEquals("Should have expected size for SB",
-                2, fps.getBitarchiveChecksum(SB).size());
-        assertEquals("Should have expected size for KB",
-                3, fps.getBitarchiveChecksum(KB).size());
+        assertEquals("Should have expected size for ONE",
+                2, fps.getBitarchiveChecksum(ONE).size());
+        assertEquals("Should have expected size for TWO",
+                3, fps.getBitarchiveChecksum(TWO).size());
         LogUtils.flushLogs(getClass().getName());
-        FileAsserts.assertFileContains("Should have warning about SB in logfile: "
+        FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking location 'Location SB'",
-                "while asking replica 'BITARCHIVEReplica (SB) SBB'",
+                //Before: "while asking replica 'Replica ONE'",
+                "while asking replica 'BITARCHIVEReplica (ONE) ReplicaOne'",
                 TestInfo.LOG_FILE);
-        FileAsserts.assertFileContains("Should have warning about KB in logfile: "
+        FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking location 'Location KB'",
-                "while asking replica 'BITARCHIVEReplica (KB) KBB'",
+                //Before: "while asking replica 'Replica TWO'",
+                "while asking replica 'BITARCHIVEReplica (TWO) ReplicaTwo'",
                 TestInfo.LOG_FILE);
 
         // TODO: More funny cases

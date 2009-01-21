@@ -42,6 +42,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
@@ -73,14 +74,13 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     public void setUp() throws Exception {
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        // This will not have any effect, if the Replica class has already been initialized
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "KBB", "SBB");
-        // Force a re-initialization of the Replica.known datastructure
-        Replica.resetKnownList();
 
-        if (!Replica.isKnownReplicaId("KBB") || !Replica.isKnownReplicaId("SBB")) {
-            fail("These tests assume, that KBB and SBB are known locations. Only known locations are: "
-                    + Replica.getKnownIds());
+        if (!Replica.isKnownReplicaId("TWO") || !Replica.isKnownReplicaId("ONE")) {
+            List<String> knownIds = new ArrayList<String>();
+            
+            fail("These tests assume, that ONE and TWO are known replica ids. Only known replicas are: "
+                    + StringUtils.conjoin(", ", 
+                                          knownIds.toArray(Replica.getKnownIds())));
         }
         super.setUp();
     }
@@ -98,27 +98,28 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
 
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
-
+        
         // Ensure that a admin data exists before we start.
         AdminData.getUpdateableInstance();
   
         MockFileBasedActiveBitPreservation mockabp 
             = new MockFileBasedActiveBitPreservation();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        String replicaID1 = "SBB";
-        String replicaID2 = "KBB";
+        String replicaID1 = "ONE";
+        String replicaID2 = "TWO";
         String filename1 = "foo";
         String filename2 = "bar";
         Locale defaultLocale = new Locale("da");
+
         // First test a working set of params
         Map<String, String[]> args = new HashMap<String, String[]>();
         args.put(ADD_COMMAND,
                 new String[] {
-                    replicaID1 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                Replica.getReplicaFromId(replicaID1).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         request.setupAddParameter(ADD_COMMAND,
                 new String[] {
-                    replicaID1 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                Replica.getReplicaFromId(replicaID1).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         args.put(GET_INFO_COMMAND, new String[] { filename1 });
         request.setupAddParameter(GET_INFO_COMMAND,
@@ -130,10 +131,9 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(new Vector<String>(args.keySet()).elements());
         Map<String, FilePreservationState> status =
-                BitpreserveFileState.processMissingRequest(getDummyPageContext(
-                        defaultLocale, request),
-                        new StringBuilder());
-        
+            BitpreserveFileState.processMissingRequest(getDummyPageContext(
+                    defaultLocale, request),
+                    new StringBuilder());
         assertEquals("Should have one call to reestablish",
                 1, mockabp.getCallCount(ADD_METHOD));
         assertEquals("Should have one call to getFilePreservationStatus",
@@ -171,13 +171,13 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                  new String[]{Replica.getReplicaFromId(replicaID2).getName()});
         request.setupAddParameter(ADD_COMMAND,
                 new String[] {
-                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    Replica.getReplicaFromId(replicaID2).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    Replica.getReplicaFromId(replicaID2).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         args.put(ADD_COMMAND,
                 new String[] {
-                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1,
-                    replicaID2 + Constants.STRING_FILENAME_SEPARATOR + filename1
+                    Replica.getReplicaFromId(replicaID2).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                    Replica.getReplicaFromId(replicaID2).getName() + Constants.STRING_FILENAME_SEPARATOR + filename1
                 });
         request.setupAddParameter(GET_INFO_COMMAND,
                 new String[] { filename1, filename2, filename1 });

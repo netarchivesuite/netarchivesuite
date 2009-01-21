@@ -59,21 +59,21 @@ public class TestInfo {
     public static final File THE_ARCHIVE_DIR =
             new File(WORKING_DIR, Channels.getTheBamon().getName());
     public static final File ORIGINAL_ARCHIVE =
-            new File(ORIGINALS_DIR, "DEV_SB_THE_BAMON");
+            new File(ORIGINALS_DIR, "DEV_ONE_THE_BAMON");
     public static final String[] REFERENCE_FILES = new String[]{
         "integrity1.ARC", "integrity2.ARC", "integrity11.ARC", "integrity12.ARC"
     };
     public static final File CHECKSUM_ARCHIVE =
-            new File(WORKING_DIR, "DEV_SB_THE_BAMON");
+            new File(WORKING_DIR, "DEV_ONE_THE_BAMON");
 
-    public static final String VALID_REPLICA_ID = "SB";
+    public static final String VALID_REPLICA_ID = "ONE";
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final SimpleDateFormat DATE_FORMATTER =
             new SimpleDateFormat(DATE_FORMAT);
 
-    public static final String REPLICA_ID = "KB";
-    public static final String OTHER_REPLICA_ID = "SB";
+    public static final String REPLICA_ID = "TWO";
+    public static final String OTHER_REPLICA_ID = "ONE";
 
     public static final File LOG_FILE =
             new File("tests/testlogs/netarkivtest.log");

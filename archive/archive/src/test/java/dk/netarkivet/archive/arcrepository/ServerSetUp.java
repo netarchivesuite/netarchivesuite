@@ -70,8 +70,6 @@ public class ServerSetUp {
 
     protected static void setUp() {
         rs.setUp();
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, ADMINDATA_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());

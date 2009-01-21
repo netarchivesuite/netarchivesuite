@@ -51,7 +51,7 @@ public class SingleMBeanObjectTester extends TestCase {
             name = new ObjectName(
                     "Test:location=NO,hostname="
                     + SystemUtils.getLocalHostName()
-                    + ",httpport=1234,applicationname=TestApp1,priority=high,replica=SB");
+                    + ",httpport=1234,applicationname=TestApp1,priority=high,replica=ONE");
         } catch (MalformedObjectNameException e) {
             //never mind
         }
@@ -66,7 +66,7 @@ public class SingleMBeanObjectTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
         Settings.set(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION, "NO");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "ONE");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "high");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }

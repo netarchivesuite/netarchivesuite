@@ -46,32 +46,30 @@
     </remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
         <replicas>
-            <!-- The names of all bit archive locations in the
-                 environment, e.g., "KB" and "SB". -->
+            <!-- All bitarcive replicas in the environment, 
+                 e.g., (ONE, "replicaOne", bitarchive) and 
+                 (TWO, "replicaTwo", bitarchive).
+                 NOTE: settings for checksum replicas are not use yet -->
             <replica>
-                <replicaId>SB</replicaId>
+                <replicaId>ONE</replicaId>
                 <replicaType>bitarchive</replicaType>
-                <replicaName>SBB</replicaName>                
+                <replicaName>ReplicaOne</replicaName>                
             </replica>
             <replica>
-                <replicaId>KB</replicaId>
+                <replicaId>TWO</replicaId>
                 <replicaType>bitarchive</replicaType>
-                <replicaName>KBB</replicaName>                
+                <replicaName>ReplicaTwo</replicaName>                
             </replica>
-            <!-- Default bit archive to use for batch jobs (if none is specified) -->
         </replicas>
-        <useReplicaId>KB</useReplicaId>
+        <!-- Default bit archive to use for e.g. batch jobs (if none is specified) -->
+        <useReplicaId>TWO</useReplicaId>
         <!--  Remove the following setting when the code is updated to 
            use the setting common.replicas.useReplicaId instead of common.useReplicaId  
         -->
-        <thisPhysicalLocation>SB</thisPhysicalLocation>
+        <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
         <applicationInstanceId>id</applicationInstanceId>
      </common>
-   
-    <archive>
-        <thisReplicaId>SB</thisReplicaId>
-    </archive>    
 </settings>

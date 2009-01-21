@@ -96,7 +96,7 @@ public class HangingListenerTest extends TestCase {
         con.setListener(theQueue, blocker);
         con2.setListener(theQueue, nonBlocker);
         for (int i = 0; i < messagesSent; i++) {
-            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "SB");
+            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
             con.send(msg);
         }
         while(HangingListenerTest.messages_received < messagesSent) {}
@@ -104,7 +104,7 @@ public class HangingListenerTest extends TestCase {
         assertEquals("Blocking listener should only have been called once", 1, blocker.called);
         System.out.println("Repeat:");
         for (int i = 0; i < messagesSent; i++) {
-            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "SB");
+            NetarkivetMessage msg = new BatchMessage(theQueue, new ChecksumJob(), "ONE");
             con.send(msg);
         }
         while(HangingListenerTest.messages_received < messagesSent) {}

@@ -97,8 +97,6 @@ public class ArcRepositoryTesterBatch extends TestCase {
         super.setUp();
         rs.setUp();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         ChannelsTester.resetChannels();
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);

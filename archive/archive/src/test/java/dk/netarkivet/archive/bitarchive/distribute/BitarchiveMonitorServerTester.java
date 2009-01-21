@@ -351,8 +351,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * Test that listener is registered and unregistered properly.
      */
     public void testListening() {
-        testListeningPerReplica("SB", "KB");
-        testListeningPerReplica("KB", "SB");
+        testListeningPerReplica("ONE", "TWO");
+        testListeningPerReplica("TWO", "ONE");
     }
 
     /**

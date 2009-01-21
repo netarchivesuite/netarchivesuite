@@ -113,8 +113,6 @@ public class ArcRepositoryTesterGet extends TestCase {
         rs.setUp();
         ChannelsTester.resetChannels();
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
         ChannelsTester.resetChannels();
 
         rf.setUp();

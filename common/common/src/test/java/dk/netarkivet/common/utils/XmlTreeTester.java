@@ -60,6 +60,14 @@ public class XmlTreeTester extends TestCase {
     public void testGetStringTree() {
         StringTree<String> tree1 = getTree();
         assertNotNull("Should get non-null tree", tree1);
+        //<dk> 
+        //  <netarkivet> 
+        //    <test>
+        //      <list1>item1</list1>
+        //      <list1>item2</list1>
+        //      <list1>item3</list1>
+        //      <q> what is the question </q>
+        //    </test> ...
         assertEquals("Should have node from backing XML",
                      "what is the question",
                      tree1.getSubTree("dk").getSubTrees("netarkivet")

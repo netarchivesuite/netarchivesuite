@@ -359,7 +359,7 @@ public class IntegrityTests extends TestCase {
                                                  Settings.get(
                                                          CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
             bac.batch(bMsg);
-            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(FILENAME_TO_GET, "SB", "FFFF", "42");
+            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.removeAndGetFile(rMsg);
         }
 

@@ -89,8 +89,7 @@ public class ARCLookupTester extends TestCase {
         FileUtils.createDir(new File(TestInfo.WORKING_DIR, "viewerproxy"));
 
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.LOG_PATH.getAbsolutePath());
-        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "SB");
+        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "ONE");
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(TestInfo.WORKING_DIR, "admin-data").getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.LOG_PATH.getAbsolutePath());
 
