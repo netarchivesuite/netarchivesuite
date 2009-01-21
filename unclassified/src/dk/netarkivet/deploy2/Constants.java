@@ -210,7 +210,7 @@ public class Constants {
         DATABASE_BASE_DIR + DATABASE_BASE_FILE;
     /** The message when database is trying to overwrite a non-empty dir.*/
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
-        "The database directory is not empty as required.";
+        "The database directory already exists. Thus database not reset.";
 
     // other constants
     /** Number of '-' repeat in scripts. */

@@ -342,16 +342,16 @@ public class DeployApplication {
         if(resetArgument != null) {
             if(resetArgument.equalsIgnoreCase("y")
                     || resetArgument.equalsIgnoreCase("yes")) {
-        	// if positive argument, then set to true.
+                // if positive argument, then set to true.
                 resetDirectory = true;
             } else if (resetArgument.equalsIgnoreCase("n")
-        	    || resetArgument.equalsIgnoreCase("no")) {
-        	// if negative argument, then set to false.
-        	resetDirectory = false;
+                    || resetArgument.equalsIgnoreCase("no")) {
+                // if negative argument, then set to false.
+                resetDirectory = false;
             } else {
-        	// if wrong argument, notify and set to false.
-        	System.err.println(Constants.MSG_ERROR_RESET_ARGUMENT);
-        	resetDirectory = false;
+                // if wrong argument, notify and set to false.
+                System.err.println(Constants.MSG_ERROR_RESET_ARGUMENT);
+                resetDirectory = false;
             }
         } else {
             // if no arguments, then 

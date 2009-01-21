@@ -110,6 +110,21 @@ public class LinuxMachine extends Machine {
         res.append("\n");
         // create other directories.
         res.append(osInstallScriptCreateDir());
+        // echo preparing for copying of settings and scripts
+        res.append("echo preparing for copying of settings and scripts");
+        res.append("\n");
+        // For overriding jmxremote.password give user all rights.
+        // ssh machine: "if [ -e conf/jmxremote.password ]; 
+        // then chmod u+rwx conf/jmxremote.password; fi; "
+        res.append("ssh ");
+        res.append(machineUserLogin());
+        res.append(" \" cd ~; if [ -e ");
+        res.append(getConfDirPath());
+        res.append("jmxremote.password");
+        res.append(" ]; then chmod u+rwx ");
+        res.append(getConfDirPath());
+        res.append("jmxremote.password; fi; \"");
+        res.append("\n");
         // echo copying settings and scripts
         res.append("echo copying settings and scripts");
         res.append("\n");
@@ -127,21 +142,25 @@ public class LinuxMachine extends Machine {
         // echo make scripts executable
         res.append("echo make scripts executable");
         res.append("\n");
-        // ssh dev@kb-test-adm-001.kb.dk "chmod +x /home/dev/TEST/conf/*.sh "
+        // Allow only user to be able to deal with these files 
+        // (go=-rwx,u=+rwx) = 700.
+        // ssh dev@kb-test-adm-001.kb.dk "chmod 700 /home/dev/TEST/conf/*.sh "
         res.append("ssh ");
         res.append(machineUserLogin());
-        res.append(" \"chmod +x ");
+        res.append(" \"chmod 700 "); 
         res.append(getConfDirPath());
         res.append("*.sh \"");
         res.append("\n");
         // echo make password files readonly
         res.append("echo make password files readonly");
         res.append("\n");
-        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
+        // Allow only user to be able to only read jmxremote.password 
+        // (a=-rwx,u=+r) = 400.
+        // ssh dev@kb-test-adm-001.kb.dk "chmod u+r-wx 
         // /home/dev/TEST/conf/jmxremote.password"
         res.append("ssh ");
         res.append(machineUserLogin());
-        res.append(" \"chmod 400 ");
+        res.append(" \"chmod a+r-wx ");
         res.append(getConfDirPath());
         res.append("jmxremote.password\"");
         res.append("\n");
@@ -542,17 +561,13 @@ public class LinuxMachine extends Machine {
         res.append(getInstallDirPath());
         res.append("; if [ -d ");
         res.append(databaseDir);
-        res.append(" ]; then echo ; else mkdir ");
-        res.append(databaseDir);
-        res.append("; fi; if [ $(ls -A ");
-        res.append(databaseDir);
-        res.append(") ]; then echo ");
+        res.append(" ]; then echo ");
         res.append(Constants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
         res.append("; else unzip -q -o ");
         res.append(Constants.DATABASE_BASE_PATH);
         res.append(" -d ");
         res.append(databaseDir);
-        res.append("/.; fi; exit; \"");
+        res.append("; fi; exit; \"");
         res.append("\n");
 
         return res.toString();

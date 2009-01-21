@@ -77,10 +77,10 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osInstallScript() {
         StringBuilder res = new StringBuilder("");
-        // echo copying null.zip to:kb-test-bar-011.bitarkiv.kb.dk
+        // echo copying null.zip to: kb-test-bar-011.bitarkiv.kb.dk
         res.append("echo copying ");
         res.append(netarchiveSuiteFileName);
-        res.append(" to:");
+        res.append(" to: ");
         res.append(name);
         res.append("\n");
         // scp null.zip dev@kb-test-bar-011.bitarkiv.kb.dk:
@@ -90,10 +90,10 @@ public class WindowsMachine extends Machine {
         res.append(machineUserLogin());
         res.append(":");
         res.append("\n");
-        // echo unzipping null.zip at:kb-test-bar-011.bitarkiv.kb.dk
+        // echo unzipping null.zip at: kb-test-bar-011.bitarkiv.kb.dk
         res.append("echo unzipping ");
         res.append(netarchiveSuiteFileName);
-        res.append(" at:");
+        res.append(" at: ");
         res.append(name);
         res.append("\n");
         // ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST 
@@ -107,6 +107,32 @@ public class WindowsMachine extends Machine {
         res.append("\n");
         // create other directories.
         res.append(osInstallScriptCreateDir());
+        // echo preparing for copying of settings and scripts
+        res.append("echo preparing for copying of settings and scripts");
+        res.append("\n");
+        // ssh machine: "if [ -e conf/jmxremote.password ]; 
+        // then chmod +x conf/jmxremote.password; fi; "
+        // if [ $(ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk 
+        // cmd /c if exist JOLF\\conf\\security.policy echo 1 ) ]; then 
+        // echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls 
+        // JOLF\\conf\\security.policy 
+        // /P BITARKIV\\ba-test:F; fi
+        res.append("if [ $(ssh ");
+        res.append(machineUserLogin());
+        res.append(" cmd /c if exist ");
+        res.append(changeToScriptPath(getLocalConfDirPath()));
+        res.append("jmxremote.password");
+        res.append(" echo 1");
+        res.append(" ) ]; then ");
+        res.append("echo Y | ssh ");
+        res.append(machineUserLogin());
+        res.append(" cmd /c cacls ");
+        res.append(changeToScriptPath(getLocalConfDirPath()));
+        res.append("jmxremote.password /P BITARKIV\\\\");
+        res.append(machineParameters.getMachineUserName().getText());
+        res.append(":F");
+        res.append("; fi;");
+        res.append("\n");
         // echo copying settings and scripts
         res.append("echo copying settings and scripts");
         res.append("\n");
@@ -781,7 +807,7 @@ public class WindowsMachine extends Machine {
      * @return The name of the script for creating the directories.
      */
     protected String getMakeDirectoryName() {
-        return "make_dir_" + name + scriptExtension;
+        return "dir_" + name + scriptExtension;
     }
     
     /**
@@ -793,7 +819,7 @@ public class WindowsMachine extends Machine {
     @Override
     protected void createInstallDirScript(File directory) {
            File dirScript = new File(directory, 
-                        "dir_" + name + scriptExtension);
+                   getMakeDirectoryName());
                 try {
                     // make print writer for writing to file
                     PrintWriter dirPrint = new PrintWriter(dirScript);
