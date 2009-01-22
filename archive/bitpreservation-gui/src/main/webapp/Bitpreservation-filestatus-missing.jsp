@@ -91,70 +91,79 @@ dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exce
     // Generate the page for showing missing file info, and allowing taking
     // actions.
 
-    // Table and form header
-    %>
-    <form action="" method="post">
-        <input type="hidden" name="bitarchive" value="<%=bitarchive.getName()%>"/>
-        <table>
-    <%
-
-    // Counter for number of files that can be uploaded with ADD_COMMAND.
-    // This is increased in the loop below.
-    int uploadableFiles = 0;
-
-    // For all files
-    int rowCount = 0;
-    for (String filename : missingFiles) {
+    //First check if there are any missing files left. 
+    //There will be no files left when there are all reuploaded.
+    if (!missingFiles.iterator().hasNext()) {
+	    %>
+	    <fmt:message key="no.more.missing.files"/>
+	    <%
+    } else {
+	    // Table and form header
+	    %>
+	    <form action="" method="post">
+	        <input type="hidden" name="bitarchive" value="<%=bitarchive.getName()%>"/>
+	        <table>
+	    <%
+	
+	    // Counter for number of files that can be uploaded with ADD_COMMAND.
+	    // This is increased in the loop below.
+	    int uploadableFiles = 0;
+	
+	    // For all files
+	    int rowCount = 0;
+	    %>
+	    <fmt:message key="status"/>
+	    <%
+	    for (String filename : missingFiles) {
+	        //Print a row for the file with info
+	        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
+	        // If info for file exists, output it
+	        if (fileInfo.containsKey(filename)) {
+	            %>
+	            <tr><td>
+	                <%
+	            FilePreservationState fs = fileInfo.get(filename);
+	            if (fs == null) {
+	                %>
+	                <fmt:message key="no.info.on.file.0">
+	                      <fmt:param value="<%=filename%>"/>
+	                </fmt:message>
+	                <%
+	            } else {
+	                // Print information about the file
+	                BitpreserveFileState.printFileState(out, fs, response.getLocale());
+	                // If the file is indeed missing
+	                if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
+	                    // Give opportunity to reupload the file.
+	                    %></td><td><%
+	                    out.println(BitpreserveFileState.makeCheckbox(
+	                            Constants.ADD_COMMAND,
+	                            bitarchive.getName(), filename));
+	                    %><fmt:message key="add.to.archive"/><%
+	                    uploadableFiles++;
+	                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
+	            } // if (fs != null)
+	            %>
+	            </td></tr>
+	            <%
+	        } // if (fileInfo.containsKey(filename))
+	        rowCount++;
+	    } // for (String filename : missingFiles)
+	
+        // Table and form footer
         %>
-        <fmt:message key="status"/>
-        <%
-        //Print a row for the file with info
-        BitpreserveFileState.printFileName(out, filename, rowCount, response.getLocale());
-        // If info for file exists, output it
-        if (fileInfo.containsKey(filename)) {
-            %>
-            <tr><td>
-                <%
-            FilePreservationState fs = fileInfo.get(filename);
-            if (fs == null) {
-                %>
-                <fmt:message key="no.info.on.file.0">
-                      <fmt:param value="<%=filename%>"/>
-                </fmt:message>
-                <%
-            } else {
-                // Print information about the file
-                BitpreserveFileState.printFileState(out, fs, response.getLocale());
-                // If the file is indeed missing
-                if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
-                    // Give opportunity to reupload the file.
-                    %></td><td><%
-                    out.println(BitpreserveFileState.makeCheckbox(
-                            Constants.ADD_COMMAND,
-                            bitarchive.getName(), filename));
-                    %><fmt:message key="add.to.archive"/><%
-                    uploadableFiles++;
-                } // if (fs.getBitarchiveChecksum(bitarchive).isEmpty())
-            } // if (fs != null)
-            %>
-            </td></tr>
-            <%
-        } // if (fileInfo.containsKey(filename))
-        rowCount++;
-    } // for (String filename : missingFiles)
-
-    // Table and form footer
-    %>
 
         </table>
         <input type="submit" value="<fmt:message key="execute"/>"/>
-    </form>
-    <br/>
-<%
-    //convenience checkboxes to toggle multiple action checkboxes with a
-    //single click.
-    BitpreserveFileState.printToggleCheckboxes(out, response.getLocale(),
+        </form>
+        <br/>
+        <%
+        //convenience checkboxes to toggle multiple action checkboxes with a
+        //single click.
+        BitpreserveFileState.printToggleCheckboxes(out, response.getLocale(),
                                                 numberOfMissingFiles,
                                                 uploadableFiles);
+    } //missingFiles.iterator().hasNext()
+
     HTMLUtils.generateFooter(out);
 %>
