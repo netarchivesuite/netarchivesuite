@@ -265,10 +265,8 @@
                                 <fileDir>n:\bitarchive</fileDir>
                                 <fileDir>o:\bitarchive</fileDir>
                                 <fileDir>p:\bitarchive</fileDir>
+                                <fileDir>q:\bitarkiv</fileDir>
                             </bitarchive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
-                        <fileDir>q:\bitarkiv</fileDir>
                     </archive>
                 </settings>
             </applicationName>
@@ -296,10 +294,8 @@
                                 <fileDir>n:\bitarchive</fileDir>
                                 <fileDir>o:\bitarchive</fileDir>
                                 <fileDir>p:\bitarchive</fileDir>
+                                <fileDir>q:\bitarkiv</fileDir>
                             </bitarchive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
-                        <fileDir>q:\bitarkiv</fileDir>
                     </archive>
                 </settings>
             </applicationName>
@@ -327,10 +323,8 @@
                                 <fileDir>n:\bitarchive</fileDir>
                                 <fileDir>o:\bitarchive</fileDir>
                                 <fileDir>p:\bitarchive</fileDir>
+                                <fileDir>q:\bitarkiv</fileDir>
                             </bitarchive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
-                        <fileDir>q:\bitarkiv</fileDir>
                     </archive>
                 </settings>
             </applicationName>
@@ -358,10 +352,8 @@
                                 <fileDir>n:\bitarchive</fileDir>
                                 <fileDir>o:\bitarchive</fileDir>
                                 <fileDir>p:\bitarchive</fileDir>
+                                <fileDir>q:\bitarkiv</fileDir>
                             </bitarchive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
-                        <fileDir>q:\bitarkiv</fileDir>
                     </archive>
                 </settings>
             </applicationName>
@@ -389,10 +381,8 @@
                                 <fileDir>n:\bitarchive</fileDir>
                                 <fileDir>o:\bitarchive</fileDir>
                                 <fileDir>p:\bitarchive</fileDir>
+                                <fileDir>q:\bitarkiv</fileDir>
                             </bitarchive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
-                        <fileDir>q:\bitarkiv</fileDir>
                     </archive>
                 </settings>
             </applicationName>

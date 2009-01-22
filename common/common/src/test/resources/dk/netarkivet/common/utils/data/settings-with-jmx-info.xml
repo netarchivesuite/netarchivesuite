@@ -3,7 +3,6 @@
 <settings>
   <archive>
     <bitarchive>
-      <thisReplicaId>KB</thisReplicaId>
       <batchMessageTimeout>172800000</batchMessageTimeout>
       <thisCredentials>42</thisCredentials>
       <heartbeatFrequency>1000</heartbeatFrequency>

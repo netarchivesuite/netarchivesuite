@@ -130,9 +130,6 @@
                             <rmiPort>8212</rmiPort>
                         </jmx>
                     </common>
-                    <archive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                    </archive>
                 </settings>
             </applicationName>
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
@@ -144,9 +141,6 @@
                             <rmiPort>8213</rmiPort>
                         </jmx>
                     </common>
-                    <archive>
-                        <thisReplicaId>SB</thisReplicaId> 
-                    </archive>
                 </settings>
             </applicationName>
         </deployMachine>
@@ -165,9 +159,9 @@
                         </jmx>
                     </common>
                     <archive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
+                      <bitarchive>
                         <fileDir>q:\bitarkiv</fileDir>
+                      </bitarchive>
                     </archive>
                 </settings>
             </applicationName>
@@ -187,9 +181,9 @@
                         </jmx>
                     </common>
                     <archive>
-                        <thisReplicaId>KB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
+                       <bitarchive>
                         <fileDir>q:\bitarkiv</fileDir>
+                       </bitarchive>
                     </archive>
                 </settings>
             </applicationName>
@@ -379,11 +373,10 @@
                         </jmx>
                     </common>
                     <archive>
-                        <thisReplicaId>SB</thisReplicaId> 
-                        <!-- T: fileDir to be extended with $TESTX by test -->
+                      <bitarchive>
                         <fileDir>/netarkiv/0001</fileDir>
-                        <!-- T: fileDir to be extended with $TESTX by test -->
                         <fileDir>/netarkiv/0002</fileDir>
+                      </bitarchive>
                     </archive>
                 </settings>
             </applicationName>

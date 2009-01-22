@@ -65,7 +65,10 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        <thisReplicaId>KB</thisReplicaId><fileDir>q:\bitarkiv</fileDir></archive>
+            <bitarchive>
+                <fileDir>q:\bitarkiv</fileDir>
+            </bitarchive>
+        </archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            

@@ -607,7 +607,6 @@
             <baseDir>.</baseDir>
         </arcrepository>
         <bitarchive>
-            <thisReplicaId>KB</thisReplicaId>
             <!-- The minimum amount of bytes left *in any dir* that we will
                  allow a bitarchive machine to accept uploads with.  When no
                  dir has more space than this, the bitarchive machine stops

@@ -63,9 +63,9 @@
                 <baseDir>bitpreservation</baseDir>
             </bitpreservation>
             <arcrepository>
-                <baseDir>.</baseDir>            
+                <baseDir>.</baseDir>       
             </arcrepository>
-        <thisReplicaId>SB</thisReplicaId></archive>
+        </archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            

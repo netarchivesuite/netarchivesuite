@@ -62,12 +62,14 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        <bitarchive>
-                                <fileDir>m:\bitarchive</fileDir>
-                                <fileDir>n:\bitarchive</fileDir>
-                                <fileDir>o:\bitarchive</fileDir>
-                                <fileDir>p:\bitarchive</fileDir>
-                            </bitarchive><thisReplicaId>KB</thisReplicaId><fileDir>q:\bitarkiv</fileDir></archive>
+            <bitarchive>
+                <fileDir>m:\bitarchive</fileDir>
+                <fileDir>n:\bitarchive</fileDir>
+                <fileDir>o:\bitarchive</fileDir>
+                <fileDir>p:\bitarchive</fileDir>
+                <fileDir>q:\bitarkiv</fileDir>
+            </bitarchive>
+        </archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            

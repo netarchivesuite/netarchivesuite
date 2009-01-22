@@ -65,7 +65,7 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        <thisReplicaId>KB</thisReplicaId></archive>
+        </archive>
         <!-- tempDir corrected from ./tests/commontempdir -->
         <tempDir>tmpdircommon</tempDir> 
         <!-- viewerproxy.baseDir is set below -->            
