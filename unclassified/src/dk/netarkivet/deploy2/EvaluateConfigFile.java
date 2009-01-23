@@ -24,13 +24,15 @@
 package dk.netarkivet.deploy2;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+
+import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * Class for evaluating a config file.
@@ -40,7 +42,7 @@ import org.dom4j.io.SAXReader;
  */
 public class EvaluateConfigFile {
     /** The elements to check the settings against.*/
-    private List<Element> settingsList;
+    private Element completeSettings;
     /** The root element in the xml tree.*/
     private XmlStructure root;
     
@@ -51,9 +53,12 @@ public class EvaluateConfigFile {
      * @param itConfigFile The file to evaluate.
      */
     public EvaluateConfigFile(File itConfigFile) {
-        initLoadDefaultSettings();
-
-        root = new XmlStructure(itConfigFile);
+        try {
+            initLoadDefaultSettings();
+            root = new XmlStructure(itConfigFile);
+        } catch (Exception e) {
+            System.err.println("Evaluation error!");
+        }
     }
     
     /**
@@ -63,8 +68,6 @@ public class EvaluateConfigFile {
      */
     @SuppressWarnings("unchecked")
     public void evaluate() {
-        System.out.println("EVALUATING BEGIN!");
-
         // check global settings
         evaluateElement(root.getChild(Constants.SETTINGS_BRANCH));
         List<Element> physLocs = root.getChildren(
@@ -83,34 +86,30 @@ public class EvaluateConfigFile {
                 }
             }
         }
-
-        System.out.println("EVALUATING END!");
     }
     
     /**
      * Load the default settings files as reference trees.
      * These are used for testing whether the branches in the settings file
      * are to be used or not.
+     * @throws IOException If file not found.
      */
-    private void initLoadDefaultSettings() {
-        settingsList = new ArrayList<Element>();
-
-        for(String filename : Constants.EVALUATE_SETTING_FILES) {
-            File f = new File(filename);
-            try {
-                Document doc;
-                SAXReader reader = new SAXReader();
-                if (f.canRead()) {
-                    doc =  reader.read(f);
-                    settingsList.add(doc.getRootElement());
-                } else {
-                    System.out.println("Cannot read file: " 
-                            + f.getAbsolutePath());
-                }
-            } catch (DocumentException e) {
-                System.err.println("Problems with file: " 
+    private void initLoadDefaultSettings() throws IOException {
+        File f = FileUtils.getResourceFileFromClassPath(
+                Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
+        try {
+            Document doc;
+            SAXReader reader = new SAXReader();
+            if (f.canRead()) {
+                doc =  reader.read(f);
+                completeSettings = doc.getRootElement();
+            } else {
+                System.out.println("Cannot read file: " 
                         + f.getAbsolutePath());
             }
+        } catch (DocumentException e) {
+            System.err.println("Problems with file: " 
+                    + f.getAbsolutePath());
         }
     }
     
@@ -134,9 +133,7 @@ public class EvaluateConfigFile {
             String path = getSettingsPath(el);
 
             // check if path exists in any default setting.
-            for(Element defSetting : settingsList) {
-                valid = valid || existBranch(defSetting, path.split("/"));
-            }
+                valid = existBranch(completeSettings, path.split("/"));
 
             if(valid) {
                 if(!el.isTextOnly()) {

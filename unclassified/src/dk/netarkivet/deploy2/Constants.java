@@ -144,7 +144,8 @@ public class Constants {
     /** The path to the serverDir branch from harvester.harvesting.*/
     static final String SETTINGS_HARVEST_SERVER_DIR_BRANCH = "serverDir";
     /** The path to the tempDir leaf from settings.*/
-    static final String[] SETTINGS_TEMP_DIR_LEAF = {SETTINGS_TEMP_DIR_BRANCH};
+    static final String[] SETTINGS_TEMP_DIR_LEAF = {
+        COMMON_BRANCH, SETTINGS_TEMP_DIR_BRANCH};
     /** The path to the fileDir branch from settings.*/
     static final String[] SETTINGS_FILE_DIR_LEAF = {
         SETTINGS_ARCHIVE_BRANCH, SETTINGS_FILE_DIR_BRANCH};
@@ -223,33 +224,26 @@ public class Constants {
         "The database directory already exists. Thus database not reset.";
 
     // evaluate specific constants
-    /** */
-    static final String[] EVALUATE_SETTING_FILES = {
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
-            + "settings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "settings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/harvester/"
-            + "settings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/monitor/"
-            + "settings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/viewerproxy/"
-            + "settings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
-            + "arcrepository/distribute/JMSArcRepositoryClientSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
-            + "indexserver/distribute/IndexRequestClientSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "utils/EMailNotificationsSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "distribute/FTPRemoteFileSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "distribute/HTTPRemoteFileSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "distribute/HTTPSRemoteFileSettings.xml",
-        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
-            + "distribute/JMSConnectionSunMQSettings.xml"
+    /** Complete list of settings files to combine to complete settings file.*/
+    static final String[] BUILD_SETTING_FILES = {
+        "dk/netarkivet/archive/settings.xml",
+        "dk/netarkivet/common/settings.xml",
+        "dk/netarkivet/harvester/settings.xml",
+        "dk/netarkivet/monitor/settings.xml",
+        "dk/netarkivet/viewerproxy/settings.xml",
+        "dk/netarkivet/archive/arcrepository/distribute/"
+            + "JMSArcRepositoryClientSettings.xml",
+        "dk/netarkivet/archive/indexserver/distribute/"
+            + "IndexRequestClientSettings.xml",
+        "dk/netarkivet/common/utils/EMailNotificationsSettings.xml",
+        "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml",
+        "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml",
+        "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml",
+        "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml"
         };
+    /** The path to the complete settings file.*/
+    static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = 
+        "dk/netarkivet/deploy2/complete_settings.xml";
     
     // other constants
     /** Number of '-' repeat in scripts. */

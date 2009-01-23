@@ -1137,4 +1137,31 @@ public class FileUtils {
         }
 
     }
+    
+    /**
+     * Loads an file from the class path (for retrieving a file from '.jar').
+     * 
+     * @param filePath The path of the class.
+     * @return The file as an input stream.
+     * @throws IOException 
+     */
+    public static File getResourceFileFromClassPath(String filePath) 
+            throws IOException {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                filePath,
+                "String defaultClasspathSettingsPath");
+        InputStream stream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(filePath);
+        if (stream != null) {
+            File tmpFile = File.createTempFile("tmp", "tmp");
+            StreamUtils.copyInputStreamToOutputStream(stream, 
+                    new FileOutputStream(tmpFile));
+            return tmpFile;
+        } else {
+            System.out.println("Unable to read the settings file "
+                    + "represented by path: '" + filePath + "'");
+            return null;
+        }
+    }
+
 }

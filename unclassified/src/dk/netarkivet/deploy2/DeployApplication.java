@@ -33,11 +33,18 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import dk.netarkivet.common.utils.Settings;
+
 /** 
  * The application that is run to generate install and start/stop scripts
  * for all physical locations, machines and applications.
  */
 public class DeployApplication {
+    static {
+        Settings.addDefaultClasspathSettings(
+                Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH
+        );
+    }
     /** The configuration for this deploy. */
     private static DeployConfiguration itConfig;
     /** Argument parameter. */
