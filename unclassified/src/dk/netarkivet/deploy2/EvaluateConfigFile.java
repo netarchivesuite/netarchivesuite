@@ -143,7 +143,7 @@ public class EvaluateConfigFile {
                     evaluateElement(el);
                 }
             } else {
-                System.out.println("Branch does not exist: " + path);
+                System.out.println("Branch not found: " + path);
             }
         }
     }

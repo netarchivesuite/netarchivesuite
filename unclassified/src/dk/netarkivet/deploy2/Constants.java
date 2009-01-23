@@ -129,9 +129,14 @@ public class Constants {
     /** The path to the arcrepository branch from archive.*/
     static final String SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH =
         "arcrepository";
-    /** The path to the base dir branch from bitpreservation.*/
+    /** The path to the base dir branch from bitpreservation
+     *  and arcrepository under archive.*/
     static final String SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH =
         "baseDir";
+    /** The path to the viewerproxy branch from the settings branch.*/
+    static final String SETTINGS_VIEWERPROXY_BRANCH = "viewerproxy";
+    /** The path to the base dir branch from the viewerproxy branch.*/
+    static final String SETTINGS_VIEWERPROXY_BASEDIR_BRANCH = "baseDir";
     /** The path to the fileDir branch from settings.*/
     static final String SETTINGS_FILE_DIR_BRANCH = "fileDir";
     /** The path to the tempDir branch from settings.*/
@@ -157,6 +162,11 @@ public class Constants {
         Constants.SETTINGS_ARCHIVE_BRANCH,
         Constants.SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH, 
         Constants.SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH};
+    /** The path to the viewer proxy base dir leaf from settings.*/
+    static final String[] SETTINGS_VIEWERPROXY_BASEDIR_LEAF = {
+        SETTINGS_ARCHIVE_BRANCH,
+        SETTINGS_VIEWERPROXY_BRANCH, 
+        SETTINGS_VIEWERPROXY_BASEDIR_BRANCH};
     
     // physical location specific
     /** The path to name in a physical location instance.*/
@@ -212,6 +222,35 @@ public class Constants {
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
         "The database directory already exists. Thus database not reset.";
 
+    // evaluate specific constants
+    /** */
+    static final String[] EVALUATE_SETTING_FILES = {
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
+            + "settings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "settings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/harvester/"
+            + "settings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/monitor/"
+            + "settings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/viewerproxy/"
+            + "settings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
+            + "arcrepository/distribute/JMSArcRepositoryClientSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/archive/"
+            + "indexserver/distribute/IndexRequestClientSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "utils/EMailNotificationsSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "distribute/FTPRemoteFileSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "distribute/HTTPRemoteFileSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "distribute/HTTPSRemoteFileSettings.xml",
+        "/home/jolf/workspace/netarchivesuite/src/dk/netarkivet/common/"
+            + "distribute/JMSConnectionSunMQSettings.xml"
+        };
+    
     // other constants
     /** Number of '-' repeat in scripts. */
     static final int SCRIPT_DASH_NUM_REPEAT = 44;
@@ -237,8 +276,10 @@ public class Constants {
     public static final String ARG_DATABASE_FILE = "D";
     /** For giving the optional test data.*/
     public static final String ARG_TEST = "T";
-    /** for giving the optional reset directory argument.*/
+    /** For giving the optional reset directory argument.*/
     public static final String ARG_RESET = "R";
+    /** For giving the optional argument.*/
+    public static final String ARG_EVALUATE = "E";
     
     // messages
     /** The error message for error in parsing the arguments.*/

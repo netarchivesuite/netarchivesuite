@@ -134,6 +134,9 @@ public class DeployApplication {
             // Retrieving the reset argument
             String resetArgument = ap.cmd.getOptionValue(
                     Constants.ARG_RESET);
+            // Retrieving the evaluate argument
+            String evaluateArgument = ap.cmd.getOptionValue(
+                    Constants.ARG_EVALUATE);
 
             // check itConfigFileName and retrieve the file
             initConfigFile(itConfigFileName);
@@ -148,13 +151,16 @@ public class DeployApplication {
             initLogPropFile(logPropFileName);
 
             // check database
-            checkDatabase(databaseFileName);
+            initDatabase(databaseFileName);
             
             // check and apply the test arguments
-            applyTestArguments(testArguments);
+            initTestArguments(testArguments);
             
             // check reset arguments.
-            checkReset(resetArgument);
+            initReset(resetArgument);
+            
+            // evaluates the config file
+            initEvaluate(evaluateArgument);
             
             // Make the configuration based on the input data
             itConfig = new DeployConfiguration(
@@ -307,7 +313,7 @@ public class DeployApplication {
      * 
      * @param databaseFileName The name of the database file.
      */
-    private static void checkDatabase(String databaseFileName) {
+    private static void initDatabase(String databaseFileName) {
         dbFile = null;
         // check the extension on the database, if it is given as argument 
         if(databaseFileName != null) {
@@ -338,7 +344,7 @@ public class DeployApplication {
      * 
      * @param resetArgument The argument for resetting given.
      */
-    private static void checkReset(String resetArgument) {
+    private static void initReset(String resetArgument) {
         if(resetArgument != null) {
             if(resetArgument.equalsIgnoreCase("y")
                     || resetArgument.equalsIgnoreCase("yes")) {
@@ -360,6 +366,24 @@ public class DeployApplication {
     }
     
     /**
+     * Checks the arguments for evaluating the config file.
+     * Only the arguments 'y' or 'yes' is accepted for evaluation.
+     * 
+     * @param evaluateArgument The argument for evaluation.
+     */
+    public static void initEvaluate(String evaluateArgument) {
+        if(evaluateArgument != null) {
+            // check if argument is acknowledgement ('y' or 'yes')
+            if(evaluateArgument.equalsIgnoreCase("y")
+                    || evaluateArgument.equalsIgnoreCase("yes")) {
+                // if yes, then evaluate config file
+                EvaluateConfigFile evf = new EvaluateConfigFile(itConfigFile);
+                evf.evaluate();
+            }
+        }
+    }
+       
+    /**
      * Applies the test arguments.
      * 
      * If the test arguments are given correctly, the configuration file is 
@@ -372,7 +396,7 @@ public class DeployApplication {
      * 
      * @param testArguments The test arguments.
      */
-    private static void applyTestArguments(String testArguments) {
+    private static void initTestArguments(String testArguments) {
         // test if any test arguments (if none, don't apply, just stop).
         if(testArguments == null || testArguments.equalsIgnoreCase("")) {
             return;
@@ -401,6 +425,7 @@ public class DeployApplication {
             String nameOfNewConfig =  configFile[0] 
                     + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
 
+            // create and use new config file.
             cti.createSettingsFile(nameOfNewConfig);
             itConfigFile = new File(nameOfNewConfig);
         } catch (IOException e) {
@@ -443,6 +468,8 @@ public class DeployApplication {
             options.addOption(Constants.ARG_RESET,
                     true, "[OPTIONAL] Reset temp directory (y/n - anything "
                     + "other than 'y' or 'Y' is asserted no).");
+            options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
+                    + "Evaluate the config file.");
         }
 
         /**

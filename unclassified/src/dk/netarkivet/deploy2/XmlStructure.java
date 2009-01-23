@@ -297,30 +297,36 @@ public class XmlStructure {
         // add branch if it does not exists
         for(Element e : attributes) {
             // find corresponding attribute in current element
-            Element curE = current.element(e.getName());
+            List<Element> curElems = current.elements(e.getName());
             
-            // if not existing branch, make branch
-            // this cannot be done directly, otherwise two of new branches of 
-            // same type will overwrite each other.
-            if(curE == null) {
+            // if no such elements in current tree, add branch.
+            if(curElems.size() == 0) {
                 addElements.add(e);
-            } else if(e.isTextOnly()) {
-                // overwrite if leaf element
-                // problem if tree is overwritten by leaf
-                if(!curE.isTextOnly()) {
-                    log.warn("Replacing a tree with a leaf");
-                }
-                // overwrite the text
-                curE.setText(e.getText());
-                
-            } else if(!curE.isTextOnly()) {
-                // when both branches are trees (neither are leaf)
-                // overwrite subtrees
-                overWriting(curE, e);
             } else {
-                log.error("Cannot replace a leaf with a tree!");
-                throw new IllegalState("Tree tries to replace leaf!");
-            }
+                // 
+                List<Element> overElems = overwriter.elements(e.getName());
+
+                // if the lists have a 1-1 ratio, then overwrite 
+                if(curElems.size() == 1 && overElems.size() == 1) {
+                    // only one branch, thus overwrite
+                    Element curE = curElems.get(0);
+                    // if leaf overwrite value, otherwise repeat for branches. 
+                    if(curE.isTextOnly()) {
+                        curE.setText(e.getText());
+                    } else {
+                        overWriting(curE, e);
+                    }
+                } else {
+                    // a different amount of current branches exist (not 0).
+                    // Therefore remove the branches in current tree, 
+                    // and add replacements.
+                    for(Element curE : curElems) {
+                        current.remove(curE);
+                    }
+                    // add only current branch, since the others will follow.
+                    addElements.add(e);
+                }
+            }            
         }
         
         // add all the new branches to the current branch.

@@ -676,7 +676,7 @@ public class LinuxMachine extends Machine {
         String[] dirs;
 
         for(Application app : applications) {
-            // get archive.fileDir directory.
+            // get archive.fileDir directories.
             dirs = app.getSettingsValues(
                     Constants.SETTINGS_FILE_DIR_LEAF);
             if(dirs != null && dirs.length > 0) {
@@ -685,9 +685,18 @@ public class LinuxMachine extends Machine {
                 }
             }
 
-            // get harvester.harvesting.serverDir directory.
+            // get harvester.harvesting.serverDir directories.
             dirs = app.getSettingsValues(
                     Constants.SETTINGS_HARVEST_SERVER_DIR_LEAF);
+            if(dirs != null && dirs.length > 0) {
+                for(String dir : dirs) {
+                    res.append(scriptCreateDir(dir, false));
+                }
+            }
+            
+            // get the viewerproxy.baseDir directories.
+            dirs = app.getSettingsValues(
+                    Constants.SETTINGS_VIEWERPROXY_BASEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));
