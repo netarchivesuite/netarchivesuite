@@ -190,6 +190,15 @@ public class LinuxMachine extends Machine {
     /**
      * Creates the operation system specific starting script for this machine.
      * 
+     * pseudo code:
+     * - ssh maclogin ". /etc/profile; conf/startall.sh; sleep 5; 
+     * cat install/*.log"
+     * 
+     * where:
+     * maclogin = login for machine (username@machine).
+     * conf = path to /conf directory.
+     * install = path to install directory.
+     * 
      * @return Operation system specific part of the startscript.
      */
     @Override
@@ -234,6 +243,18 @@ public class LinuxMachine extends Machine {
      * machine.
      * The scripts calls all the kill script for each application. 
      * 
+     * pseudo code:
+     * - echo Killing all applications at machine: mac
+     * - if [ -e ./kill_app.sh ]
+     * -    ./kill_app.sh
+     * - fi
+     * - ...
+     * 
+     * where:
+     * mac = machine name.
+     * app = application name.
+     * ... = the same for other applications.
+     * 
      * @param directory The directory for this machine (use global variable?).
      */
     @Override
@@ -256,7 +277,7 @@ public class LinuxMachine extends Machine {
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
                     killPrinter.println("if [ -e "
-                                + appScript + "]; then ");
+                                + appScript + " ]; then ");
                     killPrinter.println("      " + appScript);
                     killPrinter.println("fi");
                 }
@@ -280,6 +301,18 @@ public class LinuxMachine extends Machine {
      * This function creates the script to start all applications on this 
      * machine.
      * The scripts calls all the start script for each application. 
+     * 
+     * pseudo code:
+     * - echo Starting all applications at machine: mac
+     * - if [ -e ./start_app.sh ]
+     * -    ./start_app.sh
+     * - fi
+     * - ...
+     * 
+     * where:
+     * mac = machine name.
+     * app = application name.
+     * ... = the same for other applications.
      * 
      * @param directory The directory for this machine (use global variable?).
      */
@@ -401,7 +434,7 @@ public class LinuxMachine extends Machine {
      * 
      * The start_app.sh should have the following structure:
      * 
-     * - echo Starting linux application.
+     * - echo Starting linux application: app
      * - cd path
      * - #!/bin/bash
      * - PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
@@ -415,7 +448,7 @@ public class LinuxMachine extends Machine {
      * 
      * where:
      * path = the path to the install directory.
-     * fullapp = the full name application with path.
+     * fullapp = the full name application with java path.
      * app = the name of the application.
      * cp = the classpaths for the application.
      * JAVA = the command to run the java application.
@@ -434,7 +467,8 @@ public class LinuxMachine extends Machine {
                 PrintWriter appPrint = new PrintWriter(appStartScript);
                 try {
                     // #!/bin/bash
-                    appPrint.println("echo Starting linux application.");
+                    appPrint.println("echo Starting linux application: "
+                            + app.getIdentification());
                     // cd path
                     appPrint.println("cd " + app.installPathLinux());
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
@@ -469,7 +503,7 @@ public class LinuxMachine extends Machine {
                             + " -Djava.security.policy="
                             + getConfDirPath() + "security.policy "
                             + app.getTotalName() + " < /dev/null > "
-                            + "start_" + app.getIdentification() + ".sh.log"
+                            + "start_" + app.getIdentification() + ".log"
                             + " 2>&1 &");
                     // fi
                     appPrint.println("fi");
@@ -708,10 +742,10 @@ public class LinuxMachine extends Machine {
     }
 
     /**
-     * Dummy function.
+     * Dummy function on linux machine.
      * This is only used for windows machines!
      * 
-     * @param dir The directory to put the file
+     * @param dir The directory to put the file.
      */
     @Override
     protected void createInstallDirScript(File dir) {

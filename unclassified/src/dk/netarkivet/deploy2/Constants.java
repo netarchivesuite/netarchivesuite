@@ -26,7 +26,13 @@ package dk.netarkivet.deploy2;
 /**
  * Class containing the constant variables.
  */
-public class Constants {
+public final class Constants {
+    /**
+     * Constructor.
+     * Private due to constants only class.
+     */
+    private Constants() {}
+    
     // Setting specific
     /** Path to the Settings branch.*/
     static final String SETTINGS_BRANCH = "settings";
@@ -252,6 +258,8 @@ public class Constants {
     static final int ARGUMENTS_REQUIRED = 4;
     /** The exact number of arguments required for test.*/
     static final int TEST_ARGUMENTS_REQUIRED = 4;
+    /** The maximum integer value in a character.*/
+    static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
 
     // argument parameters as constants.
     /** For initiating a argument. */

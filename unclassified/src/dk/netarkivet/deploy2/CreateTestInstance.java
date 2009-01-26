@@ -92,7 +92,8 @@ public class CreateTestInstance {
         int offsetInt = (new Integer(httpPort)).intValue() 
                 - (new Integer(offset)).intValue();
 
-        if(offsetInt > 9 || offsetInt < 0) {
+        if(offsetInt > Constants.TEST_OFFSET_INTEGER_MAXIMUM_VALUE 
+                || offsetInt < 0) {
             System.err.print(Constants.MSG_ERROR_TEST_OFFSET);
             System.out.println();
             System.exit(0);
@@ -170,7 +171,8 @@ public class CreateTestInstance {
         set.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
 
         for(OffsetSystem ofs : offsetPaths) {
-            set.overWriteOnlyInt(e, ofs.index, offsetVal.charAt(0), ofs.path);
+            set.overWriteOnlyInt(e, ofs.getIndex(), offsetVal.charAt(0), 
+                    ofs.getPath());
         }
     }
     
@@ -233,9 +235,9 @@ public class CreateTestInstance {
      */
     private class OffsetSystem {
         /** The index of the decimal to be replaced by the offset.*/
-        public int index;
+        private int index;
         /** The path to the leaf where the offset are to be applied.*/
-        public String[] path;
+        private String[] path;
 
         /**
          * The constructor.
@@ -246,6 +248,25 @@ public class CreateTestInstance {
         public OffsetSystem(int i, String[] p) {
             index = i;
             path = p;
+        }
+        
+        /**
+         * For retrieving the index.
+         * 
+         * @return The index where the offset should be applied.
+         */
+        public int getIndex() {
+            return index;
+        }
+        
+        /**
+         * For retrieving the path.
+         * 
+         * @return The path in the xml-structure to the element which should
+         * have a character changed.
+         */
+        public String[] getPath() {
+            return path;
         }
     }
 }

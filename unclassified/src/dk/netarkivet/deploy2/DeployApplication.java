@@ -39,7 +39,7 @@ import dk.netarkivet.common.utils.Settings;
  * The application that is run to generate install and start/stop scripts
  * for all physical locations, machines and applications.
  */
-public class DeployApplication {
+public final class DeployApplication {
     static {
         Settings.addDefaultClasspathSettings(
                 Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH
@@ -62,6 +62,11 @@ public class DeployApplication {
     /** The arguments for resetting tempDir.*/
     private static boolean resetDirectory;
 
+    /** 
+     * The constructor.
+     */
+    private DeployApplication() { }
+    
     /**
      * Run the new deploy.
      * 
@@ -86,7 +91,8 @@ public class DeployApplication {
             }
 
             // Check arguments
-            if(ap.cmd.getOptions().length < Constants.ARGUMENTS_REQUIRED) {
+            if(ap.getCommandLine().getOptions().length 
+                    < Constants.ARGUMENTS_REQUIRED) {
                 System.err.print(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS);
                 System.out.println();
                 System.out.println(
@@ -108,41 +114,42 @@ public class DeployApplication {
                 System.exit(0);
             }
             // test if more arguments than options is given 
-            if (args.length > ap.options.getOptions().size()) {
+            if (args.length > ap.getOptions().getOptions().size()) {
                 System.err.print(
                         Constants.MSG_ERROR_TOO_MANY_ARGUMENTS);
                 System.out.println();
-                System.out.println("Maximum " + ap.options.getOptions().size() 
+                System.out.println("Maximum " 
+                        + ap.getOptions().getOptions().size() 
                         + "arguments.");
                 System.exit(0);
             }
            
             // Retrieving the configuration filename
-            String itConfigFileName = ap.cmd.getOptionValue(
+            String itConfigFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_CONFIG_FILE);
             // Retrieving the NetarchiveSuite filename
-            String netarchiveSuiteFileName = ap.cmd.getOptionValue(
+            String netarchiveSuiteFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_NETARCHIVE_SUITE_FILE);
             // Retrieving the security policy filename
-            String secPolicyFileName = ap.cmd.getOptionValue(
+            String secPolicyFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_SECURITY_FILE);
             // Retrieving the log property filename
-            String logPropFileName = ap.cmd.getOptionValue(
+            String logPropFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_LOG_PROPERTY_FILE);
             // Retrieving the output directory name
-            String outputDir = ap.cmd.getOptionValue(
+            String outputDir = ap.getCommandLine().getOptionValue(
                     Constants.ARG_OUTPUT_DIRECTORY);
             // Retrieving the database filename
-            String databaseFileName = ap.cmd.getOptionValue(
+            String databaseFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_DATABASE_FILE);
             // Retrieving the test arguments
-            String testArguments = ap.cmd.getOptionValue(
+            String testArguments = ap.getCommandLine().getOptionValue(
                     Constants.ARG_TEST);
             // Retrieving the reset argument
-            String resetArgument = ap.cmd.getOptionValue(
+            String resetArgument = ap.getCommandLine().getOptionValue(
                     Constants.ARG_RESET);
             // Retrieving the evaluate argument
-            String evaluateArgument = ap.cmd.getOptionValue(
+            String evaluateArgument = ap.getCommandLine().getOptionValue(
                     Constants.ARG_EVALUATE);
 
             // check itConfigFileName and retrieve the file
@@ -421,7 +428,8 @@ public class DeployApplication {
 
             // apply the arguments
             cti.applyTestArguments(changes[0], changes[1], changes[2], 
-                    changes[3]);
+                    changes[2+1]); 
+            //annoying 3 code-style 'warning' (change maximum acceptable value)
 
             // replace ".xml" with "_test.xml"
             String tmp = itConfigFile.getPath();
@@ -447,11 +455,11 @@ public class DeployApplication {
      */
     private static class ArgumentParameters {
         /** Options object for parameters.*/
-        public Options options = new Options();
+        private Options options = new Options();
         /** Parser for parsing the command line arguments.*/
         private CommandLineParser parser = new PosixParser();
         /** The command line.*/
-        public CommandLine cmd;
+        private CommandLine cmd;
          
         /**
          * Initialise options by setting legal parameters for batch jobs.
@@ -513,6 +521,24 @@ public class DeployApplication {
                 res.append(op.getDescription());
             }
             return res.toString();
+        }
+        
+        /**
+         * For retrieving the options.
+         * 
+         * @return The options.
+         */
+        public Options getOptions() {
+            return options;
+        }
+        
+        /**
+         * For retrieving the commandLine.
+         * 
+         * @return The cmd.
+         */
+        public CommandLine getCommandLine() {
+            return cmd;
         }
     }
 }

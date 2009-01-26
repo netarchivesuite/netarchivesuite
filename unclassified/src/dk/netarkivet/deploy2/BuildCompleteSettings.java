@@ -1,25 +1,50 @@
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
+ */
 package dk.netarkivet.deploy2;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.StreamUtils;
 
 /**
  * Class for combining the different setting files into a 
  * complete settings file.
  */
-public class BuildCompleteSettings {
+public final class BuildCompleteSettings {
+    /**
+     * Constructor.
+     */
+    private BuildCompleteSettings()
+    {}
+    
     /**
      * Run the program.
      * This loads and merges all the setting files into a single file.
@@ -29,12 +54,7 @@ public class BuildCompleteSettings {
      */
     public static void main(String[] args) throws IOException {
         XmlStructure settings = null;
-        for (String path: Constants.BUILD_SETTING_FILES) {
-/*            InputStream is = getSettingsFileAsStream(path);
-            File tmpFile = File.createTempFile("tmp", "tmp");
-            StreamUtils.copyInputStreamToOutputStream(is, 
-                    new FileOutputStream(tmpFile));
-*/
+        for (String path : Constants.BUILD_SETTING_FILES) {
             File tmpFile = FileUtils.getResourceFileFromClassPath(path);
             if (settings == null) {
                 settings = new XmlStructure(tmpFile);

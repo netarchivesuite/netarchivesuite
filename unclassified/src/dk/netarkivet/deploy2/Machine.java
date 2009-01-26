@@ -269,7 +269,7 @@ public abstract class Machine {
             // Change the common temp dir (if defined in settings)
             String ctd = settings.getLeafValue(
                     Constants.SETTINGS_TEMP_DIR_LEAF);
-            if(monitorRole != null) {
+            if(monitorRole != null && ctd != null) {
                 prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
                         ctd);
             }
