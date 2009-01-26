@@ -129,8 +129,8 @@ public class HarvestStatus {
         Set<Integer> selectedJobStatusCodesSet = new HashSet<Integer>();
         for (String value: values) {
             if (value.equals(JOBSTATUS_ALL)) {
-                selectedJobStatusCodesSet = new HashSet<Integer>(
-                        JobStatus.ALL_STATUS_CODE);
+                selectedJobStatusCodesSet = new HashSet<Integer>();
+                selectedJobStatusCodesSet.add(JobStatus.ALL_STATUS_CODE);
                 break;
             } else {
                 selectedJobStatusCodesSet.add(
