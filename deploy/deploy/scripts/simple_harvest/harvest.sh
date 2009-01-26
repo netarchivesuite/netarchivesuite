@@ -100,11 +100,11 @@ fi
 function makeCommonOptions {
     echo "-Dsettings.common.jmx.port=$JMXPORT \
       -Dsettings.common.jmx.rmiPort=$(( $JMXPORT + 100 )) \
-      -Dsettings.common.jmx.passwordFile=$NETARCHIVEDIR/conf/jmxremote.password \
+      -Dsettings.common.jmx.passwordFile=$ARCREP_HOME/quickstart.jmxremote.password \
       -Dcom.sun.management.jmxremote \
       -Ddk.netarkivet.quickstart.basedir=$NETARCHIVEDIR \
       -Djava.security.manager \
-      -Djava.security.policy=$NETARCHIVEDIR/conf/quickstart.security.policy";
+      -Djava.security.policy=$ARCREP_HOME/quickstart.security.policy";
 }
 
 function makeXtermOffset {
@@ -195,7 +195,7 @@ if [ -z "$KEEPDATA" -o ! -e $ARCREP_HOME/data/working ]; then
         $ARCREP_HOME/bitarchive* $ARCREP_HOME/oldjobs* $ARCREP_HOME/cache
 fi
 
-chmod 600 $NETARCHIVEDIR/conf/jmxremote.password
+chmod 600 $ARCREP_HOME/quickstart.jmxremote.password
 mkdir -p $ARCREP_HOME/log
 
 ## Clean up log locks
