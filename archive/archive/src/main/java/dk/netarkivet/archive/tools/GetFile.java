@@ -101,7 +101,7 @@ public class GetFile extends ToolRunnerBase {
         public void setUp(String... args) {
             arcrep = ArcRepositoryClientFactory.getViewerInstance();
             myReplica = Replica.getReplicaFromId(Settings.get(
-                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                    CommonSettings.USE_REPLICA_ID));
         }
 
         /**

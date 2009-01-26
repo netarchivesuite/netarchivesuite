@@ -69,7 +69,7 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGH");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "KB");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "KB");
     }
 
     public void tearDown() {
@@ -82,10 +82,14 @@ public class CachingLogHandlerTester extends TestCase {
     /**
      * Test that the constructor exposes N MBeans, and each can be connected to
      * and returns the empty string. It is tested that the names of the objects
-     * are generated from: "location" = Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
-     * "hostname" = InetAddress.getLocalHost().getCanonicalHostName() "httpport"
-     * = Settings.get(CommonSettings.HTTP_PORT_NUMBER) "applicationname" =
-     * Settings.get(CommonSettings.APPLICATIONNAME) "index" = (index in the cache; 0
+     * are generated from: "location" = 
+     * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
+     * "hostname" = InetAddress.getLocalHost().getCanonicalHostName() 
+     * "httpport" = Settings.get(CommonSettings.HTTP_PORT_NUMBER) 
+     * "applicationname" = Settings.get(CommonSettings.APPLICATION_NAME) 
+     * "applicationinstid" =
+     * Settings.get(CommonSettings.APPLICATIONINSTANCE_ID) 
+     * "index" = (index in the cache; 0
      * is always the most recent log record)
      *
      * It is also tested that no MBeans were registered before this call.
@@ -345,14 +349,16 @@ public class CachingLogHandlerTester extends TestCase {
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
                               + Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
+                CommonSettings.THIS_PHYSICAL_LOCATION)
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + ",replica=KB,priority=HIGH"
                               + ",applicationname="
-                              + Settings.get(CommonSettings.APPLICATION_NAME) + "," + (
-                index == -1 ? "*" : "index=" + index));
+                              + Settings.get(CommonSettings.APPLICATION_NAME) 
+                              + ",applicationinstid="
+                              + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID) 
+                              + "," + (index == -1 ? "*" : "index=" + index));
     }
 
     /**

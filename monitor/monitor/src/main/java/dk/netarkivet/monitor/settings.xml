@@ -29,7 +29,7 @@
 -->
 <monitor>
 	<!-- The username and password used to connect to the all Mbeanservers started by the application. 
-	    The username/password must correspond to the values stored in mxremote.password -->
+	    The username/password must correspond to the values stored in jmxremote.password -->
     <jmxUsername>monitorRole</jmxUsername>
     <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
     <logging>

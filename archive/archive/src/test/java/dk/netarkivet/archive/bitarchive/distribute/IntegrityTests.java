@@ -248,7 +248,7 @@ public class IntegrityTests extends TestCase {
         //Create a batch message
          BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheArcrepos(),
                 new ChecksumJob(),
-                Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                Settings.get(CommonSettings.USE_REPLICA_ID));
          JMSConnectionTestMQ.updateMsgID(bm, "testmsgid0");
 
 
@@ -357,7 +357,7 @@ public class IntegrityTests extends TestCase {
                                                      true)); // only first upload will succeed
             BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisHaco(), new TestBatchJobRuns(),
                                                  Settings.get(
-                                                         CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                                                         CommonSettings.USE_REPLICA_ID));
             bac.batch(bMsg);
             RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.removeAndGetFile(rMsg);

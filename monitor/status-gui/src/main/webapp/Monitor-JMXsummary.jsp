@@ -84,6 +84,10 @@ java.util.Locale,
         JMXSummaryUtils.generateShowAllLink(starredRequest,
         	JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
         </th>
+        <th><fmt:message key="tablefield;applicationid"/> <%=
+        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        	JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
+        </th>
         <th><fmt:message key="tablefield;priority"/> <%=
         JMXSummaryUtils.generateShowAllLink(starredRequest,
         	JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
@@ -122,6 +126,11 @@ java.util.Locale,
                 HTMLUtils.escapeHtmlValues
                         (JMXSummaryUtils.reduceApplicationName(
                                 entry.getApplicationName())))%>
+        </td>
+        <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                JMXSummaryUtils.JMXApplicationinstidProperty,
+                entry.getApplicationInstanceID(),
+                HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()))%>
         </td>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                 JMXSummaryUtils.JMXHarvestPriorityProperty,

@@ -75,22 +75,23 @@ public class Replica {
     private static void initializeKnownList() {
         if (known == null) {
             String[] replicaIds 
-                = Settings.getAll(CommonSettings.ENVIRONMENT_REPLICA_IDS);
+                = Settings.getAll(CommonSettings.REPLICA_IDS);
             known = new HashMap<String, Replica>(replicaIds.length);
             StringTree<String> replicas 
-                = Settings.getTree(CommonSettings.ENVIRONMENT_REPLICAS_PATH);
-            List<StringTree<String>> replicaList = replicas.getSubTrees("replica");
+                = Settings.getTree(CommonSettings.REPLICAS_SETTINGS);
+            List<StringTree<String>> replicaList = replicas.getSubTrees(
+                    CommonSettings.REPLICA_TAG);
             for (StringTree<String> replicaTree : replicaList) {
-                String replicaId = replicaTree.getValue(CommonSettings.ENVIRONMENT_REPLICAID_TAG);
+                String replicaId = replicaTree.getValue(CommonSettings.REPLICAID_TAG);
                 known.put(
                     replicaId, 
                     new Replica(
                             replicaId, 
                             replicaTree.getValue(
-                               CommonSettings.ENVIRONMENT_REPLICANAME_TAG),
+                               CommonSettings.REPLICANAME_TAG),
                             ReplicaType.fromSetting(
                                 replicaTree.getValue(
-                                   CommonSettings.ENVIRONMENT_REPLICATYPE_TAG))
+                                   CommonSettings.REPLICATYPE_TAG))
                          )
                 );
             }

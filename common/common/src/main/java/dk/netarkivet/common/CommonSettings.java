@@ -145,42 +145,61 @@ public class CommonSettings {
             = "settings.common.webinterface";
 
     /**
-     * The path to settings belonging to a individual replica.
+     * The entire settings for all replicas in the environment.
      */
-    public static String ENVIRONMENT_REPLICAS_PATH
+    public static String REPLICAS_SETTINGS
             = "settings.common.replicas";
 
     /**
-     * The tags for parts of a replica.
+     * The path to settings belonging to an individual replica,
+     * placed under the replicas setting.
      */
-    public static String ENVIRONMENT_REPLICAID_TAG
+    public static String REPLICA_TAG
+            = "replica";
+
+    /**
+     * The tags for identifier of the replica, placed under the replica tag.
+     * The replica id is used internally in e.g. naming of channels. */
+    public static String REPLICAID_TAG
             = "replicaId";
-    public static String ENVIRONMENT_REPLICANAME_TAG
+    /**
+     * The tags for name of the replica, placed under the replica tag.
+     * The replica name is used in interfaces like the GUI or command-line 
+     * batch-programs. 
+     * The name can be the same value as the id. */
+    public static String REPLICANAME_TAG
             = "replicaName";
-    public static String ENVIRONMENT_REPLICATYPE_TAG
+    /**
+     * The tags for type of the replica, placed under the replica tag.
+     * The type is used to identify whether it is a bitarchive or a checksum
+     * replica. NOTE: checksum replicas are not implemented yet 
+     * Possible values are defined in {@link ReplicaType} */
+    public static String REPLICATYPE_TAG
             = "replicaType";
 
     /**
      * The identifiers of all replicas in the
      * environment, like "replicaOneId" and "replicaTwoId".
      */
-    public static String ENVIRONMENT_REPLICA_IDS
+    public static String REPLICA_IDS
             = "settings.common.replicas.replica.replicaId";
 
-    /** Default bit archive to use for batch jobs (if none is specified). */
-    public static String ENVIRONMENT_USE_REPLICA_ID
+    /** Default bitarchive to use for e.g. batch jobs (if none is specified). */
+    public static String USE_REPLICA_ID
             = "settings.common.useReplicaId";
 
-    /** For archiving applications, determines which physical location 
-     * you are part of. */
-    public static String ENVIRONMENT_THIS_PHYSICAL_LOCATION
+    /** Physical location of where the application is running */
+    public static String THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
-    /** The name of the application, fx. "BitarchiveServerApplication". */
+    /** The name of the application, e.g. "BitarchiveServerApplication". */
     public static String APPLICATION_NAME
             = "settings.common.applicationName";
 
-    /** The name of the application, fx. "BitarchiveServerApplication". */
+    /** The identifier of the instance of the application.
+     *  This is used when there are more than one of the same application
+     *  are running on the same machine, e.g. when more harvesters are running
+     *  on the same machine. */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
 

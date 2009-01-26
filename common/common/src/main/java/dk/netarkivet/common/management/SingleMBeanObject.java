@@ -114,10 +114,12 @@ public class SingleMBeanObject<I> {
         
         nameProperties.put("location",
                            Settings.get(
-                               CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION));
+                               CommonSettings.THIS_PHYSICAL_LOCATION));
         nameProperties.put("hostname", SystemUtils.getLocalHostName());
         nameProperties.put("applicationname",
                            Settings.get(CommonSettings.APPLICATION_NAME));
+        nameProperties.put("applicationinstid",
+                Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
         nameProperties.put("httpport",
                 Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
@@ -128,7 +130,7 @@ public class SingleMBeanObject<I> {
             nameProperties.put("priority", "");            
         }
         nameProperties.put("replica",  
-                               Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                               Settings.get(CommonSettings.USE_REPLICA_ID));
 
         this.mBeanServer = mBeanServer;
     }
@@ -158,7 +160,7 @@ public class SingleMBeanObject<I> {
     /**
      * Properties for the ObjectName name. Update these before registering. On
      * construction, initialised with location, hostname, httpport, priority, replica
-     * applicationname.
+     * applicationname, applicationinstid.
      */
     public Hashtable<String, String> getNameProperties() {
         return nameProperties;

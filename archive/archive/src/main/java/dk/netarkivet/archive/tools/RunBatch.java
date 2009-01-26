@@ -123,7 +123,7 @@ public class RunBatch extends ToolRunnerBase {
          *  use replica is as default */
         private Replica batchReplica = Replica.getReplicaFromId(
             Settings.get(
-                CommonSettings.ENVIRONMENT_USE_REPLICA_ID
+                CommonSettings.USE_REPLICA_ID
             ));
 
         /**
@@ -228,7 +228,7 @@ public class RunBatch extends ToolRunnerBase {
                                "be run "
                                 + "(default: '" 
                                 + Replica.getReplicaFromId(
-                                     CommonSettings.ENVIRONMENT_USE_REPLICA_ID
+                                     CommonSettings.USE_REPLICA_ID
                                   ).getName()
                                 + "')");
                 options.addOption(

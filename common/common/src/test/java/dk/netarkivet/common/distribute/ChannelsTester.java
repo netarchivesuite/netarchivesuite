@@ -65,7 +65,7 @@ public class ChannelsTester extends TestCase {
         assertEquals("Channel must have default name before changing settings",
                 env + "_ONE_THE_BAMON", Channels.getTheBamon().getName());
 //        Settings.set(CommonSettings.ENVIRONMENT_REPLICA_IDS, "SB", "KB");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "TWO");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "TWO");
         assertEquals("Channel name must not change just because setting does",
                 env + "_ONE_THE_BAMON", Channels.getTheBamon().getName());
         resetChannels();
@@ -81,9 +81,9 @@ public class ChannelsTester extends TestCase {
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_" + Settings.get(
-                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID)
+                        CommonSettings.USE_REPLICA_ID)
                 + "_THE_BAMON", Channels.getTheBamon().getName());
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "NOWHERE");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "NOWHERE");
         try {
             resetChannels();
             Channels.getTheBamon();

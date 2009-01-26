@@ -26,7 +26,7 @@
 <!-- 
 	This file contains the default settings used by the common module.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
      	<!-- The name of the environment in which this code is running, e.g.
                  PROD, RELEASETEST, NHC,... Is used as common prefix for 
@@ -37,8 +37,8 @@
              this directory  must be set to have AllPermision in the
              conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
-    	<!-- Defines the method for transferring files around. The default is using http  -->
-        <remoteFile xsi:type="httpremotefile">
+        <remoteFile>
+        <!-- Defines the method for transferring files around. The default is using http  -->
             <!-- The class to use for RemoteFile objects. This class must implement
             the dk.netarkivet.common.distribute.RemoteFile interface 
             -->
@@ -90,7 +90,7 @@
         </mail>
         <!-- JMX logging settings -->
         <jmx>
-            <!-- The port to connect to using JMX -->
+            <!-- The port to use for JMX-->
             <port>8100</port>
             <!-- The RMI port used for communicating with beans -->
             <rmiPort>8200</rmiPort>
@@ -472,6 +472,7 @@
               -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
+        <!-- The entire settings for replicas. -->
         <replicas>
             <!-- All bitarcive replicas in the environment, 
                  e.g., (ONE, replicaOne, bitarchive) and 

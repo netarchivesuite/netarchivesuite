@@ -148,7 +148,7 @@ public class GetDataResolver extends CommandResolver {
                 job.processOnlyFilesMatching(id
                         + Constants.METADATA_FILE_PATTERN_SUFFIX);
                 BatchStatus b = client.batch(job, Settings.get(
-                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                        CommonSettings.USE_REPLICA_ID));
                 if (b.getNoOfFilesProcessed() > b.getFilesFailed().size()
                         && b.hasResultFile()) {
                     b.appendResults(response.getOutputStream());
@@ -217,7 +217,7 @@ public class GetDataResolver extends CommandResolver {
                             FileUtils.getTempDir());
                     client.getFile(fileName, Replica.getReplicaFromId(
                             Settings.get(
-                                    CommonSettings.ENVIRONMENT_USE_REPLICA_ID)),
+                                    CommonSettings.USE_REPLICA_ID)),
                             tempFile);
                     FileUtils.writeFileToStream(tempFile,
                             response.getOutputStream());

@@ -51,7 +51,7 @@ public class SingleMBeanObjectTester extends TestCase {
             name = new ObjectName(
                     "Test:location=NO,hostname="
                     + SystemUtils.getLocalHostName()
-                    + ",httpport=1234,applicationname=TestApp1,priority=high,replica=ONE");
+                    + ",httpport=1234,applicationname=TestApp1,applicationinstid=XX,priority=high,replica=ONE");
         } catch (MalformedObjectNameException e) {
             //never mind
         }
@@ -64,9 +64,10 @@ public class SingleMBeanObjectTester extends TestCase {
     public void setUp() {
         rs.setUp();
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
+        Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XX");
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "1234");
-        Settings.set(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION, "NO");
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "ONE");
+        Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "NO");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "high");
         platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
     }
@@ -98,6 +99,9 @@ public class SingleMBeanObjectTester extends TestCase {
         assertEquals("Should have applicationname in nameProperties",
                      "TestApp1",
                      test.getNameProperties().get("applicationname"));
+        assertEquals("Should have applicationinstid in nameProperties",
+                     "XX",
+                      test.getNameProperties().get("applicationinstid"));
 
         try {
             new SingleMBeanObject((String) null, new MyTestInterfaceObject(),

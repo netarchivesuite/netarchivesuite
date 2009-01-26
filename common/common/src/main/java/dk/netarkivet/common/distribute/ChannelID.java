@@ -57,8 +57,8 @@ public class ChannelID implements Serializable {
     static final String COMMON = "COMMON";
     static final boolean INCLUDE_IP = true;
     static final boolean NO_IP = false;
-    static final boolean INCLUDE_PROC_ID = true;
-    static final boolean NO_PROC_ID = false;
+    static final boolean INCLUDE_APPLINST_ID = true;
+    static final boolean NO_APPLINST_ID = false;
     static final boolean TOPIC = true;
     static final boolean QUEUE = false;
     /**
@@ -72,47 +72,48 @@ public class ChannelID implements Serializable {
     * Constructor of channel names.
     * The constructor is package private because we should never use any
     * channels except the ones constructed by our friend Channels.java
-    * @param app The name of the applications listening to the channel.
+    * @param appPref The prefix used for the applications listening 
+    * to the channel.
     * @param replicaId Name of the replica, or ChannelID.COMMON if
     * channel shared by all replicas.
     * @param useNodeId Whether that IP address of the local node should
     * be included in the channel name.
-    * @param useProcId Whether process identifier (= IP port# used for
-    * communication) should be included in the channel name.
+    * @param useAppInstId Whether application instance id from settings 
+    * should be included in the channel name.
     * @param isTopic Whether the Channel is a Topic or a Queue.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    ChannelID(String app, String replicaId, boolean useNodeId,
-        boolean useProcId, boolean isTopic) {
-        this.name = constructName(app, replicaId, useNodeId, useProcId);
+    ChannelID(String appPref, String replicaId, boolean useNodeId,
+        boolean useAppInstId, boolean isTopic) {
+        this.name = constructName(appPref, replicaId, useNodeId, useAppInstId);
         this.isTopic = isTopic;
     }
 
     /**
     * Constructs a channel name according to the specifications
     * in distributed_architecture.doc.
-    * @param app The name of the applications listening to the channel.
+    * @param appPref The prefix used for the applications listening 
+    * to the channel.
     * @param replicaId Id of the replica, or ChannelID.COMMON if
     * channel common to all bitarchive replicas.
     * @param useNodeId Whether that IP address of the local node should
     * be included in the channel name.
-    * @param useProcId Whether process identifier 
-    * 	(= IP port# used for communication)
+    * @param useAppInstId Whether application instance id from settings 
     * should be included in the channel name.
     * @return The properly concatenated channel name.
     * @throws UnknownID if looking up the local IP number failed.
     */
-    private String constructName(String app, String replicaId,
-        boolean useNodeId, boolean useProcId) {
+    private String constructName(String appPref, String replicaId,
+        boolean useNodeId, boolean useAppInstId) {
         String userId = environmentName;
         String id = "";
         if (useNodeId) {
             id = SystemUtils.getLocalIP().replace('.', '_');
-            if (useProcId) {
+            if (useAppInstId && !applicationInstanceId.isEmpty()) {
                 id += ("_" + applicationInstanceId);
             }
         }
-        return userId + "_" + replicaId + "_" + app
+        return userId + "_" + replicaId + "_" + appPref
             + (id.equals("") ? "" : ("_" + id));
     }
     /**

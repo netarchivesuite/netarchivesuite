@@ -48,6 +48,7 @@ public class JMXSummaryUtils {
     public static final String JMXHostnameProperty = "hostname";
     public static final String JMXHttpportProperty = "httpport";
     public static final String JMXApplicationnameProperty = "applicationname";
+    public static final String JMXApplicationinstidProperty = "applicationinstid";
     public static final String JMXHarvestPriorityProperty = "priority";
     public static final String JMXArchiveReplicaIdProperty = "replica";
     public static final String JMXIndexProperty = "index";
@@ -57,6 +58,7 @@ public class JMXSummaryUtils {
         JMXHostnameProperty, 
         JMXHttpportProperty,
         JMXApplicationnameProperty,
+        JMXApplicationinstidProperty,
         JMXIndexProperty};
     
     private static final String LOGGING_MBEAN_NAME_PREFIX =

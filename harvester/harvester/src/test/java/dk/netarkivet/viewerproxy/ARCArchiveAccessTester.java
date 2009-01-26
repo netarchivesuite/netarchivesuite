@@ -141,7 +141,7 @@ public class ARCArchiveAccessTester extends TestCase {
         aaa.setIndex(TestInfo.ZIPPED_INDEX_DIR);
 
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
-        Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, "ONE");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, new File(WORKING, "admin-data").getAbsolutePath());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, LOG_PATH.getAbsolutePath());
 

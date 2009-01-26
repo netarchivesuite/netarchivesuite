@@ -347,7 +347,7 @@ public class ItConfiguration {
                     int locationPort = 8081;
                     for (String location : locations) {
                         host.overrideSetting(
-                                CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION,
+                                CommonSettings.THIS_PHYSICAL_LOCATION,
                                 location.toUpperCase());
                         host.overrideSetting(CommonSettings.HTTP_PORT_NUMBER,
                                              Integer.toString(locationPort));

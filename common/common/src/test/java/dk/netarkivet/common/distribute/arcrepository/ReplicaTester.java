@@ -41,7 +41,7 @@ public class ReplicaTester extends TestCase {
     public ReplicaTester() {
         if (knownTestIds == null) {
             knownTestIds = Settings.getAll(
-                    CommonSettings.ENVIRONMENT_REPLICA_IDS);
+                    CommonSettings.REPLICA_IDS);
         }
     }
 

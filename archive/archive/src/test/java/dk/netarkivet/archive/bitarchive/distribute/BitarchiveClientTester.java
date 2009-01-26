@@ -330,7 +330,7 @@ public class BitarchiveClientTester extends TestCase {
                                              Channels.getTheArcrepos(),
                                              new TestBatchJobRuns(),
                                              Settings.get(
-                                                     CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                                                     CommonSettings.USE_REPLICA_ID));
         bac.batch(bMsg);
         verifyBatchWentWell();
     }

@@ -195,7 +195,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
-                Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                Settings.get(CommonSettings.USE_REPLICA_ID));
         try {
             bc.get(msg);
         } catch (Throwable t) {

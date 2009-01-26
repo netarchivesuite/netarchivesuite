@@ -52,6 +52,11 @@ public interface StatusEntry extends Comparable<StatusEntry> {
     String getApplicationName();
 
     /** 
+     * Get the instance id of the application that this status entry is from.
+     * @return the instance id of the application that this status entry is from. */
+    String getApplicationInstanceID();
+
+    /** 
      * Get the priority of the harvest queue that this status entry is from.
      * @return the priority of the harvest queue that this status entry is from. */
     String getHarvestPriority();

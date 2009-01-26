@@ -78,6 +78,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * Synchronizer used to make requests.
      */
     private static Synchronizer synchronizer;
+
     /**
      * Factory method map of clients created of specific types.
      */
@@ -89,13 +90,15 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * The type of this indexRequestClient.
      */
     private RequestType requestType;
+    
     /**
      * Logger for this indexRequestClient.
      */
     private Log log = LogFactory.getLog(getClass().getName());
+    
     /**
-     * Setting for the amount of time, in milliseconds, we should wait for replies when
-     * issuing a call to generate an index over some jobs.
+     * Setting for the amount of time, in milliseconds, we should wait for 
+     * replies when issuing a call to generate an index over some jobs.
      */
     public static final String INDEXREQUEST_TIMEOUT
             = "settings.common.indexClient.indexRequestTimeout";

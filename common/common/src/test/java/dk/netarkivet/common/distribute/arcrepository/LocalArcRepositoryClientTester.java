@@ -113,7 +113,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
                     TestInfo.SAMPLE_FILE_COPY.exists());
         arcrep.getFile(TestInfo.SAMPLE_FILE_COPY.getName(),
                        Replica.getReplicaFromId(Settings.get(
-                               CommonSettings.ENVIRONMENT_USE_REPLICA_ID)),
+                               CommonSettings.USE_REPLICA_ID)),
                        TestInfo.SAMPLE_FILE_COPY);
         assertTrue("Should have fetched sample file",
                    TestInfo.SAMPLE_FILE_COPY.exists());
@@ -123,7 +123,7 @@ public class LocalArcRepositoryClientTester extends TestCase {
         try {
             arcrep.getFile("No Such File",
                            Replica.getReplicaFromId(Settings.get(
-                                   CommonSettings.ENVIRONMENT_USE_REPLICA_ID)),
+                                   CommonSettings.USE_REPLICA_ID)),
                            TestInfo.SAMPLE_FILE_COPY);
             fail("Should have died on missing file");
         } catch (IOFailure e) {

@@ -30,7 +30,7 @@
     <common>
         <!-- HTTP connection data-->
         <remoteFile xsi:type="httpremotefile">
-            <!-- The default HTTP port used -->
+            <!-- The HTTP remotefile port number used -->
             <port>8100</port>
         </remoteFile>
     </common>

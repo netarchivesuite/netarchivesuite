@@ -75,7 +75,7 @@ public class HTTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The setting for the HTTP remotefile port number. */
+    /** The setting for the HTTP remotefile port number used. */
     public static String HTTPREMOTEFILE_PORT_NUMBER
             = "settings.common.remoteFile.port";
 

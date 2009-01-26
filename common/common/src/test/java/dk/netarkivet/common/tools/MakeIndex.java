@@ -67,7 +67,7 @@ public class MakeIndex {
             //String baName = wc.getBitarchiveNames()[0];
             BatchStatus cdxstatus =
                     arcrep.batch(cdxjob, Settings.get(
-                            CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                            CommonSettings.USE_REPLICA_ID));
             cdxstatus.getResultFile().copyTo(indexfile);
             cdxstatus.getResultFile().cleanup();
             final List<File> filesFailed = new ArrayList<File>(cdxstatus.getFilesFailed());

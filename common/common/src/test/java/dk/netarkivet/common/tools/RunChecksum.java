@@ -54,7 +54,7 @@ public class RunChecksum {
             bitarchive = argv[0];
             boolean found = false;
             final String[] locations = Settings.getAll(
-                    CommonSettings.ENVIRONMENT_REPLICA_IDS);
+                    CommonSettings.REPLICA_IDS);
             for (String location : locations) {
                 if (bitarchive.equals(location)) {
                     found = true;
@@ -67,7 +67,7 @@ public class RunChecksum {
                 dieWithUsage();
             }
         } else {
-            bitarchive = Settings.get(CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
+            bitarchive = Settings.get(CommonSettings.USE_REPLICA_ID);
         }
 
         PreservationArcRepositoryClient arcrep = ArcRepositoryClientFactory.getPreservationInstance();

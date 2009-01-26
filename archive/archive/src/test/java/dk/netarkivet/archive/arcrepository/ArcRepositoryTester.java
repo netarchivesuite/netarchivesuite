@@ -127,7 +127,7 @@ public class ArcRepositoryTester extends TestCase {
     public void testGetBitarchiveClientFromLocationName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
-                CommonSettings.ENVIRONMENT_REPLICA_IDS);
+                CommonSettings.REPLICA_IDS);
         for(int n = 0; n<locations.length; n++) {
             BitarchiveClient bc = a.getBitarchiveClientFromReplicaId(
                     locations[n]);

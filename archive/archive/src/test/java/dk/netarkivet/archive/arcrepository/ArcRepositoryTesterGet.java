@@ -184,7 +184,7 @@ public class ArcRepositoryTesterGet extends TestCase {
         File result = new File(FileUtils.createUniqueTempDir(
         		WORKING_DIR, "testGetFile"), (String) GETTABLE_FILES.get(1));
         Replica replica = Replica.getReplicaFromId(Settings.get(
-                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                CommonSettings.USE_REPLICA_ID));
         client.getFile(GETTABLE_FILES.get(1), replica, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
         ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
@@ -210,7 +210,7 @@ public class ArcRepositoryTesterGet extends TestCase {
         		"filedir");
         client.removeAndGetFile((String) GETTABLE_FILES.get(1),
                                 Settings.get(
-                                        CommonSettings.ENVIRONMENT_USE_REPLICA_ID),
+                                        CommonSettings.USE_REPLICA_ID),
                                 "42",
                                 MD5.generateMD5onFile(
                                 		new File(bitarchiveFiledir,

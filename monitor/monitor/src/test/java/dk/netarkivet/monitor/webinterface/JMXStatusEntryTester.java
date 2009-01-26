@@ -37,6 +37,7 @@ public class JMXStatusEntryTester extends TestCase {
     public void setUp() {
         properties = new Hashtable<String, String>();         
         properties.put(JMXSummaryUtils.JMXApplicationnameProperty, "SH");
+        properties.put(JMXSummaryUtils.JMXApplicationinstidProperty, "XX");
         properties.put(JMXSummaryUtils.JMXHostnameProperty, "localhost");
         properties.put(JMXSummaryUtils.JMXHttpportProperty, "8081");
         properties.put(JMXSummaryUtils.JMXIndexProperty, "1");
@@ -47,6 +48,7 @@ public class JMXStatusEntryTester extends TestCase {
         JMXStatusEntry entry = new JMXStatusEntry(
                 ObjectName.getInstance("kb", properties));
         assertTrue(entry.getApplicationName().equals("SH"));
+        assertTrue(entry.getApplicationInstanceID().equals("XX"));
         assertTrue(entry.getHostName().equals("localhost"));
         assertTrue(entry.getHTTPPort().equals("8081"));
         assertTrue(entry.getIndex().equals("1"));

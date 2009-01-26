@@ -59,7 +59,7 @@ public class Channels {
      * example value is {"One","Two"}.
      */
     private final String[] allReplicaIds = Settings.getAll(
-            CommonSettings.ENVIRONMENT_REPLICA_IDS);
+            CommonSettings.REPLICA_IDS);
 
     /**
      * thisReplica is the replica, used for applications
@@ -71,7 +71,7 @@ public class Channels {
      * that only communicate with local processes. An example value is "KB".
      */
     private final String useReplica = Settings.get(
-            CommonSettings.ENVIRONMENT_USE_REPLICA_ID);
+            CommonSettings.USE_REPLICA_ID);
 
     /** The index of use replica in the allReplicas list. */
     private final int indexOfUseReplica = Arrays.asList(allReplicaIds)
@@ -85,17 +85,17 @@ public class Channels {
 
         for (int i = 0; i < allReplicaIds.length; i++) {
             ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.TOPIC);
+                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
         }
         ALL_BA = ALL_BA_ARRAY[indexOfUseReplica];
         for (int i = 0; i < allReplicaIds.length; i++) {
             ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
+                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
         ANY_BA = ANY_BA_ARRAY[indexOfUseReplica];
         for (int i = 0; i < allReplicaIds.length; i++) {
             THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
+                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
         THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplica];
     }
@@ -114,7 +114,7 @@ public class Channels {
     }
 
     private final ChannelID THE_SCHED = new ChannelID("THE_SCHED",
-            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_PROC_ID,
+            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
@@ -139,11 +139,11 @@ public class Channels {
 
     private final ChannelID ANY_LOWPRIORITY_HACO = new ChannelID(
             "ANY_LOWPRIORITY_HACO", ChannelID.COMMON, ChannelID.NO_IP,
-            ChannelID.NO_PROC_ID, ChannelID.QUEUE);
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     private final ChannelID ANY_HIGHPRIORITY_HACO = new ChannelID(
             "ANY_HIGHPRIORITY_HACO", ChannelID.COMMON, ChannelID.NO_IP,
-            ChannelID.NO_PROC_ID, ChannelID.QUEUE);
+            ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Returns the one-per-HACO queue on which HaCo receives replies from the
@@ -156,7 +156,7 @@ public class Channels {
     }
 
     private final ChannelID THIS_HACO = new ChannelID("THIS_HACO",
-            ChannelID.COMMON, ChannelID.INCLUDE_IP, ChannelID.INCLUDE_PROC_ID,
+            ChannelID.COMMON, ChannelID.INCLUDE_IP, ChannelID.INCLUDE_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
@@ -169,7 +169,7 @@ public class Channels {
     }
 
     private final ChannelID THE_ARCREPOS = new ChannelID("THE_ARCREPOS",
-            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_PROC_ID,
+            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
@@ -273,7 +273,7 @@ public class Channels {
     }
 
     private final ChannelID ERROR = new ChannelID("ERROR", ChannelID.COMMON,
-            ChannelID.NO_IP, ChannelID.NO_PROC_ID, ChannelID.QUEUE);
+            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
      * Given an replica, returns the BAMON queue to which batch jobs
@@ -313,7 +313,7 @@ public class Channels {
             "INDEX_SERVER",
             ChannelID.COMMON,
             ChannelID.NO_IP,
-            ChannelID.NO_PROC_ID,
+            ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
@@ -331,7 +331,7 @@ public class Channels {
             "INDEX_CLIENT",
             ChannelID.COMMON,
             ChannelID.INCLUDE_IP,
-            ChannelID.INCLUDE_PROC_ID,
+            ChannelID.INCLUDE_APPLINST_ID,
             ChannelID.QUEUE);
 
 
@@ -347,7 +347,7 @@ public class Channels {
             "MONITOR",
             ChannelID.COMMON,
             ChannelID.NO_IP,
-            ChannelID.NO_PROC_ID,
+            ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**

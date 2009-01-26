@@ -128,7 +128,7 @@ public class JmxTester extends TestCase{
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
                               + Settings.get(
-                CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
+                CommonSettings.THIS_PHYSICAL_LOCATION)
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)

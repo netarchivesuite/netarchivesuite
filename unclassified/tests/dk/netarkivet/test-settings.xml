@@ -70,6 +70,6 @@
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
-        <applicationInstanceId>id</applicationInstanceId>
+        <applicationInstanceId>XX</applicationInstanceId>
      </common>
 </settings>

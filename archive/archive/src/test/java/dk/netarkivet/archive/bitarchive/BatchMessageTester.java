@@ -62,7 +62,7 @@ public class BatchMessageTester extends TestCase {
      */
     public void testBatchMessageSerializable() throws IOException, ClassNotFoundException {
         BatchMessage bm = new BatchMessage(q1, job, Settings.get(
-                CommonSettings.ENVIRONMENT_USE_REPLICA_ID));
+                CommonSettings.USE_REPLICA_ID));
         BatchMessage bm2 = (BatchMessage) Serial.serial(bm);
         assertEquals("Serializability failure for BatchMessage", relevantState(bm), relevantState(bm2));
     }
