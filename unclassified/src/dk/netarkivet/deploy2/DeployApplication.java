@@ -86,7 +86,7 @@ public final class DeployApplication {
             // Make sure the arguments can be parsed.
             if(!ap.parseParameters(args)) {
                 System.err.print(Constants.MSG_ERROR_PARSE_ARGUMENTS);
-                System.out.println();
+                System.out.println(ap.listArguments());
                 System.exit(0);
             }
 
@@ -101,9 +101,6 @@ public final class DeployApplication {
                 System.out.println(
                         "outputdir defaults to "
                         + "./environmentName (set in config file)");
-                System.out.println(
-                        "Database defaults to "
-                        + "?? (from NetarchiveSuite.zip)");
                 System.out.println("Example: ");
                 System.out.println(
                         "DeployApplication "
@@ -482,7 +479,7 @@ public final class DeployApplication {
                     + "http port, environment name, mail receiver).");
             options.addOption(Constants.ARG_RESET,
                     true, "[OPTIONAL] Reset temp directory (y/n - anything "
-                    + "other than 'y' or 'Y' is asserted no).");
+                    + "other than 'y' or 'yes' is asserted no).");
             options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
                     + "Evaluate the config file.");
         }

@@ -26,7 +26,7 @@
 <!-- 
 	This file contains the default settings used by the viewerproxy module.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <viewerproxy>
         <!-- The main directory for the ViewerProxy, used for storing the Lucene
              index for the jobs being viewed. This directory can be used by multiple

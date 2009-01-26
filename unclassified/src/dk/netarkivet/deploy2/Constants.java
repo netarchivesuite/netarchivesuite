@@ -188,9 +188,12 @@ public final class Constants {
     // application specific
     /** The path to name in a application instance.*/
     static final String APPLICATION_NAME_ATTRIBUTE = "name";
-    /** The path to the instance id for the application.*/
+    /** The path to the application instance id branch under common.*/
     static final String APPLICATION_INSTANCE_ID_BRANCH = 
         "applicationInstanceId";
+    /** The path to the application instance id leaf from settings.*/
+    static final String[] APPLICATION_INSTANCE_ID_PATH = { 
+        COMMON_BRANCH, APPLICATION_INSTANCE_ID_BRANCH};
 
     // operating system specific
     /** The operating system attribute for windows.*/

@@ -26,10 +26,10 @@
 <!-- 
 	This file contains the default settings used by the FTPRemoteFile class.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
         <!-- FTP connection data-->
-        <remoteFile xsi:type="ftpremotefile">
+        <remoteFile>
             <!-- The default FTP-server used -->
             <serverName>localhost</serverName>
             <!-- The default FTP-server port used -->

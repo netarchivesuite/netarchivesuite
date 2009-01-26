@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <!--  
  * File:        $Id$
  * Revision:    $Revision$
@@ -25,9 +24,10 @@
  */
 -->
 <!-- 
-	This file contains the default settings used by the monitor module.
+        This file contains the default settings used by the monitor module.
 -->
-<monitor>
+<settings>
+    <monitor>
 	<!-- The username and password used to connect to the all Mbeanservers started by the application. 
 	    The username/password must correspond to the values stored in jmxremote.password -->
     <jmxUsername>monitorRole</jmxUsername>

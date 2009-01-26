@@ -26,10 +26,10 @@
 <!-- 
 	This file contains the default settings used by the HTTPRemoteFile class.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
         <!-- HTTP connection data-->
-        <remoteFile xsi:type="httpremotefile">
+        <remoteFile>
             <!-- The HTTP remotefile port number used -->
             <port>8100</port>
         </remoteFile>

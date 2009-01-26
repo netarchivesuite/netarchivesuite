@@ -90,6 +90,7 @@ public final class BuildCompleteSettings {
             SAXReader reader = new SAXReader();
             if (settingFile.canRead()) {
                 doc =  reader.read(settingFile);
+                settingFile.deleteOnExit();
                 return doc.getRootElement();
             } else {
                 System.out.println("Cannot read file: " 
@@ -97,7 +98,8 @@ public final class BuildCompleteSettings {
             }
         } catch (DocumentException e) {
             System.err.println("Problems with file: " 
-                    + settingFile.getAbsolutePath());
+                    + settingFile.getAbsolutePath() + " : " + e);
+            
         }
         return null;
     }

@@ -27,9 +27,9 @@
 	This file contains the default settings used to initialize
 	the JMSArcRepositoryClient class.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
-        <arcrepositoryClient xsi:type="jmsarcrepositoryclient">
+        <arcrepositoryClient>
             <!-- How many milliseconds we will wait before giving up on a
                  lookup request to the Arcrepository. Set to 1 minute to
                  make it possible to retrieve large records using FTP -->

@@ -26,7 +26,7 @@
 <!-- 
 	This file contains the default settings used by the archive module.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <archive>
         <arcrepository>
             <!-- Absolute/relative path to where the "central list of files and

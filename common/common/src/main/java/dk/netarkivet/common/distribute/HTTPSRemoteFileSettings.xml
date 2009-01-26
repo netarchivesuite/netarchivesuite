@@ -26,10 +26,10 @@
 <!-- 
 	This file contains the default settings used by HTTPSRemoteFile class.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
         <!-- HTTPS connection data-->
-        <remoteFile xsi:type="httpsremotefile">
+        <remoteFile>
             <!-- The default HTTPS port used -->
             <port>8100</port>
             <!-- The path for the keystore containing the certificate. -->

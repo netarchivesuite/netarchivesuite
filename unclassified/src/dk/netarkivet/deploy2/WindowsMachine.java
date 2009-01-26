@@ -177,7 +177,7 @@ public class WindowsMachine extends Machine {
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \"cmd /c  ");
-        res.append(getConfDirPath());
+        res.append(getLocalConfDirPath());
         res.append("killall");
         res.append(scriptExtension);
         res.append(" \" ");

@@ -26,9 +26,9 @@
 <!-- 
 	This file contains the default settings used by the IndexRequestClient class.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
     <common>
-     <indexClient xsi:type="indexrequestclient">
+     <indexClient>
             <!-- The amount of time, in milliseconds, we should wait for replies
                  when issuing a call to generate an index over some jobs.
              -->

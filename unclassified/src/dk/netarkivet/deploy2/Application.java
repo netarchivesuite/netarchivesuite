@@ -108,16 +108,16 @@ public class Application {
                 nameWithNamePath = "";
             }
             // look for the optional application instance id
-            Element elem = applicationRoot.element(
-                    Constants.APPLICATION_INSTANCE_ID_BRANCH);
-            if(elem != null) {
+            Element elem = settings.getSubChild(
+                    Constants.APPLICATION_INSTANCE_ID_PATH);
+            if(elem != null && !elem.getText().isEmpty()) {
                 applicationId = elem.getText();
             } else {
                 applicationId = null;
             }
         } catch(Exception e) {
-            log.debug("Application variables not extractable! ");
-            throw new IOFailure("Application variables not extractable! ");
+            log.debug("Application variables not extractable: " + e);
+            throw new IOFailure("Application variables not extractable: " + e);
         }
     }
 
