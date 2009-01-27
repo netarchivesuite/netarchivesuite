@@ -98,7 +98,7 @@ public class DeployConfiguration {
         // get configuration tree, settings and parameters
         config = new XmlStructure(itConfigFile);
         settings = new XmlStructure(
-                config.getChild(Constants.SETTINGS_BRANCH));
+                config.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
         machineParam = new Parameters(config);
 
         // if a outputDir has not been given as argument, 
@@ -107,7 +107,7 @@ public class DeployConfiguration {
             // Load output directory from config file
             outputDirName = "./" 
                 + config.getSubChildValue(
-                        Constants.ENVIRONMENT_NAME_TOTAL_PATH_LEAF)
+                        Constants.COMPLETE_ENVIRONMENT_NAME_LEAF)
                         + "/";
         }
         outputDir = new File(outputDirName);
@@ -124,7 +124,7 @@ public class DeployConfiguration {
         physLocs = new ArrayList<PhysicalLocation>();
         // get the list from the XML tree
         List<Element> physList = config.getChildren(
-                Constants.PHYSICAL_LOCATION_BRANCH);
+                Constants.DEPLOY_PHYSICAL_LOCATION);
         // get all physical locations into the list
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,

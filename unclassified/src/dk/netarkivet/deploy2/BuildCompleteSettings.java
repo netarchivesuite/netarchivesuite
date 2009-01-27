@@ -37,6 +37,8 @@ import dk.netarkivet.common.utils.FileUtils;
 /**
  * Class for combining the different setting files into a 
  * complete settings file.
+ * 
+ * This program has to be run from src/ directory.
  */
 public final class BuildCompleteSettings {
     /**

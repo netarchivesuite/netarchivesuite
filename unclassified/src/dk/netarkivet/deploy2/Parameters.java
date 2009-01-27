@@ -60,12 +60,12 @@ public class Parameters {
     public Parameters(XmlStructure root) {
         ArgumentNotValid.checkNotNull(root, "XmlStructure root");
         // initialise variables
-        classPaths = root.getChildren(Constants.CLASS_PATH_BRANCH);
-        javaOptions = root.getChildren(Constants.JAVA_OPTIONS_BRANCH);
-        installDir = root.getChild(Constants.PARAMETER_INSTALL_DIR_BRANCH);
+        classPaths = root.getChildren(Constants.DEPLOY_CLASS_PATH);
+        javaOptions = root.getChildren(Constants.DEPLOY_JAVA_OPTIONS);
+        installDir = root.getChild(Constants.DEPLOY_INSTALL_DIR);
         machineUserName = root.getChild(
-                Constants.PARAMETER_MACHINE_USER_NAME_BRANCH);
-        databaseDir = root.getChild(Constants.PARAMETER_DATABASE_DIR_BRANCH);
+                Constants.DEPLOY_MACHINE_USER_NAME);
+        databaseDir = root.getChild(Constants.DEPLOY_DATABASE_DIR);
     }
 
     /**
@@ -116,27 +116,27 @@ public class Parameters {
         ArgumentNotValid.checkNotNull(root, "Element root");
         List<Element> tmp;
         // check if any class paths to overwrite existing
-        tmp = root.elements(Constants.CLASS_PATH_BRANCH);
+        tmp = root.elements(Constants.DEPLOY_CLASS_PATH);
         if(tmp.size() > 0) {
             classPaths = tmp;
         }
         // check if any java options to overwrite existing
-        tmp = root.elements(Constants.JAVA_OPTIONS_BRANCH);
+        tmp = root.elements(Constants.DEPLOY_JAVA_OPTIONS);
         if(tmp.size() > 0) {
             javaOptions = tmp;
         }
         // check if new install dir to overwrite existing
-        tmp = root.elements(Constants.PARAMETER_INSTALL_DIR_BRANCH);
+        tmp = root.elements(Constants.DEPLOY_INSTALL_DIR);
         if(tmp.size() > 0) {
             installDir = tmp.get(0);
         }
         // check if new install dir to overwrite existing
-        tmp = root.elements(Constants.PARAMETER_MACHINE_USER_NAME_BRANCH);
+        tmp = root.elements(Constants.DEPLOY_MACHINE_USER_NAME);
         if(tmp.size() > 0) {
             machineUserName = tmp.get(0);
         }
         // check if new database dir to overwrite existing
-        tmp = root.elements(Constants.PARAMETER_DATABASE_DIR_BRANCH);
+        tmp = root.elements(Constants.DEPLOY_DATABASE_DIR);
         if(tmp.size() > 0) {
             databaseDir = tmp.get(0);
         }

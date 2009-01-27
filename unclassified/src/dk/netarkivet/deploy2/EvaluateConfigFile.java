@@ -69,20 +69,20 @@ public class EvaluateConfigFile {
     @SuppressWarnings("unchecked")
     public void evaluate() {
         // check global settings
-        evaluateElement(root.getChild(Constants.SETTINGS_BRANCH));
+        evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
         List<Element> physLocs = root.getChildren(
-                Constants.PHYSICAL_LOCATION_BRANCH);
+                Constants.DEPLOY_PHYSICAL_LOCATION);
         for(Element pl : physLocs) {
             // check physical location settings
-            evaluateElement(pl.element(Constants.SETTINGS_BRANCH));
-            List<Element> macs = pl.elements(Constants.MACHINE_BRANCH);
+            evaluateElement(pl.element(Constants.COMPLETE_SETTINGS_BRANCH));
+            List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
             for(Element mac : macs) {
                 // check machine settings 
-                evaluateElement(mac.element(Constants.SETTINGS_BRANCH));
-                List<Element> apps = mac.elements(Constants.APPLICATION_BRANCH);
+                evaluateElement(mac.element(Constants.COMPLETE_SETTINGS_BRANCH));
+                List<Element> apps = mac.elements(Constants.DEPLOY_APPLICATION_NAME);
                 for(Element app : apps) {
                     // check application settings
-                    evaluateElement(app.element(Constants.SETTINGS_BRANCH));
+                    evaluateElement(app.element(Constants.COMPLETE_SETTINGS_BRANCH));
                 }
             }
         }

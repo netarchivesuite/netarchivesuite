@@ -23,6 +23,7 @@
  */
 package dk.netarkivet.deploy2;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.dom4j.io.SAXReader;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.XmlUtils;
 
 /**
  * The structure for handling the XML files.
@@ -286,7 +288,7 @@ public class XmlStructure {
      * by a tree
      */
     @SuppressWarnings("unchecked")
-    public void overWriting(Element current, Element overwriter) 
+    private void overWriting(Element current, Element overwriter) 
                 throws IllegalState {
         ArgumentNotValid.checkNotNull(current, "Element current");
         ArgumentNotValid.checkNotNull(overwriter, "Element overwriter");
@@ -395,5 +397,51 @@ public class XmlStructure {
         txt[position] = value;
         String res = new String(txt);
         current.setText(res);
+    }
+    
+    /**
+     * Creates an dom4j.Element from a String.
+     * This string has to be in the XML format, otherwise return null·
+     *  
+     * @param content The content of a String.
+     * @return The Element.
+     */
+    public static Element makeElementFromString(String content) {
+	try{
+	    ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
+	    Document doc = XmlUtils.getXmlDoc(in);
+
+	    return doc.getRootElement();
+	} catch (Exception e) {
+	    System.err.println("makeElementFromString error: " + e);
+	    return null;
+	}
+    }
+    
+    /**
+     * This function creates the XML code for the path.
+     * 
+     * @param content The content at the leaf of the branch.
+     * @param path The path to the branch.
+     * @return The XML code for the branch with content.
+     */
+    public static String pathAndContentToXML(String content, String ... path) {
+	StringBuilder res = new StringBuilder();
+	
+	// write path to the leaf
+	for(int i = 0; i<path.length; i++) {
+	    String st = path[i];
+	    res.append("<" + st + ">");
+	}
+	
+	res.append(content);
+
+	// write path back from leaf (close xml).
+	for(int i = path.length-1; i >= 0; i--) {
+	    String st = path[i];
+	    res.append("</" + st + ">");
+	}
+	
+	return res.toString();
     }
 }

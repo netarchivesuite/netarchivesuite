@@ -23,8 +23,18 @@
  */
 package dk.netarkivet.deploy2;
 
+import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.utils.EMailNotifications;
+import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.monitor.MonitorSettings;
+import dk.netarkivet.viewerproxy.ViewerProxySettings;
+
 /**
  * Class containing the constant variables.
+ * 
+ * SETTINGS_ = path to branches from the settings branch.
+ * COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
     /**
@@ -33,194 +43,129 @@ public final class Constants {
      */
     private Constants() {}
     
-    // Setting specific
-    /** Path to the Settings branch.*/
-    static final String SETTINGS_BRANCH = "settings";
-    /** Path to the common branch within the settings branch.*/
-    static final String COMMON_BRANCH = "common";
-    /** Path to the environment name branch in the common branch.*/
-    static final String ENVIRONMENT_NAME_BRANCH = "environmentName";
-    /** The total path to the environment name from an entity branch.*/
-    static final String[] ENVIRONMENT_NAME_TOTAL_PATH_LEAF = 
-        {SETTINGS_BRANCH, COMMON_BRANCH, ENVIRONMENT_NAME_BRANCH};
-    /** The path to the environment name from the settings branch.*/
-    static final String[] ENVIRONMENT_NAME_SETTING_PATH_LEAF = 
-        {COMMON_BRANCH, ENVIRONMENT_NAME_BRANCH};
-    /** Path to the environment name branch in the common branch.*/
-    static final String DATABASE_BRANCH = "database";
-    /** Path to the environment name branch in the common branch.*/
-    static final String DATABASE_URL_BRANCH = "url";
-    /** The path to the database directory from the settings branch.*/
-    static final String[] DATABASE_URL_SETTING_LEAF_PATH = 
-        {COMMON_BRANCH, DATABASE_BRANCH, DATABASE_URL_BRANCH};
-    
-    // parameter specific
+    // deploy specific parameter.
     /** The path to the class path branches.*/
-    static final String CLASS_PATH_BRANCH = "deployClassPath";
+    static final String DEPLOY_CLASS_PATH = "deployClassPath";
     /** The path to the java option branches.*/
-    static final String JAVA_OPTIONS_BRANCH = "deployJavaOpt";
+    static final String DEPLOY_JAVA_OPTIONS = "deployJavaOpt";
     /** The path to the optional installation directory.*/
-    static final String PARAMETER_INSTALL_DIR_BRANCH = "deployInstallDir";
+    static final String DEPLOY_INSTALL_DIR = "deployInstallDir";
     /** The path to the machine user name.*/
-    static final String PARAMETER_MACHINE_USER_NAME_BRANCH = 
-        "deployMachineUserName";
+    static final String DEPLOY_MACHINE_USER_NAME = "deployMachineUserName";
     /** The path to the directory for the database.*/
-    static final String PARAMETER_DATABASE_DIR_BRANCH = "deployDatabaseDir";
-
-    // traversing the XML tree
+    static final String DEPLOY_DATABASE_DIR = "deployDatabaseDir";
     /** The path to physical locations in from the global scope.*/
-    static final String PHYSICAL_LOCATION_BRANCH = "thisPhysicalLocation";
+    static final String DEPLOY_PHYSICAL_LOCATION = "thisPhysicalLocation";
     /** The path to machines from a physical location.*/
-    static final String MACHINE_BRANCH = "deployMachine";
+    static final String DEPLOY_MACHINE = "deployMachine";
     /** The path to applications from a machine.*/
-    static final String APPLICATION_BRANCH = "applicationName";
-    
-    /** The path to the HTTP branch from common.*/
-    static final String SETTINGS_HTTP_BRANCH = "http";
-    /** The path to the port branch from the HTTP branch.*/
-    static final String SETTINGS_HTTP_PORT_BRANCH = "port";
-    /** The complete path to the port leaf from beyond settings.*/
-    static final String[] SETTINGS_HTTP_PORT_PATH = {SETTINGS_BRANCH, 
-        COMMON_BRANCH, SETTINGS_HTTP_BRANCH, SETTINGS_HTTP_PORT_BRANCH}; 
-    /** The path to the notification branch under common.*/
-    static final String SETTINGS_NOTIFICATION_BRANCH = "notifications";
-    /** The path to the receiver branch under notification.*/
-    static final String SETTINGS_NOTIFICATION_RECEIVER_BRANCH = "receiver";
-    /** The complete path to the receiver leaf from beyond settings.*/
-    static final String[] SETTINGS_NOTIFICATION_RECEIVER_PATH = 
-        {SETTINGS_BRANCH, COMMON_BRANCH, SETTINGS_NOTIFICATION_BRANCH, 
-        SETTINGS_NOTIFICATION_RECEIVER_BRANCH};
-    /** The name of the new modified configuration file for tests.*/
-    static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
+    static final String DEPLOY_APPLICATION_NAME = "applicationName";
 
-    /** The path to jmx branch from common.*/
-    static final String SETTINGS_JMX_BRANCH = "jmx";
-    /** The path to jmx port branch from jmx.*/
-    static final String SETTINGS_JMX_PORT_BRANCH = "port";
-    /** The path to rmi port branch from jmx.*/
-    static final String SETTINGS_JMX_RMI_PORT_BRANCH = "rmiPort";
-    /** The path to harvester branch from settings.*/
-    static final String SETTINGS_HARVESTER_BRANCH = "harvester";
-    /** The path to the harvesting branch from harvester.*/
-    static final String SETTINGS_HARVESTER_HARVESTING_BRANCH = "harvesting";
-    /** The path to the heritrix branch from harvesting.*/
-    static final String SETTINGS_HARVESTER_HERITRIX_BRANCH = "heritrix";
-    /** The path to the guiPort branch from heritrix.*/
-    static final String SETTINGS_HARVESTER_GUI_PORT_BRANCH = "guiPort";
-    /** The path to the jmxPort branch from heritrix.*/
-    static final String SETTINGS_HARVESTER_JMX_PORT_BRANCH = "jmxPort";
-    
-    /** The path to the jmxPort leaf from beyond settings.*/
-    static final String[] TEXT_JMX_PORT_PATH = {SETTINGS_BRANCH, COMMON_BRANCH, 
-        SETTINGS_JMX_BRANCH, SETTINGS_JMX_PORT_BRANCH};
-    /** The path to the rmiPort leaf from beyond settings.*/
-    static final String[] TEXT_JMX_RMI_PORT_PATH = {SETTINGS_BRANCH, 
-        COMMON_BRANCH, SETTINGS_JMX_BRANCH, SETTINGS_JMX_RMI_PORT_BRANCH};
-    /** The path to the heritrix guiPort from beyond settings.*/
-    static final String[] TEXT_HARVEST_HETRIX_GUI_PORT = {
-        SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
-        SETTINGS_HARVESTER_HARVESTING_BRANCH, 
-        SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_GUI_PORT_BRANCH};
-    /** The path to the heritrix jmxPort from beyond settings.*/
-    static final String[] TEXT_HARVEST_HETRIX_JMX_PORT = {
-        SETTINGS_BRANCH, SETTINGS_HARVESTER_BRANCH, 
-        SETTINGS_HARVESTER_HARVESTING_BRANCH, 
-        SETTINGS_HARVESTER_HERITRIX_BRANCH, SETTINGS_HARVESTER_JMX_PORT_BRANCH};
-
-    /** The path to the archive branch from settings.*/
-    static final String SETTINGS_ARCHIVE_BRANCH = "archive";
-    /** The path to the bitpreservation branch from archive.*/
-    static final String SETTINGS_ARCHIVE_BITPRESERVATION_BRANCH = 
-        "bitpreservation";
-    /** The path to the arcrepository branch from archive.*/
-    static final String SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH =
-        "arcrepository";
-    /** The path to the base dir branch from bitpreservation
-     *  and arcrepository under archive.*/
-    static final String SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH =
-        "baseDir";
-    /** The path to the viewerproxy branch from the settings branch.*/
-    static final String SETTINGS_VIEWERPROXY_BRANCH = "viewerproxy";
-    /** The path to the base dir branch from the viewerproxy branch.*/
-    static final String SETTINGS_VIEWERPROXY_BASEDIR_BRANCH = "baseDir";
-    /** The path to the fileDir branch from settings.*/
-    static final String SETTINGS_FILE_DIR_BRANCH = "fileDir";
-    /** The path to the tempDir branch from settings.*/
-    static final String SETTINGS_TEMP_DIR_BRANCH = "tempDir";
-    /** The path to the serverDir branch from harvester.harvesting.*/
-    static final String SETTINGS_HARVEST_SERVER_DIR_BRANCH = "serverDir";
-    /** The path to the tempDir leaf from settings.*/
-    static final String[] SETTINGS_TEMP_DIR_LEAF = {
-        COMMON_BRANCH, SETTINGS_TEMP_DIR_BRANCH};
-    /** The path to the fileDir branch from settings.*/
-    static final String[] SETTINGS_FILE_DIR_LEAF = {
-        SETTINGS_ARCHIVE_BRANCH, SETTINGS_FILE_DIR_BRANCH};
-    /** The path to the serverDir leaf from settings.*/
-    static final String[] SETTINGS_HARVEST_SERVER_DIR_LEAF = {
-        SETTINGS_HARVESTER_BRANCH, SETTINGS_HARVESTER_HARVESTING_BRANCH,
-        SETTINGS_HARVEST_SERVER_DIR_BRANCH};
-    /** The path to the bitpreservation base dir leaf from settings.*/
-    static final String[] SETTINGS_ARCHIVE_BP_BASEDIR_LEAF = {
-        Constants.SETTINGS_ARCHIVE_BRANCH,
-        Constants.SETTINGS_ARCHIVE_BITPRESERVATION_BRANCH,
-        Constants.SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH};
-    /** The path to the arcrepository base dir leaf from settings.*/
-    static final String[] SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF = {
-        Constants.SETTINGS_ARCHIVE_BRANCH,
-        Constants.SETTINGS_ARHCIVE_ARCREPOSITORY_BRANCH, 
-        Constants.SETTINGS_ARCHIVE_BP_BASEDIR_BRANCH};
-    /** The path to the viewer proxy base dir leaf from settings.*/
-    static final String[] SETTINGS_VIEWERPROXY_BASEDIR_LEAF = {
-        SETTINGS_ARCHIVE_BRANCH,
-        SETTINGS_VIEWERPROXY_BRANCH, 
-        SETTINGS_VIEWERPROXY_BASEDIR_BRANCH};
-    
-    // physical location specific
+    // Attributes
+    /** The path to name in a application instance.*/
+    static final String APPLICATION_NAME_ATTRIBUTE = "name";
     /** The path to name in a physical location instance.*/
     static final String PHYSICAL_LOCATION_NAME_ATTRIBUTES = "name";
-
-    // machine specific
     /** The path to name in a machine instance.*/
     static final String MACHINE_NAME_ATTRIBUTE = "name";
     /** The path to the operating system variable.*/
     static final String MACHINE_OPERATING_SYSTEM_ATTRIBUTE = "os";
 
-    // application specific
-    /** The path to name in a application instance.*/
-    static final String APPLICATION_NAME_ATTRIBUTE = "name";
-    /** The path to the application instance id branch under common.*/
-    static final String APPLICATION_INSTANCE_ID_BRANCH = 
-        "applicationInstanceId";
-    /** The path to the application instance id leaf from settings.*/
-    static final String[] APPLICATION_INSTANCE_ID_PATH = { 
-        COMMON_BRANCH, APPLICATION_INSTANCE_ID_BRANCH};
+    // TAGS
+    /** The attachment for the file dir in the security policy file.*/
+    static final String SECURITY_FILE_DIR_TAG = "filedir";
+    /** The name of the jmx principal name tag in the security file.*/
+    static final String SECURITY_JMX_PRINCIPAL_NAME_TAG = "ROLE";
+    /** The name of the common temp dir tag in the security policy file.*/
+    static final String SECURITY_COMMON_TEMP_DIR_TAG = "TEMPDIR";
 
-    // operating system specific
+    // TEMPORARY CONSTANTS!
+    /** Path to the Settings branch.*/
+    static final String COMPLETE_SETTINGS_BRANCH = 
+	CommonSettings.SETTINGS;
+    
+    // Setting specific
+    /** The total path to the environment name from an entity branch.*/
+    static final String[] COMPLETE_ENVIRONMENT_NAME_LEAF = 
+	CommonSettings.ENVIRONMENT_NAME.split("[.]");
+    /** The path to the environment name from the settings branch.*/
+    static final String[] SETTINGS_ENVIRONMENT_NAME_LEAF =
+	CommonSettings.ENVIRONMENT_NAME
+	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the database directory from the settings branch.*/
+    static final String[] DATABASE_URL_SETTING_LEAF_PATH = CommonSettings
+        .DB_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The complete path to the port leaf from beyond settings.*/
+    static final String[] COMPLETE_HTTP_PORT_LEAF = 
+        CommonSettings.HTTP_PORT_NUMBER.split("[.]");
+    /** The complete path to the receiver leaf from beyond settings.*/
+    static final String[] SETTINGS_NOTIFICATION_RECEIVER_PATH = 
+	EMailNotifications.MAIL_RECEIVER_SETTING.split("[.]");
+    /** The path to the jmxPort leaf from beyond settings.*/
+    static final String[] COMPLETE_JMX_PORT_PATH =
+	CommonSettings.JMX_PORT.split("[.]");
+    /** The path to the rmiPort leaf from beyond settings.*/
+    static final String[] TEXT_JMX_RMI_PORT_PATH =
+	CommonSettings.JMX_RMI_PORT.split("[.]");
+    /** The path to the heritrix guiPort from beyond settings.*/
+    static final String[] COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH = 
+        HarvesterSettings.HERITRIX_GUI_PORT.split("[.]");
+    /** The path to the heritrix jmxPort from beyond settings.*/
+    static final String[] COMPLETE_HARVEST_HETRIX_JMX_PORT =
+	HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
+    /** The path to the tempDir leaf from settings.*/
+    static final String[] SETTINGS_TEMPDIR_LEAF = 
+	CommonSettings.DIR_COMMONTEMPDIR
+	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the fileDir branch from settings.*/
+    static final String[] SETTINGS_BITARCHIVE_FILEDIR_LEAF = 
+	ArchiveSettings.BITARCHIVE_SERVER_FILEDIR
+	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the serverDir leaf from settings.*/
+    static final String[] SETTINGS_HARVEST_SERVERDIR_LEAF = 
+        HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the bitpreservation base dir leaf from settings.
+     *  Uses the constant from ArciveSettings, with the 'settings' removed.*/
+    static final String[] SETTINGS_ARCHIVE_BP_BASEDIR_LEAF = 
+        ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION
+            .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the arcrepository base dir leaf from settings.
+     *  Uses the constant from ArciveSettings, with the 'settings' removed.*/
+    static final String[] SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF = 
+        ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to the viewer proxy base dir leaf from settings.*/
+    static final String[] SETTINGS_VIEWERPROXY_BASEDIR_LEAF = 
+        ViewerProxySettings.VIEWERPROXY_DIR
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path from monitor to the jmxUsername leaf.*/
+    static final String[] SETTINGS_JMX_NAME_LEAF = 
+	MonitorSettings.JMX_USERNAME_SETTING
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");	
+    /** The path from monitor to the jmxPassword leaf.*/
+    static final String[] SETTINGS_JMX_PASSWORD_LEAF = 
+	MonitorSettings.JMX_PASSWORD_SETTING
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");	
+    /** The path to the application instance id leaf from settings.*/
+    static final String[] SETTINGS_APPLICATION_INSTANCE_ID_LEAF = 
+        CommonSettings.APPLICATION_INSTANCE_ID
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+    /** The path to thisPhysicalLocation from settings.*/
+    static final String[] COMPLETE_THIS_PHYSICAL_LOCATION_LEAF = 
+    CommonSettings.THIS_PHYSICAL_LOCATION.split("[.]");
+    /** The path to applicationName from settings.*/
+    static final String[] COMPLETE_APPLICATION_NAME_LEAF = 
+    CommonSettings.APPLICATION_NAME.split("[.]");
+
+    // Values and file names
     /** The operating system attribute for windows.*/
     static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
     /** The call for running a batch script in windows.*/
     static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
         "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
-
-    // jmx remote password specific
-    /** The path from settings to the monitor branch.*/
-    static final String JMX_PASSWORD_MONITOR_BRANCH = "monitor";
-    /** The path from monitor to the jmxUsername leaf.*/
-    static final String JMX_PASSWORD_NAME_BRANCH = "jmxUsername";
-    /** The path from monitor to the jmxPassword leaf.*/
-    static final String JMX_PASSWORD_PASSWORD_BRANCH = "jmxPassword";
     /** The name of the JMX remote password file.*/
     static final String JMX_FILE_NAME = "jmxremote.password";
-    
-    // security policy file specific
-    /** The attachment for the file dir in the security policy file.*/
-    static final String SECURITY_FILE_DIR_ATTACHMENT = "filedir";
-    /** The name of the jmx principal name tag in the security file.*/
-    static final String SECURITY_JMX_PRINCIPAL_NAME_TAG = "ROLE";
-    /** The name of the common temp dir tag in the security policy file.*/
-    static final String SECURITY_COMMON_TEMP_DIR_TAG = "TEMPDIR";
-    
-    // database constants
     /** The directory for the database in the unpacked NetarchiveSuite.*/
     static final String DATABASE_BASE_DIR = "harvestdefinitionbasedir/";
     /** The name of the database in the directory above.*/
@@ -231,7 +176,9 @@ public final class Constants {
     /** The message when database is trying to overwrite a non-empty dir.*/
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
         "The database directory already exists. Thus database not reset.";
-
+    /** The name of the new modified configuration file for tests.*/
+    static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
+    
     // evaluate specific constants
     /** Complete list of settings files to combine to complete settings file.*/
     static final String[] BUILD_SETTING_FILES = {

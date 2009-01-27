@@ -104,7 +104,7 @@ public class PhysicalLocation {
         resetDirectory = resetDir;
         
         // retrieve the specific settings for this instance 
-        Element tmpSet = physLocRoot.element(Constants.SETTINGS_BRANCH);
+        Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -122,6 +122,7 @@ public class PhysicalLocation {
      * Extract the local variables from the root.
      * 
      * It is only the name for this instance.
+     * This is then set in settings.
      */
     private void extractVariables() {
         // retrieve name
@@ -129,6 +130,12 @@ public class PhysicalLocation {
                 Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTES);
         if(at != null) {
             name = at.getText();
+            // insert the name in settings.
+            String xmlName = XmlStructure.pathAndContentToXML(name, 
+        	    Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
+            Element physLocName = XmlStructure.makeElementFromString(
+        	    xmlName);
+            settings.overWrite(physLocName);
         } else {
             log.debug("Physical location has no name!");
             name = "";
@@ -142,7 +149,7 @@ public class PhysicalLocation {
     @SuppressWarnings("unchecked")
     private void extractMachines() {
         machines = new ArrayList<Machine>();
-        List<Element> le = physLocRoot.elements(Constants.MACHINE_BRANCH);
+        List<Element> le = physLocRoot.elements(Constants.DEPLOY_MACHINE);
         for(Element e : le) {
             String os = e.attributeValue(
                     Constants.MACHINE_OPERATING_SYSTEM_ATTRIBUTE);

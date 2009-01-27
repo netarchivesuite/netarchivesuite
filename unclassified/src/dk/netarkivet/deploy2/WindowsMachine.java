@@ -196,7 +196,7 @@ public class WindowsMachine extends Machine {
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \"cmd /c  ");
-        res.append(getConfDirPath());
+        res.append(getLocalConfDirPath());
         res.append("startall");
         res.append(scriptExtension);
         res.append(" \" ");
@@ -781,7 +781,7 @@ public class WindowsMachine extends Machine {
         for(Application app : applications) {
             // get archive.fileDir directories.
             dirs = app.getSettingsValues(
-                    Constants.SETTINGS_FILE_DIR_LEAF);
+                    Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));
@@ -790,7 +790,7 @@ public class WindowsMachine extends Machine {
 
             // get harvester.harvesting.serverDir directories.
             dirs = app.getSettingsValues(
-                    Constants.SETTINGS_HARVEST_SERVER_DIR_LEAF);
+                    Constants.SETTINGS_HARVEST_SERVERDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));
@@ -861,7 +861,7 @@ public class WindowsMachine extends Machine {
 
                         // get tempDir directory.
                         dir = settings.getLeafValue(
-                                Constants.SETTINGS_TEMP_DIR_LEAF);
+                                Constants.SETTINGS_TEMPDIR_LEAF);
                         if(dir != null && !dir.equalsIgnoreCase("")
                                 && !dir.equalsIgnoreCase(".")) {
                             dirPrint.print(scriptCreateDir(dir, resetTempDir));
@@ -885,7 +885,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
-        path += "\\" + Constants.SECURITY_FILE_DIR_ATTACHMENT + "\\";
+        path += "\\" + Constants.SECURITY_FILE_DIR_TAG + "\\";
         return path.replace("\\", "${/}");
     }
 }

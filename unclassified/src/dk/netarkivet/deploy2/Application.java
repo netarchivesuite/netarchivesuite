@@ -73,7 +73,7 @@ public class Application {
         applicationRoot = e;
         machineParameters = new Parameters(param);
         // retrieve the specific settings for this instance 
-        Element tmpSet = applicationRoot.element(Constants.SETTINGS_BRANCH);
+        Element tmpSet = applicationRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -102,6 +102,14 @@ public class Application {
                 // the classpath is is separated by '.'
                 String[] stlist = nameWithNamePath.split("[.]");
                 name = stlist[stlist.length -1];
+                
+                // insert the name in settings.
+                String xmlName = XmlStructure.pathAndContentToXML(
+                	nameWithNamePath, 
+                	Constants.COMPLETE_APPLICATION_NAME_LEAF);
+                Element appXmlName = XmlStructure.makeElementFromString(
+            	    xmlName);
+                settings.overWrite(appXmlName);
             } else {
                 log.debug("Physical location has no name!");
                 name = "";
@@ -109,7 +117,7 @@ public class Application {
             }
             // look for the optional application instance id
             Element elem = settings.getSubChild(
-                    Constants.APPLICATION_INSTANCE_ID_PATH);
+                    Constants.SETTINGS_APPLICATION_INSTANCE_ID_LEAF);
             if(elem != null && !elem.getText().isEmpty()) {
                 applicationId = elem.getText();
             } else {
@@ -179,7 +187,7 @@ public class Application {
     public String installPathLinux() {
         return machineParameters.getInstallDirValue() + "/"
             + settings.getSubChildValue(
-                    Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
+                    Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
     /**
@@ -190,7 +198,7 @@ public class Application {
     public String installPathWindows() {
         return machineParameters.getInstallDirValue() + "\\"
             + settings.getSubChildValue(
-                    Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
+                    Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
     /** 

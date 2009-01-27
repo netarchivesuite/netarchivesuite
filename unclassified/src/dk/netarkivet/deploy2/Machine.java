@@ -115,7 +115,7 @@ public abstract class Machine {
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
-        Element tmpSet = machineRoot.element(Constants.SETTINGS_BRANCH);
+        Element tmpSet = machineRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -153,7 +153,7 @@ public abstract class Machine {
     @SuppressWarnings("unchecked")
     private void extractApplications() {
         applications = new ArrayList<Application>();
-        List<Element> le = machineRoot.elements(Constants.APPLICATION_BRANCH);
+        List<Element> le = machineRoot.elements(Constants.DEPLOY_APPLICATION_NAME);
         for(Element e : le) {
             applications.add(new Application(e, settings, machineParameters));
         }
@@ -259,8 +259,7 @@ public abstract class Machine {
 
             // change the jmx monitor role (if defined in settings)
             String monitorRole = settings.getLeafValue(
-                    Constants.JMX_PASSWORD_MONITOR_BRANCH,
-                    Constants.JMX_PASSWORD_NAME_BRANCH);
+        	    Constants.SETTINGS_JMX_PASSWORD_LEAF);
             if(monitorRole != null) {
                 prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
                         monitorRole);
@@ -268,8 +267,8 @@ public abstract class Machine {
             
             // Change the common temp dir (if defined in settings)
             String ctd = settings.getLeafValue(
-                    Constants.SETTINGS_TEMP_DIR_LEAF);
-            if(monitorRole != null && ctd != null) {
+                    Constants.SETTINGS_TEMPDIR_LEAF);
+            if(ctd != null) {
                 prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
                         ctd);
             }
@@ -284,7 +283,7 @@ public abstract class Machine {
             for(Application app : applications) {
                 // get archive.fileDir directory.
                 String[] tmpDirs = app.getSettingsValues(
-                        Constants.SETTINGS_FILE_DIR_LEAF);
+                        Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF);
                 if(tmpDirs != null && tmpDirs.length > 0) {
                     for(String st : tmpDirs) {
                         dirs.add(st);
@@ -438,12 +437,10 @@ public abstract class Machine {
                 // get the monitor name and password
                 StringBuilder monitor = new StringBuilder("");
                 monitor.append(settings.getSubChildValue(
-                        Constants.JMX_PASSWORD_MONITOR_BRANCH,
-                        Constants.JMX_PASSWORD_NAME_BRANCH));
+                	Constants.SETTINGS_JMX_NAME_LEAF));
                 monitor.append(" ");
                 monitor.append(settings.getSubChildValue(
-                        Constants.JMX_PASSWORD_MONITOR_BRANCH,
-                        Constants.JMX_PASSWORD_PASSWORD_BRANCH));
+                	Constants.SETTINGS_JMX_PASSWORD_LEAF));
                 jw.print(monitor.toString());
             } finally {
                 jw.close();
@@ -476,7 +473,7 @@ public abstract class Machine {
      */
     protected String getEnvironmentName() {
         return settings.getSubChildValue(
-                Constants.ENVIRONMENT_NAME_SETTING_PATH_LEAF);
+                Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
 
     /**

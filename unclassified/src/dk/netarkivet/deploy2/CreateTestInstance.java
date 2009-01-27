@@ -107,16 +107,16 @@ public class CreateTestInstance {
         mailReceiverVal = mailReceiver;
 
         // make paths
-        httpPortPath = Constants.SETTINGS_HTTP_PORT_PATH;
-        environmentNamePath = Constants.ENVIRONMENT_NAME_TOTAL_PATH_LEAF;
+        httpPortPath = Constants.COMPLETE_HTTP_PORT_LEAF;
+        environmentNamePath = Constants.COMPLETE_ENVIRONMENT_NAME_LEAF;
         mailReceiverPath = Constants.SETTINGS_NOTIFICATION_RECEIVER_PATH;
 
         // make offset paths
         offsetPaths = new OffsetSystem[] {
-                new OffsetSystem(2, Constants.TEXT_JMX_PORT_PATH),
+                new OffsetSystem(2, Constants.COMPLETE_JMX_PORT_PATH),
                 new OffsetSystem(2, Constants.TEXT_JMX_RMI_PORT_PATH),
-                new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_GUI_PORT),
-                new OffsetSystem(1, Constants.TEXT_HARVEST_HETRIX_JMX_PORT)
+                new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
+                new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
                 };
 
         // apply the arguments
@@ -133,19 +133,19 @@ public class CreateTestInstance {
         applyOnElement(set.getRoot());
 
         List <Element> physLocs = set.getChildren(
-                Constants.PHYSICAL_LOCATION_BRANCH);
+                Constants.DEPLOY_PHYSICAL_LOCATION);
 
         for(Element pl : physLocs) {
             // apply on every physical location
             applyOnElement(pl);
 
-            List <Element> machines = pl.elements(Constants.MACHINE_BRANCH);
+            List <Element> machines = pl.elements(Constants.DEPLOY_MACHINE);
             for(Element mac : machines) {
                 // apply on every machine
                 applyOnElement(mac);
 
                 List <Element> applications = 
-                    mac.elements(Constants.APPLICATION_BRANCH);
+                    mac.elements(Constants.DEPLOY_APPLICATION_NAME);
                 for(Element app : applications) {
                     // apply on every application
                     applyOnElement(app);
@@ -184,15 +184,15 @@ public class CreateTestInstance {
      */
     @SuppressWarnings("unchecked")
     private void applyOnApplication(Element app) {
-        Element current = app.element(Constants.SETTINGS_BRANCH);
+        Element current = app.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Go through tree to end branch before leafs
-        for(int i = 0; i < Constants.SETTINGS_FILE_DIR_LEAF.length - 1; i++) {
+        for(int i = 0; i < Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1; i++) {
             // stop if branch does not exist
             if(current == null) {
                 return;
             }
             // get next string
-            String st = Constants.SETTINGS_FILE_DIR_LEAF[i];
+            String st = Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[i];
             // go to next branch
             current = current.element(st);
         }
@@ -200,8 +200,8 @@ public class CreateTestInstance {
             return;
         }
 
-        List<Element> elems = current.elements(Constants.SETTINGS_FILE_DIR_LEAF[
-                           Constants.SETTINGS_FILE_DIR_LEAF.length - 1]);
+        List<Element> elems = current.elements(Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[
+                           Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1]);
         for(Element el : elems) {
             String content = el.getText();
             // check if windows format has been used
