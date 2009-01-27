@@ -40,7 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class contains the information that we keep about each file in the
  * arcrepository: Checksum and the store states for all bitarchives.
  *
- * TODO: Maybe don't have the store state info for fully completed stores, or
+ * TODO Maybe don't have the store state info for fully completed stores, or
  * else use a slimmer map for it.
  */
 
@@ -185,7 +185,7 @@ public class ArcRepositoryEntry {
     /**
      * Set the StoreState for a specific bitarchive
      * (set timestamp for last update to lastchanged).
-     * @param ba a bitarchive
+     * @param baId a bitarchive
      * @param state the new StoreState for this bitarchive.
      * @param lastchanged the time for when the state was changed
      */

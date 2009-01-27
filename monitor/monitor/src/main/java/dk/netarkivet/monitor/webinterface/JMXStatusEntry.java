@@ -124,7 +124,7 @@ public class JMXStatusEntry implements StatusEntry {
 
     /**
      * @return the replica id designated by the key 
-     * {@link JMXSummaryUtils#JMXReplicaidProperty}
+     * {@link JMXSummaryUtils#JMXArchiveReplicaIdProperty}
      */
     public String getArchiveReplicaId() {
         return mBeanName.getKeyProperty(

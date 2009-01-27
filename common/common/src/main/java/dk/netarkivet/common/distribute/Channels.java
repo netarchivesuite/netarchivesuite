@@ -279,14 +279,14 @@ public class Channels {
      * Given an replica, returns the BAMON queue to which batch jobs
      * must be sent in order to run them on that bitarchive.
      *
-     * @param replicaid the id of the replica
+     * @param replicaId The id of the replica
      * @return the channel
      * @throws ArgumentNotValid
      *             if the replicaId is null, unknown, or empty string
      */
     public static ChannelID getBaMonForReplica(String replicaId)
             throws ArgumentNotValid {
-    	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
         ChannelID[] bamons = getAllArchives_BAMONs();
         for (ChannelID bamon : bamons) {
             if (bamon.getName().equals(
@@ -326,7 +326,7 @@ public class Channels {
         return getInstance().THIS_INDEX_CLIENT;
     }
 
-    //TODO: Should we use client channels for all our servers?
+    //TODO Should we use client channels for all our servers?
     private final ChannelID THIS_INDEX_CLIENT = new ChannelID(
             "INDEX_CLIENT",
             ChannelID.COMMON,

@@ -28,8 +28,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -52,7 +50,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class TrivialArcRepositoryClient implements ArcRepositoryClient {
     private static final String ARC_REPOSITORY_DIR_NAME = "ArcRepository";
-    /** Store files in this dir -- might later use a separate setting */
+    /** Store files in this dir -- might later use a separate setting. */
     private final File dir
             = new File(FileUtils.getTempDir(), ARC_REPOSITORY_DIR_NAME);
     private Log log = LogFactory.getLog(getClass());
@@ -183,7 +181,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * file and replica.
      *
      * @param fileName The name of a file stored in the ArcRepository.
-     * @param bitarchiveid The id of the replica that the administrative
+     * @param bitarchiveId The id of the replica that the administrative
      * data for fileName is wrong for.
      * @param newval What the administrative data will be updated to.
      */

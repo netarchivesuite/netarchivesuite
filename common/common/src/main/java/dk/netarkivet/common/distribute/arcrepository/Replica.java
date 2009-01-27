@@ -41,8 +41,8 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 
 /**
- * This class encapsulates the bitarchive or chacksum replicas.  It guarantees that
- * there is only one Replica object per replica id/name.
+ * This class encapsulates the bitarchive or chacksum replicas.
+ * It guarantees that there is only one Replica object per replica id/name.
  */
 public class Replica {
     /** the class log. */
@@ -59,9 +59,9 @@ public class Replica {
     /** Private constructor that makes a new Replica object.  These will
      * all be stored in the known map.
      *
-     * @param id Id of the replica (e.g. One)
-     * @param name Name of the replica (e.g. ReplicaOne)
-     * @param type Type of the replica (e.g. biarchive)
+     * @param repId Id of the replica (e.g. One)
+     * @param repName Name of the replica (e.g. ReplicaOne)
+     * @param repType Type of the replica (e.g. biarchive)
      */
     private Replica(String repId, String repName, ReplicaType repType) {
         this.id = repId;
@@ -82,7 +82,8 @@ public class Replica {
             List<StringTree<String>> replicaList = replicas.getSubTrees(
                     CommonSettings.REPLICA_TAG);
             for (StringTree<String> replicaTree : replicaList) {
-                String replicaId = replicaTree.getValue(CommonSettings.REPLICAID_TAG);
+                String replicaId = replicaTree.getValue(
+                        CommonSettings.REPLICAID_TAG);
                 known.put(
                     replicaId, 
                     new Replica(
@@ -100,7 +101,7 @@ public class Replica {
 
     /** Get an object representing the replica with the given id.
      *
-     * @param name The given name of an replica
+     * @param id The given name of an replica
      * @return an object representing the replica with the given id
      */
     public static Replica getReplicaFromId(String id) {
@@ -122,7 +123,8 @@ public class Replica {
     public static Replica getReplicaFromName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         initializeKnownList();
-        Replica resRep = new Replica("NONE","NONE", ReplicaType.NO_REPLICA_TYPE);
+        Replica resRep = new Replica("NONE", "NONE",
+                ReplicaType.NO_REPLICA_TYPE);
         boolean found = false; 
         for (Replica rep : known.values()) {
             found = rep.getName().equals(name);
