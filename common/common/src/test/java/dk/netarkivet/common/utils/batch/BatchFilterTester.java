@@ -62,7 +62,7 @@ public class BatchFilterTester extends TestCase {
     public void testGetMimetype() {
         String invalidMimetype = new String("test");
         String validMimetype = "text/html";
-        BatchFilter cfilter;
+        BatchFilter cfilter = null;
 
         try {
             cfilter = BatchFilter.getMimetypeBatchFilter(invalidMimetype);
@@ -84,5 +84,9 @@ public class BatchFilterTester extends TestCase {
                 " not expected here with valid mimetype as argument: " +
                 validMimetype);
         }
+        
+        assertTrue("The return batchfilter should not be null", cfilter != null);
+        
+        assertEquals(cfilter.getName(), "MimetypeBatchFilter-text/html");
     }
 }

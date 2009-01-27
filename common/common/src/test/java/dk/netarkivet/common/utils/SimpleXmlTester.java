@@ -47,8 +47,9 @@ public class SimpleXmlTester extends TestCase {
                 TestInfo.TEMPDIR.mkdir();
             }
             FileUtils.removeRecursively(TestInfo.TEMPDIR);
-            TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR,
-                                              dk.netarkivet.common.utils.TestInfo.TEMPDIR);
+            TestFileUtils.copyDirectoryNonCVS(
+                    TestInfo.DATADIR,
+                    dk.netarkivet.common.utils.TestInfo.TEMPDIR);
         }
         catch (Exception e) {
             fail("Could not setup configuration");
@@ -59,13 +60,13 @@ public class SimpleXmlTester extends TestCase {
         FileUtils.removeRecursively(TestInfo.TEMPDIR);
     }
 
-    /** Verify that it is possible to load a simple XML file author: SSC */
+    /** Verify that it is possible to load a simple XML file author. */
     public void testLoadAndSave() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
         String value = xml.getString("dk.netarkivet.test.q");
         assertEquals("Loaded value must exist", "what is the question", value);
 
-        List items = xml.getList("dk.netarkivet.test.list1");
+        List<String> items = xml.getList("dk.netarkivet.test.list1");
         CollectionAsserts.assertListEquals("Must match stored items",
                                            items, "item1", "item2", "item3");
 
@@ -75,16 +76,16 @@ public class SimpleXmlTester extends TestCase {
         assertEquals("Reloaded value must exist",
                      "what is the question", newvalue);
 
-        List newitems = newxml.getList("dk.netarkivet.test.list1");
+        List<String> newitems = newxml.getList("dk.netarkivet.test.list1");
         CollectionAsserts.assertListEquals("Must match stored items",
                                            newitems, "item1", "item2", "item3");
 
-        List answers = xml.getList("dk.netarkivet.answer");
+        List<String> answers = xml.getList("dk.netarkivet.answer");
         CollectionAsserts.assertListEquals("Must have both answers",
                                            answers, "42", "43");
     }
 
-    /** Verify that it is possible to delete and set a key in a simple XML file */
+    /** Verify that it is possible to delete and set a key in a simple XML file. */
     public void testDeleteAndSet() {
         SimpleXml xml = new SimpleXml(TestInfo.TESTXML);
 
@@ -102,10 +103,10 @@ public class SimpleXmlTester extends TestCase {
                      retrievevalue);
     }
 
-    /** Check loading of non xml file */
+    /** Check loading of non xml file fails. */
     public void testLoadNonXml() {
         try {
-            SimpleXml xml = new SimpleXml(TestInfo.INVALIDXML);
+            new SimpleXml(TestInfo.INVALIDXML);
             fail("Loading invalid xml should throw exception");
         } catch (IOFailure e) {
             //Expected
@@ -113,7 +114,7 @@ public class SimpleXmlTester extends TestCase {
 
     }
 
-    /** Check loading of unknown file or null file */
+    /** Check loading of unknown file or null file. */
     public void testLoadNonExistingFile() {
         try {
             new SimpleXml((File) null);

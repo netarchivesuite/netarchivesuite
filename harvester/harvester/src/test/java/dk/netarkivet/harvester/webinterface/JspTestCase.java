@@ -124,26 +124,26 @@ public class JspTestCase extends TestCase {
             public void setCharacterEncoding(String s) {
                 encoding = s;
             }
+//
+//            public int getRemotePort() {
+//                //TODO: implement method
+//                throw new NotImplementedException("Not implemented");
+//            }
+//
+//            public String getLocalName() {
+//                //TODO: implement methods
+//                throw new NotImplementedException("Not implemented");
+//            }
+//
+//            public String getLocalAddr() {
+//                //TODO: implement method
+//                throw new NotImplementedException("Not implemented");
+//            }
 
-            public int getRemotePort() {
-                //TODO: implement method
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getLocalName() {
-                //TODO: implement method
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public String getLocalAddr() {
-                //TODO: implement method
-                throw new NotImplementedException("Not implemented");
-            }
-
-            public int getLocalPort() {
-                //TODO: implement method
-                throw new NotImplementedException("Not implemented");
-            }
+//            public int getLocalPort() {
+//                //TODO: implement method
+//                throw new NotImplementedException("Not implemented");
+//            }
         };
         response = new MockHttpServletResponse();
 
@@ -171,30 +171,30 @@ public class JspTestCase extends TestCase {
                                               ServletResponse servletResponse,
                                               String s, boolean b, int i, boolean b1) {
                 final MockPageContext mockPageContext = new MockPageContext() {
-                    public void include(String s, boolean b) throws ServletException,
-                            IOException {
-                        //TODO: implement method
-                        throw new NotImplementedException("Not implemented");
-                    }
+//                    public void include(String s, boolean b) throws ServletException,
+//                            IOException {
+//                        //TODO: implement method
+//                        throw new NotImplementedException("Not implemented");
+//                    }
 
                     public void handlePageException(Throwable e) {
                         throw new IOFailure("Exception in page", e);
                     }
 
-                    public ExpressionEvaluator getExpressionEvaluator() {
-                        //TODO: implement method
-                        throw new NotImplementedException("Not implemented");
-                    }
-
-                    public VariableResolver getVariableResolver() {
-                        //TODO: implement method
-                        throw new NotImplementedException("Not implemented");
-                    }
-
-                    public ELContext getELContext() {
-                        //TODO: implement method
-                        throw new NotImplementedException("Not implemented");
-                    }
+//                    public ExpressionEvaluator getExpressionEvaluator() {
+//                        //TODO: implement method
+//                        throw new NotImplementedException("Not implemented");
+//                    }
+//
+//                    public VariableResolver getVariableResolver() {
+//                        //TODO: implement method
+//                        throw new NotImplementedException("Not implemented");
+//                    }
+//
+//                    public ELContext getELContext() {
+//                        //TODO: implement method
+//                        throw new NotImplementedException("Not implemented");
+//                    }
                 };
                 mockPageContext.setJspWriter(new MockJspWriter() {
                     public void print(String s) {

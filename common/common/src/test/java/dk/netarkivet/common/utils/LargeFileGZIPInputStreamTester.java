@@ -66,11 +66,12 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
         assertEquals("Should be at EOF", -1,
                      largeFileGZIPInputStream.read(buffer));
 
+        int bytesRead;
+        
         largeFileGZIPInputStream
                 = new LargeFileGZIPInputStream(new FileInputStream(
                 new File(ORIGINALS, "smallFileWrongCRC/smallFile.gz")));
         try {
-            int bytesRead;
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
@@ -87,7 +88,6 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
                 = new LargeFileGZIPInputStream(new FileInputStream(
                 new File(ORIGINALS, "smallFileWrongLength/smallFile.gz")));
         try {
-            int bytesRead;
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }
@@ -104,7 +104,6 @@ public class LargeFileGZIPInputStreamTester extends TestCase {
                 = new LargeFileGZIPInputStream(new FileInputStream(
                 new File(ORIGINALS, "smallFileMissingLength/smallFile.gz")));
         try {
-            int bytesRead;
             while ((bytesRead = largeFileGZIPInputStream.read(buffer)) > 0) {
                 //just carry on.
             }

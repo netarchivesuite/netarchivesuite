@@ -145,6 +145,7 @@ function startHarvestApp {
     priority=$2;
     priority_settings=-Dsettings.harvester.harvesting.harvestControllerPriority=${priority}PRIORITY;
     portsetting="-Dsettings.harvester.harvesting.queuePriority=${priority}PRIORITY \
+             -Dsettings.common.applicationInstanceId=$2 \
              -Dsettings.common.http.port=$HTTPPORT \
              -Dsettings.harvester.harvesting.heritrix.guiPort=$HERITRIXPORT \
              -Dsettings.harvester.harvesting.heritrix.jmxPort=$(( $HERITRIXPORT + 1 ))";

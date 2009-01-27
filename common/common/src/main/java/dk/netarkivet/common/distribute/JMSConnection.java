@@ -284,7 +284,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                     senders.put(queueName, queueSender);
                 }
                 synchronized (nMsg) {
-                    log.info("Sending message to " + queueName + "ID = "
+                    log.info("Sending message to destination '" + queueName + "', ID = "
                             + nMsg.replyOfId);
 
                     queueSender.send(msg);

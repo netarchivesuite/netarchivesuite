@@ -58,8 +58,10 @@ public class ExtractCDXTester extends TestCase {
      * Verify that indexing a single ARC file works as expected.
      */
     public void testMainOneFile() {
-        File f = TestInfo.ARC1;
-        ExtractCDX.main(new String[]{TestInfo.ARC1.getAbsolutePath()});
+        File arcfile = TestInfo.ARC1;
+        ExtractCDX.main(new String[]{
+                arcfile.getAbsolutePath()
+                });
         List<CDXRecord> rList = getRecords();
         assertEquals(
                 "Output CDX records should be 1-1 with input ARC file records",
