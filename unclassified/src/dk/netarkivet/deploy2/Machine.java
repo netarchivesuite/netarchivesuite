@@ -259,7 +259,7 @@ public abstract class Machine {
 
             // change the jmx monitor role (if defined in settings)
             String monitorRole = settings.getLeafValue(
-        	    Constants.SETTINGS_JMX_PASSWORD_LEAF);
+        	    Constants.SETTINGS_JMX_NAME_LEAF);
             if(monitorRole != null) {
                 prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
                         monitorRole);
