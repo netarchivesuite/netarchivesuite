@@ -47,6 +47,9 @@ public class CommonSettings {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
+    /** The path in the XML-tree for the settings branch. (Used by deploy).*/
+    public static String SETTINGS = "settings";
+    
     /** Common temporary directory for all applications. */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";
 
