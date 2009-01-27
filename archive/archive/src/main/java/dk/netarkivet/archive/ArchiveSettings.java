@@ -48,13 +48,16 @@ public class ArchiveSettings {
     // will not run.
 
     /**
+     * *settings.archive.arcrepository.baseDir*: <br>
      * Absolute/relative path to where the "central list of files and
      * checksums" (admin.data) is written. Used by ArcRepository and
      * BitPreservation.
      */
     public static String DIRS_ARCREPOSITORY_ADMIN
             = "settings.archive.arcrepository.baseDir";
+    
     /**
+     * *settings.archive.bitarchive.minSpaceLeft*: <br>
      * The minimum amount of bytes left *in any dir* that we will allow a
      * bitarchive machine to accept uploads with.  When no dir has more space
      * than this, the bitarchive machine stops listening for uploads.  This
@@ -63,20 +66,26 @@ public class ArchiveSettings {
      */
     public static String BITARCHIVE_MIN_SPACE_LEFT
             = "settings.archive.bitarchive.minSpaceLeft";
+    
     /**
+     * *settings.archive.bitarchive.baseFileDir*: <br>
      * These are the directories where ARC files are stored (in a subdir).
      * If more than one is given, they are used from one end.
      * This setting may be repeated, to define multiple directories. 
      */
     public static String BITARCHIVE_SERVER_FILEDIR
-            = "settings.archive.bitarchive.fileDir";
+            = "settings.archive.bitarchive.baseFileDir";
+    
     /**
+     * *settings.archive.bitarchive.heartbeatFrequency:* <br>
      * The frequency in milliseconds of heartbeats that are sent by each
      * BitarchiveServer to the BitarchiveMonitor.
      */
     public static String BITARCHIVE_HEARTBEAT_FREQUENCY
             = "settings.archive.bitarchive.heartbeatFrequency";
+   
     /**
+     * *settings.archive.bitarchive.acceptableHeartbeatDelay:* <br>
      * If we haven't heard from a bit archive within this many milliseconds,
      * we don't expect it to be online and won't wait for them to reply on a
      * batch job.  This number should be significantly greater than
@@ -84,14 +93,18 @@ public class ArchiveSettings {
      */
     public static String BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY
             = "settings.archive.bitarchive.acceptableHeartbeatDelay";
+   
     /**
+     * *settings.archive.bitarchive.batchMessageTimeout*: <br>
      * The BitarchiveMonitorServer will listen for BatchEndedMessages for this
      * many milliseconds before it decides that a batch job is taking too long
      * and returns just the replies it has received at that point.
      */
     public static String BITARCHIVE_BATCH_JOB_TIMEOUT
             = "settings.archive.bitarchive.batchMessageTimeout";
+   
     /**
+     * *settings.archive.bitarchive.thisCredentials*: <br>
      * Credentials to enter in the GUI for "deleting" ARC files in
      * this bit archive.
      */
@@ -99,6 +112,7 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.thisCredentials";
 
     /**
+     * : <br>
      * Absolute or relative path to dir containing results of
      * file-list-batch-jobs and checksumming batch jobs for bit preservation.
      */
