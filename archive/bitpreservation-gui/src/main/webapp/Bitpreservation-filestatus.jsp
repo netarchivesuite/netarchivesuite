@@ -50,14 +50,14 @@ There are no parameters.
     // For each known bitarchive in the system, print out statistics about
     // missing files
     for (Replica replica : Replica.getKnown()) {
-        BitpreserveFileState.printMissingFileStateForLocation(out, replica,
+        BitpreserveFileState.printMissingFileStateForReplica(out, replica,
                                                           response.getLocale());
     }
 
     // For each known bitarchive in the system, print out statistics about 
     // corrupt files (files with wrong checksums)
     for (Replica replica : Replica.getKnown()) {
-        BitpreserveFileState.printChecksumErrorStateForLocation(out, replica,
+        BitpreserveFileState.printChecksumErrorStateForReplica(out, replica,
                                                           response.getLocale());
     }
     HTMLUtils.generateFooter(out);
