@@ -28,10 +28,9 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
- *
+ * 
+ * Unit tests for the package dk.netarkivet.archive.bitarchive.distribute.
  */
-
 public class BitarchiveDistributeTesterSuite {
     /**
      * Create a test suite just for these tests.

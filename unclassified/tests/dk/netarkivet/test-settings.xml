@@ -26,7 +26,7 @@
 <!-- 
 	This file contains the settings needed to run our unittests.
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings>
 <common>
         <jms>
         <class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
@@ -72,4 +72,12 @@
         <applicationName>NA</applicationName>
         <applicationInstanceId>XX</applicationInstanceId>
      </common>
+     <harvester>
+     	<harvesting>
+     		<heritrix>
+     			<jmxUsername>controlRole</jmxUsername>
+     			<jmxPassword>R_D</jmxPassword>
+     		</heritrix>
+     	</harvesting>
+     	</harvester>
 </settings>

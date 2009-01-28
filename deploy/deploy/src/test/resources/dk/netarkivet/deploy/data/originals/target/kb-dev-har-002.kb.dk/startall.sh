@@ -1,6 +1,0 @@
-#!/bin/bash
-cd /home/test/UNITTEST/conf
-if [ -e ./start_harvester_8081.sh ]; then
-    ./start_harvester_8081.sh 
-fi
-

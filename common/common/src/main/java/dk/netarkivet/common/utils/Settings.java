@@ -361,6 +361,9 @@ public class Settings {
         InputStream stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(defaultClasspathSettingsPath);
         if (stream != null) {
+            if (defaultClasspathSettingsXmlList == null) {
+                defaultClasspathSettingsXmlList = new ArrayList<SimpleXml>();
+            }
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
         } else {
             log.warn("Unable to read the settings file represented by path: '"
