@@ -221,7 +221,7 @@ public class HarvesterSettings {
     
     /** 
      * <b>settings.harvester.harvesting.heritrix.jmxPort</b>: <br>
-     * The port that Heritrix uses to expose its JMX interface.  This port
+     * The port that Heritrix uses to expose its JMX interface. This port
      * must not be used by anything else on the machine, but does not need to
      * be accessible from other machines unless you want to be able to use
      * jconsole to access Heritrix directly. 
@@ -229,6 +229,24 @@ public class HarvesterSettings {
      * Heritrix may cause unexpected breakage. */
     public static String HERITRIX_JMX_PORT
             = "settings.harvester.harvesting.heritrix.jmxPort";
+    
+    /** 
+     * <b>settings.harvester.harvesting.heritrix.jmxUsername</b>: <br>
+     * The username used to connect to Heritrix JMX interface 
+     * The username must correspond to the value stored in the 
+     * jmxremote.password file (name defined in setting 
+     * settings.common.jmx.passwordFile). */
+    public static String HERITRIX_JMX_USERNAME
+            = "settings.harvester.harvesting.heritrix.jmxUsername";
+    
+    /** 
+     * <b>settings.harvester.harvesting.heritrix.jmxPassword</b>: <br>
+     * The password used to connect to Heritrix JMX interface 
+     * The password must correspond to the value stored in the 
+     * jmxremote.password file (name defined in setting 
+     * settings.common.jmx.passwordFile). */
+    public static String HERITRIX_JMX_PASSWORD
+            = "settings.harvester.harvesting.heritrix.jmxPassword";
     
     /** 
      * <b>settings.harvester.harvesting.heritrix.heapSize</b>: <br>

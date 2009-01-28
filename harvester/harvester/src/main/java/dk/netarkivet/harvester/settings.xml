@@ -65,6 +65,8 @@
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
                 <jmxPort>8091</jmxPort>
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
             </heritrix>
         </harvesting>
