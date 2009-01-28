@@ -679,7 +679,7 @@ public class LinuxMachine extends Machine {
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
      * @return The lines of code for creating the directories.
-     * @see createInstallDirScript.
+     * @see #createInstallDirScript(File)
      */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {

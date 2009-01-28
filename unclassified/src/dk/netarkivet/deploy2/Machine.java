@@ -733,7 +733,7 @@ public abstract class Machine {
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
      * @return The lines of code for creating the directories.
-     * @see createInstallDirScript.
+     * @see #createInstallDirScript(File)
      */
     abstract protected String scriptCreateDir(String dir, boolean clean);
     

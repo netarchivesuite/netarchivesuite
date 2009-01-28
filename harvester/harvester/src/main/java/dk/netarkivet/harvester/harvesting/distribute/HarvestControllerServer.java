@@ -54,32 +54,35 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /**
  * This class responds to JMS doOneCrawl messages from the HarvestScheduler and
- * launches a Heritrix crawl with the received job
- * description. The generated ARC files are uploaded to the bitarchives once a
- * harvest job has been completed.
- *
- * During operation CrawlStatus messages are
- * sent to the HarvestSchedulerMonitorServer. When starting harvesting a message
- * is sent with status 'STARTED'. When finished a message is sent with either
- * status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED' message with result
- * should ALWAYS be sent if at all possible, but only ever one such message per
- * job.
- *
+ * launches a Heritrix crawl with the received job description. The generated
+ * ARC files are uploaded to the bitarchives once a harvest job has been
+ * completed.
+ * 
+ * During its operation CrawlStatus messages are sent to the
+ * HarvestSchedulerMonitorServer. When starting the actual harvesting a message
+ * is sent with status 'STARTED'. When the harvesting has finished a message is
+ * sent with either status 'DONE' or 'FAILED'. Either a 'DONE' or 'FAILED'
+ * message with result should ALWAYS be sent if at all possible, but only ever
+ * one such message per job.
+ * 
  * It is necessary to be able to run the Heritrix harvester on several machines
  * and several processes on each machine. Each instance of Heritrix is started
  * and monitored by a HarvestControllerServer.
- *
- * If the VM is stopped during a harvest it will, on restart,
- * read all directories under serverdir looking for harvestinfo files. If any
- * are found, they are parsed for information, and all remaining files are
- * attempted uploaded to the bitarchive. It will then send a crawlstatusmessage
- * with failed.
- *
+ * 
+ * Initially, all directories under serverdir are scanned for harvestinfo files.
+ * If any are found, they are parsed for information, and all remaining files
+ * are attempted uploaded to the bitarchive. It will then send back a
+ * crawlstatusmessage with status failed.
+ * 
  * A new thread is started for each actual crawl, in which the JMS listener is
- * removed.  Threading is required since JMS will not let the called thread
- * remove the listener that's being handled.  If we fail to start the crawl,
- * the listener is readded, otherwise the VM is shutdown and restarted by
- * the SideKickApplication.
+ * removed. Threading is required since JMS will not let the called thread
+ * remove the listener that's being handled.
+ * 
+ * After a harvestjob has been terminated, either successfully or
+ * unsuccessfully, the serverdir is again scanned for harvestInfo files to
+ * attempt upload of files not yet uploaded. Then it begins to listen again
+ * after new jobs, if there is enough room available on the machine. If not, it
+ * logs a warning about this, which is also sent as a notification.
  */
 public class HarvestControllerServer extends HarvesterMessageHandler
         implements CleanupIF {
@@ -657,6 +660,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 NotificationsFactory.getInstance().errorEvent(msg, e);
             } finally {
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
+                // process serverdir for files not yet uploaded.
+                processOldJobs();
                 running = false;
                 beginListeningIfSpaceAvailable();
             }

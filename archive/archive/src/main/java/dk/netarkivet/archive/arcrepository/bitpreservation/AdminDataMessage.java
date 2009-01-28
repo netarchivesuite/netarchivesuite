@@ -53,8 +53,9 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /**
      * Constructor used when you change the BitarchiveStoreState.
-     * @param theFileName
-     * @param theBitarchiveName
+     * @param theFileName The filename you want to give a new
+     * BitarchiveStoreState.
+     * @param theBitarchiveId The ID for the bitarchive where the file resides
      * @param newval The new BitarchiveStoreState
      */
     public AdminDataMessage(String theFileName, String theBitarchiveId,
@@ -102,6 +103,9 @@ public class AdminDataMessage extends ArchiveMessage {
         return fileName;
     }
 
+    /**
+     * @return Returns the fileName.
+     */
     public String getChecksum() {
         return checksum;
     }

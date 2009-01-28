@@ -448,7 +448,8 @@ public class WindowsMachine extends Machine {
      * These files are created in each of their own function.
      * 
      * @param directory The directory for this machine (use global variable?).
-     * @see windowsStartBatScript, windowsStartVbsScript.
+     * @see #windowsStartBatScript(Application, File)
+     * @see #windowsStartVbsScript(Application, File)
      */
     @Override
     protected void createApplicationStartScripts(File directory) {
@@ -745,7 +746,7 @@ public class WindowsMachine extends Machine {
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
      * @return The lines of code for creating the directories.
-     * @see createInstallDirScript.
+     * @see #createInstallDirScript(File)
      */
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
