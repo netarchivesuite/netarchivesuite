@@ -26,19 +26,17 @@
 <!-- 
 	This file contains the default settings used to initialize
 	the JMSArcRepositoryClient class.
+
+	For documentation of the individual settings, please refer to the javadoc for
+	dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient.java 
 -->
 <settings>
     <common>
         <arcrepositoryClient>
-            <!-- How many milliseconds we will wait before giving up on a
-                 lookup request to the Arcrepository. Set to 1 minute to
-                 make it possible to retrieve large records using FTP -->
+            <!-- Set to 1 minute to make it possible to retrieve large records
+                 using FTP -->
             <getTimeout>60000</getTimeout>
-            <!-- Number of times to try sending a store message before failing,
-                 including the first attempt -->
             <storeRetries>3</storeRetries>
-            <!-- Timeout in milliseconds before retrying when calling
-                 ArcRepositoryClient.store() -->
             <storeTimeout>3600000</storeTimeout>
         </arcrepositoryClient>
     </common>

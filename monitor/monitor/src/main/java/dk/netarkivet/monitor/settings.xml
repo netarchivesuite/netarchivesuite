@@ -24,16 +24,17 @@
  */
 -->
 <!-- 
-        This file contains the default settings used by the monitor module.
+    This file contains the default settings used by the monitor module.
+	
+	For documentation of the individual settings, please refer to the
+	javadoc for dk.netarkivet.monitor.MonitorSettings.java
 -->
 <settings>
     <monitor>
-	<!-- The username and password used to connect to the all Mbeanservers started by the application. 
-	    The username/password must correspond to the values stored in jmxremote.password -->
-    <jmxUsername>monitorRole</jmxUsername>
-    <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
-    <logging>
-        <historySize>100</historySize>
-    </logging>
-</monitor>
+        <jmxUsername>monitorRole</jmxUsername>
+        <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+        <logging>
+            <historySize>100</historySize>
+        </logging>
+    </monitor>
 </settings>

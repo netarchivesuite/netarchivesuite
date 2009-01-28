@@ -25,14 +25,14 @@
 -->
 <!-- 
 	This file contains the default settings used by the JMSConnectionSunMQ class.
+
+	For documentation of the individual settings, please refer to the javadoc
+	for dk.netarkivet.common.distribute.JMSConnectionSunMQ.java
 -->
 <settings>
     <common>
-        <!-- Connection data for JMS-->
-        <jms>
-            <!-- The JMS broker host contacted by the JMS connection -->
+        <jms> <!-- Connection data for JMS-->
             <broker>localhost</broker>
-            <!-- The port the JMS connection should use -->
             <port>7676</port>
         </jms>
     </common>

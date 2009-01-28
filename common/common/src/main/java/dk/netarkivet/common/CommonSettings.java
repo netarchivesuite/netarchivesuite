@@ -50,34 +50,42 @@ public class CommonSettings {
     /** The path in the XML-tree for the settings branch. (Used by deploy).*/
     public static String SETTINGS = "settings";
     
-    /** Common temporary directory for all applications. */
+    /**
+     * <b>settings.common.environmentName</b>: <br>
+     * The name of the environment in which this code is running.
+     * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS 
+     * channels created in a NetarchiveSuite installation. */
+    public static String ENVIRONMENT_NAME = "settings.common.environmentName";
+
+    /** 
+     * <b>settings.common.tempDir</b>: <br>
+     * Common temporary directory for all applications. 
+     * Some subdirs of this directory  must be set to have AllPermision in the
+     * conf/security.conf file, or the web pages won't work. */
     public static String DIR_COMMONTEMPDIR = "settings.common.tempDir";
 
-    /** The class to use for RemoteFile objects. This class must extend the
-     * class dk.netarkivet.common.distribute.RemoteFile. 
-     */
+    /** 
+     * <b>settings.common.remoteFile.class</b>: <br>
+     * The class to use for RemoteFile objects (for transferring files around).
+     * This class must implement the dk.netarkivet.common.distribute.RemoteFile
+     * interface. */
     public static String REMOTE_FILE_CLASS
             = "settings.common.remoteFile.class";
 
-    /** Selects the broker class to be used. Must be subclass of
+    /**
+     * <b>settings.common.jms.class</b>: <br>
+     * Selects the broker class to be used. Must be subclass of
      * dk.netarkivet.common.distribute.JMSConnection. */
     public static String JMS_BROKER_CLASS = "settings.common.jms.class";
 
     /**
-     * The name of the environment in which this code is running.
-     * E.g. PROD, RELEASETEST. It is used as a Common prefix to all JMS channels.
-     * created in a NetarchiveSuite installation.
-     */
-    public static String ENVIRONMENT_NAME
-            = "settings.common.environmentName";
-
-    /**
+     * <b>settings.common.http.port</b>: <br>
      * The *unique* (per host) port number that may or may not be used to serve
-     * http, but is frequently used to identify the process.
-     */
+     * http. */
     public static String HTTP_PORT_NUMBER = "settings.common.http.port";
 
     /**
+     * <b>settings.common.arcrepositoryClient.class</b>: <br>
      * The class that implements the ArcRepositoryClient. The class must
      * implement the interface 
      * dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient
@@ -86,7 +94,15 @@ public class CommonSettings {
     public static String ARC_REPOSITORY_CLIENT
             = "settings.common.arcrepositoryClient.class";
 
+    /** 
+     * <b>settings.common.monitorregistryClient.class</b>: <br>
+     * Which class to use for monitor registry. Must implement the interface
+     * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
+    public static String MONITOR_REGISTRY_CLIENT
+            = "settings.common.monitorregistryClient.class";
+
     /**
+     * <b>settings.common.indexClient.class</b>: <br>
      * The class instantiated to give access to indices.  The class must
      * implement the interface 
      * dk.netarkivet.common.distribute.indexserver.JobIndexCache
@@ -96,6 +112,7 @@ public class CommonSettings {
             = "settings.common.indexClient.class";
 
     /**
+     * <b>settings.common.cacheDir</b>: <br>
      * The name of the directory where cache data global to the entire
      * machine can be stored.  Various kinds of caches should be stored in
      * subdirectories of this.
@@ -104,24 +121,112 @@ public class CommonSettings {
 
     // TODO Currently only used by heritrix shutdown - move to harvester
     // settings?
-    /** The number of milliseconds we wait for processes to react to
-     *  shutdown requests. */
+    /** 
+     * <b>settings.common.processTimeout</b>: <br>
+     * The number of milliseconds we wait for processes to react to
+     * shutdown requests. */
     public static String PROCESS_TIMEOUT
             = "settings.common.processTimeout";
 
+    /** 
+     * <b>settings.common.notifications.class</b>: <br>
+     * The implementation class for notifications, e.g. error notification. 
+     * The class must extend dk.netarkivet.common.utils.Notifications */
+    public static String NOTIFICATIONS_CLASS
+            = "settings.common.notifications.class";
+
+    /**
+     * <b>settings.common.mail.server</b>: <br>
+     * The mail server to use when sending mails. */
+    public static String MAIL_SERVER = "settings.common.mail.server";
+
+    /** 
+     * <b>settings.common.jmx.port</b>: <br>
+     * The port to use for JMX. */
+    public static String JMX_PORT = "settings.common.jmx.port";
+
+    /** 
+     * <b>settings.common.jmx.rmiPort</b>: <br>
+     * The JMX's RMI port to use for internal communication with beans. */
+    public static String JMX_RMI_PORT = "settings.common.jmx.rmiPort";
+
+    /** 
+     * <b>settings.common.jmx.passwordFile</b>: <br>
+     * The password file, containing information about who may connect to the
+     * beans. */
+    public static String JMX_PASSWORD_FILE
+            = "settings.common.jmx.passwordFile";
+
+    /** 
+     * <b>settings.common.jmx.timeout</b>: <br>
+     * How many seconds we will wait before giving up on a JMX connection. */
+    public static String JMX_TIMEOUT
+            = "settings.common.jmx.timeout";
+
+    /** 
+     * <b>settings.common.webinterface</b>: <br>
+     * The entire webinterface setting structure. */
+    public static String WEBINTERFACE_SETTINGS
+            = "settings.common.webinterface";
+
+    /** 
+     * settings.common.webinterface.<b>language</b>: <br>
+     * The entire language setting structure under the webinterface setting. 
+     * Is repeated for each language */
+    public static String WEBINTERFACE_LANGUAGE = "language";
+    
+    /** 
+     * settings.common.webinterface.language.<b>locale</b>: <br>
+     * The locale the GUI is available as under specific language setting. */
+    public static String WEBINTERFACE_LANGUAGE_LOCALE = "locale";
+
+    /** 
+     * settings.common.webinterface.language.<b>name</b>: <br>
+     * The native name of the language for the locale under specific language
+     * setting. */
+    public static String WEBINTERFACE_LANGUAGE_NAME = "name";
+
+    /**
+     * <b>settings.common.webinterface.siteSection.class</b>: <br>
+     * The subclass of SiteSection that defines a part of the
+     * web interface. Is part of repeated siteSection settings for each 
+     * part. */
+    public static String SITESECTION_CLASS
+            = "settings.common.webinterface.siteSection.class";
+
+    /**
+     * <b>settings.common.webinterface.siteSection.webapplication</b>: <br>
+     * The directory or war-file containing the web application
+     * for a site section. Is part of repeated siteSection settings for each 
+     * part. */
+    public static String SITESECTION_WEBAPPLICATION
+            = "settings.common.webinterface.siteSection.webapplication";
+
+    /** 
+     * <b>settings.common.topLevelDomains.tld</b>: <br>
+     * Valid top level domain, like .co.uk, .dk, .org. Is part of repeated 
+     * in settings for each top level domain */
+    public static String TLDS = "settings.common.topLevelDomains.tld";
+
     // TODO Currently only used by harvestscheduler - move to harvester
     // settings?
-    /** The class that defines DB-specific methods. This class must  */
+    /** 
+     * <b>settings.common.database.class</b>: <br>
+     * The class that defines DB-specific methods. This class must extend 
+     * the DBSpecifics class */
     public static String DB_SPECIFICS_CLASS
             = "settings.common.database.class";
 
     /**
-     * URL to use to connect to the database.
+     * <b>settings.common.database.url</b>: <br>
+     * The URL to use to connect to the database specified in the 
+     * DB_SPECIFICS_CLASS setting.
      */
     public static String DB_URL
             = "settings.common.database.url";
 
     /**
+     * <b>settings.common.database.backupInitHour</b>: <br>
      * The earliest time of day backup will be initiated, 0..24 hours.  At
      * a time shortly after this, a consistent backup copy of the database
      * will be created.
@@ -130,30 +235,23 @@ public class CommonSettings {
             = "settings.common.database.backupInitHour";
 
     /**
-     * The subclass of SiteSection that defines a part of the
-     * web interface.
+     * <b>settings.common.repository.limitForRecordDatatransferInFile</b>: <br>
+     * When the length record exceeds this number, the contents of the record
+     * will be transferred using a RemoteFile.
      */
-    public static String SITESECTION_CLASS
-            = "settings.common.webinterface.siteSection.class";
+    public static String BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
+            = "settings.common.repository.limitForRecordDatatransferInFile";
 
     /**
-     * The directory or war-file containing the web application
-     * for a site section.
-     */
-    public static String SITESECTION_WEBAPPLICATION
-            = "settings.common.webinterface.siteSection.webapplication";
-
-    /** The entire webinterface structure. */
-    public static String WEBINTERFACE_SETTINGS
-            = "settings.common.webinterface";
-
-    /**
+     * <b>settings.common.replicas</b>: <br>
      * The entire settings for all replicas in the environment.
+     * NOTE: settings for checksum replicas are not use yet
      */
     public static String REPLICAS_SETTINGS
             = "settings.common.replicas";
 
     /**
+     * settings.common.replicas.<b>replica</b>: <br>
      * The path to settings belonging to an individual replica,
      * placed under the replicas setting.
      */
@@ -161,11 +259,13 @@ public class CommonSettings {
             = "replica";
 
     /**
+     * settings.common.replicas.replica.<b>replicaId</b>: <br>
      * The tags for identifier of the replica, placed under the replica tag.
      * The replica id is used internally in e.g. naming of channels. */
     public static String REPLICAID_TAG
             = "replicaId";
     /**
+     * settings.common.replicas.replica.<b>replicaName</b>: <br>
      * The tags for name of the replica, placed under the replica tag.
      * The replica name is used in interfaces like the GUI or command-line 
      * batch-programs. 
@@ -173,6 +273,7 @@ public class CommonSettings {
     public static String REPLICANAME_TAG
             = "replicaName";
     /**
+     * <b>settings.common.replicas.replica.<b>replicaType</b>: <br>
      * The tags for type of the replica, placed under the replica tag.
      * The type is used to identify whether it is a bitarchive or a checksum
      * replica. NOTE: checksum replicas are not implemented yet 
@@ -181,66 +282,37 @@ public class CommonSettings {
             = "replicaType";
 
     /**
-     * The identifiers of all replicas in the
-     * environment, like "replicaOneId" and "replicaTwoId".
-     */
+     * The identifiers of all replicas in the environment. */
     public static String REPLICA_IDS
-            = "settings.common.replicas.replica.replicaId";
+            = REPLICAS_SETTINGS + "." + REPLICA_TAG + "." + REPLICAID_TAG;
 
-    /** Default bitarchive to use for e.g. batch jobs (if none is specified). */
+    /** 
+     * <b>settings.common.useReplicaId</b>: <br>
+     * Default bitarchive to use for e.g. batch jobs (if none is specified). */
     public static String USE_REPLICA_ID
             = "settings.common.useReplicaId";
 
-    /** Physical location of where the application is running */
+    /** 
+     * <b>settings.common.thisPhysicalLocation</b>: <br>
+     * Physical location of where the application is running.
+     * Only use for System state GUI and deploy */
     public static String THIS_PHYSICAL_LOCATION
             = "settings.common.thisPhysicalLocation";
 
-    /** The name of the application, e.g. "BitarchiveServerApplication". */
+    /** 
+     * <b></b>: <br>
+     * The name of the application, e.g. "BitarchiveServerApplication". 
+     * The monitor puts this with each log message. */
     public static String APPLICATION_NAME
             = "settings.common.applicationName";
 
-    /** The identifier of the instance of the application.
-     *  This is used when there are more than one of the same application
-     *  are running on the same machine, e.g. when more harvesters are running
-     *  on the same machine. */
+    /** 
+     * <b>settings.common.applicationInstanceId</b>: <br>
+     * The identifier of the instance of the application.
+     * This is used when there are more than one of the same application
+     * running on the same machine, e.g. when more harvesters are running
+     * on the same machine or more bitarchive applications are running on 
+     * the same machine. */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
-
-    /**
-     * The mail server to use when sending mails. Currently only used for
-     * email notifications.
-     */
-    public static String MAIL_SERVER = "settings.common.mail.server";
-
-    /** The implementation class for notifications. */
-    public static String NOTIFICATIONS_CLASS
-            = "settings.common.notifications.class";
-
-    /** Which port to use for JMX. */
-    public static String JMX_PORT = "settings.common.jmx.port";
-
-    /** Which port to use for JMX's RMI communication. */
-    public static String JMX_RMI_PORT = "settings.common.jmx.rmiPort";
-
-    /** Which file to look for JMX passwords in. */
-    public static String JMX_PASSWORD_FILE
-            = "settings.common.jmx.passwordFile";
-
-    /** How many seconds we will wait before giving up on a JMX connection. */
-    public static String JMX_TIMEOUT
-            = "settings.common.jmx.timeout";
-
-    /** Which class to use for monitor registry. Must implement the interface
-     * dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient. */
-    public static String MONITOR_REGISTRY_CLIENT
-            = "settings.common.monitorregistryClient.class";
-
-    /** Valid top level domains, like .co.uk, .dk, .org. Repeats. */
-    public static String TLDS = "settings.common.topLevelDomains.tld";
-    /**
-     * When the length record exceeds this number, the contents of the record
-     * will be transferred using a RemoteFile.
-     */
-    public static String BITARCHIVE_LIMIT_FOR_RECORD_DATATRANSFER_IN_FILE
-            = "settings.common.repository.limitForRecordDatatransferInFile";
 }

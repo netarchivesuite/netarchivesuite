@@ -150,10 +150,10 @@ public class HTMLUtilsTester extends TestCase {
 
         for (StringTree<String> language
                 : webinterfaceSettings.getSubTrees(
-                Constants.WEBINTERFACE_LANGUAGE)) {
-            String locale = language.getValue(Constants.
+                     CommonSettings.WEBINTERFACE_LANGUAGE)) {
+            String locale = language.getValue(CommonSettings.
                     WEBINTERFACE_LANGUAGE_LOCALE);
-            String name = language.getValue(Constants.
+            String name = language.getValue(CommonSettings.
                     WEBINTERFACE_LANGUAGE_NAME);
             StringAsserts.assertStringContains("Should contain link to locale",
                                                "locale=" + locale, result);

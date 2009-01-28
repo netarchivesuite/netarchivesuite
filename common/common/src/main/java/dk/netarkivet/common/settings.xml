@@ -25,148 +25,81 @@
 -->
 <!-- 
 	This file contains the default settings used by the common module.
+
+	For documentation of the individual settings, please refer to the
+	javadoc for dk.netarkivet.common.CommonSettings.java
 -->
 <settings>
     <common>
-     	<!-- The name of the environment in which this code is running, e.g.
-                 PROD, RELEASETEST, NHC,... Is used as common prefix for 
-                 all JMS channels
-    	 -->
         <environmentName>DEV</environmentName>
-        <!-- Common temporary directory for all applications. Some subdirs of
-             this directory  must be set to have AllPermision in the
-             conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
-        <!-- Defines the method for transferring files around. The default is using http  -->
-            <!-- The class to use for RemoteFile objects. This class must implement
-            the dk.netarkivet.common.distribute.RemoteFile interface 
-            -->
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
         </remoteFile>
-        <!-- Connection data for JMS-->
-        <jms>
-            <!-- Selects the broker class to be used. Must be a subclass of
-            dk.netarkivet.common.distribute.JMSConnection. -->
+        <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         </jms>
         <http>
-            <!-- The *unique* (per host) port number that may or may not be
-                 used to serve http, but is frequently used to identify
-                 the process.-->
             <port>0000</port>
         </http>
         <arcrepositoryClient>
-            <!-- The class that implements the ArcRepositoryClient.  This class
-                 will be instantiated by the ArcRepositoryClientFactory -->
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
         </arcrepositoryClient>
         <monitorregistryClient>
-            <!-- The class instantiated to register JMX urls at a registry. -->
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
         </monitorregistryClient>
         <indexClient>
-            <!-- The class instantiated to give access to indices.  Will be
-                 created by IndexClientFactory -->
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
         </indexClient>
-        <!-- The name of the directory where cache data global to the entire
-             machine can be stored.  Various kinds of caches should be stored in
-             subdirectories of this -->
         <cacheDir>cache</cacheDir>
-        <!--The number of milliseconds we wait for processes to react
-            to shutdown requests.-->
         <processTimeout>5000</processTimeout>
-        <!-- Error notification settings -->
         <notifications>
-            <!-- Which class to instantiate to handle error notifications -->
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
         </notifications>
-        <!-- Settings for sending email. Currently mail is only used for email
-         notifications. -->
         <mail>
-            <!-- The email server to use. -->
             <server>localhost</server>
         </mail>
-        <!-- JMX logging settings -->
-        <jmx>
-            <!-- The port to use for JMX-->
+        <jmx> <!-- JMX logging settings -->
             <port>8100</port>
-            <!-- The RMI port used for communicating with beans -->
             <rmiPort>8200</rmiPort>
-            <!-- The password file, containing information about who may
-            connect -->
             <passwordFile>conf/jmxremote.password</passwordFile>
-            <!-- How many seconds we will wait before giving up on a JMX
-            connection. -->
             <timeout>120</timeout>
         </jmx>
-        <!-- Settings for the web GUI -->
-        <webinterface>
-            <!-- Language settings -->
+        <webinterface> <!-- Settings for the web GUI -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>da</locale>
-                <!-- Native name of the language for this locale -->
                 <name>Dansk</name>
             </language>
-            <!-- Language settings -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>en</locale>
-                <!-- Native name of the language for this locale -->
                 <name>English</name>
             </language>
-            <!-- Language settings -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>de</locale>
-                <!-- Native name of the language for this locale -->
                 <name>Deutsch</name>
             </language>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/QA.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
         </webinterface>
         <topLevelDomains>
-            <!-- This setting describes valid TLDs to define domains. -->
             <tld>ac</tld>
             <tld>ad</tld>
             <tld>ae</tld>
@@ -455,29 +388,15 @@
             <tld>zw</tld>
         </topLevelDomains>
         <database>
-            <!-- The full URL for connecting to the database.
-                 If present and not empty, this URL must match the settings
-                 baseDir and class.-->
-            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-            <!-- The class that handles DB-specific methods -->
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <!-- The earliest time of day backup will be initiated, 0..24
-                 hours.  At a time shortly after this, a consistent backup
-                 copy of the database will be created -->
+            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <backupInitHour>3</backupInitHour>
         </database>
         <repository>
-            <!-- When the length record exceeds this number, the contents of the record
-                 will be transferred using a RemoteFile. Currently set to 10 MB
-              -->
+            <!-- Currently set to 10 MB -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <!-- The entire settings for replicas. -->
-        <replicas>
-            <!-- All bitarcive replicas in the environment, 
-                 e.g., (ONE, replicaOne, bitarchive) and 
-                 (TWO, replicaTwo, bitarchive).
-                 NOTE: settings for checksum replicas are not use yet -->
+        <replicas> <!-- The entire settings for replicas. -->
             <replica>
                 <replicaId>ONE</replicaId>
                 <replicaName>replicaOne</replicaName>
@@ -489,12 +408,8 @@
                 <replicaType>bitarchive</replicaType>
             </replica>
         </replicas>
-        <!-- Default bit archive id to use for 
-             e.g. batch jobs (if none is specified) -->
         <useReplicaId>TWO</useReplicaId>
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
-        <!-- The name of the application, fx. "BitarchiveServerApplication".
-             The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
         <applicationInstanceId></applicationInstanceId>
     </common>

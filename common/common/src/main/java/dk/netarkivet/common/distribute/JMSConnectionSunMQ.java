@@ -94,9 +94,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The JMS broker host contacted by the JMS connection. */
+    /** 
+     * <b>settings.common.jms.broker</b>: <br>
+     * The JMS broker host contacted by the JMS connection. */
     public static final String JMS_BROKER_HOST = "settings.common.jms.broker";
-    /** The port the JMS connection should use. */
+
+    /** 
+     * <b>settings.common.jms.port</b>: <br>
+     * The port the JMS connection should use. */
     public static final String JMS_BROKER_PORT = "settings.common.jms.port";
 
     /**

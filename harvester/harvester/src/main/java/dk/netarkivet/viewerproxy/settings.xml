@@ -24,14 +24,14 @@
  */
 -->
 <!-- 
-	This file contains the default settings used by the viewerproxy module.
+	This file contains the default settings used by the viewerproxy (access)
+	module.
+	
+	For documentation of the individual settings, please refer to the
+	javadoc for dk.netarkivet.viewerproxy.ViewerProxySettings.java
 -->
 <settings>
     <viewerproxy>
-        <!-- The main directory for the ViewerProxy, used for storing the Lucene
-             index for the jobs being viewed. This directory can be used by multiple
-     		 ViewerProxy applications running on the same machine.
-     	-->
         <baseDir>viewerproxy</baseDir>
     </viewerproxy>
 </settings>

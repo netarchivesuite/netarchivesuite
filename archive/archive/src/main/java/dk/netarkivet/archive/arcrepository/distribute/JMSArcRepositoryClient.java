@@ -103,18 +103,23 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     // will not run.
 
     /**
+     * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br>
      * The setting for how many milliseconds we will wait before giving up
      * on a lookup request to the Arcrepository.
      */
     public static final String ARCREPOSITORY_GET_TIMEOUT
             = "settings.common.arcrepositoryClient.getTimeout";
+
     /**
+     * <b>settings.common.arcrepositoryClient.storeRetries</b>: <br>
      * The setting for the number of times to try sending a store message
      * before failing, including the first attempt.
      */
     public static String ARCREPOSITORY_STORE_RETRIES
             = "settings.common.arcrepositoryClient.storeRetries";
+
     /**
+     * <b>settings.common.arcrepositoryClient.storeTimeout</b>: <br>
      * the setting for the timeout in milliseconds before retrying when calling
      * {@link ArcRepositoryClient#store(File)}.
      */

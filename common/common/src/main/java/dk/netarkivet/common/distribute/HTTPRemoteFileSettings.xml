@@ -25,12 +25,14 @@
 -->
 <!-- 
 	This file contains the default settings used by the HTTPRemoteFile class.
+
+	For documentation of the individual settings, please refer to the javadoc
+	for dk.netarkivet.common.distribute.HTTPRemoteFile.java
 -->
 <settings>
     <common>
         <!-- HTTP connection data-->
         <remoteFile>
-            <!-- The HTTP remotefile port number used -->
             <port>8100</port>
         </remoteFile>
     </common>

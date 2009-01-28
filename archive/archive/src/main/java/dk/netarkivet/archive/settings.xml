@@ -25,6 +25,9 @@
 -->
 <!-- 
 	This file contains the default settings used by the archive module.
+
+	For documentation of the individual settings, please refer to the
+	javadoc for dk.netarkivet.archive.ArchiveSettings.java
 -->
 <settings>
     <archive>

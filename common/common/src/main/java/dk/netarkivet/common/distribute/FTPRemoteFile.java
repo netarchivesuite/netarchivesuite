@@ -107,24 +107,37 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The setting for the FTP-server used. */
+    /** 
+     * <b>settings.common.remoteFile.serverName</b>: <br>
+     * The setting for the FTP-server used. */
     public static String FTP_SERVER_NAME
             = "settings.common.remoteFile.serverName";
-    /** The setting for the FTP-server port used. */
+    
+    /** 
+     * <b>settings.common.remoteFile.serverPort</b>: <br>
+     * The setting for the FTP-server port used. */
     public static String FTP_SERVER_PORT
             = "settings.common.remoteFile.serverPort";
-    /** The setting for the FTP username. */
+
+    /** 
+     * <b>settings.common.remoteFile.userName</b>: <br>
+     * The setting for the FTP username. */
     public static String FTP_USER_NAME
             = "settings.common.remoteFile.userName";
-    /** The setting for the FTP password. * */
+
+    /** 
+     * <b>settings.common.remoteFile.userPassword</b>: <br>
+     * The setting for the FTP password. * */
     public static String FTP_USER_PASSWORD
             = "settings.common.remoteFile.userPassword";
+    
     /**
+     * <b>settings.common.remoteFile.retries</b>: <br>
      * The setting for the number of times FTPRemoteFile should try before
-     * giving up a copyTo operation.
-     */
+     * giving up a copyTo operation. */
     public static final String FTP_COPYTO_RETRIES_SETTINGS
             = "settings.common.remoteFile.retries";
+
     /**
      * How many times we will retry upload and download.
      */

@@ -204,15 +204,15 @@ public class HTMLUtils {
 
         for (StringTree<String> language
                 : webinterfaceSettings.getSubTrees(
-                Constants.WEBINTERFACE_LANGUAGE)) {
+                        CommonSettings.WEBINTERFACE_LANGUAGE)) {
             out.print(String.format(
                     "<a href=\"lang.jsp?locale=%s&amp;name=%s\">%s</a>&nbsp;",
                     escapeHtmlValues(encode(language.getValue(
-                            Constants.WEBINTERFACE_LANGUAGE_LOCALE))),
+                            CommonSettings.WEBINTERFACE_LANGUAGE_LOCALE))),
                     escapeHtmlValues(encode(language.getValue(
-                            Constants.WEBINTERFACE_LANGUAGE_NAME))),
+                            CommonSettings.WEBINTERFACE_LANGUAGE_NAME))),
                     escapeHtmlValues(language.getValue(
-                            Constants.WEBINTERFACE_LANGUAGE_NAME)))
+                            CommonSettings.WEBINTERFACE_LANGUAGE_NAME)))
             );
         }
         out.print("</div>");

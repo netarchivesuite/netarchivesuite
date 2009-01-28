@@ -54,17 +54,26 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     // purpose! Otherwise, the static initialiser that loads default values
     // will not run.
 
-    /** The setting for the keystore file used for HTTPS remotefiles. */
+    /** 
+     * <b>settings.common.remoteFile.certificateKeyStore</b>: <br>
+     * The setting for the keystore file used for HTTPS remotefiles. 
+     * It contains the certificate for HTTPS */
     public static String HTTPSREMOTEFILE_KEYSTORE_FILE
             = "settings.common.remoteFile.certificateKeyStore";
     
-    /** The setting for the password used for HTTPS remotefile keystore.
-     * Refer to the installation manual for how to build a keystore.
+    /** 
+     * <b>settings.common.remoteFile.certificateKeyStorePassword</b>: <br>
+     * The setting for the password that the keystore used for HTTPS 
+     * remotefile keystore is encrypted with.
+     * Refer to the configuration manual for how to build a keystore.
      */
     public static String HTTPSREMOTEFILE_KEYSTORE_PASSWORD
             = "settings.common.remoteFile.certificateKeyStorePassword";
     
-    /** The setting for the password used for HTTPS remotefile private key. */
+    /** 
+     * <b>settings.common.remoteFile.certificatePassword</b>: <br>
+     * The setting for the password that the certificate used for HTTPS 
+     * remotefile (private key) is encrypted with. */
     public static String HTTPSREMOTEFILE_KEY_PASSWORD
             = "settings.common.remoteFile.certificatePassword";
 

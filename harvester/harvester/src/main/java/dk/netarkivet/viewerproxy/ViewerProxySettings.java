@@ -48,9 +48,9 @@ public class ViewerProxySettings {
     // will not run.
 
     /**
+     * <b>settings.viewerproxy.baseDir</b>: <br> 
      * The main directory for the ViewerProxy, used for storing the Lucene
      * index for the jobs being viewed. This directory can be used by multiple
-     * ViewerProxy applications running on the same machine.
-     */
+     * ViewerProxy applications running on the same machine. */
     public static String VIEWERPROXY_DIR = "settings.viewerproxy.baseDir";
 }

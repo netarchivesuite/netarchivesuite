@@ -47,11 +47,16 @@ public class EMailNotifications extends Notifications {
         );
     }
 
-    /** The setting for the receiver of email notifications. */
+    /** 
+     * <b>settings.common.notifications.receiver</b>: <br>
+     * The setting for the receiver of email notifications. */
     public static String MAIL_RECEIVER_SETTING
             = "settings.common.notifications.receiver";
 
-    /** The setting for the sender of email notifications. */
+    /** 
+     * <b>settings.common.notifications.sender</b>: <br>
+     * The setting for the sender of email notifications (and receiver of 
+     * bounces). */
     public static String MAIL_SENDER_SETTING
             = "settings.common.notifications.sender";
     

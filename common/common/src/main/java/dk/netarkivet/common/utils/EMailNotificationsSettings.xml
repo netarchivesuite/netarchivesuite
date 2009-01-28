@@ -25,14 +25,14 @@
 -->
 <!-- 
 	This file contains the default settings used by the EmailNotifications class.
+
+	For documentation of the individual settings, please refer to the javadoc
+	for dk.netarkivet.common.utils.EMailNotifications.java
 -->
 <settings>
     <common>
-    	<!-- Default settings for the EmailNotifications class -->
     	<notifications>
-            <!-- The receiver of emails -->
             <receiver>root@localhost</receiver>
-            <!-- The stated sender of emails  (and receiver of bounces)-->
             <sender>root@localhost</sender>
         </notifications>
     </common>

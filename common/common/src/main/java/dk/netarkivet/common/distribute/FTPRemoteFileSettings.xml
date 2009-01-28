@@ -25,21 +25,17 @@
 -->
 <!-- 
 	This file contains the default settings used by the FTPRemoteFile class.
+
+	For documentation of the individual settings, please refer to the javadoc
+	for dk.netarkivet.common.distribute.FTPRemoteFile.java 
 -->
 <settings>
     <common>
-        <!-- FTP connection data-->
-        <remoteFile>
-            <!-- The default FTP-server used -->
+        <remoteFile> <!-- FTP connection data-->
             <serverName>localhost</serverName>
-            <!-- The default FTP-server port used -->
             <serverPort>21</serverPort>
-            <!-- The default FTP username -->
             <userName>anonymous</userName>
-            <!-- The setting for the FTP password -->
             <userPassword>anonymous</userPassword>
-            <!-- The number of times FTPRemoteFile should try before giving up
-                 a copyTo operation. We augment FTP with checksum checks. -->
             <retries>3</retries>
         </remoteFile>
     </common>

@@ -25,18 +25,17 @@
 -->
 <!-- 
 	This file contains the default settings used by HTTPSRemoteFile class.
+
+	For documentation of the individual settings, please refer to the javadoc
+	for dk.netarkivet.common.distribute.HTTPSRemoteFile.java and 
+	dk.netarkivet.common.distribute.HTTPRemoteFile.java
 -->
 <settings>
     <common>
-        <!-- HTTPS connection data-->
-        <remoteFile>
-            <!-- The default HTTPS port used -->
+        <remoteFile> <!-- HTTPS connection data-->
             <port>8100</port>
-            <!-- The path for the keystore containing the certificate. -->
             <certificateKeyStore>conf/keystore</certificateKeyStore>
-            <!-- The password the keystore is encrypted with. -->
             <certificateKeyStorePassword>1234</certificateKeyStorePassword>
-            <!-- The password the certificate is encrypted with. -->
             <certificatePassword>1234</certificatePassword>
         </remoteFile>
     </common>

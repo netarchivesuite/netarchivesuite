@@ -49,18 +49,28 @@ public class MonitorSettings {
 
     /* The setting names used should be declared and documented here */
 
-    /** The username used to connect to the MBeanservers. */
+    /** 
+     * <b>settings.monitor.jmxUsername</b>: <br>
+     * The username used to connect to the all MBeanservers started by the 
+     * application. The username must correspond to the value stored in the 
+     * jmxremote.password file (name defined in setting 
+     * settings.common.jmx.passwordFile). */
     public static String JMX_USERNAME_SETTING
         = "settings.monitor.jmxUsername";
     
-    /** The password needed to connect to the MBeanservers. */
+    /**
+     * <b>settings.monitor.jmxPassword</b>: <br>
+     * The password used to connect to the all MBeanservers started by the 
+     * application. The password must correspond to the value stored in the
+     * jmxremote.password file (name defined in setting 
+     * settings.common.jmx.passwordFile). */
     public static String JMX_PASSWORD_SETTING
             = "settings.monitor.jmxPassword";
     
     /**
+     * <b>settings.monitor.logging.historySize</b>: <br>
      * The number of logmessages from each application visible in the
-     * monitor.
-     */
+     * monitor. */
     public static String LOGGING_HISTORY_SIZE
             = "settings.monitor.logging.historySize";
 }

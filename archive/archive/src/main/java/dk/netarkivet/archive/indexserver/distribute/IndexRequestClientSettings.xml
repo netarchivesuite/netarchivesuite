@@ -25,13 +25,13 @@
 -->
 <!-- 
 	This file contains the default settings used by the IndexRequestClient class.
+
+	For documentation of the individual settings, please refer to the javadoc 
+	for dk.netarkivet.archive.indexserver.distribute.IndexRequestClient.java 
 -->
 <settings>
     <common>
      <indexClient>
-            <!-- The amount of time, in milliseconds, we should wait for replies
-                 when issuing a call to generate an index over some jobs.
-             -->
             <indexRequestTimeout>43200000</indexRequestTimeout>
         </indexClient>
     </common>

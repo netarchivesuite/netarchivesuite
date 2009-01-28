@@ -97,9 +97,9 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     private Log log = LogFactory.getLog(getClass().getName());
     
     /**
+     * <b>settings.common.indexClient.indexRequestTimeout</b>: <br>
      * Setting for the amount of time, in milliseconds, we should wait for 
-     * replies when issuing a call to generate an index over some jobs.
-     */
+     * replies when issuing a call to generate an index over some jobs. */
     public static final String INDEXREQUEST_TIMEOUT
             = "settings.common.indexClient.indexRequestTimeout";
 
