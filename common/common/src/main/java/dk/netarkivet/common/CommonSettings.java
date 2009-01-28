@@ -153,7 +153,9 @@ public class CommonSettings {
     /** 
      * <b>settings.common.jmx.passwordFile</b>: <br>
      * The password file, containing information about who may connect to the
-     * beans. */
+     * beans. 
+     * The file has a format defined by the JMX standard,
+     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
     public static String JMX_PASSWORD_FILE
             = "settings.common.jmx.passwordFile";
 

@@ -118,9 +118,6 @@ public class JMXHeritrixController implements HeritrixController {
      */
     private static final String UID_PROPERTY = "uid";
 
-    /** Name of the JMX user that can control anything in Heritrix. */
-    private static final String JMX_ADMIN_NAME = "controlRole";
-
     /** File path Separator. Used to separate the jar-files in the classpath. */
     private static final String FILE_PATH_SEPARATOR = ":";
 
@@ -762,29 +759,16 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Name to use when connecting to Heritrix JMX
      */
     private String getJMXAdminName() {
-        return JMX_ADMIN_NAME;
+        return Settings.get(HarvesterSettings.HERITRIX_JMX_USERNAME);
     }
 
     /** Get the password to use to access the Heritrix JMX as the user returned
      * by getJMXAdminName().  This password can be set in a file pointed to
-     * in settings.xml.  The file has a format defined by the JMX standard,
-     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>
-     * @throws IOFailure If no usable password found in the JMX password file.
+     * in settings.xml. 
      * @return Password for accessing Heritrix JMX
      */
     private String getJMXAdminPassword() {
-        File filename = new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE));
-        List<String> lines = FileUtils.readListFromFile(filename);
-        for (String line : lines) {
-            if (!line.startsWith("#")) {
-                String[] parts = line.split(" +");
-                if (parts.length >= 2 && parts[0].equals(getJMXAdminName())) {
-                    return parts[1];
-                }
-            }
-        }
-        throw new IOFailure("No usable password found for '"
-                            + getJMXAdminName() + "' in '" + filename + "'");
+        return Settings.get(HarvesterSettings.HERITRIX_JMX_PASSWORD);
     }
 
     /** Get the port to use for Heritrix JMX, as set in settings.xml.
