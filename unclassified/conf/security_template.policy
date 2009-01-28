@@ -2,7 +2,7 @@
  * This is a template for the security policy file.
  * The following variables should be replaced 
  * (and is automatically replaced by deploy):
- * TEMPDIR and ROLE.
+ * T E M P D I R and R O L E.
  * The file directories should granted read-only access at the end of the file. 
  */
 grant codeBase "file:lib/-" {
@@ -28,19 +28,19 @@ grant codeBase "file:TEMPDIR/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:tests/commontempdir/QA/jsp/-" {
+grant codeBase "file:TEMPDIR/QA/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:tests/commontempdir/History/jsp/-" {
+grant codeBase "file:TEMPDIR/History/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:tests/commontempdir/HarvestDefinition/jsp/-" {
+grant codeBase "file:TEMPDIR/HarvestDefinition/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:tests/commontempdir/BitPreservation/jsp/-" {
+grant codeBase "file:TEMPDIR/BitPreservation/jsp/-" {
   permission java.security.AllPermission;
 };
 
