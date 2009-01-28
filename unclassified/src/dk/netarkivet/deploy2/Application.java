@@ -73,7 +73,8 @@ public class Application {
         applicationRoot = e;
         machineParameters = new Parameters(param);
         // retrieve the specific settings for this instance 
-        Element tmpSet = applicationRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
+        Element tmpSet = applicationRoot
+            .element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -105,10 +106,10 @@ public class Application {
                 
                 // insert the name in settings.
                 String xmlName = XmlStructure.pathAndContentToXML(
-                	nameWithNamePath, 
-                	Constants.COMPLETE_APPLICATION_NAME_LEAF);
+                        nameWithNamePath, 
+                        Constants.COMPLETE_APPLICATION_NAME_LEAF);
                 Element appXmlName = XmlStructure.makeElementFromString(
-            	    xmlName);
+                    xmlName);
                 settings.overWrite(appXmlName);
             } else {
                 log.debug("Physical location has no name!");

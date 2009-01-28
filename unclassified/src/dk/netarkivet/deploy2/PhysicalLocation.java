@@ -104,7 +104,8 @@ public class PhysicalLocation {
         resetDirectory = resetDir;
         
         // retrieve the specific settings for this instance 
-        Element tmpSet = physLocRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
+        Element tmpSet = physLocRoot.element(
+                Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -132,9 +133,9 @@ public class PhysicalLocation {
             name = at.getText();
             // insert the name in settings.
             String xmlName = XmlStructure.pathAndContentToXML(name, 
-        	    Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
+                    Constants.COMPLETE_THIS_PHYSICAL_LOCATION_LEAF);
             Element physLocName = XmlStructure.makeElementFromString(
-        	    xmlName);
+                    xmlName);
             settings.overWrite(physLocName);
         } else {
             log.debug("Physical location has no name!");

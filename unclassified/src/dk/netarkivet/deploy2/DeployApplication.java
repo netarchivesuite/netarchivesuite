@@ -120,7 +120,7 @@ public final class DeployApplication {
                         + "arguments.");
                 System.exit(0);
             }
-            
+
             // Retrieving the configuration filename
             String itConfigFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_CONFIG_FILE);

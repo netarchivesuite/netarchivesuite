@@ -79,19 +79,17 @@ public final class Constants {
     /** The name of the common temp dir tag in the security policy file.*/
     static final String SECURITY_COMMON_TEMP_DIR_TAG = "TEMPDIR";
 
-    // TEMPORARY CONSTANTS!
+    // Setting specific
     /** Path to the Settings branch.*/
     static final String COMPLETE_SETTINGS_BRANCH = 
-	CommonSettings.SETTINGS;
-    
-    // Setting specific
+        CommonSettings.SETTINGS;
     /** The total path to the environment name from an entity branch.*/
     static final String[] COMPLETE_ENVIRONMENT_NAME_LEAF = 
-	CommonSettings.ENVIRONMENT_NAME.split("[.]");
+        CommonSettings.ENVIRONMENT_NAME.split("[.]");
     /** The path to the environment name from the settings branch.*/
     static final String[] SETTINGS_ENVIRONMENT_NAME_LEAF =
-	CommonSettings.ENVIRONMENT_NAME
-	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+        CommonSettings.ENVIRONMENT_NAME
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the database directory from the settings branch.*/
     static final String[] DATABASE_URL_SETTING_LEAF_PATH = CommonSettings
         .DB_URL.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
@@ -100,27 +98,27 @@ public final class Constants {
         CommonSettings.HTTP_PORT_NUMBER.split("[.]");
     /** The complete path to the receiver leaf from beyond settings.*/
     static final String[] SETTINGS_NOTIFICATION_RECEIVER_PATH = 
-	EMailNotifications.MAIL_RECEIVER_SETTING.split("[.]");
+        EMailNotifications.MAIL_RECEIVER_SETTING.split("[.]");
     /** The path to the jmxPort leaf from beyond settings.*/
     static final String[] COMPLETE_JMX_PORT_PATH =
-	CommonSettings.JMX_PORT.split("[.]");
+        CommonSettings.JMX_PORT.split("[.]");
     /** The path to the rmiPort leaf from beyond settings.*/
     static final String[] TEXT_JMX_RMI_PORT_PATH =
-	CommonSettings.JMX_RMI_PORT.split("[.]");
+        CommonSettings.JMX_RMI_PORT.split("[.]");
     /** The path to the heritrix guiPort from beyond settings.*/
     static final String[] COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH = 
         HarvesterSettings.HERITRIX_GUI_PORT.split("[.]");
     /** The path to the heritrix jmxPort from beyond settings.*/
     static final String[] COMPLETE_HARVEST_HETRIX_JMX_PORT =
-	HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
+        HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
     /** The path to the tempDir leaf from settings.*/
     static final String[] SETTINGS_TEMPDIR_LEAF = 
-	CommonSettings.DIR_COMMONTEMPDIR
-	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+        CommonSettings.DIR_COMMONTEMPDIR
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the fileDir branch from settings.*/
     static final String[] SETTINGS_BITARCHIVE_FILEDIR_LEAF = 
-	ArchiveSettings.BITARCHIVE_SERVER_FILEDIR
-	.replace(CommonSettings.SETTINGS + ".", "").split("[.]");
+        ArchiveSettings.BITARCHIVE_SERVER_FILEDIR
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the serverDir leaf from settings.*/
     static final String[] SETTINGS_HARVEST_SERVERDIR_LEAF = 
         HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR
@@ -140,13 +138,13 @@ public final class Constants {
         ViewerProxySettings.VIEWERPROXY_DIR
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path from monitor to the jmxUsername leaf.*/
-    static final String[] SETTINGS_JMX_NAME_LEAF = 
-	MonitorSettings.JMX_USERNAME_SETTING
-        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");	
+    static final String[] SETTINGS_MONITOR_JMX_NAME_LEAF = 
+        MonitorSettings.JMX_USERNAME_SETTING
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path from monitor to the jmxPassword leaf.*/
-    static final String[] SETTINGS_JMX_PASSWORD_LEAF = 
-	MonitorSettings.JMX_PASSWORD_SETTING
-        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");	
+    static final String[] SETTINGS_MONITOR_JMX_PASSWORD_LEAF = 
+        MonitorSettings.JMX_PASSWORD_SETTING
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the application instance id leaf from settings.*/
     static final String[] SETTINGS_APPLICATION_INSTANCE_ID_LEAF = 
         CommonSettings.APPLICATION_INSTANCE_ID
@@ -154,14 +152,22 @@ public final class Constants {
     /** The path to thisPhysicalLocation from settings.*/
     static final String[] COMPLETE_THIS_PHYSICAL_LOCATION_LEAF = 
     CommonSettings.THIS_PHYSICAL_LOCATION.split("[.]");
-    /** The path to applicationName from settings.*/
+    /** The path to applicationName from beyond settings.*/
     static final String[] COMPLETE_APPLICATION_NAME_LEAF = 
     CommonSettings.APPLICATION_NAME.split("[.]");
+    /** The path to the jmxUsername under heritrix from settings.*/
+    static final String[] SETTINGS_HERITRIX_JMX_USERNAME_LEAF = 
+	HarvesterSettings.HERITRIX_JMX_USERNAME
+	.replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+    /** The path to the jmxPassword under heritrix from settings.*/
+    static final String[] SETTINGS_HERITRIX_JMX_PASSWORD_LEAF = 
+	HarvesterSettings.HERITRIX_JMX_PASSWORD
+	.replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
 
     // Values and file names
     /** The operating system attribute for windows.*/
     static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
-    /** The call for running a batch script in windows.*/
+    /** The call for running a batch script from another batch script.*/
     static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
         "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
     /** The name of the JMX remote password file.*/
@@ -290,7 +296,7 @@ public final class Constants {
         "There have to be " + TEST_ARGUMENTS_REQUIRED + " test arguments.";
     /** The error message when offset value are too different from httpport.*/
     public static final String MSG_ERROR_TEST_OFFSET = 
-        "Offsetvalue not between 0 and 10, as required.";
+        "Difference between Offset and http not between 0 and 10, as required.";
     /** The error message when reset directory has wrong argument.*/
     public static final String MSG_ERROR_RESET_ARGUMENT = 
         "Wrong argument for resetting the directory.";

@@ -115,7 +115,8 @@ public abstract class Machine {
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
-        Element tmpSet = machineRoot.element(Constants.COMPLETE_SETTINGS_BRANCH);
+        Element tmpSet = machineRoot.element(
+                Constants.COMPLETE_SETTINGS_BRANCH);
         // Generate the specific settings by combining the general settings 
         // and the specific, (only if this instance has specific settings)
         if(tmpSet != null) {
@@ -153,7 +154,8 @@ public abstract class Machine {
     @SuppressWarnings("unchecked")
     private void extractApplications() {
         applications = new ArrayList<Application>();
-        List<Element> le = machineRoot.elements(Constants.DEPLOY_APPLICATION_NAME);
+        List<Element> le = machineRoot.elements(
+                Constants.DEPLOY_APPLICATION_NAME);
         for(Element e : le) {
             applications.add(new Application(e, settings, machineParameters));
         }
@@ -259,7 +261,7 @@ public abstract class Machine {
 
             // change the jmx monitor role (if defined in settings)
             String monitorRole = settings.getLeafValue(
-        	    Constants.SETTINGS_JMX_NAME_LEAF);
+                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
             if(monitorRole != null) {
                 prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
                         monitorRole);
@@ -434,14 +436,13 @@ public abstract class Machine {
                 jw.println("# as described above.");
                 jw.println("#");
 
-                // get the monitor name and password
-                StringBuilder monitor = new StringBuilder("");
-                monitor.append(settings.getSubChildValue(
-                	Constants.SETTINGS_JMX_NAME_LEAF));
-                monitor.append(" ");
-                monitor.append(settings.getSubChildValue(
-                	Constants.SETTINGS_JMX_PASSWORD_LEAF));
-                jw.print(monitor.toString());
+                // get the username and password for monitor and heritrix.
+                StringBuilder logins = new StringBuilder("");
+
+                logins.append(getMonitorLogin());
+                logins.append(getHeritrixLogin());
+                
+                jw.print(logins.toString());
             } finally {
                 jw.close();
             }
@@ -455,7 +456,154 @@ public abstract class Machine {
             System.out.println("Error in creating jmxremote.password " + e);
         }
     }
+    
+    /**
+     * For finding the jmxUsernames and jmxPasswords under the monitor branch
+     * in the settings. 
+     * Goes through all applications, which all must have the same 
+     * username and the same passwords.  
+     *  
+     * @return The string to add to the jmxremote.password file.
+     * @throws Exception If there is a different amount of usernames 
+     * and passwords, or if two application has different values for their
+     * username or passwords (applications without values are ignored). 
+     */
+    protected String getMonitorLogin() throws Exception{
+        StringBuilder res = new StringBuilder();
+        // initialise list of usernames and passwords to add
+        List<String> usernames = new ArrayList<String>();
+        List<String> passwords = new ArrayList<String>();
+        String[] tmpVals;
 
+        // get values from applications and put them into the lists
+        for(Application app : applications) {
+            // get monitor.jmxUsername
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    usernames.add(st);
+                }
+            }
+            // get monitor.jmxPassword
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_MONITOR_JMX_PASSWORD_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    passwords.add(st);
+                }
+            }
+        }
+
+        // if different amount of usernames and passwords. DIE
+        if(usernames.size() != passwords.size()) {
+            log.warn("Different amount of usernames and passwords "
+                    + "in monitor under applications.");
+            throw new Exception("Different amount of usernames "
+                    + "and passwords!");
+        }
+        
+
+        // if no usernames, and thus no passwords, finish!
+        if(usernames.size() == 0) {
+            return "";
+        }
+        
+        // check if the usernames and passwords are the same.
+        for(int i = 1; i < usernames.size(); i++) {
+            if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
+        	    || !passwords.get(0)
+        	    .equalsIgnoreCase(passwords.get(i))) {
+        	log.warn("Different usernames or passwords "
+        		+ "under heritrix on the same machine.");
+        	throw new Exception("Different usernames "
+        		+ "or passwords!");
+            }
+        }
+        
+        // make the resulting string
+        if(usernames.size() > 0) {
+            res.append(usernames.get(0));
+            res.append(" ");
+            res.append(passwords.get(0));
+            res.append("\n");
+        }
+        return res.toString();
+    }
+
+    /**
+     * For finding the jmxUsernames and jmxPasswords under the 
+     * harvest.harvesting.heritrix branch under in the settings. 
+     * Goes through all applications, which all must have the same 
+     * username and the same passwords.  
+     *  
+     * @return The string to add to the jmxremote.password file.
+     * @throws Exception If there is a different amount of usernames 
+     * and passwords, or if two application has different values for their
+     * username or passwords (applications without values are ignored). 
+     */
+    protected String getHeritrixLogin() throws Exception{
+        StringBuilder res = new StringBuilder();
+        // initialise list of usernames and passwords to add
+        List<String> usernames = new ArrayList<String>();
+        List<String> passwords = new ArrayList<String>();
+        String[] tmpVals;
+
+        // get values from applications and put them into the lists
+        for(Application app : applications) {
+            // get heritrix.jmxUsername
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    usernames.add(st);
+                }
+            }
+            // get heritrix.jmxPassword
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_HERITRIX_JMX_PASSWORD_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    passwords.add(st);
+                }
+            }
+        }
+
+        // if different amount of usernames and passwords. DIE
+        if(usernames.size() != passwords.size()) {
+            log.warn("Different amount of usernames and passwords "
+                    + "in heritrix under applications.");
+            throw new Exception("Different amount of usernames "
+                    + "and passwords!");
+        }
+
+        // if no usernames, and thus no passwords, finish!
+        if(usernames.size() == 0) {
+            return "";
+        }
+        
+        // check if the usernames and passwords are the same.
+        for(int i = 1; i < usernames.size(); i++) {
+            if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
+        	    || !passwords.get(0)
+        	    .equalsIgnoreCase(passwords.get(i))) {
+        	log.warn("Different usernames or passwords "
+        		+ "under heritrix on the same machine.");
+        	throw new Exception("Different usernames "
+        		+ "or passwords!");
+            }
+        }
+
+        // make the resulting string
+        if(usernames.size() > 0) {
+            res.append(usernames.get(0));
+            res.append(" ");
+            res.append(passwords.get(0));
+            res.append("\n");
+        }
+        return res.toString();
+    }
+    
     /**
      * The string for accessing this machine through SSH.
      * 

@@ -237,16 +237,15 @@ public class XmlStructure {
             return null;
         }
 
-        // get results.
-        String[] res = null;
+        // check that any leafs exists.
         List<Element> elemList = e.elements(path[path.length - 1]);
         // check that any leafs exist.
         if(elemList.size() < 1) {
             return null;
         }
 
-        // extract the value of the elements.
-        res = new String[elemList.size()];
+        // extract the value of the elements to an array.
+        String[] res = new String[elemList.size()];
         for(int i=0; i<elemList.size(); i++) {
             res[i] = elemList.get(i).getText();
         }
@@ -407,15 +406,16 @@ public class XmlStructure {
      * @return The Element.
      */
     public static Element makeElementFromString(String content) {
-	try{
-	    ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
-	    Document doc = XmlUtils.getXmlDoc(in);
+        try{
+            ByteArrayInputStream in = new ByteArrayInputStream(
+                    content.getBytes());
+            Document doc = XmlUtils.getXmlDoc(in);
 
-	    return doc.getRootElement();
-	} catch (Exception e) {
-	    System.err.println("makeElementFromString error: " + e);
-	    return null;
-	}
+            return doc.getRootElement();
+        } catch (Exception e) {
+            System.err.println("makeElementFromString error: " + e);
+            return null;
+        }
     }
     
     /**
@@ -426,22 +426,22 @@ public class XmlStructure {
      * @return The XML code for the branch with content.
      */
     public static String pathAndContentToXML(String content, String ... path) {
-	StringBuilder res = new StringBuilder();
-	
-	// write path to the leaf
-	for(int i = 0; i<path.length; i++) {
-	    String st = path[i];
-	    res.append("<" + st + ">");
-	}
-	
-	res.append(content);
+        StringBuilder res = new StringBuilder();
 
-	// write path back from leaf (close xml).
-	for(int i = path.length-1; i >= 0; i--) {
-	    String st = path[i];
-	    res.append("</" + st + ">");
-	}
-	
-	return res.toString();
+        // write path to the leaf
+        for(int i = 0; i<path.length; i++) {
+            String st = path[i];
+            res.append("<" + st + ">");
+        }
+
+        res.append(content);
+
+        // write path back from leaf (close xml).
+        for(int i = path.length-1; i >= 0; i--) {
+            String st = path[i];
+            res.append("</" + st + ">");
+        }
+
+        return res.toString();
     }
 }

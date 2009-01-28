@@ -91,7 +91,7 @@ public class CreateTestInstance {
         // calculate offset
         int offsetInt = (new Integer(httpPort)).intValue() 
                 - (new Integer(offset)).intValue();
-
+        
         if(offsetInt > Constants.TEST_OFFSET_INTEGER_MAXIMUM_VALUE 
                 || offsetInt < 0) {
             System.err.print(Constants.MSG_ERROR_TEST_OFFSET);
@@ -115,7 +115,8 @@ public class CreateTestInstance {
         offsetPaths = new OffsetSystem[] {
                 new OffsetSystem(2, Constants.COMPLETE_JMX_PORT_PATH),
                 new OffsetSystem(2, Constants.TEXT_JMX_RMI_PORT_PATH),
-                new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
+                new OffsetSystem(1, Constants
+                        .COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
                 new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
                 };
 
@@ -186,7 +187,8 @@ public class CreateTestInstance {
     private void applyOnApplication(Element app) {
         Element current = app.element(Constants.COMPLETE_SETTINGS_BRANCH);
         // Go through tree to end branch before leafs
-        for(int i = 0; i < Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1; i++) {
+        for(int i = 0; i < Constants
+                .SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1; i++) {
             // stop if branch does not exist
             if(current == null) {
                 return;
@@ -200,8 +202,9 @@ public class CreateTestInstance {
             return;
         }
 
-        List<Element> elems = current.elements(Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[
-                           Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1]);
+        List<Element> elems = current.elements(
+                Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[
+                Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1]);
         for(Element el : elems) {
             String content = el.getText();
             // check if windows format has been used

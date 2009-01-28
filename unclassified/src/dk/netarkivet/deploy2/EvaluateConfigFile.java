@@ -78,11 +78,14 @@ public class EvaluateConfigFile {
             List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
             for(Element mac : macs) {
                 // check machine settings 
-                evaluateElement(mac.element(Constants.COMPLETE_SETTINGS_BRANCH));
-                List<Element> apps = mac.elements(Constants.DEPLOY_APPLICATION_NAME);
+                evaluateElement(mac
+                        .element(Constants.COMPLETE_SETTINGS_BRANCH));
+                List<Element> apps = mac
+                        .elements(Constants.DEPLOY_APPLICATION_NAME);
                 for(Element app : apps) {
                     // check application settings
-                    evaluateElement(app.element(Constants.COMPLETE_SETTINGS_BRANCH));
+                    evaluateElement(app
+                            .element(Constants.COMPLETE_SETTINGS_BRANCH));
                 }
             }
         }
@@ -140,7 +143,8 @@ public class EvaluateConfigFile {
                     evaluateElement(el);
                 }
             } else {
-                System.out.println("Branch not found: " + path);
+                System.out.println("Branch in settings not found: " 
+                        + path.replace("/", "."));
             }
         }
     }
