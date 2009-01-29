@@ -260,6 +260,7 @@ public class WindowsMachine extends Machine {
                             + app.getIdentification() + scriptExtension;
                     killPrinter.print(
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
+                    killPrinter.print("\"");
                     killPrinter.print(appScript);
                     killPrinter.println("\"");
                     killPrinter.println();
@@ -307,6 +308,7 @@ public class WindowsMachine extends Machine {
                             + app.getIdentification() + scriptExtension;
                     startPrinter.print(
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
+                    startPrinter.print("\"");
                     startPrinter.print(appScript);
                     startPrinter.println("\"");
                     startPrinter.println();

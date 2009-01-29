@@ -284,7 +284,7 @@ public class ArcRepository implements CleanupIF {
      *            remotefile to upload to bitarchive.
      * @param bitarchiveClient
      *            The bitarchive client to upload to.
-     * @param bitarchiveName
+     * @param bitarchiveId
      *            The name of the bitarchive, where RemoteFile is to be stored.
      */
     private synchronized void startUpload(RemoteFile rf,

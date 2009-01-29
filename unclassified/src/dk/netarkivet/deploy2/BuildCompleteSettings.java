@@ -76,6 +76,7 @@ public final class BuildCompleteSettings {
         FileWriter fw = new FileWriter(completeSettings);
         // write settings to file.
         fw.append(settings.getXML());
+        System.out.println(settings.getXML());
         fw.append("\n");
         fw.close();
     }

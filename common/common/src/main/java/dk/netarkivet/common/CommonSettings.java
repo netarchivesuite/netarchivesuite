@@ -275,11 +275,11 @@ public class CommonSettings {
     public static String REPLICANAME_TAG
             = "replicaName";
     /**
-     * <b>settings.common.replicas.replica.<b>replicaType</b>: <br>
+     * settings.common.replicas.replica.<b>replicaType</b>: <br>
      * The tags for type of the replica, placed under the replica tag.
      * The type is used to identify whether it is a bitarchive or a checksum
      * replica. NOTE: checksum replicas are not implemented yet 
-     * Possible values are defined in {@link ReplicaType} */
+     * Possible values are defined in ReplicaType */
     public static String REPLICATYPE_TAG
             = "replicaType";
 
@@ -302,7 +302,7 @@ public class CommonSettings {
             = "settings.common.thisPhysicalLocation";
 
     /** 
-     * <b></b>: <br>
+     * <b>settings.common.applicationName</b>: <br>
      * The name of the application, e.g. "BitarchiveServerApplication". 
      * The monitor puts this with each log message. */
     public static String APPLICATION_NAME

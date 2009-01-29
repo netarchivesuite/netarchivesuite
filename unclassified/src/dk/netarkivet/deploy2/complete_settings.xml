@@ -1,190 +1,92 @@
 <settings>
     <archive>
         <arcrepository>
-            <!-- Absolute/relative path to where the "central list of files and
-                 checksums" (admin.data) is written. Used by ArcRepository and
-                 BitPreservation. -->
             <baseDir>.</baseDir>
         </arcrepository>
         <bitarchive>
-            <!-- The minimum amount of bytes left *in any dir* that we will
-                 allow a bitarchive machine to accept uploads with.  When no
-                 dir has more space than this, the bitarchive machine stops
-                 listening for uploads.  This values should at the very least
-                 be greater than the largest ARC file you expect to receive.
-                 The default value amounts to 190 MBytes. 
-            -->
+            <!-- The default value amounts to 190 MBytes. -->
             <minSpaceLeft>200000000</minSpaceLeft>
-            <!-- These are the directories where ARC files are stored
-                 (in a subdir). If more than one is given, they are used from
-                 one end. -->
-            <fileDir>bitarchive</fileDir>
-            <!-- The frequency in milliseconds of heartbeats that are sent by
-                 each BitarchiveServer to the BitarchiveMonitor. -->
+            <baseFileDir>bitarchive</baseFileDir>
             <heartbeatFrequency>1000</heartbeatFrequency>
-            <!-- If we haven't heard from a bit archive within this many
-                 milliseconds, we don't expect it to be online and won't wait
-                 for them to reply on a batch job.  This number should be
-                 significantly greater than heartbeatFrequency to account for
-                 temporary network congestion. -->
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
-            <!-- The BitarchiveMonitorServer will listen for BatchEndedMessages
-                 for this many milliseconds before it decides that a batch job
-                 is taking too long and returns just the replies it has
-                 received at that point. The default value amounts to 14 days.
-            -->
+            <!-- The default value amounts to 14 days. -->
             <batchMessageTimeout>1209600000</batchMessageTimeout>
-            <!-- Credentials to enter in the GUI for "deleting" ARC files in
-                 this bit archive -->
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
         <bitpreservation>
-            <!-- Absolute or relative path to dir containing results of
-                 file-list-batch-jobs and checksumming batch jobs
-                 for bit preservation-->
             <baseDir>bitpreservation</baseDir>
         </bitpreservation>
     </archive>
 <common>
-     	<!-- The name of the environment in which this code is running, e.g.
-                 PROD, RELEASETEST, NHC,... Is used as common prefix for 
-                 all JMS channels
-    	 -->
         <environmentName>DEV</environmentName>
-        <!-- Common temporary directory for all applications. Some subdirs of
-             this directory  must be set to have AllPermision in the
-             conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
-        <!-- Defines the method for transferring files around. The default is using http  -->
-            <!-- The class to use for RemoteFile objects. This class must implement
-            the dk.netarkivet.common.distribute.RemoteFile interface 
-            -->
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
         <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
-        <!-- Connection data for JMS-->
-        <jms>
-            <!-- Selects the broker class to be used. Must be a subclass of
-            dk.netarkivet.common.distribute.JMSConnection. -->
+        <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         <broker>localhost</broker><port>7676</port></jms>
         <http>
-            <!-- The *unique* (per host) port number that may or may not be
-                 used to serve http, but is frequently used to identify
-                 the process.-->
             <port>0000</port>
         </http>
         <arcrepositoryClient>
-            <!-- The class that implements the ArcRepositoryClient.  This class
-                 will be instantiated by the ArcRepositoryClientFactory -->
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
         <getTimeout>60000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
-            <!-- The class instantiated to register JMX urls at a registry. -->
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
         </monitorregistryClient>
         <indexClient>
-            <!-- The class instantiated to give access to indices.  Will be
-                 created by IndexClientFactory -->
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
         <indexRequestTimeout>43200000</indexRequestTimeout></indexClient>
-        <!-- The name of the directory where cache data global to the entire
-             machine can be stored.  Various kinds of caches should be stored in
-             subdirectories of this -->
         <cacheDir>cache</cacheDir>
-        <!--The number of milliseconds we wait for processes to react
-            to shutdown requests.-->
         <processTimeout>5000</processTimeout>
-        <!-- Error notification settings -->
         <notifications>
-            <!-- Which class to instantiate to handle error notifications -->
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
         <receiver>root@localhost</receiver><sender>root@localhost</sender></notifications>
-        <!-- Settings for sending email. Currently mail is only used for email
-         notifications. -->
         <mail>
-            <!-- The email server to use. -->
             <server>localhost</server>
         </mail>
-        <!-- JMX logging settings -->
-        <jmx>
-            <!-- The port to use for JMX-->
+        <jmx> <!-- JMX logging settings -->
             <port>8100</port>
-            <!-- The RMI port used for communicating with beans -->
             <rmiPort>8200</rmiPort>
-            <!-- The password file, containing information about who may
-            connect -->
             <passwordFile>conf/jmxremote.password</passwordFile>
-            <!-- How many seconds we will wait before giving up on a JMX
-            connection. -->
             <timeout>120</timeout>
         </jmx>
-        <!-- Settings for the web GUI -->
-        <webinterface>
-            <!-- Language settings -->
+        <webinterface> <!-- Settings for the web GUI -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>da</locale>
-                <!-- Native name of the language for this locale -->
                 <name>Dansk</name>
             </language>
-            <!-- Language settings -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>en</locale>
-                <!-- Native name of the language for this locale -->
                 <name>English</name>
             </language>
-            <!-- Language settings -->
             <language>
-                <!-- A locale the GUI is available as -->
                 <locale>de</locale>
-                <!-- Native name of the language for this locale -->
                 <name>Deutsch</name>
             </language>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/QA.war</webapplication>
             </siteSection>
             <siteSection>
-                <!-- A subclass of SiteSection that defines this part of the
-                     web interface. -->
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
-                <!-- The directory or war-file containing the web application
-                     for this site section.-->
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
         </webinterface>
         <topLevelDomains>
-            <!-- This setting describes valid TLDs to define domains. -->
             <tld>ac</tld>
             <tld>ad</tld>
             <tld>ae</tld>
@@ -473,29 +375,15 @@
             <tld>zw</tld>
         </topLevelDomains>
         <database>
-            <!-- The full URL for connecting to the database.
-                 If present and not empty, this URL must match the settings
-                 baseDir and class.-->
-            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
-            <!-- The class that handles DB-specific methods -->
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
-            <!-- The earliest time of day backup will be initiated, 0..24
-                 hours.  At a time shortly after this, a consistent backup
-                 copy of the database will be created -->
+            <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <backupInitHour>3</backupInitHour>
         </database>
         <repository>
-            <!-- When the length record exceeds this number, the contents of the record
-                 will be transferred using a RemoteFile. Currently set to 10 MB
-              -->
+            <!-- Currently set to 10 MB -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
-        <!-- The entire settings for replicas. -->
-        <replicas>
-            <!-- All bitarcive replicas in the environment, 
-                 e.g., (ONE, replicaOne, bitarchive) and 
-                 (TWO, replicaTwo, bitarchive).
-                 NOTE: settings for checksum replicas are not use yet -->
+        <replicas> <!-- The entire settings for replicas. -->
             <replica>
                 <replicaId>ONE</replicaId>
                 <replicaName>replicaOne</replicaName>
@@ -507,143 +395,56 @@
                 <replicaType>bitarchive</replicaType>
             </replica>
         </replicas>
-        <!-- Default bit archive id to use for 
-             e.g. batch jobs (if none is specified) -->
         <useReplicaId>TWO</useReplicaId>
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
-        <!-- The name of the application, fx. "BitarchiveServerApplication".
-             The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
     </common><harvester>
         <datamodel>
             <domain>
-                <!-- Default name of the seed list to use when new domains are created -->
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
-                <!-- The name of a configuration that is created by default and
-                     which is initially used for snapshot harvests-->
                 <defaultConfig>defaultconfig</defaultConfig>
-                <!-- Name of order xml template used for domains if nothing
-                 else is specified. The newly created configurations use this.
-                 This template must exist before harvesting can commence. 
-                -->
                 <defaultOrderxml>default_orderxml</defaultOrderxml>
-                <!-- Default download rate for domain configuration.
-                 Not currently enforced. -->
                 <defaultMaxrate>100</defaultMaxrate>
-                <!-- Default byte limit for domain configuration. -->
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
             </domain>
         </datamodel>
         <scheduler>
-            <!-- Used when calculating expected size of a harvest of some
-                 configuration during job-creation process. This defines how
-                 great a possible factor we will permit a harvest to be larger
-                 then the expectation, when basing the expectation on a previous
-                 completed job. -->
             <errorFactorPrevResult>10</errorFactorPrevResult>
-            <!-- Used when calculating expected size of a harvest of some
-                 configuration during job-creation process.  This defines how
-                 great a possible factor we will permit a harvest to be larger
-                 then the expectation, when basing the expectation on previous
-                 uncompleted harvests or no harvest data at all. -->
             <errorFactorBestGuess>2</errorFactorBestGuess>
-            <!-- How many bytes the average object is expected to be on domains
-                 where we don't know any better.  This number should grow over
-                 time, as of end of 2005 empirical data shows 38000 -->
             <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-            <!--  The initial guess of the domain size(number of objects) of
-     			an unknown domain.
-     		-->
             <maxDomainSize>5000</maxDomainSize>
-            <jobs><!-- One Job corresponds to a Heritrix run -->
-                <!-- The maximum allowed relative difference in expected number
-                     of objects retrieved in a single job definition. 
-                     To avoid job splitting, set the value as Long.MAX_VALUE.
-                     -->
+            <jobs> <!-- One Job corresponds to a Heritrix run -->
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
-                <!-- Size differences for jobs below this threshold are ignored,
-                     regardless of the limits for the relative size difference.
-                     To avoid job splitting, set the value as Long.MAX_VALUE.
-                     -->
                 <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
-                <!-- When this limit is exceeded no more configurations may be
-                     added to a job. 
-                     To avoid job splitting, set the value as Long.MAX_VALUE.
-                     -->
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
-            <!-- How many domain configurations we will process in one go before
-                 making jobs out of them.  This amount of domains will be stored
-                 in memory at the same time.  
-                 To avoid job splitting, set the value as Long.MAX_VALUE.
-            -->
             <configChunkSize>10000</configChunkSize>
         </scheduler>
         <harvesting>
-            <!-- Each job gets a subdir of this dir. Job data is written and
-                 Heritrix writes to that subdir-->
             <serverDir>server</serverDir>
-            <!--  The minimum amount of free bytes in the serverDir
-                required before accepting any harvest-jobs. Default is
-                 400000000 bytes (~400 Mbytes).
-            -->
+            <!-- Default is 400000000 bytes (~400 Mbytes). -->
             <minSpaceLeft>400000000</minSpaceLeft>
-            <!-- The directory in which data from old jobs is kept after
-                 uploading.  Each directory from serverDir will be moved to
-                 here if any data remains, either due to failed uploads or
-                 because it wasn't attempted uploaded. -->
             <oldjobsDir>oldjobs</oldjobsDir>
-            <!-- Pool to take jobs from. There are two pools to choose from: 
-            	HIGHPRIORITY (pool for selective harvest jobs), 
-            	and LOWPRIORITY (pool for snapshot harvest jobs)
-            -->
             <queuePriority>HIGHPRIORITY</queuePriority>
             <heritrix>
-                <!-- The timeout setting for aborting a crawl based on
-                    crawler-inactivity. If the crawler is inactive for this
-                    amount of seconds the crawl will be aborted.
-                    The inactivity is measured on the
-                    crawlController.activeToeCount(). -->
                 <inactivityTimeout>100</inactivityTimeout>
-                <!-- The timeout value (in seconds) used in HeritrixLauncher
-                     for aborting crawl when no bytes are being received from
-                     web servers. -->
                 <noresponseTimeout>100</noresponseTimeout>
-                <!-- Name for accessing the Heritrix GUI -->
                 <adminName>admin</adminName>
-                <!-- Password for accesing the Heritrix GUI -->
                 <adminPassword>adminPassword</adminPassword>
-                <!-- Port used to access the Heritrix web user interface.
-                     This port must not be used by anything else on the machine.
-                     -->
                 <guiPort>8090</guiPort>
-                <!-- Port used to access the Heritrix JMX interface.
-                     This port must not be used by anything else on the machine,
-                     but does not need to be accessible from other machines
-                     unless you want to be able to use jconsole to access
-                     Heritrix directly
-                     -->
                 <jmxPort>8091</jmxPort>
-                <!-- The heap size to use for the Heritrix sub-process.  This
-                     should probably be fairly large.  It can be specified in
-                     the same way as for the -Xmx argument to Java, e.g.
-                     512M, 2G etc.-->
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
             </heritrix>
         </harvesting>
     </harvester><monitor>
-	<!-- The username and password used to connect to the all Mbeanservers started by the application. 
-	    The username/password must correspond to the values stored in jmxremote.password -->
-    <jmxUsername>monitorRole</jmxUsername>
-    <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
-    <logging>
-        <historySize>100</historySize>
-    </logging>
-</monitor><viewerproxy>
-        <!-- The main directory for the ViewerProxy, used for storing the Lucene
-             index for the jobs being viewed. This directory can be used by multiple
-     		 ViewerProxy applications running on the same machine.
-     	-->
+        <jmxUsername>monitorRole</jmxUsername>
+        <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+        <logging>
+            <historySize>100</historySize>
+        </logging>
+    </monitor><viewerproxy>
         <baseDir>viewerproxy</baseDir>
     </viewerproxy></settings>

@@ -126,7 +126,6 @@ public class XmlStructure {
      * 
      * @param name The name of the children to be found.
      * @return A list of the children with the given name.
-     * @see GetChildren() 
      */
     @SuppressWarnings("unchecked")
     public List<Element> getChildren(String name) {
@@ -400,7 +399,7 @@ public class XmlStructure {
     
     /**
      * Creates an dom4j.Element from a String.
-     * This string has to be in the XML format, otherwise return null·
+     * This string has to be in the XML format, otherwise return null.
      *  
      * @param content The content of a String.
      * @return The Element.
