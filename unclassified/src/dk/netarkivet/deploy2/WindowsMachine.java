@@ -262,7 +262,9 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     killPrinter.print("\"");
                     killPrinter.print(appScript);
-                    killPrinter.println("\"");
+                    killPrinter.print(" 2>> log_");
+                    killPrinter.print(app.getIdentification());
+                    killPrinter.print(".log \"");
                     killPrinter.println();
                 }
             } finally {
@@ -310,7 +312,9 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     startPrinter.print("\"");
                     startPrinter.print(appScript);
-                    startPrinter.println("\"");
+                    startPrinter.print(" 2>> log_");
+                    startPrinter.print(app.getIdentification());
+                    startPrinter.print(".log \"");
                     startPrinter.println();
                 }
             } finally {
@@ -406,7 +410,8 @@ public class WindowsMachine extends Machine {
                         appPrint.println(Constants.
                                 OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE
                                 + "\"kill_ps_" + id
-                                + ".bat" + "\"");
+                                + ".bat" + " 2>> log_" + id + ".log" 
+                                + "\"");
                         // del run_app.txt
                         appPrint.println("DEL " + killPsName);
                         // GOTO DONE
