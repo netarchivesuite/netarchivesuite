@@ -784,7 +784,7 @@ public class WindowsMachine extends Machine {
         for(Application app : applications) {
             // get archive.fileDir directories.
             dirs = app.getSettingsValues(
-                    Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF);
+                    Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));

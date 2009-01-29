@@ -116,7 +116,7 @@ public final class Constants {
         CommonSettings.DIR_COMMONTEMPDIR
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the fileDir branch from settings.*/
-    static final String[] SETTINGS_BITARCHIVE_FILEDIR_LEAF = 
+    static final String[] SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF = 
         ArchiveSettings.BITARCHIVE_SERVER_FILEDIR
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the serverDir leaf from settings.*/
@@ -157,12 +157,12 @@ public final class Constants {
     CommonSettings.APPLICATION_NAME.split("[.]");
     /** The path to the jmxUsername under heritrix from settings.*/
     static final String[] SETTINGS_HERITRIX_JMX_USERNAME_LEAF = 
-	HarvesterSettings.HERITRIX_JMX_USERNAME
-	.replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+        HarvesterSettings.HERITRIX_JMX_USERNAME
+        .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
     /** The path to the jmxPassword under heritrix from settings.*/
     static final String[] SETTINGS_HERITRIX_JMX_PASSWORD_LEAF = 
-	HarvesterSettings.HERITRIX_JMX_PASSWORD
-	.replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+        HarvesterSettings.HERITRIX_JMX_PASSWORD
+        .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
 
     // Values and file names
     /** The operating system attribute for windows.*/

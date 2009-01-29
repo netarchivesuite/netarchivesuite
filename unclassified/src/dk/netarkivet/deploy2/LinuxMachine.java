@@ -156,11 +156,11 @@ public class LinuxMachine extends Machine {
         res.append("\n");
         // Allow only user to be able to only read jmxremote.password 
         // (a=-rwx,u=+r) = 400.
-        // ssh dev@kb-test-adm-001.kb.dk "chmod u+r-wx 
+        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
         // /home/dev/TEST/conf/jmxremote.password"
         res.append("ssh ");
         res.append(machineUserLogin());
-        res.append(" \"chmod a+r-wx ");
+        res.append(" \"chmod 400 ");
         res.append(getConfDirPath());
         res.append("jmxremote.password\"");
         res.append("\n");
@@ -391,7 +391,8 @@ public class LinuxMachine extends Machine {
                 PrintWriter appPrint = new PrintWriter(appKillScript);
                 try {
                     // echo Killing linux application.
-                    appPrint.println("echo Killing linux application.");
+                    appPrint.println("echo Killing linux application:"
+                            + app.getIdentification());
                     // #!/bin/bash
                     appPrint.println("#!/bin/bash");
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
@@ -712,7 +713,7 @@ public class LinuxMachine extends Machine {
         for(Application app : applications) {
             // get archive.fileDir directories.
             dirs = app.getSettingsValues(
-                    Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF);
+                    Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));

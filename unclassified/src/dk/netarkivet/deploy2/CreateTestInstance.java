@@ -183,28 +183,14 @@ public class CreateTestInstance {
      * 
      * @param app The application where this has to be applied.
      */
-    @SuppressWarnings("unchecked")
     private void applyOnApplication(Element app) {
-        Element current = app.element(Constants.COMPLETE_SETTINGS_BRANCH);
-        // Go through tree to end branch before leafs
-        for(int i = 0; i < Constants
-                .SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1; i++) {
-            // stop if branch does not exist
-            if(current == null) {
-                return;
-            }
-            // get next string
-            String st = Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[i];
-            // go to next branch
-            current = current.element(st);
-        }
-        if(current == null) {
-            return;
-        }
+        ArgumentNotValid.checkNotNull(app, "Element app");
 
-        List<Element> elems = current.elements(
-                Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF[
-                Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF.length - 1]);
+        // Get the list of leaf elements along the path to the base_file_dir 
+        List<Element> elems = XmlStructure.getAllChildrenAlongPath(app.element(
+                Constants.COMPLETE_SETTINGS_BRANCH),
+                Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
+        // append the environment name as sub directory to these leafs.
         for(Element el : elems) {
             String content = el.getText();
             // check if windows format has been used
@@ -213,6 +199,7 @@ public class CreateTestInstance {
             } else {
                 content += "/" + environmentNameVal;
             }
+            // then set new value.
             el.setText(content);
         }
     }

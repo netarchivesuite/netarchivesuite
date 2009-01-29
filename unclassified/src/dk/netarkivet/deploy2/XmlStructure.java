@@ -142,6 +142,12 @@ public class XmlStructure {
         return root.asXML();
     }
     
+    /**
+     * For retrieving the first children along a path.
+     * 
+     * @param name The path to the child.
+     * @return The child element.
+     */
     public Element getSubChild(String ... name) {
         // if no arguments, the XML is returned
         ArgumentNotValid.checkNotNull(name, "String ...name");
@@ -208,7 +214,7 @@ public class XmlStructure {
     
     /**
      * Retrieves the content of a the leafs deep in the tree structure.
-     * It only retrieves 
+     * It only retrieves branches at the first path.
      * 
      * @param path Specifies the path in the tree (e.g. in HTML: 
      * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
@@ -251,7 +257,7 @@ public class XmlStructure {
 
         return res;
     }
-
+    
     /**
      * This function initialise the process of overwriting a part of the tree.
      * 
@@ -442,5 +448,49 @@ public class XmlStructure {
         }
 
         return res.toString();
+    }
+
+    /**
+     * This function recursively calls it self, and retrieves all the leaf 
+     * children from all sibling branches along the path.
+     * When a call to it-self is made, the first string in path is removed.
+     * 
+     * @param current The current element to retrieve children along the path.
+     * @param path The path to the leafs.
+     * @return The complete list of elements which can be found along the path.
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Element> getAllChildrenAlongPath(Element current, 
+            String ... path) {
+        ArgumentNotValid.checkNotNull(current, "Element current");
+        ArgumentNotValid.checkNotNull(path, "String ... path");
+
+        // make the resulting element list.
+        List<Element> res = new ArrayList<Element>();
+
+        // get value from children
+        if(path.length > 1){
+            // create the new path
+            String[] nextPath = new String[path.length -1];
+            for(int i=1; i<path.length; i++) {
+                nextPath[i-1] = path[i];
+            }
+
+            // Get the list of children at next level of the path.
+            List<Element> children = current.elements(path[0]);
+            for(Element el : children) {
+                    // the the result of these children.
+                List<Element> childRes = getAllChildrenAlongPath(el,nextPath);
+                // put children result into current result. 
+                for(Element cr : childRes) {
+                    res.add(cr);
+                }
+            }
+        } else if (path.length == 1) {
+            // if next level is leaf (or goal of path) return them.
+            return current.elements(path[0]);
+        }
+
+        return res;
     }
 }

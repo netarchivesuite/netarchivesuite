@@ -285,7 +285,7 @@ public abstract class Machine {
             for(Application app : applications) {
                 // get archive.fileDir directory.
                 String[] tmpDirs = app.getSettingsValues(
-                        Constants.SETTINGS_BITARCHIVE_FILEDIR_LEAF);
+                        Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
                 if(tmpDirs != null && tmpDirs.length > 0) {
                     for(String st : tmpDirs) {
                         dirs.add(st);
@@ -512,12 +512,12 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
             if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
-        	    || !passwords.get(0)
-        	    .equalsIgnoreCase(passwords.get(i))) {
-        	log.warn("Different usernames or passwords "
-        		+ "under heritrix on the same machine.");
-        	throw new Exception("Different usernames "
-        		+ "or passwords!");
+                    || !passwords.get(0)
+                    .equalsIgnoreCase(passwords.get(i))) {
+                log.warn("Different usernames or passwords "
+                        + "under heritrix on the same machine.");
+                throw new Exception("Different usernames "
+                        + "or passwords!");
             }
         }
         
@@ -585,12 +585,12 @@ public abstract class Machine {
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
             if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
-        	    || !passwords.get(0)
-        	    .equalsIgnoreCase(passwords.get(i))) {
-        	log.warn("Different usernames or passwords "
-        		+ "under heritrix on the same machine.");
-        	throw new Exception("Different usernames "
-        		+ "or passwords!");
+                    || !passwords.get(0)
+                    .equalsIgnoreCase(passwords.get(i))) {
+                log.warn("Different usernames or passwords "
+                        + "under heritrix on the same machine.");
+                throw new Exception("Different usernames "
+                        + "or passwords!");
             }
         }
 
