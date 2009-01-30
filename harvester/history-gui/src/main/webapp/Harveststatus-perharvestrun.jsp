@@ -98,17 +98,23 @@ This page displays harvest details for one harvest definition run
                          + "\">" + HTMLUtils.escapeHtmlValues(harvestName)
                          + "</a>";
     HTMLUtils.generateHeader(pageContext);
+    String selected;
 %>
 
 
 <%--Make line with comboboxes with job status and order to be shown --%>
 <form method="get" action="Harveststatus-perharvestrun.jsp">
+<input type="hidden" name="<%=Constants.HARVEST_ID_PARAM%>"
+                                       value="<%=request.getParameter(Constants.HARVEST_ID_PARAM)%>"/>
+<input type="hidden" name="<%=Constants.HARVEST_NUM_PARAM%>"
+                                       value="<%=request.getParameter(Constants.HARVEST_NUM_PARAM)%>"/>
 <h4>
+
 <fmt:message key="status.0.sort.order.1.job.choice">
 <fmt:param>
 <select multiple name="<%= Constants.JOBSTATUS_PARAM %>" size="<%= JobStatus.values().length %>">
     <%
-    String selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
+    selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
                       ? "selected=\"selected\""
                       : "";
     %>
@@ -136,7 +142,7 @@ This page displays harvest details for one harvest definition run
 <fmt:param>
 <select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
     <%
-    String selected = 
+    selected = 
                (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
                ? "selected=\"selected\""
                : "";

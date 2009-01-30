@@ -759,8 +759,12 @@ public class JMXHeritrixController implements HeritrixController {
      * @return Name to use when connecting to Heritrix JMX
      */
     private String getJMXAdminName() {
-        return Settings.get(HarvesterSettings.HERITRIX_JMX_USERNAME);
-    }
+        String jmxUsername = Settings.get(
+                HarvesterSettings.HERITRIX_JMX_USERNAME);
+        log.debug("The JMX username used for connecting to the Heritrix GUI is: "
+                + "'" + jmxUsername + "'.");
+        return jmxUsername;
+        }
 
     /** Get the password to use to access the Heritrix JMX as the user returned
      * by getJMXAdminName().  This password can be set in a file pointed to
