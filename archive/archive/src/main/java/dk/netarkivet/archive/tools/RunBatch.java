@@ -74,8 +74,8 @@ import org.apache.commons.cli.*;
  * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ 
  *                          -R10-*.arc -BReplicaOne -Omimes
  *        
- * Note that you probably want to set the HTTP port setting
- * ({@literal CommonSettings#HTTP_PORT_NUMBER}) to something other than its 
+ * Note that you probably want to set the application instance id setting
+ * ({@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than its 
  * default value to avoid clashing with other channel listeners.
  */
 public class RunBatch extends ToolRunnerBase {
@@ -228,7 +228,7 @@ public class RunBatch extends ToolRunnerBase {
                                "be run "
                                 + "(default: '" 
                                 + Replica.getReplicaFromId(
-                                     CommonSettings.USE_REPLICA_ID
+                                     Settings.get(CommonSettings.USE_REPLICA_ID)
                                   ).getName()
                                 + "')");
                 options.addOption(
