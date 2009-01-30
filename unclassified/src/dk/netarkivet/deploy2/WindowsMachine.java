@@ -555,9 +555,6 @@ public class WindowsMachine extends Machine {
                 String id = app.getIdentification();
                 String killPsName = "kill_ps_" + id + scriptExtension;
 
-                // #echo start windows app
-                appPrint.println("#echo START WINDOWS APPLICATION: "
-                        + app.getIdentification());
                 // cd "path"
                 appPrint.println("cd \""
                         + app.installPathWindows() + "\"");
@@ -793,6 +790,10 @@ public class WindowsMachine extends Machine {
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));
+                    for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
+                        res.append(scriptCreateDir(
+                                dir + "\\" + subdir, false));
+                    }
                 }
             }
 

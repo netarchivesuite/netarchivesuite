@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -68,21 +69,6 @@ public class BitarchiveAdmin {
     private final long minSpaceLeft;
 
     /**
-     * The name of the directory in which files are stored.
-     */
-    private static String FILE_DIRECTORY_NAME = "filedir";
-    /**
-     * Temporary directory used during upload, where partial files exist, until
-     * moved into directory FILE_DIRECTORY_NAME.
-     */
-    private static String TEMPORARY_DIRECTORY_NAME = "tempdir";
-
-    /**
-     * Directory where "deleted" files are placed".
-     */
-    private static String ATTIC_DIRECTORY_NAME = "atticdir";
-
-    /**
      * Creates a new BitarchiveAdmin object for an existing bit archive.
      * Reads the directories to use from settings.
      *
@@ -108,16 +94,17 @@ public class BitarchiveAdmin {
 
         for (int i = 0; i < filedirnames.length; i++) {
             File basedir = new File(filedirnames[i]);
-            File filedir = new File(basedir, FILE_DIRECTORY_NAME);
+            File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
 
             // Ensure that 'filedir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(filedir);
-            File tempdir = new File(basedir, TEMPORARY_DIRECTORY_NAME);
+            File tempdir = new File(basedir, 
+                    Constants.TEMPORARY_DIRECTORY_NAME);
 
             // Ensure that 'tempdir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(tempdir);
 
-            File atticdir = new File(basedir, ATTIC_DIRECTORY_NAME);
+            File atticdir = new File(basedir, Constants.ATTIC_DIRECTORY_NAME);
 
             // Ensure that 'atticdir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(atticdir);
@@ -167,7 +154,8 @@ public class BitarchiveAdmin {
             File dir = i.next();
             if (checkArchiveDir(dir)) {
                 if (FileUtils.getBytesFree(dir) > requestedSize) {
-                    File filedir = new File(dir, TEMPORARY_DIRECTORY_NAME);
+                    File filedir = new File(dir, 
+                            Constants.TEMPORARY_DIRECTORY_NAME);
                     return new File(filedir, arcFile);
                 }
             }
@@ -203,9 +191,11 @@ public class BitarchiveAdmin {
          */
         File arcFilePath = tempLocation.getParentFile();
         if (arcFilePath == null
-            || !arcFilePath.getName().equals(TEMPORARY_DIRECTORY_NAME)) {
+            || !arcFilePath.getName().equals(
+                    Constants.TEMPORARY_DIRECTORY_NAME)) {
             throw new IOFailure("Location '" + tempLocation + "' is not in "
-                                + "tempdir '" + TEMPORARY_DIRECTORY_NAME + "'");
+                                + "tempdir '" 
+                                + Constants.TEMPORARY_DIRECTORY_NAME + "'");
         }
         /**
          * Check, that arcFilePath (now known to be TEMPORARY_DIRECTORY_NAME)
@@ -219,7 +209,8 @@ public class BitarchiveAdmin {
         /**
          * Move File tempLocation to new location: storageFile
          */
-        File storagePath = new File(archivedir, FILE_DIRECTORY_NAME);
+        File storagePath = new File(archivedir, 
+                Constants.FILE_DIRECTORY_NAME);
         File storageFile = new File(storagePath, arcFileName);
         if (!tempLocation.renameTo(storageFile)) {
             throw new IOFailure("Could not move '" + tempLocation.getPath()
@@ -288,7 +279,8 @@ public class BitarchiveAdmin {
     public File[] getFiles() {
         List<File> files = new ArrayList<File>();
         for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
-            File archiveDir = new File(i.next(), FILE_DIRECTORY_NAME);
+            File archiveDir = new File(i.next(), 
+                    Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
                 File[] filesHere = archiveDir.listFiles();
                 for (int j = 0; j < filesHere.length; j++) {
@@ -315,7 +307,8 @@ public class BitarchiveAdmin {
     public File[] getFilesMatching(final Pattern regexp) {
         List<File> files = new ArrayList<File>();
         for (File archivePath : archivePaths) {
-            File archiveDir = new File(archivePath, FILE_DIRECTORY_NAME);
+            File archiveDir = new File(archivePath, 
+        	    Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
                 File[] filesHere = archiveDir.listFiles(new FilenameFilter() {
                     public boolean accept(File dir, String name) {
@@ -348,7 +341,7 @@ public class BitarchiveAdmin {
     public BitarchiveARCFile lookup(String arcFileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFileName");
         for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
-            File archiveDir = new File(i.next(), FILE_DIRECTORY_NAME);
+            File archiveDir = new File(i.next(), Constants.FILE_DIRECTORY_NAME);
 
             if (checkArchiveDir(archiveDir)) {
                 File filename = new File(archiveDir, arcFileName);
@@ -376,7 +369,8 @@ public class BitarchiveAdmin {
      */
     private long calculateBytesUsed(File filedir) {
         long used = 0;
-        File[] files = new File(filedir, FILE_DIRECTORY_NAME).listFiles();
+        File[] files = new File(filedir, Constants.FILE_DIRECTORY_NAME)
+                 .listFiles();
         // Check, that listFiles method returns valid information
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
@@ -389,10 +383,10 @@ public class BitarchiveAdmin {
             }
         } else {
             log.warn("filedir does not contain a directory named: "
-                        + FILE_DIRECTORY_NAME);
+                        + Constants.FILE_DIRECTORY_NAME);
         }
         File[] tempfiles = new File(filedir,
-                                    TEMPORARY_DIRECTORY_NAME).listFiles();
+                Constants.TEMPORARY_DIRECTORY_NAME).listFiles();
         // Check, that listFiles() method returns valid information
         if (tempfiles != null) { 
             for (int i = 0; i < tempfiles.length; i++) {
@@ -406,9 +400,10 @@ public class BitarchiveAdmin {
             }
         } else {
             log.warn("filedir does not contain a directory named: "
-                        + TEMPORARY_DIRECTORY_NAME);
+                        + Constants.TEMPORARY_DIRECTORY_NAME);
         }
-        File[] atticfiles = new File(filedir, ATTIC_DIRECTORY_NAME).listFiles();
+        File[] atticfiles = new File(filedir, Constants.ATTIC_DIRECTORY_NAME)
+                .listFiles();
         // Check, that listFiles() method returns valid information
         if (atticfiles != null) { 
             for (int i = 0; i < atticfiles.length; i++) {
@@ -422,7 +417,7 @@ public class BitarchiveAdmin {
             }
         } else {
             log.warn("filedir does not contain a directory named: "
-                        + ATTIC_DIRECTORY_NAME);
+                        + Constants.ATTIC_DIRECTORY_NAME);
         }
         return used;
     }
@@ -467,7 +462,7 @@ public class BitarchiveAdmin {
                     + " but " + existingFile + " doesn't");
         }
         // Ensure that 'atticdir' exists. If it doesn't, it is created
-        File atticdir = new File(parentDir, ATTIC_DIRECTORY_NAME);
+        File atticdir = new File(parentDir, Constants.ATTIC_DIRECTORY_NAME);
         ApplicationUtils.dirMustExist(atticdir);
         return new File(atticdir,
                         arcFileName);

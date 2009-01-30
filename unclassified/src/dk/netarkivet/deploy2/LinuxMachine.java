@@ -717,6 +717,10 @@ public class LinuxMachine extends Machine {
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
                     res.append(scriptCreateDir(dir, false));
+                    for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
+                        res.append(scriptCreateDir(
+                                dir + "/" + subdir, false));
+                    }
                 }
             }
 

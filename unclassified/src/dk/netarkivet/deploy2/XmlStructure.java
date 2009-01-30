@@ -222,28 +222,12 @@ public class XmlStructure {
      * @return The content of the leaf. If it is not a leaf, return null.
      * Returns 'null' if the path to the branch cannot be found.   
      */
-    @SuppressWarnings("unchecked")
     public String[] getLeafValues(String ...path) {
         // check argument
         ArgumentNotValid.checkNotNull(path, "String ...path");
 
-        Element e = root;
-        // go through tree to branch before leafs.
-        for(int i=0; i<path.length-1; i++) {
-            String n = path[i];
-            if(e != null) {
-                e = e.element(n);
-            } else {
-                return null;
-            }
-        }
-        // if no wanted branches, return null 
-        if(e == null) {
-            return null;
-        }
-
-        // check that any leafs exists.
-        List<Element> elemList = e.elements(path[path.length - 1]);
+        // get all leafs along path
+        List<Element> elemList = getAllChildrenAlongPath(root, path);
         // check that any leafs exist.
         if(elemList.size() < 1) {
             return null;

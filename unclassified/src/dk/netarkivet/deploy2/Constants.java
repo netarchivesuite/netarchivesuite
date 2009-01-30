@@ -216,6 +216,11 @@ public final class Constants {
     static final int TEST_ARGUMENTS_REQUIRED = 4;
     /** The maximum integer value in a character.*/
     static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
+    /** Directories to install under baseFileDir.*/
+    static final String[] BASEFILEDIR_SUBDIRECTORIES = 
+        {dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
+	dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
+	dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME};
 
     // argument parameters as constants.
     /** For initiating a argument. */
