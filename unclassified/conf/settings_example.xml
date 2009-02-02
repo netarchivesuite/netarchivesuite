@@ -27,7 +27,8 @@
 	This file contains an example of a settings.xml file.
 	NOTE that this settings file is NOT necessary if you use deploy 
 -->
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<deployGlobal>
+<settings>
     <common>
         <!-- The name of the environment in which this code is running, e.g.
                  PROD, RELEASETEST, NHC,... also used as common prefix to all 
@@ -39,7 +40,7 @@
              conf/security.conf file, or the web pages won't work. -->
         <tempDir>./tests/commontempdir</tempDir>
         <!-- FTP connection data-->
-        <remoteFile xsi:type="ftpremotefile">
+        <remoteFile>
             <!-- The class to use for RemoteFile objects. -->
             <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
             <!-- The default FTP-server used -->
@@ -70,7 +71,7 @@
                  the process.-->
             <port>8076</port>
         </http>
-        <arcrepositoryClient xsi:type="jmsarcrepositoryclient">
+        <arcrepositoryClient>
             <!-- The class that implements the ArcRepositoryClient.  This class
                  will be instantiated by the ArcRepositoryClientFactory -->
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
@@ -85,11 +86,11 @@
                  ArcRepositoryClient.store() -->
             <storeTimeout>3600000</storeTimeout>
         </arcrepositoryClient>
-        <monitorregistryClient xsi:type="jmsmonitorregistryclient">
+        <monitorregistryClient>
             <!-- The class instantiated to register JMX urls at a registry. -->
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
         </monitorregistryClient>
-        <indexClient xsi:type="indexrequestclient">
+        <indexClient>
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
@@ -479,7 +480,7 @@
             <tld>zm</tld>
             <tld>zw</tld>
         </topLevelDomains>
-        <database xsi:type="derbydatabase">
+        <database>
             <!-- The full URL for connecting to the database.
                  If present and not empty, this URL must match the settings
                  baseDir and class.-->
@@ -634,10 +635,6 @@
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
             </heritrix>
-            <!-- The file used to signal that the harvest controller is running.
-                 Sidekick starts HarvestController if this file is not present
-                 -->
-            <isrunningFile>./hcsRunning.tmp</isrunningFile>
         </harvesting>
     </harvester>
     <archive>
@@ -701,3 +698,4 @@
         </logging>
     </monitor>
 </settings>
+</deployGlobal>
