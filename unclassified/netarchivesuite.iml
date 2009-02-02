@@ -377,6 +377,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Netarkivet Libs" level="application" />
     <orderEntryProperties />
   </component>
 </module>

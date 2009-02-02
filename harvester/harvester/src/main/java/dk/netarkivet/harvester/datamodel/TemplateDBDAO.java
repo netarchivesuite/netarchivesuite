@@ -42,6 +42,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * Implements the TemplateDAO with databases.
@@ -83,7 +84,8 @@ public class TemplateDBDAO extends TemplateDAO {
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for "
-                + orderXmlName;
+                + orderXmlName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (DocumentException e) {
@@ -106,7 +108,8 @@ public class TemplateDBDAO extends TemplateDAO {
             List<String> names = DBUtils.selectStringlist("SELECT name FROM ordertemplates ORDER BY name");
             return names.iterator();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error finding order.xml names", e);
+            throw new IOFailure("SQL error finding order.xml names" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -141,7 +144,8 @@ public class TemplateDBDAO extends TemplateDAO {
                     Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error creating template " + orderXmlName, e);
+            throw new IOFailure("SQL error creating template " + orderXmlName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -185,7 +189,8 @@ public class TemplateDBDAO extends TemplateDAO {
             s.executeUpdate();
         } catch (SQLException e) {
             throw new IOFailure("SQL error updating template "
-                    + orderXmlName, e);
+                    + orderXmlName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -218,7 +223,8 @@ public class TemplateDBDAO extends TemplateDAO {
             log.debug("Deleting template " + orderXmlName);
         } catch (SQLException e) {
             throw new IOFailure("SQL error deleting template "
-                    + orderXmlName, e);
+                    + orderXmlName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

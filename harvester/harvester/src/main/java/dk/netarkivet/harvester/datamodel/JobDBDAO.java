@@ -51,6 +51,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A database-based implementation of the JobDAO class.
@@ -143,7 +144,8 @@ public class JobDBDAO extends JobDAO {
             c.commit();
             job.setEdition(initialEdition);
         } catch (SQLException e) {
-            String message = "SQL error creating job " + job + " in database";
+            String message = "SQL error creating job " + job + " in database"
+                             + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -314,7 +316,8 @@ public class JobDBDAO extends JobDAO {
             c.commit();
             job.setEdition(edition);
         } catch (SQLException e) {
-            String message = "SQL error updating job " + job + " in database";
+            String message = "SQL error updating job " + job + " in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -404,7 +407,8 @@ public class JobDBDAO extends JobDAO {
             job.setEdition(edition);
             return job;
         } catch (SQLException e) {
-            String message = "SQL error reading job " + jobID + " in database";
+            String message = "SQL error reading job " + jobID + " in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (DocumentException e) {
@@ -451,7 +455,8 @@ public class JobDBDAO extends JobDAO {
                 }
             };
         } catch (SQLException e) {
-            String message = "SQL error asking for job list in database";
+            String message = "SQL error asking for job list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -472,7 +477,8 @@ public class JobDBDAO extends JobDAO {
                     + "ORDER BY job_id", status.ordinal());
             return idList.iterator();
         } catch (SQLException e) {
-            String message = "SQL error asking for job list in database";
+            String message = "SQL error asking for job list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -493,7 +499,8 @@ public class JobDBDAO extends JobDAO {
                 }
             };
         } catch (SQLException e) {
-            String message = "SQL error asking for job list in database";
+            String message = "SQL error asking for job list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -510,7 +517,8 @@ public class JobDBDAO extends JobDAO {
                     "SELECT job_id FROM jobs ORDER BY job_id");
             return idList.iterator();
         } catch (SQLException e) {
-            String message = "SQL error asking for job list in database";
+            String message = "SQL error asking for job list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -571,7 +579,8 @@ public class JobDBDAO extends JobDAO {
             return joblist;
         } catch (SQLException e) {
             String message
-                       = "SQL error asking for job status list in database";
+                       = "SQL error asking for job status list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -691,7 +700,8 @@ public class JobDBDAO extends JobDAO {
             return joblist;
         } catch (SQLException e) {
             String message
-                       = "SQL error asking for job status list in database";
+                       = "SQL error asking for job status list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -763,7 +773,8 @@ public class JobDBDAO extends JobDAO {
                         + ")"));
             }
         } catch (SQLException e) {
-            String message = "SQL error asking for job list in database";
+            String message = "SQL error asking for job list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -892,7 +903,8 @@ public class JobDBDAO extends JobDAO {
             s.executeUpdate();
             c.commit();
         } catch (SQLException e) {
-            String message = "SQL error rescheduling job in database";
+            String message = "SQL error rescheduling job in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -970,7 +982,8 @@ public class JobDBDAO extends JobDAO {
             }
             return joblist;
         } catch (SQLException e) {
-            String message = "SQL error asking for job status list in database";
+            String message = "SQL error asking for job status list in database" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {

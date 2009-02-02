@@ -73,7 +73,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
                 }
             } catch (SQLException e) {
                 throw new IOFailure("SQL error getting next element from "
-                        + res, e);
+                        + res + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
             }
         }
         return objectCache != null;

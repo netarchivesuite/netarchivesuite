@@ -47,7 +47,7 @@ public class ExceptionUtilsTester extends TestCase {
         SQLException ex3 = new SQLException("reason3", "state3", 103);
         ex1.setNextException(ex2);
         ex2.setNextException(ex3);
-        String message = ExceptionUtils.getSQLExceptionCause(ex1);
+        String message = dk.netarkivet.common.utils.ExceptionUtils.getSQLExceptionCause(ex1);
         System.out.println(message);
         StringAsserts.assertStringContains("Compound exception should contain "
                                            + "references to all three "

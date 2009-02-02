@@ -25,6 +25,7 @@ package dk.netarkivet.common.utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.sql.SQLException;
 
 /**
  * Utilities for reading a stacktrace.
@@ -55,4 +56,34 @@ public class ExceptionUtils {
         return result.toString();
     }
 
+    /**
+     * SQLExceptions have their own stack of causes accessed via the
+     * getNextException() method. This utility provides a string representation of those causes for
+     * use in logging or rethrowing
+     * @param e  the original top-level exception
+     * @return a String describing the exception
+     */
+    public static String getSQLExceptionCause(SQLException e) {
+        StringBuffer message = new StringBuffer("SQLException trace:\n");
+        do {
+            message.append(getSingleSQLExceptionCause(e));
+            e = e.getNextException();
+            if (e != null) {
+                message.append("NextException:\n");
+            }
+        } while (e != null);
+        message.append("End of SQLException trace");
+        return message.toString();
+    }
+
+    private static StringBuffer getSingleSQLExceptionCause(SQLException e) {
+        StringBuffer message = new StringBuffer();
+        message.append("SQL State:").append(e.getSQLState()).append("\n");
+        message.append("Error Code:").append(e.getErrorCode()).append("\n");
+        StringWriter string_writer = new StringWriter();
+        PrintWriter writer = new PrintWriter(string_writer);
+        e.printStackTrace(writer);
+        message.append(string_writer.getBuffer());
+        return message;
+    }
 }

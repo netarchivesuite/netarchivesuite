@@ -36,6 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 
 /**
@@ -77,7 +78,9 @@ public class DBConnect {
             } catch (SQLException e) {
                 final String message = "Can't connect to database with DBurl: '"
                         + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                        + DBSpecifics.getInstance().getDriverClassName() + "'";
+                        + DBSpecifics.getInstance().getDriverClassName() + "'" +
+                        "\n" +
+                        ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(message, e);
                 throw new IOFailure(message, e);
             }

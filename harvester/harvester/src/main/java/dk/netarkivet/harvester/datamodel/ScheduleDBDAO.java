@@ -42,6 +42,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 
 /**
@@ -89,7 +90,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setEdition(edition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while creating schedule "
-                    + schedule, e);
+                    + schedule +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -203,7 +205,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setEdition(edition);
             return schedule;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error reading schedule " + scheduleName, e);
+            throw new IOFailure("SQL error reading schedule " + scheduleName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -249,7 +252,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             log.debug("Deleting schedule " + scheduleName);
         } catch (SQLException e) {
             final String message = "SQL error deleting schedule "
-                + scheduleName;
+                + scheduleName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -305,7 +309,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setEdition(newEdition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while creating schedule "
-                    + schedule, e);
+                    + schedule +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -333,7 +338,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
                 }
             };
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting all schedules", e);
+            throw new IOFailure("SQL error getting all schedules" +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 

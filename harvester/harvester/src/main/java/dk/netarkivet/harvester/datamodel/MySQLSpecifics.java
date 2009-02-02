@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * MySQL-specific implementation of DB methods.
@@ -102,7 +103,8 @@ public class MySQLSpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TEMPORARY TABLE " +  tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName, e);
+            log.warn("Couldn't drop temporary table " + tableName +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

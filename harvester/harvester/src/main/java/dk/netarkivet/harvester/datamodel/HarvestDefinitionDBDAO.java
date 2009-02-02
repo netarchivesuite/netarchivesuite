@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A database-oriented implementation of the HarvestDefinitionDAO.
@@ -143,7 +144,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return id;
         } catch (SQLException e) {
             String message = "SQL error creating harvest definition "
-                    + harvestDefinition + " in database";
+                    + harvestDefinition + " in database" +
+                    "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -329,7 +331,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return ph;
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while reading harvest definition "
-                    + harvestDefinitionID, e);
+                    + harvestDefinitionID + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -355,7 +358,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
         } catch (SQLException e) {
             String message = "SQL exception while checking for usages of "
-                    + "harvest definition #" + oid;
+                    + "harvest definition #" + oid + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -396,7 +400,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             c.commit();
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while deleting harvest definition "
-                    + oid, e);
+                    + oid +
+                    "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "deleting harvestdefinition", oid);
             DBUtils.closeStatementIfOpen(s);
@@ -486,7 +491,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             hd.setEdition(nextEdition);
         } catch (SQLException e) {
             throw new IOFailure("SQL error while updating harvest definition "
-                    + hd, e);
+                    + hd +
+                    "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.rollbackIfNeeded(c, "updating", hd);
             DBUtils.closeStatementIfOpen(s);
@@ -516,7 +522,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 }
             };
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while asking for all harvest definitions",
+            throw new IOFailure("SQL Error while asking for all harvest definitions"
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e),
                     e);
         }
     }
@@ -567,7 +574,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     + "   AND nextdate < ?", true, now));
             return ids;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while getting ready harvests", e);
+            throw new IOFailure("SQL error while getting ready harvests" +
+                    "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -594,7 +602,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return null;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while getting HD by name", e);
+            throw new IOFailure("SQL error while getting HD by name" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -618,7 +628,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 }
             };
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while asking for all full harvest definitions",
+            throw new IOFailure("SQL Error while asking for all full harvest definitions"
+                                + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e),
                     e);
         }
     }
@@ -642,7 +654,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 }
             };
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while asking for all partial harvest definitions",
+            throw new IOFailure("SQL Error while asking for all partial harvest definitions"
+                     + "\n" +
+                     ExceptionUtils.getSQLExceptionCause(e),
                     e);
         }
     }
@@ -738,7 +752,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return infoList;
         } catch (SQLException e) {
             String message = "SQL error asking for harvest run info on "
-                             + harvestID + " in database";
+                             + harvestID + " in database" + "\n" +
+                             ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -795,7 +810,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return resultList;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting sparse domains", e);
+            throw new IOFailure("SQL error getting sparse domains" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -841,7 +858,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return harvests;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting sparse harvests", e);
+            throw new IOFailure("SQL error getting sparse harvests" +
+                                "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -886,7 +905,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting sparse harvest", e);
+            throw new IOFailure("SQL error getting sparse harvest" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -927,7 +947,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return harvests;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting sparse harvests", e);
+            throw new IOFailure("SQL error getting sparse harvests" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -970,7 +992,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             return name;
         } catch (SQLException e) {
             throw new IOFailure("An error occurred finding the name for "
-                                + "harvest definition " + harvestDefinitionID, e);
+                                + "harvest definition " + harvestDefinitionID +
+                    "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1046,7 +1069,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting sparse harvest", e);
+            throw new IOFailure("SQL error getting sparse harvest" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

@@ -33,6 +33,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 import java.sql.Clob;
 import java.sql.Connection;
@@ -181,7 +182,9 @@ public class DomainDBDAO extends DomainDAO {
             c.commit();
             d.setEdition(initialEdition);
         } catch (SQLException e) {
-            String message = "SQL error creating domain " + d + " in database";
+            String message = "SQL error creating domain " + d + " in database"
+                    + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -270,7 +273,9 @@ public class DomainDBDAO extends DomainDAO {
             c.commit();
             d.setEdition(newEdition);
         } catch (SQLException e) {
-            String message = "SQL error updating domain " + d + " in database";
+            String message = "SQL error updating domain " + d + " in database" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -623,7 +628,10 @@ public class DomainDBDAO extends DomainDAO {
             harvestInfo.setID(DBUtils.getGeneratedID(s));
         } catch (SQLException e) {
             throw new IOFailure("SQL error while inserting harvest info "
-                    + harvestInfo + " for " + d, e);
+                    + harvestInfo + " for " + d +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e),
+                                e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -917,7 +925,9 @@ public class DomainDBDAO extends DomainDAO {
 
             result = d;
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while reading domain " + domainName, e);
+            throw new IOFailure("SQL Error while reading domain " + domainName
+                                + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1229,7 +1239,9 @@ public class DomainDBDAO extends DomainDAO {
             log.debug("Deleting domain " + domainName);
             c.commit();
         } catch (SQLException e) {
-            String message = "SQL error deleting domain " + domainName + " in database";
+            String message = "SQL error deleting domain " + domainName + " in database"
+                    + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -1279,7 +1291,9 @@ public class DomainDBDAO extends DomainDAO {
                 }
             };
         } catch (SQLException e) {
-            String message = "SQL error asking for all domains in database";
+            String message = "SQL error asking for all domains in database"
+                    + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1309,7 +1323,9 @@ public class DomainDBDAO extends DomainDAO {
                 }
             };
         } catch (SQLException e) {
-            String message = "SQL error asking for all domains in database";
+            String message = "SQL error asking for all domains in database"
+                    + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1322,7 +1338,9 @@ public class DomainDBDAO extends DomainDAO {
         try {
             DBConnect.getDBConnection().close();
         } catch (SQLException e) {
-            String message = "SQL error closing Domain DAO DB connection";
+            String message = "SQL error closing Domain DAO DB connection" +
+                             "\n" +
+                             ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1336,7 +1354,8 @@ public class DomainDBDAO extends DomainDAO {
                     sqlGlob);
         } catch (SQLException e) {
             String message = "SQL error searching for domains with glob "
-                + glob;
+                + glob + "\n" +
+                ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1399,7 +1418,8 @@ public class DomainDBDAO extends DomainDAO {
             return domainHarvestInfos;
         } catch (SQLException e) {
             String message = "SQL error getting domain harvest info for "
-                + domainName;
+                + domainName + "\n" +
+                ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -1466,7 +1486,9 @@ public class DomainDBDAO extends DomainDAO {
             }
             return new SparseDomain(domainName, domainConfigurationNames);
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while reading domain " + domainName,
+            throw new IOFailure("SQL Error while reading domain " + domainName +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e),
                                 e);
         }
     }
@@ -1502,7 +1524,8 @@ public class DomainDBDAO extends DomainDAO {
                 resultSet.add(ai);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting alias-information", e);
+            throw new IOFailure("Failure getting alias-information" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1537,7 +1560,9 @@ public class DomainDBDAO extends DomainDAO {
                 resultSet.add(ai);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting alias-information", e);
+            throw new IOFailure("Failure getting alias-information" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1566,7 +1591,10 @@ public class DomainDBDAO extends DomainDAO {
                 i.addSubdomain(domain);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting TLD-information", e);
+            throw new IOFailure("Failure getting TLD-information" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e),
+                                e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1613,7 +1641,8 @@ public class DomainDBDAO extends DomainDAO {
                         byteCount, objectCount, reason);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting DomainJobInfo", e);
+            throw new IOFailure("Failure getting DomainJobInfo" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

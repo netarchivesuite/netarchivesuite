@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -86,7 +87,8 @@ public abstract class DerbySpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TABLE " + tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName, e);
+            log.warn("Couldn't drop temporary table " + tableName + "\n" +
+                     ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

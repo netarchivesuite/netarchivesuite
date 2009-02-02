@@ -35,6 +35,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A class that implement functionality specific to the embedded Derby system.
@@ -62,7 +63,9 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             log.warn("Shut down Derby embedded database w/o expected warning");
         } catch (SQLException e) {
             log.info("Embedded Derby database has been shut down");
-            log.debug("Shutdown down derby gave (as expected) an exception",
+            log.debug("Shutdown down derby gave (as expected) an exception" +
+                      "\n" +
+                      ExceptionUtils.getSQLExceptionCause(e),
                     e);
         }
     }

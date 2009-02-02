@@ -212,7 +212,8 @@ public class HarvestScheduler implements CleanupIF {
                 lastBackupDate = new Date();
             } catch (SQLException e) {
                 String errMsg = "Unable to backup database to dir: " 
-                    + backupDir; 
+                    + backupDir +
+                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(errMsg, e);
                 NotificationsFactory.getInstance().errorEvent(
                         errMsg, e); 

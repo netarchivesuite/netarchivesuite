@@ -77,7 +77,8 @@ public class DBUtils {
             }
             return resultInt;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error executing statement " + s, e);
+            throw new IOFailure("SQL error executing statement " + s + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -100,7 +101,8 @@ public class DBUtils {
             return selectIntValue(s);
         } catch (SQLException e) {
             throw new IOFailure("SQL error preparing statement "
-                    + query + " args " + args, e);
+                    + query + " args " + args + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -129,7 +131,8 @@ public class DBUtils {
             }
             return resultLong;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error executing statement " + s, e);
+            throw new IOFailure("SQL error executing statement " + s + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -153,7 +156,8 @@ public class DBUtils {
             return selectLongValue(s);
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + args, e);
+                    + query + " args " + args + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -180,7 +184,8 @@ public class DBUtils {
                 return null;
             }
         } catch (SQLException e) {
-            String message = "SQL error executing '" + query + "'";
+            String message = "SQL error executing '" + query + "'" + "\n" +
+                             ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -363,7 +368,8 @@ public class DBUtils {
             }
             return version;
         } catch (SQLException e) {
-            String msg = "SQL Error checking version of table " + tablename;
+            String msg = "SQL Error checking version of table " + tablename +
+                          "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
@@ -383,7 +389,7 @@ public class DBUtils {
             try {
                 s.close();
             } catch (SQLException e) {
-                log.warn("Error closing SQL statement " + s, e);
+                log.warn("Error closing SQL statement " + s + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
             }
         }
     }
@@ -517,7 +523,9 @@ public class DBUtils {
             c.rollback();
             c.setAutoCommit(true);
         } catch (SQLException e) {
-            log.warn("SQL error doing rollback after " + action + " " + o, e);
+            log.warn("SQL error doing rollback after " + action + " " + o + "\n"
+                     + ExceptionUtils.getSQLExceptionCause(e),
+                     e);
             // Can't throw here, we want the real exception
         }
     }
@@ -654,8 +662,8 @@ public class DBUtils {
             }
         } catch (SQLException e) {
             final String message = "SQL error deleting " + victim;
-            log.warn(message, e);
-            throw new IOFailure(message, e);
+            log.warn(message + "\n"  + ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure(message + "\n"  + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
         }
@@ -686,7 +694,9 @@ public class DBUtils {
             }
             return null;
         } catch (SQLException e) {
-            final String message = "SQL error checking for usages of " + victim;
+            final String message = "SQL error checking for usages of "
+                                   + victim + "\n" +
+                                   ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -733,7 +743,8 @@ public class DBUtils {
             return DBUtils.selectStringValue(s);
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + args, e);
+                    + " args " + args + "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
         }
@@ -762,7 +773,8 @@ public class DBUtils {
             }
             return resultString;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error executing statement " + s, e);
+            throw new IOFailure("SQL error executing statement " + s + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -781,7 +793,7 @@ public class DBUtils {
             return s.executeQuery().next();
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + args, e);
+                    + " args " + args + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
         }
@@ -824,7 +836,7 @@ public class DBUtils {
             log.debug("Updated database using updates '" 
                     + StringUtils.conjoin(";", updates) + "'.");
         } catch (SQLException e) {
-            String msg = "SQL error updating database with sql: " + s;
+            String msg = "SQL error updating database with sql: " + s + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
