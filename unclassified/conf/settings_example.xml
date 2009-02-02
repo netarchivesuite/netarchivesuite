@@ -629,6 +629,9 @@
                      should probably be fairly large.  It can be specified in
                      the same way as for the -Xmx argument to Java, e.g.
                      512M, 2G etc.-->
+                <!-- the username/password used to connect to Heritrix via JMX. These values must correspond to what is written in jmxremote.password -->
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
             </heritrix>
             <!-- The file used to signal that the harvest controller is running.
@@ -655,10 +658,10 @@
             <!-- These are the directories where ARC files are stored
                  (in a subdir). If more than one is given, they are used from
                  one end. -->
-            <fileDir>m:\bitarchive</fileDir>
-            <fileDir>n:\bitarchive</fileDir>
-            <fileDir>o:\bitarchive</fileDir>
-            <fileDir>p:\bitarchive</fileDir>
+            <baseFileDir>m:\bitarchive</baseFileDir>
+            <baseFileDir>n:\bitarchive</baseFileDir>
+            <baseFileDir>o:\bitarchive</baseFileDir>
+            <baseFileDir>p:\bitarchive</baseFileDir>
             <!-- The frequency in milliseconds of heartbeats that are sent by
                  each BitarchiveServer to the BitarchiveMonitor. -->
             <heartbeatFrequency>1000</heartbeatFrequency>
@@ -691,7 +694,7 @@
     </viewerproxy>
     <monitor>
         <!-- the username/password used to connect to the all Mbeanservers started by the application. These values must correspond to what is written in jmxremote.password -->
-	<jmxUsername>monitorRole</jmxUsername>
+	    <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
         <logging>
             <historySize>100</historySize>

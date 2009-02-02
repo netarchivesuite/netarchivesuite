@@ -124,24 +124,17 @@
     <harvester>
         <datamodel>
             <domain>
-	            
 	            <defaultSeedlist>defaultseeds</defaultSeedlist>
-	            
 	            <defaultConfig>defaultconfig</defaultConfig>
-	            
 	            <defaultOrderxml>default_orderxml</defaultOrderxml>
-	            
 	            <defaultMaxrate>100</defaultMaxrate>
 	            <defaultMaxbytes>10000000</defaultMaxbytes>
             </domain>
         </datamodel>
         <scheduler>
-            
             <errorFactorPrevResult>10</errorFactorPrevResult>
             <errorFactorBestGuess>20</errorFactorBestGuess>
-            
             <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
-            
             <maxDomainSize>5000</maxDomainSize>
             <jobs>
                 <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
@@ -162,6 +155,8 @@
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
                 <jmxPort>8091</jmxPort>
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
             </heritrix>
         </harvesting>
@@ -172,8 +167,8 @@
         </arcrepository>
         <bitarchive>
             <minSpaceLeft>2000000</minSpaceLeft>
-            <fileDir>bitarchive1</fileDir>
-            <fileDir>bitarchive2</fileDir>
+            <baseFileDir>bitarchive1</baseFileDir>
+            <baseFileDir>bitarchive2</baseFileDir>
             <heartbeatFrequency>1000</heartbeatFrequency>
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
             <batchMessageTimeout>1209600000</batchMessageTimeout>
