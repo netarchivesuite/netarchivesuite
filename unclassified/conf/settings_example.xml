@@ -27,7 +27,6 @@
 	This file contains an example of a settings.xml file.
 	NOTE that this settings file is NOT necessary if you use deploy 
 -->
-<deployGlobal>
 <settings>
     <common>
         <!-- The name of the environment in which this code is running, e.g.
@@ -698,4 +697,3 @@
         </logging>
     </monitor>
 </settings>
-</deployGlobal>
