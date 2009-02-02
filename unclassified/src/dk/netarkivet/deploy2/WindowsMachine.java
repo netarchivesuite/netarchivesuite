@@ -262,9 +262,10 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     killPrinter.print("\"");
                     killPrinter.print(appScript);
-                    killPrinter.print(" 2>> log_");
-                    killPrinter.print(app.getIdentification());
-                    killPrinter.print(".log \"");
+//                  killPrinter.print(" 2>> log_");
+//                  killPrinter.print(app.getIdentification());
+//                  killPrinter.print(".log \"");
+                    killPrinter.print("\"");
                     killPrinter.println();
                 }
             } finally {
@@ -312,9 +313,10 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     startPrinter.print("\"");
                     startPrinter.print(appScript);
-                    startPrinter.print(" 2>> log_");
-                    startPrinter.print(app.getIdentification());
-                    startPrinter.print(".log \"");
+//                    startPrinter.print(" 2>> log_");
+//                    startPrinter.print(app.getIdentification());
+//                    startPrinter.print(".log \"");
+                    startPrinter.print("\"");
                     startPrinter.println();
                 }
             } finally {
@@ -339,17 +341,18 @@ public class WindowsMachine extends Machine {
      * 
      * kill_ps_app.bat kills the process of the application.
      * kill_app.bat runs kill_ps_app.bat if the application is running.
+     * run_app tells if the application is running. It is deleted during kill.
      * 
      * The kill_app.bat should have the following structure:
      * 
      * - ECHO Killing application : app
      * - CD "path"
-     * - IF EXIST kill_ps_app.txt GOTO KILL
+     * - IF EXIST run_app GOTO KILL
      * - GOTO NOKILL
      * - 
      * - :KILL
      * - cmdrun kill_ps_app.bat
-     * - DEL kill_ps_app.txt
+     * - DEL run_app
      * - GOTO DONE
      * - 
      * - :NOKILL
@@ -380,15 +383,20 @@ public class WindowsMachine extends Machine {
         // go through all applications and create their kill script
         try {
             for(Application app : applications) {
+                String id = app.getIdentification();
+                String killPsName = "kill_ps_" + id + scriptExtension;
                 File appKillScript = new File(directory, 
-                        "kill_" + app.getIdentification() + scriptExtension);
+                        "kill_" + id + scriptExtension);
+                File appKillPsScript = new File(directory, killPsName);
                 try {
                     // make print writer for writing to file
                     PrintWriter appPrint = new PrintWriter(appKillScript);
+                    PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
                     try {
+                	// write dummy line in kill script.
+                	appPsPrint.println("ECHO Not started!");
                         // initiate variables
-                        String id = app.getIdentification();
-                        String killPsName = "kill_ps_" + id + scriptExtension;
+                        String runPs = "running_" + id;
                         // get the content for the kill script of 
                         // this application
                         // #echo kill windows application
@@ -398,7 +406,7 @@ public class WindowsMachine extends Machine {
                         appPrint.println("CD \""
                                 + app.installPathWindows() + "\\conf\"");
                         // if exist run_app.txt GOTO KILL
-                        appPrint.println("IF EXIST " + killPsName
+                        appPrint.println("IF EXIST " + runPs
                                 + " GOTO KILL");
                         // GOTO NOKILL
                         appPrint.println("GOTO NOKILL");
@@ -409,11 +417,10 @@ public class WindowsMachine extends Machine {
                         // cmdrun kill_ps_app.bat
                         appPrint.println(Constants.
                                 OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE
-                                + "\"kill_ps_" + id
-                                + ".bat" + " 2>> log_" + id + ".log" 
+                                + "\"" + killPsName 
                                 + "\"");
                         // del run_app.txt
-                        appPrint.println("DEL " + killPsName);
+                        appPrint.println("DEL " + runPs);
                         // GOTO DONE
                         appPrint.println("GOTO DONE");
                         //
@@ -430,6 +437,7 @@ public class WindowsMachine extends Machine {
                     } finally {
                         // close files
                         appPrint.close();
+                        appPsPrint.close();
                     }
                 } catch (IOException e) {
                     log.trace("Cannot create the kill script for application: "
@@ -525,7 +533,7 @@ public class WindowsMachine extends Machine {
      * 
      * - echo Starting windows application : app
      * - cd "path"
-     * - if exist ".\conf\kill_ps_app.txt" goto NOSTART
+     * - if exist ".\conf\run_app.txt" goto NOSTART
      * - goto START
      * - 
      * - :START
@@ -553,13 +561,14 @@ public class WindowsMachine extends Machine {
             try {
                 // initiate variables
                 String id = app.getIdentification();
-                String killPsName = "kill_ps_" + id + scriptExtension;
+//                String killPsName = "kill_ps_" + id + scriptExtension;
+                String runPs = "run_" + id;
 
                 // cd "path"
                 appPrint.println("cd \""
                         + app.installPathWindows() + "\"");
                 // if exist .\conf\run_app.txt GOTO NOSTART
-                appPrint.println("if Exist .\\conf\\" + killPsName
+                appPrint.println("IF EXIST .\\conf\\" + runPs
                         + " GOTO NOSTART");
                 // GOTO START
                 appPrint.println("GOTO START");
@@ -628,6 +637,7 @@ public class WindowsMachine extends Machine {
                 // initiate variables
                 String id = app.getIdentification();
                 String killPsName = "kill_ps_" + id + scriptExtension;
+                String runPsName = "running_" + id;
 
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println("Set WshShell= "
@@ -665,6 +675,12 @@ public class WindowsMachine extends Machine {
                 // f.close
                 vbsPrint.println("f.close");
                 // set tf = fso.OpenTextFile(".\conf\run_app.txt", 2, True)
+                vbsPrint.println("set tf=fso.OpenTextFile(\".\\conf\\"
+                        + runPsName + "\",2,True)");
+                // tf.WriteLine running
+                vbsPrint.println("tf.WriteLine \"running\"");
+                // f.close
+                vbsPrint.println("tf.close");
             } finally {
                 // close file
                 vbsPrint.close();

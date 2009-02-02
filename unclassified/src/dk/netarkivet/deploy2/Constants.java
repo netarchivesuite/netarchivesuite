@@ -103,7 +103,7 @@ public final class Constants {
     static final String[] COMPLETE_JMX_PORT_PATH =
         CommonSettings.JMX_PORT.split("[.]");
     /** The path to the rmiPort leaf from beyond settings.*/
-    static final String[] TEXT_JMX_RMI_PORT_PATH =
+    static final String[] COMPLETE_JMX_RMIPORT_PATH =
         CommonSettings.JMX_RMI_PORT.split("[.]");
     /** The path to the heritrix guiPort from beyond settings.*/
     static final String[] COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH = 

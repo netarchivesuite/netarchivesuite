@@ -114,7 +114,7 @@ public class CreateTestInstance {
         // make offset paths
         offsetPaths = new OffsetSystem[] {
                 new OffsetSystem(2, Constants.COMPLETE_JMX_PORT_PATH),
-                new OffsetSystem(2, Constants.TEXT_JMX_RMI_PORT_PATH),
+                new OffsetSystem(2, Constants.COMPLETE_JMX_RMIPORT_PATH),
                 new OffsetSystem(1, Constants
                         .COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
                 new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
