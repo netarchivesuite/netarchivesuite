@@ -48,6 +48,7 @@ import dk.netarkivet.common.utils.UtilsTesterSuite;
 import dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite;
 import dk.netarkivet.common.utils.batch.BatchUtilsTesterSuite;
 import dk.netarkivet.common.utils.cdx.CdxUtilsTesterSuite;
+import dk.netarkivet.deploy.DeployTesterSuite;
 import dk.netarkivet.harvester.datamodel.DataModelTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
@@ -83,8 +84,7 @@ public class UnitTesterSuite {
         CdxUtilsTesterSuite.addToSuite(suite);
         CommonsTesterSuite.addToSuite(suite);
         DataModelTesterSuite.addToSuite(suite);
-        //DeployTesterSuite.addToSuite(suite);
-        dk.netarkivet.deploy2.DeployTesterSuite.addToSuite(suite);
+        DeployTesterSuite.addToSuite(suite);
         DistributeArcrepositoryTesterSuite.addToSuite(suite);
         DistributeIndexserverTesterSuite.addToSuite(suite);
         DistributeTesterSuite.addToSuite(suite);
