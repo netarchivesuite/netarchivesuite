@@ -206,6 +206,8 @@ public final class Constants {
     /** The path to the complete settings file.*/
     static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = 
         "dk/netarkivet/deploy/complete_settings.xml";
+    /** The name of the temporary run-file for windows.*/
+    static final String FILE_TEMPORARY_RUN_WINDOWS_NAME = "running_";
     
     // other constants
     /** Number of '-' repeat in scripts. */

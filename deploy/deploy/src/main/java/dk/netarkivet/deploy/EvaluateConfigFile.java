@@ -72,7 +72,7 @@ public class EvaluateConfigFile {
      */
     @SuppressWarnings("unchecked")
     public void evaluate() {
-	try {
+        try {
             // check global settings
             evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
             List<Element> physLocs = root.getChildren(
@@ -94,10 +94,10 @@ public class EvaluateConfigFile {
                     }
                 }
             }
-	} catch (Exception e) {
-	    System.err.println("Unknown evaluation error: " + e);
-	    log.trace("Error occured during evaluation: " + e);
-	}
+        } catch (Exception e) {
+            System.err.println("Unknown evaluation error: " + e);
+            log.trace("Error occured during evaluation: " + e);
+        }
     }
     
     /**

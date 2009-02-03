@@ -393,10 +393,11 @@ public class WindowsMachine extends Machine {
                     PrintWriter appPrint = new PrintWriter(appKillScript);
                     PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
                     try {
-                	// write dummy line in kill script.
-                	appPsPrint.println("ECHO Not started!");
+                        // write dummy line in kill script.
+                        appPsPrint.println("ECHO Not started!");
                         // initiate variables
-                        String runPs = "running_" + id;
+                        String tmpRunApp = Constants
+                                .FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
                         // get the content for the kill script of 
                         // this application
                         // #echo kill windows application
@@ -406,7 +407,7 @@ public class WindowsMachine extends Machine {
                         appPrint.println("CD \""
                                 + app.installPathWindows() + "\\conf\"");
                         // if exist run_app.txt GOTO KILL
-                        appPrint.println("IF EXIST " + runPs
+                        appPrint.println("IF EXIST " + tmpRunApp
                                 + " GOTO KILL");
                         // GOTO NOKILL
                         appPrint.println("GOTO NOKILL");
@@ -420,7 +421,7 @@ public class WindowsMachine extends Machine {
                                 + "\"" + killPsName 
                                 + "\"");
                         // del run_app.txt
-                        appPrint.println("DEL " + runPs);
+                        appPrint.println("DEL " + tmpRunApp);
                         // GOTO DONE
                         appPrint.println("GOTO DONE");
                         //
@@ -561,14 +562,14 @@ public class WindowsMachine extends Machine {
             try {
                 // initiate variables
                 String id = app.getIdentification();
-//                String killPsName = "kill_ps_" + id + scriptExtension;
-                String runPs = "run_" + id;
+                String tmpRunApp = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
+                        + id;
 
                 // cd "path"
                 appPrint.println("cd \""
                         + app.installPathWindows() + "\"");
                 // if exist .\conf\run_app.txt GOTO NOSTART
-                appPrint.println("IF EXIST .\\conf\\" + runPs
+                appPrint.println("IF EXIST .\\conf\\" + tmpRunApp
                         + " GOTO NOSTART");
                 // GOTO START
                 appPrint.println("GOTO START");
@@ -637,7 +638,8 @@ public class WindowsMachine extends Machine {
                 // initiate variables
                 String id = app.getIdentification();
                 String killPsName = "kill_ps_" + id + scriptExtension;
-                String runPsName = "running_" + id;
+                String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
+                        + id;
 
                 // Set WshShell = CreateObject("WScript.Shell")
                 vbsPrint.println("Set WshShell= "
@@ -676,7 +678,7 @@ public class WindowsMachine extends Machine {
                 vbsPrint.println("f.close");
                 // set tf = fso.OpenTextFile(".\conf\run_app.txt", 2, True)
                 vbsPrint.println("set tf=fso.OpenTextFile(\".\\conf\\"
-                        + runPsName + "\",2,True)");
+                        + tmpRunPsName + "\",2,True)");
                 // tf.WriteLine running
                 vbsPrint.println("tf.WriteLine \"running\"");
                 // f.close
