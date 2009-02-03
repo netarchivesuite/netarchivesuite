@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -45,6 +47,8 @@ public class EvaluateConfigFile {
     private Element completeSettings;
     /** The root element in the xml tree.*/
     private XmlStructure root;
+    /** the log, for logging stuff instead of displaying them directly.*/
+    private final Log log = LogFactory.getLog(getClass().getName());
     
     /**
      * Constructor.
@@ -68,27 +72,32 @@ public class EvaluateConfigFile {
      */
     @SuppressWarnings("unchecked")
     public void evaluate() {
-        // check global settings
-        evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
-        List<Element> physLocs = root.getChildren(
-                Constants.DEPLOY_PHYSICAL_LOCATION);
-        for(Element pl : physLocs) {
-            // check physical location settings
-            evaluateElement(pl.element(Constants.COMPLETE_SETTINGS_BRANCH));
-            List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
-            for(Element mac : macs) {
-                // check machine settings 
-                evaluateElement(mac
-                        .element(Constants.COMPLETE_SETTINGS_BRANCH));
-                List<Element> apps = mac
-                        .elements(Constants.DEPLOY_APPLICATION_NAME);
-                for(Element app : apps) {
-                    // check application settings
-                    evaluateElement(app
+	try {
+            // check global settings
+            evaluateElement(root.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
+            List<Element> physLocs = root.getChildren(
+                    Constants.DEPLOY_PHYSICAL_LOCATION);
+            for(Element pl : physLocs) {
+                // check physical location settings
+                evaluateElement(pl.element(Constants.COMPLETE_SETTINGS_BRANCH));
+                List<Element> macs = pl.elements(Constants.DEPLOY_MACHINE);
+                for(Element mac : macs) {
+                    // check machine settings 
+                    evaluateElement(mac
                             .element(Constants.COMPLETE_SETTINGS_BRANCH));
+                    List<Element> apps = mac
+                            .elements(Constants.DEPLOY_APPLICATION_NAME);
+                    for(Element app : apps) {
+                        // check application settings
+                        evaluateElement(app
+                                .element(Constants.COMPLETE_SETTINGS_BRANCH));
+                    }
                 }
             }
-        }
+	} catch (Exception e) {
+	    System.err.println("Unknown evaluation error: " + e);
+	    log.trace("Error occured during evaluation: " + e);
+	}
     }
     
     /**
