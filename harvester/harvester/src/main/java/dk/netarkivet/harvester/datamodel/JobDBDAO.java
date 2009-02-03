@@ -60,20 +60,27 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  */
 public class JobDBDAO extends JobDAO {
     private final Log log = LogFactory.getLog(getClass());
+    
+    /** Version of jobs table needed by our code. */
+    private static final int JOBS_VERSION_NEEDED = 5;
+    
+    /** Version of job_configs table needed by our code. */
+    private static final int JOB_CONFIGS_VERSION_NEEDED = 1;
 
     /** Create a new JobDAO implemented using database.
      */
     protected JobDBDAO() {
         
         int jobVersion = DBUtils.getTableVersion("jobs");
-        if (jobVersion == 3) {
-            log.info("Migrate table" +
-            		" 'jobs' to version 4");
-            DBSpecifics.getInstance().updateTable("jobs", 4);
+        
+        if (jobVersion < JOBS_VERSION_NEEDED) {
+            log.info("Migrate table" + " 'jobs' to version "
+                    + JOBS_VERSION_NEEDED);
+            DBSpecifics.getInstance().updateTable("jobs", JOBS_VERSION_NEEDED);
         }
         
-        DBUtils.checkTableVersion("jobs", 4);
-        DBUtils.checkTableVersion("job_configs", 1);
+        DBUtils.checkTableVersion("jobs", JOBS_VERSION_NEEDED);        
+        DBUtils.checkTableVersion("job_configs", JOB_CONFIGS_VERSION_NEEDED);
     }
 
     /**
@@ -160,9 +167,11 @@ public class JobDBDAO extends JobDAO {
      *
      * @param c A connection to work on
      * @param job The job to store entries for
-     * @throws SQLException
+     * @throws SQLException If any problems occur during creation of the 
+     * new entries in the job_configs table.
      */
-    private void createJobConfigsEntries(Connection c, Job job) throws SQLException {
+    private void createJobConfigsEntries(Connection c, Job job)
+    throws SQLException {
         if (job.configsChanged) {
             PreparedStatement s = null;
             String tmpTable = null;
@@ -422,7 +431,10 @@ public class JobDBDAO extends JobDAO {
 
     /** Try to extract an orderxmldoc from a given Clob. 
      * @param clob a given Clob returned from the database
-     * @return a Document object based on the data in the Clob 
+     * @return a Document object based on the data in the Clob
+     * @throws SQLException If data from the clob cannot be fetched.
+     * @throws DocumentException If unable to create a Document object based on
+     * the data in the Clob
      */
     private Document getOrderXMLdocFromClob(Clob clob) throws SQLException,
         DocumentException {
@@ -547,7 +559,8 @@ public class JobDBDAO extends JobDAO {
         String sql;
         sql = "SELECT jobs.job_id, status, jobs.harvest_id, "
             + "harvestdefinitions.name, harvest_num, harvest_errors,"
-            + " upload_errors, orderxml, num_configs, startdate, enddate"
+            + " upload_errors, orderxml, num_configs, submitted, startdate,"
+            + " enddate"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
         if (jobStatusCode != JobStatus.ALL_STATUS_CODE)  {
@@ -573,7 +586,8 @@ public class JobDBDAO extends JobDAO {
                             res.getString(6), res.getString(7),
                             res.getString(8), res.getInt(9),
                             DBUtils.getDateMaybeNull(res, 10),
-                            DBUtils.getDateMaybeNull(res, 11)
+                            DBUtils.getDateMaybeNull(res, 11),
+                            DBUtils.getDateMaybeNull(res, 12)
                 ));
             }
             return joblist;
@@ -655,7 +669,8 @@ public class JobDBDAO extends JobDAO {
         String sql;
         sql = "SELECT jobs.job_id, status, jobs.harvest_id, "
             + "harvestdefinitions.name, harvest_num, harvest_errors,"
-            + " upload_errors, orderxml, num_configs, startdate, enddate"
+            + " upload_errors, orderxml, num_configs,"
+            + " submitteddate, startdate, enddate"
             + " FROM jobs, harvestdefinitions "
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ";
         if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
@@ -694,7 +709,8 @@ public class JobDBDAO extends JobDAO {
                             res.getString(6), res.getString(7),
                             res.getString(8), res.getInt(9),
                             DBUtils.getDateMaybeNull(res, 10),
-                            DBUtils.getDateMaybeNull(res, 11)
+                            DBUtils.getDateMaybeNull(res, 11),
+                            DBUtils.getDateMaybeNull(res, 12)
                 ));
             }
             return joblist;
@@ -956,8 +972,8 @@ public class JobDBDAO extends JobDAO {
             s = c.prepareStatement(
                     "SELECT jobs.job_id, status, jobs.harvest_id, "
                     + "harvestdefinitions.name, harvest_num, harvest_errors,"
-                    + " upload_errors, orderxml, num_configs, startdate, "
-                    +   "enddate"
+                    + " upload_errors, orderxml, num_configs, submitteddate,"
+                    +   " startdate, enddate"
                     + " FROM jobs, harvestdefinitions "
                     + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id "
                     + " AND jobs.harvest_id = "
@@ -977,8 +993,10 @@ public class JobDBDAO extends JobDAO {
                                 res.getLong(3), res.getString(4), res.getInt(5),
                                 res.getString(6), res.getString(7),
                                 res.getString(8), res.getInt(9),
+                                
                                 DBUtils.getDateMaybeNull(res, 10),
-                                DBUtils.getDateMaybeNull(res, 11)));
+                                DBUtils.getDateMaybeNull(res, 11),
+                                DBUtils.getDateMaybeNull(res, 12)));
             }
             return joblist;
         } catch (SQLException e) {

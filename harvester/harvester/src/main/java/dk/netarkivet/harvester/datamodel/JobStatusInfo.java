@@ -48,15 +48,36 @@ public class JobStatusInfo {
     private final String orderXMLname;
     /** The number of domain-configurations used for this job. */
     private final int configCount;
+    /** The time when this job was submitted. */
+    private final Date submittedDate;
     /** The time when this job started. */
     private final Date startDate;
     /** The time when this job finished. */
     private final Date endDate;
-
+ 
+    /**
+     * Constructor for the JobStatusInfo class. 
+     * @param jobID The ID of the job
+     * @param status The current status of the Job
+     * @param harvestDefinitionID The Id of the harvestdefinition behind
+     * this job
+     * @param harvestDefinition The name of the harvestdefinition behind
+     * this job
+     * @param harvestNum The number of times a harvestdefinition has been
+     * performed
+     * @param harvestErrors Any errors encountered during the actual harvest
+     * @param uploadErrors Any errors encountered during the upload of the
+     * result files
+     * @param orderXMLname The name of the Heritrix Template used by this job
+     * @param domainCount The number of domain-configurations used for this job
+     * @param submittedDate The time when this job was submitted
+     * @param startDate The time when this job started
+     * @param endDate The time when this job finished
+     */
     JobStatusInfo(long jobID, JobStatus status,
                   long harvestDefinitionID, String harvestDefinition,
                   int harvestNum, String harvestErrors, String uploadErrors,
-                  String orderXMLname, int domainCount,
+                  String orderXMLname, int domainCount, Date submittedDate,
                   Date startDate, Date endDate) {
         this.jobID = jobID;
         this.status = status;
@@ -67,6 +88,7 @@ public class JobStatusInfo {
         this.uploadErrors = uploadErrors;
         this.orderXMLname = orderXMLname;
         this.configCount = domainCount;
+        this.submittedDate = submittedDate;
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -134,6 +156,14 @@ public class JobStatusInfo {
         return configCount;
     }
 
+    /**
+     * @return The time when the job was submitted
+     */
+    public Date getSubmittedDate() {
+        return submittedDate;
+    }
+
+    
     /**
      * @return The time when the job started
      */

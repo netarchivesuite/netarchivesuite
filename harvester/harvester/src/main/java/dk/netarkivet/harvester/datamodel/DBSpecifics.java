@@ -27,6 +27,9 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -43,8 +46,11 @@ import dk.netarkivet.common.utils.SettingsFactory;
  *
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
+    
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
+    
+    Log log = LogFactory.getLog(DBSpecifics.class);
 
     /** Get the singleton instance of the DBSpecifics implementation class.
      *
@@ -124,7 +130,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
         
         int currentVersion = DBUtils.getTableVersion(tableName);
-        
+        log.info("Trying to migrate table '" + tableName + "' from version '"
+                + currentVersion + "' to version '" + toVersion + "'.");
         if (currentVersion == toVersion) {
             // Nothing to do. Version of table is already correct.
             return;
@@ -147,16 +154,20 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             }
             if (currentVersion == 3 && toVersion >= 4) {
                 migrateJobsv3tov4();
+                currentVersion = 4;
             }
-            // 
             if (currentVersion == 4 && toVersion >= 5) {
+                migrateJobsv4tov5();
+            }
+            
+            if (currentVersion == 5 && toVersion >= 6) {
                     throw new NotImplementedException(
                             "No method exists for migrating table '"
                             +  tableName + "' from version " 
                             + currentVersion + " to version " + toVersion);
             }
             // future updates of the job table are inserted here
-            if (currentVersion > 4) {
+            if (currentVersion > 5) {
                 throw new IllegalState("Database is in an illegalState: " 
                     + "The current version (" + currentVersion + ") of table '"
                     + tableName + "' is not an acceptable/known version. ");
@@ -170,7 +181,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                     +  tableName + "' to version " + toVersion);
         }
     }
-    
+
     /** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1. 
@@ -178,4 +189,20 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected abstract void migrateJobsv3tov4();
+    
+    /** Migrates the 'jobs' table from version 4 to version 5
+     * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
+     * @throws IOFailure in case of problems in interacting with the database
+     */
+    protected abstract void migrateJobsv4tov5();
+    
+    /** Migrates the 'configurations' table from version 3 to version 4.
+     * This consists of altering the default value of field 'maxbytes' to -1.
+     */
+    protected abstract void migrateConfigurationsv3ov4();
+ 
+    /** Migrates the 'fullharvests' table from version 2 to version 3.
+     * This consists of altering the default value of field 'maxbytes' to -1.
+     */
+    protected abstract void migrateFullharvestsv2tov3();
 }

@@ -41,7 +41,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  *
  */
 public abstract class DerbySpecifics extends DBSpecifics {
-    Log log = LogFactory.getLog(DBSpecifics.class);
+    Log log = LogFactory.getLog(DerbySpecifics.class);
 
     /** Get a temporary table for short-time use.  The table should be
      * disposed of with dropTemporaryTable.  The table has two columns
@@ -253,5 +253,39 @@ public abstract class DerbySpecifics extends DBSpecifics {
         //drop backup table
         sql = "DROP TABLE backupJobs3to4";
         DBUtils.executeSQL(sql);  
+    }
+    
+    /** Migrates the 'jobs' table from version 4 to version 5
+     * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
+     * @throws IOFailure in case of problems in interacting with the database
+     */
+    protected synchronized void migrateJobsv4tov5() {
+     // Update jobs table to version 5
+        String[] SqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN submittedDate timestamp",
+                "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
+            };
+        DBConnect.updateTable("jobs", 5, SqlStatements);
+    }
+    
+    /** Migrates the 'configurations' table from version 3 to version 4.
+     * This consists of altering the default value of field 'maxbytes' to -1.
+     */
+    protected synchronized void migrateConfigurationsv3ov4() {
+     // Update configurations table to version 4
+        String[] SqlStatements = {
+            };
+        DBConnect.updateTable("configurations", 4, SqlStatements);
+    }
+ 
+    /** Migrates the 'fullharvests' table from version 2 to version 3.
+     * This consists of altering the default value of field 'maxbytes' to -1.
+     */
+    protected synchronized void migrateFullharvestsv2tov3() {
+        // Update fullharvests table to version 3
+        String[] SqlStatements = {
+                "ALTER TABLE jobs "
+            };
+        DBConnect.updateTable("fullharvests", 3, SqlStatements);
     }
 }
