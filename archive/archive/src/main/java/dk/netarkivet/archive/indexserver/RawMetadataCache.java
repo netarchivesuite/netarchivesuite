@@ -50,14 +50,15 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
  */
 public class RawMetadataCache extends FileBasedCache<Long>
         implements RawDataCache {
-    /** A regular expression object that matches everything */
+    /** A regular expression object that matches everything. */
     private static final Pattern MATCH_ALL_PATTERN = Pattern.compile(".*");
     /** The prefix (cache name) that this cache uses. */
     private final String prefix;
     /** The arc repository interface.
      * This does not need to be closed, it is a singleton.
      */
-    private ViewerArcRepositoryClient arcrep = ArcRepositoryClientFactory.getViewerInstance();
+    private ViewerArcRepositoryClient arcrep
+        = ArcRepositoryClientFactory.getViewerInstance();
 
     /** The job that we use to dig through metadata files. */
     private final ARCBatchJob job;
@@ -122,15 +123,22 @@ public class RawMetadataCache extends FileBasedCache<Long>
      * getCacheFile(ID);
      */
     protected Long cacheData(Long ID) {
-        job.processOnlyFilesMatching(ID + Constants.METADATA_FILE_PATTERN_SUFFIX);
-        BatchStatus b = arcrep.batch(job,
-                                     Settings.get(
-                                             CommonSettings.USE_REPLICA_ID));
+        final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
+        log.debug("Extract using a batchjob of type '"
+                + job.getClass().getName()
+                + "' cachedata from files matching '"
+                + ID + Constants.METADATA_FILE_PATTERN_SUFFIX
+                + "' on replica '" 
+                + replicaUsed + "'");
+        job.processOnlyFilesMatching(ID
+                + Constants.METADATA_FILE_PATTERN_SUFFIX);
+        BatchStatus b = arcrep.batch(job, replicaUsed);
+        
         // This check ensures that we got data from at least one file.
         // Mind you, the data may be empty, but at least one file was
         // successfully processed.
-        if (b.hasResultFile() &&
-                b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
+        if (b.hasResultFile()
+                && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
             File cacheFileName = getCacheFile(ID);
             b.copyResults(cacheFileName);
             log.debug("Cached data for job '" + ID
@@ -158,7 +166,8 @@ public class RawMetadataCache extends FileBasedCache<Long>
 
         public void processRecord(ARCRecord sar, OutputStream os) {
             if (URLMatcher.matcher(sar.getMetaData().getUrl()).matches()
-                    && mimeMatcher.matcher(sar.getMetaData().getMimetype()).matches()) {
+                    && mimeMatcher.matcher(
+                            sar.getMetaData().getMimetype()).matches()) {
                 try {
                     try {                        
                         byte[] buf = new byte[Constants.IO_BUFFER_SIZE];

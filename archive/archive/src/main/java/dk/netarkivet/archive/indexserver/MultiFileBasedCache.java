@@ -36,7 +36,7 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  */
 
-public abstract class MultiFileBasedCache<T extends Comparable>
+public abstract class MultiFileBasedCache<T extends Comparable<T>>
         extends FileBasedCache<Set<T>> {
 
     /**

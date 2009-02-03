@@ -48,9 +48,9 @@ import dk.netarkivet.common.utils.Settings;
  *
  */
 public abstract class FileBasedCache<I> {
-    /** Cache directory */
+    /** Cache directory. */
     File cacheDir;
-    /** Logger */
+    /** Logger. */
     private Log log = LogFactory.getLog(getClass().getName());
 
     /** Creates a new FileBasedCache object.  This creates a directory under
@@ -61,8 +61,9 @@ public abstract class FileBasedCache<I> {
      */
     public FileBasedCache(String cacheName) {
         ArgumentNotValid.checkNotNullOrEmpty(cacheName, "cacheName");
-        this.cacheDir = new File(new File(Settings.get(CommonSettings.CACHE_DIR)),
-                                 cacheName).getAbsoluteFile();
+        this.cacheDir = new File(new File(
+                Settings.get(CommonSettings.CACHE_DIR)),
+                cacheName).getAbsoluteFile();
         log.info("Metadata cache for '" + cacheName + "' uses directory '"
                  + getCacheDir().getAbsolutePath() + "'");
         FileUtils.createDir(getCacheDir());
@@ -122,6 +123,8 @@ public abstract class FileBasedCache<I> {
      * @return The id given if it was successfully fetched, otherwise null
      * if the type parameter I does not allow subsets, or a subset of id
      * if it does.  This subset should be immediately cacheable.
+     * 
+     * FIXME added method synchronization. Try to fix bug 1547
      */
     public I cache(I id) {
         ArgumentNotValid.checkNotNull(id, "id");
@@ -130,14 +133,15 @@ public abstract class FileBasedCache<I> {
             return id;
         } else {
             try {
-                FileOutputStream lockFile = new FileOutputStream
-                        (new File(cachedFile.getAbsolutePath() + ".working"));
+                FileOutputStream lockFile = new FileOutputStream(
+                        new File(cachedFile.getAbsolutePath() + ".working"));
 
                 FileLock lock = null;
                 try {
                     // Make sure no other thread tries to create this
                     synchronized (cachedFile.getAbsolutePath().intern()) {
                         // Make sure no other process tries to create this
+                        log.debug("locking filechannel " +  lockFile.getChannel());
                         lock = lockFile.getChannel().lock();
                         // Now we know nobody else touches the file
                         // Just in case, check that the file wasn't created
@@ -149,12 +153,17 @@ public abstract class FileBasedCache<I> {
                     }
                 } finally {
                     if (lock != null) {
+                        log.debug("release lock on filechannel "
+                                +  lockFile.getChannel());
                         lock.release();
                     }
                     lockFile.close();
                 }
             } catch (IOException e) {
-                throw new IOFailure("Error obtaining lock for " + cachedFile, e);
+                String errMsg = "Error obtaining lock for file '"
+                    + cachedFile.getAbsolutePath() + "'.";
+                log.warn(errMsg, e);
+                throw new IOFailure(errMsg, e);
             }
         }
     }

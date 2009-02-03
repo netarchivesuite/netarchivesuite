@@ -29,7 +29,7 @@ import dk.netarkivet.deploy.Constants;
 public class TestInfo {
     // directories
     public static final File DATA_DIR 
-    = new File("tests/dk/netarkivet/deploy2/data");
+    = new File("tests/dk/netarkivet/deploy/data");
     public static final File ORIGINALS_DIR = new File(DATA_DIR, "originals");
     public static final File WORKING_DIR = new File(DATA_DIR, "working");
     public static final File TMPDIR = new File(WORKING_DIR, "tmpdir");

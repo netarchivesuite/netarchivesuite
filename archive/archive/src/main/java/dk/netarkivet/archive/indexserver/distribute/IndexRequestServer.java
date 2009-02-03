@@ -56,11 +56,11 @@ import dk.netarkivet.common.utils.StringUtils;
  */
 public class IndexRequestServer extends ArchiveMessageHandler
         implements CleanupIF {
-    /** The class logger */
+    /** The class logger. */
     private Log log = LogFactory.getLog(getClass().getName());
     /** The unique instance. */
     private static IndexRequestServer instance;
-    /** The handlers for index request types */
+    /** The handlers for index request types. */
     private Map<RequestType, FileBasedCache<Set<Long>>> handlers;
 
     /** Initialise index request server with no handlers, listening to the
@@ -80,7 +80,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
      *
      * @return The index request server.
      */
-    public static IndexRequestServer getInstance() {
+    public static synchronized IndexRequestServer getInstance() {
         if (instance == null) {
             instance = new IndexRequestServer();
         }
@@ -98,7 +98,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
         ArgumentNotValid.checkNotNull(t, "RequestType t");
         ArgumentNotValid.checkNotNull(handler,
                                       "FileBasedCache<Set<Long>> handler");
-
+        log.info("Setting handler for RequestType: " + t);
         handlers.put(t, handler);
     }
 
@@ -149,22 +149,22 @@ public class IndexRequestServer extends ArchiveMessageHandler
             RequestType type = irMsg.getRequestType();
             Set<Long> jobIDs = irMsg.getRequestedJobs();
             log.info("Generating an index of type '" + type
-                     + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
+                     + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                      + "]");
             FileBasedCache<Set<Long>> handler = handlers.get(type);
             Set<Long> foundIDs = handler.cache(jobIDs);
             irMsg.setFoundJobs(foundIDs);
             if (foundIDs.equals(jobIDs)) {
                 log.info("Successfully generated index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
+                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                          + "]");
                 File cacheFile = handler.getCacheFile(jobIDs);
                 if (cacheFile.isDirectory()) {
                     // This cache uses multiple files stored in a directory,
                     // so transfer them all.
                     File[] cacheFiles = cacheFile.listFiles();
-                    List<RemoteFile> resultFiles = new ArrayList<RemoteFile>
-                            (cacheFiles.length);
+                    List<RemoteFile> resultFiles = new ArrayList<RemoteFile>(
+                            cacheFiles.length);
                     for (File f : cacheFiles) {
                         resultFiles.add(
                                 RemoteFileFactory.getCopyfileInstance(f));
@@ -176,18 +176,23 @@ public class IndexRequestServer extends ArchiveMessageHandler
                 }
             } else {
                 log.warn("Failed generating index of type '" + type
-                         + "' for the jobs [" + StringUtils.conjoin(",",jobIDs )
+                         + "' for the jobs [" + StringUtils.conjoin(",", jobIDs)
                          + "], only the jobs ["
-                         + StringUtils.conjoin(",",foundIDs )
+                         + StringUtils.conjoin(",", foundIDs)
                          + "] are available.");
             }
         } catch (Exception e) {
             log.warn(
                     "Unable to generate index for jobs ["
-                    + StringUtils.conjoin(",",irMsg.getRequestedJobs() ) + "]",
+                    + StringUtils.conjoin(",", irMsg.getRequestedJobs()) + "]",
                     e);
             irMsg.setNotOk(e);
         } finally {
+            log.info("Sending reply for IndexRequestMessage " +
+            		//"with ID='"
+                    //+ irMsg.getReplyOfId()
+                     " back to sender '"
+                    + irMsg.getReplyTo() + "'."); 
             JMSConnectionFactory.getInstance().reply(irMsg);
         }
     }
@@ -203,8 +208,10 @@ public class IndexRequestServer extends ArchiveMessageHandler
      */
     private void checkMessage(final IndexRequestMessage irMsg) {
         ArgumentNotValid.checkTrue(irMsg.isOk(), "Message was not OK");
-        ArgumentNotValid.checkNotNull(irMsg.getRequestType(), "RequestType type");
-        ArgumentNotValid.checkNotNull(irMsg.getRequestedJobs(), "Set<Long> jobIDs");
+        ArgumentNotValid.checkNotNull(irMsg.getRequestType(),
+                "RequestType type");
+        ArgumentNotValid.checkNotNull(irMsg.getRequestedJobs(),
+                "Set<Long> jobIDs");
         if (handlers.get(irMsg.getRequestType()) == null) {
             throw new UnknownID("No handler known for requesttype "
                                 + irMsg.getRequestType());
