@@ -678,9 +678,10 @@ public class WindowsMachine extends Machine {
                 vbsPrint.println("f.close");
                 // set tf = fso.OpenTextFile(".\conf\run_app.txt", 2, True)
                 vbsPrint.println("set tf=fso.OpenTextFile(\".\\conf\\"
-                        + tmpRunPsName + "\",2,True)");
+                        + tmpRunPsName + "\",8,True)");
                 // tf.WriteLine running
-                vbsPrint.println("tf.WriteLine \"running\"");
+                vbsPrint.println("tf.WriteLine \"running process: \""
+                                + " & oExec.ProcessID");
                 // f.close
                 vbsPrint.println("tf.close");
             } finally {
