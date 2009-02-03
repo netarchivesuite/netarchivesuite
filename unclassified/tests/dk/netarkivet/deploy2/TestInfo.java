@@ -24,6 +24,8 @@ package dk.netarkivet.deploy2;
 
 import java.io.File;
 
+import dk.netarkivet.deploy.Constants;
+
 public class TestInfo {
     // directories
     public static final File DATA_DIR 

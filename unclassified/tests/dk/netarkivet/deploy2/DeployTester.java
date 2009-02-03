@@ -25,6 +25,8 @@ package dk.netarkivet.deploy2;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.deploy.Constants;
+import dk.netarkivet.deploy.DeployApplication;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -169,7 +171,7 @@ public class DeployTester extends TestCase {
      */
     public void testDeployArguments1() {
 	String[] args = {
-		"-ERROR" + itConfXmlName,
+		"-FAIL" + itConfXmlName,
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
 		TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
 		TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
