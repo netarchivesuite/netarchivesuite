@@ -366,9 +366,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     public BatchStatus batch(FileBatchJob job, String replicaId) {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
-
+        log.debug("Starting batchjob '" + job + "' running on replica '"
+            + replicaId +"'");
         BatchMessage bMsg = new BatchMessage(Channels.getTheArcrepos(), replyQ,
                 job, replicaId);
+        log.debug("Sending batchmessage to queue '" + Channels.getTheArcrepos()
+                + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =
             (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);
         if (!brMsg.isOk()) {

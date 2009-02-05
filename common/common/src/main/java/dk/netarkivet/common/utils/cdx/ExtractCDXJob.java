@@ -176,4 +176,12 @@ public class ExtractCDXJob extends ARCBatchJob {
                     + sb + "' to batch outstream", e);
         }
     }
+    
+    /**
+     * Humanly readable description of this instance.
+     */
+    public String toString() {
+	return getClass().getName() + ", with Filter: " + getFilter()
+	+ ", include checksum = " + includeChecksum;
+    }
 }

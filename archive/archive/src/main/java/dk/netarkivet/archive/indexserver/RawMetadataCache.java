@@ -156,14 +156,23 @@ public class RawMetadataCache extends FileBasedCache<Long>
         private final Pattern URLMatcher;
         private final Pattern mimeMatcher;
 
+        /**
+         * TODO: Javadoc.
+         */
         public GetMetadataARCBatchJob(Pattern URLMatcher, Pattern mimeMatcher) {
             this.URLMatcher = URLMatcher;
             this.mimeMatcher = mimeMatcher;
         }
 
+        /**
+         * TODO: Javadoc.
+         */
         public void initialize(OutputStream os) {
         }
 
+        /**
+         * TODO: Javadoc.
+         */
         public void processRecord(ARCRecord sar, OutputStream os) {
             if (URLMatcher.matcher(sar.getMetaData().getUrl()).matches()
                     && mimeMatcher.matcher(
@@ -190,7 +199,18 @@ public class RawMetadataCache extends FileBasedCache<Long>
             }
         }
 
+        /**
+         * TODO: Javadoc.
+         */
         public void finish(OutputStream os) {
+        }
+        
+        /**
+         * Humanly readable description of this instance.
+         */
+        public String toString() {
+            return getClass().getName() + ", with arguments: URLMatcher= " 
+            + URLMatcher + ", mimeMatcher = " + mimeMatcher;
         }
     }
 }
