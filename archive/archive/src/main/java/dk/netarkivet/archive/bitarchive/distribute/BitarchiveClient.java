@@ -173,7 +173,7 @@ public class BitarchiveClient {
     public BatchMessage batch(BatchMessage bMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
         log.debug("Resending batch message '" + bMsg + "' to bitarchive" 
-                  + " monitor");
+                  + " monitor " + this.the_bamon);
         con.resend(bMsg, this.the_bamon);
         return bMsg;
     }

@@ -135,4 +135,13 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      */
     public void finish(OutputStream os) {
     }
+    
+    /**
+     * Humanly readable representation of this instance.
+     * @return The class content.
+     */
+    public String toString() {
+        return getClass().getName() + ", with arguments: Domain = " + domain
+                + ", Filter = " + getFilter();
+    }
 }
