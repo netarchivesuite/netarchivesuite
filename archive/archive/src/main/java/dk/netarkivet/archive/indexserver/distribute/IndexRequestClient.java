@@ -114,9 +114,9 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         this.requestType = type;
     }
 
-    /** Get the singleton synchronizer for sending requets.
+    /** Get the singleton synchronizer for sending requests.
      * @return synchronizer */
-    private Synchronizer getSynchronizer() {
+    private synchronized Synchronizer getSynchronizer() {
         if (synchronizer == null) {
             synchronizer = new Synchronizer();
             JMSConnectionFactory.getInstance().setListener(
@@ -133,7 +133,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @return The singleton instance dedicated to this type of index requests.
      * @throws ArgumentNotValid if type is null.
      */
-    public static IndexRequestClient getInstance(RequestType type) {
+    public synchronized static IndexRequestClient getInstance(RequestType type) {
         ArgumentNotValid.checkNotNull(type, "RequestType type");
         IndexRequestClient client = clients.get(type);
         if (client == null) {
@@ -166,12 +166,14 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     protected Set<Long> cacheData(Set<Long> jobSet) {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
 
-        log.debug("Requesting an index of type '" + this.requestType
-                 + "' for the jobs [" + StringUtils.conjoin(",",jobSet )
+        log.info("Requesting an index of type '" + this.requestType
+                 + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                  + "]");
         //Send request to server
         IndexRequestMessage irMsg = new IndexRequestMessage(requestType,
                                                             jobSet);
+        log.debug("Waiting " + getIndexTimeout()
+                + " millseconds for the index");
         NetarkivetMessage msg = getSynchronizer().sendAndWaitForOneReply(
                 irMsg, getIndexTimeout());
 
@@ -183,7 +185,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         if (jobSet.equals(foundJobs)) {
             log.debug("Successfully received an index of type '"
                       + this.requestType
-                     + "' for the jobs [" + StringUtils.conjoin(",",jobSet )
+                     + "' for the jobs [" + StringUtils.conjoin(",", jobSet)
                      + "]");
             try {
                 if (reply.isIndexIsStoredInDirectory()) {
@@ -283,7 +285,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     }
 
     /**
-     * Check the reply message is valid
+     * Check the reply message is valid.
      * @param jobSet The requested set of jobs
      * @param msg The message received
      * @throws ArgumentNotValid On wrong parameters in replied message.
@@ -295,36 +297,36 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         //Read and check reply
         if (msg == null) {
             throw new IOFailure("Timeout waiting for reply of index request "
-                                + "for jobs " + StringUtils.conjoin(",",jobSet
+                                + "for jobs " + StringUtils.conjoin(",", jobSet
                                                                     ));
         }
         if (!msg.isOk()) {
             throw new IllegalState("Reply message not ok. Message is: '"
                                    + msg.getErrMsg()
                                    + "' in index request for jobs "
-                                   + StringUtils.conjoin(",",jobSet ));
+                                   + StringUtils.conjoin(",", jobSet));
         }
         if (!(msg instanceof IndexRequestMessage)) {
             throw new IOFailure("Unexpected type of reply message: '"
                                 + msg.getClass().getName()
                                 + "' in index request for jobs "
-                                + StringUtils.conjoin(",",jobSet ));
+                                + StringUtils.conjoin(",", jobSet));
         }
         IndexRequestMessage reply = (IndexRequestMessage) msg;
         Set<Long> foundJobs = reply.getFoundJobs();
         if (foundJobs == null) {
             throw new ArgumentNotValid("Missing parameter foundjobs in reply to"
                                        + " index request for jobs "
-                                       + StringUtils.conjoin(",",jobSet ));
+                                       + StringUtils.conjoin(",", jobSet));
         }
 
         //FoundJobs should always be a subset
         if (!jobSet.containsAll(foundJobs)) {
             throw new ArgumentNotValid("foundJobs is not a subset of requested "
                     + "jobs. Requested: "
-                    + StringUtils.conjoin(",",jobSet )
+                    + StringUtils.conjoin(",", jobSet)
                     + ". Found: "
-                    + StringUtils.conjoin(",",foundJobs ));
+                    + StringUtils.conjoin(",", foundJobs));
         }
 
         if (jobSet.equals(foundJobs)) {
@@ -335,14 +337,14 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                 if  (files == null) {
                     throw new ArgumentNotValid("Missing files in reply to"
                             + " index request for jobs "
-                            + StringUtils.conjoin(",",jobSet ));
+                            + StringUtils.conjoin(",", jobSet));
                 }
             } else {
                 RemoteFile file = reply.getResultFile();
                 if  (file == null) {
                     throw new ArgumentNotValid("Missing file in reply to"
                             + " index request for jobs "
-                            + StringUtils.conjoin(",",jobSet ));
+                            + StringUtils.conjoin(",", jobSet));
                 }
             }
 

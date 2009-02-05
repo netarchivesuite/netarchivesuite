@@ -383,7 +383,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             // start thread which will remove this listener, harvest, store, and
             // exit the VM
             t1.start();
-            log.debug("Started harvester thread for job " + jobID);
+            log.info("Started harvester thread for job " + jobID);
             // We delay assigning the thread variable until start() has
             // succeeded.  Thus, if start() fails, we will resume accepting
             // jobs.
