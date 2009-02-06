@@ -67,6 +67,7 @@ and reposne.getLocale use this locale.
     }
     String harvestname;
     String harvesturl= "/HarvestDefinition/Definitions-selective-harvests.jsp";
+    String jobdetailsUrl = "/History/Harveststatus-jobdetails.jsp";
     boolean definitionsSitesectionDeployed = SiteSection.isDeployed(
                     Constants.DEFINITIONS_SITESECTION_DIRNAME);
     final Long harvestID = job.getOrigHarvestDefinitionID();
@@ -90,10 +91,17 @@ and reposne.getLocale use this locale.
         harvestname = I18N.getString(response.getLocale(),
                 "unknown.harvest.0", harvestID);
     }
-    String tdContents = HTMLUtils.escapeHtmlValues(harvestname);
+    String harvestnameTdContents = HTMLUtils.escapeHtmlValues(harvestname);
     if (definitionsSitesectionDeployed) {
-    	tdContents = "<a href=\"" + HTMLUtils.escapeHtmlValues(harvesturl)
+    	harvestnameTdContents = "<a href=\"" + HTMLUtils.escapeHtmlValues(harvesturl)
     		+ "\">" + HTMLUtils.escapeHtmlValues(harvestname) + "</a>";
+    }
+    String jobstatusTdContents = job.getStatus().getLocalizedString(response.getLocale());
+    if (job.getStatus().equals(JobStatus.RESUBMITTED)
+    	&& job.getResubmittedAsJob() != null) {
+    	 jobstatusTdContents += "<br/>(<a href=\"" + jobdetailsUrl + "?" 
+    	 	+ Constants.JOB_PARAM + "=" + job.getResubmittedAsJob() + "\">"
+    	 	+ "</a>" + ")";
     }
     HTMLUtils.generateHeader(pageContext);
 %>
@@ -106,6 +114,7 @@ and reposne.getLocale use this locale.
         <th><fmt:message key="table.job.type"/></th>
         <th><fmt:message key="table.job.harvestname"/></th>
         <th><fmt:message key="table.job.harvestnumber"/></th>
+        <th><fmt:message key="table.job.submittedtime"/></th>
         <th><fmt:message key="table.job.starttime"/></th>
         <th><fmt:message key="table.job.stoptime"/></th>
         <th><fmt:message key="table.job.jobstatus"/></th>
@@ -118,14 +127,15 @@ and reposne.getLocale use this locale.
         <td><%=job.getJobID()%></td>
         <td><%=job.getPriority().getLocalizedString(response.getLocale())%>
         </td>
-        <td><%=tdContents %></td>
+        <td><%=harvestnameTdContents %></td>
         <td><%=dk.netarkivet.harvester.webinterface.HarvestStatus
                 .makeHarvestRunLink(harvestID,
                                     job.getHarvestNum())%>
         </td>
+        <td><fmt:formatDate type="both" value="<%=job.getSubmittedDate()%>"/></td>
         <td><fmt:formatDate type="both" value="<%=job.getActualStart()%>"/></td>
         <td><fmt:formatDate type="both" value="<%=job.getActualStop()%>"/></td>
-        <td><%=job.getStatus().getLocalizedString(response.getLocale())%></td>
+        <td><%=jobstatusTdContents %></td>
         <td><a href="#harvesterror">
             <%=HTMLUtils.escapeHtmlValues(job.getHarvestErrors())%>
         </a></td>

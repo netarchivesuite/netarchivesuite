@@ -293,6 +293,7 @@ public class HarvestScheduler implements CleanupIF {
             try {
                 jobToSubmit = dao.read(jobID);
                 jobToSubmit.setStatus(JobStatus.SUBMITTED);
+                jobToSubmit.setSubmittedDate(new Date());
                 dao.update(jobToSubmit);
                 //Add alias metadata
                 List<MetadataEntry> metadata
