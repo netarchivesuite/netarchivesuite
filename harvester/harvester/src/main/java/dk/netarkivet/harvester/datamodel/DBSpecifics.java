@@ -128,7 +128,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
-        
+
         int currentVersion = DBUtils.getTableVersion(tableName);
         log.info("Trying to migrate table '" + tableName + "' from version '"
                 + currentVersion + "' to version '" + toVersion + "'.");
@@ -138,19 +138,18 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
 
         if (currentVersion > toVersion) {
-            throw new IllegalState("Database is in an illegalState: " 
-                    + "The current version of table '"
-                    + tableName + "' is not acceptable "
+            throw new IllegalState("Database is in an illegalState: "
+                    + "The current version of table '" + tableName
+                    + "' is not acceptable "
                     + "(current version is greater than requested version).");
         }
-        
-        
+
         if (tableName.equals("jobs")) {
             if (currentVersion < 3) {
-                throw new IllegalState("Database is in an illegalState: " 
-                    + "The current version " + currentVersion + " of table '"
-                    + tableName + "' is not acceptable. "
-                    + "(current version is less than open source version).");
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version " + currentVersion
+                        + " of table '" + tableName + "' is not acceptable. "
+                        + "(current version is less than open source version).");
             }
             if (currentVersion == 3 && toVersion >= 4) {
                 migrateJobsv3tov4();
@@ -159,26 +158,83 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
             if (currentVersion == 4 && toVersion >= 5) {
                 migrateJobsv4tov5();
             }
-            
+
             if (currentVersion == 5 && toVersion >= 6) {
-                    throw new NotImplementedException(
-                            "No method exists for migrating table '"
-                            +  tableName + "' from version " 
-                            + currentVersion + " to version " + toVersion);
+                throw new NotImplementedException(
+                        "No method exists for migrating table '" + tableName
+                                + "' from version " + currentVersion
+                                + " to version " + toVersion);
             }
             // future updates of the job table are inserted here
             if (currentVersion > 5) {
-                throw new IllegalState("Database is in an illegalState: " 
-                    + "The current version (" + currentVersion + ") of table '"
-                    + tableName + "' is not an acceptable/known version. ");
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version (" + currentVersion
+                        + ") of table '" + tableName
+                        + "' is not an acceptable/known version. ");
             }
-        //} else if tableName.equals("xxx") {   
+
+        } else if (tableName.equals("fullharvests")) {
+            if (currentVersion < 2) {
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version " + currentVersion
+                        + " of table '" + tableName + "' is not acceptable. "
+                        + "(current version is less than open source version).");
+            }
+            if (currentVersion == 2 && toVersion >= 3) {
+                migrateFullharvestsv2tov3();
+                currentVersion = 3;
+            }
+
+            if (currentVersion == 3 && toVersion >= 4) {
+                throw new NotImplementedException(
+                        "No method exists for migrating table '" + tableName
+                                + "' from version " + currentVersion
+                                + " to version " + toVersion);
+            }
+
+            // future updates of the job table are inserted here
+
+            if (currentVersion > 4) {
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version (" + currentVersion
+                        + ") of table '" + tableName
+                        + "' is not an acceptable/known version. ");
+            }
+
+        } else if (tableName.equals("configurations")) {
+            if (currentVersion < 3) {
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version " + currentVersion
+                        + " of table '" + tableName + "' is not acceptable. "
+                        + "(current version is less than open source version).");
+            }
+            if (currentVersion == 3 && toVersion >= 4) {
+                migrateConfigurationsv3ov4();
+                currentVersion = 4;
+            }
+
+            if (currentVersion == 4 && toVersion >= 5) {
+                throw new NotImplementedException(
+                        "No method exists for migrating table '" + tableName
+                                + "' from version " + currentVersion
+                                + " to version " + toVersion);
+            }
+
+            // future updates of the job table are inserted here
+
+            if (currentVersion > 5) {
+                throw new IllegalState("Database is in an illegalState: "
+                        + "The current version (" + currentVersion
+                        + ") of table '" + tableName
+                        + "' is not an acceptable/known version. ");
+            }
+
         } else {
             // This includes cases where currentVersion < toVersion
             // for all tables that does not have migration functions yet
             throw new NotImplementedException(
-                    "No method exists for migrating table '"
-                    +  tableName + "' to version " + toVersion);
+                    "No method exists for migrating table '" + tableName
+                            + "' to version " + toVersion);
         }
     }
 

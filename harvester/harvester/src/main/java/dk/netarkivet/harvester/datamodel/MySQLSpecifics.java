@@ -157,7 +157,7 @@ public class MySQLSpecifics extends DBSpecifics {
      */
     protected synchronized void migrateJobsv4tov5() {
         String[] SqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN submittedDate datetime AFTER enddate",
+                "ALTER TABLE jobs ADD COLUMN submitteddate datetime AFTER enddate",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
             };
         DBConnect.updateTable("jobs", 5, SqlStatements);
@@ -170,6 +170,7 @@ public class MySQLSpecifics extends DBSpecifics {
     protected synchronized void migrateConfigurationsv3ov4() {
      // Update configurations table to version 4
         String[] SqlStatements = {
+                "ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1"
             };
         DBConnect.updateTable("configurations", 4, SqlStatements);
     }
@@ -181,6 +182,7 @@ public class MySQLSpecifics extends DBSpecifics {
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
         String[] SqlStatements = {
+                "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1"
             };
         DBConnect.updateTable("fullharvests", 3, SqlStatements);
     }

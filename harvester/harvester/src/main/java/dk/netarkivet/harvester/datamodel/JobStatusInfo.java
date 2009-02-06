@@ -54,7 +54,11 @@ public class JobStatusInfo {
     private final Date startDate;
     /** The time when this job finished. */
     private final Date endDate;
- 
+    /**
+     * The ID of the job this job was resubmitted as.
+     */
+    private final Long resubmittedAsJobWithID;
+    
     /**
      * Constructor for the JobStatusInfo class. 
      * @param jobID The ID of the job
@@ -73,12 +77,14 @@ public class JobStatusInfo {
      * @param submittedDate The time when this job was submitted
      * @param startDate The time when this job started
      * @param endDate The time when this job finished
+     * @param resubmittedAsJobWithId The id of the job this job was resubmitted
+     *  as (possibly null)
      */
     JobStatusInfo(long jobID, JobStatus status,
                   long harvestDefinitionID, String harvestDefinition,
                   int harvestNum, String harvestErrors, String uploadErrors,
                   String orderXMLname, int domainCount, Date submittedDate,
-                  Date startDate, Date endDate) {
+                  Date startDate, Date endDate, Long resubmittedAsJobWithID) {
         this.jobID = jobID;
         this.status = status;
         this.harvestDefinitionID = harvestDefinitionID;
@@ -91,6 +97,8 @@ public class JobStatusInfo {
         this.submittedDate = submittedDate;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.resubmittedAsJobWithID = resubmittedAsJobWithID;
+        
     }
 
     /**
@@ -176,5 +184,13 @@ public class JobStatusInfo {
      */
     public Date getEndDate() {
         return endDate;
+    }
+    
+    /**
+     * @return the ID of the job this job was resubmitted as. If null this
+     * job has not been resubmitted.
+     */
+    public Long getResubmittedAsJob() {
+        return this.resubmittedAsJobWithID;
     }
 }

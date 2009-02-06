@@ -135,10 +135,22 @@ public class Job implements Serializable {
     private Date actualStart;
     /** The ending point of the job. */
     private Date actualStop;
+    /** The time when this job was submitted. */
+    private Date submittedDate;
+    
+    
+    
     /**
      * Edition is used by the DAO to keep track of changes.
      */
     private long edition = -1;
+    
+    /**
+     * Resubmitted as the Job with this ID.
+     * If null, this job has not been resubmitted.
+     */
+    Long resubmittedAsJobWithID;
+    
     /**
      * A map (domainName, domainConfigurationName), must be accessible in order
      * to update job information (see Ass. 2.4.3)
@@ -648,6 +660,14 @@ public class Job implements Serializable {
     public Date getActualStart() {
         return actualStart;
     }
+    
+    /** Get the time when this job was submitted. 
+     * @return the time as Date
+     */
+    public Date getSubmittedDate() {
+        return submittedDate;
+    }
+    
 
     /**
      * Get a list of settings.xml files.
@@ -1246,5 +1266,30 @@ public class Job implements Serializable {
             aliases.addAll(dao.getAliases(domain));
         }
         return aliases;
+    }
+
+    /**
+     * Get the ID for the job which this job was resubmitted as.
+     * If null, this job has not been resubmitted.
+     * @return this ID.
+     */
+    public Long getResubmittedAsJob() {
+        return resubmittedAsJobWithID;
+    }
+
+    /**
+     * Set the Date for when this job was submitted.
+     * If null, this job has not been submitted.
+     */
+    public void setSubmittedDate(Date submittedDate) {
+        this.submittedDate = submittedDate;
+    }
+
+    /**
+     * Set the ID for the job which this job was resubmitted as.
+     */
+    public void setResubmittedAsJob(Long resubmittedAsJob) {
+        this.resubmittedAsJobWithID = resubmittedAsJob;
+        
     }
 }

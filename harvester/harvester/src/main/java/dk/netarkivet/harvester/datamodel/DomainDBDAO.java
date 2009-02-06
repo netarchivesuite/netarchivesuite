@@ -63,6 +63,9 @@ public class DomainDBDAO extends DomainDAO {
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
 
+    final static int CONFIGURATIONS_VERSION_NEEDED = 4;
+    
+    
     /** Creates a database-based implementation of the DomainDAO.
      * Will check that all schemas have correct versions, and update the ones
      * that haven't.
@@ -71,8 +74,18 @@ public class DomainDBDAO extends DomainDAO {
      * version.
      */
     protected DomainDBDAO() {
+
+        int configurationsVersion = DBUtils.getTableVersion("configurations");
+        
+        if (configurationsVersion < CONFIGURATIONS_VERSION_NEEDED ) {
+            log.info("Migrate table" + " 'configurations' to version "
+                    + CONFIGURATIONS_VERSION_NEEDED );
+            DBSpecifics.getInstance().updateTable("configurations", 
+                    CONFIGURATIONS_VERSION_NEEDED );
+        }
+        
         DBUtils.checkTableVersion("domains", 2);
-        DBUtils.checkTableVersion("configurations", 3);
+        DBUtils.checkTableVersion("configurations", 4);
         DBUtils.checkTableVersion("config_passwords", 1);
         DBUtils.checkTableVersion("config_seedlists", 1);
         DBUtils.checkTableVersion("seedlists", 1);

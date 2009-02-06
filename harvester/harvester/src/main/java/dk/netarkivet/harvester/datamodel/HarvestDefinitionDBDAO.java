@@ -57,12 +57,24 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 
 public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     private final Log log = LogFactory.getLog(getClass());
+    
+    final static int FULLHARVESTS_VERSION_NEEDED = 3;
 
     /** Create a new HarvestDefinitionDAO using database.
      */
     HarvestDefinitionDBDAO() {
+        
+        int fullharvestsVersion = DBUtils.getTableVersion("fullharvests");
+        
+        if (fullharvestsVersion < FULLHARVESTS_VERSION_NEEDED ) {
+            log.info("Migrate table" + " 'fullharvests' to version "
+                    + FULLHARVESTS_VERSION_NEEDED );
+            DBSpecifics.getInstance().updateTable("fullharvests", 
+                    FULLHARVESTS_VERSION_NEEDED );
+        }
+        
     	DBUtils.checkTableVersion("harvestdefinitions", 2);
-        DBUtils.checkTableVersion("fullharvests", 2);
+        DBUtils.checkTableVersion("fullharvests", 3);
         DBUtils.checkTableVersion("partialharvests", 1);
         DBUtils.checkTableVersion("harvest_configs", 1);
     }

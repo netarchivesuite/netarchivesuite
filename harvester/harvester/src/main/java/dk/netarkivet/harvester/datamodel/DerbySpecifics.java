@@ -262,7 +262,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
     protected synchronized void migrateJobsv4tov5() {
      // Update jobs table to version 5
         String[] SqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN submittedDate timestamp",
+                "ALTER TABLE jobs ADD COLUMN submitteddate timestamp",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
             };
         DBConnect.updateTable("jobs", 5, SqlStatements);
@@ -274,6 +274,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
     protected synchronized void migrateConfigurationsv3ov4() {
      // Update configurations table to version 4
         String[] SqlStatements = {
+                "ALTER TABLE configurations ALTER maxbytes WITH DEFAULT -1"
             };
         DBConnect.updateTable("configurations", 4, SqlStatements);
     }
@@ -284,7 +285,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
         String[] SqlStatements = {
-                "ALTER TABLE jobs "
+                "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"
             };
         DBConnect.updateTable("fullharvests", 3, SqlStatements);
     }
