@@ -239,14 +239,14 @@ public class IntegrityTests extends TestCase {
 
         // Set up a listener on the reply queue for batch messages
         TestMessageListener listener = new TestMessageListener();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         con.setListener(Channels.getAllBa(), listener);
 
         //File for reply
         File output_file = new File(WORKING, "batch_output.txt");
 
         //Create a batch message
-         BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheArcrepos(),
+         BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(),
                 new ChecksumJob(),
                 Settings.get(CommonSettings.USE_REPLICA_ID));
          JMSConnectionTestMQ.updateMsgID(bm, "testmsgid0");
@@ -334,7 +334,7 @@ public class IntegrityTests extends TestCase {
          } catch(IOFailure e) {
              //expected
          }
-         con.removeListener(Channels.getTheArcrepos(), listener);
+         con.removeListener(Channels.getTheRepos(), listener);
          con.removeListener(Channels.getAllBa(), listener);
     }
 
@@ -343,8 +343,8 @@ public class IntegrityTests extends TestCase {
      */
     public void testLotsOfMessages() {
         MessageTestHandler handler = new MessageTestHandler();
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), handler);
-        JMSConnectionFactory.getInstance().setListener(Channels.getThisHaco(), handler);
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), handler);
+        JMSConnectionFactory.getInstance().setListener(Channels.getThisReposClient(), handler);
 
         assertTrue("File to upload must exist: " + FILE_TO_UPLOAD,
                 FILE_TO_UPLOAD.exists());
@@ -355,7 +355,7 @@ public class IntegrityTests extends TestCase {
             bac.get(FILENAME_TO_GET, 0);
             bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                      true)); // only first upload will succeed
-            BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisHaco(), new TestBatchJobRuns(),
+            BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisReposClient(), new TestBatchJobRuns(),
                                                  Settings.get(
                                                          CommonSettings.USE_REPLICA_ID));
             bac.batch(bMsg);
@@ -456,7 +456,7 @@ public class IntegrityTests extends TestCase {
      */
     public void testConstruction() {
         ChannelID to = Channels.getAllBa();
-        ChannelID reply = Channels.getThisHaco();
+        ChannelID reply = Channels.getThisReposClient();
         File testARCFile = TestInfo.UPLOADMESSAGE_TESTFILE_1;
         long fileSize = testARCFile.length();
 

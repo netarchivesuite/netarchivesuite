@@ -331,7 +331,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, "tests/commontempdir");
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnection con = JMSConnectionFactory.getInstance();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         final boolean[] done = new boolean[]{false};
         // Send a store message in a thread
         Thread t = new Thread() {
@@ -351,7 +351,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         // Get the store message
         StoreMessage sm = (StoreMessage) listener.messagesReceived.get(0);
         // Send the message back to indicate a succesful store
-        con.resend(sm, Channels.getThisHaco());
+        con.resend(sm, Channels.getThisReposClient());
         // Let the other thread process the message
         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
         // And check that the file has been deleted
@@ -561,11 +561,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
         public DummyBatchMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {
@@ -594,11 +594,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
 
         public DummyStoreMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {
@@ -629,11 +629,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
         public boolean noReply = false;
 
         public DummyGetMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {
@@ -709,11 +709,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
         public DummyGetFileMessageReplyServer(File dir) {
             this.dir = dir;
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {

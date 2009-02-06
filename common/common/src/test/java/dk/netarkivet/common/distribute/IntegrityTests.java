@@ -478,9 +478,9 @@ public class IntegrityTests extends TestCase {
      */
     public void testQueueSendMessage() throws InterruptedException {
         TestMessageConsumer mc = new TestMessageConsumer();
-        conn.setListener(Channels.getTheArcrepos(), mc);
+        conn.setListener(Channels.getTheRepos(), mc);
 
-        NetarkivetMessage nMsg = new TestMessage(Channels.getTheArcrepos(),
+        NetarkivetMessage nMsg = new TestMessage(Channels.getTheRepos(),
                 Channels.getError(), "testQueueSendMessage");
         synchronized (mc) {
             conn.send(nMsg);

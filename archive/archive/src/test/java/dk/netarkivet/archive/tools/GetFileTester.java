@@ -61,7 +61,7 @@ public class GetFileTester extends TestCase {
         mjms.setUp();
         listener = new GetFileListener(mtf.working(
         		new File(TestInfo.DATA_DIR, "test1.arc")));
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), listener);
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), listener);
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.NullRemoteFile");
         mtf.setUp();
@@ -73,7 +73,7 @@ public class GetFileTester extends TestCase {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
-        JMSConnectionFactory.getInstance().removeListener(Channels.getTheArcrepos(), listener);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), listener);
         mjms.tearDown();
         rs.tearDown();
     }

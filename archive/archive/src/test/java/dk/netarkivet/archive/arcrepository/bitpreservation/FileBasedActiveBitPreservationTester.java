@@ -599,11 +599,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         private BitarchiveRecord bar;
 
         public DummyBatchMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {

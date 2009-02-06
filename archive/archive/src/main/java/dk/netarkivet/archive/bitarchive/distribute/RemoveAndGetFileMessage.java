@@ -64,7 +64,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     public RemoveAndGetFileMessage(String arcfileName,
                                      String replicaId, String checksum,
                                      String credentials) {
-        super(Channels.getTheArcrepos(), Channels.getThisHaco(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
         this.arcfileName = arcfileName;
         this.replicaId = replicaId;
         this.checksum = checksum;

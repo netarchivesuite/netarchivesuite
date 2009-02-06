@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
@@ -54,6 +55,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * The Arcrepository handles the communication with the different bitarchives.
@@ -67,12 +69,6 @@ import dk.netarkivet.common.utils.NotificationsFactory;
 public class ArcRepository implements CleanupIF {
 
     private final Log log = LogFactory.getLog(getClass().getName());
-
-    /**
-     * The maximum number of times an arc file is attempted uploaded if the
-     * initial upload fails.
-     */
-    private static final int MAX_RETRYCOUNT = 1;
 
     /**
      * The unique instance (singleton) of this class.
@@ -227,15 +223,16 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Stores a file in all known Bitarchives. This runs asynchronously, and
-     * returns immediately. Side effects: 1) The RemoteFile added to List
-     * outstandingRemoteFiles 2) TODO: Document other side effects.
+     * returns immediately. Side effects: 
+     * 1) The RemoteFile added to List outstandingRemoteFiles 
+     * 2) TODO: Document other side effects.
      *
      * @param rf
      *            A remotefile to be stored.
      * @param replyInfo
      *            A StoreMessage used to reply with success or failure.
      * @throws IOFailure
-     *             If file couldn't be stores.
+     *             If file couldn't be stored.
      */
     public synchronized void store(RemoteFile rf, StoreMessage replyInfo)
             throws IOFailure {
@@ -335,7 +332,7 @@ public class ArcRepository implements CleanupIF {
             BitarchiveClient bitarchiveClient) {
         ChecksumJob checksumJob = new ChecksumJob();
         checksumJob.processOnlyFileNamed(filename);
-        BatchMessage msg = bitarchiveClient.batch(Channels.getTheArcrepos(),
+        BatchMessage msg = bitarchiveClient.batch(Channels.getTheRepos(),
                 checksumJob);
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job submitted for: '" + filename + "'");
@@ -537,7 +534,7 @@ public class ArcRepository implements CleanupIF {
 
         String arcfileName = outstandingChecksumFiles
                 .remove(msg.getReplyOfId());
-        if (arcfileName != null) {
+        if (arcfileName != null) { //Message was expected
             // Check incoming message
             if (!msg.isOk()) {
                 log.warn("Message '" + msg.getID()
@@ -726,8 +723,7 @@ public class ArcRepository implements CleanupIF {
             return true;
         }
 
-        // Currently only 1 retry allowed
-        if (retryCount >= MAX_RETRYCOUNT) {
+        if (retryCount >= Settings.getInt(ArchiveSettings.ARCREPOSITORY_UPLOAD_RETRIES)) {
             return false;
         }
 

@@ -50,7 +50,7 @@ public class StoreMessage extends ArchiveMessage {
      * @param arcfile The file to store
      */
     public StoreMessage(ChannelID replyTo, File arcfile) {
-        super(Channels.getTheArcrepos(), replyTo, STORE_MESSAGE_PREFIX);
+        super(Channels.getTheRepos(), replyTo, STORE_MESSAGE_PREFIX);
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
         theRemoteFile = RemoteFileFactory.getDistributefileInstance(arcfile);
     }

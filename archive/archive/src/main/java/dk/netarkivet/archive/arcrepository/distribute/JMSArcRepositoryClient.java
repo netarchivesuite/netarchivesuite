@@ -140,7 +140,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                    + " times and timeout on each try after " + storeTimeout
                    + " milliseconds, and timeout on each getrequest after "
                    + getTimeout + " milliseconds.");
-        replyQ = Channels.getThisHaco();
+        replyQ = Channels.getThisReposClient();
         conn = JMSConnectionFactory.getInstance();
         conn.setListener(replyQ, this);
         log.info("JMSArcRepository listens for replies on channel '"
@@ -190,7 +190,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '" + arcfile + ":" + index + "'");
         long start = System.currentTimeMillis();
-        GetMessage requestGetMsg = new GetMessage(Channels.getTheArcrepos(),
+        GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(),
                 replyQ, arcfile, index);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg,
                 getTimeout);
@@ -239,7 +239,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         
         log.debug("Requesting get of file '" + arcfilename + "' from '"
                   + replica + "'");
-        GetFileMessage gfMsg = new GetFileMessage(Channels.getTheArcrepos(),
+        GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(),
                 replyQ, arcfilename, replica.getName());
         GetFileMessage getFileMessage
                 = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
@@ -366,11 +366,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     public BatchStatus batch(FileBatchJob job, String replicaId) {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
+
         log.debug("Starting batchjob '" + job + "' running on replica '"
-            + replicaId +"'");
-        BatchMessage bMsg = new BatchMessage(Channels.getTheArcrepos(), replyQ,
+                + replicaId +"'");
+        BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ,
                 job, replicaId);
-        log.debug("Sending batchmessage to queue '" + Channels.getTheArcrepos()
+        log.debug("Sending batchmessage to queue '" + Channels.getTheRepos()
                 + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =
             (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);

@@ -55,7 +55,15 @@ public class ArchiveSettings {
      */
     public static String DIRS_ARCREPOSITORY_ADMIN
             = "settings.archive.arcrepository.baseDir";
-    
+
+    /**
+     * <b>settings.archive.arcrepository.uploadRetries</b>: <br>
+     * The maximum number of times an arc file is attempted uploaded if the
+     * initial upload fails.
+     */
+    public static String ARCREPOSITORY_UPLOAD_RETRIES
+            = "settings.archive.arcrepository.uploadRetries";
+
     /**
      * <b>settings.archive.bitarchive.minSpaceLeft</b>: <br>
      * The minimum amount of bytes left *in any dir* that we will allow a

@@ -21,12 +21,12 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
         failOnFiles = new ArrayList<String>();
         msgCount = 0;
         storeMsgs = new ArrayList<StoreMessage>();
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), this);
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), this);
     }
 
     public void tearDown() {
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionFactory.getInstance().removeListener(Channels.getTheArcrepos(), this);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
 
     public void failOnFile(String file) {

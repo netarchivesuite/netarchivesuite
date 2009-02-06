@@ -60,7 +60,7 @@ public class AdminDataMessage extends ArchiveMessage {
      */
     public AdminDataMessage(String theFileName, String theBitarchiveId,
                             BitArchiveStoreState newval) {
-        super(Channels.getTheArcrepos(), Channels.getThisHaco(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
         fileName = theFileName;
         bitarchiveId = theBitarchiveId;
         newvalue = newval;
@@ -73,7 +73,7 @@ public class AdminDataMessage extends ArchiveMessage {
      * @param theChecksum the new checksum for the filename
      */
     public AdminDataMessage(String theFileName, String theChecksum) {
-        super(Channels.getTheArcrepos(), Channels.getThisHaco(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
         fileName = theFileName;
         checksum = theChecksum;
         changechecksum = true;

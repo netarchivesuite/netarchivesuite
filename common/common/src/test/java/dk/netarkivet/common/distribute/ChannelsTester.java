@@ -24,6 +24,7 @@ package dk.netarkivet.common.distribute;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservationTester.MockupArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -291,7 +292,7 @@ public class ChannelsTester extends TestCase {
                 Channels.getAnyHighpriorityHaco(),
                 Channels.getAnyBa(),
                 Channels.getAnyLowpriorityHaco(),
-                Channels.getTheArcrepos(),
+                Channels.getTheRepos(),
                 Channels.getTheIndexServer(),
                 Channels.getTheMonitorServer(),
                 Channels.getError(),

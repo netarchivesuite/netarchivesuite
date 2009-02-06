@@ -154,7 +154,7 @@ public class JMSConnectionTester extends TestCase {
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionTestMQ");
         String testID = "42";
-        TestMessage testMessage = new TestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), testID);
+        TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), testID);
         JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
         TestMessage msg = (TestMessage)JMSConnection.unpack(
                 new TestObjectMessage(testMessage));
@@ -233,7 +233,7 @@ public class JMSConnectionTester extends TestCase {
         // Create dummy server and listen on the TheArcrepos queue
         DummyServer serverTheArcreposQueue = new DummyServer();
         serverTheArcreposQueue.reset();
-        con.setListener(Channels.getTheArcrepos(), serverTheArcreposQueue);
+        con.setListener(Channels.getTheRepos(), serverTheArcreposQueue);
 
         // Create dummy server and listen on the TheArcrepos queue
         DummyServer serverTheBamonQueue = new DummyServer();
@@ -247,7 +247,7 @@ public class JMSConnectionTester extends TestCase {
         assertEquals("Server should not have received any messages", 0, serverTheBamonQueue.msgReceived);
         assertEquals("Server should not have received any messages", 0, serverTheArcreposQueue.msgReceived);
 
-        NetarkivetMessage msg = new TestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "testMSG");
+        NetarkivetMessage msg = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "testMSG");
         con.resend(msg, Channels.getError());
 
         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
@@ -296,7 +296,7 @@ public class JMSConnectionTester extends TestCase {
         Map<String, QueueSender> sendersMap =
                 (Map<String, QueueSender>) senders.get(con);
 
-        ChannelID sendChannel = Channels.getTheArcrepos();
+        ChannelID sendChannel = Channels.getTheRepos();
         ChannelID replyChannel = Channels.getTheBamon();
         NetarkivetMessage msg = new TestMessage(sendChannel,
                 replyChannel, "testMSG");
@@ -506,7 +506,7 @@ public class JMSConnectionTester extends TestCase {
         JMSConnection con = JMSConnectionFactory.getInstance();
         con.initConnection();
 
-        NetarkivetMessage msg = new TestMessage(Channels.getTheArcrepos(),
+        NetarkivetMessage msg = new TestMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), "testMSG");
 
         Field senders = ReflectUtils.getPrivateField(JMSConnection.class,
@@ -516,7 +516,7 @@ public class JMSConnectionTester extends TestCase {
                 (Map<String, QueueSender>) senders.get(con);
 
         con.send(msg);
-        String sendName = Channels.getTheArcrepos().getName();
+        String sendName = Channels.getTheRepos().getName();
         JMSConnectionMockupMQ.TestQueueSender queueSender =
                 (JMSConnectionMockupMQ.TestQueueSender)sendersMap.get(sendName);
         ObjectMessage sentSerialMsg = ((ObjectMessage) queueSender.messagesSent.get(0));
@@ -538,7 +538,7 @@ public class JMSConnectionTester extends TestCase {
         assertFalse("Message should now be notOk",
                 received.isOk());
 
-        msg = new TestMessage(Channels.getTheArcrepos(),
+        msg = new TestMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), "testMSG");
 
         try {

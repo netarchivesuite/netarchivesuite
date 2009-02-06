@@ -146,29 +146,29 @@ public class Channels {
             ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
-     * Returns the one-per-HACO queue on which HaCo receives replies from the
-     * arcrepository.
+     * Returns the one-per-client queue on which client receives replies from
+     * the arcrepository.
      *
      * @return the <code>ChannelID</code> object for this queue.
      */
-    public static ChannelID getThisHaco() {
-        return getInstance().THIS_HACO;
+    public static ChannelID getThisReposClient() {
+        return getInstance().THIS_REPOS_CLIENT;
     }
 
-    private final ChannelID THIS_HACO = new ChannelID("THIS_HACO",
+    private final ChannelID THIS_REPOS_CLIENT = new ChannelID("THIS_REPOS_CLIENT",
             ChannelID.COMMON, ChannelID.INCLUDE_IP, ChannelID.INCLUDE_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
-     * Returns the queue on which all messages to the ArcRepository are sent.
+     * Returns the queue on which all messages to the Repository are sent.
      *
      * @return the <code>ChannelID</code> object for this queue.
      */
-    public static ChannelID getTheArcrepos() {
-        return getInstance().THE_ARCREPOS;
+    public static ChannelID getTheRepos() {
+        return getInstance().THE_REPOS;
     }
 
-    private final ChannelID THE_ARCREPOS = new ChannelID("THE_ARCREPOS",
+    private final ChannelID THE_REPOS = new ChannelID("THE_REPOS",
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
@@ -328,7 +328,7 @@ public class Channels {
 
     //TODO Should we use client channels for all our servers?
     private final ChannelID THIS_INDEX_CLIENT = new ChannelID(
-            "INDEX_CLIENT",
+            "THIS_INDEX_CLIENT",
             ChannelID.COMMON,
             ChannelID.INCLUDE_IP,
             ChannelID.INCLUDE_APPLINST_ID,

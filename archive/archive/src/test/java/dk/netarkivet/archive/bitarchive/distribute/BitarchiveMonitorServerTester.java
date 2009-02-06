@@ -78,7 +78,7 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 public class BitarchiveMonitorServerTester extends TestCase {
 
     static final ChannelID THE_BAMON = Channels.getTheBamon();
-    static final ChannelID THE_ARCREPOS = Channels.getTheArcrepos();
+    static final ChannelID THE_ARCREPOS = Channels.getTheRepos();
     static final ChannelID ALL_BA = Channels.getAllBa();
     static final ChannelID ANY_BA = Channels.getAnyBa();
 
@@ -129,7 +129,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     public void testParallelBatchJobs() throws InterruptedException {
         bam_server = BitarchiveMonitorServer.getInstance();
         TestMessageListener client = new TestMessageListener();
-        JMSConnectionFactory.getInstance().setListener(Channels.getThisHaco(), client);
+        JMSConnectionFactory.getInstance().setListener(Channels.getThisReposClient(), client);
         final MockupBitarchiveBatch mockupBitarchiveBatch
                 = new MockupBitarchiveBatch("EnesteBitarkiv");
         final BlockingRF brf = new BlockingRF();
@@ -183,7 +183,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         BatchMessage result =
                 new BatchMessage(
                         Channels.getTheBamon(),
-                        Channels.getThisHaco(),
+                        Channels.getThisReposClient(),
                         new FileBatchJob() {
                             public void initialize(OutputStream os) {
                             }
@@ -273,7 +273,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         // register a listener that simulates the arc repository
         TestListener arcrepos = new TestListener();
-        con.addListener(Channels.getTheArcrepos(), arcrepos);
+        con.addListener(Channels.getTheRepos(), arcrepos);
 
         // send a heartbeat to let monitor know that ba_App_Id is alive
         HeartBeatMessage hbm = new HeartBeatMessage(Channels.getTheBamon(),
@@ -286,7 +286,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         con.addListener(Channels.getAllBa(), bitarchive);
 
         // send a batch message to the monitor
-        BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheArcrepos(),
+        BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheRepos(),
                                            job, Settings.get(
                 CommonSettings.USE_REPLICA_ID));
         con.send(bm);
@@ -512,7 +512,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         TestJob job = new TestJob(
                 "testBatchReceive_ID"); // job is used for carrying an id to recognize later
         BatchMessage batchMessage = new BatchMessage(THE_BAMON,
-                                                     Channels.getTheArcrepos(),
+                                                     Channels.getTheRepos(),
                                                      job, Settings.get(
                 CommonSettings.USE_REPLICA_ID));
 
@@ -597,7 +597,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         // Set up a listener on the reply queue for batch messages
         TestMessageListener listener = new TestMessageListener();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         con.setListener(Channels.getAllBa(), listener);
 
         //File for reply
@@ -605,7 +605,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         //Create a batch message
         BatchMessage bm = new BatchMessage(Channels.getTheBamon(),
-                                           Channels.getTheArcrepos(),
+                                           Channels.getTheRepos(),
                                            new ChecksumJob(), Settings.get(
                 CommonSettings.USE_REPLICA_ID));
         JMSConnectionTestMQ.updateMsgID(bm, "ID50");

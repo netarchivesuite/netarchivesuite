@@ -26,6 +26,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
@@ -44,12 +45,20 @@ public class ChannelID implements Serializable {
     private final String environmentName =
             Settings.get(CommonSettings.ENVIRONMENT_NAME);
     /**
-     * appplciation instance id is a setting for an application's
+     * application instance id is a setting for an application's
      * identification as a specific process on a given machine.
      * An example value is "BAKB".
      */
     private static final String applicationInstanceId =
             Settings.get(CommonSettings.APPLICATION_INSTANCE_ID);
+    /**
+     * application instance id is a setting for an application's
+     * identification as a specific process on a given machine.
+     * An example value is "BAKB".
+     */
+    private static final String applicationAbbreviation =
+        getApplicationAbbreviation(
+                    Settings.get(CommonSettings.APPLICATION_NAME));
     /**
      * Constants to make the semantics of parameters to our name constructors
      * more explicit.
@@ -109,8 +118,11 @@ public class ChannelID implements Serializable {
         String id = "";
         if (useNodeId) {
             id = SystemUtils.getLocalIP().replace('.', '_');
-            if (useAppInstId && !applicationInstanceId.isEmpty()) {
-                id += ("_" + applicationInstanceId);
+            if (useAppInstId) {
+                id += "_" + applicationAbbreviation;
+                if (!applicationInstanceId.isEmpty()) {
+                    id += ("_" + applicationInstanceId);
+                }
             }
         }
         return userId + "_" + replicaId + "_" + appPref
@@ -206,5 +218,34 @@ public class ChannelID implements Serializable {
         result = name.hashCode();
         result = (29 * result) + (isTopic ? 1 : 0);
         return result;
+    }
+    
+    /**
+     * Finds abbreviation for an application name.
+     * The abbreviation is only calculated from the application name without
+     * path. It is made from the uppercase letters in the name, ecluding the 
+     * last letter (which is typically 'A' for Application) 
+     * @param applName application name with full path
+     * @return abbreviation for given application name.
+     */
+    private static String getApplicationAbbreviation(String applName) {
+        ArgumentNotValid.checkNotNull(applName, "applName");
+        //Strip path from name
+        String[] p = applName.split("[.]");
+        if (p.length <= 0) {
+            return "";
+        }
+        String shortName = p[p.length - 1];
+        //put uppercase letters into abbr
+        String abbr ="";
+        for (int i = 0; i< shortName.length(); i++) {
+            if (Character.isUpperCase(shortName.charAt(i))) {
+                abbr += shortName.substring(i, i+1);
+            }
+        }
+        //return abbr without last letter (if possible)
+        return (abbr.length() > 1  
+                ? abbr.substring(0, abbr.length()-1)
+                : abbr);
     }
 }

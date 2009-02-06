@@ -49,7 +49,7 @@ public class TestInfo {
     public static final File LOG_FILE = new File(new File("tests/testlogs"), "netarkivtest.log");
     public static final int WAIT_TIME = 6000;
     public static ChannelID CLIENT_ID = Channels.getTheSched();
-    public static ChannelID SERVER_ID = Channels.getThisHaco();
+    public static ChannelID SERVER_ID = Channels.getThisReposClient();
     public static final File SERVER_DIR = new File(TestInfo.DATA_DIR, "server");
     public static final String DUMMY_SERVER_ID = "hc_test_dummy_server";
     public static final MetadataEntry sampleEntry = new MetadataEntry(

@@ -49,9 +49,9 @@ public class DoOneCrawlMessageTester extends TestCase {
 
     TestInfo info = new TestInfo();
     /**
-     We use (arbitrarily) THIS_HACO as channel for testing.
+     We use (arbitrarily) THIS_CLIENT as channel for testing.
      */
-    private static final ChannelID CHAN1 = Channels.getThisHaco();
+    private static final ChannelID CHAN1 = Channels.getThisReposClient();
     ReloadSettings rs = new ReloadSettings();
 
     public DoOneCrawlMessageTester(String sTestName) {

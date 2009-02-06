@@ -63,7 +63,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public ArcRepositoryServer(ArcRepository ar) {
         ArgumentNotValid.checkNotNull(ar, "ArcRepository ar");
         this.ar = ar;
-        ChannelID channel = Channels.getTheArcrepos();
+        ChannelID channel = Channels.getTheRepos();
         log.info("Listening for arc repository messages on channel '"
                  + channel + "'");
         con.setListener(channel, this);
@@ -231,6 +231,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Removes the ArcRepositoryMessageHandler as listener.
      */
     public void close() {
-        con.removeListener(Channels.getTheArcrepos(), this);
+        con.removeListener(Channels.getTheRepos(), this);
     }
 }

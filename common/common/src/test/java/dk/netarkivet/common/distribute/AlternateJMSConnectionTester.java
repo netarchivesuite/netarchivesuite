@@ -41,7 +41,7 @@ public class AlternateJMSConnectionTester extends TestCase {
         NetarkivetMessage msg = null;
         int msgNr = 0;
         while (msgNr < 50) {
-             msg = new TestMessage(Channels.getError(), Channels.getTheArcrepos(), "testID" + msgNr);
+             msg = new TestMessage(Channels.getError(), Channels.getTheRepos(), "testID" + msgNr);
              System.out.println("Sending message " +  msgNr);
              con.send(msg);
              System.out.println("Message " +  msgNr +  " now sent");

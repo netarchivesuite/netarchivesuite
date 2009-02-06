@@ -249,7 +249,7 @@ public class ArcRepositoryTester extends TestCase {
         // Matching checksum
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
-        BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheArcrepos(),
+        BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0),
                 new StringRemoteFile(arcname1
                 + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR + "f00\n"));
@@ -267,7 +267,7 @@ public class ArcRepositoryTester extends TestCase {
         // Test what happens when a known arcfile gets an error message.
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
-        BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheArcrepos(),
+        BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
         JMSConnectionTestMQ.updateMsgID(bamsg2, id1);
         bamsg2.setNotOk("Test an error");
@@ -284,7 +284,7 @@ public class ArcRepositoryTester extends TestCase {
         // Related bug: 574 -- processing of errors is strange
         admindataentries.remove(arcname1);
         outstanding.put(id1, arcname1);
-        BatchReplyMessage bamsg3 = new BatchReplyMessage(Channels.getTheArcrepos(),
+        BatchReplyMessage bamsg3 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
         JMSConnectionTestMQ.updateMsgID(bamsg3, id1);
         bamsg3.setNotOk("Test another error");
@@ -303,7 +303,7 @@ public class ArcRepositoryTester extends TestCase {
         assertFalse("Should not have info about non-yet-processed arcfile",
                 ad.hasEntry(arcname1));
         // Try one without matching arcfilename -- should give warning.
-        BatchReplyMessage bamsg1 = new BatchReplyMessage(Channels.getTheArcrepos(),
+        BatchReplyMessage bamsg1 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
         a.onBatchReply(bamsg1);
         LogUtils.flushLogs(ArcRepository.class.getName());

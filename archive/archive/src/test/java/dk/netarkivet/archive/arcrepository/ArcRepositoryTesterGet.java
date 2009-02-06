@@ -289,11 +289,11 @@ public class ArcRepositoryTesterGet extends TestCase {
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
         public DummyGetFileMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {
@@ -311,11 +311,11 @@ public class ArcRepositoryTesterGet extends TestCase {
         JMSConnection conn = JMSConnectionFactory.getInstance();
 
         public DummyRemoveAndGetFileMessageReplyServer() {
-            conn.setListener(Channels.getTheArcrepos(), this);
+            conn.setListener(Channels.getTheRepos(), this);
         }
 
         public void close() {
-            conn.removeListener(Channels.getTheArcrepos(), this);
+            conn.removeListener(Channels.getTheRepos(), this);
         }
 
         public void onMessage(Message msg) {

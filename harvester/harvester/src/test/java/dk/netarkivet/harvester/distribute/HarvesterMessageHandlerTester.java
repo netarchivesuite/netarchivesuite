@@ -70,13 +70,13 @@ public class HarvesterMessageHandlerTester extends TestCase {
     }
 
     public final void testOnMessage() {
-        TestMessage testMessage = new TestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "42");
+        TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
         JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
         tmh.onMessage(new TestObjectMessage(testMessage));
         assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
         // test that tmh.onMessage issues a "Invalid message type" warning, if the message embeddded in the TestObjectMessage is not a
         // HarvesterMessage
-        IllegalTestMessage illegalMessage = new IllegalTestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "43");
+        IllegalTestMessage illegalMessage = new IllegalTestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "43");
         JMSConnectionTestMQ.updateMsgID(illegalMessage, "ID90");
         
         tmh.onMessage(new TestObjectMessage(illegalMessage));
@@ -109,7 +109,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
                    InstantiationException {
         Job job = TestInfo.getJob();
         try {
-            tmh.visit(new DoOneCrawlMessage(job, Channels.getTheArcrepos(),
+            tmh.visit(new DoOneCrawlMessage(job, Channels.getTheRepos(),
                                             new ArrayList<MetadataEntry>()));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {

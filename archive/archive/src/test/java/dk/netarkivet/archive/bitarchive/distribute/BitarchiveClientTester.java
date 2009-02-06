@@ -110,7 +110,7 @@ public class BitarchiveClientTester extends TestCase {
 
         handler = new MessageTestHandler();
         con = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
-        con.setListener(Channels.getTheArcrepos(), handler);
+        con.setListener(Channels.getTheRepos(), handler);
         bac = BitarchiveClient.getInstance(ALL_BA, ANY_BA, THE_BAMON);
 
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE_DIR.getAbsolutePath());
@@ -214,7 +214,7 @@ public class BitarchiveClientTester extends TestCase {
                                                  true));
         con.waitForConcurrentTasksToFinish();
         GetFileMessage msg = new GetFileMessage(ALL_BA,
-                                                Channels.getTheArcrepos(),
+                                                Channels.getTheRepos(),
                                                 ARC_FILE_NAME,
                                                 "KB");
         bac.getFile(msg);
@@ -327,7 +327,7 @@ public class BitarchiveClientTester extends TestCase {
         uploadInPreparationOfBatchTest();
 
         BatchMessage bMsg = new BatchMessage(THE_BAMON,
-                                             Channels.getTheArcrepos(),
+                                             Channels.getTheRepos(),
                                              new TestBatchJobRuns(),
                                              Settings.get(
                                                      CommonSettings.USE_REPLICA_ID));
@@ -340,7 +340,7 @@ public class BitarchiveClientTester extends TestCase {
      * accept null parameters.
      */
     public void testBatch2NullParameters() {
-        ChannelID chan = Channels.getTheArcrepos();
+        ChannelID chan = Channels.getTheRepos();
         FileBatchJob job = new TestBatchJobRuns();
         //Variable rf is initialized in the setup() method.
         try {
@@ -364,7 +364,7 @@ public class BitarchiveClientTester extends TestCase {
     public void testBatch2() {
         uploadInPreparationOfBatchTest();
 
-        ChannelID chan = Channels.getTheArcrepos();
+        ChannelID chan = Channels.getTheRepos();
         FileBatchJob job = new TestBatchJobRuns();
         //Variable rf is initialized in the setup() method.
         bac.batch(chan, job);

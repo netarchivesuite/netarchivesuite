@@ -186,7 +186,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                       + "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
                       + "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");
         // Get JMS-connection
-        // Channel THIS_HACO is only used for replies to store messages so
+        // Channel THIS_CLIENT is only used for replies to store messages so
         // do not set as listener here. It is registered in the arcrepository
         // client.
         // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
@@ -397,7 +397,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         }
         // Now return from this method letting the thread do the work.
         // This is important as it allows us to receive upload-replies from
-        // THIS_HACO in the crawl thread.
+        // THIS_CLIENT in the crawl thread.
     }
 
     /** Sends a CrawlStatusMessage for a failed job with the given short message

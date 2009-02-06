@@ -79,7 +79,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
         utrf.setUp();
         mjms.setUp();
         listener = new BatchListener();
-        JMSConnectionFactory.getInstance().setListener(Channels.getTheArcrepos(), listener);
+        JMSConnectionFactory.getInstance().setListener(Channels.getTheRepos(), listener);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -88,7 +88,7 @@ public class CreateCDXMetadataFileTester extends TestCase {
         pse.tearDown();
         pss.tearDown();
         mtf.tearDown();
-        JMSConnectionFactory.getInstance().removeListener(Channels.getTheArcrepos(), listener);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), listener);
         mjms.tearDown();
         utrf.tearDown();
 

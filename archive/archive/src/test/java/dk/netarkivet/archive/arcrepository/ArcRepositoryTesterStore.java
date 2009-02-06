@@ -170,7 +170,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -181,7 +181,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -240,7 +240,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -250,7 +250,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -299,13 +299,13 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -358,7 +358,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -369,7 +369,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.UPLOAD_FAILED);
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -437,7 +437,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -448,7 +448,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -516,7 +516,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -527,7 +527,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Store
-        StoreMessage msg = new StoreMessage(Channels.getThisHaco(),
+        StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -595,7 +595,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -606,7 +606,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Deliver message
-        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheArcrepos(),
+        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
                                               RemoteFileFactory.getInstance(
                                                       STORABLE_FILE, true, false,
                                                       true));
@@ -666,19 +666,19 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
-                Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
+                Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForReplica("ONE").getName(),
                            BitArchiveStoreState.UPLOAD_STARTED);
 
         //Deliver message
-        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheArcrepos(),
+        UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
                                               RemoteFileFactory.getInstance(
                                                       STORABLE_FILE, true, false,
                                                       true));
@@ -735,12 +735,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
-                Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
+                Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForReplica("ONE").getName(),
@@ -756,7 +756,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
+                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-1");
@@ -812,12 +812,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
-                Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
+                Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForReplica("ONE").getName(),
@@ -833,7 +833,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
+                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false,
                                               true));
@@ -889,12 +889,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
         con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisHaco(), gmlHaco);
+        con.setListener(Channels.getThisReposClient(), gmlHaco);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), new StoreMessage(
-                Channels.getThisHaco(), STORABLE_FILE), MD5.generateMD5onFile(
+                Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.getBaMonForReplica("ONE").getName(),
@@ -910,7 +910,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheArcrepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 0,
+                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 0,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false,
                                               true));

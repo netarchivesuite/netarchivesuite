@@ -221,7 +221,7 @@ public class IntegrityTests extends TestCase{
                 con.reply(nMsg);
             }
         };
-        con.setListener(Channels.getTheArcrepos(), listenerDummy);
+        con.setListener(Channels.getTheRepos(), listenerDummy);
 
         //Send job
         Job j = TestInfo.getJob();
@@ -240,7 +240,7 @@ public class IntegrityTests extends TestCase{
             }
         }
         //done listening for store reply
-        con.removeListener(Channels.getTheArcrepos(), listenerDummy);
+        con.removeListener(Channels.getTheRepos(), listenerDummy);
         //now listen for crawl ended
         con.setListener(Channels.getTheSched(), listenerDummy);
 
@@ -332,7 +332,7 @@ public class IntegrityTests extends TestCase{
                 con.reply(nMsg);
             }
         };
-        con.setListener(Channels.getTheArcrepos(), arcrepDummy);
+        con.setListener(Channels.getTheRepos(), arcrepDummy);
 
 
         // Use a test listener to make sure that all the expected messages

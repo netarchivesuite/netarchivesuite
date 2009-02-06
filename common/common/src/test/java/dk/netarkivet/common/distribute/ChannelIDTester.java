@@ -29,18 +29,28 @@ import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests the ChannelID class that defines instances of message channels
  * (ie. queues and topics).
  */
 public class ChannelIDTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
+
+    public void setUp() {
+        rs.setUp();
+        Settings.set(CommonSettings.APPLICATION_NAME,
+                "dk.netarkivet.archive.indexserver.IndexServerApplication");
+        Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
+    }
 
     /**
      * Verify that the old ChannelID.getInstance(String s) method has been
@@ -96,8 +106,8 @@ public class ChannelIDTester extends TestCase {
         }
         ChannelID[] l1 =
          {Channels.getAllBa(), result1, Channels.getAnyBa(),
-          Channels.getError(), Channels.getTheArcrepos(), Channels.getTheBamon(),
-          Channels.getTheSched(), Channels.getThisHaco()};
+          Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
+          Channels.getTheSched(), Channels.getThisReposClient()};
         String priority = Settings.get(
                 HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
         ChannelID result;
@@ -114,8 +124,8 @@ public class ChannelIDTester extends TestCase {
         }
         ChannelID[] l2 =
                 {Channels.getAllBa(), result, Channels.getAnyBa(),
-                 Channels.getError(), Channels.getTheArcrepos(), Channels.getTheBamon(),
-                 Channels.getTheSched(), Channels.getThisHaco()};
+                 Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
+                 Channels.getTheSched(), Channels.getThisReposClient()};
 
         for (int i = 0; i<l1.length; i++){
             for (int j = 0; j<l2.length; j++){
@@ -216,6 +226,23 @@ public class ChannelIDTester extends TestCase {
                       BAMONs[j].getName());
           }
       }
+    }
+
+    /**
+     * Test that AllArchives_BAMONs returns as array of BAMON channels which are all
+     * distinct and all contain BAMON in name.
+     */
+    public void testClients() {
+      ChannelID client = Channels.getThisReposClient();
+      assertTrue("ChannelID.getThisClient() returned a channel without " +
+              "THIS_REPOS_CLIENT in its name: " + client.getName(),
+              client.getName().indexOf("THIS_REPOS_CLIENT") != -1 );
+      assertTrue("ChannelID.getThisClient() returned a channel without " +
+              "application settings in its name: " + client.getName(),
+              client.getName().indexOf("_IS") != -1 );
+      assertTrue("ChannelID.getThisClient() returned a channel without " +
+              "application instance settings in its name: " + client.getName(),
+              client.getName().indexOf("_XXX") != -1 );
     }
 
     /**

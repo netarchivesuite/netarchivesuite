@@ -60,7 +60,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
     }
 
     public final void testOnMessage() {
-        TestMessage testMessage = new TestMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "42");
+        TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
         JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
         tmh.onMessage(new TestObjectMessage(testMessage));
         assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
@@ -71,7 +71,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitBatchEndedMessage() {
         try {
-            tmh.visit(new BatchEndedMessage(Channels.getTheArcrepos(), "x", "x", null));
+            tmh.visit(new BatchEndedMessage(Channels.getTheRepos(), "x", "x", null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -83,7 +83,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitBatchMessage() {
         try {
-            tmh.visit(new BatchMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), new ChecksumJob(), "42"));
+            tmh.visit(new BatchMessage(Channels.getTheRepos(), Channels.getTheBamon(), new ChecksumJob(), "42"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -95,7 +95,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitBatchReplyMessage() {
         try {
-            tmh.visit(new BatchReplyMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "x",
+            tmh.visit(new BatchReplyMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x",
                     0, new ArrayList<File>(), null));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
@@ -108,7 +108,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitGetFileMessage() {
         try {
-            tmh.visit(new GetFileMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "x",
+            tmh.visit(new GetFileMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x",
                                          "KB"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
@@ -121,7 +121,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitGetMessage() {
         try {
-            tmh.visit(new GetMessage(Channels.getTheArcrepos(), Channels.getTheBamon(), "x", 0));
+            tmh.visit(new GetMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x", 0));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected
@@ -133,7 +133,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
      */
     public final void testVisitHeartBeatMessage() {
         try {
-            tmh.visit(new HeartBeatMessage(Channels.getTheArcrepos(), "x"));
+            tmh.visit(new HeartBeatMessage(Channels.getTheRepos(), "x"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

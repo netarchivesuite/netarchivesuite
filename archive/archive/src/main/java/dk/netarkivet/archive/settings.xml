@@ -33,6 +33,7 @@
     <archive>
         <arcrepository>
             <baseDir>.</baseDir>
+            <uploadRetries>1</uploadRetries>
         </arcrepository>
         <bitarchive>
             <!-- The default value amounts to 190 MBytes. -->

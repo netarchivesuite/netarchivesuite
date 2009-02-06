@@ -65,7 +65,7 @@ public class GetRecordTester extends TestCase {
                 TestInfo.TEST_ENTRY_FILENAME,
                 TestInfo.TEST_ENTRY_OFFSET);
         JMSConnectionFactory.getInstance().setListener(
-                Channels.getTheArcrepos(), listener);
+                Channels.getTheRepos(), listener);
         mtf.setUp();
         pss.setUp();
         pse.setUp();
@@ -75,7 +75,7 @@ public class GetRecordTester extends TestCase {
         pss.tearDown();
         mtf.tearDown();
         JMSConnectionFactory.getInstance().removeListener(
-                Channels.getTheArcrepos(), listener);
+                Channels.getTheRepos(), listener);
         mjms.tearDown();
     }
 

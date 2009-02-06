@@ -51,7 +51,7 @@ public class BitarchiveClient {
     private ChannelID all_ba;
     private ChannelID any_ba;
     private ChannelID the_bamon;
-    private ChannelID clientId = Channels.getTheArcrepos();
+    private ChannelID clientId = Channels.getTheRepos();
 
     /**
      * Establish the connection to the server.

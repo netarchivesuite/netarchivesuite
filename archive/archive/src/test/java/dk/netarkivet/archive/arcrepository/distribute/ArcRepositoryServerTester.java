@@ -234,7 +234,7 @@ public class ArcRepositoryServerTester extends TestCase {
      */
     public void testGet() {
         file = new File(BITARCHIVE_DIR, STORABLE_FILES.get(0).toString());
-        GetMessage msg = new GetMessage(Channels.getTheArcrepos(), Channels
+        GetMessage msg = new GetMessage(Channels.getTheRepos(), Channels
                 .getError(), "", 0);
         JMSConnectionTestMQ testCon = (JMSConnectionTestMQ) JMSConnectionTestMQ
                 .getInstance();

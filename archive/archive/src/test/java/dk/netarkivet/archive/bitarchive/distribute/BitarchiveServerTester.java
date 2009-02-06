@@ -170,7 +170,7 @@ public class BitarchiveServerTester extends TestCase {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
 
         bas = BitarchiveServer.getInstance();
-        ChannelID arcReposQ = Channels.getTheArcrepos();
+        ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
@@ -219,7 +219,7 @@ public class BitarchiveServerTester extends TestCase {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, BITARCHIVE1.getAbsolutePath());
 
         bas = BitarchiveServer.getInstance();
-        ChannelID arcReposQ = Channels.getTheArcrepos();
+        ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
@@ -267,7 +267,7 @@ public class BitarchiveServerTester extends TestCase {
 
     public void testListenerNotRemovedOnErrors() {
         bas = BitarchiveServer.getInstance();
-        ChannelID arcReposQ = Channels.getTheArcrepos();
+        ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
         JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
@@ -317,11 +317,11 @@ public class BitarchiveServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
         final long arcfileOffset = 3L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc",
+                Channels.getTheRepos(), "NetarchiveSuite-upload1.arc",
                 arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
@@ -347,11 +347,11 @@ public class BitarchiveServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
         final long arcfileOffset = 3L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "Upload2.ARC", arcfileOffset);
+                Channels.getTheRepos(), "Upload2.ARC", arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
@@ -372,11 +372,11 @@ public class BitarchiveServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
                 .getInstance();
-        con.setListener(Channels.getTheArcrepos(), listener);
+        con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
         final long arcfileOffset = 300L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
-                Channels.getTheArcrepos(), "NetarchiveSuite-upload1.arc",
+                Channels.getTheRepos(), "NetarchiveSuite-upload1.arc",
                 arcfileOffset);
         JMSConnectionTestMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);

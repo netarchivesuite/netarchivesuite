@@ -49,7 +49,7 @@ public class UploadMessageTester extends TestCase {
     public void testInvalidArguments() {
         try {
             new UploadMessage(Channels.getTheBamon(),
-                    Channels.getTheArcrepos(),
+                    Channels.getTheRepos(),
                     RemoteFileFactory.getInstance(null, true, false, true));
             fail("Should throw ArgumentNotValid on null file");
         } catch (ArgumentNotValid e) {

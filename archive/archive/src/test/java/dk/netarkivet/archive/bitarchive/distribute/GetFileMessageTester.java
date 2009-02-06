@@ -67,7 +67,7 @@ public class GetFileMessageTester extends TestCase {
             IllegalAccessException {
         File origFile = new File(WORKING, "NetarchiveSuite-store1.arc");
         GetFileMessage message = new GetFileMessage(Channels.getAllBa(),
-                Channels.getThisHaco(), origFile.getName(), "KB");
+                Channels.getThisReposClient(), origFile.getName(), "KB");
         message.setFile(origFile);
         File destDir = new File(WORKING, "dest");
         FileUtils.createDir(destDir);
@@ -89,7 +89,7 @@ public class GetFileMessageTester extends TestCase {
                     + " error message", origFile.getName(), e.getMessage());
         }
         message = new GetFileMessage(Channels.getAllBa(),
-                Channels.getThisHaco(), origFile.getName(), "KB");
+                Channels.getThisReposClient(), origFile.getName(), "KB");
         try {
             message.getData(destFile);
             fail("Should die if no file is set");

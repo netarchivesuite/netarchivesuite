@@ -58,7 +58,7 @@ public class StoreMessageTester extends TestCase {
         }
 
         try {
-            new StoreMessage(Channels.getTheArcrepos(), null);
+            new StoreMessage(Channels.getTheRepos(), null);
             fail("Should throw ArgumentNotValid on null file");
         } catch (ArgumentNotValid e) {
             // expected case
