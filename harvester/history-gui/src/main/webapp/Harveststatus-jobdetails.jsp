@@ -101,7 +101,7 @@ and reposne.getLocale use this locale.
     	&& job.getResubmittedAsJob() != null) {
     	 jobstatusTdContents += "<br/>(<a href=\"" + jobdetailsUrl + "?" 
     	 	+ Constants.JOB_PARAM + "=" + job.getResubmittedAsJob() + "\">"
-    	 	+ "</a>" + ")";
+    	 	+ "Job " + job.getResubmittedAsJob() + "</a>" + ")";
     }
     HTMLUtils.generateHeader(pageContext);
 %>
