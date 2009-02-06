@@ -77,7 +77,7 @@ public class JobStatusInfo {
      * @param submittedDate The time when this job was submitted
      * @param startDate The time when this job started
      * @param endDate The time when this job finished
-     * @param resubmittedAsJobWithId The id of the job this job was resubmitted
+     * @param resubmittedAsJobWithID The id of the job this job was resubmitted
      *  as (possibly null)
      */
     JobStatusInfo(long jobID, JobStatus status,
