@@ -697,6 +697,7 @@ public class JobTester extends DataModelTestCase {
                 + "\nExpected maxBytes: " + job.getMaxBytesPerDomain()
                 // Checked outside this method, because order of seeds is random
                 //+ "\nSeedlist: " + job.getSeedListAsString()
+                + "\nSubmitted tid: " + job.getSubmittedDate()
                 + "\nActual Start: " + job.getActualStart()
                 + "\nActual Stop: " + job.getActualStop()
                 + "\nPriority: " + job.getPriority().toString();
@@ -920,5 +921,31 @@ public class JobTester extends DataModelTestCase {
             }
             last = i;
         }
-    }    
+    }
+    
+    /**
+     * Test method getSubmittedDate().
+     */
+    public void testGetSubmittedDate() {
+        Job job = Job.createJob(new Long(42),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        assertNull("Should be null, before being set explicitly", 
+                job.getSubmittedDate());
+        Date now = new Date();
+            job.setSubmittedDate(now);
+        assertEquals("Should be set correctly, after being set explicitly", 
+                now, job.getSubmittedDate());
+        
+        job = Job.createJob(new Long(43),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+       
+        
+        JobDAO.getInstance().create(job);
+        Long jobID = job.getJobID();
+        job.setSubmittedDate(now);
+        JobDAO.getInstance().update(job);
+        job = JobDAO.getInstance().read(jobID);
+        assertEquals(now, job.getSubmittedDate());
+    }
+    
 }
