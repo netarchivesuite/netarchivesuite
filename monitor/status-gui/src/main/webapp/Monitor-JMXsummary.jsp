@@ -74,8 +74,8 @@ java.util.Locale,
 
 <table>
     <tr><%
-         if(JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXLocationProperty) { 
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXLocationProperty) ) { 
          %>
             <th><fmt:message key="tablefield;location"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
