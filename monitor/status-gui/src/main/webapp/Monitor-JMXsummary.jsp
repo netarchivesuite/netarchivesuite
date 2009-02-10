@@ -26,7 +26,8 @@ This page shows the status of all applications that were known to exist
 when the GUI-application was started. That information is currently taken from
 the 'deploy' element in the setting.xml assigned to the
 dk.netarkivet.common.webinterface.GUIApplication.
-But the actual reading is done in auxiliary class dk.netarkivet.monitor.jmx.HostForwarding
+But the actual reading is done in auxiliary class 
+dk.netarkivet.monitor.jmx.HostForwarding
 
 If the application is down, this can be seen on this page. Furthermore,
 the last 100 significant (log-level INFO and above) logmessages
@@ -63,7 +64,8 @@ java.util.Locale,
     List<StatusEntry> result = null;
 	try {
     	result = JMXSummaryUtils.queryJMXFromRequest(
-    		JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest, pageContext);
+    		JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest, 
+    		pageContext);
     } catch (ForwardedToErrorPage e) {
     	return;
     }
@@ -71,39 +73,40 @@ java.util.Locale,
 %>
 
 <table>
-    <tr><th><fmt:message key="tablefield;location"/> <%=
-    JMXSummaryUtils.generateShowAllLink(starredRequest,
+    <tr>
+        <th><fmt:message key="tablefield;location"/> <%=
+        JMXSummaryUtils.generateShowLink(starredRequest,
     		JMXSummaryUtils.JMXLocationProperty, currentLocale)%></th>
         <th><fmt:message key="tablefield;machine"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXHostnameProperty, currentLocale)%></th>
-        <th><fmt:message key="tablefield;port"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
-        	JMXSummaryUtils.JMXHttpportProperty, currentLocale)%></th>
         <th><fmt:message key="tablefield;application"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
         </th>
         <th><fmt:message key="tablefield;applicationid"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
         </th>
+        <th><fmt:message key="tablefield;port"/> <%=
+        JMXSummaryUtils.generateShowLink(starredRequest,
+                JMXSummaryUtils.JMXHttpportProperty, currentLocale)%></th>
         <th><fmt:message key="tablefield;priority"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
         </th>
         <th><fmt:message key="tablefield;replica"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
         </th>
         <th><fmt:message key="tablefield;index"/> <%=
-        JMXSummaryUtils.generateShowAllLink(starredRequest,
+        JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
         <th><fmt:message key="tablefield;logmessage"/></th>
     </tr>
     <%
-        for (StatusEntry entry : result) {
-            if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
+    for (StatusEntry entry : result) {
+        if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
     %>
     <tr>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
@@ -117,10 +120,6 @@ java.util.Locale,
                         (JMXSummaryUtils.reduceHostname(entry.getHostName())))%>
         </td>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXHttpportProperty,
-                entry.getHTTPPort(),
-                HTMLUtils.escapeHtmlValues(entry.getHTTPPort()))%></td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
                 JMXSummaryUtils.JMXApplicationnameProperty,
                 entry.getApplicationName(),
                 HTMLUtils.escapeHtmlValues
@@ -132,6 +131,10 @@ java.util.Locale,
                 entry.getApplicationInstanceID(),
                 HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()))%>
         </td>
+        <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                JMXSummaryUtils.JMXHttpportProperty,
+                entry.getHTTPPort(),
+                HTMLUtils.escapeHtmlValues(entry.getHTTPPort()))%></td>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                 JMXSummaryUtils.JMXHarvestPriorityProperty,
                 entry.getHarvestPriority(),
@@ -146,13 +149,12 @@ java.util.Locale,
                 JMXSummaryUtils.JMXIndexProperty,
                 entry.getIndex(),
                 HTMLUtils.escapeHtmlValues(entry.getIndex()))%></td>
-        <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response.getLocale()),
-        		currentLocale)%></td>
+        <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
+        .getLocale()), currentLocale)%></td>
     </tr>
     <%
-            }
         }
-
+    }
     %>
 </table>
 

@@ -46,9 +46,10 @@ public class JMXSummaryUtils {
     /** JMX properties used by Monitor-JMXsummary.jsp */
     public static final String JMXLocationProperty = "location";
     public static final String JMXHostnameProperty = "hostname";
-    public static final String JMXHttpportProperty = "httpport";
     public static final String JMXApplicationnameProperty = "applicationname";
-    public static final String JMXApplicationinstidProperty = "applicationinstid";
+    public static final String JMXApplicationinstidProperty = 
+        "applicationinstid";
+    public static final String JMXHttpportProperty = "httpport";
     public static final String JMXHarvestPriorityProperty = "priority";
     public static final String JMXArchiveReplicaIdProperty = "replica";
     public static final String JMXIndexProperty = "index";
@@ -56,9 +57,11 @@ public class JMXSummaryUtils {
     public static final String[] STARRABLE_PARAMETERS = new String[]{
         JMXLocationProperty,
         JMXHostnameProperty, 
-        JMXHttpportProperty,
         JMXApplicationnameProperty,
         JMXApplicationinstidProperty,
+        JMXHttpportProperty,
+        JMXHarvestPriorityProperty,
+        JMXArchiveReplicaIdProperty,
         JMXIndexProperty};
     
     private static final String LOGGING_MBEAN_NAME_PREFIX =
@@ -113,6 +116,35 @@ public class JMXSummaryUtils {
                     + generateLink(starredRequest, parameter, "*", 
                             I18N.getString(l, "showall"))
                     + ")";
+        }
+    }
+    
+    /** Generate HTML to show at the top of the table, containing a "show all"
+     * and "show none" links if the parameter is currently restricted.
+     *
+     * @param starredRequest A request to take parameters from.
+     * @param parameter The parameter that, if not already unrestricted, should
+     * be unrestricted in the "show all" or "show none" link.
+     * @param l the current locale
+     * @return HTML to insert at the top of the JMX monitor table.
+     */
+    public static String generateShowLink(StarredRequest starredRequest,
+                                             String parameter, Locale l) {
+        ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
+        ArgumentNotValid.checkNotNull(parameter, "parameter");
+        if ("*".equals(starredRequest.getParameter(parameter))) {
+            return "("
+                   + generateLink(starredRequest, parameter, "-", 
+                     I18N.getString(l, "show none")  )
+                   + ")";
+        } else {
+            return "("
+                   + generateLink(starredRequest, parameter, "*", 
+                    I18N.getString(l, "showall"))
+                   + ", "
+                   + generateLink(starredRequest, parameter, "-", 
+                     I18N.getString(l, "show none")  )
+                   + ")";
         }
     }
 
@@ -314,5 +346,4 @@ public class JMXSummaryUtils {
             }
         }
     }
-
 }
