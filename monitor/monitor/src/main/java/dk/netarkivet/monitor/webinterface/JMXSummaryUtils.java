@@ -120,11 +120,11 @@ public class JMXSummaryUtils {
     }
     
     /** Generate HTML to show at the top of the table, containing a "show all"
-     * and "show none" links if the parameter is currently restricted.
+     * and a "off" links if the parameter is currently restricted.
      *
      * @param starredRequest A request to take parameters from.
      * @param parameter The parameter that, if not already unrestricted, should
-     * be unrestricted in the "show all" or "show none" link.
+     * be unrestricted in the "show all".
      * @param l the current locale
      * @return HTML to insert at the top of the JMX monitor table.
      */
@@ -134,18 +134,31 @@ public class JMXSummaryUtils {
         ArgumentNotValid.checkNotNull(parameter, "parameter");
         if ("*".equals(starredRequest.getParameter(parameter))) {
             return "("
-                   + generateLink(starredRequest, parameter, "-", 
-                     I18N.getString(l, "show none")  )
+                   + generateLink(starredRequest, parameter, "-", "off")
                    + ")";
         } else {
             return "("
                    + generateLink(starredRequest, parameter, "*", 
-                    I18N.getString(l, "showall"))
+                     I18N.getString(l, "showall"))
                    + ", "
-                   + generateLink(starredRequest, parameter, "-", 
-                     I18N.getString(l, "show none")  )
+                   + generateLink(starredRequest, parameter, "-", "off")
                    + ")";
         }
+    }
+    
+    /**
+     * Tests if a parameter in the request is "-" (thus off). 
+     * 
+     * @param starredRequest A request to take parameters from.
+     * @param parameter The parameter that should be tested.
+     * @return Whether the parameter is set to "-".
+     */
+    public static boolean showColumn(StarredRequest starredRequest, 
+            String parameter) {
+        if ("-".equals(starredRequest.getParameter(parameter))) {
+            return false;
+        }
+	return true;
     }
 
     /** Generate an HTML link to the JMX summary page with one part of the

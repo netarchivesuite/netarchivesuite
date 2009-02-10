@@ -73,10 +73,16 @@ java.util.Locale,
 %>
 
 <table>
-    <tr>
-        <th><fmt:message key="tablefield;location"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-    		JMXSummaryUtils.JMXLocationProperty, currentLocale)%></th>
+    <tr><%
+         if(JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXLocationProperty) { 
+         %>
+            <th><fmt:message key="tablefield;location"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXLocationProperty, currentLocale)%></th>
+        <% 
+         } 
+    	 %>
         <th><fmt:message key="tablefield;machine"/> <%=
         JMXSummaryUtils.generateShowLink(starredRequest,
         	JMXSummaryUtils.JMXHostnameProperty, currentLocale)%></th>
