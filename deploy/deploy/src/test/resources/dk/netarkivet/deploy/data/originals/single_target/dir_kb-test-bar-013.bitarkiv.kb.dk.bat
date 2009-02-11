@@ -1,0 +1,19 @@
+cd c:\Documents and Settings\dev\TEST
+IF NOT EXIST bitpreservation MD bitpreservation
+IF NOT EXIST m:\bitarchive MD m:\bitarchive
+IF NOT EXIST m:\bitarchive\filedir MD m:\bitarchive\filedir
+IF NOT EXIST m:\bitarchive\tempdir MD m:\bitarchive\tempdir
+IF NOT EXIST m:\bitarchive\atticdir MD m:\bitarchive\atticdir
+IF NOT EXIST n:\bitarchive MD n:\bitarchive
+IF NOT EXIST n:\bitarchive\filedir MD n:\bitarchive\filedir
+IF NOT EXIST n:\bitarchive\tempdir MD n:\bitarchive\tempdir
+IF NOT EXIST n:\bitarchive\atticdir MD n:\bitarchive\atticdir
+IF NOT EXIST o:\bitarchive MD o:\bitarchive
+IF NOT EXIST o:\bitarchive\filedir MD o:\bitarchive\filedir
+IF NOT EXIST o:\bitarchive\tempdir MD o:\bitarchive\tempdir
+IF NOT EXIST o:\bitarchive\atticdir MD o:\bitarchive\atticdir
+IF NOT EXIST p:\bitarchive MD p:\bitarchive
+IF NOT EXIST p:\bitarchive\filedir MD p:\bitarchive\filedir
+IF NOT EXIST p:\bitarchive\tempdir MD p:\bitarchive\tempdir
+IF NOT EXIST p:\bitarchive\atticdir MD p:\bitarchive\atticdir
+IF NOT EXIST tmpdircommon MD tmpdircommon
