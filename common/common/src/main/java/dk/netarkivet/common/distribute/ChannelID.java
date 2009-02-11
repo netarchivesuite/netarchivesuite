@@ -100,7 +100,7 @@ public class ChannelID implements Serializable {
 
     /**
     * Constructs a channel name according to the specifications
-    * in distributed_architecture.doc.
+    * of channels in the NetarchiveSuite Developer Manual.
     * @param appPref The prefix used for the applications listening 
     * to the channel.
     * @param replicaId Id of the replica, or ChannelID.COMMON if
@@ -157,7 +157,7 @@ public class ChannelID implements Serializable {
      * Method used by Java serialization.
      * Our coding guidelines prescribes that this method should always
      * be implemented, even if it only calls the default method:
-     * http://asterix.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
+     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
      * See also "Effective Java", pages 219 and 224.
      * @param s
      * @throws IOFailure if Java could not deserialize the object.
