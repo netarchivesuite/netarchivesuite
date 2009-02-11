@@ -55,7 +55,6 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
 public class ArcRepositoryTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
@@ -174,7 +173,7 @@ public class ArcRepositoryTester extends TestCase {
                 "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have warning about unwanted line",
-                "Read unexpected line 'bar##baz", TestInfo.LOG_FILE);
+                "had unexpected arcfile name in checksum result 'bar##baz", TestInfo.LOG_FILE);
         FileAsserts.assertFileNotContains("Should have no warning about wanted line",
                 TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
 

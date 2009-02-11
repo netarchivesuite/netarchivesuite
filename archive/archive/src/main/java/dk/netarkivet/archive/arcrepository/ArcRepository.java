@@ -24,7 +24,9 @@ package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -50,6 +52,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
@@ -532,69 +535,80 @@ public class ArcRepository implements CleanupIF {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.debug("BatchReplyMessage received: '" + msg + "'");
 
-        String arcfileName = outstandingChecksumFiles
-                .remove(msg.getReplyOfId());
-        if (arcfileName != null) { //Message was expected
-            // Check incoming message
-            if (!msg.isOk()) {
-                log.warn("Message '" + msg.getID()
-                                + "' is reported not okay"
-                                + "\nReported error: '" + msg.getErrMsg() + "'"
-                                + "\nTrying to process anyway.");
-            }
-
-            // Parse results
-            String reportedChecksum;
-            RemoteFile rf = msg.getResultFile();
-            if (rf == null || rf instanceof NullRemoteFile) {
-                log.debug("Message '" + msg.getID()
-                                + "' returned no results"
-                                + "\nNo checksum to use for file '"
-                                + arcfileName + "'");
-                reportedChecksum = "";
-            } else {
-                // Copy result to a local file
-                File outputFile = new File(FileUtils.getTempDir(),
-                        msg.getReplyTo().getName()
-                                + "_" + arcfileName + "_checksumOutput.txt");
-                try {
-                    rf.copyTo(outputFile);
-
-                    // Read checksum from local file
-                    reportedChecksum = readChecksum(outputFile, arcfileName);
-                } catch (IOFailure e) {
-                    log.warn("Couldn't read checksumjob "
-                            + "output for '" + arcfileName + "'", e);
-                    reportedChecksum = "";
-                }
-
-                // Clean up output file and remote file
-                try {
-                    FileUtils.removeRecursively(outputFile);
-                } catch (IOFailure e) {
-                    log.warn("Couldn't clean up checksumjob "
-                            + "output file '" + outputFile + "'", e);
-                }
-                try {
-                    rf.cleanup();
-                } catch (IOFailure e) {
-                    log.warn("Couldn't clean up checksumjob "
-                            + "remote file '" + rf.getName() + "'", e);
-                }
-            }
-
-            // Process result
-            String orgCheckSum = ad.getCheckSum(arcfileName);
-            String bitarchive = resolveBitarchiveID(msg.getReplyTo().getName());
-            processCheckSum(arcfileName, bitarchive, orgCheckSum,
-                    reportedChecksum);
-
-        } else {
+        if (!outstandingChecksumFiles.containsKey(msg.getReplyOfId())) {
+            // Message was NOT expected
             log.warn("Received batchreply message with unknown originating "
                     + "ID " + msg.getReplyOfId() + "\n" + msg.toString()
                     + "\n. Known IDs are: "
                     + outstandingChecksumFiles.keySet().toString());
+            return;
         }
+
+        String arcfileName = outstandingChecksumFiles
+                .remove(msg.getReplyOfId());
+
+        // Check incoming message
+        if (!msg.isOk()) {
+            //Checksum job has ended with errors, but can contain checksum 
+            //anyway, therefore it is logged - but we try to go on 
+            log.warn("Message '" + msg.getID()
+                            + "' is reported not okay"
+                            + "\nReported error: '" + msg.getErrMsg() + "'"
+                            + "\nTrying to process anyway.");
+        }
+
+        // Parse results
+        // if legel result is found it is placed in reportedChecksum
+        // if illegal or errors occurs reportedChecksum is set to ""
+        RemoteFile checksumResFile = msg.getResultFile();
+        String reportedChecksum = "";
+        if (checksumResFile == null || 
+            checksumResFile instanceof NullRemoteFile) {
+            log.debug("Message '" + msg.getID()
+                            + "' returned no results"
+                            + "\nNo checksum to use for file '"
+                            + arcfileName + "'");
+        } else {
+            //Read checksum
+            // Copy result to a local file
+            File outputFile = new File(FileUtils.getTempDir(),
+                    msg.getReplyTo().getName()
+                            + "_" + arcfileName + "_checksumOutput.txt");
+            try {
+                checksumResFile.copyTo(outputFile);
+
+                // Read checksum from local file
+                reportedChecksum = readChecksum(outputFile, arcfileName);
+            } catch (IOFailure e) {
+                log.warn("Couldn't read checksumjob "
+                        + "output for '" + arcfileName + "'", e);
+            } catch (IllegalState e) {
+                log.warn("Couldn't read result of checksumjob "
+                        + "in '" + arcfileName + "'", e);
+            }
+
+            // Clean up output file and remote file
+            // clean up does NOT result in general error, i.e. 
+            // reportedChecksum is NOT set to "" in case of errors
+            try {
+                FileUtils.removeRecursively(outputFile);
+            } catch (IOFailure e) {
+                log.warn("Couldn't clean up checksumjob "
+                        + "output file '" + outputFile + "'", e);
+            }
+            try {
+                checksumResFile.cleanup();
+            } catch (IOFailure e) {
+                log.warn("Couldn't clean up checksumjob "
+                        + "remote file '" + checksumResFile.getName() + "'", e);
+            }
+        }
+
+        // Process result
+        String orgCheckSum = ad.getCheckSum(arcfileName);
+        String bitarchive = resolveBitarchiveID(msg.getReplyTo().getName());
+        processCheckSum(arcfileName, bitarchive, orgCheckSum,
+                reportedChecksum, msg.isOk() && !reportedChecksum.isEmpty());
     }
 
     /**
@@ -612,96 +626,188 @@ public class ArcRepository implements CleanupIF {
      * @return The checksum, or the empty string
      *          if no checksum found for arcfilename.
      * @throws IOFailure If any error occurs reading the file.
+     * @throws IllegalState if readen format is wrong
      */
     private String readChecksum(File outputFile, String arcfileName) {
-        String result = "";
-        for (String line : FileUtils.readListFromFile(outputFile)) {
-            String[] tokens = line.split(dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-
-            if (tokens.length == 2 && tokens[0].equals(arcfileName)) {
-                if (!result.equals("") && !result.equals(tokens[1])) {
-                    log.warn("Arcfile '" + arcfileName + "' found with two "
-                                + "different checksums in checksumjob: '"
-                                + result + "' and '" + tokens[1] + "'");
+        //List of lines in batch (checksum job) output file
+        List<String> lines = FileUtils.readListFromFile(outputFile);
+        //List of checksums found in batch (checksum job) output file
+        List<String> checksumList = new ArrayList<String>();
+        
+        //Extract checksums for arcfile from lines
+        //If errors occurs then throw exception
+        for (String line : lines) {
+            String readFileName = "";
+            String checksum = "";
+            String[] tokens = line.split(
+                    dk.netarkivet.archive.arcrepository
+                      .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
+            boolean ignoreLine = false;
+            
+            //Check line format
+            ignoreLine = (tokens.length == 0);
+            if (tokens.length != 2 && !ignoreLine) { //wrong format
+                throw new IllegalState("Readen checksum line " +
+                   (tokens.length == 0 ? "was empty": "had unexpected format")
+                   + " '" + line + "'");
+            }
+            
+            //Check checksum and arc-file name in line
+            if (!ignoreLine) {
+                readFileName = tokens[0];
+                checksum = tokens[1];
+                if (checksum.length() == 0) { //wrong format of checksum
+                    //do not exit - there may be more checksums
+                    ignoreLine = true;
+                    log.warn("There were an empty checksum in result for checksums" 
+                             + "to arc-file '" + arcfileName 
+                             + "(line: '" + line + "')");
+                } else {
+                    if (!readFileName.equals(arcfileName)) { //wrong arcfile
+                        // do not exit - there may be more checksums
+                        ignoreLine = true;
+                        log.warn("There were an unexpected arc-file name in " 
+                                + "checksum result for arc-file '" + arcfileName
+                                + "'" + "(line: '" + line + "')");
+                    }
                 }
-                result = tokens[1];
-            } else {
-                log.warn("Read unexpected line '" + line
-                        + "' in output from checksum job");
+            }
+            
+            //Check against earlier readen checksums, if more than one
+            if (checksumList.size() > 0 && !ignoreLine) {
+                //Ignore if the checksums are the same
+                if (!checksum.equals(
+                        checksumList.get(checksumList.size() - 1))) {
+                    throw new IllegalState("There were minimum "  
+                        + (checksumList.size() + 1) + " checksums "
+                        + "in result where some of them were "
+                        + "different (last checksum line: '" + line 
+                        + "')");
+                }
+            }
+            
+            //Add error free non-empty found checksum in list
+            if (!ignoreLine) {
+                checksumList.add(checksum);
             }
         }
 
-        if (result.equals("")) {
+        // Check that checksum list contain a result, 
+        // log if it has more than one result
+        if (checksumList.size() > 1) {
+            //Log and proceed - the checksums are equal
+            log.warn("Arcfile '" + arcfileName + "' was found with " 
+                      + checksumList.size() + "occurences of the checksum: "
+                      + checksumList.get(0));
+        }
+        
+        if (checksumList.size() == 0) {
             log.debug("Arcfile '" + arcfileName
                     + "' not found in lines of checksum output file '"
                     + outputFile
                     + "':  " + FileUtils.readListFromFile(outputFile));
+            return "";
+        } else {
+            return checksumList.get(0);
         }
-        return result;
     }
 
     /**
      * Process reporting of a checksum from a bitarchive for a specific file as
      * part of a store operation for the file. Verify that the checksum is
      * correct, update the BitArchiveStoreState state.
+     * Invariant: upload-state is changed or retry count is increased.
      *
      * @param arcFileName
-     *            The file being stored
+     *            The file being stored.
      * @param bitarchiveName
-     *            The bitarchive reporting a checksum
+     *            The bitarchive reporting a checksum.
      * @param orgChecksum
-     *            The original checksum
+     *            The original checksum.
      * @param reportedChecksum
      *            The checksum calculated by the bitarchive This value is "", if
-     *            arcfileName does not exist in bitarchive.
+     *            an error has occured (except reply NOT ok from bitarchive).
+     * @param checksumReadOk
+     *            Tells whether the checksum was readen ok by batch job.
      */
     private synchronized void processCheckSum(String arcFileName,
             String bitarchiveName, String orgChecksum,
-            String reportedChecksum) {
+            String reportedChecksum,
+            boolean checksumReadOk) {
         log.debug("Checksum received ... processing");
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
         ArgumentNotValid.checkNotNullOrEmpty(orgChecksum, "orgChecksum");
         ArgumentNotValid.checkNotNull(reportedChecksum, "reportedChecksum");
 
-        if (orgChecksum.equals(reportedChecksum)) {
-            // Checksum job matches expected results
+        //Log if we do not find file outstanding
+        //we proceed anyway in order to be sure to update stae of file
+        if (!outstandingRemoteFiles.containsKey(arcFileName)) {
+            log.warn("Could not find arc-file as outstanding " +
+                      "remote file: '" + arcFileName + "'");
+        }
+
+        //If everything works fine complete process of this checksum
+        if (orgChecksum.equals(reportedChecksum) &&
+            !reportedChecksum.equals("")) {
+            
+            // Checksum is valid and job matches expected results
             ad.setState(arcFileName, bitarchiveName,
                     BitArchiveStoreState.UPLOAD_COMPLETED);
 
-            // See above javadoc on method considerReplyingOnStore()
+            // Find out if and how to make general reply on store()
+            // remove file from outstandingRemoteFiles if a reply is given
             considerReplyingOnStore(arcFileName);
-        } else {
+            
+            return;
+        } 
 
-            // if the file does not exists in the bitarchive
-            // retry the upload if possible
-            if (reportedChecksum.equals("")
-                    && retryOk(bitarchiveName, arcFileName)) {
-
-                RemoteFile rf = outstandingRemoteFiles.get(arcFileName);
-                if (rf != null) {
-                    log.debug("Retrying upload of '" + arcFileName + "'");
-                    ad.setState(rf.getName(), bitarchiveName,
-                            BitArchiveStoreState.UPLOAD_STARTED);
-                    connectedBitarchives.get(bitarchiveName).upload(rf);
-                    incRetry(bitarchiveName, arcFileName);
-                    return;
+        //Log error or retry upload
+        if (reportedChecksum.equals("") ) { //no checksum found
+            if (checksumReadOk) { //no errors in finding no checksum
+                if (retryOk(bitarchiveName, arcFileName)) { // we can retry
+                    if (!outstandingRemoteFiles.containsKey(arcFileName)) {
+                        RemoteFile rf = outstandingRemoteFiles.get(arcFileName);
+                        //Retry upload only if allowed and in case we are sure that the
+                        //empty checksum means that the arcfile is not in the archive
+                        log.debug("Retrying upload of '" + arcFileName + "'");
+                        ad.setState(rf.getName(), bitarchiveName,
+                                BitArchiveStoreState.UPLOAD_STARTED);
+                        connectedBitarchives.get(bitarchiveName).upload(rf);
+                        incRetry(bitarchiveName, arcFileName);
+                        return;
+                    } //else logning was done allready above
+                } else { //cannot retry
+                    log.warn("Cannot do more retry upload of " +
+                        "remote file: '" + arcFileName + "' to '"
+                        + bitarchiveName + "', reported checksum='"
+                        + reportedChecksum + "'" );
                 }
-            }
-
-            // This point is reached if
-            // - the file already exists in the bitarchive with an invalid
-            // checksum
-            // - or it is not possible to retry the upload
-
-            // Mark upload as failed in both cases
-            log.warn("Can not upload '" + arcFileName + "' to '"
+            } else { //error in getting checksum
+                log.warn("Cannot retry upload of " +
+                    "remote file: '" + arcFileName + "' to '"
                     + bitarchiveName + "', reported checksum='"
-                    + reportedChecksum + "'");
-            ad.setState(arcFileName, bitarchiveName,
-                    BitArchiveStoreState.UPLOAD_FAILED);
-            considerReplyingOnStore(arcFileName);
+                    + reportedChecksum + "' due to earlier batchjob" 
+                    + " error." );
+            }
+        } else { //non empty checksum
+            if (!orgChecksum.equals(reportedChecksum)) {
+                log.warn("Cannot upload (wrong checksum) '" + arcFileName
+                        + "' to '"+ bitarchiveName + "', reported checksum='"
+                        + reportedChecksum + "'");
+            } else {
+                log.warn("Cannot upload (unknown reason) '" + arcFileName
+                        + "' to '"+ bitarchiveName + "', reported checksum='"
+                        + reportedChecksum + "'");
+            }
         }
+        
+        // This point is reached if there is some kind of (logged) error, i.e.
+        // - the file has not been accepted as completed
+        // - the file has not been sent to retry of upload
+        ad.setState(arcFileName, bitarchiveName,
+                    BitArchiveStoreState.UPLOAD_FAILED);
+        considerReplyingOnStore(arcFileName);
     }
 
     /**
