@@ -45,9 +45,9 @@ public class TestInfo {
     public static final File IT_CONF_FILE  = new File(
 	    WORKING_DIR, "it_config.xml");
     public static final File IT_CONF_SINGLE_FILE = new File(
-	    WORKING_DIR, "it_conf_test_single.xml");
+	    WORKING_DIR, "it_single_config.xml");
     public static final File IT_CONF_DATABASE_FILE = new File(
-	    WORKING_DIR, "it_conf_test_database.xml");
+	    WORKING_DIR, "it_database_config.xml");
     public static final File FILE_NETATCHIVE_SUITE = new File(
             WORKING_DIR, "null.zip");
     public static final File FILE_SECURITY_POLICY = new File(
@@ -55,7 +55,7 @@ public class TestInfo {
     public static final File FILE_LOG_PROP = new File(
 	    WORKING_DIR, "log.prop");
     public static final File FILE_DATABASE = new File(
-	    WORKING_DIR, "fullhddb.jar");
+	    WORKING_DIR, "database.jar");
 
     // arguments
     public static final String ARGUMENT_CONFIG_FILE = 

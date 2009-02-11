@@ -114,11 +114,14 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.SINGLE_TARGET_DIR,
                                               TestInfo.TMPDIR);
+        /*
         if(differences.length() > 0) {
             pss.tearDown();
             System.out.println(differences);
             pss.setUp();
         }
+        */
+        
         assertEquals("No differences expected", 0, differences.length());
     }
     
@@ -142,6 +145,7 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.DATABASE_TARGET_DIR,
                                               TestInfo.TMPDIR);
+
         assertEquals("No differences expected", 0, differences.length());
     }
     
@@ -163,6 +167,7 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TEST_TARGET_DIR,
                                               TestInfo.TMPDIR);
+        
         assertEquals("No differences expected", 0, differences.length());
     }
 
