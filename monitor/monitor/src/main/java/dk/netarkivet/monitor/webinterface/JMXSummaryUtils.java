@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.monitor.webinterface;
@@ -37,22 +38,32 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import dk.netarkivet.common.management.Constants;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.
  */
 public class JMXSummaryUtils {
     
-    /** JMX properties used by Monitor-JMXsummary.jsp */
-    public static final String JMXLocationProperty = "location";
-    public static final String JMXHostnameProperty = "hostname";
-    public static final String JMXApplicationnameProperty = "applicationname";
+    /** JMX properties used by Monitor-JMXsummary.jsp. */
+    public static final String JMXLocationProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_LOCATION;
+    public static final String JMXHostnameProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_MACHINE;
+    public static final String JMXApplicationnameProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_APPLICATIONNAME;
     public static final String JMXApplicationinstidProperty = 
-        "applicationinstid";
-    public static final String JMXHttpportProperty = "httpport";
-    public static final String JMXHarvestPriorityProperty = "priority";
-    public static final String JMXArchiveReplicaIdProperty = "replica";
-    public static final String JMXIndexProperty = "index";
+        dk.netarkivet.common.management.Constants
+            .PRIORITY_KEY_APPLICATIONINSTANCEID;
+    public static final String JMXHttpportProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
+    public static final String JMXHarvestPriorityProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
+    public static final String JMXArchiveReplicaIdProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICA;
+    public static final String JMXIndexProperty = 
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
+    
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
         JMXLocationProperty,
@@ -97,23 +108,39 @@ public class JMXSummaryUtils {
     }
     
     /**
-     * If a column is not active, this function generates the link 
-     * to showing a specific column again.
+     * Creates the show links for showing columns again.
+     * 
+     * Goes through all parameters to check if their column is active.
+     * If a column is not active, the link to showing a specific column again
+     * is generated.
      * 
      * @param starredRequest A request to take parameters from.
-     * @param parameter Reference to the column to show again.
+     * @param l For retrieving the correct words form the current language.
      * @return The link to show the parameter again.
      */
     public static String generateShowColumn(StarredRequest starredRequest, 
-            String parameter) {
+            Locale l) {
         ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
-        ArgumentNotValid.checkNotNull(parameter, "parameter");
-	if( !"-".equals(starredRequest.getParameter(parameter))) {
-            return "";
-	}
-
-	return generateLink(starredRequest, parameter, "*", 
-                parameter) + ", ";	
+        
+        StringBuilder res = new StringBuilder();
+        
+        for(String parameter : STARRABLE_PARAMETERS) {
+            if("-".equals(starredRequest.getParameter(parameter))) {
+                // generate the link, but use the parameter applied to the 
+                // table field value.
+                res.append(generateLink(starredRequest, parameter, "*", 
+                I18N.getString(l, "tablefield;" + parameter)));
+                res.append(",");
+            }
+        }
+        
+        // If any content, then remove last ',' and put 'show' in front
+        if(res.length() > 0) {
+            res.deleteCharAt(res.length() - 1);
+            res.insert(0, "Show: ");
+        }
+        
+        return res.toString();
     }
 
     /** Generate HTML to show at the top of the table, containing a "show all"
@@ -182,7 +209,7 @@ public class JMXSummaryUtils {
         if ("-".equals(starredRequest.getParameter(parameter))) {
             return false;
         }
-	return true;
+        return true;
     }
 
     /** Generate an HTML link to the JMX summary page with one part of the
@@ -256,14 +283,13 @@ public class JMXSummaryUtils {
         } catch (MalformedObjectNameException e) {
             if (query != null) {
                 HTMLUtils.forwardWithErrorMessage(context, I18N, e,
-                                                  "errormsg;error.in.querying.jmx.with.query.0",
-                query);
+                      "errormsg;error.in.querying.jmx.with.query.0", query);
                 throw new ForwardedToErrorPage(
                         "Error in querying JMX with query '" + query + "'.", e);
             } else {
                 HTMLUtils.forwardWithErrorMessage(context, I18N, e,
-                                                  "errormsg;error.in.building.jmxquery");
-                throw new ForwardedToErrorPage("Error building JMX query", e );
+                                         "errormsg;error.in.building.jmxquery");
+                throw new ForwardedToErrorPage("Error building JMX query", e);
             }
         }
     }
@@ -306,7 +332,8 @@ public class JMXSummaryUtils {
     public static String generateMessage(String logMessage, Locale l) {
         StringBuilder msg = new StringBuilder();
         logMessage = HTMLUtils.escapeHtmlValues(logMessage);
-        logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)", "<a href=\"$1\">$1</a>");
+        logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)", 
+                "<a href=\"$1\">$1</a>");
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");
         int lineno = 0;

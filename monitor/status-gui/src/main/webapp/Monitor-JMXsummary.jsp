@@ -71,35 +71,8 @@ java.util.Locale,
     }
     Locale currentLocale = response.getLocale();
 %>
-Show: 
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXLocationProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXHostnameProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXApplicationnameProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXApplicationinstidProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXHttpportProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXHarvestPriorityProperty) 
-      %>
-      <%=
-      JMXSummaryUtils.generateShowColumn(starredRequest, 
-          JMXSummaryUtils.JMXArchiveReplicaIdProperty) 
-      %>
+<%= JMXSummaryUtils.generateShowColumn(starredRequest, 
+        JMXSummaryUtils.JMXLocationProperty, currentLocale) %> 
 
 <table>
     <tr><%
@@ -126,7 +99,7 @@ Show:
          if( JMXSummaryUtils.showColumn(starredRequest, 
              JMXSummaryUtils.JMXApplicationnameProperty) ) { 
          %>
-            <th><fmt:message key="tablefield;application"/> <%=
+            <th><fmt:message key="tablefield;applicationname"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
                     JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
             </th>
@@ -137,7 +110,7 @@ Show:
          if( JMXSummaryUtils.showColumn(starredRequest, 
              JMXSummaryUtils.JMXApplicationinstidProperty) ) { 
          %>
-            <th><fmt:message key="tablefield;applicationid"/> <%=
+            <th><fmt:message key="tablefield;applicationinstanceid"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
                     JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
             </th>
@@ -148,7 +121,7 @@ Show:
          if( JMXSummaryUtils.showColumn(starredRequest, 
              JMXSummaryUtils.JMXHttpportProperty) ) { 
          %>
-            <th><fmt:message key="tablefield;port"/> <%=
+            <th><fmt:message key="tablefield;httpport"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
                     JMXSummaryUtils.JMXHttpportProperty, currentLocale)%></th>
         <% 
@@ -169,7 +142,7 @@ Show:
          if( JMXSummaryUtils.showColumn(starredRequest, 
              JMXSummaryUtils.JMXArchiveReplicaIdProperty) ) { 
          %>
-            <th><fmt:message key="tablefield;replica"/> <%=
+            <th><fmt:message key="tablefield;replicaname"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
                     JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
             </th>

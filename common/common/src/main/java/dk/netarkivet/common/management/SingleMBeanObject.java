@@ -112,25 +112,30 @@ public class SingleMBeanObject<I> {
         this.asInterface = asInterface;
         this.o = o;
         
-        nameProperties.put("location",
+        nameProperties.put(Constants.PRIORITY_KEY_LOCATION,
                            Settings.get(
                                CommonSettings.THIS_PHYSICAL_LOCATION));
-        nameProperties.put("hostname", SystemUtils.getLocalHostName());
-        nameProperties.put("applicationname",
+        nameProperties.put(Constants.PRIORITY_KEY_MACHINE, 
+        	SystemUtils.getLocalHostName());
+        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME,
                            Settings.get(CommonSettings.APPLICATION_NAME));
-        nameProperties.put("applicationinstid",
+        nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID,
                 Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
-        nameProperties.put("httpport",
+        nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT,
                 Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;
             val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
-            nameProperties.put("priority", val);
+            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, val);
         } catch (UnknownID e) {
-            nameProperties.put("priority", "");            
+            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, "");            
         }
-        nameProperties.put("replica",  
-                               Settings.get(CommonSettings.USE_REPLICA_ID));
+        try {
+            String val = Settings.get(CommonSettings.USE_REPLICA_ID);
+            nameProperties.put(Constants.PRIORITY_KEY_REPLICA,  val);
+        } catch (Exception e) {
+            nameProperties.put(Constants.PRIORITY_KEY_REPLICA,  "");
+        }
 
         this.mBeanServer = mBeanServer;
     }
