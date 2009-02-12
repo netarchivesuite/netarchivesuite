@@ -106,7 +106,7 @@ java.util.Locale,
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+             JMXSummaryUtils.JMXApplicationinstidProperty) ) { 
          %>
             <th><fmt:message key="tablefield;applicationid"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
@@ -147,17 +147,10 @@ java.util.Locale,
         <% 
          } 
          %>
-         <%
-         if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXIndexProperty) ) { 
-         %>
-            <th><fmt:message key="tablefield;index"/> <%=
-            JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
-            <th><fmt:message key="tablefield;logmessage"/></th>
-        <% 
-         } 
-         %>
+        <th><fmt:message key="tablefield;index"/> <%=
+        JMXSummaryUtils.generateShowLink(starredRequest,
+                JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
+        <th><fmt:message key="tablefield;logmessage"/></th>
     </tr>
     <%
     for (StatusEntry entry : result) {
@@ -248,19 +241,12 @@ java.util.Locale,
         <% 
          } 
          %>
-         <%
-         if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXIndexProperty) ) { 
-         %>
-            <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                    JMXSummaryUtils.JMXIndexProperty,
-                    entry.getIndex(),
-                    HTMLUtils.escapeHtmlValues(entry.getIndex()))%></td>
-            <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
-                    .getLocale()), currentLocale)%></td>
-        <% 
-         } 
-         %>
+        <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                JMXSummaryUtils.JMXIndexProperty,
+                entry.getIndex(),
+                HTMLUtils.escapeHtmlValues(entry.getIndex()))%></td>
+        <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
+                .getLocale()), currentLocale)%></td>
     </tr>
     <%
         }
