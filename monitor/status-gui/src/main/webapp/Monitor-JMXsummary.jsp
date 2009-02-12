@@ -83,80 +83,184 @@ java.util.Locale,
         <% 
          } 
     	 %>
-        <th><fmt:message key="tablefield;machine"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXHostnameProperty, currentLocale)%></th>
-        <th><fmt:message key="tablefield;application"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
-        </th>
-        <th><fmt:message key="tablefield;applicationid"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
-        </th>
-        <th><fmt:message key="tablefield;port"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-                JMXSummaryUtils.JMXHttpportProperty, currentLocale)%></th>
-        <th><fmt:message key="tablefield;priority"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
-        </th>
-        <th><fmt:message key="tablefield;replica"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
-        </th>
-        <th><fmt:message key="tablefield;index"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
-        	JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
-        <th><fmt:message key="tablefield;logmessage"/></th>
+    	 <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHostnameProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;machine"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXHostnameProperty, currentLocale)%></th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;application"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
+            </th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;applicationid"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
+            </th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHttpportProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;port"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXHttpportProperty, currentLocale)%></th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHarvestPriorityProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;priority"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXHarvestPriorityProperty, currentLocale)%>
+            </th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXArchiveReplicaIdProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;replica"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
+            </th>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXIndexProperty) ) { 
+         %>
+            <th><fmt:message key="tablefield;index"/> <%=
+            JMXSummaryUtils.generateShowLink(starredRequest,
+                    JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
+            <th><fmt:message key="tablefield;logmessage"/></th>
+        <% 
+         } 
+         %>
     </tr>
     <%
     for (StatusEntry entry : result) {
         if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
     %>
-    <tr>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-        		JMXSummaryUtils.JMXLocationProperty,
-                entry.getLocation(),
-                HTMLUtils.escapeHtmlValues(entry.getLocation()))%></td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXHostnameProperty,
-                entry.getHostName(),
-                HTMLUtils.escapeHtmlValues
-                        (JMXSummaryUtils.reduceHostname(entry.getHostName())))%>
-        </td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXApplicationnameProperty,
-                entry.getApplicationName(),
-                HTMLUtils.escapeHtmlValues
-                        (JMXSummaryUtils.reduceApplicationName(
-                                entry.getApplicationName())))%>
-        </td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXApplicationinstidProperty,
-                entry.getApplicationInstanceID(),
-                HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()))%>
-        </td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXHttpportProperty,
-                entry.getHTTPPort(),
-                HTMLUtils.escapeHtmlValues(entry.getHTTPPort()))%></td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXHarvestPriorityProperty,
-                entry.getHarvestPriority(),
-                HTMLUtils.escapeHtmlValues(entry.getHarvestPriority()))%>
-        </td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXArchiveReplicaIdProperty,
-                entry.getArchiveReplicaId(),
-                HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaId()))%>
-        </td>
-        <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                JMXSummaryUtils.JMXIndexProperty,
-                entry.getIndex(),
-                HTMLUtils.escapeHtmlValues(entry.getIndex()))%></td>
-        <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
-        .getLocale()), currentLocale)%></td>
+    <tr><%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXLocationProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                            JMXSummaryUtils.JMXLocationProperty,
+                    entry.getLocation(),
+                    HTMLUtils.escapeHtmlValues(entry.getLocation()))%></td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHostnameProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXHostnameProperty,
+                    entry.getHostName(),
+                    HTMLUtils.escapeHtmlValues
+                            (JMXSummaryUtils.reduceHostname(
+                            entry.getHostName())))%></td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXApplicationnameProperty,
+                    entry.getApplicationName(),
+                    HTMLUtils.escapeHtmlValues
+                            (JMXSummaryUtils.reduceApplicationName(
+                                    entry.getApplicationName())))%>
+            </td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXApplicationinstidProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXApplicationinstidProperty,
+                    entry.getApplicationInstanceID(),
+                    HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()))%>
+            </td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHttpportProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXHttpportProperty,
+                    entry.getHTTPPort(),
+                    HTMLUtils.escapeHtmlValues(entry.getHTTPPort()))%></td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXHarvestPriorityProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXHarvestPriorityProperty,
+                    entry.getHarvestPriority(),
+                    HTMLUtils.escapeHtmlValues(entry.getHarvestPriority()))%>
+            </td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXArchiveReplicaIdProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXArchiveReplicaIdProperty,
+                    entry.getArchiveReplicaId(),
+                    HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaId()))%>
+            </td>
+        <% 
+         } 
+         %>
+         <%
+         if( JMXSummaryUtils.showColumn(starredRequest, 
+             JMXSummaryUtils.JMXIndexProperty) ) { 
+         %>
+            <td><%=JMXSummaryUtils.generateLink(starredRequest,
+                    JMXSummaryUtils.JMXIndexProperty,
+                    entry.getIndex(),
+                    HTMLUtils.escapeHtmlValues(entry.getIndex()))%></td>
+            <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
+                    .getLocale()), currentLocale)%></td>
+        <% 
+         } 
+         %>
     </tr>
     <%
         }

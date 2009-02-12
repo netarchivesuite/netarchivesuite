@@ -134,14 +134,16 @@ public class JMXSummaryUtils {
         ArgumentNotValid.checkNotNull(parameter, "parameter");
         if ("*".equals(starredRequest.getParameter(parameter))) {
             return "("
-                   + generateLink(starredRequest, parameter, "-", "off")
+                   + generateLink(starredRequest, parameter, "-", 
+                           I18N.getString(l, "hide"))
                    + ")";
         } else {
             return "("
                    + generateLink(starredRequest, parameter, "*", 
                      I18N.getString(l, "showall"))
                    + ", "
-                   + generateLink(starredRequest, parameter, "-", "off")
+                   + generateLink(starredRequest, parameter, "-", 
+                           I18N.getString(l, "hide"))
                    + ")";
         }
     }
