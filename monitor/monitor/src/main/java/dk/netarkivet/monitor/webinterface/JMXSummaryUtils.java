@@ -95,6 +95,26 @@ public class JMXSummaryUtils {
         String[] split = hostname.split("\\.", 2);
         return split[0];
     }
+    
+    /**
+     * If a column is not active, this function generates the link 
+     * to showing a specific column again.
+     * 
+     * @param starredRequest A request to take parameters from.
+     * @param parameter Reference to the column to show again.
+     * @return The link to show the parameter again.
+     */
+    public static String generateShowColumn(StarredRequest starredRequest, 
+            String parameter) {
+        ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
+        ArgumentNotValid.checkNotNull(parameter, "parameter");
+	if( "-".equals(starredRequest.getParameter(parameter))) {
+            return "";
+	}
+
+	return generateLink(starredRequest, parameter, "*", 
+                parameter) + ", ";	
+    }
 
     /** Generate HTML to show at the top of the table, containing a "show all"
      * link if the parameter is currently restricted.

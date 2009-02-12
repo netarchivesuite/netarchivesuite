@@ -71,6 +71,35 @@ java.util.Locale,
     }
     Locale currentLocale = response.getLocale();
 %>
+Show: 
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXLocationProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXHostnameProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXApplicationnameProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXApplicationinstidProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXHttpportProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXHarvestPriorityProperty) 
+      %>
+      <%
+      JMXSummaryUtils.generateShowColumn(starredRequest, 
+          JMXSummaryUtils.JMXArchiveReplicaIdProperty) 
+      %>
 
 <table>
     <tr><%
