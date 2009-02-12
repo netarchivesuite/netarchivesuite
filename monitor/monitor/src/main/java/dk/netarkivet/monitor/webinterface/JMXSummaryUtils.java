@@ -108,7 +108,7 @@ public class JMXSummaryUtils {
             String parameter) {
         ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
         ArgumentNotValid.checkNotNull(parameter, "parameter");
-	if( "-".equals(starredRequest.getParameter(parameter))) {
+	if( !"-".equals(starredRequest.getParameter(parameter))) {
             return "";
 	}
 
