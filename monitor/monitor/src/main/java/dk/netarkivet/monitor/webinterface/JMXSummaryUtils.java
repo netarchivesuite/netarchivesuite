@@ -98,6 +98,8 @@ public class JMXSummaryUtils {
 
     /** Generate HTML to show at the top of the table, containing a "show all"
      * link if the parameter is currently restricted.
+     * This function is only used by JMXIndexProperty field, 
+     * the other properties uses generateShowLing instead.
      *
      * @param starredRequest A request to take parameters from.
      * @param parameter The parameter that, if not already unrestricted, should

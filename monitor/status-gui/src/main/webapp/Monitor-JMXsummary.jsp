@@ -148,7 +148,7 @@ java.util.Locale,
          } 
          %>
         <th><fmt:message key="tablefield;index"/> <%=
-        JMXSummaryUtils.generateShowLink(starredRequest,
+        JMXSummaryUtils.generateShowAllLink(starredRequest,
                 JMXSummaryUtils.JMXIndexProperty, currentLocale)%></th>
         <th><fmt:message key="tablefield;logmessage"/></th>
     </tr>
