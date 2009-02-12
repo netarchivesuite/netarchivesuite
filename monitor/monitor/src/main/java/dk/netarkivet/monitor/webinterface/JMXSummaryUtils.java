@@ -261,7 +261,8 @@ public class JMXSummaryUtils {
                                          StarredRequest starredRequest) {
         StringBuilder query = new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
         for (String queryPart : parameters) {
-            if (!"*".equals(starredRequest.getParameter(queryPart))) {
+            if (!"*".equals(starredRequest.getParameter(queryPart))
+        	    && !"-".equals(starredRequest.getParameter(queryPart))) {
                 query.append(",");
                 query.append(queryPart);
                 query.append("=");
