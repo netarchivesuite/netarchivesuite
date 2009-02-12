@@ -71,8 +71,7 @@ java.util.Locale,
     }
     Locale currentLocale = response.getLocale();
 %>
-<%= JMXSummaryUtils.generateShowColumn(starredRequest, 
-        JMXSummaryUtils.JMXLocationProperty, currentLocale) %> 
+<%= JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale) %> 
 
 <table>
     <tr><%
