@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -146,7 +147,12 @@ public abstract class FileBasedCache<I> {
                         	+ fileBehindLockFile.getAbsolutePath()
                         	+ "' (thread = "
                         	+ Thread.currentThread().getName() + ")");
-                        lock = lockFile.getChannel().lock();
+                        try {
+                            lock = lockFile.getChannel().lock();
+                        } catch (OverlappingFileLockException e) {
+                            log.warn(e);
+                            throw new IOException(e);
+                        }
                         // Now we know nobody else touches the file
                         // Just in case, check that the file wasn't created
                         // in the interim.  If it was, we can return it.

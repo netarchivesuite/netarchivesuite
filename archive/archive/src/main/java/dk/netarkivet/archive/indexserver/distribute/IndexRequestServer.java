@@ -80,10 +80,12 @@ public class IndexRequestServer extends ArchiveMessageHandler
      *
      * @return The index request server.
      */
-    public static synchronized IndexRequestServer getInstance() {
-        if (instance == null) {
-            instance = new IndexRequestServer();
-        }
+    public static IndexRequestServer getInstance() {
+	synchronized (instance) {
+	    if (instance == null) {
+		instance = new IndexRequestServer();
+	    }
+	}
         return instance;
     }
 
@@ -188,10 +190,15 @@ public class IndexRequestServer extends ArchiveMessageHandler
                     e);
             irMsg.setNotOk(e);
         } finally {
-            log.info("Sending reply for IndexRequestMessage " +
+            String state = "failed";
+            if (irMsg.isOk()) {
+        	state = "successfull";
+            }
+            log.info("Sending " + state 
+        	    + " reply for IndexRequestMessage "
             		//"with ID='"
                     //+ irMsg.getReplyOfId()
-                     " back to sender '"
+                    + " back to sender '"
                     + irMsg.getReplyTo() + "'."); 
             JMSConnectionFactory.getInstance().reply(irMsg);
         }
