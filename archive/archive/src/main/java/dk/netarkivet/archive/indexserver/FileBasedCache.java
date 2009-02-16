@@ -133,15 +133,19 @@ public abstract class FileBasedCache<I> {
             return id;
         } else {
             try {
+        	File fileBehindLockFile 
+        		= new File(cachedFile.getAbsolutePath() + ".working");
                 FileOutputStream lockFile = new FileOutputStream(
-                        new File(cachedFile.getAbsolutePath() + ".working"));
-
+                        fileBehindLockFile);
                 FileLock lock = null;
                 try {
                     // Make sure no other thread tries to create this
                     synchronized (cachedFile.getAbsolutePath().intern()) {
                         // Make sure no other process tries to create this
-                        log.debug("locking filechannel " +  lockFile.getChannel());
+                        log.debug("locking filechannel for file '"
+                        	+ fileBehindLockFile.getAbsolutePath()
+                        	+ "' (thread = "
+                        	+ Thread.currentThread().getName() + ")");
                         lock = lockFile.getChannel().lock();
                         // Now we know nobody else touches the file
                         // Just in case, check that the file wasn't created
