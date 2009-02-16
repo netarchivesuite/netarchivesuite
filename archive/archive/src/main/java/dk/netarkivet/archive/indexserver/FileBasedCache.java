@@ -141,12 +141,13 @@ public abstract class FileBasedCache<I> {
                 FileLock lock = null;
                 try {
                     // Make sure no other thread tries to create this
-                    synchronized (cachedFile.getAbsolutePath().intern()) {
+                    synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
+                	
                         // Make sure no other process tries to create this
-                        log.debug("locking filechannel for file '"
-                        	+ fileBehindLockFile.getAbsolutePath()
-                        	+ "' (thread = "
-                        	+ Thread.currentThread().getName() + ")");
+//                        log.debug("locking filechannel for file '"
+//                        	+ fileBehindLockFile.getAbsolutePath()
+//                        	+ "' (thread = "
+//                        	+ Thread.currentThread().getName() + ")");
                         try {
                             lock = lockFile.getChannel().lock();
                         } catch (OverlappingFileLockException e) {
