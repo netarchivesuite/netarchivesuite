@@ -223,8 +223,7 @@ public class ChannelID implements Serializable {
     /**
      * Finds abbreviation for an application name.
      * The abbreviation is only calculated from the application name without
-     * path. It is made from the uppercase letters in the name, ecluding the 
-     * last letter (which is typically 'A' for Application) 
+     * path. It is made from the uppercase letters in the name.
      * @param applName application name with full path
      * @return abbreviation for given application name.
      */
@@ -243,9 +242,7 @@ public class ChannelID implements Serializable {
                 abbr += shortName.substring(i, i+1);
             }
         }
-        //return abbr without last letter (if possible)
-        return (abbr.length() > 1  
-                ? abbr.substring(0, abbr.length()-1)
-                : abbr);
+        //return found abbreviation
+        return abbr;
     }
 }

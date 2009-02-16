@@ -69,7 +69,7 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
-        <applicationName>IxxxxSxxxxApp</applicationName>
+        <applicationName>IxxxxSxxxx</applicationName>
         <applicationInstanceId>XXX</applicationInstanceId>
      </common>
      <harvester>
