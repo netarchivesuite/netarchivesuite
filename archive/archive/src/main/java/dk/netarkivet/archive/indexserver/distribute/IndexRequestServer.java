@@ -81,11 +81,10 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @return The index request server.
      */
     public static IndexRequestServer getInstance() {
-	synchronized (instance) {
-	    if (instance == null) {
-		instance = new IndexRequestServer();
-	    }
+	if (instance == null) {
+	    instance = new IndexRequestServer();
 	}
+
         return instance;
     }
 
