@@ -171,11 +171,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="unittest" depends="compiletestsclean"
             description="Run unit tests on a clean compile">
-        <chmod perm="+x">
-            <fileset dir="tests/dk/netarkivet/harvester/sidekick/data/">
-                <include name="*.sh"/>
-            </fileset>
-        </chmod>
         <chmod perm="0600">
             <fileset dir="conf">
                 <include name="jmxremote.password"/>
@@ -187,7 +182,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Djava.security.manager"/>
-            <jvmarg value="-Djava.security.policy=conf/test.policy"/>
+            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/test.policy"/>
             <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
             <formatter type="brief" usefile="false"/>
@@ -203,7 +198,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Djava.security.manager"/>
-            <jvmarg value="-Djava.security.policy=conf/test.policy"/>
+            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/test.policy"/>
             <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
             <formatter type="brief" usefile="false"/>
@@ -290,13 +285,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="LICENSE.txt"/>
             <include name="README.txt"/>
             <!-- Eclipse specific project files --> 
-	    <include name=".project"/>
-	    <include name=".classpath"/>
-	    <include name=".checkstyle"/>
-	    <include name="NetarchiveSuite_checks.xml"/>
+	        <include name=".project"/>
+	    	<include name=".classpath"/>
+	    	<include name=".checkstyle"/>
+	    	<include name="NetarchiveSuite_checks.xml"/>
             <!-- Intellij specific project files --> 
             <include name="netarchivesuite.iml"/>
-	    <include name="netarchivesuite.ipr"/>
+	    	<include name="netarchivesuite.ipr"/>
         </zip>
     </target>
 
@@ -401,10 +396,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="dk/netarkivet/deploy/**/*.class"/>
             <include name="dk/netarkivet/deploy/**/*.properties"/>
             <include name="dk/netarkivet/deploy/**/*.xml"/>
-            <include name="dk/netarkivet/deploy2/**/*.class"/>
-            <include name="dk/netarkivet/deploy2/**/*.properties"/>
-            <include name="dk/netarkivet/deploy2/**/*.xml"/>
-        	            
             <manifest>
                 <attribute name="Builder" value="${builder}"/>
                 <attribute name="Class-Path"
@@ -443,7 +434,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <arg value="dk.netarkivet.harvester.harvesting.HarvestControllerApplication"/>
             <arg value="dk.netarkivet.common.webinterface.GUIApplication"/>
             <arg value="dk.netarkivet.viewerproxy.ViewerProxyApplication"/>
-            <arg value="dk.netarkivet.harvester.sidekick.SideKick"/>
             <arg value="-x"/>
             <arg value="org/xml/sax"/>
             <arg value="-x"/>
@@ -467,7 +457,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Djava.security.manager"/>
-            <jvmarg value="-Djava.security.policy=conf/test.policy"/>
+            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/test.policy"/>
             <jvmarg value="-Dsettings.common.jms.broker=localhost"/>
             <jvmarg value="-Dsettings.common.environmentName=CLOVER"/>
             <jvmarg value="-Ddk.netarkivet.ftp.serverName=localhost"/>
