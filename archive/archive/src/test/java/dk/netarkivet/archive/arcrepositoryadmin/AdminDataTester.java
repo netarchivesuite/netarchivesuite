@@ -113,7 +113,7 @@ public class AdminDataTester extends TestCase {
         StoreMessage myReplyInfo
                 = new StoreMessage(Channels.getError(),
                                    File.createTempFile("dummy","dummy"));
-        ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(myFile, myReplyInfo, "checksum");
         assertTrue("replyInfo has been set", ad.hasReplyInfo(myFile));
         assertEquals("Wrong replyInfo returned", myReplyInfo, ad.removeReplyInfo(myFile));
@@ -146,7 +146,7 @@ public class AdminDataTester extends TestCase {
         assertFalse("Entry for file: " + myFile + " already exists",
                 ad.hasEntry(myFile));
         String myChecksum = "Dummy checksum";
-        ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(myFile, null, myChecksum);
         assertTrue("Entry for File: " + myFile + " should exist now.",
                 ad.hasEntry(myFile));
@@ -171,7 +171,7 @@ public class AdminDataTester extends TestCase {
         ad = UpdateableAdminData.getUpdateableInstance();
         String myBA = "Test ID of bit archive";
         //TODO: Needs to incorporate the timestamps, and generalstate into this test
-        ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(myFile, null, "checksum");
         assertFalse("No state set for " + myFile + " " + myBA, ad.hasState(myFile, myBA));
         ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_STARTED);
@@ -248,7 +248,7 @@ public class AdminDataTester extends TestCase {
         File file = new File(TestInfo.ORIGINALS_DIR, (String) TestInfo.GETTABLE_FILENAMES.get(0));
         String filename = file.getName();
         String bitArchiveID = "bitArchiveID";
-        ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(filename, null, "checksum");
 
         try {
@@ -314,7 +314,7 @@ public class AdminDataTester extends TestCase {
      * @throws FileNotFoundException
      */
     public void testWriteJournalling() throws IOException, FileNotFoundException{
-        ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+        //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         File datafile = new File(Settings.get(
                 ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN), "admin.data");
         ad = UpdateableAdminData.getUpdateableInstance();
