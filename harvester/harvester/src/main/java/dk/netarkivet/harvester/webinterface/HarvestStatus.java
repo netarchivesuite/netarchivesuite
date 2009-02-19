@@ -102,13 +102,16 @@ public class HarvestStatus {
      * @param harvestID The ID of the harvest
      * @param harvestRun The run # of the harvest (always 0 for snapshots)
      * @return A properly encoded HTML string with a link and the harvest run
-     * as the text.
+     * as the text. Select all jobs to be shown.
      */
     public static String makeHarvestRunLink(long harvestID, int harvestRun) {
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestRun, "harvestRun");
         return "<a href=\"/History/Harveststatus-perharvestrun.jsp?harvestID="
-                + harvestID + "&amp;harvestNum=" + harvestRun + "\">"
+                + harvestID + "&amp;" + Constants.HARVEST_NUM_PARAM
+                + "=" + harvestRun 
+                + "&amp;" + Constants.JOBSTATUS_PARAM + "="
+                + HarvestStatus.JOBSTATUS_ALL + "\">"
                 + harvestRun + "</a>";
     }
 
