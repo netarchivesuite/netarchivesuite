@@ -38,6 +38,7 @@ import javax.management.remote.JMXServiceURL;
 import javax.naming.ServiceUnavailableException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -248,6 +249,11 @@ public class JMXUtils {
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
+                } catch (IOException e) {
+                  lastException = e;
+                    if (tries < MAX_TRIES) {
+                        TimeUtils.exponentialBackoffSleep(tries);
+                    }
                 }
             } while (tries < MAX_TRIES);
             throw new IOFailure("Failed to find MBean " + beanName
@@ -258,8 +264,6 @@ public class JMXUtils {
             throw new IOFailure("MBean exception for " + beanName, e);
         } catch (ReflectionException e) {
             throw new IOFailure("Reflection exception for " + beanName, e);
-        } catch (IOException e) {
-            throw new IOFailure("Generic IO problem for " + beanName, e);
         }
     }
 
@@ -296,6 +300,11 @@ public class JMXUtils {
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
+                } catch (IOException e) {
+                   lastException = e;
+                    if (tries < MAX_TRIES) {
+                        TimeUtils.exponentialBackoffSleep(tries);
+                    }
                 }
             } while (tries < MAX_TRIES);
             throw new IOFailure("Failed to find MBean " + beanName
@@ -308,8 +317,6 @@ public class JMXUtils {
             throw new IOFailure("MBean exception for " + beanName, e);
         } catch (ReflectionException e) {
             throw new IOFailure("Reflection exception for " + beanName, e);
-        } catch (IOException e) {
-            throw new IOFailure("Generic IO problem for " + beanName, e);
         }
     }
 
@@ -357,7 +364,8 @@ public class JMXUtils {
                 lastException = e;
                 if (retries < MAX_TRIES &&
                     e.getCause() != null
-                    && e.getCause() instanceof ServiceUnavailableException) {
+                    && (e.getCause() instanceof ServiceUnavailableException ||
+                        e.getCause() instanceof SocketTimeoutException) ) {   
                     // Sleep a bit before trying again
                     TimeUtils.exponentialBackoffSleep(retries);
                     continue;
@@ -438,7 +446,7 @@ public class JMXUtils {
         try {
             connection = connector.getMBeanServerConnection();
         } catch (IOException e) {
-            throw new IOFailure("Failure getting JMX connection", e);
+            throw new IOFailure("Failure getting JMX connection", e);    
         }
         try {
             return getAttribute(beanName, attribute, connection);

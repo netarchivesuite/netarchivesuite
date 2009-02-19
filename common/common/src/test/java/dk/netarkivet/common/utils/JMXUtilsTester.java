@@ -41,9 +41,19 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 import javax.management.ReflectionException;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.net.MalformedURLException;
 
 import junit.framework.TestCase;
 
@@ -52,6 +62,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
+import com.sun.jndi.rmi.registry.RegistryContextFactory;
+
 /**
  * 
  * Unit tests for the JMXUtils class.
@@ -59,13 +71,14 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 public class JMXUtilsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
-    
+
+
     public JMXUtilsTester(String s) {
         super(s);
     }
 
     public void setUp() {
-        
+
         // Set JMX_timeout to 1 second.
         // When run as part of the unittestersuite, it has no
         // effect.
@@ -80,6 +93,33 @@ public class JMXUtilsTester extends TestCase {
     public void tearDown() {
         rs.tearDown();
     }
+
+    public void testGetJMXConnector() throws IOException {
+        try {
+            JMXUtils.getJMXConnector("Ahost.invalid", 1234, "login", "password");
+            fail("Should throw IOFailure when failing to connect to JMX host");
+        } catch (IOFailure e) {
+            //expected
+        }
+/* This code block launches a local jmx service, but it's commented out because it doesn't
+test any project code
+        MBeanServer mbs = MBeanServerFactory.createMBeanServer();
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://");
+        url = new JMXServiceURL("rmi", "localhost", 1234, "");
+                 Map<String,String[]> credentials = new HashMap<String,String[]>(1);
+        credentials.put("jmx.remote.credentials",
+                new String[]{"user", "pass"});
+        JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url,credentials,mbs);
+        cs.start();
+        JMXServiceURL addr = cs.getAddress();
+        JMXConnector conn1 = JMXConnectorFactory.connect(addr, credentials);
+        //JMXConnector conn = JMXUtils.getJMXConnector("localhost", 1234, "user", "pass");
+        conn1.close();
+        cs.stop();*/
+    }
+
+
+
     public void testGetAttribute() throws Exception {
         TestMBeanServerConnection connection = new TestMBeanServerConnection(0);
         Object ret = connection.getAttribute(JMXUtils.getBeanName("a:aBean=1"), "anAttribute");
