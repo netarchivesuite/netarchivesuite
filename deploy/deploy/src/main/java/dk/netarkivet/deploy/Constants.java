@@ -26,6 +26,7 @@ package dk.netarkivet.deploy;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.EMailNotifications;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.viewerproxy.ViewerProxySettings;
@@ -37,13 +38,7 @@ import dk.netarkivet.viewerproxy.ViewerProxySettings;
  * COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
-    /**
-     * Constructor.
-     * Private due to constants only class.
-     */
-    private Constants() {}
-    
-    // deploy specific parameter.
+    // deploy specific parameters.
     /** The path to the class path branches.*/
     static final String DEPLOY_CLASS_PATH = "deployClassPath";
     /** The path to the java option branches.*/
@@ -65,7 +60,7 @@ public final class Constants {
     /** The path to name in a application instance.*/
     static final String APPLICATION_NAME_ATTRIBUTE = "name";
     /** The path to name in a physical location instance.*/
-    static final String PHYSICAL_LOCATION_NAME_ATTRIBUTES = "name";
+    static final String PHYSICAL_LOCATION_NAME_ATTRIBUTE = "name";
     /** The path to name in a machine instance.*/
     static final String MACHINE_NAME_ATTRIBUTE = "name";
     /** The path to the operating system variable.*/
@@ -167,16 +162,24 @@ public final class Constants {
     // Values and file names
     /** The operating system attribute for windows.*/
     static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
+    /** The operating system attribute for linux/unix */
+    static final String OPERATING_SYSTEM_LINUX_ATTRIBUTE = "linux";
     /** The call for running a batch script from another batch script.*/
     static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
         "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
     /** The name of the JMX remote password file.*/
     static final String JMX_FILE_NAME = "jmxremote.password";
-    /** The directory for the database in the unpacked NetarchiveSuite.*/
+    /** The directory for the database in the unpacked NetarchiveSuite.
+     *  The default directory for the database file.
+     */
     static final String DATABASE_BASE_DIR = "harvestdefinitionbasedir/";
-    /** The name of the database in the directory above.*/
+    /** The name of the database in the directory above.
+     *  The default name for the database file.
+     */
     static final String DATABASE_BASE_FILE = "fullhddb.jar";
-    /** The path to the base database (the two above combined).*/
+    /** The path to the base database (the two above combined).
+     *  This is the default location for the database. 
+     */
     static final String DATABASE_BASE_PATH = 
         DATABASE_BASE_DIR + DATABASE_BASE_FILE;
     /** The message when database is trying to overwrite a non-empty dir.*/
@@ -210,8 +213,6 @@ public final class Constants {
     static final String FILE_TEMPORARY_RUN_WINDOWS_NAME = "running_";
     
     // other constants
-    /** Number of '-' repeat in scripts. */
-    static final int SCRIPT_DASH_NUM_REPEAT = 44;
     /** The minimum number of arguments required.*/
     static final int ARGUMENTS_REQUIRED = 4;
     /** The exact number of arguments required for test.*/
@@ -224,6 +225,23 @@ public final class Constants {
             dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
             dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME
         };
+    /** The offset for the digit to replace during test in the 
+     * monitor jmx port.
+     */
+    static final int TEST_OFFSET_MONITOR_JMX_PORT = 2;
+    /** The offset for the digit to replace during test in the 
+     * monitor rmi port.
+     */
+    static final int TEST_OFFSET_MONITOR_RMI_PORT = 2;
+    /** The offset for the digit to replace during test in the 
+     * heritrix jmx port.
+     */
+    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
+    /** The offset for the digit to replace during test in the 
+     * heritrix gui port.
+     */
+    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    
 
     // argument parameters as constants.
     /** For initiating a argument. */
@@ -257,7 +275,7 @@ public final class Constants {
     /** The error message when not enough arguments are given.*/
     public static final String MSG_ERROR_NOT_ENOUGH_ARGUMENTS = 
         "Not enough arguments given.\n";
-    /** The error message when no it-config file is given.*/
+    /** The error message when no deploy-config file is given.*/
     public static final String MSG_ERROR_NO_CONFIG_FILE_ARG = 
         "No config file argument: -C (Must end with '.xml').\n";
     /** The error message when no NetarchiveSuite file is given.*/
@@ -284,7 +302,7 @@ public final class Constants {
     /** The error message when database file does not exist.*/
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = 
         "Reference to non-existing database file (-D argument).";
-    /** The error message for wrong it-config file extension.*/
+    /** The error message for wrong deploy-config file extension.*/
     public static final String MSG_ERROR_CONFIG_EXTENSION = 
         "Config file must be '.xml'!.\n";
     /** The error message for wrong NetarchiveSuite file extension.*/
@@ -308,4 +326,7 @@ public final class Constants {
     /** The error message when reset directory has wrong argument.*/
     public static final String MSG_ERROR_RESET_ARGUMENT = 
         "Wrong argument for resetting the directory.";
+    /** The error message when a physical location has no name attribute.*/
+    public static final String MSG_ERROR_PHYSICAL_LOCATION_NO_NAME =
+	"A Physical Location has no name!";
 }

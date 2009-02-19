@@ -70,11 +70,11 @@ public class XmlStructure {
      * Creating a new instance of this data-structure from 
      * the branch of another instance. 
      * 
-     * @param tree The root of the tree for this instance
+     * @param subTreeRoot The root of the tree for this instance
      */
-    public XmlStructure(Element tree) {
-        ArgumentNotValid.checkNotNull(tree, "Element tree");
-        root = tree.createCopy();
+    public XmlStructure(Element subTreeRoot) {
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element tree");
+        root = subTreeRoot.createCopy();
     }
 
     /**
@@ -97,15 +97,17 @@ public class XmlStructure {
         ArgumentNotValid.checkNotNull(f, "File f");
         SAXReader reader = new SAXReader();
         if (!f.canRead()) {
-            log.debug("Could not read file: '" + f + "'");
-            throw new IOFailure("Could not read file: '" + f + "'");
+            String msg = "Could not read file: '" + f.getAbsolutePath() + "'";
+            log.debug(msg);
+            throw new IOFailure(msg);
         }
         try {
             return reader.read(f);
         } catch (DocumentException e) {
-            log.warn("Could not parse the file as XML: '" + f + "'", e);
-            throw new IOFailure(
-                    "Could not parse the file as XML: '" + f + "'", e);
+            String msg = "Could not parse file: '" + f.getAbsolutePath() 
+                    + "' as XML.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -146,7 +148,7 @@ public class XmlStructure {
      * For retrieving the first children along a path.
      * 
      * @param name The path to the child.
-     * @return The child element.
+     * @return The child element, or null if no such child exists.
      */
     public Element getSubChild(String ... name) {
         // if no arguments, the XML is returned
@@ -184,7 +186,8 @@ public class XmlStructure {
             if(e.isTextOnly()) {
                 return e.getText();
             } else {
-                log.debug("Element is not text");
+                log.debug("Element is not text. The entire XML-branch "
+                	+ "is returned.");
                 return e.asXML();
             }
         } else {
@@ -207,7 +210,7 @@ public class XmlStructure {
         if(e != null && e.isTextOnly()) {
             return e.getText();
         } else {
-            log.debug("Element is not text");
+            log.debug("Element is not text. Null returned.");
             return null;
         }
     }
@@ -229,7 +232,7 @@ public class XmlStructure {
         // get all leafs along path
         List<Element> elemList = getAllChildrenAlongPath(root, path);
         // check that any leafs exist.
-        if(elemList.size() < 1) {
+        if(elemList.isEmpty()) {
             return null;
         }
 
@@ -261,7 +264,7 @@ public class XmlStructure {
     }
 
     /**
-     * The current tree will be overwritten by the overwriter tree
+     * The current tree will be overwritten by the overwriter tree.
      * The new branches in overwriter will be added to the current tree.
      * For the leafs which are present in both overwriter and current, 
      * the value in the current-leaf will be overwritten by the overwriter-leaf.
@@ -290,7 +293,7 @@ public class XmlStructure {
             List<Element> curElems = current.elements(e.getName());
             
             // if no such elements in current tree, add branch.
-            if(curElems.size() == 0) {
+            if(curElems.isEmpty()) {
                 addElements.add(e);
             } else {
                 // 
@@ -364,7 +367,6 @@ public class XmlStructure {
      */
     public void overWriteOnlyInt(Element branch, int position, char value, 
             String ... path) {
-        ArgumentNotValid.checkNotNull(value, "String Value");
         ArgumentNotValid.checkNotNull(path, "String path");
         ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
         ArgumentNotValid.checkPositive(position, "int position");
@@ -395,6 +397,8 @@ public class XmlStructure {
      * @return The Element.
      */
     public static Element makeElementFromString(String content) {
+	ArgumentNotValid.checkNotNullOrEmpty(content, "String name");
+	
         try{
             ByteArrayInputStream in = new ByteArrayInputStream(
                     content.getBytes());
@@ -415,6 +419,10 @@ public class XmlStructure {
      * @return The XML code for the branch with content.
      */
     public static String pathAndContentToXML(String content, String ... path) {
+	ArgumentNotValid.checkNotNullOrEmpty(content, "String content");
+	ArgumentNotValid.checkNotNegative(path.length, 
+                "Size of 'String ... path'");
+	
         StringBuilder res = new StringBuilder();
 
         // write path to the leaf

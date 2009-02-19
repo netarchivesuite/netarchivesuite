@@ -72,32 +72,59 @@ public class WindowsMachine extends Machine {
      * Creates the operation system specific installation script for 
      * this machine.
      * 
+     * Pseudo code:
+     * - echo copying 'NetarchiveSuite.zip' to: 'machine'
+     * - scp 'NetarchiveSuite.zip' 'login'@'machine':
+     * - echo unzipping 'NetarchiveSuite.zip' at: 'machine'
+     * - ssh 'login'@'machine' 'unzip' 'environmentName' -o 'NetarchiveSuite.zip
+     * - $'create directories'.
+     * - echo preparing for copying of settings and scripts
+     * - if [ $( ssh 'login'@'machine' cmd /c if exist 
+     * 'environmentName'\\conf\\security.policy echo 1 ) ]; then echo Y | ssh 
+     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\security.policy
+     * /P BITARKIV\\'login':F; fi
+     * - echo copying settings and scripts
+     * - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\
+     * - $'apply database script'
+     * - echo make password files readonly
+     * - echo Y | ssh 'login'@'machine' cmd /c cacls 
+     * 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
+     * 
+     * variables:
+     * 'NetarchiveSuite.zip' = The NetarchiveSuitePackage with '.zip' extension.
+     * 'machine' = The machine name.
+     * 'login' = The username for the machine.
+     * 'unzip' = The command for unzipping.
+     * 'environmentName' = the environmentName from the configuration file.
+     * 
+     * $'...' = call other function.
+     * 
      * @return Operation system specific part of the installscript
      */
     @Override
     protected String osInstallScript() {
-        StringBuilder res = new StringBuilder("");
-        // echo copying null.zip to: kb-test-bar-011.bitarkiv.kb.dk
+        StringBuilder res = new StringBuilder();
+        // - echo copying 'NetarchiveSuite.zip' to: 'machine'
         res.append("echo copying ");
         res.append(netarchiveSuiteFileName);
         res.append(" to: ");
         res.append(name);
         res.append("\n");
-        // scp null.zip dev@kb-test-bar-011.bitarkiv.kb.dk:
+        // - scp 'NetarchiveSuite.zip' 'login'@'machine':
         res.append("scp ");
         res.append(netarchiveSuiteFileName);
         res.append(" ");
         res.append(machineUserLogin());
         res.append(":");
         res.append("\n");
-        // echo unzipping null.zip at: kb-test-bar-011.bitarkiv.kb.dk
+        // - echo unzipping 'NetarchiveSuite.zip' at: 'machine'
         res.append("echo unzipping ");
         res.append(netarchiveSuiteFileName);
         res.append(" at: ");
         res.append(name);
         res.append("\n");
-        // ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c unzip.exe -q -d TEST 
-        // -o null.zip
+        // - ssh 'login'@'machine' 'unzip' 'environmentName' -o 
+        // 'NetarchiveSuite.zip 
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" cmd /c unzip.exe -q -d ");
@@ -105,18 +132,15 @@ public class WindowsMachine extends Machine {
         res.append(" -o ");
         res.append(netarchiveSuiteFileName);
         res.append("\n");
-        // create other directories.
+        // - $'create directories'.
         res.append(osInstallScriptCreateDir());
-        // echo preparing for copying of settings and scripts
+        // - echo preparing for copying of settings and scripts
         res.append("echo preparing for copying of settings and scripts");
         res.append("\n");
-        // ssh machine: "if [ -e conf/jmxremote.password ]; 
-        // then chmod +x conf/jmxremote.password; fi; "
-        // if [ $(ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk 
-        // cmd /c if exist JOLF\\conf\\security.policy echo 1 ) ]; then 
-        // echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls 
-        // JOLF\\conf\\security.policy 
-        // /P BITARKIV\\ba-test:F; fi
+        // - if [ $( ssh 'login'@'machine' cmd /c if exist 
+        // 'environmentName'\\conf\\security.policy echo 1 ) ]; then echo Y 
+        // | ssh 'login'@'machine' cmd /c cacls 
+        // 'environmentName'\\conf\\security.policy /P BITARKIV\\'login':F; fi
         res.append("if [ $(ssh ");
         res.append(machineUserLogin());
         res.append(" cmd /c if exist ");
@@ -133,12 +157,10 @@ public class WindowsMachine extends Machine {
         res.append(":F");
         res.append("; fi;");
         res.append("\n");
-        // echo copying settings and scripts
+        // - echo copying settings and scripts
         res.append("echo copying settings and scripts");
         res.append("\n");
-        // scp -r kb-test-bar-011.bitarkiv.kb.dk/* 
-        // dev@kb-test-bar-011.bitarkiv.kb.dk:
-        // ""c:\\Documents and Settings\\dev\\TEST\\conf\\""
+        // - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\
         res.append("scp -r ");
         res.append(name);
         res.append("/* ");
@@ -146,14 +168,13 @@ public class WindowsMachine extends Machine {
         res.append(":");
         res.append(changeToScriptPath(getLocalConfDirPath()));
         res.append("\n");
-        // APPLY DATABASE
+        // - $'apply database script'
         res.append(osInstallDatabase());
-        // pw.println("echo make password files readonly");
+        // - echo make password files readonly 
         res.append("echo make password files readonly");
         res.append("\n");
-        // echo Y | ssh dev@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls 
-        // ""c:\\Documents and Settings\\dev\\TEST\\conf\\jmxremote.password"" 
-        // /P BITARKIV\\dev:R
+        // - echo Y | ssh 'login'@'machine' cmd /c cacls 
+        // 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
         res.append("echo Y | ssh ");
         res.append(machineUserLogin());
         res.append(" cmd /c cacls ");
@@ -169,11 +190,19 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the operation system specific killing script for this machine.
      * 
+     * pseudocode:
+     * - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\killall.bat
+     * 
+     * variables:
+     * 'login' = machine user name
+     * 'machine' = name of the machine
+     * 'environmentName' = the environmentName from configuration.
+     * 
      * @return Operation system specific part of the killscript.
      */
     @Override
     protected String osKillScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \"cmd /c  ");
@@ -188,11 +217,19 @@ public class WindowsMachine extends Machine {
     /**
      * Creates the operation system specific starting script for this machine.
      * 
+     * pseudocode:
+     * - ssh 'login'@'machine' cmd /c 'environmentName'\\conf\\startall.bat
+     * 
+     * variables:
+     * 'login' = machine user name
+     * 'machine' = name of the machine
+     * 'environmentName' = the environmentName from configuration.
+     * 
      * @return Operation system specific part of the startscript.
      */
     @Override
     protected String osStartScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \"cmd /c  ");
@@ -250,8 +287,8 @@ public class WindowsMachine extends Machine {
             // Initialise script
             PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
-                killPrinter.println("echo Killing all applications at: " 
-                        + name);
+                killPrinter.println("echo Killing all applications on: '" 
+                        + name + "'");
                 killPrinter.println("cd \"" + getConfDirPath() + "\"");
                 // insert path to kill script for all applications
                 for(Application app : applications) {
@@ -262,9 +299,6 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     killPrinter.print("\"");
                     killPrinter.print(appScript);
-//                  killPrinter.print(" 2>> log_");
-//                  killPrinter.print(app.getIdentification());
-//                  killPrinter.print(".log \"");
                     killPrinter.print("\"");
                     killPrinter.println();
                 }
@@ -273,14 +307,13 @@ public class WindowsMachine extends Machine {
                 killPrinter.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create the local kill all script: " + e);
-            throw new IOFailure("Problems creating local kill all script: "
-                    + e);
+            String msg = "Problems creating local kill all script: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating local kill all script: "
-                    + e);
+            String msg = "Error in creating local kill all script: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -301,8 +334,8 @@ public class WindowsMachine extends Machine {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
             try {
-                startPrinter.println("echo Starting all applications at: " 
-                        + name);
+                startPrinter.println("echo Starting all applications on: '" 
+                        + name + "'");
                 startPrinter.println("cd \"" + getConfDirPath() + "\"");
                 // insert path to kill script for all applications
                 for(Application app : applications) {
@@ -313,9 +346,7 @@ public class WindowsMachine extends Machine {
                             Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
                     startPrinter.print("\"");
                     startPrinter.print(appScript);
-//                    startPrinter.print(" 2>> log_");
-//                    startPrinter.print(app.getIdentification());
-//                    startPrinter.print(".log \"");
+
                     startPrinter.print("\"");
                     startPrinter.println();
                 }
@@ -324,14 +355,14 @@ public class WindowsMachine extends Machine {
                 startPrinter.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create the local start all script: " + e);
-            throw new IOFailure("Problems creating local start all script: "
-                    + e);
+            String msg = "Problems during creation of the local start "
+                    + "all script: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating local start all script: "
-                    + e);
+            String msg = "Error in creating local start all script: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -495,7 +526,7 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         // get all the classpaths (change from '\' to '\\')
         for(Element cp : app.getMachineParameters().getClassPaths()) {
             // insert the path to the install directory
@@ -722,13 +753,13 @@ public class WindowsMachine extends Machine {
     }
 
     /**
-     * Creates the specified directories in the it-config.
+     * Creates the specified directories in the deploy config file.
      * 
      * @return The script for creating the directories.
      */
     @Override
     protected String osInstallScriptCreateDir() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
 
         res.append("echo Creating directories.");
         res.append("\n");
@@ -764,7 +795,8 @@ public class WindowsMachine extends Machine {
      * This functions makes the script for creating the new directories.
      * 
      * Linux creates directories directly through ssh.
-     * Windows creates an install
+     * Windows creates an install a script file for installing the directories, 
+     * which has to be sent to the machine, then executed and finally deleted. 
      * 
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
@@ -799,7 +831,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String getAppDirectories() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         String[] dirs;
 
         for(Application app : applications) {
@@ -890,7 +922,7 @@ public class WindowsMachine extends Machine {
                         // get tempDir directory.
                         dir = settings.getLeafValue(
                                 Constants.SETTINGS_TEMPDIR_LEAF);
-                        if(dir != null && !dir.equalsIgnoreCase("")
+                        if(dir != null && !dir.isEmpty()
                                 && !dir.equalsIgnoreCase(".")) {
                             dirPrint.print(scriptCreateDir(dir, resetTempDir));
                         }

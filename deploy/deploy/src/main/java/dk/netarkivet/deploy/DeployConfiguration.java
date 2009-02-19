@@ -33,8 +33,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
- * The structure for the it-config.
- * Loads the IT configuration from an XML file into a XmlStructure.
+ * The structure for the deploy-config.
+ * Loads the deploy-configuration from an XML file into a XmlStructure.
  */
 public class DeployConfiguration {
     /** The configuration structure (deployGlobal).*/
@@ -45,8 +45,8 @@ public class DeployConfiguration {
     private Parameters machineParam;
     /** The list of the physical locations.*/
     private List<PhysicalLocation> physLocs;
-    /** The file containing the it-configuration.*/
-    private File itConfigFile;
+    /** The file containing the deploy-configuration.*/
+    private File deployConfigFile;
     /** The NetarchiveSuite file (in .zip).*/
     private File netarchiveSuiteFile;
     /** The security policy file.*/
@@ -63,7 +63,7 @@ public class DeployConfiguration {
     /**
      *  Initialise everything.
      * 
-     * @param itConfigFileName Name of configuration file.
+     * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
      * @param secPolicyFileName Name of security policy file.
      * @param logPropFileName Name of the log property file.
@@ -71,7 +71,7 @@ public class DeployConfiguration {
      * @param dbFileName Name of the database.
      * @param resetDir Whether the temporary directory should be reset.
      */
-    public DeployConfiguration(File itConfigFileName, 
+    public DeployConfiguration(File deployConfigFileName, 
             File netarchiveSuiteFileName, 
             File secPolicyFileName,
             File logPropFileName,
@@ -79,16 +79,15 @@ public class DeployConfiguration {
             File dbFileName,
             boolean resetDir) {
         ArgumentNotValid.checkNotNull(
-                itConfigFileName, "No config file");
+                deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(
                 netarchiveSuiteFileName, "No installation file");
         ArgumentNotValid.checkNotNull(
                 secPolicyFileName, "No security file");
         ArgumentNotValid.checkNotNull(
                 logPropFileName, "No log file");
-        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
 
-        itConfigFile = itConfigFileName;
+        deployConfigFile = deployConfigFileName;
         netarchiveSuiteFile = netarchiveSuiteFileName;
         secPolicyFile = secPolicyFileName;
         logPropFile = logPropFileName;
@@ -96,7 +95,7 @@ public class DeployConfiguration {
         resetDirectory = resetDir;
 
         // get configuration tree, settings and parameters
-        config = new XmlStructure(itConfigFile);
+        config = new XmlStructure(deployConfigFile);
         settings = new XmlStructure(
                 config.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
         machineParam = new Parameters(config);

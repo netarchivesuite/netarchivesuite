@@ -38,6 +38,9 @@ import dk.netarkivet.common.utils.Settings;
 /** 
  * The application that is run to generate install and start/stop scripts
  * for all physical locations, machines and applications.
+ * 
+ * The actual deployment has to be done from an Linux/Unix machine, 
+ * and this application should therefore not be run on Windows.
  */
 public final class DeployApplication {
     static {
@@ -46,11 +49,11 @@ public final class DeployApplication {
         );
     }
     /** The configuration for this deploy. */
-    private static DeployConfiguration itConfig;
+    private static DeployConfiguration deployConfig;
     /** Argument parameter. */
     private static ArgumentParameters ap = new ArgumentParameters();
-    /** The it-config file. */
-    private static File itConfigFile;
+    /** The deploy-config file. */
+    private static File deployConfigFile;
     /** The NetarchiveSuite file.*/
     private static File netarchiveSuiteFile;
     /** The security policy file.*/
@@ -72,14 +75,16 @@ public final class DeployApplication {
      * 
      * @param args The Command-line arguments in no particular order:
      * 
-     * -C  The it-configuration file (ends with .xml).
+     * -C  The deploy configuration file (ends with .xml).
      * -Z  The NetarchiveSuite file to be unpacked (ends with .zip).
      * -S  The security policy file (ends with .policy).
      * -L  The logging property file (ends with .prop).
      * -O  [OPTIONAL] The output directory
      * -D  [OPTIONAL] The database
      * -T  [OPTIONAL] The test arguments (httpportoffset, port, 
-     *                                    environmentName, mailReciever) 
+     *                                    environmentName, mailReceiver)
+     * -R  [OPTIONAL] For resetting the tempDir (takes arguments 'y' or 'yes')
+     * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
      */
     public static void main(String[] args) {
         try {
@@ -101,13 +106,6 @@ public final class DeployApplication {
                 System.out.println(
                         "outputdir defaults to "
                         + "./environmentName (set in config file)");
-                System.out.println("Example: ");
-                System.out.println(
-                        "DeployApplication "
-                        + "-C./conf/it-config.xml "
-                        + "-Z./NetarchiveSuite-1.zip "
-                        + "-S./conf/security.policy "
-                        + "-L./conf/log.prop");
                 System.exit(0);
             }
             // test if more arguments than options is given 
@@ -122,7 +120,7 @@ public final class DeployApplication {
             }
 
             // Retrieving the configuration filename
-            String itConfigFileName = ap.getCommandLine().getOptionValue(
+            String deployConfigFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_CONFIG_FILE);
             // Retrieving the NetarchiveSuite filename
             String netarchiveSuiteFileName = ap.getCommandLine().getOptionValue(
@@ -149,16 +147,16 @@ public final class DeployApplication {
             String evaluateArgument = ap.getCommandLine().getOptionValue(
                     Constants.ARG_EVALUATE);
 
-            // check itConfigFileName and retrieve the file
-            initConfigFile(itConfigFileName);
+            // check deployConfigFileName and retrieve the corresponding file
+            initConfigFile(deployConfigFileName);
             
-            // check netarchiveSuiteFileName and retrieve the file
+            // check netarchiveSuiteFileName and retrieve the corresponding file
             initNetarchiveSuiteFile(netarchiveSuiteFileName);
 
-            // check sePolicyFileName and retrieve the file
+            // check secPolicyFileName and retrieve the corresponding file
             initSecPolicyFile(secPolicyFileName);
 
-            // check logPropFileName and retrieve the file
+            // check logPropFileName and retrieve the corresponding file
             initLogPropFile(logPropFileName);
 
             // check database
@@ -174,8 +172,8 @@ public final class DeployApplication {
             initEvaluate(evaluateArgument);
             
             // Make the configuration based on the input data
-            itConfig = new DeployConfiguration(
-                    itConfigFile,
+            deployConfig = new DeployConfiguration(
+                    deployConfigFile,
                     netarchiveSuiteFile,
                     secPolicyFile,
                     logPropFile,
@@ -184,12 +182,11 @@ public final class DeployApplication {
                     resetDirectory); 
 
             // Write the scripts, directories and everything
-            itConfig.write();
+            deployConfig.write();
         } catch (SecurityException e) {
             // This problem should only occur in tests -> thus not err message. 
             System.out.println("SECURITY ERROR: " + e);
         } catch (Exception e) {
-            // handle other exceptions?
             System.err.println("DEPLOY APPLICATION ERROR: " + e);
         }
     }
@@ -197,27 +194,27 @@ public final class DeployApplication {
     /** 
      * Checks the configuration file argument and retrieves the file.
      * 
-     * @param itConfigFileName The configuration file argument.
+     * @param deployConfigFileName The configuration file argument.
      */
-    private static void initConfigFile(String itConfigFileName) {
-        // check whether it-config file name is given as argument
-        if(itConfigFileName == null) {
+    private static void initConfigFile(String deployConfigFileName) {
+        // check whether deploy-config file name is given as argument
+        if(deployConfigFileName == null) {
             System.err.print(
                     Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
             System.out.println();
             System.exit(0);
         }
-        // check whether it-config file has correct extensions
-        if(!itConfigFileName.endsWith(".xml")) {
+        // check whether deploy-config file has correct extensions
+        if(!deployConfigFileName.endsWith(".xml")) {
             System.err.print(
                     Constants.MSG_ERROR_CONFIG_EXTENSION);
             System.out.println();
             System.exit(0);
         }
         // get the file
-        itConfigFile = new File(itConfigFileName);
-        // check whether the it-config file exists.
-        if(!itConfigFile.exists()) {
+        deployConfigFile = new File(deployConfigFileName);
+        // check whether the deploy-config file exists.
+        if(!deployConfigFile.exists()) {
             System.err.print(
                     Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
             System.out.println();
@@ -253,6 +250,8 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
             System.out.println();
+            System.out.println("Couldn't find file: " 
+                    + netarchiveSuiteFile.getAbsolutePath());
             System.exit(0);
         }
     }
@@ -284,6 +283,8 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND);
             System.out.println();
+            System.out.println("Couldn't find file: " 
+                    + secPolicyFile.getAbsolutePath());
             System.exit(0);
         }
     }
@@ -315,6 +316,8 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND);
             System.out.println();
+            System.out.println("Couldn't find file: " 
+                    + logPropFile.getAbsolutePath());
             System.exit(0);
         }
     }
@@ -343,6 +346,8 @@ public final class DeployApplication {
                 System.err.print(
                             Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
                 System.out.println();
+                System.out.println("Couldn't find file: " 
+                        + dbFile.getAbsolutePath());
                 System.exit(0);
             }
         }
@@ -350,8 +355,11 @@ public final class DeployApplication {
     
     /**
      * Checks the arguments for resetting the directory.
-     * Only the arguments 'y' or 'yes' is accepted for resetting 
-     * the temporary directory. 
+     * Only the arguments 'y' or 'yes' resets the database directory. 
+     * Default is 'no'.
+     * 
+     * If another argument than 'y', 'yes', 'n' or 'no' is given, an warning 
+     * is given. 
      * 
      * @param resetArgument The argument for resetting given.
      */
@@ -379,6 +387,8 @@ public final class DeployApplication {
     /**
      * Checks the arguments for evaluating the config file.
      * Only the arguments 'y' or 'yes' is accepted for evaluation.
+     * Anything else (including argument set to null) does not evaluate the
+     * deployConfigFile. 
      * 
      * @param evaluateArgument The argument for evaluation.
      */
@@ -388,7 +398,7 @@ public final class DeployApplication {
             if(evaluateArgument.equalsIgnoreCase("y")
                     || evaluateArgument.equalsIgnoreCase("yes")) {
                 // if yes, then evaluate config file
-                EvaluateConfigFile evf = new EvaluateConfigFile(itConfigFile);
+                EvaluateConfigFile evf = new EvaluateConfigFile(deployConfigFile);
                 evf.evaluate();
             }
         }
@@ -417,19 +427,27 @@ public final class DeployApplication {
         if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
             System.err.print(
                     Constants.MSG_ERROR_TEST_ARGUMENTS);
+            System.out.println();
+            System.out.println(changes.length + " arguments was given and "
+        	    + Constants.TEST_ARGUMENTS_REQUIRED + " was expected."); 
             System.exit(0);
         }
 
         try {
-            CreateTestInstance cti = new CreateTestInstance(itConfigFile);
+            CreateTestInstance cti = new CreateTestInstance(deployConfigFile);
 
+            final int offsetIndex = 0;
+            final int httpIndex = 1;
+            final int environmentNameIndex = 2;
+            final int mailIndex = 3;
+            
             // apply the arguments
-            cti.applyTestArguments(changes[0], changes[1], changes[2], 
-                    changes[2+1]); 
+            cti.applyTestArguments(changes[offsetIndex], changes[httpIndex], 
+        	    changes[environmentNameIndex], changes[mailIndex]); 
             //annoying 3 code-style 'warning' (change maximum acceptable value)
 
             // replace ".xml" with "_test.xml"
-            String tmp = itConfigFile.getPath();
+            String tmp = deployConfigFile.getPath();
             // split this into two ("path/config", ".xml") 
             String[] configFile = tmp.split("[.]");
             // take the first part and add test ending 
@@ -438,8 +456,8 @@ public final class DeployApplication {
                     + Constants.TEST_CONFIG_FILE_REPLACE_ENDING;
 
             // create and use new config file.
-            cti.createSettingsFile(nameOfNewConfig);
-            itConfigFile = new File(nameOfNewConfig);
+            cti.createConfigurationFile(nameOfNewConfig);
+            deployConfigFile = new File(nameOfNewConfig);
         } catch (IOException e) {
             System.out.println("Error in test arguments: " + e);
             System.exit(0);
@@ -458,28 +476,31 @@ public final class DeployApplication {
         /** The command line.*/
         private CommandLine cmd;
          
+        private final boolean hasArg = true;
         /**
          * Initialise options by setting legal parameters for batch jobs.
          */
         ArgumentParameters() {
             options.addOption(Constants.ARG_CONFIG_FILE, 
-                    true, "Config file.");
+        	    hasArg, "Config file.");
             options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, 
-                    true, "The NetarchiveSuite package file.");
+        	    hasArg, "The NetarchiveSuite package file.");
             options.addOption(Constants.ARG_SECURITY_FILE, 
-                    true, "Security property file.");
+        	    hasArg, "Security property file.");
             options.addOption(Constants.ARG_LOG_PROPERTY_FILE, 
-                    true, "Log property file.");
+        	    hasArg, "Log property file.");
             options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
-                    true, "[OPTIONAL] output directory.");
+        	    hasArg, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, 
-                    true, "[OPTIONAL] Database file.");
+        	    hasArg, "[OPTIONAL] Database file.");
             options.addOption(Constants.ARG_TEST, 
-                    true, "[OPTIONAL] Tests arguments (offset for http port, "
+        	    hasArg, "[OPTIONAL] Tests arguments (offset for http port, "
                     + "http port, environment name, mail receiver).");
             options.addOption(Constants.ARG_RESET,
-                    true, "[OPTIONAL] Reset temp directory (y/n - anything "
-                    + "other than 'y' or 'yes' is asserted no).");
+        	    hasArg, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
+        	    + "means reset, anything else means do not reset."
+                    + " Different from 'y', 'yes', 'n' or 'no' gives"
+                    + " an error message.");
             options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
                     + "Evaluate the config file.");
         }
@@ -495,6 +516,7 @@ public final class DeployApplication {
                 // parse the command line arguments
                 cmd = parser.parse(options, args);
             } catch(ParseException exp) {
+        	System.out.println("Parsing error: " + exp);
                 return false;
             }
             return true;

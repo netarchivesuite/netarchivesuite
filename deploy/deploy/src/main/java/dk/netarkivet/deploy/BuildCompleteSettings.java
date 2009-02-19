@@ -32,6 +32,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -51,7 +52,7 @@ public final class BuildCompleteSettings {
      * Run the program.
      * This loads and merges all the setting files into a single file.
      * 
-     * @param args Unused arguments.
+     * @param args Optional argument for name of complete settings file.
      * @throws IOException For input/output errors.
      */
     public static void main(String[] args) throws IOException {
@@ -65,14 +66,20 @@ public final class BuildCompleteSettings {
                 if (elem != null) {
                     settings.overWrite(elem);
                 } else {
-                    System.out.println("Cannot overwrite!!");
+                    throw new ArgumentNotValid("No settings found at: "
+                	    + tmpFile.getAbsolutePath());
                 }
             }
         }
 
         // make settings file.
-        File completeSettings = new File(
+        File completeSettings;
+        if(args.length < 1) {
+            completeSettings = new File(
                 Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
+        } else {
+            completeSettings = new File(args[0]);
+        }
         FileWriter fw = new FileWriter(completeSettings);
         // write settings to file.
         fw.append(settings.getXML());
@@ -84,7 +91,9 @@ public final class BuildCompleteSettings {
      * Retrieves the main element from the file.
      * 
      * @param settingFile The file to load into an Element.
+     * This has to be a temporary file, since it is deleted afterwards.
      * @return The root of the XML structure of the settings file. 
+     * Returns null if problems occurred during reading.
      */
     private static Element retrieveXmlSettingsTree(File settingFile) {
         try {

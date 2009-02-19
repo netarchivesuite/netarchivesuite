@@ -27,14 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Element;
+import org.mortbay.log.Log;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * The Parameters class contains the machine parameters.
- * This is the user name, the install directory and the parameters for running
+ * These are the user name, the install directory and the parameters for running
  * the Java applications.
- * This is inherited from the parent entity (e.g. the machine inherits the 
+ * These are inherited from the parent entity (e.g. the machine inherits the 
  * Parameters from the PhysicalLocation), then overwrites its own specified 
  * variables.
  */
@@ -89,21 +90,15 @@ public class Parameters {
         // copy parent install dir (if any)
         if(parent.installDir != null) {
             installDir = parent.installDir.createCopy();
-        } else {
-            installDir = null;
-        }
+        } 
         // copy parent install dir (if any)
         if(parent.machineUserName != null) {
             machineUserName = parent.machineUserName.createCopy();
-        } else {
-            machineUserName = null;
-        }
+        } 
         // copy parent database dir (if any)
         if(parent.databaseDir != null) {
             databaseDir = parent.databaseDir;
-        } else {
-            databaseDir = null;
-        }
+        } 
     }
 
     /**
@@ -129,16 +124,34 @@ public class Parameters {
         tmp = root.elements(Constants.DEPLOY_INSTALL_DIR);
         if(tmp.size() > 0) {
             installDir = tmp.get(0);
+            // log if more than one install directory.
+            if(tmp.size() > 1) {
+        	Log.debug("Maximum 1 value expected at: "
+        		+ Constants.DEPLOY_INSTALL_DIR
+        		+ " but " + tmp.size() + " received.");
+            }
         }
-        // check if new install dir to overwrite existing
+        // check if new machine user name to overwrite existing
         tmp = root.elements(Constants.DEPLOY_MACHINE_USER_NAME);
         if(tmp.size() > 0) {
             machineUserName = tmp.get(0);
+            // log if more than one machine user name.
+            if(tmp.size() > 1) {
+        	Log.debug("Maximum 1 value expected at: "
+        		+ Constants.DEPLOY_MACHINE_USER_NAME
+        		+ " but " + tmp.size() + " received.");
+            }
         }
         // check if new database dir to overwrite existing
         tmp = root.elements(Constants.DEPLOY_DATABASE_DIR);
         if(tmp.size() > 0) {
             databaseDir = tmp.get(0);
+            // log if more than one database directory.
+            if(tmp.size() > 1) {
+        	Log.debug("Maximum 1 value expected at: "
+        		+ Constants.DEPLOY_DATABASE_DIR
+        		+ " but " + tmp.size() + " received.");
+            }
         }
     }
 
@@ -148,7 +161,7 @@ public class Parameters {
      * @return All the java options.
      */
     public String writeJavaOptions() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         // apply the java options
         for(Element e : javaOptions) {
             res.append(e.getText());

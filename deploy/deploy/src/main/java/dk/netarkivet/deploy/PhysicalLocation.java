@@ -36,7 +36,7 @@ import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
  * The physical location class.
@@ -70,20 +70,20 @@ public class PhysicalLocation {
      * where the computers are located.
      * One physical location can contain many machines.
      * 
-     * @param elem The root of this branch in the XML structure.
-     * @param parentSettings The settings of the parent (it-config).
-     * @param param The parameters of the parent (it-config).
+     * @param subTreeRoot The root of this branch in the XML structure.
+     * @param parentSettings The settings of the parent (deploy-config).
+     * @param param The parameters of the parent (deploy-config).
      * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFile The name of the database.
      * @param resetDir Whether the temporary directory should be reset.
      */
-    public PhysicalLocation(Element elem, XmlStructure parentSettings, 
+    public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
         File securityPolicy, File dbFile, boolean resetDir) {
         // test if valid arguments
-        ArgumentNotValid.checkNotNull(elem, "Element elem (physLocRoot)");
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, 
         "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -91,11 +91,10 @@ public class PhysicalLocation {
         "String netarchiveSuite");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
-        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
         
         // make a copy of parent, don't use it directly.
         settings = new XmlStructure(parentSettings.getRoot());
-        physLocRoot = elem;
+        physLocRoot = subTreeRoot;
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
         logPropFile = logProp;
@@ -128,7 +127,7 @@ public class PhysicalLocation {
     private void extractVariables() {
         // retrieve name
         Attribute at = physLocRoot.attribute(
-                Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTES);
+                Constants.PHYSICAL_LOCATION_NAME_ATTRIBUTE);
         if(at != null) {
             name = at.getText();
             // insert the name in settings.
@@ -138,8 +137,8 @@ public class PhysicalLocation {
                     xmlName);
             settings.overWrite(physLocName);
         } else {
-            log.debug("Physical location has no name!");
-            name = "";
+            throw new IllegalState(
+        	    Constants.MSG_ERROR_PHYSICAL_LOCATION_NO_NAME);
         }
     }
 
@@ -189,6 +188,8 @@ public class PhysicalLocation {
      * * killall.
      * * install.
      * * startall.
+     * 
+     * The scripts for a physical location will only work from Linux/Unix.  
      *
      * @param directory The directory where the scripts are to be placed.
      */
@@ -205,51 +206,40 @@ public class PhysicalLocation {
             PrintWriter iWriter = new PrintWriter(install);
             PrintWriter sWriter = new PrintWriter(startall);
             try {
-                kWriter.println("#!/bin/bash");
-                iWriter.println("#!/bin/bash");
-                sWriter.println("#!/bin/bash");
+                kWriter.println(ScriptConstants.BIN_BASH_COMMENT);
+                iWriter.println(ScriptConstants.BIN_BASH_COMMENT);
+                sWriter.println(ScriptConstants.BIN_BASH_COMMENT);
                 // insert machine data
                 for(Machine mac : machines) {
                     // write install script from machines
-                    iWriter.println("echo " 
-                            + StringUtils.repeat("-", 
-                                    Constants.SCRIPT_DASH_NUM_REPEAT));
+                    iWriter.println(ScriptConstants.writeDashLine());
                     iWriter.print(mac.writeToGlobalInstallScript());
                     // write start script from machines
-                    sWriter.println("echo " 
-                            + StringUtils.repeat("-", 
-                                    Constants.SCRIPT_DASH_NUM_REPEAT));
+                    sWriter.println(ScriptConstants.writeDashLine());
                     sWriter.print(mac.writeToGlobalStartScript());
                     // write kill script from machines
-                    kWriter.println("echo " 
-                            + StringUtils.repeat("-", 
-                                    Constants.SCRIPT_DASH_NUM_REPEAT));
+                    kWriter.println(ScriptConstants.writeDashLine());
                     kWriter.print(mac.writeToGlobalKillScript());
                 }
             } finally {
                 // close writers
-                kWriter.println("echo " 
-                        + StringUtils.repeat("-", 
-                                Constants.SCRIPT_DASH_NUM_REPEAT));
+                kWriter.println(ScriptConstants.writeDashLine());
                 kWriter.close();
-                iWriter.println("echo " 
-                        + StringUtils.repeat("-", 
-                                Constants.SCRIPT_DASH_NUM_REPEAT));
+                iWriter.println(ScriptConstants.writeDashLine());
                 iWriter.close();
-                sWriter.println("echo " 
-                        + StringUtils.repeat("-", 
-                                Constants.SCRIPT_DASH_NUM_REPEAT));
+                sWriter.println(ScriptConstants.writeDashLine());
                 sWriter.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create physical location scripts: " + e);
-            throw new IOFailure("Problems creating the scripts for the"
-                    + "physical locations: " + e);
+            String msg = "Problems creating the scripts for the physical "
+                + "locations: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating the scripts for the"
-                    + "physical locations: " + e);
+            String msg = "Error in creating the scripts for the physical "
+                + "locations: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 }

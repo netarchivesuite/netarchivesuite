@@ -36,14 +36,19 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This class applies the test variables.
  * 
  * It creates a new instance of the settings where the variables are changed, 
- * and then writes it out as a new it-configuration file 
+ * and then writes it out as a new deploy-configuration file 
  * (does not overwrite the original, but creates a new in same directory).
+ * 
+ * This class is prompted by our need to be able to install and run multiple 
+ * instances the NetarchiveSuite in our test-environment simultaneously.
  */
 public class CreateTestInstance {
     /** The source configuration file.*/
     private File source;
-    /** The settings instance. Loaded from the source file, changed and saved.*/
-    private XmlStructure set;
+    /** The configuration instance. 
+     * Loaded from the source file, changed and saved.
+     */
+    private XmlStructure deployConfiguration;
     /** The string value of the calculated offset.*/
     private String offsetVal;
     /** The paths to where the positions the offset are to be used.*/
@@ -67,8 +72,9 @@ public class CreateTestInstance {
      * @param configSource The source configuration file.
      */
     public CreateTestInstance(File configSource) {
+	ArgumentNotValid.checkNotNull(configSource, "File configSource");
         source = configSource;
-        set = new XmlStructure(source);
+        deployConfiguration = new XmlStructure(source);
     }
 
     /**
@@ -86,7 +92,7 @@ public class CreateTestInstance {
         ArgumentNotValid.checkNotNullOrEmpty(environmentName, 
                 "String environmentName");
         ArgumentNotValid.checkNotNullOrEmpty(mailReceiver, 
-                "String mailReciever");
+                "String mailReceiver");
 
         // calculate offset
         int offsetInt = (new Integer(httpPort)).intValue() 
@@ -113,11 +119,14 @@ public class CreateTestInstance {
 
         // make offset paths
         offsetPaths = new OffsetSystem[] {
-                new OffsetSystem(2, Constants.COMPLETE_JMX_PORT_PATH),
-                new OffsetSystem(2, Constants.COMPLETE_JMX_RMIPORT_PATH),
-                new OffsetSystem(1, Constants
-                        .COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
-                new OffsetSystem(1, Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
+                new OffsetSystem(Constants.TEST_OFFSET_MONITOR_JMX_PORT, 
+                	Constants.COMPLETE_JMX_PORT_PATH),
+                new OffsetSystem(Constants.TEST_OFFSET_MONITOR_RMI_PORT, 
+                	Constants.COMPLETE_JMX_RMIPORT_PATH),
+                new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_GUI_PORT, 
+                	Constants.COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
+                new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_JMX_PORT, 
+                	Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
                 };
 
         // apply the arguments
@@ -131,9 +140,9 @@ public class CreateTestInstance {
     @SuppressWarnings("unchecked")
     private void apply() {
         // apply on root
-        applyOnElement(set.getRoot());
+        applyOnElement(deployConfiguration.getRoot());
 
-        List <Element> physLocs = set.getChildren(
+        List <Element> physLocs = deployConfiguration.getChildren(
                 Constants.DEPLOY_PHYSICAL_LOCATION);
 
         for(Element pl : physLocs) {
@@ -151,7 +160,7 @@ public class CreateTestInstance {
                     // apply on every application
                     applyOnElement(app);
                     
-                    applyOnApplication(app);
+                    applyEnvironmentNameOnBaseFileDir(app);
                 }
             }
         }
@@ -167,12 +176,12 @@ public class CreateTestInstance {
         ArgumentNotValid.checkNotNull(e, "Element e");
 
         // Check the following! 
-        set.overWriteOnly(e, httpPortVal, httpPortPath);
-        set.overWriteOnly(e, environmentNameVal, environmentNamePath);
-        set.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
+        deployConfiguration.overWriteOnly(e, httpPortVal, httpPortPath);
+        deployConfiguration.overWriteOnly(e, environmentNameVal, environmentNamePath);
+        deployConfiguration.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
 
         for(OffsetSystem ofs : offsetPaths) {
-            set.overWriteOnlyInt(e, ofs.getIndex(), offsetVal.charAt(0), 
+            deployConfiguration.overWriteOnlyInt(e, ofs.getIndex(), offsetVal.charAt(0), 
                     ofs.getPath());
         }
     }
@@ -183,7 +192,7 @@ public class CreateTestInstance {
      * 
      * @param app The application where this has to be applied.
      */
-    private void applyOnApplication(Element app) {
+    private void applyEnvironmentNameOnBaseFileDir(Element app) {
         ArgumentNotValid.checkNotNull(app, "Element app");
 
         // Get the list of leaf elements along the path to the base_file_dir 
@@ -205,18 +214,18 @@ public class CreateTestInstance {
     }
     
     /**
-     * Writing out the XMLcode to a file.
+     * Creates a file containing the new configuration instance.
      * 
      * @param filename The name of the file to be written.
      * @throws IOException If anything goes wrong.
      */
-    public void createSettingsFile(String filename) 
+    public void createConfigurationFile(String filename) 
         throws IOException {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         File f = new File(filename);
 
         FileWriter fw = new FileWriter(f);
-        fw.write(set.getXML());
+        fw.write(deployConfiguration.getXML());
         fw.close();
     }
     

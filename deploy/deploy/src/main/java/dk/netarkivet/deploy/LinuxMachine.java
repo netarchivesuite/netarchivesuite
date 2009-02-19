@@ -43,13 +43,13 @@ public class LinuxMachine extends Machine {
      * Starts by initialising the parent abstract class, then sets the 
      * operating system dependent variables.
      * 
-     * @param e The XML root element.
+     * @param subTreeRoot The XML root element.
      * @param parentSettings The Settings to be inherited from the 
      * PhysicalLocation, where this machine is placed.
      * @param param The machine parameters to be inherited from the 
      * PhysicalLocation.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite package 
-     * file. Must be '.zip'.
+     * file. Must end with '.zip'.
      * @param logProp The logging property file, to be copied into 
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
@@ -57,14 +57,14 @@ public class LinuxMachine extends Machine {
      * @param dbFile The name of the database file.
      * @param resetDir Whether the temporary directory should be reset.
      */
-    public LinuxMachine(Element e, XmlStructure parentSettings, 
+    public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFile,
             boolean resetDir) {
-        super(e, parentSettings, param, netarchiveSuiteSource,
+        super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
                 logProp, securityPolicy, dbFile, resetDir);
         // set operating system
-        OS = "linux";
+        OS = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = ".sh";
     }
 
@@ -76,7 +76,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osInstallScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         // echo copying null.zip to:kb-test-adm-001.kb.dk
         res.append("echo copying ");
         res.append(netarchiveSuiteFileName);
@@ -175,7 +175,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osKillScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \". /etc/profile; ");
@@ -203,7 +203,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osStartScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("ssh ");
         res.append(machineUserLogin());
         res.append(" \". /etc/profile; ");
@@ -266,13 +266,13 @@ public class LinuxMachine extends Machine {
             // Initialise script
             PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
-                killPrinter.println("echo Killing all applications at: " 
-                        + name);
+                killPrinter.println("echo Killing all applications on: '" 
+                        + name + "'");
                 killPrinter.println("#!/bin/bash");
                 killPrinter.println("cd " + getConfDirPath());
                 // insert path to kill script for all applications
                 for(Application app : applications) {
-                    // make name of file
+                    // Constructing filename
                     String appScript = "./kill_"
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
@@ -286,14 +286,13 @@ public class LinuxMachine extends Machine {
                 killPrinter.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create local kill all script.");
-            throw new IOFailure("Problems creating local kill all script: "
-                    + e);
+            String msg = "Problems creating local kill all script: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in create local kill all script: "
-                    + e);
+            String msg = "Error in create local kill all script: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -326,8 +325,8 @@ public class LinuxMachine extends Machine {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
         try {
-                startPrinter.println("echo Starting all applications at: " 
-                        + name);
+                startPrinter.println("echo Starting all applications on: '" 
+                        + name + "'");
                 startPrinter.println("#!/bin/bash");
                 startPrinter.println("cd " + getConfDirPath());
                 // insert path to kill script for all applications
@@ -413,14 +412,14 @@ public class LinuxMachine extends Machine {
                     appPrint.close();
                 }
             } catch (IOException e) {
-                log.trace("Cannot create application kill script.");
-                throw new IOFailure("Problems creating application kill "
-                        + "script: " + e);
+        	String msg ="Problems creating application kill script: " + e;
+                log.trace(msg);
+                throw new IOFailure(msg);
             } catch(Exception e) {
+        	String msg = "Error in creating application kill script: " + e;
                 // ERROR
-                log.trace("Unknown error: " + e);
-                System.out.println("Error in creating application kill script: "
-                        + e);
+                log.trace(msg);
+                System.out.println(msg);
             }
         }
     }
@@ -513,14 +512,13 @@ public class LinuxMachine extends Machine {
                     appPrint.close();
                 }
             } catch (IOException e) {
-                log.trace("Cannot create application kill script.");
-                throw new IOFailure("Problems creating application start"
-                        + "script: " + e);
+        	String msg = "Problems creating application start script: " + e;
+                log.trace(msg);
+                throw new IOFailure(msg);
             } catch(Exception e) {
-                // ERROR
-                log.trace("Unknown error: " + e);
-                System.out.println("Error in creating application start"
-                        + "script: " + e);
+                String msg = "Error in creating application start script: " + e;
+                log.trace(msg);
+                System.out.println(msg);
             }
         }
     }
@@ -536,7 +534,7 @@ public class LinuxMachine extends Machine {
     @Override
     protected String osGetClassPath(Application app) {
         ArgumentNotValid.checkNotNull(app, "Application app");
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         // get all the classpaths
         for(Element cp : app.getMachineParameters().getClassPaths()) {
             res.append(getInstallDirPath() + "/" + cp.getText() + ":");
@@ -563,7 +561,7 @@ public class LinuxMachine extends Machine {
 
         String databaseDir = machineParameters.getDatabaseDirValue();
         // Do not install if no proper database directory.
-        if(databaseDir == null || databaseDir.equalsIgnoreCase("")) {
+        if(databaseDir == null || databaseDir.isEmpty()) {
             return "";
         }
 
@@ -609,7 +607,7 @@ public class LinuxMachine extends Machine {
     }
 
     /**
-     * Creates the specified directories in the it-config.
+     * Creates the specified directories in the deploy-configuration file.
      * 
      * Structure
      * - ssh login cd path; DIRS; CLEANDIR; exit;
@@ -628,7 +626,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osInstallScriptCreateDir() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("echo Creating directories.");
         res.append("\n");
         res.append("ssh ");
@@ -675,7 +673,8 @@ public class LinuxMachine extends Machine {
      * This functions makes the script for creating the new directories.
      * 
      * Linux creates directories directly through ssh.
-     * Windows creates an install
+     * Windows creates an install a script file for installing the directories, 
+     * which has to be sent to the machine, then executed and finally deleted. 
      * 
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.
@@ -707,7 +706,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String getAppDirectories() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         String[] dirs;
 
         for(Application app : applications) {

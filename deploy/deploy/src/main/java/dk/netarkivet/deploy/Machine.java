@@ -37,6 +37,7 @@ import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -44,7 +45,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * at a physical location.
  * The actual instances are depending on the operation system:
  * LinuxMachine and WindowsMachine.
- * All non-OS specific methods are implemented in MachineBase.
+ * All non-OS specific methods are implemented this machine class.
  */
 public abstract class Machine {
     /** the log, for logging stuff instead of displaying them directly.*/
@@ -81,7 +82,7 @@ public abstract class Machine {
      * which can have independent applications from the other machines at the 
      * same location.
      * 
-     * @param e The root of this instance in the XML document.
+     * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
      * @param netarchiveSuiteSource The name of the NetarchiveSuite 
@@ -91,11 +92,11 @@ public abstract class Machine {
      * @param dbFileName The name of the database file.
      * @param resetDir Whether the temporary directory should be reset.
      */
-    public Machine(Element e, XmlStructure parentSettings, 
+    public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFileName, 
             boolean resetDir) {
-        ArgumentNotValid.checkNotNull(e, "Element e");
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -103,10 +104,9 @@ public abstract class Machine {
                 "String netarchiveSuiteSource");
         ArgumentNotValid.checkNotNull(logProp, "File logProp");
         ArgumentNotValid.checkNotNull(securityPolicy, "File securityPolicy");
-        ArgumentNotValid.checkNotNull(resetDir, "boolean resetDir");
 
         settings = new XmlStructure(parentSettings.getRoot());
-        machineRoot = e;
+        machineRoot = subTreeRoot;
         machineParameters = new Parameters(param);
         netarchiveSuiteFileName = netarchiveSuiteSource;
         inheritedLogPropFile = logProp;
@@ -142,8 +142,7 @@ public abstract class Machine {
         if(at != null) {
             name = at.getText();
         } else {
-            log.debug("Physical location has no name!");
-            name = "";
+            throw new IllegalState("A Machine instance has no name!");
         }
     }
 
@@ -168,6 +167,8 @@ public abstract class Machine {
      * @param parentDirectory The directory where to write the files.
      */
     public void write(File parentDirectory) {
+	ArgumentNotValid.checkNotNull(parentDirectory, "File parentDirectory");
+	
         // create the directory for this machine
         machineDirectory = new File(parentDirectory, name);
         FileUtils.createDir(machineDirectory);
@@ -204,7 +205,7 @@ public abstract class Machine {
      * @return The script to kill this machine.
      */
     public String writeToGlobalKillScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("echo KILLING MACHINE: ");
         res.append(machineUserLogin());
         res.append("\n");
@@ -220,7 +221,7 @@ public abstract class Machine {
      * @return The script to make the installation on this machine
      */
     public String writeToGlobalInstallScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("echo INSTALLING TO MACHINE: ");
         res.append(machineUserLogin());
         res.append("\n");
@@ -236,7 +237,7 @@ public abstract class Machine {
      * @return The script to start this machine.
      */
     public String writeToGlobalStartScript() {
-        StringBuilder res = new StringBuilder("");
+        StringBuilder res = new StringBuilder();
         res.append("echo STARTING MACHINE: ");
         res.append(machineUserLogin());
         res.append("\n");
@@ -294,7 +295,7 @@ public abstract class Machine {
             }
 
             // append file directories
-            if(dirs.size() > 0) {
+            if(!dirs.isEmpty()) {
                 secfw.write("grant {" + "\n");
                 for(String dir : dirs) {
                     //   permission java.io.FilePermission "
@@ -310,7 +311,7 @@ public abstract class Machine {
 
             secfw.close();
         } catch (IOException e) {
-            log.warn("IOException occoured: " + e);
+            log.warn("IOException occurred: " + e);
         }
     }
 
@@ -339,7 +340,7 @@ public abstract class Machine {
                 logfw.write(prop);
                 logfw.close();
             } catch (IOException e) {
-                log.warn("IOException occoured: " + e);
+                log.warn("IOException occurred: " + e);
             }
         }
     }
@@ -437,7 +438,7 @@ public abstract class Machine {
                 jw.println("#");
 
                 // get the username and password for monitor and heritrix.
-                StringBuilder logins = new StringBuilder("");
+                StringBuilder logins = new StringBuilder();
 
                 logins.append(getMonitorLogin());
                 logins.append(getHeritrixLogin());
@@ -447,13 +448,13 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create the jmxremote.password file.");
-            throw new IOFailure("Problems creating jmxremote.password: "
-                    + e);
+            String msg = "Problems creating jmxremote.password: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating jmxremote.password " + e);
+            String msg = "Error in creating jmxremote.password " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
     
@@ -495,29 +496,33 @@ public abstract class Machine {
             }
         }
 
-        // if different amount of usernames and passwords. DIE
+        // if different amount of usernames and passwords => DIE
         if(usernames.size() != passwords.size()) {
-            log.warn("Different amount of usernames and passwords "
-                    + "in monitor under applications.");
-            throw new Exception("Different amount of usernames "
-                    + "and passwords!");
+            String msg = "Different amount of usernames and passwords "
+                    + "in monitor under applications on machine: '" 
+                    + name + "'"; 
+            log.warn(msg);
+            throw new Exception(msg);
         }
         
 
-        // if no usernames, and thus no passwords, finish!
+        // if no usernames, and thus no passwords => DIE
         if(usernames.size() == 0) {
-            return "";
+            String msg = "No usernames or passwords for monitor on machine: '"
+        	+ name + "'";
+            log.warn(msg);
+            throw new IllegalState(msg);
         }
         
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
+            if(!usernames.get(0).equals(usernames.get(i))
                     || !passwords.get(0)
-                    .equalsIgnoreCase(passwords.get(i))) {
-                log.warn("Different usernames or passwords "
-                        + "under heritrix on the same machine.");
-                throw new Exception("Different usernames "
-                        + "or passwords!");
+                    .equals(passwords.get(i))) {
+        	String msg = "Different usernames or passwords "
+                    + "under monitor on the same machine: '" + name + "'";
+                log.warn(msg);
+                throw new Exception(msg);
             }
         }
         
@@ -571,10 +576,11 @@ public abstract class Machine {
 
         // if different amount of usernames and passwords. DIE
         if(usernames.size() != passwords.size()) {
-            log.warn("Different amount of usernames and passwords "
-                    + "in heritrix under applications.");
-            throw new Exception("Different amount of usernames "
-                    + "and passwords!");
+            String msg = "Different amount of usernames and passwords "
+                    + "in heritrix under applications on machine: '"
+                    + name + "'";
+            log.warn(msg);
+            throw new Exception(msg);
         }
 
         // if no usernames, and thus no passwords, finish!
@@ -584,13 +590,13 @@ public abstract class Machine {
         
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
-            if(!usernames.get(0).equalsIgnoreCase(usernames.get(i))
+            if(!usernames.get(0).equals(usernames.get(i))
                     || !passwords.get(0)
-                    .equalsIgnoreCase(passwords.get(i))) {
-                log.warn("Different usernames or passwords "
-                        + "under heritrix on the same machine.");
-                throw new Exception("Different usernames "
-                        + "or passwords!");
+                    .equals(passwords.get(i))) {
+        	String msg = "Different usernames or passwords "
+                    + "under heritrix on machine: '" + name + "'";
+                log.warn(msg);
+                throw new Exception(msg);
             }
         }
 
@@ -686,7 +692,7 @@ public abstract class Machine {
     abstract protected String osInstallScript();
     
     /**
-     * Creates the specified directories in the it-config.
+     * Creates the specified directories in the deploy-configuration file.
      * 
      * @return The script for creating the directories.
      */
@@ -728,7 +734,8 @@ public abstract class Machine {
      * This functions makes the script for creating the new directories.
      * 
      * Linux creates directories directly through ssh.
-     * Windows creates an install
+     * Windows creates an install a script file for installing the directories, 
+     * which has to be sent to the machine, then executed and finally deleted. 
      * 
      * @param dir The name of the directory to create.
      * @param clean Whether the directory should be cleaned\reset.

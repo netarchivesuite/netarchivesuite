@@ -34,6 +34,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -54,12 +55,13 @@ public class EvaluateConfigFile {
      * Constructor.
      * Only initialises the config file and settings list.
      * 
-     * @param itConfigFile The file to evaluate.
+     * @param deployConfigFile The file to evaluate.
      */
-    public EvaluateConfigFile(File itConfigFile) {
+    public EvaluateConfigFile(File deployConfigFile) {
+	ArgumentNotValid.checkNotNull(deployConfigFile, "File deployConfigFile");
         try {
             initLoadDefaultSettings();
-            root = new XmlStructure(itConfigFile);
+            root = new XmlStructure(deployConfigFile);
         } catch (Exception e) {
             System.err.println("Evaluation error!");
         }
@@ -95,8 +97,9 @@ public class EvaluateConfigFile {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Unknown evaluation error: " + e);
-            log.trace("Error occured during evaluation: " + e);
+            String msg = "Error occured during evaluation: " + e;  
+            System.err.println(msg);
+            log.trace(msg);
         }
     }
     
@@ -116,12 +119,12 @@ public class EvaluateConfigFile {
                 doc =  reader.read(f);
                 completeSettings = doc.getRootElement();
             } else {
-                System.out.println("Cannot read file: " 
-                        + f.getAbsolutePath());
+                System.out.println("Cannot read file: '" 
+                        + f.getAbsolutePath() + "'");
             }
         } catch (DocumentException e) {
-            System.err.println("Problems with file: " 
-                    + f.getAbsolutePath());
+            System.err.println("Problems with file: '" 
+                    + f.getAbsolutePath() + "'");
         }
     }
     
@@ -130,7 +133,9 @@ public class EvaluateConfigFile {
      * Then tries to evaluate all the branches to the element. 
      * The method is called recursively for the children of curElem.
      * 
-     * @param curElem The current element to evaluate. 
+     * @param curElem The current element to evaluate.
+     * Null element represents in this context that no settings branch 
+     * exists for the current instance. 
      */
     @SuppressWarnings("unchecked")
     private void evaluateElement(Element curElem) {
@@ -145,7 +150,7 @@ public class EvaluateConfigFile {
             String path = getSettingsPath(el);
 
             // check if path exists in any default setting.
-                valid = existBranch(completeSettings, path.split("/"));
+            valid = existBranch(completeSettings, path.split("/"));
 
             if(valid) {
                 if(!el.isTextOnly()) {

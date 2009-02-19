@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The application entity in the deploy structure.
+ * The application entity in the deploy hierarchy.
  */
 public class Application {
     /** the log, for logging stuff instead of displaying them directly.*/ 
@@ -54,23 +54,23 @@ public class Application {
     /** application instance id 
      * (optional, used when two application has same name).
      */
-    private String applicationId;
+    private String applicationInstanceId;
 
     /**
      * A application is the program to be run on a machine.
      * 
-     * @param e The root of this instance in the XML document.
+     * @param subTreeRoot The root of this instance in the XML document.
      * @param parentSettings The setting inherited by the parent.
      * @param param The machine parameters inherited by the parent.
      */
-    public Application(Element e, XmlStructure parentSettings, 
+    public Application(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param) {
-        ArgumentNotValid.checkNotNull(e, "Element e");
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings, 
                 "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
         settings = new XmlStructure(parentSettings.getRoot());
-        applicationRoot = e;
+        applicationRoot = subTreeRoot;
         machineParameters = new Parameters(param);
         // retrieve the specific settings for this instance 
         Element tmpSet = applicationRoot
@@ -104,7 +104,8 @@ public class Application {
                 String[] stlist = nameWithNamePath.split("[.]");
                 name = stlist[stlist.length -1];
                 
-                // insert the name in settings.
+                // overwriting the name, if it exists already; 
+                // otherwise it is inserted. 
                 String xmlName = XmlStructure.pathAndContentToXML(
                         nameWithNamePath, 
                         Constants.COMPLETE_APPLICATION_NAME_LEAF);
@@ -120,13 +121,12 @@ public class Application {
             Element elem = settings.getSubChild(
                     Constants.SETTINGS_APPLICATION_INSTANCE_ID_LEAF);
             if(elem != null && !elem.getText().isEmpty()) {
-                applicationId = elem.getText();
-            } else {
-                applicationId = null;
-            }
+                applicationInstanceId = elem.getText();
+            } 
         } catch(Exception e) {
-            log.debug("Application variables not extractable: " + e);
-            throw new IOFailure("Application variables not extractable: " + e);
+            String msg = "Application variables not extractable: " + e; 
+            log.debug(msg);
+            throw new IOFailure(msg);
         }
     }
 
@@ -138,10 +138,10 @@ public class Application {
      */
     public String getIdentification() {
         StringBuilder res = new StringBuilder(name);
-        // apply only applicationId if it exists and has content
-        if(applicationId != null && !applicationId.isEmpty()) {
+        // use only applicationInstanceId if it exists and has content
+        if(applicationInstanceId != null && !applicationInstanceId.isEmpty()) {
             res.append("_");
-            res.append(applicationId);
+            res.append(applicationInstanceId);
         }
         return res.toString();
     }
@@ -162,6 +162,8 @@ public class Application {
      * @param directory The directory where the settings file should be placed.
      */
     public void createSettingsFile(File directory) {
+	ArgumentNotValid.checkNotNull(directory, "File directory");
+	
         // make file
         File settingsFile = new File(directory, 
                 "settings_" + getIdentification() + ".xml");
@@ -211,22 +213,15 @@ public class Application {
     }
     
     /**
-     * For acquiring specific values from the application settings.
-     *  
-     * @param path The path from settings.
-     * @return The content at the leaf at the path in the settings.
-     */
-    public String getSettingsValue(String[] path) {
-        return settings.getLeafValue(path);
-    }
-    
-    /**
      * For acquiring all the values of the leafs at the end of the path.
      * 
      * @param path The path to the branches.
      * @return The values of the leafs.
      */
     public String[] getSettingsValues(String[] path) {
+	ArgumentNotValid.checkNotNull(path, "String[] path");
+	ArgumentNotValid.checkNotNegative(path.length, 
+                "Length of String[] path");
         return settings.getLeafValues(path);
     }
 }
