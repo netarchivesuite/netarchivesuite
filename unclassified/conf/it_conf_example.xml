@@ -39,13 +39,13 @@
             </indexClient>
             <replicas>
                 <replica>
-                    <replicaId>SB</replicaId>
-                    <replicaName>SB</replicaName>
+                    <replicaId>A</replicaId>
+                    <replicaName>ReplicaA</replicaName>
                     <replicaType>bitArchive</replicaType>
                 </replica>
                 <replica>
-                    <replicaId>KB</replicaId>
-                    <replicaName>KB</replicaName>
+                    <replicaId>B</replicaId>
+                    <replicaName>ReplicaB</replicaName>
                     <replicaType>bitArchive</replicaType>
                 </replica>
             </replicas>
@@ -56,9 +56,10 @@
         </monitor>
     </settings>
     
-    <thisPhysicalLocation name="kb">
+    <thisPhysicalLocation name="EAST">
         <deployMachineUserName>test</deployMachineUserName>
         <deployInstallDir>/home/test</deployInstallDir>
+        <deployDatabaseDir>databaseDir</deployDatabaseDir>
         <settings>
             <common>
                 <remoteFile>
@@ -66,7 +67,7 @@
                     <userName>ftptestuser</userName>
                     <userPassword>ftptestpasswd</userPassword>
                 </remoteFile>
-                <useReplicaId>KB</useReplicaId>
+                <useReplicaId>A</useReplicaId>
                 <notifications>
                     <sender>example@netarkivet.dk</sender>
                     <receiver>example@netarkivet.dk</receiver>
@@ -100,7 +101,8 @@
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>SBBM</applicationInstanceId>
+                        <useReplicaId>B</useReplicaId>
+                        <applicationInstanceId>BBM</applicationInstanceId>
                         <jmx>
                             <port>8101</port>
                             <rmiPort>8301</rmiPort>
@@ -112,7 +114,8 @@
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
                 <settings>
                     <common>
-                        <applicationInstanceId>KBBM</applicationInstanceId>
+                        <useReplicaId>A</useReplicaId>
+                        <applicationInstanceId>ABM</applicationInstanceId>
                         <jmx>
                             <port>8102</port>
                             <rmiPort>8302</rmiPort>
@@ -275,7 +278,7 @@
         </deployMachine>
     </thisPhysicalLocation>
     
-    <thisPhysicalLocation name="sb">
+    <thisPhysicalLocation name="WEST">
         <deployMachineUserName>netarkiv</deployMachineUserName>
         <deployInstallDir>/home/netarkiv</deployInstallDir>
         <settings>
@@ -293,7 +296,7 @@
                     <sender>example@netarkivet.dk</sender>
                     <receiver>example@netarkivet.dk</receiver>
                 </notifications>
-                <useReplicaId>KB</useReplicaId>
+                <useReplicaId>B</useReplicaId>
             </common>
         </settings>
         
