@@ -269,30 +269,30 @@ public class WebProxy extends DefaultHandler
          * @throws IOFailure if the URI is invalid. This should never happen.
          */
         public URI getURI() {
-            String uri_string;
+            String uriString;
              if (hr.getQueryString()!=null) {
-                     uri_string = hr.getRequestURL().toString()
+                     uriString = hr.getRequestURL().toString()
                                         + "?" + uriEncode(hr.getQueryString());
              } else {
-                   uri_string = hr.getRequestURL().toString();
+                   uriString = hr.getRequestURL().toString();
                 }
             try {
-                return new URI(uri_string);
+                return new URI(uriString);
             } catch (URISyntaxException e) {
-                throw new IOFailure("Could not construct URI from '" + uri_string + "'", e);
+                throw new IOFailure("Could not construct URI from '" + uriString + "'", e);
             }
         }
 
         /**
-         * Why would we replace standard API functionality with this sort of kludge?
-         * It appears that the ctor java.net.URI.URI(String s) violates its own documentation. It should
-         * encode all "other" charcters in the query part of the URI. These "other" characters include
+         * We here replace what should be standard API functionality with an apparent kludge.
+         * We do this because the ctor java.net.URI(String s) violates its own documentation. It should
+         * encode all "other" characters in the query part of the URI. These "other" characters include
          * curly brackets, but actually the escaping is never done. Hence we do it here.
          * @param s  the String to be encoded
          * @return   the encoded String
          */
         public static String uriEncode(String s) {
-            return s.replaceAll("\\{", "%7B").replaceAll("}", "%7D");
+            return s.replaceAll("\\{", "%7B").replaceAll("\\}", "%7D");
         }
         
         /** Get parameters from this request. Note that this method is
