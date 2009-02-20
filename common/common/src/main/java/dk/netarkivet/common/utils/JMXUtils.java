@@ -227,7 +227,7 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
         ArgumentNotValid.checkNotNullOrEmpty(command, "String command");
         ArgumentNotValid.checkNotNull(arguments, "String... arguments");
-        
+
         log.debug("Preparing to execute " + command + " with args " +
                   Arrays.toString(arguments) + " on " + beanName);
         try {
@@ -241,7 +241,7 @@ public class JMXUtils {
                 tries++;
                 try {
                     Object ret = connection.invoke(getBeanName(beanName), command,
-                                             arguments, signature);
+                                                   arguments, signature);
                     log.debug("Executed command " + command + " returned " + ret);
                     return ret;
                 } catch (InstanceNotFoundException e) {
@@ -250,7 +250,10 @@ public class JMXUtils {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
-                  lastException = e;
+                    log.warn("Exception thrown while executing " + command +
+                             " with args " +
+                             Arrays.toString(arguments) + " on " + beanName, e);
+                    lastException = e;
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
@@ -293,15 +296,19 @@ public class JMXUtils {
                     Object ret = connection
                             .getAttribute(getBeanName(beanName), attribute);
                     log.debug("Getting attribute " + attribute
-                             + " returned " + ret);
+                              + " returned " + ret);
                     return ret;
                 } catch (InstanceNotFoundException e) {
+                    log.warn("Error while getting attribute " + attribute
+                             + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
-                   lastException = e;
+                    log.warn("Error while getting attribute " + attribute
+                             + " on " + beanName, e);
+                    lastException = e;
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
