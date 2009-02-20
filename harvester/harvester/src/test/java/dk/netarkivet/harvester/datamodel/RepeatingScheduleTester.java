@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests a repeating schedule
- */
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,7 +30,9 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
-
+/**
+ * Tests a repeating schedule.
+ */
 public class RepeatingScheduleTester extends TestCase {
     public RepeatingScheduleTester(String s) {
         super(s);
@@ -45,7 +43,7 @@ public class RepeatingScheduleTester extends TestCase {
 
     public void tearDown() {
     }
-
+    
     /** Given a repeating schedule that should run yearly 3 times, check
      * that it gives the expected events, and no fourth event.
      * @throws Exception
@@ -90,6 +88,11 @@ public class RepeatingScheduleTester extends TestCase {
         assertNull("Fourth event should not happen.", next);
     }
 
+    /**
+     * Test that negative argument on getNextEvent
+     * throws ArgumentNotValid exception.
+     * @throws Exception
+     */
     public void testExceptions() throws Exception {
         Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
         Schedule sched = Schedule.getInstance(cal.getTime(), 1,
@@ -104,4 +107,20 @@ public class RepeatingScheduleTester extends TestCase {
             //Expected
         }
     }
+    
+    /** Given a repeating schedule check, that given the date of previous event is null,
+     * the date of the next event is also null.
+     */
+    public void testGetNextEvent3() throws Exception {
+        Calendar cal = new GregorianCalendar(1940, Calendar.APRIL, 9, 9, 30);
+        Schedule sched = Schedule.getInstance(cal.getTime(), 1,
+                new MonthlyFrequency(12, 9, 12, 0), "Full flag",
+                "In rememberance of the German occupation");
+        assertTrue("Schedule should be repeating",
+                sched instanceof RepeatingSchedule);
+        
+        assertNull("Null expected", sched.getNextEvent(null, 0));
+    }
+    
+    
 }

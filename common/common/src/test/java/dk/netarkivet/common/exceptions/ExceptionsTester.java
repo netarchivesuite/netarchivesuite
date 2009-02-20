@@ -24,20 +24,13 @@ package dk.netarkivet.common.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 
 import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 /**
  * Unit-tests for all Exceptions in this package.
  */
 public class ExceptionsTester extends TestCase {
-
-    private static final Log log = LogFactory.getLog(ExceptionsTester.class);
 
     private String nullString;
     private String emptyString;

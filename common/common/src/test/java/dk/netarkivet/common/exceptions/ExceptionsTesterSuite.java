@@ -50,7 +50,6 @@ public class ExceptionsTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ExceptionsTester.class);
-        suite.addTestSuite(ExceptionUtilsTester.class);
     }
 
     public static void main(String args[]) {

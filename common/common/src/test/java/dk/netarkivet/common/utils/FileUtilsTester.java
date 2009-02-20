@@ -95,7 +95,7 @@ public class FileUtilsTester extends TestCase{
      * Check that recursive file filter works correctly
      */
     public void testGetFilesRecursively() {
-        List l = FileUtils.getFilesRecursively(WORKING.getAbsolutePath(),
+        List<File> l = FileUtils.getFilesRecursively(WORKING.getAbsolutePath(),
                 new ArrayList<File>(), ".arc");
         assertEquals("Wrong number of files returned", 4, l.size());
     }
