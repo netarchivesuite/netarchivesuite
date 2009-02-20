@@ -40,7 +40,7 @@
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         </jms>
         <http>
-            <port>0000</port>
+            <port></port>
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
