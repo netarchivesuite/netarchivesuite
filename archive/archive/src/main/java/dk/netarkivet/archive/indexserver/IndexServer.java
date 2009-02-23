@@ -26,6 +26,7 @@ import dk.netarkivet.archive.indexserver.distribute.IndexRequestServer;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.utils.CleanupIF;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /** Index server.
@@ -53,6 +54,12 @@ public class IndexServer implements CleanupIF{
                 = new DedupCrawlLogIndexCache();
         FileBasedCache<Set<Long>> fullCrawlLogCache
                 = new FullCrawlLogIndexCache();
+        //prompt the empty indices to pre-generated
+        Set<Long> emptySet = new HashSet<Long>();
+        cdxCache.getIndex(emptySet);
+        dedupCrawlLogCache.getIndex(emptySet);
+        fullCrawlLogCache.getIndex(emptySet);
+        
         remoteServer = IndexRequestServer.getInstance();
         remoteServer.setHandler(RequestType.CDX, cdxCache);
         remoteServer.setHandler(RequestType.DEDUP_CRAWL_LOG,
