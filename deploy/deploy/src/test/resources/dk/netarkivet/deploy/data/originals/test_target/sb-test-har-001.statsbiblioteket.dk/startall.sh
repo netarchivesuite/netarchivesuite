@@ -1,4 +1,4 @@
-echo Starting all applications at: sb-test-har-001.statsbiblioteket.dk
+echo Starting all applications on: 'sb-test-har-001.statsbiblioteket.dk'
 #!/bin/bash
 cd /home/netarkiv/test/conf/
 if [ -e ./start_HarvestControllerApplication.sh ]; then 

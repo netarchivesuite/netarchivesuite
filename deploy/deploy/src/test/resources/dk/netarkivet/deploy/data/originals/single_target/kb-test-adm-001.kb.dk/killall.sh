@@ -1,4 +1,4 @@
-echo Killing all applications at: kb-test-adm-001.kb.dk
+echo Killing all applications on: 'kb-test-adm-001.kb.dk'
 #!/bin/bash
 cd /home/dev/TEST/conf/
 if [ -e ./kill_GUIApplication.sh ]; then 

@@ -40,7 +40,7 @@ public class TestInfo {
 	    WORKING_DIR, "database_target");
     public static final File TEST_TARGET_DIR = new File(
 	    WORKING_DIR, "test_target");
-
+    
     // argument files
     public static final File IT_CONF_FILE  = new File(
 	    WORKING_DIR, "it_config.xml");
@@ -57,6 +57,13 @@ public class TestInfo {
     public static final File FILE_DATABASE = new File(
 	    WORKING_DIR, "database.jar");
 
+    // arguments for complete settings
+    public static final File COMPLETE_SETTINGS_DIR = new File(
+	    WORKING_DIR, "complete_settings");
+    public static final File FILE_COMPLETE_SETTINGS = new File(
+	    TMPDIR, "complete_settings.xml");
+
+
     // arguments
     public static final String ARGUMENT_CONFIG_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_CONFIG_FILE;
@@ -72,5 +79,7 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
     public static final String ARGUMENT_TEST = 
 	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
+    public static final String ARGUMENT_EVALUATE = 
+	Constants.ARG_INIT_ARG + Constants.ARG_EVALUATE;
     public static final String ARGUMENT_TEST_ARG = "1000,1001,test,test@kb.dk";
 }

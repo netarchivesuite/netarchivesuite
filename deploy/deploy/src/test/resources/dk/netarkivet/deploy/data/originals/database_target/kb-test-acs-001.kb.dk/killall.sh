@@ -1,4 +1,4 @@
-echo Killing all applications at: kb-test-acs-001.kb.dk
+echo Killing all applications on: 'kb-test-acs-001.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
 if [ -e ./kill_IndexServerApplication.sh ]; then 

@@ -1,4 +1,4 @@
-echo Killing all applications at: kb-test-har-002.kb.dk
+echo Killing all applications on: 'kb-test-har-002.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
 if [ -e ./kill_HarvestControllerApplication_low.sh ]; then 

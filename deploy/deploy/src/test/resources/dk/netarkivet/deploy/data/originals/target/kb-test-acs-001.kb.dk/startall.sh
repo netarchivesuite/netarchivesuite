@@ -1,4 +1,4 @@
-echo Starting all applications at: kb-test-acs-001.kb.dk
+echo Starting all applications on: 'kb-test-acs-001.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
 if [ -e ./start_IndexServerApplication.sh ]; then 

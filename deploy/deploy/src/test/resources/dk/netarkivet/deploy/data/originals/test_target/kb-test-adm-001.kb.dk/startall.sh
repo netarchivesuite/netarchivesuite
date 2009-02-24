@@ -1,4 +1,4 @@
-echo Starting all applications at: kb-test-adm-001.kb.dk
+echo Starting all applications on: 'kb-test-adm-001.kb.dk'
 #!/bin/bash
 cd /home/test/test/conf/
 if [ -e ./start_GUIApplication.sh ]; then 

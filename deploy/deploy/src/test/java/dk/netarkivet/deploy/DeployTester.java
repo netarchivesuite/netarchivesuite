@@ -22,6 +22,8 @@
 */
 package dk.netarkivet.deploy;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
@@ -84,14 +86,23 @@ public class DeployTester extends TestCase {
                     TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
                     TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
                     TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                    TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                    TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                    TestInfo.ARGUMENT_EVALUATE + "yes"
                     };
         DeployApplication.main(args);
         // compare the resulting output files with the target files
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TARGETDIR,
                                               TestInfo.TMPDIR);
-
+        /**/
+        if(differences.length() > 0) {
+            pss.tearDown();
+            System.out.println("testDeploy");
+            System.out.println(differences);
+            pss.setUp();
+        }
+        /**/
+        
         assertEquals("No differences expected", 0, differences.length());
     }
 
@@ -114,13 +125,14 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.SINGLE_TARGET_DIR,
                                               TestInfo.TMPDIR);
-        /*
+        /**/
         if(differences.length() > 0) {
             pss.tearDown();
+            System.out.println("testDeploySingle");
             System.out.println(differences);
             pss.setUp();
         }
-        */
+        /**/
         
         assertEquals("No differences expected", 0, differences.length());
     }
@@ -145,6 +157,14 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.DATABASE_TARGET_DIR,
                                               TestInfo.TMPDIR);
+        /**/
+        if(differences.length() > 0) {
+            pss.tearDown();
+            System.out.println("testDeployDatabase:");
+            System.out.println(differences);
+            pss.setUp();
+        }
+        /**/
 
         assertEquals("No differences expected", 0, differences.length());
     }
@@ -167,6 +187,14 @@ public class DeployTester extends TestCase {
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TEST_TARGET_DIR,
                                               TestInfo.TMPDIR);
+        /**/
+        if(differences.length() > 0) {
+            pss.tearDown();
+            System.out.println("testDeployTest");
+            System.out.println(differences);
+            pss.setUp();
+        }
+        /**/
         
         assertEquals("No differences expected", 0, differences.length());
     }
@@ -612,5 +640,27 @@ public class DeployTester extends TestCase {
 	assertEquals("Exit value asserted 0.", 0, pseVal);
 	assertEquals("Correct error message expected.", 
 		Constants.MSG_ERROR_TEST_OFFSET, pssMsg);
+    }
+    
+    /**
+     * Tests if the complete settings file is correctly created.
+     */
+    public void testCompleteSettings() {
+	try {
+	    // the output directory is not automatically created, 
+	    // hence create it before running. 
+	    FileUtils.createDir(TestInfo.TMPDIR);
+	    
+	    String[] args = {TestInfo.FILE_COMPLETE_SETTINGS.getAbsolutePath()};	    
+	    BuildCompleteSettings.main(args);
+	    
+	    String differences = TestFileUtils.compareDirsText(
+		    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
+	    
+	    assertEquals("No differences expected", 0, differences.length());	
+	} catch (Exception e) {
+	    // give error if exception caught.
+	    assertEquals(e.getMessage(), -1, 0);
+	}
     }
 }
