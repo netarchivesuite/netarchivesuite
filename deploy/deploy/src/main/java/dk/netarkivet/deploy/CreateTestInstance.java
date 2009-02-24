@@ -72,7 +72,8 @@ public class CreateTestInstance {
      * @param configSource The source configuration file.
      */
     public CreateTestInstance(File configSource) {
-	ArgumentNotValid.checkNotNull(configSource, "File configSource");
+        ArgumentNotValid.checkNotNull(configSource, "File configSource");
+        
         source = configSource;
         deployConfiguration = new XmlStructure(source);
     }
@@ -105,7 +106,7 @@ public class CreateTestInstance {
             System.exit(0);
         }
         // change integer to string (easiest way to change integer to String)
-        offsetVal = new String("" + offsetInt);
+        offsetVal = new String(new Integer(offsetInt).toString());
 
         // Get values
         httpPortVal = httpPort;
@@ -120,13 +121,13 @@ public class CreateTestInstance {
         // make offset paths
         offsetPaths = new OffsetSystem[] {
                 new OffsetSystem(Constants.TEST_OFFSET_MONITOR_JMX_PORT, 
-                	Constants.COMPLETE_JMX_PORT_PATH),
+                        Constants.COMPLETE_JMX_PORT_PATH),
                 new OffsetSystem(Constants.TEST_OFFSET_MONITOR_RMI_PORT, 
-                	Constants.COMPLETE_JMX_RMIPORT_PATH),
+                        Constants.COMPLETE_JMX_RMIPORT_PATH),
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_GUI_PORT, 
-                	Constants.COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
+                        Constants.COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH),
                 new OffsetSystem(Constants.TEST_OFFSET_HERITRIX_JMX_PORT, 
-                	Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
+                        Constants.COMPLETE_HARVEST_HETRIX_JMX_PORT)
                 };
 
         // apply the arguments
@@ -177,12 +178,13 @@ public class CreateTestInstance {
 
         // Check the following! 
         deployConfiguration.overWriteOnly(e, httpPortVal, httpPortPath);
-        deployConfiguration.overWriteOnly(e, environmentNameVal, environmentNamePath);
+        deployConfiguration.overWriteOnly(e, environmentNameVal, 
+                environmentNamePath);
         deployConfiguration.overWriteOnly(e, mailReceiverVal, mailReceiverPath);
 
         for(OffsetSystem ofs : offsetPaths) {
-            deployConfiguration.overWriteOnlyInt(e, ofs.getIndex(), offsetVal.charAt(0), 
-                    ofs.getPath());
+            deployConfiguration.overWriteOnlyInt(e, ofs.getIndex(), 
+                    offsetVal.charAt(0), ofs.getPath());
         }
     }
     
@@ -203,10 +205,10 @@ public class CreateTestInstance {
         for(Element el : elems) {
             String content = el.getText();
             // check if windows format has been used
-            if(content.contains("\\")) {
-                content += "\\" + environmentNameVal;
+            if(content.contains(Constants.BACKSLASH)) {
+                content += Constants.BACKSLASH + environmentNameVal;
             } else {
-                content += "/" + environmentNameVal;
+                content += Constants.SLASH + environmentNameVal;
             }
             // then set new value.
             el.setText(content);

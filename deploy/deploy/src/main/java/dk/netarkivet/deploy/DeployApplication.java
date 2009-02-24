@@ -65,11 +65,6 @@ public final class DeployApplication {
     /** The arguments for resetting tempDir.*/
     private static boolean resetDirectory;
 
-    /** 
-     * The constructor.
-     */
-    private DeployApplication() { }
-    
     /**
      * Run the new deploy.
      * 
@@ -205,7 +200,7 @@ public final class DeployApplication {
             System.exit(0);
         }
         // check whether deploy-config file has correct extensions
-        if(!deployConfigFileName.endsWith(".xml")) {
+        if(!deployConfigFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_CONFIG_EXTENSION);
             System.out.println();
@@ -237,7 +232,7 @@ public final class DeployApplication {
             System.exit(0);
         }
         // check whether the NetarchiveSuite file has correct extensions
-        if(!netarchiveSuiteFileName.endsWith(".zip")) {
+        if(!netarchiveSuiteFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
             System.out.println();
@@ -270,7 +265,7 @@ public final class DeployApplication {
             System.exit(0);
         }
         // check whether security policy file has correct extensions
-        if(!secPolicyFileName.endsWith(".policy")) {
+        if(!secPolicyFileName.endsWith(Constants.EXTENSION_POLICY_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_SECURITY_EXTENSION);
             System.out.println();
@@ -303,7 +298,7 @@ public final class DeployApplication {
             System.exit(0);
         }
         // check whether the log property file has correct extensions
-        if(!logPropFileName.endsWith(".prop")) {
+        if(!logPropFileName.endsWith(Constants.EXTENSION_LOG_PROPERTY_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
             System.out.println();
@@ -331,8 +326,9 @@ public final class DeployApplication {
         dbFile = null;
         // check the extension on the database, if it is given as argument 
         if(databaseFileName != null) {
-            if(!databaseFileName.endsWith(".jar") 
-                    && !databaseFileName.endsWith(".zip")) {
+            if(!databaseFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
+                    && !databaseFileName.endsWith(
+                            Constants.EXTENSION_ZIP_FILES)) {
                 System.err.print(
                         Constants.MSG_ERROR_DATABASE_EXTENSION);
                 System.out.println();
@@ -365,12 +361,12 @@ public final class DeployApplication {
      */
     private static void initReset(String resetArgument) {
         if(resetArgument != null) {
-            if(resetArgument.equalsIgnoreCase("y")
-                    || resetArgument.equalsIgnoreCase("yes")) {
+            if(resetArgument.equalsIgnoreCase(Constants.YES_SHORT)
+                    || resetArgument.equalsIgnoreCase(Constants.YES_LONG)) {
                 // if positive argument, then set to true.
                 resetDirectory = true;
-            } else if (resetArgument.equalsIgnoreCase("n")
-                    || resetArgument.equalsIgnoreCase("no")) {
+            } else if (resetArgument.equalsIgnoreCase(Constants.NO_SHORT)
+                    || resetArgument.equalsIgnoreCase(Constants.NO_LONG)) {
                 // if negative argument, then set to false.
                 resetDirectory = false;
             } else {
@@ -395,10 +391,11 @@ public final class DeployApplication {
     public static void initEvaluate(String evaluateArgument) {
         if(evaluateArgument != null) {
             // check if argument is acknowledgement ('y' or 'yes')
-            if(evaluateArgument.equalsIgnoreCase("y")
-                    || evaluateArgument.equalsIgnoreCase("yes")) {
+            if(evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
+                    || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG)) {
                 // if yes, then evaluate config file
-                EvaluateConfigFile evf = new EvaluateConfigFile(deployConfigFile);
+                EvaluateConfigFile evf = 
+                    new EvaluateConfigFile(deployConfigFile);
                 evf.evaluate();
             }
         }
@@ -419,17 +416,18 @@ public final class DeployApplication {
      */
     private static void initTestArguments(String testArguments) {
         // test if any test arguments (if none, don't apply, just stop).
-        if(testArguments == null || testArguments.equalsIgnoreCase("")) {
+        if(testArguments == null || testArguments.isEmpty()) {
             return;
         }
 
-        String[] changes = testArguments.split("[,]");
+        String[] changes = testArguments.split(Constants.REGEX_COMMA_CHARACTER);
         if(changes.length != Constants.TEST_ARGUMENTS_REQUIRED) {
             System.err.print(
                     Constants.MSG_ERROR_TEST_ARGUMENTS);
             System.out.println();
             System.out.println(changes.length + " arguments was given and "
-        	    + Constants.TEST_ARGUMENTS_REQUIRED + " was expected."); 
+                    + Constants.TEST_ARGUMENTS_REQUIRED + " was expected.");
+            System.out.println("Received: " + testArguments);
             System.exit(0);
         }
 
@@ -443,13 +441,13 @@ public final class DeployApplication {
             
             // apply the arguments
             cti.applyTestArguments(changes[offsetIndex], changes[httpIndex], 
-        	    changes[environmentNameIndex], changes[mailIndex]); 
+                    changes[environmentNameIndex], changes[mailIndex]); 
             //annoying 3 code-style 'warning' (change maximum acceptable value)
 
             // replace ".xml" with "_test.xml"
             String tmp = deployConfigFile.getPath();
-            // split this into two ("path/config", ".xml") 
-            String[] configFile = tmp.split("[.]");
+            // split this into two ("path/config.xml" = {"path/config", ".xml"})
+            String[] configFile = tmp.split(Constants.REGEX_DOT_CHARACTER);
             // take the first part and add test ending 
             // ("path/config" + "_test.xml" = "path/config_test.xml")
             String nameOfNewConfig =  configFile[0] 
@@ -475,30 +473,30 @@ public final class DeployApplication {
         private CommandLineParser parser = new PosixParser();
         /** The command line.*/
         private CommandLine cmd;
-         
+        /** Whether the options has an argument.*/
         private final boolean hasArg = true;
         /**
          * Initialise options by setting legal parameters for batch jobs.
          */
         ArgumentParameters() {
             options.addOption(Constants.ARG_CONFIG_FILE, 
-        	    hasArg, "Config file.");
+                    hasArg, "Config file.");
             options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, 
-        	    hasArg, "The NetarchiveSuite package file.");
+                    hasArg, "The NetarchiveSuite package file.");
             options.addOption(Constants.ARG_SECURITY_FILE, 
-        	    hasArg, "Security property file.");
+                    hasArg, "Security property file.");
             options.addOption(Constants.ARG_LOG_PROPERTY_FILE, 
-        	    hasArg, "Log property file.");
+                    hasArg, "Log property file.");
             options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
-        	    hasArg, "[OPTIONAL] output directory.");
+                    hasArg, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, 
-        	    hasArg, "[OPTIONAL] Database file.");
+                    hasArg, "[OPTIONAL] Database file.");
             options.addOption(Constants.ARG_TEST, 
-        	    hasArg, "[OPTIONAL] Tests arguments (offset for http port, "
+                    hasArg, "[OPTIONAL] Tests arguments (offset for http port, "
                     + "http port, environment name, mail receiver).");
             options.addOption(Constants.ARG_RESET,
-        	    hasArg, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
-        	    + "means reset, anything else means do not reset."
+                    hasArg, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
+                    + "means reset, anything else means do not reset."
                     + " Different from 'y', 'yes', 'n' or 'no' gives"
                     + " an error message.");
             options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
@@ -516,7 +514,7 @@ public final class DeployApplication {
                 // parse the command line arguments
                 cmd = parser.parse(options, args);
             } catch(ParseException exp) {
-        	System.out.println("Parsing error: " + exp);
+                System.out.println("Parsing error: " + exp);
                 return false;
             }
             return true;
@@ -528,15 +526,16 @@ public final class DeployApplication {
          * @return The list describing the possible arguments.
          */
         String listArguments() {
-            StringBuilder res = new StringBuilder("\n");
-            res.append("Arguments:");
+            StringBuilder res = new StringBuilder();
+            res.append(Constants.NEWLINE);
+            res.append(Constants.INIT_ARGUMENTS_LIST);
             // add options
             for (Object o: options.getOptions()) {
                 Option op = (Option) o;
-                res.append("\n");
-                res.append("-");
+                res.append(Constants.NEWLINE);
+                res.append(Constants.DASH);
                 res.append(op.getOpt());
-                res.append(" ");
+                res.append(Constants.SPACE);
                 res.append(op.getDescription());
             }
             return res.toString();

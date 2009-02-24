@@ -167,8 +167,8 @@ public abstract class Machine {
      * @param parentDirectory The directory where to write the files.
      */
     public void write(File parentDirectory) {
-	ArgumentNotValid.checkNotNull(parentDirectory, "File parentDirectory");
-	
+        ArgumentNotValid.checkNotNull(parentDirectory, "File parentDirectory");
+
         // create the directory for this machine
         machineDirectory = new File(parentDirectory, name);
         FileUtils.createDir(machineDirectory);
@@ -206,9 +206,7 @@ public abstract class Machine {
      */
     public String writeToGlobalKillScript() {
         StringBuilder res = new StringBuilder();
-        res.append("echo KILLING MACHINE: ");
-        res.append(machineUserLogin());
-        res.append("\n");
+        res.append(ScriptConstants.writeKillMachineHeader(machineUserLogin()));
         // write the operating system dependent part of the kill script
         res.append(osKillScript());
         return res.toString();
@@ -222,9 +220,8 @@ public abstract class Machine {
      */
     public String writeToGlobalInstallScript() {
         StringBuilder res = new StringBuilder();
-        res.append("echo INSTALLING TO MACHINE: ");
-        res.append(machineUserLogin());
-        res.append("\n");
+        res.append(ScriptConstants.writeInstallMachineHeader(
+                machineUserLogin()));
         // write the operating system dependent part of the install script
         res.append(osInstallScript());
         return res.toString();
@@ -238,9 +235,8 @@ public abstract class Machine {
      */
     public String writeToGlobalStartScript() {
         StringBuilder res = new StringBuilder();
-        res.append("echo STARTING MACHINE: ");
-        res.append(machineUserLogin());
-        res.append("\n");
+        res.append(ScriptConstants.writeStartMachineHeader(
+                machineUserLogin()));
         // write the operating system dependent part of the start script
         res.append(osStartScript());
         return res.toString();
@@ -256,7 +252,8 @@ public abstract class Machine {
         // make file
         try {
             // make file
-            File secPolFile = new File(directory, "security.policy");
+            File secPolFile = new File(directory, 
+                    Constants.SECURITY_POLICY_FILE_NAME);
             FileWriter secfw = new FileWriter(secPolFile);
             String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
 
@@ -298,13 +295,9 @@ public abstract class Machine {
             if(!dirs.isEmpty()) {
                 secfw.write("grant {" + "\n");
                 for(String dir : dirs) {
-                    //   permission java.io.FilePermission "
-                    secfw.write("  permission java.io.FilePermission \"");
-                    // ${/}netarkiv${/}0001${/}JOLF${/}filedir${/};
-                    secfw.write(changeFileDirPathForSecurity(dir));
-                    // -", "read"
-                    secfw.write("-\", \"read\"");
-                    secfw.write(";" + "\n");
+                    secfw.write(ScriptConstants
+                            .writeSecurityPolicyDirPermission(
+                            changeFileDirPathForSecurity(dir)));
                 }
                 secfw.write("};");
             }
@@ -329,12 +322,15 @@ public abstract class Machine {
             try {
                 // make file
                 File logProp = new File(directory, 
-                    "log_" + app.getIdentification() + ".prop");
+                        Constants.LOG_PROP_APPLICATION_PREFIX 
+                        + app.getIdentification() 
+                        + Constants.LOG_PROP_APPLICATION_SUFFIX);
                 FileWriter logfw = new FileWriter(logProp);
                 String prop = FileUtils.readFile(inheritedLogPropFile);
 
                 // append stuff!
-                prop = prop.replace("APPID", app.getIdentification());
+                prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
+                        app.getIdentification());
 
                 // write to file.
                 logfw.write(prop);
@@ -358,88 +354,13 @@ public abstract class Machine {
             // init writer
             PrintWriter jw = new PrintWriter(jmxFile);
             try {
-                // write template comment header in jmx file!
-                jw.println("################################################"
-                                + "##############");
-                jw.println("#        Password File for Remote JMX Monitoring");
-                jw.println("################################################"
-                                + "##############");
-                jw.println("#");
-                jw.println("# Password file for Remote JMX API access to "
-                                + "monitoring.  This");
-                jw.println("# file defines the different roles and their "
-                                + "passwords.  The access");
-                jw.println("# control file (jmxremote.access by default) "
-                                + "defines the allowed");
-                jw.println("# access for each role.  To be functional, a "
-                                + "role must have an entry");
-                jw.println("# in both the password and the access files.");
-                jw.println("#");
-                jw.println("# Default location of this file is $JRE/lib/"
-                                + "management/jmxremote.password");
-                jw.println("# You can specify an alternate location by "
-                                + "specifying a property in");
-                jw.println("# the management config file $JRE/lib/"
-                                + "management/management.properties");
-                jw.println("# or by specifying a system property (See that "
-                                + "file for details).");
-                jw.println();
-                jw.println();
-                jw.println("################################################"
-                                + "##############");
-                jw.println("#    File permissions of the jmxremote.password "
-                                + "file");
-                jw.println("################################################"
-                                + "##############");
-                jw.println("#      Since there are cleartext passwords "
-                                + "stored in this file,");
-                jw.println("#      this file must be readable by ONLY the "
-                                + "owner,");
-                jw.println("#      otherwise the program will exit with an "
-                                + "error.");
-                jw.println("#");
-                jw.println("# The file format for password and access files "
-                                + "is syntactically the same");
-                jw.println("# as the Properties file format.  The syntax is "
-                                + "described in the Javadoc");
-                jw.println("# for java.util.Properties.load.");
-                jw.println("# Typical password file has multiple  lines, "
-                                + "where each line is blank,");
-                jw.println("# a comment (like this one), or a password entry.");
-                jw.println("#");
-                jw.println("#");
-                jw.println("# A password entry consists of a role name "
-                                + "and an associated");
-                jw.println("# password.  The role name is any string "
-                                + "that does not itself contain");
-                jw.println("# spaces or tabs.  The password is again any "
-                                + "string that does not");
-                jw.println("# contain spaces or tabs.  Note that passwords "
-                                + "appear in the clear in");
-                jw.println("# this file, so it is a good idea not to use "
-                                + "valuable passwords.");
-                jw.println("#");
-                jw.println("# A given role should have at most one entry "
-                                + "in this file.  If a role");
-                jw.println("# has no entry");
-                jw.println("# If multiple entries are found for the same "
-                                + "role name, then the last one");
-                jw.println("# is used.");
-                jw.println("#");
-                jw.println("# In a typical installation, this file can be "
-                                + "read by anybody on the");
-                jw.println("# local machine, and possibly by people on other"
-                                + " machines.");
-                jw.println("# For # security, you should either restrict the"
-                                + " access to this file,");
-                jw.println("# or specify another, less accessible file in "
-                                + "the management config file");
-                jw.println("# as described above.");
-                jw.println("#");
+                // Write the header of the jmxremote.password file.
+                jw.print(ScriptConstants.JMXREMOTE_PASSWORD_HEADER);
 
-                // get the username and password for monitor and heritrix.
+                // Get the username and password for monitor and heritrix.
                 StringBuilder logins = new StringBuilder();
 
+                // Append the jmx logins for monitor and heritrix. 
                 logins.append(getMonitorLogin());
                 logins.append(getHeritrixLogin());
                 
@@ -509,7 +430,7 @@ public abstract class Machine {
         // if no usernames, and thus no passwords => DIE
         if(usernames.size() == 0) {
             String msg = "No usernames or passwords for monitor on machine: '"
-        	+ name + "'";
+                + name + "'";
             log.warn(msg);
             throw new IllegalState(msg);
         }
@@ -519,7 +440,7 @@ public abstract class Machine {
             if(!usernames.get(0).equals(usernames.get(i))
                     || !passwords.get(0)
                     .equals(passwords.get(i))) {
-        	String msg = "Different usernames or passwords "
+                String msg = "Different usernames or passwords "
                     + "under monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new Exception(msg);
@@ -529,9 +450,9 @@ public abstract class Machine {
         // make the resulting string
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
-            res.append(" ");
+            res.append(Constants.SPACE);
             res.append(passwords.get(0));
-            res.append("\n");
+            res.append(Constants.NEWLINE);
         }
         return res.toString();
     }
@@ -593,7 +514,7 @@ public abstract class Machine {
             if(!usernames.get(0).equals(usernames.get(i))
                     || !passwords.get(0)
                     .equals(passwords.get(i))) {
-        	String msg = "Different usernames or passwords "
+                String msg = "Different usernames or passwords "
                     + "under heritrix on machine: '" + name + "'";
                 log.warn(msg);
                 throw new Exception(msg);
@@ -603,9 +524,9 @@ public abstract class Machine {
         // make the resulting string
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
-            res.append(" ");
+            res.append(Constants.SPACE);
             res.append(passwords.get(0));
-            res.append("\n");
+            res.append(Constants.NEWLINE);
         }
         return res.toString();
     }
@@ -617,7 +538,7 @@ public abstract class Machine {
      */
     protected String machineUserLogin() {
         return machineParameters.getMachineUserName().getStringValue()
-                + "@" + name;
+                + Constants.AT + name;
     }
 
     /**

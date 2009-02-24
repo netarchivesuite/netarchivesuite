@@ -26,7 +26,6 @@ package dk.netarkivet.deploy;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.EMailNotifications;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.viewerproxy.ViewerProxySettings;
@@ -38,6 +37,53 @@ import dk.netarkivet.viewerproxy.ViewerProxySettings;
  * COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
+    // Single character specific
+    /** The empty string, "".*/
+    static final String EMPTY = "";
+    /** The newline character as a string.*/
+    static final String NEWLINE = "\n";
+    /** Quote mark.*/
+    static final String QUOTE_MARK = "\"";
+    /** Apostrophe.*/
+    static final String APOSTROPHE = "'"; 
+    /** The space character as a string.*/
+    static final String SPACE = " ";
+    /** The at '@' character as a string.*/
+    static final String AT = "@";
+    /** The underscore '_' character as a string.*/
+    static final String UNDERSCORE = "_";
+    /** Less than (prefix for XML).*/
+    static final String LESS_THAN = "<";
+    /** Greater than (suffix for XML).*/
+    static final String GREATER_THAN = ">";
+    /** Slash, Linux/Unix directory path separator.*/
+    static final String SLASH = "/";
+    /** Dot: '.'.*/
+    static final String DOT = ".";
+    /** Dash: '-'.*/
+    static final String DASH = "-";
+    /** BackSlash: '\\'.*/
+    static final String BACKSLASH = "\\";
+    /** Colon: ':'.*/
+    static final String COLON = ":";
+    /** Semicolon: ';'.*/
+    static final String SEMICOLON = ";";
+    /** ( - To start a standard bracket.*/
+    static final String BRACKET_BEGIN = "(";
+    /** ) - To end a standard bracket.*/
+    static final String BRACKET_END = ")";
+    /** [ - To start a square bracket.*/
+    static final String SQUARE_BRACKET_BEGIN = "[";
+    /** ] - To end a square bracket.*/
+    static final String SQUARE_BRACKET_END = "]";
+    /** $ - Dollar sign.*/
+    static final String DOLLAR_SIGN = "$";
+    /** | - Separator.*/
+    static final String SEPARATOR = "|";
+    /** * - Star.*/
+    static final String STAR = "*";
+    
+    
     // deploy specific parameters.
     /** The path to the class path branches.*/
     static final String DEPLOY_CLASS_PATH = "deployClassPath";
@@ -66,6 +112,12 @@ public final class Constants {
     /** The path to the operating system variable.*/
     static final String MACHINE_OPERATING_SYSTEM_ATTRIBUTE = "os";
 
+    // Attribute values
+    /** The operating system attribute for windows.*/
+    static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
+    /** The operating system attribute for linux/unix. */
+    static final String OPERATING_SYSTEM_LINUX_ATTRIBUTE = "linux";
+
     // TAGS
     /** The attachment for the file dir in the security policy file.*/
     static final String SECURITY_FILE_DIR_TAG = "filedir";
@@ -73,6 +125,8 @@ public final class Constants {
     static final String SECURITY_JMX_PRINCIPAL_NAME_TAG = "ROLE";
     /** The name of the common temp dir tag in the security policy file.*/
     static final String SECURITY_COMMON_TEMP_DIR_TAG = "TEMPDIR";
+    /** The name of the application id in the log.prop file.*/
+    static final String LOG_PROPERTY_APPLICATION_ID_TAG = "APPID";
 
     // Setting specific
     /** Path to the Settings branch.*/
@@ -159,16 +213,15 @@ public final class Constants {
         HarvesterSettings.HERITRIX_JMX_PASSWORD
         .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
 
-    // Values and file names
-    /** The operating system attribute for windows.*/
-    static final String OPERATING_SYSTEM_WINDOWS_ATTRIBUTE = "windows";
-    /** The operating system attribute for linux/unix */
-    static final String OPERATING_SYSTEM_LINUX_ATTRIBUTE = "linux";
-    /** The call for running a batch script from another batch script.*/
-    static final String OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE = 
-        "\"C:\\Program Files\\Bitvise WinSSHD\\bvRun\" -brj -new -cmd=";
+    // File and directory names
     /** The name of the JMX remote password file.*/
     static final String JMX_FILE_NAME = "jmxremote.password";
+    /** The name of the security policy file.*/
+    static final String SECURITY_POLICY_FILE_NAME = "security.policy";
+    /** The prefix for the log property file for the application.*/
+    static final String LOG_PROP_APPLICATION_PREFIX = "log_";
+    /** The suffix for the log property file for the application.*/
+    static final String LOG_PROP_APPLICATION_SUFFIX = ".prop";
     /** The directory for the database in the unpacked NetarchiveSuite.
      *  The default directory for the database file.
      */
@@ -182,11 +235,50 @@ public final class Constants {
      */
     static final String DATABASE_BASE_PATH = 
         DATABASE_BASE_DIR + DATABASE_BASE_FILE;
-    /** The message when database is trying to overwrite a non-empty dir.*/
-    static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
-        "The database directory already exists. Thus database not reset.";
     /** The name of the new modified configuration file for tests.*/
     static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
+    /** The script extension for Linux/Unix.*/
+    static final String SCRIPT_EXTENSION_LINUX = ".sh";
+    /** The script extension for Windows.*/
+    static final String SCRIPT_EXTENSION_WINDOWS = ".bat";
+    /** The name of the killall script. killall.*/
+    static final String SCRIPT_NAME_KILL_ALL = "killall";
+    /** The name of the killall script. install.*/
+    static final String SCRIPT_NAME_INSTALL_ALL = "install";
+    /** The name of the killall script. startall.*/
+    static final String SCRIPT_NAME_START_ALL = "startall";
+    /** Prefix for the application kill script. kill_ .*/
+    static final String SCRIPT_LOCAL_KILL_ALL = "kill_";
+    /** Prefix for the application start script. start_ .*/
+    static final String SCRIPT_LOCAL_START_ALL = "start_";
+    /** Prefix for the application kill_ps script.*/
+    static final String SCRIPT_KILL_PS = "kill_ps_";
+    /** The prefix of the name for application specific settings files.*/
+    static final String PREFIX_SETTINGS = "settings_";
+    /** The extension on XML files.*/
+    static final String EXTENSION_XML_FILES = ".xml";
+    /** The extension on zip files.*/
+    static final String EXTENSION_ZIP_FILES = ".zip";
+    /** The extension on policy files.*/
+    static final String EXTENSION_POLICY_FILES = ".policy";
+    /** The extension on property files.*/
+    static final String EXTENSION_LOG_PROPERTY_FILES = ".prop";
+    /** The extension on jar files.*/
+    static final String EXTENSION_JAR_FILES = ".jar";
+    /** The extension on vb-script files.*/
+    static final String EXTENSION_VBS_FILES = ".vbs";
+    /** The extension on log files.*/
+    static final String EXTENSION_LOG_FILES = ".log";
+    /** The config directory path from install directory.*/
+    static final String CONF_DIR_WINDOWS = "\\conf\\";
+    /** The config directory path from install directory.*/
+    static final String CONF_DIR_LINUX = "/conf/";
+    /** Settings prefix. settings_.*/
+    static final String SETTINGS_PREFIX = "settings_";
+    /** Log property prefix. log_.*/
+    static final String LOG_PREFIX = "log_";
+    /** Windows directory creation script prefix.*/
+    static final String WINDOWS_DIR_CREATE_PREFIX = "dir_";
     
     // evaluate specific constants
     /** Complete list of settings files to combine to complete settings file.*/
@@ -207,20 +299,20 @@ public final class Constants {
         "dk/netarkivet/common/distribute/JMSConnectionSunMQSettings.xml"
         };
     /** The path to the complete settings file.*/
-    static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = 
+    public static final String BUILD_COMPLETE_SETTINGS_FILE_PATH = 
         "dk/netarkivet/deploy/complete_settings.xml";
     /** The name of the temporary run-file for windows.*/
-    static final String FILE_TEMPORARY_RUN_WINDOWS_NAME = "running_";
+    public static final String FILE_TEMPORARY_RUN_WINDOWS_NAME = "running_";
     
     // other constants
     /** The minimum number of arguments required.*/
-    static final int ARGUMENTS_REQUIRED = 4;
+    public static final int ARGUMENTS_REQUIRED = 4;
     /** The exact number of arguments required for test.*/
-    static final int TEST_ARGUMENTS_REQUIRED = 4;
+    public static final int TEST_ARGUMENTS_REQUIRED = 4;
     /** The maximum integer value in a character.*/
-    static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
+    public static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
     /** Directories to install under baseFileDir.*/
-    static final String[] BASEFILEDIR_SUBDIRECTORIES = {
+    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {
             dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
             dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
             dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME
@@ -241,7 +333,6 @@ public final class Constants {
      * heritrix gui port.
      */
     static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
-    
 
     // argument parameters as constants.
     /** For initiating a argument. */
@@ -264,6 +355,24 @@ public final class Constants {
     public static final String ARG_RESET = "R";
     /** For giving the optional argument.*/
     public static final String ARG_EVALUATE = "E";
+    
+    // Argument values
+    /** The long yes argument.*/
+    public static final String YES_LONG = "yes";
+    /** The short yes argument.*/
+    public static final String YES_SHORT = "y";
+    /** The long no argument.*/
+    public static final String NO_LONG = "no";
+    /** The short no argument.*/
+    public static final String NO_SHORT = "n";
+    
+    // Other string constants
+    /** Regular expression for finding the '.' character.*/
+    public static final String REGEX_DOT_CHARACTER = "[.]";
+    /** Regular expression for finding the ',' character.*/
+    public static final String REGEX_COMMA_CHARACTER = "[,]";
+    /** Argument.*/
+    public static final String INIT_ARGUMENTS_LIST = "Arguments:";
     
     // messages
     /** The error message for error in parsing the arguments.*/
@@ -328,5 +437,36 @@ public final class Constants {
         "Wrong argument for resetting the directory.";
     /** The error message when a physical location has no name attribute.*/
     public static final String MSG_ERROR_PHYSICAL_LOCATION_NO_NAME =
-	"A Physical Location has no name!";
+        "A Physical Location has no name!";
+    
+    // functions
+    /**
+     * Create the beginning of a scope in XML (e.g. html = \< html \>).
+     * 
+     * @param scope The name of the XML-scope to have the start created.
+     * @return The beginning of the XML-scope.
+     */
+    public static String changeToXMLBeginScope(String scope) {
+        return LESS_THAN + scope + GREATER_THAN;
+    }
+
+    /**
+     * Create the ending of a scope in XML (e.g. html = \< \html \>).
+     * 
+     * @param scope The name of the XML-scope to have the end created.
+     * @return The ending of the XML-scope.
+     */
+    public static String changeToXMLEndScope(String scope) {
+        return LESS_THAN + SLASH + scope + GREATER_THAN;
+    }
+    
+    /**
+     * Replaces all slashes in a string with dots.
+     * 
+     * @param st The string to have slashes replaced with dots.
+     * @return The new replaced string.
+     */
+    public static String replaceSlashWithDot(String st) {
+        return st.replace(SLASH, DOT);
+    }
 }

@@ -87,7 +87,7 @@ public class XmlStructure {
     }
 
     /**
-     * Loading the file into the document data structure
+     * Loading the file into the document data structure.
      * 
      * @param f The XML file to be loaded.
      * @return The XML file loaded into the document data structure
@@ -112,7 +112,7 @@ public class XmlStructure {
     }
 
     /**
-     * for retrieving a single specific branch  
+     * Function for retrieving a single specific branch.  
      * 
      * @param name The name of the branch
      * @return The child element of the XML tree structure
@@ -160,9 +160,8 @@ public class XmlStructure {
                 e = e.element(n);
             } else {
                 // the element does not exist
-                String errMsg = "Element " + n 
-                        + " is not a branch in the tree. Null returned";
-                log.debug(errMsg);
+                log.debug("Element " + n 
+                        + " is not a branch in the tree. Null returned");
                 return null;
             }
         }
@@ -179,15 +178,15 @@ public class XmlStructure {
      * XML-branch is returned.
      * Returns 'null' if the path to the branch cannot be found.   
      */
-    public String getSubChildValue(String ...name ) {
+    public String getSubChildValue(String ...name) {
         ArgumentNotValid.checkNotNull(name, "String ...name");
         Element e = getSubChild(name);
-        if(e != null ) {
+        if(e != null) {
             if(e.isTextOnly()) {
                 return e.getText();
             } else {
                 log.debug("Element is not text. The entire XML-branch "
-                	+ "is returned.");
+                        + "is returned.");
                 return e.asXML();
             }
         } else {
@@ -238,7 +237,7 @@ public class XmlStructure {
 
         // extract the value of the elements to an array.
         String[] res = new String[elemList.size()];
-        for(int i=0; i<elemList.size(); i++) {
+        for(int i = 0; i < elemList.size(); i++) {
             res[i] = elemList.get(i).getText();
         }
 
@@ -335,7 +334,7 @@ public class XmlStructure {
      * @param value The value to overwrite the leaf with.
      * @param path The path from the branch to the leaf.
      */
-    public void overWriteOnly(Element branch, String value, String ... path ) {
+    public void overWriteOnly(Element branch, String value, String ... path) {
         ArgumentNotValid.checkNotNullOrEmpty(value, "String Value");
         ArgumentNotValid.checkNotNull(path, "String path");
         ArgumentNotValid.checkPositive(path.length, "Size of String path[]");
@@ -397,8 +396,8 @@ public class XmlStructure {
      * @return The Element.
      */
     public static Element makeElementFromString(String content) {
-	ArgumentNotValid.checkNotNullOrEmpty(content, "String name");
-	
+        ArgumentNotValid.checkNotNullOrEmpty(content, "String name");
+
         try{
             ByteArrayInputStream in = new ByteArrayInputStream(
                     content.getBytes());
@@ -419,16 +418,16 @@ public class XmlStructure {
      * @return The XML code for the branch with content.
      */
     public static String pathAndContentToXML(String content, String ... path) {
-	ArgumentNotValid.checkNotNullOrEmpty(content, "String content");
-	ArgumentNotValid.checkNotNegative(path.length, 
+        ArgumentNotValid.checkNotNullOrEmpty(content, "String content");
+        ArgumentNotValid.checkNotNegative(path.length, 
                 "Size of 'String ... path'");
-	
+
         StringBuilder res = new StringBuilder();
 
         // write path to the leaf
         for(int i = 0; i<path.length; i++) {
             String st = path[i];
-            res.append("<" + st + ">");
+            res.append(Constants.changeToXMLBeginScope(st));
         }
 
         res.append(content);
@@ -436,7 +435,7 @@ public class XmlStructure {
         // write path back from leaf (close xml).
         for(int i = path.length-1; i >= 0; i--) {
             String st = path[i];
-            res.append("</" + st + ">");
+            res.append(Constants.changeToXMLEndScope(st));
         }
 
         return res.toString();
@@ -464,7 +463,7 @@ public class XmlStructure {
         if(path.length > 1){
             // create the new path
             String[] nextPath = new String[path.length -1];
-            for(int i=1; i<path.length; i++) {
+            for(int i = 1; i < path.length; i++) {
                 nextPath[i-1] = path[i];
             }
 
@@ -472,7 +471,7 @@ public class XmlStructure {
             List<Element> children = current.elements(path[0]);
             for(Element el : children) {
                     // the the result of these children.
-                List<Element> childRes = getAllChildrenAlongPath(el,nextPath);
+                List<Element> childRes = getAllChildrenAlongPath(el, nextPath);
                 // put children result into current result. 
                 for(Element cr : childRes) {
                     res.add(cr);

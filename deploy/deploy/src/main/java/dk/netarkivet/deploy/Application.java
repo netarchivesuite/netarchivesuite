@@ -33,6 +33,7 @@ import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
  * The application entity in the deploy hierarchy.
@@ -101,7 +102,12 @@ public class Application {
                 // set as the name. It is the last element in the classpath.
                 nameWithNamePath = at.getText();
                 // the classpath is is separated by '.'
-                String[] stlist = nameWithNamePath.split("[.]");
+                String[] stlist = nameWithNamePath.split(
+                        Constants.REGEX_DOT_CHARACTER);
+                // take the last part of the application class path as name. 
+                // e.g.
+                // dk.netarkivet.archive.bitarhcive.BitarchiveMonitorApplication
+                // gets the name BitarchiveMonitorApplication.
                 name = stlist[stlist.length -1];
                 
                 // overwriting the name, if it exists already; 
@@ -113,9 +119,9 @@ public class Application {
                     xmlName);
                 settings.overWrite(appXmlName);
             } else {
-                log.debug("Physical location has no name!");
-                name = "";
-                nameWithNamePath = "";
+                String msg = "Application has no name!"; 
+                log.warn(msg);
+                throw new IllegalState(msg);
             }
             // look for the optional application instance id
             Element elem = settings.getSubChild(
@@ -140,7 +146,7 @@ public class Application {
         StringBuilder res = new StringBuilder(name);
         // use only applicationInstanceId if it exists and has content
         if(applicationInstanceId != null && !applicationInstanceId.isEmpty()) {
-            res.append("_");
+            res.append(Constants.UNDERSCORE);
             res.append(applicationInstanceId);
         }
         return res.toString();
@@ -162,11 +168,12 @@ public class Application {
      * @param directory The directory where the settings file should be placed.
      */
     public void createSettingsFile(File directory) {
-	ArgumentNotValid.checkNotNull(directory, "File directory");
-	
+        ArgumentNotValid.checkNotNull(directory, "File directory");
+
         // make file
         File settingsFile = new File(directory, 
-                "settings_" + getIdentification() + ".xml");
+                Constants.PREFIX_SETTINGS + getIdentification()
+                + Constants.EXTENSION_XML_FILES);
         try {
             // initiate writer
             PrintWriter pw = new PrintWriter(settingsFile);
@@ -188,7 +195,7 @@ public class Application {
      * @return The path in linux syntax.
      */
     public String installPathLinux() {
-        return machineParameters.getInstallDirValue() + "/"
+        return machineParameters.getInstallDirValue() + Constants.SLASH
             + settings.getSubChildValue(
                     Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
@@ -199,7 +206,7 @@ public class Application {
      * @return The path with windows syntax.
      */
     public String installPathWindows() {
-        return machineParameters.getInstallDirValue() + "\\"
+        return machineParameters.getInstallDirValue() + Constants.BACKSLASH
             + settings.getSubChildValue(
                     Constants.SETTINGS_ENVIRONMENT_NAME_LEAF);
     }
@@ -219,9 +226,10 @@ public class Application {
      * @return The values of the leafs.
      */
     public String[] getSettingsValues(String[] path) {
-	ArgumentNotValid.checkNotNull(path, "String[] path");
-	ArgumentNotValid.checkNotNegative(path.length, 
+        ArgumentNotValid.checkNotNull(path, "String[] path");
+        ArgumentNotValid.checkNotNegative(path.length, 
                 "Length of String[] path");
+
         return settings.getLeafValues(path);
     }
 }

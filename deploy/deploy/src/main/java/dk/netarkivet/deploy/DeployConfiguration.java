@@ -104,10 +104,10 @@ public class DeployConfiguration {
         // it is the output directory
         if(outputDirName == null) {
             // Load output directory from config file
-            outputDirName = "./" 
+            outputDirName = Constants.DOT + Constants.SLASH 
                 + config.getSubChildValue(
                         Constants.COMPLETE_ENVIRONMENT_NAME_LEAF)
-                        + "/";
+                        + Constants.SLASH;
         }
         outputDir = new File(outputDirName);
         // make sure that directory outputDir exists

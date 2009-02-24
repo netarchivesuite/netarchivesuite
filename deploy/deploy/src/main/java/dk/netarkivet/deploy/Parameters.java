@@ -126,9 +126,9 @@ public class Parameters {
             installDir = tmp.get(0);
             // log if more than one install directory.
             if(tmp.size() > 1) {
-        	Log.debug("Maximum 1 value expected at: "
-        		+ Constants.DEPLOY_INSTALL_DIR
-        		+ " but " + tmp.size() + " received.");
+                Log.info("Maximum 1 value expected at: "
+                        + Constants.DEPLOY_INSTALL_DIR
+                        + " but " + tmp.size() + " received.");
             }
         }
         // check if new machine user name to overwrite existing
@@ -137,9 +137,9 @@ public class Parameters {
             machineUserName = tmp.get(0);
             // log if more than one machine user name.
             if(tmp.size() > 1) {
-        	Log.debug("Maximum 1 value expected at: "
-        		+ Constants.DEPLOY_MACHINE_USER_NAME
-        		+ " but " + tmp.size() + " received.");
+                Log.info("Maximum 1 value expected at: "
+                        + Constants.DEPLOY_MACHINE_USER_NAME
+                        + " but " + tmp.size() + " received.");
             }
         }
         // check if new database dir to overwrite existing
@@ -148,9 +148,9 @@ public class Parameters {
             databaseDir = tmp.get(0);
             // log if more than one database directory.
             if(tmp.size() > 1) {
-        	Log.debug("Maximum 1 value expected at: "
-        		+ Constants.DEPLOY_DATABASE_DIR
-        		+ " but " + tmp.size() + " received.");
+                Log.info("Maximum 1 value expected at: "
+                        + Constants.DEPLOY_DATABASE_DIR
+                        + " but " + tmp.size() + " received.");
             }
         }
     }
@@ -165,7 +165,7 @@ public class Parameters {
         // apply the java options
         for(Element e : javaOptions) {
             res.append(e.getText());
-            res.append(" ");
+            res.append(Constants.SPACE);
         }
         return res.toString();
     }

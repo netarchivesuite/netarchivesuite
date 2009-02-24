@@ -83,7 +83,8 @@ public class PhysicalLocation {
             Parameters param, String netarchiveSuiteSource, File logProp,
         File securityPolicy, File dbFile, boolean resetDir) {
         // test if valid arguments
-        ArgumentNotValid.checkNotNull(subTreeRoot, "Element elem (physLocRoot)");
+        ArgumentNotValid.checkNotNull(subTreeRoot, 
+                "Element elem (physLocRoot)");
         ArgumentNotValid.checkNotNull(parentSettings, 
         "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -138,7 +139,7 @@ public class PhysicalLocation {
             settings.overWrite(physLocName);
         } else {
             throw new IllegalState(
-        	    Constants.MSG_ERROR_PHYSICAL_LOCATION_NO_NAME);
+                    Constants.MSG_ERROR_PHYSICAL_LOCATION_NO_NAME);
         }
     }
 
@@ -196,11 +197,15 @@ public class PhysicalLocation {
     private void makeScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make extension (e.g. '_kb.sh' in the script 'killall_kb.sh')
-        String ext = "_" + name + ".sh";
+        String ext = Constants.UNDERSCORE + name 
+                + Constants.SCRIPT_EXTENSION_LINUX;
         // make script files
-        File killall = new File(directory, "killall" + ext);
-        File install = new File(directory, "install" + ext);
-        File startall = new File(directory, "startall" + ext);
+        File killall = new File(directory, 
+                Constants.SCRIPT_NAME_KILL_ALL + ext);
+        File install = new File(directory, 
+                Constants.SCRIPT_NAME_INSTALL_ALL + ext);
+        File startall = new File(directory, 
+                Constants.SCRIPT_NAME_START_ALL + ext);
         try {
             PrintWriter kWriter = new PrintWriter(killall);
             PrintWriter iWriter = new PrintWriter(install);

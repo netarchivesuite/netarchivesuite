@@ -65,7 +65,7 @@ public class LinuxMachine extends Machine {
                 logProp, securityPolicy, dbFile, resetDir);
         // set operating system
         OS = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
-        scriptExtension = ".sh";
+        scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
     }
 
     /**
@@ -78,92 +78,105 @@ public class LinuxMachine extends Machine {
     protected String osInstallScript() {
         StringBuilder res = new StringBuilder();
         // echo copying null.zip to:kb-test-adm-001.kb.dk
-        res.append("echo copying ");
+        res.append(ScriptConstants.ECHO_COPYING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" to:");
+        res.append(Constants.SPACE + ScriptConstants.TO + Constants.COLON);
         res.append(name);
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // scp null.zip dev@kb-test-adm-001.kb.dk:/home/dev
-        res.append("scp ");
+        res.append(ScriptConstants.SCP + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" ");
+        res.append(Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(":");
+        res.append(Constants.COLON);
         res.append(machineParameters.getInstallDirValue());
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // echo unzipping null.zip at:kb-test-adm-001.kb.dk
-        res.append("echo unzipping ");
+        res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" at:");
+        res.append(Constants.SPACE + ScriptConstants.AT + Constants.COLON);
         res.append(name);
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // ssh dev@kb-test-adm-001.kb.dk unzip -q -o /home/dev/null.zip -d 
         // /home/dev/TEST
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" unzip -q -o ");
+        res.append(Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
+                + Constants.SPACE);
         res.append(machineParameters.getInstallDirValue());
-        res.append("/");
+        res.append(Constants.SLASH);
         res.append(netarchiveSuiteFileName);
-        res.append(" -d ");
+        res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
+                + Constants.SPACE);
         res.append(getInstallDirPath());
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // create other directories.
         res.append(osInstallScriptCreateDir());
         // echo preparing for copying of settings and scripts
-        res.append("echo preparing for copying of settings and scripts");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_PREPARING_FOR_COPY);
+        res.append(Constants.NEWLINE);
         // For overriding jmxremote.password give user all rights.
         // ssh machine: "if [ -e conf/jmxremote.password ]; 
         // then chmod u+rwx conf/jmxremote.password; fi; "
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \" cd ~; if [ -e ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE
+                + ScriptConstants.LINUX_HOME_DIR + Constants.SEMICOLON 
+                + Constants.SPACE + ScriptConstants.LINUX_IF_EXIST
+                + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append("jmxremote.password");
-        res.append(" ]; then chmod u+rwx ");
+        res.append(Constants.JMX_FILE_NAME);
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE + ScriptConstants.LINUX_USER_ONLY 
+                + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append("jmxremote.password; fi; \"");
-        res.append("\n");
+        res.append(Constants.JMX_FILE_NAME + Constants.SEMICOLON 
+                + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON
+                + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
         // echo copying settings and scripts
-        res.append("echo copying settings and scripts");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_COPY_SETTINGS_AND_SCRIPTS);
+        res.append(Constants.NEWLINE);
         // scp -r kb-test-adm-001.kb.dk/* 
         // dev@kb-test-adm-001.kb.dk:/home/dev/TEST/conf/
-        res.append("scp -r ");
+        res.append(ScriptConstants.SCP + Constants.SPACE
+                + ScriptConstants.SCRIPT_REPOSITORY + Constants.SPACE);
         res.append(name);
-        res.append("/* ");
+        res.append(Constants.SLASH + Constants.STAR + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(":");
+        res.append(Constants.COLON);
         res.append(getConfDirPath());
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // APPLY DATABASE!
         res.append(osInstallDatabase());
         // echo make scripts executable
-        res.append("echo make scripts executable");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_MAKE_EXECUTABLE);
+        res.append(Constants.NEWLINE);
         // Allow only user to be able to deal with these files 
         // (go=-rwx,u=+rwx) = 700.
         // ssh dev@kb-test-adm-001.kb.dk "chmod 700 /home/dev/TEST/conf/*.sh "
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"chmod 700 "); 
+        res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                + ScriptConstants.LINUX_USER_700 + Constants.SPACE); 
         res.append(getConfDirPath());
-        res.append("*.sh \"");
-        res.append("\n");
+        res.append(Constants.STAR + Constants.SCRIPT_EXTENSION_LINUX 
+                + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
         // echo make password files readonly
-        res.append("echo make password files readonly");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
+        res.append(Constants.NEWLINE);
         // Allow only user to be able to only read jmxremote.password 
         // (a=-rwx,u=+r) = 400.
         // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
         // /home/dev/TEST/conf/jmxremote.password"
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"chmod 400 ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.LINUX_USER_400 + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append("jmxremote.password\"");
-        res.append("\n");
+        res.append(Constants.JMX_FILE_NAME + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
         // 
         return res.toString();
     }
@@ -176,14 +189,16 @@ public class LinuxMachine extends Machine {
     @Override
     protected String osKillScript() {
         StringBuilder res = new StringBuilder();
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \". /etc/profile; ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
+                + Constants.SPACE + ScriptConstants.ECT_PROFILE 
+                + Constants.SEMICOLON + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append("killall");
+        res.append(Constants.SCRIPT_NAME_KILL_ALL);
         res.append(scriptExtension);
-        res.append("\";");
-        res.append("\n");
+        res.append(Constants.QUOTE_MARK + Constants.SEMICOLON);
+        res.append(Constants.NEWLINE);
         return res.toString();
     }
 
@@ -204,16 +219,21 @@ public class LinuxMachine extends Machine {
     @Override
     protected String osStartScript() {
         StringBuilder res = new StringBuilder();
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \". /etc/profile; ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
+                + Constants.SPACE + ScriptConstants.ECT_PROFILE 
+                + Constants.SEMICOLON + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append("startall");
+        res.append(Constants.SCRIPT_NAME_START_ALL);
         res.append(scriptExtension);
-        res.append("; sleep 5; cat ");
+        res.append(Constants.SEMICOLON + Constants.SPACE 
+                + ScriptConstants.SLEEP_5 + Constants.SEMICOLON 
+                + Constants.SPACE + ScriptConstants.CAT + Constants.SPACE);
         res.append(getInstallDirPath());
-        res.append("/*.log\"");
-        res.append("\n");
+        res.append(Constants.SLASH + ScriptConstants.STAR_LOG 
+                + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
         return res.toString();
     }
 
@@ -224,7 +244,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.getInstallDirValue() + "/" 
+        return machineParameters.getInstallDirValue() + Constants.SLASH 
                 + getEnvironmentName();
     }
 
@@ -235,7 +255,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String getConfDirPath() {
-        return getInstallDirPath() + "/conf/";
+        return getInstallDirPath() + Constants.CONF_DIR_LINUX;
     }
 
     /**
@@ -261,25 +281,31 @@ public class LinuxMachine extends Machine {
     protected void createOSLocalKillAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the kill all script file
-        File killAllScript = new File(directory, "killall" + scriptExtension);
+        File killAllScript = new File(directory, 
+                Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
             PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
-                killPrinter.println("echo Killing all applications on: '" 
-                        + name + "'");
-                killPrinter.println("#!/bin/bash");
-                killPrinter.println("cd " + getConfDirPath());
+                killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS
+                        + Constants.COLON + Constants.SPACE 
+                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                killPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
+                killPrinter.println(ScriptConstants.CD + Constants.SPACE
+                        + getConfDirPath());
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // Constructing filename
-                    String appScript = "./kill_"
+                    String appScript = Constants.DOT + Constants.SLASH
+                            + Constants.SCRIPT_LOCAL_KILL_ALL
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
-                    killPrinter.println("if [ -e "
-                                + appScript + " ]; then ");
-                    killPrinter.println("      " + appScript);
-                    killPrinter.println("fi");
+                    killPrinter.println(ScriptConstants.LINUX_IF_EXIST
+                            + Constants.SPACE + appScript + Constants.SPACE
+                            + ScriptConstants.LINUX_THEN + Constants.SPACE);
+                    killPrinter.println(ScriptConstants.MULTI_SPACE
+                            + appScript);
+                    killPrinter.println(ScriptConstants.FI);
                 }
             } finally {
                 // close script
@@ -319,39 +345,44 @@ public class LinuxMachine extends Machine {
     protected void createOSLocalStartAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the start all script file
-        File startAllScript = new File(directory, "startall"
-                + scriptExtension);
+        File startAllScript = new File(directory, 
+                Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
         try {
-                startPrinter.println("echo Starting all applications on: '" 
-                        + name + "'");
-                startPrinter.println("#!/bin/bash");
-                startPrinter.println("cd " + getConfDirPath());
+                startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
+                        + Constants.COLON + Constants.SPACE 
+                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                startPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
+                startPrinter.println(ScriptConstants.CD + Constants.SPACE
+                        + getConfDirPath());
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "./start_"
+                    String appScript = Constants.DOT + Constants.SLASH
+                            + Constants.SCRIPT_LOCAL_START_ALL
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
-                    startPrinter.println("if [ -e "
-                            + appScript + " ]; then ");
-                    startPrinter.println("      " + appScript);
-                    startPrinter.println("fi");
+                    startPrinter.println(ScriptConstants.LINUX_IF_EXIST
+                            + Constants.SPACE + appScript + Constants.SPACE
+                            + ScriptConstants.LINUX_THEN + Constants.SPACE);
+                    startPrinter.println(ScriptConstants.MULTI_SPACE
+                            + appScript);
+                    startPrinter.println(ScriptConstants.FI);
                 }
             } finally {
                 // close script
                 startPrinter.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create local start all script.");
-            throw new IOFailure("Problems creating local start all script: "
-                    + e);
+            String msg = "Problems creating local start all script: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in create local start all script: " + e);
+            String msg = "Error in create local start all script: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -384,40 +415,42 @@ public class LinuxMachine extends Machine {
         // go through all applications and create their kill script
         for(Application app : applications) {
             File appKillScript = new File(directory, 
-                    "kill_" + app.getIdentification() + scriptExtension);
+                    Constants.SCRIPT_LOCAL_KILL_ALL + app.getIdentification() 
+                    + scriptExtension);
             try {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appKillScript);
                 try {
                     // echo Killing linux application.
-                    appPrint.println("echo Killing linux application:"
-                            + app.getIdentification());
+                    appPrint.println(ScriptConstants.ECHO_KILL_LINUX_APPLICATION
+                            + Constants.COLON + app.getIdentification());
                     // #!/bin/bash
-                    appPrint.println("#!/bin/bash");
+                    appPrint.println(ScriptConstants.BIN_BASH_COMMENT);
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
                     // path\settings_app.xml | awk "{print \\$2}")
-                    appPrint.println("PIDS=$(ps -wwfe | grep "
-                            + app.getTotalName() + " | grep -v grep | grep "
-                            + getConfDirPath() + "settings_"
-                            + app.getIdentification() + ".xml"
-                            + " | awk \"{print \\$2}\")");
+                    appPrint.println(ScriptConstants.getLinuxPIDS(
+                            app.getTotalName(), getConfDirPath(), 
+                            app.getIdentification()));
                     // if [ -n "$PIDS" ]; then
-                    appPrint.println("if [ -n \"$PIDS\" ] ; then");
+                    appPrint.println(ScriptConstants.LINUX_IF_N_EXIST 
+                            + Constants.SPACE + Constants.QUOTE_MARK
+                            + ScriptConstants.PIDS + Constants.QUOTE_MARK
+                            + Constants.SPACE + ScriptConstants.LINUX_N_THEN);
                     //     kill -9 $PIDS;
-                    appPrint.println("    kill -9 $PIDS;");
+                    appPrint.println(ScriptConstants.KILL_9_PIDS 
+                            + Constants.SEMICOLON);
                     // fi
-                    appPrint.println("fi");
+                    appPrint.println(ScriptConstants.FI);
                 } finally {
                     // close file
                     appPrint.close();
                 }
             } catch (IOException e) {
-        	String msg ="Problems creating application kill script: " + e;
+                String msg = "Problems creating application kill script: " + e;
                 log.trace(msg);
                 throw new IOFailure(msg);
             } catch(Exception e) {
-        	String msg = "Error in creating application kill script: " + e;
-                // ERROR
+                String msg = "Error in creating application kill script: " + e;
                 log.trace(msg);
                 System.out.println(msg);
             }
@@ -461,58 +494,75 @@ public class LinuxMachine extends Machine {
         // go through all applications and create their start script
         for(Application app : applications) {
             File appStartScript = new File(directory, 
-                    "start_" + app.getIdentification() + scriptExtension);
+                    Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                    + scriptExtension);
             try {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appStartScript);
                 try {
                     // #!/bin/bash
-                    appPrint.println("echo Starting linux application: "
+                    appPrint.println(ScriptConstants.ECHO_START_LINUX_APP
+                            + Constants.COLON + Constants.SPACE
                             + app.getIdentification());
                     // cd path
-                    appPrint.println("cd " + app.installPathLinux());
+                    appPrint.println(ScriptConstants.CD + Constants.SPACE
+                            + app.installPathLinux());
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
                     //    path\settings_app.xml | awk "{print \\$2}")
-                    appPrint.println("PIDS=$(ps -wwfe | grep "
-                            + app.getTotalName() + " | grep -v grep | grep "
-                            + getConfDirPath() + "settings_"
-                            + app.getIdentification() + ".xml"
-                            + " | awk \"{print \\$2}\")");
+                    appPrint.println(ScriptConstants.getLinuxPIDS(
+                            app.getTotalName(), getConfDirPath(), 
+                            app.getIdentification()));
                     // if [ -n "$PIDS" ]; then
-                    appPrint.println("if [ -n \"$PIDS\" ] ; then");
+                    appPrint.println(ScriptConstants.LINUX_IF_N_EXIST 
+                            + Constants.SPACE + Constants.QUOTE_MARK
+                            + ScriptConstants.PIDS + Constants.QUOTE_MARK
+                            + Constants.SPACE + ScriptConstants.LINUX_N_THEN);
                     //     echo Application already running.
-                    appPrint.println("    echo Application already running.");
+                    appPrint.println(ScriptConstants.ECHO_APP_ALREADY_RUNNING);
                     // else
-                    appPrint.println("else");
+                    appPrint.println(ScriptConstants.ELSE);
                     //     export CLASSPATH = cp;
-                    appPrint.println("    export CLASSPATH="
+                    appPrint.println(ScriptConstants.EXPORT_CLASSPATH
                             + osGetClassPath(app)
-                            + "$CLASSPATH;");
+                            + ScriptConstants.VALUE_OF_CLASSPATH 
+                            + Constants.SEMICOLON);
                     //     JAVA
-                    appPrint.println("    java "
+                    appPrint.println(ScriptConstants.MULTI_SPACE_2
+                            + ScriptConstants.JAVA + Constants.SPACE
                             + app.getMachineParameters().writeJavaOptions()
-                            + " -Ddk.netarkivet.settings.file="
-                            + getConfDirPath() + "settings_"
-                            + app.getIdentification() + ".xml"
-                            + " -Dorg.apache.commons.logging.Log="
-                            + "org.apache.commons.logging.impl.Jdk14Logger"
-                            + " -Djava.util.logging.config.file="
-                            + getConfDirPath() + "log_"
-                            + app.getIdentification() + ".prop"
-                            + " -Djava.security.manager"
-                            + " -Djava.security.policy="
-                            + getConfDirPath() + "security.policy "
-                            + app.getTotalName() + " < /dev/null > "
-                            + "start_" + app.getIdentification() + ".log"
-                            + " 2>&1 &");
+                            + Constants.SPACE + Constants.DASH 
+                            + ScriptConstants.OPTION_SETTINGS 
+                            + getConfDirPath() + Constants.PREFIX_SETTINGS
+                            + app.getIdentification() 
+                            + Constants.EXTENSION_XML_FILES + Constants.SPACE
+                            + Constants.DASH 
+                            + ScriptConstants.OPTION_LOG_COMPLETE
+                            + Constants.SPACE + Constants.DASH 
+                            + ScriptConstants.OPTION_LOG_CONFIG
+                            + getConfDirPath() + Constants.LOG_PREFIX
+                            + app.getIdentification() 
+                            + Constants.EXTENSION_LOG_PROPERTY_FILES
+                            + Constants.SPACE + Constants.DASH 
+                            + ScriptConstants.OPTION_SECURITY_MANAGER
+                            + Constants.SPACE + Constants.DASH 
+                            + ScriptConstants.OPTION_SECIRITY_POLICY
+                            + getConfDirPath() 
+                            + Constants.SECURITY_POLICY_FILE_NAME 
+                            + Constants.SPACE + app.getTotalName()
+                            + Constants.SPACE + ScriptConstants.LINUX_DEV_NULL
+                            + Constants.SPACE + Constants.SCRIPT_LOCAL_START_ALL
+                            + app.getIdentification() 
+                            + Constants.EXTENSION_LOG_FILES
+                            + Constants.SPACE 
+                            + ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
                     // fi
-                    appPrint.println("fi");
+                    appPrint.println(ScriptConstants.FI);
                 } finally {
                     // close file
                     appPrint.close();
                 }
             } catch (IOException e) {
-        	String msg = "Problems creating application start script: " + e;
+                String msg = "Problems creating application start script: " + e;
                 log.trace(msg);
                 throw new IOFailure(msg);
             } catch(Exception e) {
@@ -537,7 +587,8 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
         // get all the classpaths
         for(Element cp : app.getMachineParameters().getClassPaths()) {
-            res.append(getInstallDirPath() + "/" + cp.getText() + ":");
+            res.append(getInstallDirPath() + Constants.SLASH + cp.getText() 
+                    + Constants.COLON);
         }
         return res.toString();
     }
@@ -562,46 +613,56 @@ public class LinuxMachine extends Machine {
         String databaseDir = machineParameters.getDatabaseDirValue();
         // Do not install if no proper database directory.
         if(databaseDir == null || databaseDir.isEmpty()) {
-            return "";
+            return Constants.EMPTY;
         }
 
         // copy to final destination if database argument.
         if(databaseFile != null) {
             // echo Copying database
-            res.append("echo Copying database" + "\n");
+            res.append(ScriptConstants.ECHO_COPYING_DATABASE);
+            res.append(Constants.NEWLINE);
             // scp database.jar user@machine:dbDir/db
-            res.append("scp ");
+            res.append(ScriptConstants.SCP + Constants.SPACE);
             res.append(databaseFile.getAbsolutePath());
-            res.append(" ");
+            res.append(Constants.SPACE);
             res.append(machineUserLogin());
-            res.append(":");
+            res.append(Constants.COLON);
             res.append(getInstallDirPath());
-            res.append("/");
+            res.append(Constants.SLASH);
             res.append(Constants.DATABASE_BASE_PATH);
-            res.append("\n");
+            res.append(Constants.NEWLINE);
         }
         // unzip database.
-        res.append("echo Unzipping database" + "\n");
+        res.append(ScriptConstants.ECHO_UNZIPPING_DATABASE);
+        res.append(Constants.NEWLINE);
         // ssh user@machine "
         // cd dir; if [ -d databaseDir ]; then echo ; 
         // else mkdir databaseDir; fi; if [ $(ls -A databaseDir) ]; 
         // then echo ERROR MESSAGE: DIR NOT EMPTY; 
         // else unzip -q -o dbDir/db -d databaseDir/.; fi; exit;
         // "
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"cd ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.CD + Constants.SPACE);
         res.append(getInstallDirPath());
-        res.append("; if [ -d ");
+        res.append(Constants.SEMICOLON + Constants.SPACE 
+                + ScriptConstants.LINUX_IF_DIR_EXIST + Constants.SPACE);
         res.append(databaseDir);
-        res.append(" ]; then echo ");
-        res.append(Constants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
-        res.append("; else unzip -q -o ");
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE + ScriptConstants.ECHO + Constants.SPACE);
+        res.append(ScriptConstants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.ELSE
+                + Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
+                + Constants.SPACE);
         res.append(Constants.DATABASE_BASE_PATH);
-        res.append(" -d ");
+        res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
+                + Constants.SPACE);
         res.append(databaseDir);
-        res.append("; fi; exit; \"");
-        res.append("\n");
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
+                + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.EXIT
+                + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
 
         return res.toString();
     }
@@ -627,13 +688,14 @@ public class LinuxMachine extends Machine {
     @Override
     protected String osInstallScriptCreateDir() {
         StringBuilder res = new StringBuilder();
-        res.append("echo Creating directories.");
-        res.append("\n");
-        res.append("ssh ");
+        res.append(ScriptConstants.ECHO_CREATING_DIRECTORIES);
+        res.append(Constants.NEWLINE);
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"cd ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                + ScriptConstants.CD + Constants.SPACE);
         res.append(getInstallDirPath());
-        res.append("; ");
+        res.append(Constants.SEMICOLON + Constants.SPACE);
         
         // go through all directories.
         String dir;
@@ -641,16 +703,16 @@ public class LinuxMachine extends Machine {
         // get archive.bitpresevation.baseDir directory.
         dir = settings.getLeafValue(
                 Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
-        if(dir != null && !dir.equalsIgnoreCase("") 
-                && !dir.equalsIgnoreCase(".")) {
+        if(dir != null && !dir.isEmpty() 
+                && !dir.equalsIgnoreCase(Constants.DOT)) {
             res.append(scriptCreateDir(dir, false));
         }
         
         // get archive.arcrepository.baseDir directory.
         dir = settings.getLeafValue(
                 Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
-        if(dir != null && !dir.equalsIgnoreCase("")
-                && !dir.equalsIgnoreCase(".")) {
+        if(dir != null && !dir.isEmpty()
+                && !dir.equalsIgnoreCase(Constants.DOT)) {
             res.append(scriptCreateDir(dir, false));
         }
         
@@ -659,12 +721,13 @@ public class LinuxMachine extends Machine {
         // get tempDir directory.
         dir = settings.getLeafValue(
                 Constants.SETTINGS_TEMPDIR_LEAF);
-        if(dir != null && !dir.equalsIgnoreCase("")
-                && !dir.equalsIgnoreCase(".")) {
+        if(dir != null && !dir.isEmpty()
+                && !dir.equalsIgnoreCase(Constants.DOT)) {
             res.append(scriptCreateDir(dir, resetTempDir));
         }
 
-        res.append("exit; \"\n");
+        res.append(ScriptConstants.EXIT + Constants.SEMICOLON + Constants.SPACE
+                + Constants.QUOTE_MARK + Constants.NEWLINE);
         
         return res.toString();
     }
@@ -684,17 +747,21 @@ public class LinuxMachine extends Machine {
     @Override
     protected String scriptCreateDir(String dir, boolean clean) {
         StringBuilder res = new StringBuilder();
-        res.append("if [ ! -d ");
+        res.append(ScriptConstants.LINUX_IF_NOT_DIR_EXIST + Constants.SPACE);
         res.append(dir);
-        res.append(" ]; then mkdir ");
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN
+                + Constants.SPACE + ScriptConstants.MKDIR + Constants.SPACE);
         res.append(dir);
         if(clean) {
-            res.append("; else rm -r ");
+            res.append(Constants.SEMICOLON + Constants.SPACE
+                    + ScriptConstants.ELSE_REMOVE + Constants.SPACE);
             res.append(dir);
-            res.append("; mkdir ");
+            res.append(Constants.SEMICOLON + Constants.SPACE 
+                    + ScriptConstants.MKDIR + Constants.SPACE);
             res.append(dir);
         }
-        res.append("; fi; ");
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
+                + Constants.SEMICOLON + Constants.SPACE);
 
         return res.toString();
     }
@@ -718,7 +785,7 @@ public class LinuxMachine extends Machine {
                     res.append(scriptCreateDir(dir, false));
                     for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
                         res.append(scriptCreateDir(
-                                dir + "/" + subdir, false));
+                                dir + Constants.SLASH + subdir, false));
                     }
                 }
             }
@@ -764,7 +831,9 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
-        path += "/" + Constants.SECURITY_FILE_DIR_TAG + "/";
-        return path.replace("/", "${/}");
+        path += Constants.SLASH + Constants.SECURITY_FILE_DIR_TAG 
+                + Constants.SLASH;
+        return path.replace(Constants.SLASH, 
+                ScriptConstants.SECURITY_DIR_SEPARATOR);
     }
 }

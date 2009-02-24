@@ -35,6 +35,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
@@ -58,12 +59,15 @@ public class EvaluateConfigFile {
      * @param deployConfigFile The file to evaluate.
      */
     public EvaluateConfigFile(File deployConfigFile) {
-	ArgumentNotValid.checkNotNull(deployConfigFile, "File deployConfigFile");
+        ArgumentNotValid.checkNotNull(deployConfigFile, 
+                "File deployConfigFile");
         try {
             initLoadDefaultSettings();
             root = new XmlStructure(deployConfigFile);
         } catch (Exception e) {
-            System.err.println("Evaluation error!");
+            String msg = "Evaluation error: " + e;
+            log.warn(msg);
+            throw new IllegalState(msg);
         }
     }
     
@@ -150,7 +154,7 @@ public class EvaluateConfigFile {
             String path = getSettingsPath(el);
 
             // check if path exists in any default setting.
-            valid = existBranch(completeSettings, path.split("/"));
+            valid = existBranch(completeSettings, path.split(Constants.SLASH));
 
             if(valid) {
                 if(!el.isTextOnly()) {
@@ -158,7 +162,7 @@ public class EvaluateConfigFile {
                 }
             } else {
                 System.out.println("Branch in settings not found: " 
-                        + path.replace("/", "."));
+                        + Constants.replaceSlashWithDot(path));
             }
         }
     }
@@ -190,18 +194,19 @@ public class EvaluateConfigFile {
      * @return The path from settings to the element, in the XML-tree.
      */
     private String getSettingsPath(Element el) {
-        String[] elList = el.getPath().split("/");
+        String[] elList = el.getPath().split(Constants.SLASH);
 
         StringBuilder res = new StringBuilder();
         int i = 0;
         // find the index for settings
-        while(i < elList.length && !elList[i].equalsIgnoreCase("settings")) {
+        while(i < elList.length && !elList[i].equalsIgnoreCase(
+                Constants.COMPLETE_SETTINGS_BRANCH)) {
             i++;
         }
 
         for(i++; i<elList.length; i++) {
             res.append(elList[i]);
-            res.append("/");
+            res.append(Constants.SLASH);
         }
 
         // remove last '/'

@@ -43,16 +43,11 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public final class BuildCompleteSettings {
     /**
-     * Constructor.
-     */
-    private BuildCompleteSettings()
-    {}
-    
-    /**
      * Run the program.
      * This loads and merges all the setting files into a single file.
      * 
      * @param args Optional argument for name of complete settings file.
+     * E.g. /home/myUser/myDir/complete_settings.xml
      * @throws IOException For input/output errors.
      */
     public static void main(String[] args) throws IOException {
@@ -67,7 +62,7 @@ public final class BuildCompleteSettings {
                     settings.overWrite(elem);
                 } else {
                     throw new ArgumentNotValid("No settings found at: "
-                	    + tmpFile.getAbsolutePath());
+                            + tmpFile.getAbsolutePath());
                 }
             }
         }
@@ -83,7 +78,7 @@ public final class BuildCompleteSettings {
         FileWriter fw = new FileWriter(completeSettings);
         // write settings to file.
         fw.append(settings.getXML());
-        fw.append("\n");
+        fw.append(Constants.NEWLINE);
         fw.close();
     }
     

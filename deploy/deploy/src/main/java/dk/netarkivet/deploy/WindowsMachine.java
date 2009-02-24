@@ -64,8 +64,8 @@ public class WindowsMachine extends Machine {
         super(e, parentSettings, param, netarchiveSuiteSource,
                 logProp, securityPolicy, dbFile, resetDir);
         // set operating system
-        OS = "windows";
-        scriptExtension = ".bat";
+        OS = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
+        scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
     }
 
     /**
@@ -105,84 +105,107 @@ public class WindowsMachine extends Machine {
     protected String osInstallScript() {
         StringBuilder res = new StringBuilder();
         // - echo copying 'NetarchiveSuite.zip' to: 'machine'
-        res.append("echo copying ");
+        res.append(ScriptConstants.ECHO_COPYING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" to: ");
+        res.append(Constants.SPACE + ScriptConstants.TO + Constants.COLON 
+                + Constants.SPACE);
         res.append(name);
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // - scp 'NetarchiveSuite.zip' 'login'@'machine':
-        res.append("scp ");
+        res.append(ScriptConstants.SCP + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" ");
+        res.append(Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(":");
-        res.append("\n");
+        res.append(Constants.COLON);
+        res.append(Constants.NEWLINE);
         // - echo unzipping 'NetarchiveSuite.zip' at: 'machine'
-        res.append("echo unzipping ");
+        res.append(ScriptConstants.ECHO_UNZIPPING + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append(" at: ");
+        res.append(Constants.SPACE + ScriptConstants.AT + Constants.COLON 
+                + Constants.SPACE);
         res.append(name);
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // - ssh 'login'@'machine' 'unzip' 'environmentName' -o 
         // 'NetarchiveSuite.zip 
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c unzip.exe -q -d ");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_UNZIP_COMMAND
+                + Constants.SPACE);
         res.append(getEnvironmentName());
-        res.append(" -o ");
+        res.append(Constants.SPACE + ScriptConstants.SCRIPT_OUTPUT 
+                + Constants.SPACE);
         res.append(netarchiveSuiteFileName);
-        res.append("\n");
+        res.append(Constants.NEWLINE);
         // - $'create directories'.
         res.append(osInstallScriptCreateDir());
         // - echo preparing for copying of settings and scripts
-        res.append("echo preparing for copying of settings and scripts");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_PREPARING_FOR_COPY);
+        res.append(Constants.NEWLINE);
         // - if [ $( ssh 'login'@'machine' cmd /c if exist 
         // 'environmentName'\\conf\\security.policy echo 1 ) ]; then echo Y 
         // | ssh 'login'@'machine' cmd /c cacls 
         // 'environmentName'\\conf\\security.policy /P BITARKIV\\'login':F; fi
-        res.append("if [ $(ssh ");
+        res.append(ScriptConstants.IF + Constants.SPACE 
+                + Constants.SQUARE_BRACKET_BEGIN + Constants.SPACE
+                + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN 
+                + ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c if exist ");
-        res.append(changeToScriptPath(getLocalConfDirPath()));
-        res.append("jmxremote.password");
-        res.append(" echo 1");
-        res.append(" ) ]; then ");
-        res.append("echo Y | ssh ");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
+                + ScriptConstants.EXIST + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.JMX_FILE_NAME);
+        res.append(Constants.SPACE + ScriptConstants.ECHO_ONE);
+        res.append(Constants.SPACE + Constants.BRACKET_END 
+                + Constants.SPACE + Constants.SQUARE_BRACKET_END
+                + Constants.SEMICOLON + Constants.SPACE
+                + ScriptConstants.THEN + Constants.SPACE);
+        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
+                + Constants.SEPARATOR + Constants.SPACE
+                + ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c cacls ");
-        res.append(changeToScriptPath(getLocalConfDirPath()));
-        res.append("jmxremote.password /P BITARKIV\\\\");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.JMX_FILE_NAME + Constants.SPACE 
+                + ScriptConstants.SLASH_P + Constants.SPACE 
+                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
         res.append(machineParameters.getMachineUserName().getText());
-        res.append(":F");
-        res.append("; fi;");
-        res.append("\n");
+        res.append(ScriptConstants.COLON_F + Constants.SEMICOLON
+                + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON);
+        res.append(Constants.NEWLINE);
         // - echo copying settings and scripts
-        res.append("echo copying settings and scripts");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_COPY_SETTINGS_AND_SCRIPTS);
+        res.append(Constants.NEWLINE);
         // - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\
-        res.append("scp -r ");
+        res.append(ScriptConstants.SCP + Constants.SPACE 
+                + ScriptConstants.DASH_R + Constants.SPACE);
         res.append(name);
-        res.append("/* ");
+        res.append(Constants.SLASH + Constants.STAR + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(":");
-        res.append(changeToScriptPath(getLocalConfDirPath()));
-        res.append("\n");
+        res.append(Constants.COLON);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.NEWLINE);
         // - $'apply database script'
         res.append(osInstallDatabase());
         // - echo make password files readonly 
-        res.append("echo make password files readonly");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
+        res.append(Constants.NEWLINE);
         // - echo Y | ssh 'login'@'machine' cmd /c cacls 
         // 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
-        res.append("echo Y | ssh ");
+        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
+                + Constants.SEPARATOR + Constants.SPACE + ScriptConstants.SSH
+                + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c cacls ");
-        res.append(changeToScriptPath(getLocalConfDirPath()));
-        res.append("jmxremote.password /P BITARKIV\\\\");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.JMX_FILE_NAME + Constants.SPACE 
+                + ScriptConstants.SLASH_P + Constants.SPACE 
+                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
         res.append(machineParameters.getMachineUserName().getText());
-        res.append(":R");
-        res.append("\n");
+        res.append(ScriptConstants.COLON_R);
+        res.append(Constants.NEWLINE);
         // END OF SCRIPT
         return res.toString();
     }
@@ -203,14 +226,16 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osKillScript() {
         StringBuilder res = new StringBuilder();
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"cmd /c  ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                + ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE
+                + Constants.SPACE);
         res.append(getLocalConfDirPath());
-        res.append("killall");
+        res.append(Constants.SCRIPT_NAME_KILL_ALL);
         res.append(scriptExtension);
-        res.append(" \" ");
-        res.append("\n");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE);
+        res.append(Constants.NEWLINE);
         return res.toString();
     }
 
@@ -230,14 +255,16 @@ public class WindowsMachine extends Machine {
     @Override
     protected String osStartScript() {
         StringBuilder res = new StringBuilder();
-        res.append("ssh ");
+        res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" \"cmd /c  ");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK 
+                + ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE
+                + Constants.SPACE);
         res.append(getLocalConfDirPath());
-        res.append("startall");
+        res.append(Constants.SCRIPT_NAME_START_ALL);
         res.append(scriptExtension);
-        res.append(" \" ");
-        res.append("\n");
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE);
+        res.append(Constants.NEWLINE);
         return res.toString();
     }
 
@@ -248,7 +275,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String getInstallDirPath() {
-        return machineParameters.getInstallDirValue() + "\\" 
+        return machineParameters.getInstallDirValue() + Constants.BACKSLASH 
                 + getEnvironmentName();
     }
 
@@ -259,7 +286,7 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String getConfDirPath() {
-        return getInstallDirPath() + "\\conf\\";
+        return getInstallDirPath() + Constants.CONF_DIR_WINDOWS;
     }
     
     /**
@@ -268,7 +295,7 @@ public class WindowsMachine extends Machine {
      * @return The path to the conf dir for ssh.
      */
     protected String getLocalConfDirPath() {
-        return getEnvironmentName() + "\\conf\\";
+        return getEnvironmentName() + Constants.CONF_DIR_WINDOWS;
     }
 
     /**
@@ -282,24 +309,28 @@ public class WindowsMachine extends Machine {
     protected void createOSLocalKillAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the kill all script file
-        File killAllScript = new File(directory, "killall" + scriptExtension);
+        File killAllScript = new File(directory, 
+                Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
         try {
             // Initialise script
             PrintWriter killPrinter = new PrintWriter(killAllScript);
             try {
-                killPrinter.println("echo Killing all applications on: '" 
-                        + name + "'");
-                killPrinter.println("cd \"" + getConfDirPath() + "\"");
+                killPrinter.println(ScriptConstants.ECHO_KILL_ALL_APPS
+                        + Constants.COLON + Constants.SPACE 
+                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                killPrinter.println(ScriptConstants.CD + Constants.SPACE 
+                        + Constants.QUOTE_MARK + getConfDirPath() 
+                        + Constants.QUOTE_MARK);
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "kill_"
+                    String appScript = Constants.SCRIPT_LOCAL_KILL_ALL
                             + app.getIdentification() + scriptExtension;
-                    killPrinter.print(
-                            Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
-                    killPrinter.print("\"");
+                    killPrinter.print(ScriptConstants
+                            .OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
+                    killPrinter.print(Constants.QUOTE_MARK);
                     killPrinter.print(appScript);
-                    killPrinter.print("\"");
+                    killPrinter.print(Constants.QUOTE_MARK);
                     killPrinter.println();
                 }
             } finally {
@@ -328,26 +359,28 @@ public class WindowsMachine extends Machine {
     protected void createOSLocalStartAllScript(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // create the start all script file
-        File startAllScript = new File(directory, "startall"
-                + scriptExtension);
+        File startAllScript = new File(directory, 
+                Constants.SCRIPT_NAME_START_ALL + scriptExtension);
         try {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
             try {
-                startPrinter.println("echo Starting all applications on: '" 
-                        + name + "'");
-                startPrinter.println("cd \"" + getConfDirPath() + "\"");
+                startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
+                        + Constants.COLON + Constants.SPACE 
+                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+                startPrinter.println(ScriptConstants.CD + Constants.SPACE
+                        + Constants.QUOTE_MARK + getConfDirPath()
+                        + Constants.QUOTE_MARK);
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = "start_"
+                    String appScript = Constants.SCRIPT_LOCAL_START_ALL
                             + app.getIdentification() + scriptExtension;
-                    startPrinter.print(
-                            Constants.OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
-                    startPrinter.print("\"");
+                    startPrinter.print(ScriptConstants
+                            .OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
+                    startPrinter.print(Constants.QUOTE_MARK);
                     startPrinter.print(appScript);
-
-                    startPrinter.print("\"");
+                    startPrinter.print(Constants.QUOTE_MARK);
                     startPrinter.println();
                 }
             } finally {
@@ -415,9 +448,10 @@ public class WindowsMachine extends Machine {
         try {
             for(Application app : applications) {
                 String id = app.getIdentification();
-                String killPsName = "kill_ps_" + id + scriptExtension;
+                String killPsName = Constants.SCRIPT_KILL_PS + id 
+                        + scriptExtension;
                 File appKillScript = new File(directory, 
-                        "kill_" + id + scriptExtension);
+                        Constants.SCRIPT_LOCAL_KILL_ALL + id + scriptExtension);
                 File appKillPsScript = new File(directory, killPsName);
                 try {
                     // make print writer for writing to file
@@ -432,58 +466,69 @@ public class WindowsMachine extends Machine {
                         // get the content for the kill script of 
                         // this application
                         // #echo kill windows application
-                        appPrint.println("ECHO Killing windows application: "
-                                + id);
+                        appPrint.println(
+                                ScriptConstants.ECHO_KILL_WINDOWS_APPLICATION
+                                + Constants.COLON + Constants.SPACE + id);
                         // cd "path"
-                        appPrint.println("CD \""
-                                + app.installPathWindows() + "\\conf\"");
+                        appPrint.println(ScriptConstants.CD + Constants.SPACE
+                                + Constants.QUOTE_MARK
+                                + app.installPathWindows() 
+                                + Constants.CONF_DIR_WINDOWS
+                                + Constants.QUOTE_MARK);
                         // if exist run_app.txt GOTO KILL
-                        appPrint.println("IF EXIST " + tmpRunApp
-                                + " GOTO KILL");
+                        appPrint.println(ScriptConstants.IF + Constants.SPACE
+                                + ScriptConstants.EXIST + Constants.SPACE
+                                + tmpRunApp + Constants.SPACE 
+                                + ScriptConstants.GOTO + Constants.SPACE
+                                + ScriptConstants.LABEL_KILL);
                         // GOTO NOKILL
-                        appPrint.println("GOTO NOKILL");
+                        appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                                + ScriptConstants.LABEL_NOKILL);
                         // 
                         appPrint.println();
                         // :KILL
-                        appPrint.println(":KILL");
+                        appPrint.println(Constants.COLON 
+                                + ScriptConstants.LABEL_KILL);
                         // cmdrun kill_ps_app.bat
-                        appPrint.println(Constants.
+                        appPrint.println(ScriptConstants.
                                 OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE
-                                + "\"" + killPsName 
-                                + "\"");
+                                + Constants.QUOTE_MARK + killPsName 
+                                + Constants.QUOTE_MARK);
                         // del run_app.txt
-                        appPrint.println("DEL " + tmpRunApp);
+                        appPrint.println(ScriptConstants.DEL + Constants.SPACE
+                                + tmpRunApp);
                         // GOTO DONE
-                        appPrint.println("GOTO DONE");
+                        appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                                + ScriptConstants.LABEL_DONE);
                         //
                         appPrint.println();
                         // :NOKILL
-                        appPrint.println(":NOKILL");
+                        appPrint.println(Constants.COLON 
+                                + ScriptConstants.LABEL_NOKILL);
                         // echo Cannot kill application. Already running.
-                        appPrint.println("ECHO Cannot kill application."
-                                + " Is not running.");
+                        appPrint.println(ScriptConstants.ECHO_CANNOT_KILL_APP);
                         //
                         appPrint.println();
                         // :DONE
-                        appPrint.println(":DONE");
+                        appPrint.println(Constants.COLON 
+                                + ScriptConstants.LABEL_DONE);
                     } finally {
                         // close files
                         appPrint.close();
                         appPsPrint.close();
                     }
                 } catch (IOException e) {
-                    log.trace("Cannot create the kill script for application: "
-                            + app.getIdentification() + ", at machine: " 
-                            + name);
-                    throw new IOFailure(
-                            "Problems creating local kill all script: " + e);
+                    String msg = "Cannot create the kill script for "
+                        + "application: " + app.getIdentification() 
+                        + ", at machine: " + name + ", with exception: " + e; 
+                    log.trace(msg);
+                    throw new IOFailure(msg);
                 } 
             }
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating kill script for "
-                        + "applications: " + e);
+            String msg = "Error in creating kill script for applications: " + e;
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -508,10 +553,10 @@ public class WindowsMachine extends Machine {
                 windowsStartVbsScript(app, directory);
             }
         } catch(Exception e) {
-            // ERROR
-            log.trace("Unknown error: " + e);
-            System.out.println("Error in creating start script "
-                        + "for applications: " + e);
+            String msg = "Error in creating start script for applications: " 
+                + e; 
+            log.trace(msg);
+            System.out.println(msg);
         }
     }
 
@@ -530,31 +575,17 @@ public class WindowsMachine extends Machine {
         // get all the classpaths (change from '\' to '\\')
         for(Element cp : app.getMachineParameters().getClassPaths()) {
             // insert the path to the install directory
-            res.append(getInstallDirPath().replaceAll("[\\\\]", "\\\\\\\\"));
-            res.append("\\\\");
+            res.append(ScriptConstants.doubleBackslashes(
+                    getInstallDirPath()));
+            res.append(Constants.BACKSLASH + Constants.BACKSLASH);
             // Then insert the class path. 
-            res.append(cp.getText().replaceAll("[/]", "\\\\\\\\"));
-            res.append(";");
+            res.append(ScriptConstants.replaceWindowsDirSeparators(
+                    cp.getText()));
+            res.append(Constants.SEMICOLON);
         }
         return res.toString();
     }
 
-    /**
-     * Changes a string into correct formatted style.
-     * The '.vbs' script needs '\\' instead of '\', which is quite annoying 
-     * when using regular expressions, since a final '\' in regular expressions
-     *  is '\\\\', thus '\\' = '\\\\\\\\' (8).
-     *   
-     * @param path The directory path to change to appropriate format.
-     * @return The formatted path.
-     */
-    private String changeToScriptPath(String path) {
-        ArgumentNotValid.checkNotNull(path, "String path");
-        String res = path;
-        res = res.replaceAll("\\\\", "\\\\\\\\");
-        return res.toString();
-    }
-    
     /**
      * Creates the batch script for starting the application.
      * It checks if the application is running and starts the application
@@ -586,7 +617,8 @@ public class WindowsMachine extends Machine {
      */
     protected void windowsStartBatScript(Application app, File directory) {
         File appStartScript = new File(directory, 
-                "start_" + app.getIdentification() + scriptExtension);
+                Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                + scriptExtension);
         try {
             // make print writer for writing to file
             PrintWriter appPrint = new PrintWriter(appStartScript);
@@ -597,43 +629,52 @@ public class WindowsMachine extends Machine {
                         + id;
 
                 // cd "path"
-                appPrint.println("cd \""
-                        + app.installPathWindows() + "\"");
+                appPrint.println(ScriptConstants.CD + Constants.SPACE
+                        + Constants.QUOTE_MARK
+                        + app.installPathWindows() + Constants.QUOTE_MARK);
                 // if exist .\conf\run_app.txt GOTO NOSTART
-                appPrint.println("IF EXIST .\\conf\\" + tmpRunApp
-                        + " GOTO NOSTART");
+                appPrint.println(ScriptConstants.IF + Constants.SPACE
+                        + ScriptConstants.EXIST + Constants.SPACE 
+                        + Constants.DOT + Constants.CONF_DIR_WINDOWS + tmpRunApp
+                        + Constants.SPACE + ScriptConstants.GOTO
+                        + Constants.SPACE + ScriptConstants.LABEL_NOSTART);
                 // GOTO START
-                appPrint.println("GOTO START");
+                appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                        + ScriptConstants.LABEL_START);
                 // 
                 appPrint.println();
                 // :START
-                appPrint.println(":START");
+                appPrint.println(Constants.COLON
+                        + ScriptConstants.LABEL_START);
                 // cscript .\conf\start_app.vbs
-                appPrint.println("cscript .\\conf\\"
-                        + "start_" + id + ".vbs");
+                appPrint.println(ScriptConstants.CSCRIPT + Constants.SPACE
+                        + Constants.DOT + Constants.CONF_DIR_WINDOWS
+                        + Constants.SCRIPT_LOCAL_START_ALL + id 
+                        + Constants.EXTENSION_VBS_FILES);
                 // GOTO DONE
-                appPrint.println("GOTO DONE");
+                appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                        + ScriptConstants.LABEL_DONE);
                 // 
                 appPrint.println();
                 // :NOSTART
-                appPrint.println(":NOSTART");
+                appPrint.println(Constants.COLON 
+                        + ScriptConstants.LABEL_NOSTART);
                 // echo Cannot start. Application already running.
-                appPrint.println("echo Cannot start. "
-                        + "Application already running.");
+                appPrint.println(ScriptConstants.ECHO_CANNOT_START_APP);
                 // 
                 appPrint.println();
                 // :DONE
-                appPrint.println(":DONE");
+                appPrint.println(Constants.COLON + ScriptConstants.LABEL_DONE);
             } finally {
                 // close file
                 appPrint.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create the start script for application: "
-                    + app.getIdentification() + ", at machine: "
-                    + name);
-            throw new IOFailure("Problems creating local "
-                        + "start all script: " + e);
+            String msg = "Cannot create the start script for application: "
+                + app.getIdentification() + ", at machine: "
+                + name + ", with exception: " + e; 
+            log.trace(msg);
+            throw new IOFailure(msg);
         }
     }
 
@@ -660,7 +701,8 @@ public class WindowsMachine extends Machine {
      */
     protected void windowsStartVbsScript(Application app, File directory) {
         File appStartSupportScript = new File(directory,
-                "start_" + app.getIdentification() + ".vbs");
+                Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                + Constants.EXTENSION_VBS_FILES);
         try {
             // make print writer for writing to file
             PrintWriter vbsPrint = new PrintWriter(
@@ -668,63 +710,70 @@ public class WindowsMachine extends Machine {
             try {
                 // initiate variables
                 String id = app.getIdentification();
-                String killPsName = "kill_ps_" + id + scriptExtension;
+                String killPsName = Constants.SCRIPT_KILL_PS + id 
+                        + scriptExtension;
                 String tmpRunPsName = Constants.FILE_TEMPORARY_RUN_WINDOWS_NAME
                         + id;
 
                 // Set WshShell = CreateObject("WScript.Shell")
-                vbsPrint.println("Set WshShell= "
-                        + "CreateObject(\"WScript.Shell\")");
+                vbsPrint.println(ScriptConstants.VB_CREATE_SHELL_OBJ);
                 // Set oExec = WshShell.exec( "JAVA" )
                 vbsPrint.println(
-                        "Set oExec = WshShell.exec( \""
-                        + "java " + app.getMachineParameters()
-                        .writeJavaOptions()
-                        + " -classpath \"\""
-                        + osGetClassPath(app) + "\"\""
-                        + " -Ddk.netarkivet.settings.file=\"\""
-                        + changeToScriptPath(getConfDirPath())
-                        + "settings_" + id
-                        + ".xml\"\""
-                        + " -Dorg.apache.commons.logging.Log="
-                        + "org.apache.commons.logging.impl.Jdk14Logger"
-                        + " -Djava.util.logging.config.file=\"\""
-                        + changeToScriptPath(getConfDirPath()) + "log_"
-                        + id + ".prop\"\""
-                        + " -Djava.security.manager"
-                        + " -Djava.security.policy=\"\""
-                        + changeToScriptPath(getConfDirPath())
-                        + "security.policy\"\" "
-                        + app.getTotalName() + "\")");
+                        ScriptConstants.VB_CREATE_EXECUTE
+                        + ScriptConstants.JAVA + Constants.SPACE 
+                        + app.getMachineParameters().writeJavaOptions()
+                        + Constants.SPACE + Constants.DASH
+                        + ScriptConstants.CLASSPATH + Constants.SPACE
+                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
+                        + osGetClassPath(app) + Constants.QUOTE_MARK
+                        + Constants.QUOTE_MARK + Constants.SPACE 
+                        + Constants.DASH + ScriptConstants.OPTION_SETTINGS_WIN
+                        + ScriptConstants.doubleBackslashes(getConfDirPath())
+                        + Constants.SETTINGS_PREFIX + id 
+                        + Constants.EXTENSION_XML_FILES + Constants.QUOTE_MARK
+                        + Constants.QUOTE_MARK + Constants.SPACE 
+                        + Constants.DASH + ScriptConstants.OPTION_LOG_COMPLETE
+                        + Constants.SPACE + Constants.DASH
+                        + ScriptConstants.OPTION_LOG_CONFIG_WIN
+                        + ScriptConstants.doubleBackslashes(getConfDirPath()) 
+                        + Constants.LOG_PREFIX + id 
+                        + Constants.EXTENSION_LOG_PROPERTY_FILES
+                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
+                        + Constants.SPACE + Constants.DASH
+                        + ScriptConstants.OPTION_SECURITY_MANAGER
+                        + Constants.SPACE + Constants.DASH
+                        + ScriptConstants.OPTION_SECIRITY_POLICY_WIN
+                        + ScriptConstants.doubleBackslashes(getConfDirPath())
+                        + Constants.SECURITY_POLICY_FILE_NAME
+                        + Constants.QUOTE_MARK + Constants.QUOTE_MARK
+                        + Constants.SPACE + app.getTotalName() 
+                        + Constants.QUOTE_MARK + Constants.BRACKET_END);
                 // Set fso = CreateObject("Scripting.FileSystemObject")
-                vbsPrint.println("set fso= "
-                + "CreateObject(\"Scripting.FileSystemObject\")");
+                vbsPrint.println(ScriptConstants.VB_CREATE_FSO);
                 // set f = fso.OpenTextFile(".\conf\kill_ps_app.bat", 2, True)
-                vbsPrint.println("set f=fso.OpenTextFile(\".\\conf\\"
-                        + killPsName + "\",2,True)");
+                vbsPrint.println(ScriptConstants.VB_WRITE_F_PREFIX
+                        + killPsName + ScriptConstants.VB_WRITE_F_SURFIX);
                 // f.WriteLine "taskkill /F /PID " & oExec.ProcessID
-                vbsPrint.println("f.WriteLine \"taskkill /F /PID \""
-                                + " & oExec.ProcessID");
+                vbsPrint.println(ScriptConstants.VB_WRITE_F_KILL);
                 // f.close
-                vbsPrint.println("f.close");
+                vbsPrint.println(ScriptConstants.VB_WRITE_F_CLOSE);
                 // set tf = fso.OpenTextFile(".\conf\run_app.txt", 2, True)
-                vbsPrint.println("set tf=fso.OpenTextFile(\".\\conf\\"
-                        + tmpRunPsName + "\",8,True)");
+                vbsPrint.println(ScriptConstants.VB_WRITE_TF_PREFIX
+                        + tmpRunPsName + ScriptConstants.VB_WRITE_TF_SURFIX);
                 // tf.WriteLine running
-                vbsPrint.println("tf.WriteLine \"running process: \""
-                                + " & oExec.ProcessID");
+                vbsPrint.println(ScriptConstants.VB_WRITE_TF_CONTENT);
                 // f.close
-                vbsPrint.println("tf.close");
+                vbsPrint.println(ScriptConstants.VB_WRITE_TF_CLOSE);
             } finally {
                 // close file
                 vbsPrint.close();
             }
         } catch (IOException e) {
-            log.trace("Cannot create the start script for application: "
-                    + app.getIdentification() + ", at machine: "
-                    + name);
-            throw new IOFailure("Problems creating local "
-                        + "start all script: " + e);
+            String msg = "Cannot create the start script for application: "
+                + app.getIdentification() + ", at machine: "
+                + name + ", with exception: " + e; 
+            log.trace(msg);
+            throw new IOFailure(msg);
         }
     }
 
@@ -746,9 +795,9 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osInstallDatabase() {
-        StringBuilder res = new StringBuilder("echo Database not implemented "
-                + "for windows.");
-        res.append("\n");
+        StringBuilder res = new StringBuilder(
+                ScriptConstants.ECHO_WINDOWS_DATABASE);
+        res.append(Constants.NEWLINE);
         return res.toString();
     }
 
@@ -761,32 +810,32 @@ public class WindowsMachine extends Machine {
     protected String osInstallScriptCreateDir() {
         StringBuilder res = new StringBuilder();
 
-        res.append("echo Creating directories.");
-        res.append("\n");
+        res.append(ScriptConstants.ECHO_CREATING_DIRECTORIES);
+        res.append(Constants.NEWLINE);
 
         // send script to machine
-        res.append("scp ");
+        res.append(ScriptConstants.SCP + Constants.SPACE);
         res.append(getMakeDirectoryName());
-        res.append(" ");
+        res.append(Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(":");
-        res.append("\n");
+        res.append(Constants.COLON);
+        res.append(Constants.NEWLINE);
 
         // run script
-        res.append("ssh ");
-        res.append(" ");
+        res.append(ScriptConstants.SSH + Constants.SPACE + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c ");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE);
         res.append(getMakeDirectoryName());
-        res.append("\n");
+        res.append(Constants.NEWLINE);
 
         // delete script
-        res.append("ssh ");
-        res.append(" ");
+        res.append(ScriptConstants.SSH + Constants.SPACE + Constants.SPACE);
         res.append(machineUserLogin());
-        res.append(" cmd /c del ");
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.DEL + Constants.SPACE);
         res.append(getMakeDirectoryName());
-        res.append("\n");
+        res.append(Constants.NEWLINE);
 
         return res.toString();
     }
@@ -808,18 +857,20 @@ public class WindowsMachine extends Machine {
         StringBuilder res = new StringBuilder();
 
         if(clean) {
-            res.append("IF EXIST ");
+            res.append(ScriptConstants.IF + Constants.SPACE
+                    + ScriptConstants.EXIST + Constants.SPACE);
             res.append(dir);
-            res.append(" RD ");
+            res.append(Constants.SPACE + ScriptConstants.RD + Constants.SPACE);
             res.append(dir);
-            res.append("\n");
+            res.append(Constants.NEWLINE);
         }
-        res.append("IF NOT EXIST ");
+        res.append(ScriptConstants.IF + Constants.SPACE + ScriptConstants.NOT
+                + Constants.SPACE + ScriptConstants.EXIST + Constants.SPACE);
         res.append(dir);
-        res.append(" MD ");
+        res.append(Constants.SPACE + ScriptConstants.MD + Constants.SPACE);
         res.append(dir);
         
-        res.append("\n");
+        res.append(Constants.NEWLINE);
 
         return res.toString();
     }
@@ -843,7 +894,7 @@ public class WindowsMachine extends Machine {
                     res.append(scriptCreateDir(dir, false));
                     for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
                         res.append(scriptCreateDir(
-                                dir + "\\" + subdir, false));
+                                dir + Constants.BACKSLASH + subdir, false));
                     }
                 }
             }
@@ -876,7 +927,7 @@ public class WindowsMachine extends Machine {
      * @return The name of the script for creating the directories.
      */
     protected String getMakeDirectoryName() {
-        return "dir_" + name + scriptExtension;
+        return Constants.WINDOWS_DIR_CREATE_PREFIX + name + scriptExtension;
     }
     
     /**
@@ -894,9 +945,9 @@ public class WindowsMachine extends Machine {
                     PrintWriter dirPrint = new PrintWriter(dirScript);
                     try {
                         // go to correct directory
-                        dirPrint.print("cd ");
+                        dirPrint.print(ScriptConstants.CD + Constants.SPACE);
                         dirPrint.print(getInstallDirPath());
-                        dirPrint.print("\n");
+                        dirPrint.print(Constants.NEWLINE);
 
                         // go through all directories.
                         String dir;
@@ -904,16 +955,16 @@ public class WindowsMachine extends Machine {
                         // get archive.bitpresevation.baseDir directory.
                         dir = settings.getLeafValue(
                                 Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
-                        if(dir != null && !dir.equalsIgnoreCase("") 
-                                && !dir.equalsIgnoreCase(".")) {
+                        if(dir != null && !dir.isEmpty() 
+                                && !dir.equalsIgnoreCase(Constants.DOT)) {
                             dirPrint.print(scriptCreateDir(dir, false));
                         }
 
                         // get archive.arcrepository.baseDir directory.
                         dir = settings.getLeafValue(
                                 Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
-                        if(dir != null && !dir.equalsIgnoreCase("")
-                                && !dir.equalsIgnoreCase(".")) {
+                        if(dir != null && !dir.isEmpty()
+                                && !dir.equalsIgnoreCase(Constants.DOT)) {
                             dirPrint.print(scriptCreateDir(dir, false));
                         }
 
@@ -923,7 +974,7 @@ public class WindowsMachine extends Machine {
                         dir = settings.getLeafValue(
                                 Constants.SETTINGS_TEMPDIR_LEAF);
                         if(dir != null && !dir.isEmpty()
-                                && !dir.equalsIgnoreCase(".")) {
+                                && !dir.equalsIgnoreCase(Constants.DOT)) {
                             dirPrint.print(scriptCreateDir(dir, resetTempDir));
                         }
                     } finally {
@@ -931,9 +982,10 @@ public class WindowsMachine extends Machine {
                         dirPrint.close();
                     }
                 } catch (IOException e) {
-                    log.trace("createInstallDirScript: " + e);
-                    throw new IOFailure("Problems creating local "
-                                + "start all script: " + e);
+                    String msg = "Problems creating local start all script: "
+                        + e;
+                    log.trace(msg);
+                    throw new IOFailure(msg);
                 }
     }
 
@@ -945,7 +997,9 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String changeFileDirPathForSecurity(String path) {
-        path += "\\" + Constants.SECURITY_FILE_DIR_TAG + "\\";
-        return path.replace("\\", "${/}");
+        path += Constants.BACKSLASH + Constants.SECURITY_FILE_DIR_TAG
+                + Constants.BACKSLASH;
+        return path.replace(Constants.BACKSLASH, 
+                ScriptConstants.SECURITY_DIR_SEPARATOR);
     }
 }
