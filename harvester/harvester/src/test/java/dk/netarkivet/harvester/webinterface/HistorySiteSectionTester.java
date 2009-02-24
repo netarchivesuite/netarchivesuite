@@ -21,9 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package dk.netarkivet.harvester.webinterface;
-/**
 
- */
 import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -52,7 +50,9 @@ public class HistorySiteSectionTester extends TestCase {
                 "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
                         + "harvestID=" + harvestID 
                         + "&amp;harvestNum=" + harvestRun + "\">"
-                        + harvestRun + "</a>",
+                        + harvestRun 
+                        + "&amp;jobstatusname=" + HarvestStatus.JOBSTATUS_ALL
+                        + "</a>",
                 HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
         try {
             harvestID = -1L;
