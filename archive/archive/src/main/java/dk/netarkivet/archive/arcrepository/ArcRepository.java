@@ -562,6 +562,7 @@ public class ArcRepository implements CleanupIF {
         // if illegal or errors occurs reportedChecksum is set to ""
         RemoteFile checksumResFile = msg.getResultFile();
         String reportedChecksum = "";
+        boolean checksumReadOk = false;
         if (checksumResFile == null || 
             checksumResFile instanceof NullRemoteFile) {
             log.debug("Message '" + msg.getID()
@@ -579,6 +580,7 @@ public class ArcRepository implements CleanupIF {
 
                 // Read checksum from local file
                 reportedChecksum = readChecksum(outputFile, arcfileName);
+                checksumReadOk = true;
             } catch (IOFailure e) {
                 log.warn("Couldn't read checksumjob "
                         + "output for '" + arcfileName + "'", e);
@@ -608,7 +610,7 @@ public class ArcRepository implements CleanupIF {
         String orgCheckSum = ad.getCheckSum(arcfileName);
         String bitarchive = resolveBitarchiveID(msg.getReplyTo().getName());
         processCheckSum(arcfileName, bitarchive, orgCheckSum,
-                reportedChecksum, msg.isOk() && !reportedChecksum.isEmpty());
+                reportedChecksum, msg.isOk() && checksumReadOk);
     }
 
     /**
