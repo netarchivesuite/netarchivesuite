@@ -28,7 +28,7 @@
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
         <broker>localhost</broker><port>7676</port></jms>
         <http>
-            <port>0000</port>
+            <port/>
         </http>
         <arcrepositoryClient>
             <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>

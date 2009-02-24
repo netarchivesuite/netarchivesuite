@@ -656,7 +656,15 @@ public class DeployTester extends TestCase {
 	    
 	    String differences = TestFileUtils.compareDirsText(
 		    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
-	    
+	    /**/
+	    if(differences.length() > 0) {
+		pss.tearDown();
+		System.out.println("testDeployTest");
+		System.out.println(differences);
+		pss.setUp();
+	    }
+	    /**/
+
 	    assertEquals("No differences expected", 0, differences.length());	
 	} catch (Exception e) {
 	    // give error if exception caught.
