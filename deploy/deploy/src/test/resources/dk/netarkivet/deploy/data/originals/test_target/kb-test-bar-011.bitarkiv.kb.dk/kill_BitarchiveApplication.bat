@@ -1,12 +1,12 @@
 ECHO Killing windows application: BitarchiveApplication
-CD "c:\Documents and Settings\ba-test\test\conf"
-IF EXIST running_BitarchiveApplication GOTO KILL
-GOTO NOKILL
+cd "c:\Documents and Settings\ba-test\test\conf\"
+if exist running_BitarchiveApplication goto KILL
+goto NOKILL
 
 :KILL
 "C:\Program Files\Bitvise WinSSHD\bvRun" -brj -new -cmd="kill_ps_BitarchiveApplication.bat"
-DEL running_BitarchiveApplication
-GOTO DONE
+del running_BitarchiveApplication
+goto DONE
 
 :NOKILL
 ECHO Cannot kill application. Is not running.

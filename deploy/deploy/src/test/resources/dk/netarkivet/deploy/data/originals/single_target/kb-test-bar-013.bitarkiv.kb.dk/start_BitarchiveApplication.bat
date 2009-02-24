@@ -1,10 +1,10 @@
 cd "c:\Documents and Settings\dev\TEST"
-IF EXIST .\conf\running_BitarchiveApplication GOTO NOSTART
-GOTO START
+if exist .\conf\running_BitarchiveApplication goto NOSTART
+goto START
 
 :START
 cscript .\conf\start_BitarchiveApplication.vbs
-GOTO DONE
+goto DONE
 
 :NOSTART
 echo Cannot start. Application already running.

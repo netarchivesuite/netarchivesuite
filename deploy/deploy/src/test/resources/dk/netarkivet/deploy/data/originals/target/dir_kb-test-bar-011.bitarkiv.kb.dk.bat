@@ -1,7 +1,7 @@
 cd c:\Documents and Settings\ba-test\TEST
-IF NOT EXIST bitpreservation MD bitpreservation
-IF NOT EXIST q:\bitarkiv MD q:\bitarkiv
-IF NOT EXIST q:\bitarkiv\filedir MD q:\bitarkiv\filedir
-IF NOT EXIST q:\bitarkiv\tempdir MD q:\bitarkiv\tempdir
-IF NOT EXIST q:\bitarkiv\atticdir MD q:\bitarkiv\atticdir
-IF NOT EXIST commontempdir MD commontempdir
+if not exist bitpreservation md bitpreservation
+if not exist q:\bitarkiv md q:\bitarkiv
+if not exist q:\bitarkiv\filedir md q:\bitarkiv\filedir
+if not exist q:\bitarkiv\tempdir md q:\bitarkiv\tempdir
+if not exist q:\bitarkiv\atticdir md q:\bitarkiv\atticdir
+if not exist commontempdir md commontempdir
