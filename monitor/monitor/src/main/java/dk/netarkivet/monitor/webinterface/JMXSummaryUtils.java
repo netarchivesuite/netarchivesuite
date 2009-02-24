@@ -137,7 +137,7 @@ public class JMXSummaryUtils {
         // If any content, then remove last ',' and put 'show' in front
         if(res.length() > 0) {
             res.deleteCharAt(res.length() - 1);
-            res.insert(0, "Show: ");
+            res.insert(0, I18N.getString(l, "show") + ": ");
         }
         
         return res.toString();
@@ -392,10 +392,15 @@ public class JMXSummaryUtils {
         }
 
         /** Gets a parameter from the original request, except if the
-         * parameter is unset, return "*" (except the "index" parameter
-         * returns "0").
-         * @param paramName a parameter
-         * @return The parameter or "*" or "0"; never null.
+         * parameter is unset, return the following.
+         * "index" = "0".
+         * "applicationInstanceId" = "-".
+         * "location" = "-".
+         * "http-port" = "-".
+         * Default = "*".
+         * 
+         * @param paramName The parameter.
+         * @return The parameter or "*", "0" or "-"; never null.
          */
         public String getParameter(String paramName) {
             ArgumentNotValid.checkNotNull(paramName, "paramName");
@@ -403,6 +408,12 @@ public class JMXSummaryUtils {
             if (value == null || value.length() == 0) {
                 if (JMXIndexProperty.equals(paramName)) {
                     return "0";
+                } else if (JMXLocationProperty.equals(paramName)) {
+                    return "-";
+                } else if (JMXApplicationinstidProperty.equals(paramName)) {
+                    return "-";
+                } else if (JMXHttpportProperty.equals(paramName)) {
+                    return "-";
                 } else {
                     return "*";
                 }
