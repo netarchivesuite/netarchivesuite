@@ -47,7 +47,7 @@ public class ChannelID implements Serializable {
     /**
      * application instance id is a setting for an application's
      * identification as a specific process on a given machine.
-     * An example value is "BAKB"
+     * An example value is "BAONE"
      * Note that it is set to uppercase in order to ensure that a channel name
      * only has uppercase characters.
      */
@@ -56,7 +56,7 @@ public class ChannelID implements Serializable {
     /**
      * application instance id is a setting for an application's
      * identification as a specific process on a given machine.
-     * An example value is "BAKB".
+     * An example value is "BAONE".
      */
     private static final String applicationAbbreviation =
         getApplicationAbbreviation(

@@ -109,7 +109,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
     public final void testVisitGetFileMessage() {
         try {
             tmh.visit(new GetFileMessage(Channels.getTheRepos(), Channels.getTheBamon(), "x",
-                                         "KB"));
+                                         "ONE"));
             fail("Should have thrown a permission denied.");
         } catch (PermissionDenied e) {
             // Expected

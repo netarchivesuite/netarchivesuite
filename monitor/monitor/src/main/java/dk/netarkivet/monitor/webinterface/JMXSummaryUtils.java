@@ -46,33 +46,33 @@ import dk.netarkivet.common.management.Constants;
 public class JMXSummaryUtils {
     
     /** JMX properties used by Monitor-JMXsummary.jsp. */
-    public static final String JMXLocationProperty = 
+    public static final String JMXPhysLocationProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_LOCATION;
-    public static final String JMXHostnameProperty = 
+    public static final String JMXMachineNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_MACHINE;
-    public static final String JMXApplicationnameProperty = 
+    public static final String JMXApplicationNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_APPLICATIONNAME;
-    public static final String JMXApplicationinstidProperty = 
+    public static final String JMXApplicationInstIdProperty = 
         dk.netarkivet.common.management.Constants
             .PRIORITY_KEY_APPLICATIONINSTANCEID;
     public static final String JMXHttpportProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
     public static final String JMXHarvestPriorityProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
-    public static final String JMXArchiveReplicaIdProperty = 
+    public static final String JMXArchiveReplicaNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICA;
     public static final String JMXIndexProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
     
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
-        JMXLocationProperty,
-        JMXHostnameProperty, 
-        JMXApplicationnameProperty,
-        JMXApplicationinstidProperty,
+        JMXPhysLocationProperty,
+        JMXMachineNameProperty, 
+        JMXApplicationNameProperty,
+        JMXApplicationInstIdProperty,
         JMXHttpportProperty,
         JMXHarvestPriorityProperty,
-        JMXArchiveReplicaIdProperty,
+        JMXArchiveReplicaNameProperty,
         JMXIndexProperty};
     
     private static final String LOGGING_MBEAN_NAME_PREFIX =
@@ -408,9 +408,9 @@ public class JMXSummaryUtils {
             if (value == null || value.length() == 0) {
                 if (JMXIndexProperty.equals(paramName)) {
                     return "0";
-                } else if (JMXLocationProperty.equals(paramName)) {
+                } else if (JMXPhysLocationProperty.equals(paramName)) {
                     return "-";
-                } else if (JMXApplicationinstidProperty.equals(paramName)) {
+                } else if (JMXApplicationInstIdProperty.equals(paramName)) {
                     return "-";
                 } else if (JMXHttpportProperty.equals(paramName)) {
                     return "-";

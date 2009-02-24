@@ -56,48 +56,43 @@ public class Channels {
      * The following fields are read from settings.xml. allReplicaIds is the
      * list of all replica ids in the environment. It is used for
      * applications that need to communicate with e.g. all bitarchives. An
-     * example value is {"One","Two"}.
+     * example value is {"ONE","TWO"}.
      */
     private final String[] allReplicaIds = Settings.getAll(
             CommonSettings.REPLICA_IDS);
 
     /**
-     * thisReplica is the replica, used for applications
-     * that represent a replica. An example value is "KB".
+     * useReplicaId is the id of the replica, used for applications
+     * that only communicate with local processes. An example value is "ONE".
      */
-
-    /**
-     * useReplica is the replica, used for applications
-     * that only communicate with local processes. An example value is "KB".
-     */
-    private final String useReplica = Settings.get(
+    private final String useReplicaId = Settings.get(
             CommonSettings.USE_REPLICA_ID);
 
-    /** The index of use replica in the allReplicas list. */
-    private final int indexOfUseReplica = Arrays.asList(allReplicaIds)
-            .indexOf(useReplica);
+    /** The index of use replica id n the allReplicas list. */
+    private final int indexOfUseReplicaId = Arrays.asList(allReplicaIds)
+            .indexOf(useReplicaId);
     
     private Channels() {
-        if (indexOfUseReplica < 0) {
+        if (indexOfUseReplicaId < 0) {
              throw new ArgumentNotValid("Bad replicas " 
-                        + "useReplica: '" + useReplica + "'");
+                        + "useReplica: '" + useReplicaId + "'");
         }
 
         for (int i = 0; i < allReplicaIds.length; i++) {
             ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
         }
-        ALL_BA = ALL_BA_ARRAY[indexOfUseReplica];
+        ALL_BA = ALL_BA_ARRAY[indexOfUseReplicaId];
         for (int i = 0; i < allReplicaIds.length; i++) {
             ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
-        ANY_BA = ANY_BA_ARRAY[indexOfUseReplica];
+        ANY_BA = ANY_BA_ARRAY[indexOfUseReplicaId];
         for (int i = 0; i < allReplicaIds.length; i++) {
             THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicaIds[i],
                     ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
-        THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplica];
+        THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplicaId];
     }
 
     /* ******** Sort in order of the Distributed Architecture paper ******** */

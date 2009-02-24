@@ -216,7 +216,7 @@ public class BitarchiveClientTester extends TestCase {
         GetFileMessage msg = new GetFileMessage(ALL_BA,
                                                 Channels.getTheRepos(),
                                                 ARC_FILE_NAME,
-                                                "KB");
+                                                "ONE");
         bac.getFile(msg);
 
         con.waitForConcurrentTasksToFinish();

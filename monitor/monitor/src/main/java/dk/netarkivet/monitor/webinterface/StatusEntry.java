@@ -30,14 +30,14 @@ import java.util.Locale;
  */
 public interface StatusEntry extends Comparable<StatusEntry> {
     /** 
-     * Get the location this status entry is from, e.g. KB.
-     * @return the location this status entry is from, e.g. KB */
-    String getLocation();
+     * Get the (physical) location this status entry is from, e.g. EAST.
+     * @return the (physical) location this status entry is from, e.g. EAST */
+    String getPhysicalLocation();
 
     /** 
-     * Get the name of the host this status entry is from.
-     * @return the name of the host this status entry is from. */
-    String getHostName();
+     * Get the name of the host (machine) this status entry is from.
+     * @return the name of the host (machine) this status entry is from. */
+    String getMachineName();
 
     /** 
      * Get the HTTP port used by the application this status entry is from.
@@ -64,7 +64,7 @@ public interface StatusEntry extends Comparable<StatusEntry> {
     /** 
      * Get the replica id of the application that this status entry is represents.
      * @return the replica id of the application that this status entry is represents. */
-    String getArchiveReplicaId();
+    String getArchiveReplicaName();
 
     /** 
      * Get the index in the list of most recent log messages that this status

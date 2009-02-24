@@ -76,42 +76,42 @@ java.util.Locale,
 <table>
     <tr><%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXLocationProperty) ) { 
+             JMXSummaryUtils.JMXPhysLocationProperty) ) { 
          %>
             <th><fmt:message key="tablefield;location"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXLocationProperty, currentLocale)%></th>
+                    JMXSummaryUtils.JMXPhysLocationProperty, currentLocale)%></th>
         <% 
          } 
     	 %>
     	 <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXHostnameProperty) ) { 
+             JMXSummaryUtils.JMXMachineNameProperty) ) { 
          %>
             <th><fmt:message key="tablefield;machine"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXHostnameProperty, currentLocale)%></th>
+                    JMXSummaryUtils.JMXMachineNameProperty, currentLocale)%></th>
         <% 
          } 
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+             JMXSummaryUtils.JMXApplicationNameProperty) ) { 
          %>
             <th><fmt:message key="tablefield;applicationname"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXApplicationnameProperty, currentLocale)%>
+                    JMXSummaryUtils.JMXApplicationNameProperty, currentLocale)%>
             </th>
         <% 
          } 
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXApplicationinstidProperty) ) { 
+             JMXSummaryUtils.JMXApplicationInstIdProperty) ) { 
          %>
             <th><fmt:message key="tablefield;applicationinstanceid"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXApplicationinstidProperty, currentLocale)%>
+                    JMXSummaryUtils.JMXApplicationInstIdProperty, currentLocale)%>
             </th>
         <% 
          } 
@@ -139,11 +139,11 @@ java.util.Locale,
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXArchiveReplicaIdProperty) ) { 
+             JMXSummaryUtils.JMXArchiveReplicaNameProperty) ) { 
          %>
             <th><fmt:message key="tablefield;replicaname"/> <%=
             JMXSummaryUtils.generateShowLink(starredRequest,
-                    JMXSummaryUtils.JMXArchiveReplicaIdProperty, currentLocale)%>
+                    JMXSummaryUtils.JMXArchiveReplicaNameProperty, currentLocale)%>
             </th>
         <% 
          } 
@@ -159,34 +159,34 @@ java.util.Locale,
     %>
     <tr><%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXLocationProperty) ) { 
+             JMXSummaryUtils.JMXPhysLocationProperty) ) { 
          %>
             <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                            JMXSummaryUtils.JMXLocationProperty,
-                    entry.getLocation(),
-                    HTMLUtils.escapeHtmlValues(entry.getLocation()))%></td>
+                            JMXSummaryUtils.JMXPhysLocationProperty,
+                    entry.getPhysicalLocation(),
+                    HTMLUtils.escapeHtmlValues(entry.getPhysicalLocation()))%></td>
         <% 
          } 
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXHostnameProperty) ) { 
+             JMXSummaryUtils.JMXMachineNameProperty) ) { 
          %>
             <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                    JMXSummaryUtils.JMXHostnameProperty,
-                    entry.getHostName(),
+                    JMXSummaryUtils.JMXMachineNameProperty,
+                    entry.getMachineName(),
                     HTMLUtils.escapeHtmlValues
                             (JMXSummaryUtils.reduceHostname(
-                            entry.getHostName())))%></td>
+                            entry.getMachineName())))%></td>
         <% 
          } 
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXApplicationnameProperty) ) { 
+             JMXSummaryUtils.JMXApplicationNameProperty) ) { 
          %>
             <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                    JMXSummaryUtils.JMXApplicationnameProperty,
+                    JMXSummaryUtils.JMXApplicationNameProperty,
                     entry.getApplicationName(),
                     HTMLUtils.escapeHtmlValues
                             (JMXSummaryUtils.reduceApplicationName(
@@ -197,10 +197,10 @@ java.util.Locale,
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXApplicationinstidProperty) ) { 
+             JMXSummaryUtils.JMXApplicationInstIdProperty) ) { 
          %>
             <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                    JMXSummaryUtils.JMXApplicationinstidProperty,
+                    JMXSummaryUtils.JMXApplicationInstIdProperty,
                     entry.getApplicationInstanceID(),
                     HTMLUtils.escapeHtmlValues(entry.getApplicationInstanceID()))%>
             </td>
@@ -232,12 +232,12 @@ java.util.Locale,
          %>
          <%
          if( JMXSummaryUtils.showColumn(starredRequest, 
-             JMXSummaryUtils.JMXArchiveReplicaIdProperty) ) { 
+             JMXSummaryUtils.JMXArchiveReplicaNameProperty) ) { 
          %>
             <td><%=JMXSummaryUtils.generateLink(starredRequest,
-                    JMXSummaryUtils.JMXArchiveReplicaIdProperty,
-                    entry.getArchiveReplicaId(),
-                    HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaId()))%>
+                    JMXSummaryUtils.JMXArchiveReplicaNameProperty,
+                    entry.getArchiveReplicaName(),
+                    HTMLUtils.escapeHtmlValues(entry.getArchiveReplicaName()))%>
             </td>
         <% 
          } 

@@ -68,7 +68,7 @@ public class CachingLogHandlerTester extends TestCase {
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGH");
-        Settings.set(CommonSettings.USE_REPLICA_ID, "KB");
+        Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
     public void tearDown() {
@@ -352,7 +352,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + ",hostname=" + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + ",replica=KB,priority=HIGH"
+                              + ",replica=ONE,priority=HIGH"
                               + ",applicationname="
                               + Settings.get(CommonSettings.APPLICATION_NAME) 
                               + ",applicationinstid="

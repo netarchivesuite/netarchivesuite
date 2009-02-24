@@ -548,7 +548,7 @@ public class BitarchiveServerTester extends TestCase {
      */
     public void testVisitRemoveAndGetFileMessage() throws Exception {
         String arcFile = TestInfo.BA1_FILENAME;
-        String dummyReplicaId = "KB";
+        String dummyReplicaId = "ONE";
         String checksum = TestInfo.BA1_CHECKSUM;
         String credentials = Settings.get(
                 ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS);

@@ -73,7 +73,7 @@ public class BatchStatusTester extends TestCase {
         String fileContents = FileUtils.readFile(TestInfo.SAMPLE_FILE);
         TestRemoteFile lrf = new TestRemoteFile(TestInfo.SAMPLE_FILE, false,
                                                   false, false);
-        BatchStatus bs = new BatchStatus("KB", emptyList, 1, lrf,
+        BatchStatus bs = new BatchStatus("ONE", emptyList, 1, lrf,
                 new ArrayList<FileBatchJob.ExceptionOccurrence>(0));
         bs.copyResults(tmpFile);
         FileAsserts.assertFileContains("Should have copied result contents",

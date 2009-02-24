@@ -240,7 +240,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         log.debug("Requesting get of file '" + arcfilename + "' from '"
                   + replica + "'");
         GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(),
-                replyQ, arcfilename, replica.getName());
+                replyQ, arcfilename, replica.getId());
         GetFileMessage getFileMessage
                 = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
         if (getFileMessage == null) {

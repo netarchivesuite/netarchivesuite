@@ -73,18 +73,18 @@ public class JMXStatusEntry implements StatusEntry {
     
     /**
      * @return the location designated by the key 
-     *  {@link JMXSummaryUtils#JMXLocationProperty}
+     *  {@link JMXSummaryUtils#JMXPhysLocationProperty}
      */
-    public String getLocation() {
-        return mBeanName.getKeyProperty(JMXSummaryUtils.JMXLocationProperty);
+    public String getPhysicalLocation() {
+        return mBeanName.getKeyProperty(JMXSummaryUtils.JMXPhysLocationProperty);
     }
 
     /**
      * @return the hostname designated by the key 
-     * {@link JMXSummaryUtils#JMXHostnameProperty}
+     * {@link JMXSummaryUtils#JMXMachineNameProperty}
      */
-    public String getHostName() {
-        return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHostnameProperty);
+    public String getMachineName() {
+        return mBeanName.getKeyProperty(JMXSummaryUtils.JMXMachineNameProperty);
     }
     
     /**
@@ -97,20 +97,20 @@ public class JMXStatusEntry implements StatusEntry {
 
     /**
      * @return the application name designated by the key 
-     * {@link JMXSummaryUtils#JMXApplicationnameProperty}
+     * {@link JMXSummaryUtils#JMXApplicationNameProperty}
      */
     public String getApplicationName() {
         return mBeanName.getKeyProperty(
-                JMXSummaryUtils.JMXApplicationnameProperty);
+                JMXSummaryUtils.JMXApplicationNameProperty);
     }
 
     /**
      * @return the application inst id designated by the key 
-     * {@link JMXSummaryUtils#JMXApplicationinstidProperty}
+     * {@link JMXSummaryUtils#JMXApplicationInstIdProperty}
      */
     public String getApplicationInstanceID() {
         return mBeanName.getKeyProperty(
-                JMXSummaryUtils.JMXApplicationinstidProperty);
+                JMXSummaryUtils.JMXApplicationInstIdProperty);
     }
 
     /**
@@ -124,11 +124,11 @@ public class JMXStatusEntry implements StatusEntry {
 
     /**
      * @return the replica id designated by the key 
-     * {@link JMXSummaryUtils#JMXArchiveReplicaIdProperty}
+     * {@link JMXSummaryUtils#JMXArchiveReplicaNameProperty}
      */
-    public String getArchiveReplicaId() {
+    public String getArchiveReplicaName() {
         return mBeanName.getKeyProperty(
-                JMXSummaryUtils.JMXArchiveReplicaIdProperty);
+                JMXSummaryUtils.JMXArchiveReplicaNameProperty);
     }
 
     /**
@@ -192,23 +192,23 @@ public class JMXStatusEntry implements StatusEntry {
     public int compareTo(StatusEntry o) {
         int c;
 
-        if (getLocation() != null && o.getLocation() != null) {
-            c = getLocation().compareTo(o.getLocation());
+        if (getPhysicalLocation() != null && o.getPhysicalLocation() != null) {
+            c = getPhysicalLocation().compareTo(o.getPhysicalLocation());
             if (c != 0) {
                 return c;
             }
-        } else if (getLocation() == null) {
+        } else if (getPhysicalLocation() == null) {
             return -1;
         } else {
             return 1;
         }
 
-        if (getHostName() != null && o.getHostName() != null) {
-            c = getHostName().compareTo(o.getHostName());
+        if (getMachineName() != null && o.getMachineName() != null) {
+            c = getMachineName().compareTo(o.getMachineName());
             if (c != 0) {
                 return c;
             }
-        } else if (getHostName() == null) {
+        } else if (getMachineName() == null) {
             return -1;
         } else {
             return 1;
@@ -258,12 +258,12 @@ public class JMXStatusEntry implements StatusEntry {
             return 1;
         }
 
-        if (getArchiveReplicaId() != null && o.getArchiveReplicaId() != null) {
-            c = getArchiveReplicaId().compareTo(o.getArchiveReplicaId());
+        if (getArchiveReplicaName() != null && o.getArchiveReplicaName() != null) {
+            c = getArchiveReplicaName().compareTo(o.getArchiveReplicaName());
             if (c != 0) {
                 return c;
             }
-        } else if (getArchiveReplicaId() == null) {
+        } else if (getArchiveReplicaName() == null) {
             return -1;
         } else {
             return 1;
@@ -299,7 +299,7 @@ public class JMXStatusEntry implements StatusEntry {
     /** Query the JMX system for system status mbeans.
      *
      * @param query A JMX request, e.g.
-     * dk.netarkivet.logging:location=KB,httpport=8080,*
+     * dk.netarkivet.logging:location=EAST,httpport=8080,*
      * @return A list of status entries for the mbeans that match the query.
      * @throws MalformedObjectNameException If the query has wrong format.
      */
