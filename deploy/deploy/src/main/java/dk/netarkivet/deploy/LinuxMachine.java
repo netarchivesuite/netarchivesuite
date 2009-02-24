@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.archive.crawler.Heritrix;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -402,10 +403,18 @@ public class LinuxMachine extends Machine {
      * -     kill -9 $PIDS;
      * - fi
      * 
+     * Also, if a heritrix process is started, the following is added:
+     * - PIDS = $(ps -wwfe | grep heritrix | grep -v grep | grep 
+     * path\settings_app.xml | awk "{print \\$2}")
+     * - if [ -n "$PIDS" ]; then
+     * -     kill -9 $PIDS;
+     * - fi
+     * 
      * where:
      * path = the path to the ./conf directory.
-     * fullapp = the full name application with path.
-     * app = the name of the application.
+     * fullapp = the full application name with class path.
+     * app = the id of the application (name + instanceId).
+     * heritrix = the heritrix class path.
      * 
      * @param directory The directory for this machine (use global variable?).
      */
@@ -423,7 +432,8 @@ public class LinuxMachine extends Machine {
                 try {
                     // echo Killing linux application.
                     appPrint.println(ScriptConstants.ECHO_KILL_LINUX_APPLICATION
-                            + Constants.COLON + app.getIdentification());
+                            + Constants.COLON + Constants.SPACE
+                            + app.getIdentification());
                     // #!/bin/bash
                     appPrint.println(ScriptConstants.BIN_BASH_COMMENT);
                     // PIDS = $(ps -wwfe | grep fullapp | grep -v grep | grep 
@@ -441,6 +451,33 @@ public class LinuxMachine extends Machine {
                             + Constants.SEMICOLON);
                     // fi
                     appPrint.println(ScriptConstants.FI);
+                    
+                    // If the application contains a heritrix instance,
+                    // then make script for killing the heritrix process.
+                    String[] heritrixJmxPort = app.getSettingsValues(
+                            Constants.SETTINGS_HARVEST_HETRIX_JMX_PORT);
+                    if(heritrixJmxPort != null) {
+                        // log if more than one jmx port defined for heritrix.
+                        if(heritrixJmxPort.length > 1) {
+                            log.trace(heritrixJmxPort.length 
+                                    + " number of jmx-ports for a heritrix "
+                                    + "harvester.");
+                        }
+
+                        // - PIDS = $(ps -wwfe | grep heritrix | grep -v grep 
+                        // | grep path\settings_app.xml | awk "{print \\$2}")
+                        appPrint.println(ScriptConstants.getLinuxPIDS(
+                                Heritrix.class.getName(), getConfDirPath(), 
+                                app.getIdentification()));
+                        // - if [ -n "$PIDS" ]; then
+                        appPrint.println(ScriptConstants.LINUX_IF_N_EXIST
+                                + Constants.SPACE + ScriptConstants.PIDS
+                                + ScriptConstants.LINUX_N_THEN);
+                        // -     kill -9 $PIDS;
+                        appPrint.println(ScriptConstants.KILL_9_PIDS);
+                        // - fi
+                        appPrint.println(ScriptConstants.FI);
+                    }
                 } finally {
                     // close file
                     appPrint.close();

@@ -160,6 +160,10 @@ public final class Constants {
     /** The path to the heritrix jmxPort from beyond settings.*/
     static final String[] COMPLETE_HARVEST_HETRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
+    /** The path to the heritrix jmxPort from the settings branch.*/
+    static final String[] SETTINGS_HARVEST_HETRIX_JMX_PORT =
+        HarvesterSettings.HERITRIX_JMX_PORT
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the tempDir leaf from settings.*/
     static final String[] SETTINGS_TEMPDIR_LEAF = 
         CommonSettings.DIR_COMMONTEMPDIR

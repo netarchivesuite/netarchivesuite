@@ -439,6 +439,10 @@ public class WindowsMachine extends Machine {
      * where:
      * id = the process identification number of the running application. 
      * 
+     * TODO: kill the potential heritrix process, created by a harvester.
+     * Just like on Linux/Unix. 
+     * If we in the future add the possibility of running heritrix on Windows.
+     * 
      * @param directory The directory for this machine (use global variable?).
      */
     @Override
