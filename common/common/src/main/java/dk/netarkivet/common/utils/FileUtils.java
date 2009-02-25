@@ -1219,27 +1219,37 @@ public class FileUtils {
     /**
      * Loads an file from the class path (for retrieving a file from '.jar').
      * 
-     * @param filePath The path of the class.
-     * @return The file as an input stream.
-     * @throws IOException 
+     * @param filePath The path of the file.
+     * @return The file from the class path.
+     * @throws IOFailure If resource cannot be retrieved from the 
+     * class path.
      */
     public static File getResourceFileFromClassPath(String filePath) 
-            throws IOException {
-        ArgumentNotValid.checkNotNullOrEmpty(
-                filePath,
-                "String defaultClasspathSettingsPath");
-        InputStream stream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(filePath);
-        if (stream != null) {
-            File tmpFile = File.createTempFile("tmp", "tmp");
-            StreamUtils.copyInputStreamToOutputStream(stream, 
-                    new FileOutputStream(tmpFile));
-            return tmpFile;
-        } else {
-            System.out.println("Unable to read the settings file "
-                    + "represented by path: '" + filePath + "'");
-            return null;
+            throws IOFailure {
+        ArgumentNotValid.checkNotNullOrEmpty(filePath,
+               "String defaultClasspathSettingsPath");
+        try {
+            // retrieve the file as a stream from the classpath.
+            InputStream stream = Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(filePath);
+
+            if (stream != null) {
+                // Make stream into file, and return it.
+                File tmpFile = File.createTempFile("tmp", "tmp");
+                StreamUtils.copyInputStreamToOutputStream(stream, 
+                        new FileOutputStream(tmpFile));
+                return tmpFile;
+            } else {
+                String msg = "The resource was not retrieved correctly from"
+                        + " the class path: '" + filePath + "'";
+                log.trace(msg);
+                throw new IOFailure(msg);
+            }
+        } catch (IOException e){
+            String msg = "Problems making stream of resource in class path into "
+                    + "a file. Filepath: '" + filePath + "'";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
-
 }
