@@ -1,4 +1,4 @@
-echo Killing linux application:ArcRepositoryApplication
+echo Killing linux application: ArcRepositoryApplication
 #!/bin/bash
 PIDS=$(ps -wwfe | grep dk.netarkivet.archive.arcrepository.ArcRepositoryApplication | grep -v grep | grep /home/test/TEST/conf/settings_ArcRepositoryApplication.xml | awk "{print \$2}")
 if [ -n "$PIDS" ] ; then
