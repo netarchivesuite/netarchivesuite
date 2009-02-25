@@ -463,14 +463,4 @@ public final class Constants {
     public static String changeToXMLEndScope(String scope) {
         return LESS_THAN + SLASH + scope + GREATER_THAN;
     }
-    
-    /**
-     * Replaces all slashes in a string with dots.
-     * 
-     * @param st The string to have slashes replaced with dots.
-     * @return The new replaced string.
-     */
-    public static String replaceSlashWithDot(String st) {
-        return st.replace(SLASH, DOT);
-    }
 }

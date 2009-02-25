@@ -162,7 +162,7 @@ public class EvaluateConfigFile {
                 }
             } else {
                 System.out.println("Branch in settings not found: " 
-                        + Constants.replaceSlashWithDot(path));
+                        + path.replace(Constants.SLASH, Constants.DOT));
             }
         }
     }
