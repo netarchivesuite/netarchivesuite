@@ -471,7 +471,9 @@ public class LinuxMachine extends Machine {
                                 app.getIdentification()));
                         // - if [ -n "$PIDS" ]; then
                         appPrint.println(ScriptConstants.LINUX_IF_N_EXIST
-                                + Constants.SPACE + ScriptConstants.PIDS
+                                + Constants.SPACE + Constants.QUOTE_MARK 
+                                + ScriptConstants.PIDS + Constants.QUOTE_MARK
+                                + Constants.SPACE 
                                 + ScriptConstants.LINUX_N_THEN);
                         // -     kill -9 $PIDS;
                         appPrint.println(ScriptConstants.KILL_9_PIDS);
