@@ -50,8 +50,8 @@ public class HarvestControllerClient {
     /** the logger to use.     */
     protected final Log log = LogFactory.getLog(getClass());
 
-    /** Connection to JMS provider.     */
-    private JMSConnection con;
+    /** Connection to JMS provider. */
+    private JMSConnection jmsConnection;
 
     /**
     * Establish the connection to the server
@@ -64,7 +64,7 @@ public class HarvestControllerClient {
     * could be established
     */
     private HarvestControllerClient() throws IOFailure {
-        con = JMSConnectionFactory.getInstance();
+        jmsConnection = JMSConnectionFactory.getInstance();
     }
 
     /**
@@ -106,14 +106,14 @@ public class HarvestControllerClient {
         DoOneCrawlMessage nMsg =
                 new DoOneCrawlMessage(job, result, metadata);
         log.debug(sendMessage + nMsg);
-        con.send(nMsg);
+        jmsConnection.send(nMsg);
     }
 
     /**
      * Closes client cleanly.
      */
     public void close() {
-        con = null;
+        jmsConnection = null;
         log.info("Client closing down");
     }
 }

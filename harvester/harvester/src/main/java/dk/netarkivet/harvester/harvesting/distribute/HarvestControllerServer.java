@@ -117,8 +117,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** queue-assignment-policy property. */
     private static final String HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY =
         "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy";
-    /** The JMSConnections to use. */
-    private JMSConnection con;
+    /** The JMSConnection to use. */
+    private JMSConnection jmsConnection;
 
     /** The (singleton) HarvestController that handles the non-JMS parts of
      * a harvest.
@@ -175,23 +175,26 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         controller = HarvestController.getInstance();
 
         // Set properties "heritrix.version" and
-        // "org.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy"
+        // "org.archive.crawler.frontier.AbstractFrontier
+        //  .queue-assignment-policy"
         System.setProperty(HERITRIX_VERSION_PROPERTY,
                 Constants.getHeritrixVersionString());
         System.setProperty(
-                        HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
-                        "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
-                      + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
-                      + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
-                      + "org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,"
-                      + "dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy");
+                HERITRIX_QUEUE_ASSIGNMENT_POLICY_PROPERTY,
+                "org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,"
+                + "org.archive.crawler.frontier.IPQueueAssignmentPolicy,"
+                + "org.archive.crawler.frontier.BucketQueueAssignmentPolicy,"
+                + "org.archive.crawler.frontier"
+                    + ".SurtAuthorityQueueAssignmentPolicy,"
+                + "dk.netarkivet.harvester.harvesting"
+                    + ".DomainnameQueueAssignmentPolicy");
         // Get JMS-connection
         // Channel THIS_CLIENT is only used for replies to store messages so
         // do not set as listener here. It is registered in the arcrepository
         // client.
         // Channel ANY_xxxPRIORIRY_HACO is used for listening for jobs, and
         // registered below.
-        con = JMSConnectionFactory.getInstance();
+        jmsConnection = JMSConnectionFactory.getInstance();
         log.debug("Obtained JMS connection.");
 
         // If any unprocessed jobs are left on the server, process them now
@@ -251,8 +254,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         if (controller != null) {
             controller.cleanup();
         }
-        if (con != null) {
-            con.removeListener(jobChannel, this);
+        if (jmsConnection != null) {
+            jmsConnection.removeListener(jobChannel, this);
         }
         instance = null;
     }
@@ -275,7 +278,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                              + "'. Crawl probably interrupted by "
                              + "shutdown of HarvestController. "
                              + "Processing data.");
-                //TODO: Does such an unexpected job warrant an email?
+                //TODO Does such an unexpected job warrant an email?
                 processHarvestInfoFile(oldCrawlDir,
                         new IOFailure("Crawl probably interrupted by "
                                       + "shutdown of HarvestController"));
@@ -323,7 +326,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 log.warn("Received crawl request, but sent it back to queue, "
                          + "as another crawl is already running: '" + msg
                          + "'");
-                con.resend(msg, jobChannel);
+                jmsConnection.resend(msg, jobChannel);
                 try {
                     // Wait a second before listening again, so the message has
                     // a chance of getting snatched by another harvester.
@@ -359,7 +362,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             // Send message to scheduler that job is started
             CrawlStatusMessage csmStarted = new CrawlStatusMessage(
                     jobID, JobStatus.STARTED);
-            con.send(csmStarted);
+            jmsConnection.send(csmStarted);
 
             // Jobs should arrive with status "submitted". If this is not the
             // case, log the error and send a job-failed message back.
@@ -414,7 +417,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 null);
         csm.setHarvestErrors(message);
         csm.setHarvestErrorDetails(detailedMessage);
-        con.send(csm);
+        jmsConnection.send(csm);
     }
 
     /** Stop accepting more jobs.  After this is called, all crawl messages
@@ -443,15 +446,16 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      */
     private void removeListener() {
         log.debug("Removing listener on channel '" + jobChannel + "'");
-        con.removeListener(jobChannel, this);
+        jmsConnection.removeListener(jobChannel, this);
     }
 
     /** Start listening for crawls, if space available. */
     private void beginListeningIfSpaceAvailable() {
         long availableSpace = FileUtils.getBytesFree(serverDir);
         if (availableSpace > minSpaceRequired) {
-            log.info("Starts to listen to new jobs on '" + jobChannel + "'");
-            con.setListener(jobChannel, this);
+            log.info("Starts to listen to new jobs on queue '"
+                    + jobChannel + "'");
+            jmsConnection.setListener(jobChannel, this);
             log.info(STARTED_MESSAGE);
         } else {
             String PAUSED_MESSAGE = "Not enough available diskspace. Only "
@@ -579,7 +583,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                         dhr == null, failedFiles.size());
             }
             try {
-                con.send(csm);
+                jmsConnection.send(csm);
                 if (crawlException == null && errorMessage.length() == 0) {
                     files.deleteFinalLogs();
                 }
@@ -589,7 +593,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 // of data we need to remove, even on send trouble.
                 files.cleanUpAfterHarvest(new File(
                         Settings.get(
-                                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR)));
+                                HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR
+                                )));
             }
         }
         log.info("Done post-processing files for job " + jobID
@@ -602,9 +607,14 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * called.
      */
     private class HarvesterThread extends Thread {
+        /** The harvester Job in this thread. */   
         private final Job job;
+        /** The list of metadata associated with this Job. */
         private final List<MetadataEntry> metadataEntries;
-
+        /** Constructor for the HarvesterThread class. 
+         * @param job a harvesting job
+         * @param metadataEntries metadata associated with the given job
+         */
         public HarvesterThread(Job job, List<MetadataEntry> metadataEntries) {
             this.job = job;
             this.metadataEntries = metadataEntries;
@@ -614,7 +624,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
          * listener, sets up the files for Heritrix, then passes control
          * to the HarvestController to perform the actual harvest.
          *
-         * TODO: Get file writing into HarvestController as well
+         * TODO Get file writing into HarvestController as well
          *       (requires some rearrangement of the message sending)
          * @throws PermissionDenied if we cannot create the crawl directory.
          * @throws IOFailure if there are problems preparing or running the
@@ -649,8 +659,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                     // This handles some message sending, so it must live
                     // in HCS for now, but the meat of it should be in
                     // HarvestController
-                    // TODO: Refactor to be able to move this out.
-                    // TODO: This may overwrite another exception, since this
+                    // TODO Refactor to be able to move this out.
+                    // TODO This may overwrite another exception, since this
                     // may throw exceptions.
                     processHarvestInfoFile(files.getCrawlDir(), crawlException);
                 }
@@ -662,7 +672,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 log.info(ENDCRAWL_MESSAGE + " " + job.getJobID());
                 // process serverdir for files not yet uploaded.
                 processOldJobs();
-                running = false;
+                resumeAcceptingJobs();
                 beginListeningIfSpaceAvailable();
             }
         }
@@ -680,9 +690,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             // Create the crawldir.  This is done here in order to be able
             // to send a proper message if something goes wrong.
             try {
-                File baseCrawlDir =
-                        new File(Settings.get(
-                                HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
+                File baseCrawlDir = new File(Settings.get(
+                        HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR));
                 crawlDir = new File(baseCrawlDir,
                                     job.getJobID() + "_"
                                     + System.currentTimeMillis());
