@@ -64,7 +64,7 @@ import org.apache.commons.cli.*;
  *              written.  By default, it goes to stdout.
  *       -E<errorFile> is a file where the errors from the batch job will be
  *              written. By default, it goes to stderr.
- *       -N<className> is the name of the primary class to be loaded when doing 
+ *       -N<className> is the name of the primary class to be loaded when doing
  *              a LoadableJarBatchJob       
  * Examples:
  *
@@ -75,8 +75,8 @@ import org.apache.commons.cli.*;
  *                          -R10-*.arc -BReplicaOne -Omimes
  *        
  * Note that you probably want to set the application instance id setting
- * ({@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than its 
- * default value to avoid clashing with other channel listeners.
+ * ({@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than
+ * its default value to avoid clashing with other channel listeners.
  */
 public class RunBatch extends ToolRunnerBase {
     /**
@@ -224,9 +224,8 @@ public class RunBatch extends ToolRunnerBase {
                     "R", true, "Regular expression for files to be processed "
                                + "(default: '" + regexp + "')");
                 options.addOption(
-                    "B", true, "Name of bitarchive replica where batch must " +
-                               "be run "
-                                + "(default: '" 
+                    "B", true, "Name of bitarchive replica where batch must "
+                                + "be run " + "(default: '" 
                                 + Replica.getReplicaFromId(
                                      Settings.get(CommonSettings.USE_REPLICA_ID)
                                   ).getName()
@@ -257,7 +256,7 @@ public class RunBatch extends ToolRunnerBase {
                     Option op = (Option) o;
                     s += "-" + op.getOpt() + " " + op.getDescription() + "\n";  
                 }
-                //delete last delimitter
+                //delete last delimiter
                 if (s.length() > 0) {
                     s = s.substring(0, s.length()-1);
                 }
@@ -315,7 +314,8 @@ public class RunBatch extends ToolRunnerBase {
                 return false;
             }
             
-            if (classFileName != null && jars == null) { // -C is used and not -J
+            // Validate the situation where -C is used and not -J
+            if (classFileName != null && jars == null) {
                 if (!getFileType(classFileName).equals(FileType.CLASS)) {
                     System.err.println("Argument '"+ classFileName 
                             + "' is not denoting a class file");
@@ -338,17 +338,18 @@ public class RunBatch extends ToolRunnerBase {
                 }
 
                 String[] jarList = jars.split(",");
-                for(String jar : jarList) {
-                	if (!getFileType(jar).equals(FileType.JAR)) {
-                		System.err.println("Argument '"+ jar 
-                				+ "' is not denoting a jar file");
-                		return false;
-                	}
+                for (String jar : jarList) {
+                    if (!getFileType(jar).equals(FileType.JAR)) {
+                        System.err.println("Argument '" + jar
+                                + "' is not denoting a jar file");
+                        return false;
+                    }
 
-                	if(!new File(jar).canRead()) {
-                		System.err.println("Cannot read jar file: '" + jar + "'");
-                		return false;
-                	}
+                    if (!new File(jar).canRead()) {
+                        System.err.println("Cannot read jar file: '" + jar
+                                + "'");
+                        return false;
+                    }
                 }
                 
                 //TODO Validate class name
@@ -432,7 +433,6 @@ public class RunBatch extends ToolRunnerBase {
             String classFileName = parms.cmd.getOptionValue("C");
             String className = parms.cmd.getOptionValue("N");
 
-            
             FileBatchJob job;
 
             if (jarArgs == null) {
@@ -440,19 +440,16 @@ public class RunBatch extends ToolRunnerBase {
                         new File(classFileName));
                 job = classJob;
             } else {
-            	// split jar argument into jar file names 
-            	String[] jarNames = jarArgs.split(",");
-//            	System.out.println("Number of jar files: " + jarNames.length);
-            	
-            	// get jar files an put them into an array
-            	File[] jarFiles = new File[jarNames.length];
-            	for(int i=0; i<jarNames.length; i++) {
-            		jarFiles[i] = new File(jarNames[i]);
-            	}
+                // split jar argument into jar file names
+                String[] jarNames = jarArgs.split(",");
 
-            	LoadableJarBatchJob jarJob = new LoadableJarBatchJob(className,
-                        jarFiles);
-                job = jarJob;
+                // get jar files and put them into an array
+                File[] jarFiles = new File[jarNames.length];
+                for (int i = 0; i < jarNames.length; i++) {
+                    jarFiles[i] = new File(jarNames[i]);
+                }
+
+                job = new LoadableJarBatchJob(className, jarFiles);
             }
             
             String reg = parms.cmd.getOptionValue("R");
