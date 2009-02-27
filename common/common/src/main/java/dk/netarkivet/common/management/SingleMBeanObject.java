@@ -129,7 +129,7 @@ public class SingleMBeanObject<I> {
             val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
             nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, val);
         } catch (UnknownID e) {
-            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, "");            
+            nameProperties.put(Constants.PRIORITY_KEY_PRIORITY, "");        
         }
         try {
             String val = Replica.getReplicaFromId(Settings.get(
@@ -215,5 +215,12 @@ public class SingleMBeanObject<I> {
         } catch (JMException e) {
             throw new IOFailure("Unable to unregister MBean", e);
         }
+    }
+
+    /**
+     * @return the name
+     */
+    public ObjectName getName() {
+        return name;
     }
 }

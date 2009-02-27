@@ -36,6 +36,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.management.Constants;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -83,7 +84,7 @@ public class CachingLogHandlerTester extends TestCase {
      * and returns the empty string. It is tested that the names of the objects
      * are generated from: "location" = 
      * Settings.get(CommonSettings.ENVIRONMENT_THIS_PHYSICAL_LOCATION)
-     * "hostname" = InetAddress.getLocalHost().getCanonicalHostName() 
+     * "machine" = InetAddress.getLocalHost().getCanonicalHostName() 
      * "httpport" = Settings.get(CommonSettings.HTTP_PORT_NUMBER) 
      * "applicationname" = Settings.get(CommonSettings.APPLICATION_NAME) 
      * "applicationinstid" =
@@ -112,7 +113,8 @@ public class CachingLogHandlerTester extends TestCase {
                      LOG_HISTORY_SIZE, after - before);
 
         //Check 42 mbeans of this type
-        assertEquals("Should have " + LOG_HISTORY_SIZE + " mbeans matching object name",
+        assertEquals("Should have " + LOG_HISTORY_SIZE
+                    + " mbeans matching object name '" + name + "'",
                      LOG_HISTORY_SIZE,
                      mBeanServer.queryNames(name, null).size());
 
@@ -348,15 +350,17 @@ public class CachingLogHandlerTester extends TestCase {
                                                        MalformedObjectNameException {
         return new ObjectName("dk.netarkivet.common.logging:location="
                               + Settings.get(
-                CommonSettings.THIS_PHYSICAL_LOCATION)
-                              + ",hostname=" + SystemUtils.getLocalHostName()
+                                      CommonSettings.THIS_PHYSICAL_LOCATION)
+                              + "," +  Constants.PRIORITY_KEY_MACHINE + "=" 
+                              + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + ",replica=ONE,priority=HIGH"
-                              + ",applicationname="
-                              + Settings.get(CommonSettings.APPLICATION_NAME) 
-                              + ",applicationinstid="
-                              + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID) 
+                              + "," + Constants.PRIORITY_KEY_REPLICA + "=ONE,"
+                              + Constants.PRIORITY_KEY_PRIORITY + "=HIGH"
+                              + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
+                              + Settings.get(CommonSettings.APPLICATION_NAME)
+                              + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="
+                              + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID)
                               + "," + (index == -1 ? "*" : "index=" + index));
     }
 
