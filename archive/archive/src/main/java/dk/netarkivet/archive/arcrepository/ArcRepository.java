@@ -768,7 +768,7 @@ public class ArcRepository implements CleanupIF {
         if (reportedChecksum.equals("") ) { //no checksum found
             if (checksumReadOk) { //no errors in finding no checksum
                 if (retryOk(bitarchiveName, arcFileName)) { // we can retry
-                    if (!outstandingRemoteFiles.containsKey(arcFileName)) {
+                    if (outstandingRemoteFiles.containsKey(arcFileName)) {
                         RemoteFile rf = outstandingRemoteFiles.get(arcFileName);
                         //Retry upload only if allowed and in case we are sure that the
                         //empty checksum means that the arcfile is not in the archive
