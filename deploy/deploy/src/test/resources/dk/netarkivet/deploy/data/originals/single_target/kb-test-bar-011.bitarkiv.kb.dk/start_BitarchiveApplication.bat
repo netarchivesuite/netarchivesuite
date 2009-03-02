@@ -1,4 +1,4 @@
-cd "c:\Documents and Settings\dev\TEST"
+cd "c:\Documents and Settings\ba-test\TEST"
 if exist .\conf\running_BitarchiveApplication goto NOSTART
 goto START
 

@@ -1,7 +1,7 @@
-cd c:\Documents and Settings\dev\TEST
+cd c:\Documents and Settings\ba-test\TEST
 if not exist bitpreservation md bitpreservation
-if not exist m:\bitarchive md m:\bitarchive
-if not exist m:\bitarchive\filedir md m:\bitarchive\filedir
-if not exist m:\bitarchive\tempdir md m:\bitarchive\tempdir
-if not exist m:\bitarchive\atticdir md m:\bitarchive\atticdir
+if not exist q:\bitarchive md q:\bitarchive
+if not exist q:\bitarchive\filedir md q:\bitarchive\filedir
+if not exist q:\bitarchive\tempdir md q:\bitarchive\tempdir
+if not exist q:\bitarchive\atticdir md q:\bitarchive\atticdir
 if not exist tmpdircommon md tmpdircommon

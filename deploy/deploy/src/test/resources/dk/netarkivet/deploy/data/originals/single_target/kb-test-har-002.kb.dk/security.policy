@@ -52,14 +52,3 @@ grant {
 
 /* Directories in the bitarchives should be added below.
  */
-grant {
-  permission java.io.FilePermission "x:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "y:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "z:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "x:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "y:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "z:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "x:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "y:\bitarchive${/}filedir${/}-", "read";
-  permission java.io.FilePermission "z:\bitarchive${/}filedir${/}-", "read";
-};

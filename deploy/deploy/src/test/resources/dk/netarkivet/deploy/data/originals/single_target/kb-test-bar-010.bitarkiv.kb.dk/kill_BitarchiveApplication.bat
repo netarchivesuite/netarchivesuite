@@ -1,5 +1,5 @@
 ECHO Killing windows application: BitarchiveApplication
-cd "c:\Documents and Settings\dev\TEST\conf\"
+cd "c:\Documents and Settings\ba-test\TEST\conf\"
 if exist running_BitarchiveApplication goto KILL
 goto NOKILL
 
