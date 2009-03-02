@@ -2,7 +2,7 @@
  * This is a template for the security policy file.
  * The following variables should be replaced 
  * (and is automatically replaced by deploy):
- * commontempdir and monitorRole.
+ * tmpdircommon and monitorRole.
  * The file directories should granted read-only access at the end of the file. 
  */
 grant codeBase "file:lib/-" {
@@ -24,23 +24,23 @@ grant codeBase "file:lib/heritrix/lib/-" {
 /* Each web site section requires an AllPermission for the JSP compilation to
  * work, but we don't want to give AllPermission to all of commontempdir, lest
  * third-party classes get that permission, too. */
-grant codeBase "file:commontempdir/Status/jsp/-" {
+grant codeBase "file:tmpdircommon/Status/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:commontempdir/QA/jsp/-" {
+grant codeBase "file:tmpdircommon/QA/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:commontempdir/History/jsp/-" {
+grant codeBase "file:tmpdircommon/History/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:commontempdir/HarvestDefinition/jsp/-" {
+grant codeBase "file:tmpdircommon/HarvestDefinition/jsp/-" {
   permission java.security.AllPermission;
 };
 
-grant codeBase "file:commontempdir/BitPreservation/jsp/-" {
+grant codeBase "file:tmpdircommon/BitPreservation/jsp/-" {
   permission java.security.AllPermission;
 };
 
