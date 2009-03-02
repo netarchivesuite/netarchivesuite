@@ -799,9 +799,16 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osInstallDatabase() {
+        String databaseDir = machineParameters.getDatabaseDirValue();
+        // Do not install if no proper database directory.
+        if(databaseDir == null || databaseDir.isEmpty()) {
+            return Constants.EMPTY;
+        }
+
         StringBuilder res = new StringBuilder(
                 ScriptConstants.ECHO_WINDOWS_DATABASE);
         res.append(Constants.NEWLINE);
+
         return res.toString();
     }
 
