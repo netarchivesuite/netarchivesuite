@@ -6,7 +6,7 @@ scp null.zip netarkiv@sb-test-har-001.statsbiblioteket.dk:/home/netarkiv
 echo unzipping null.zip at:sb-test-har-001.statsbiblioteket.dk
 ssh netarkiv@sb-test-har-001.statsbiblioteket.dk unzip -q -o /home/netarkiv/null.zip -d /home/netarkiv/test
 echo Creating directories.
-ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d harvester_high ]; then mkdir harvester_high; fi; if [ ! -d commontempdir ]; then mkdir commontempdir; fi; exit; "
+ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d harvester_high ]; then mkdir harvester_high; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh netarkiv@sb-test-har-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/test/conf/jmxremote.password ]; then chmod u+rwx /home/netarkiv/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
@@ -22,7 +22,7 @@ scp null.zip netarkiv@sb-test-bar-001.statsbiblioteket.dk:/home/netarkiv
 echo unzipping null.zip at:sb-test-bar-001.statsbiblioteket.dk
 ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk unzip -q -o /home/netarkiv/null.zip -d /home/netarkiv/test
 echo Creating directories.
-ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d /netarkiv/0001/test ]; then mkdir /netarkiv/0001/test; fi; if [ ! -d /netarkiv/0001/test/filedir ]; then mkdir /netarkiv/0001/test/filedir; fi; if [ ! -d /netarkiv/0001/test/tempdir ]; then mkdir /netarkiv/0001/test/tempdir; fi; if [ ! -d /netarkiv/0001/test/atticdir ]; then mkdir /netarkiv/0001/test/atticdir; fi; if [ ! -d /netarkiv/0002/test ]; then mkdir /netarkiv/0002/test; fi; if [ ! -d /netarkiv/0002/test/filedir ]; then mkdir /netarkiv/0002/test/filedir; fi; if [ ! -d /netarkiv/0002/test/tempdir ]; then mkdir /netarkiv/0002/test/tempdir; fi; if [ ! -d /netarkiv/0002/test/atticdir ]; then mkdir /netarkiv/0002/test/atticdir; fi; if [ ! -d commontempdir ]; then mkdir commontempdir; fi; exit; "
+ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d /netarkiv/0001/test ]; then mkdir /netarkiv/0001/test; fi; if [ ! -d /netarkiv/0001/test/filedir ]; then mkdir /netarkiv/0001/test/filedir; fi; if [ ! -d /netarkiv/0001/test/tempdir ]; then mkdir /netarkiv/0001/test/tempdir; fi; if [ ! -d /netarkiv/0001/test/atticdir ]; then mkdir /netarkiv/0001/test/atticdir; fi; if [ ! -d /netarkiv/0002/test ]; then mkdir /netarkiv/0002/test; fi; if [ ! -d /netarkiv/0002/test/filedir ]; then mkdir /netarkiv/0002/test/filedir; fi; if [ ! -d /netarkiv/0002/test/tempdir ]; then mkdir /netarkiv/0002/test/tempdir; fi; if [ ! -d /netarkiv/0002/test/atticdir ]; then mkdir /netarkiv/0002/test/atticdir; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/test/conf/jmxremote.password ]; then chmod u+rwx /home/netarkiv/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
@@ -38,7 +38,7 @@ scp null.zip netarkiv@sb-test-acs-001.statsbiblioteket.dk:/home/netarkiv
 echo unzipping null.zip at:sb-test-acs-001.statsbiblioteket.dk
 ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk unzip -q -o /home/netarkiv/null.zip -d /home/netarkiv/test
 echo Creating directories.
-ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; if [ ! -d commontempdir ]; then mkdir commontempdir; fi; exit; "
+ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "cd /home/netarkiv/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/test/conf/jmxremote.password ]; then chmod u+rwx /home/netarkiv/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
