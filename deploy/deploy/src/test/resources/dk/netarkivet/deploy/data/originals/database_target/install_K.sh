@@ -33,7 +33,6 @@ echo preparing for copying of settings and scripts
 if [ $(ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-010.bitarkiv.kb.dk/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:TEST\\conf\\
-echo Database not implemented for windows.
 echo make password files readonly
 echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:R
 echo --------------------------------------------
@@ -50,7 +49,6 @@ echo preparing for copying of settings and scripts
 if [ $(ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-011.bitarkiv.kb.dk/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:TEST\\conf\\
-echo Database not implemented for windows.
 echo make password files readonly
 echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls TEST\\conf\\jmxremote.password /P BITARKIV\\ba-test:R
 echo --------------------------------------------
