@@ -45,7 +45,7 @@
                 </mail><notifications>
                     <class>dk.netarkivet.common.utils.EMailNotifications</class>
                     <!-- T: receiver to be modified by test -->
-                    <receiver>jolf@kb.dk</receiver> 
+                    <receiver>test@kb.dk</receiver> 
                     <sender>test@kb-prod-udv-001.kb.dk</sender>
                 </notifications><thisPhysicalLocation>K</thisPhysicalLocation><applicationName>dk.netarkivet.archive.bitarchive.BitarchiveApplication</applicationName></common>
 
