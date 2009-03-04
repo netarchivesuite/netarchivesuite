@@ -662,7 +662,7 @@ public class LinuxMachine extends Machine {
             res.append(Constants.NEWLINE);
             // scp database.jar user@machine:dbDir/db
             res.append(ScriptConstants.SCP + Constants.SPACE);
-            res.append(databaseFile.getAbsolutePath());
+            res.append(databaseFile.getPath());
             res.append(Constants.SPACE);
             res.append(machineUserLogin());
             res.append(Constants.COLON);
