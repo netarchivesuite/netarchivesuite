@@ -236,8 +236,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      */
     public void visit(GetMessage msg) {
         BitarchiveRecord bar;
-        log.trace("Processing getMessage(" + msg.getArcFile() + ":" + msg.getIndex() 
-                + ").");
+        log.trace("Processing getMessage(" + msg.getArcFile() + ":"
+                + msg.getIndex() + ").");
         try {
             bar = ba.get(msg.getArcFile(), msg.getIndex());            
         } catch (Throwable e) {
@@ -264,7 +264,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * @param msg a container for upload request
      */
     public void visit(UploadMessage msg) {
-        // TODO: Implement a thread-safe solution on resource level rather than
+        // TODO Implement a thread-safe solution on resource level rather than
         // message processor level.
         try {
             try {
@@ -390,7 +390,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         Thread batchThread = new Thread("Batch-" + msg.getID()) {
             public void run() {
                 try {
-                    // TODO: Possibly tell batch something that will let
+                    // TODO Possibly tell batch something that will let
                     //  it create more comprehensible file names.
                     //Run the batch job on all files on this machine
                     BatchStatus batchStatus = ba.batch(bitarchiveAppId,
@@ -403,9 +403,10 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
 
                     //Update informational fields in reply message
                     if (batchStatus.getFilesFailed().size() > 0) {
-                        resultMessage.setNotOk("Batch job failed on "
-                                               + batchStatus.getFilesFailed().size()
-                                               + " files.");
+                        resultMessage.setNotOk(
+                                "Batch job failed on "
+                                + batchStatus.getFilesFailed().size()
+                                + " files.");
                     }
 
 
@@ -417,8 +418,9 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                     log.warn("Batch processing failed for message '"
                             + msg + "'", e);
                     BatchEndedMessage failMessage
-                            = new BatchEndedMessage(baMon, bitarchiveAppId,
-                                                    msg.getID(), new NullRemoteFile());
+                            = new BatchEndedMessage(
+                                    baMon, bitarchiveAppId,
+                                    msg.getID(), new NullRemoteFile());
                     failMessage.setNotOk(e);
                     con.send(failMessage);
                     log.debug("Submitted failure message for batch job:"
@@ -455,7 +457,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * (within the bit archive, i.e. either with id ONE or TWO)
      *
      * @return String with IP address of this host and, if specified, the
-     *         HTTP_PORT_NUMBER from settings
+     *         APPLICATION_INSTANCE_ID from settings
      */
     public String getBitarchiveAppId() {
         return bitarchiveAppId;
@@ -465,11 +467,12 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
     /**
      * Returns a String that identifies this bit archive application
      * (within the bit archive, i.e. either with id ONE or TWO).
-     * The string has the following form: [hostaddress]_[port]
-     * fx. "10.0.0.1_80"
+     * The string has the following form: hostaddress[_applicationinstanceid]
+     * fx. "10.0.0.1_appOne" or just "10.0.0.1", if no applicationinstanceid
+     * has been chosen. 
      *
      * @return String with IP address of this host and, if specified, the
-     *         HTTP_PORT_NUMBER from settings
+     *         APPLICATION_INSTANCE_ID from settings
      * @throws UnknownID - if InetAddress.getLocalHost() failed
      */
     private String createBitarchiveAppId() throws UnknownID {
@@ -478,15 +481,19 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
         // Create an id with the IP address of this current host
         id = SystemUtils.getLocalIP();
 
-        // Append an underscore and HTTP_PORT_NUMBER from settings to the id,
-        // if specified in settings.
-        // If no HTTP_PORT_NUMBER is found do nothing.
+        // Append an underscore and APPLICATION_INSTANCE_ID from settings
+        // to the id, if specified in settings.
+        // If no APPLICATION_INSTANCE_ID is found do nothing.
         try {
-            String port = Settings.get(CommonSettings.HTTP_PORT_NUMBER);
-            id += "_" + port;
+            String applicationInstanceId = Settings.get(
+                    CommonSettings.APPLICATION_INSTANCE_ID);
+            if (!applicationInstanceId.isEmpty()) {
+                id += "_" + applicationInstanceId;
+            }
         } catch (UnknownID e) {
-            // Ignore the fact, that there is no HTTP_PORT_NUMBER in settings
-            log.warn("No setting HTTP_PORT_NUMBER found in settings");
+            // Ignore the fact, that there is no APPLICATION_INSTANCE_ID in
+            // settings
+            log.warn("No setting APPLICATION_INSTANCE_ID found in settings");
         }
 
         return id;

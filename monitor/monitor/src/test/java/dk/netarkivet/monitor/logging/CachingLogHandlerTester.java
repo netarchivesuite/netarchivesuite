@@ -29,6 +29,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -65,10 +66,11 @@ public class CachingLogHandlerTester extends TestCase {
         //Get the MBean server
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
         //Set Settings to what we expect
+        Settings.set(CommonSettings.THIS_PHYSICAL_LOCATION, "physLocationOne");
         Settings.set(CommonSettings.APPLICATION_NAME, "TestApp1");
         Settings.set(MonitorSettings.LOGGING_HISTORY_SIZE, Integer.toString(LOG_HISTORY_SIZE));
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, "8076");
-        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGH");
+        Settings.set(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY, "HIGHPRIORITY");
         Settings.set(CommonSettings.USE_REPLICA_ID, "ONE");
     }
 
@@ -112,6 +114,13 @@ public class CachingLogHandlerTester extends TestCase {
         assertEquals(LOG_HISTORY_SIZE + " new MBeans should be registered.",
                      LOG_HISTORY_SIZE, after - before);
 
+        Set<ObjectName> names = mBeanServer.queryNames(null, null);
+        for (ObjectName currentName : names) {
+            System.out.println(currentName);
+        }
+        //assertTrue(names.size() == 42);
+        
+        
         //Check 42 mbeans of this type
         assertEquals("Should have " + LOG_HISTORY_SIZE
                     + " mbeans matching object name '" + name + "'",
@@ -303,6 +312,9 @@ public class CachingLogHandlerTester extends TestCase {
         assertEquals("42 new MBeans should be registered.",
                      LOG_HISTORY_SIZE, after - before);
 
+        
+        
+        
         //Check 42 mbeans of this type
         assertEquals("Should have 42 mbeans matching object name",
                      LOG_HISTORY_SIZE,
@@ -355,8 +367,8 @@ public class CachingLogHandlerTester extends TestCase {
                               + SystemUtils.getLocalHostName()
                               + ",httpport="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + "," + Constants.PRIORITY_KEY_REPLICA + "=ONE,"
-                              + Constants.PRIORITY_KEY_PRIORITY + "=HIGH"
+                              + "," + Constants.PRIORITY_KEY_REPLICA + "=replicaOne,"
+                              + Constants.PRIORITY_KEY_PRIORITY + "=HIGHPRIORITY"
                               + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
                               + Settings.get(CommonSettings.APPLICATION_NAME)
                               + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="

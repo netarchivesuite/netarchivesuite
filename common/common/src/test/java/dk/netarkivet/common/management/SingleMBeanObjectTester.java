@@ -55,7 +55,7 @@ public class SingleMBeanObjectTester extends TestCase {
                     + Constants.PRIORITY_KEY_APPLICATIONNAME + "=TestApp1,"
                     + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "=XX," 
                     + Constants.PRIORITY_KEY_PRIORITY + "=high,"
-                    + Constants.PRIORITY_KEY_REPLICA + "=ONE");
+                    + Constants.PRIORITY_KEY_REPLICA + "=ReplicaOne");
         } catch (MalformedObjectNameException e) {
             System.out.println(e);
         }
@@ -147,10 +147,10 @@ public class SingleMBeanObjectTester extends TestCase {
                 = new SingleMBeanObject("Test", new MyTestInterfaceObject(),
                                         MyTestInterface.class,
                                         ManagementFactory.getPlatformMBeanServer());
-        assertFalse("Nothing should be registered under the name",
+        assertFalse("Nothing should be registered under the name '" + name + "'",
                     platformMBeanServer.isRegistered(name));
         test.register();
-        assertTrue("Something should be registered under the name",
+        assertTrue("Something should be registered under the name '" + name + "'",
                    platformMBeanServer.isRegistered(name));
         Object attribute = platformMBeanServer.getAttribute(name, "TestString");
         assertEquals("Should get the right attribute", "Hello World",

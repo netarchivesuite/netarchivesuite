@@ -136,32 +136,42 @@ public class BitarchiveAdmin {
     /**
      * Returns a temporary place for the the file to be stored.
      *
-     * @param arcFile       The simple name (i.e. no dirs) of the ARC file.
+     * @param arcFileName The simple name (i.e. no dirs) of the ARC file.
      * @param requestedSize How large the file is in bytes.
      * @return The path where the arcFile should go.
      *
      * @throws ArgumentNotValid
-     *          If arcFile is null or empty, or requestedSize is negative.
+     *          If arcFileName is null or empty, or requestedSize is negative.
      * @throws IOFailure if there is no more room left to store this file of
      *                   size=requestedSize
      */
-    public File getTemporaryPath(String arcFile, long requestedSize)
+    public File getTemporaryPath(String arcFileName, long requestedSize)
     throws ArgumentNotValid, IOFailure {
-        ArgumentNotValid.checkNotNullOrEmpty(arcFile, "arcFile");
+        ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFile");
         ArgumentNotValid.checkNotNegative(requestedSize, "requestedSize");
 
-        for (Iterator<File> i = archivePaths.iterator(); i.hasNext(); ) {
+        for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
             File dir = i.next();
-            if (checkArchiveDir(dir)) {
-                if (FileUtils.getBytesFree(dir) > requestedSize) {
-                    File filedir = new File(dir, 
-                            Constants.TEMPORARY_DIRECTORY_NAME);
-                    return new File(filedir, arcFile);
+            long bytesFreeInDir = FileUtils.getBytesFree(dir);
+            // TODO If it turns out that it has not enough space for
+            // this file, it should resend the Upload message
+            // This should probably be handled in the 
+            // method BitarchiveServer.visit(UploadMessage msg)
+            if (checkArchiveDir(dir) && bytesFreeInDir > minSpaceLeft) {
+                if (bytesFreeInDir > requestedSize) {
+                    File filedir = new File(
+                            dir, Constants.TEMPORARY_DIRECTORY_NAME);
+                    return new File(filedir, arcFileName);
+                } else {
+                    log.warn("Not enough space on dir '"
+                            + dir.getAbsolutePath() + "' for file '"
+                            + arcFileName + "' of size " + requestedSize 
+                            + " bytes. Only " + bytesFreeInDir + " left");
                 }
             }
         }
-        String errMsg = "No space left to store '" + arcFile + "' of size "
-                        + requestedSize;
+        String errMsg = "No space left to store file '" + arcFileName
+            + "' of size " + requestedSize;
         log.fatal(errMsg);
         throw new IOFailure(errMsg);
     }
@@ -308,7 +318,7 @@ public class BitarchiveAdmin {
         List<File> files = new ArrayList<File>();
         for (File archivePath : archivePaths) {
             File archiveDir = new File(archivePath, 
-        	    Constants.FILE_DIRECTORY_NAME);
+                    Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
                 File[] filesHere = archiveDir.listFiles(new FilenameFilter() {
                     public boolean accept(File dir, String name) {
