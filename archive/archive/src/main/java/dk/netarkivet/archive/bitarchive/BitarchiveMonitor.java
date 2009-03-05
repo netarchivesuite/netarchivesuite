@@ -235,7 +235,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                     "The batch ID '" + bitarchiveBatchID
                     + "' of the received reply from bitarchives does not "
                     + "correspond to any pending batch job. Ignoring and "
-                    + "deleting RemoteFile '" + remoteFile + "'.");
+                    + "deleting RemoteFile '" + remoteFile + "'."
+                    + "Only knows batchjob with IDs: "
+                    + runningBatchJobs.keySet());
+           
             if (remoteFile != null) {
                 remoteFile.cleanup();
             }
