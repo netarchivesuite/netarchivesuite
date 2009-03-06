@@ -375,6 +375,10 @@ public final class Constants {
     public static final String REGEX_DOT_CHARACTER = "[.]";
     /** Regular expression for finding the ',' character.*/
     public static final String REGEX_COMMA_CHARACTER = "[,]";
+    /** Regular expression for finding the '/' character.*/
+    public static final String REGEX_SLASH_CHARACTER = "[/]";
+    /** Regular expression for finding the '/' character.*/
+    public static final String REGEX_BACKSLASH_CHARACTER = "[\\\\]";
     /** Argument.*/
     public static final String INIT_ARGUMENTS_LIST = "Arguments:";
     

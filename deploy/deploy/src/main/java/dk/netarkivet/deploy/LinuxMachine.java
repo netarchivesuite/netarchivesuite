@@ -744,6 +744,7 @@ public class LinuxMachine extends Machine {
                 Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
         if(dir != null && !dir.isEmpty() 
                 && !dir.equalsIgnoreCase(Constants.DOT)) {
+            res.append(createPathToDir(dir));
             res.append(scriptCreateDir(dir, false));
         }
         
@@ -755,16 +756,18 @@ public class LinuxMachine extends Machine {
             res.append(scriptCreateDir(dir, false));
         }
         
-        res.append(getAppDirectories());
-        
         // get tempDir directory.
         dir = settings.getLeafValue(
                 Constants.SETTINGS_TEMPDIR_LEAF);
         if(dir != null && !dir.isEmpty()
                 && !dir.equalsIgnoreCase(Constants.DOT)) {
+            res.append(createPathToDir(dir));
             res.append(scriptCreateDir(dir, resetTempDir));
         }
 
+        // get the application specific directories.
+        res.append(getAppDirectories());
+        
         res.append(ScriptConstants.EXIT + Constants.SEMICOLON + Constants.SPACE
                 + Constants.QUOTE_MARK + Constants.NEWLINE);
         
@@ -806,6 +809,33 @@ public class LinuxMachine extends Machine {
     }
     
     /**
+     * Function for creating the directories along the path
+     * until the end directory. Does not create the end directory.
+     * 
+     * @param dir The path to the directory.
+     * @return The script for creating the directory.
+     */
+    protected String createPathToDir(String dir) {
+	StringBuilder res = new StringBuilder();
+	
+	String[] pathDirs = dir.split(Constants.REGEX_SLASH_CHARACTER);
+	String path = "";
+	
+	// only make directories along path to last directory, 
+	// don't create end directory.
+	for(int i = 0; i < pathDirs.length-1; i++) {
+	    // don't make directory of empty path.
+	    if(!pathDirs[i].isEmpty())
+	    {
+	        path += pathDirs[i];
+	        res.append(scriptCreateDir(path, false));
+	    }
+	    path += Constants.SLASH;
+	}
+	return res.toString();
+    }
+    
+    /**
      * Creates the script for creating the application specified directories.
      * 
      * @return The script for creating the application specified directories.
@@ -821,6 +851,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+                    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                     for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
                         res.append(scriptCreateDir(
@@ -834,6 +865,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_HARVEST_SERVERDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+                    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                 }
             }
@@ -843,8 +875,25 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_VIEWERPROXY_BASEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+                    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                 }
+            }
+            
+            // get the common.tempDir directories. But only those, 
+            // which are not the same as the machine common.tempDir.
+            dirs = app.getSettingsValues(Constants.SETTINGS_TEMPDIR_LEAF);
+            if(dirs != null && dirs.length > 0) {
+                String machineDir = settings.getLeafValue(
+                	Constants.SETTINGS_TEMPDIR_LEAF);
+        	for(String dir : dirs) {
+        	    // Don't make machine temp dir twice.
+        	    if(dir != machineDir)
+        	    {
+                        res.append(createPathToDir(dir));
+                        res.append(scriptCreateDir(dir, resetTempDir));
+        	    }
+        	}
             }
         }
 

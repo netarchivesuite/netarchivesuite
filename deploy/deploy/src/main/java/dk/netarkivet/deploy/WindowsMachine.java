@@ -887,7 +887,41 @@ public class WindowsMachine extends Machine {
     }
     
     /**
+     * Function for creating the directories along the path
+     * until the end directory. Does not create the end directory.
+     * 
+     * @param dir The path to the directory.
+     * @return The script for creating the directory.
+     */
+    protected String createPathToDir(String dir) {
+	StringBuilder res = new StringBuilder();
+	
+	System.out.println(dir);
+	String[] pathDirs = dir.split(Constants.REGEX_BACKSLASH_CHARACTER);
+	String path = "";
+	
+	// only make directories along path to last directory, 
+	// don't create end directory.
+	for(int i = 0; i < pathDirs.length-1; i++) {
+	    // don't make directory of empty path.
+	    if(!pathDirs[i].isEmpty())
+	    {
+	        path += pathDirs[i];
+		if(!path.endsWith(Constants.COLON))
+		{
+	            res.append(scriptCreateDir(path, false));
+		}
+	    }
+	    path += Constants.BACKSLASH;
+	}
+	
+	System.out.println(res.toString());
+	return res.toString();
+    }
+    
+    /**
      * Creates the script for creating the application specified directories.
+     * Also creates the directories along the path to the directories.
      * 
      * @return The script for creating the application specified directories.
      */
@@ -902,6 +936,7 @@ public class WindowsMachine extends Machine {
                     Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+            	    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                     for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
                         res.append(scriptCreateDir(
@@ -915,6 +950,7 @@ public class WindowsMachine extends Machine {
                     Constants.SETTINGS_HARVEST_SERVERDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+            	    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                 }
             }
@@ -924,8 +960,25 @@ public class WindowsMachine extends Machine {
                     Constants.SETTINGS_VIEWERPROXY_BASEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
+            	    res.append(createPathToDir(dir));
                     res.append(scriptCreateDir(dir, false));
                 }
+            }
+            
+            // get the common.tempDir directories. But only those, 
+            // which are not the same as the machine common.tempDir.
+            dirs = app.getSettingsValues(Constants.SETTINGS_TEMPDIR_LEAF);
+            if(dirs != null && dirs.length > 0) {
+                String machineDir = settings.getLeafValue(
+                	Constants.SETTINGS_TEMPDIR_LEAF);
+        	for(String dir : dirs) {
+        	    // Don't make machine temp dir twice.
+        	    if(dir != machineDir)
+        	    {
+                        res.append(createPathToDir(dir));
+                        res.append(scriptCreateDir(dir, resetTempDir));
+        	    }
+        	}
             }
         }
 
@@ -968,6 +1021,7 @@ public class WindowsMachine extends Machine {
                                 Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
                         if(dir != null && !dir.isEmpty() 
                                 && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    	    dirPrint.print(createPathToDir(dir));
                             dirPrint.print(scriptCreateDir(dir, false));
                         }
 
@@ -976,6 +1030,7 @@ public class WindowsMachine extends Machine {
                                 Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
                         if(dir != null && !dir.isEmpty()
                                 && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    	    dirPrint.print(createPathToDir(dir));
                             dirPrint.print(scriptCreateDir(dir, false));
                         }
 
@@ -986,6 +1041,7 @@ public class WindowsMachine extends Machine {
                                 Constants.SETTINGS_TEMPDIR_LEAF);
                         if(dir != null && !dir.isEmpty()
                                 && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    	    dirPrint.print(createPathToDir(dir));
                             dirPrint.print(scriptCreateDir(dir, resetTempDir));
                         }
                     } finally {
