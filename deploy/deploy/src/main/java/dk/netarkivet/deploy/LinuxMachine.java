@@ -816,23 +816,23 @@ public class LinuxMachine extends Machine {
      * @return The script for creating the directory.
      */
     protected String createPathToDir(String dir) {
-	StringBuilder res = new StringBuilder();
-	
-	String[] pathDirs = dir.split(Constants.REGEX_SLASH_CHARACTER);
-	String path = "";
-	
-	// only make directories along path to last directory, 
-	// don't create end directory.
-	for(int i = 0; i < pathDirs.length-1; i++) {
-	    // don't make directory of empty path.
-	    if(!pathDirs[i].isEmpty())
-	    {
-	        path += pathDirs[i];
-	        res.append(scriptCreateDir(path, false));
-	    }
-	    path += Constants.SLASH;
-	}
-	return res.toString();
+        StringBuilder res = new StringBuilder();
+
+        String[] pathDirs = dir.split(Constants.REGEX_SLASH_CHARACTER);
+        String path = "";
+
+        // only make directories along path to last directory, 
+        // don't create end directory.
+        for(int i = 0; i < pathDirs.length-1; i++) {
+            // don't make directory of empty path.
+            if(!pathDirs[i].isEmpty()) {
+                path += pathDirs[i];
+                res.append(scriptCreateDir(path, false));
+            }
+            path += Constants.SLASH;
+        }
+
+        return res.toString();
     }
     
     /**
@@ -885,15 +885,14 @@ public class LinuxMachine extends Machine {
             dirs = app.getSettingsValues(Constants.SETTINGS_TEMPDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 String machineDir = settings.getLeafValue(
-                	Constants.SETTINGS_TEMPDIR_LEAF);
-        	for(String dir : dirs) {
-        	    // Don't make machine temp dir twice.
-        	    if(dir != machineDir)
-        	    {
+                        Constants.SETTINGS_TEMPDIR_LEAF);
+                for(String dir : dirs) {
+                    // Don't make machine temp dir twice.
+                    if(dir != machineDir) {
                         res.append(createPathToDir(dir));
                         res.append(scriptCreateDir(dir, resetTempDir));
-        	    }
-        	}
+                    }
+                }
             }
         }
 
