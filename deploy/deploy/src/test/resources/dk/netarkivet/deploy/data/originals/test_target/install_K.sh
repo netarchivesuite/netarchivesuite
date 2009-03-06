@@ -58,7 +58,7 @@ scp null.zip test@kb-test-har-001.kb.dk:/home/test
 echo unzipping null.zip at:kb-test-har-001.kb.dk
 ssh test@kb-test-har-001.kb.dk unzip -q -o /home/test/null.zip -d /home/test/test
 echo Creating directories.
-ssh test@kb-test-har-001.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d harvester_low ]; then mkdir harvester_low; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
+ssh test@kb-test-har-001.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; if [ ! -d harvester_low ]; then mkdir harvester_low; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh test@kb-test-har-001.kb.dk " cd ~; if [ -e /home/test/test/conf/jmxremote.password ]; then chmod u+rwx /home/test/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
@@ -74,7 +74,7 @@ scp null.zip test@kb-test-har-002.kb.dk:/home/test
 echo unzipping null.zip at:kb-test-har-002.kb.dk
 ssh test@kb-test-har-002.kb.dk unzip -q -o /home/test/null.zip -d /home/test/test
 echo Creating directories.
-ssh test@kb-test-har-002.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d harvester_low ]; then mkdir harvester_low; fi; if [ ! -d harvester_high ]; then mkdir harvester_high; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
+ssh test@kb-test-har-002.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; if [ ! -d harvester_low ]; then mkdir harvester_low; fi; if [ ! -d harvester_high ]; then mkdir harvester_high; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh test@kb-test-har-002.kb.dk " cd ~; if [ -e /home/test/test/conf/jmxremote.password ]; then chmod u+rwx /home/test/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
@@ -90,7 +90,7 @@ scp null.zip test@kb-test-acs-001.kb.dk:/home/test
 echo unzipping null.zip at:kb-test-acs-001.kb.dk
 ssh test@kb-test-acs-001.kb.dk unzip -q -o /home/test/null.zip -d /home/test/test
 echo Creating directories.
-ssh test@kb-test-acs-001.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; exit; "
+ssh test@kb-test-acs-001.kb.dk "cd /home/test/test; if [ ! -d bitpreservation ]; then mkdir bitpreservation; fi; if [ ! -d tmpdircommon ]; then mkdir tmpdircommon; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; if [ ! -d viewerproxy ]; then mkdir viewerproxy; fi; exit; "
 echo preparing for copying of settings and scripts
 ssh test@kb-test-acs-001.kb.dk " cd ~; if [ -e /home/test/test/conf/jmxremote.password ]; then chmod u+rwx /home/test/test/conf/jmxremote.password; fi; "
 echo copying settings and scripts
