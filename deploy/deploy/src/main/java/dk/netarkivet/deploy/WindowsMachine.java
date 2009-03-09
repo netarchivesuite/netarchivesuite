@@ -896,7 +896,6 @@ public class WindowsMachine extends Machine {
     protected String createPathToDir(String dir) {
         StringBuilder res = new StringBuilder();
 
-        System.out.println(dir);
         String[] pathDirs = dir.split(Constants.REGEX_BACKSLASH_CHARACTER);
         String path = "";
 
@@ -913,7 +912,6 @@ public class WindowsMachine extends Machine {
             path += Constants.BACKSLASH;
         }
 
-        System.out.println(res.toString());
         return res.toString();
     }
     
