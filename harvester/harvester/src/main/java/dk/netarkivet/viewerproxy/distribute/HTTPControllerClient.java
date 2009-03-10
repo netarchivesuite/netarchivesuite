@@ -50,13 +50,14 @@ import dk.netarkivet.viewerproxy.Controller;
  *
  */
 public class HTTPControllerClient implements Controller {
-    /** The response we are working on */
+    /** The response we are working on. */
     private HttpServletResponse response;
     /** The JspWriter that the page gave us. */
     private JspWriter out;
     /** The url to return to, for commands using this. */
     private String returnURL;
-
+    
+    /** The I18n object associated with this class. */
     private static final I18n I18N = new I18n(Constants.TRANSLATIONS_BUNDLE);
 
     /** Make an HTTP controller client.
@@ -65,10 +66,10 @@ public class HTTPControllerClient implements Controller {
      * url.
      *
      * @param response The response object to use for redirect.
-     * @param out
+     * @param out The JspWriter used to communicate with the users.
      * @param returnURL The URL to return to afterwards if no output is given.
-     * This must not be null if either startRecordingURIs, stopRecordingURIs,
-     * changeIndex or clearRecordedURIs are called.
+     * This must not be null or not empty if either startRecordingURIs,
+     * stopRecordingURIs, changeIndex or clearRecordedURIs are called.
      */
     public HTTPControllerClient(HttpServletResponse response,
                                 JspWriter out, String returnURL) {
@@ -97,19 +98,22 @@ public class HTTPControllerClient implements Controller {
     }
 
     /** Perform the necessary redirection to execute a simple (parameterless)
-     * command.
+     * command. 
+     * Checks, that the returnURL is neither null or not empty.
      *
      * @param command One of the three parameterless commands START_COMMAND,
      * @param useReturnURL Whether to append the returnURL parameter
      */
-    private void redirectForSimpleCommand(String command, boolean useReturnURL) {
+    private void redirectForSimpleCommand(
+            String command, boolean useReturnURL) {
         try {
-            String url = "http://"
-                    + CommandResolver.VIEWERPROXY_COMMAND_NAME + command;
+            String url = "http://" + CommandResolver.VIEWERPROXY_COMMAND_NAME
+                    + command;
             if (useReturnURL) {
-                ArgumentNotValid.checkNotNullOrEmpty(returnURL, "String returnURL");
-                url += '?' + HTTPControllerServer.RETURN_URL_PARAMETER
-                        + '=' + HTMLUtils.encode(returnURL);
+                ArgumentNotValid.checkNotNullOrEmpty(returnURL,
+                        "String returnURL");
+                url += '?' + HTTPControllerServer.RETURN_URL_PARAMETER + '='
+                        + HTMLUtils.encode(returnURL);
             }
             response.sendRedirect(url);
         } catch (IOException e) {
@@ -150,7 +154,8 @@ public class HTTPControllerClient implements Controller {
             out.println("<html><head><title>");
             out.println(I18N.getString(response.getLocale(), "redirecting"));
             out.println("</title></head>");
-            out.println("<body onload='document.getElementById(\"form\").submit();'>");
+            out.println("<body onload='document"
+                    + ".getElementById(\"form\").submit();'>");
             out.println("<form action=\""
                         + HTMLUtils.escapeHtmlValues(url.toString())
                         + "\" method=\"POST\" id=\"form\">");
@@ -172,7 +177,7 @@ public class HTTPControllerClient implements Controller {
             out.println(I18N.getString(response.getLocale(),
                                        "generating.index.0.for.jobs.1",
                                        HTMLUtils.escapeHtmlValues(label),
-                                       StringUtils.conjoin(", ",jobList )));
+                                       StringUtils.conjoin(", ", jobList)));
             out.println("</body></html>");
         } catch (IOException e) {
             throw new IOFailure("Unable to redirect to controller server", e);
