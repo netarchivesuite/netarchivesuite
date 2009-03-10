@@ -50,45 +50,46 @@ import java.util.Set;
  */
 public class HTTPControllerServer extends CommandResolver {
     /**
-     * The controller to call methods on
+     * The controller to call methods on.
      */
     private Controller c;
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
 
-    /** Command for starting url collection */
+    /** Command for starting url collection. */
     static final String START_COMMAND = "/startRecordingURIs";
-    /** Command for stopping url collection */
+    /** Command for stopping url collection. */
     static final String STOP_COMMAND = "/stopRecordingURIs";
-    /** Command for clearing collected urls */
+    /** Command for clearing collected urls. */
     static final String CLEAR_COMMAND = "/clearRecordedURIs";
-    /** Command for getting collected urls */
+    /** Command for getting collected urls. */
     static final String GET_RECORDED_URIS_COMMAND = "/getRecordedURIs";
-    /** Command for changing index */
+    /** Command for changing index. */
     static final String CHANGE_INDEX_COMMAND = "/changeIndex";
-    /** Command for getting status */
+    /** Command for getting status. */
     static final String GET_STATUS_COMMAND = "/getStatus";
 
     /** Parameter defining the url to return to after doing start, stop, clear,
-     * or changeIndex */
+     * or changeIndex. */
     static final String RETURN_URL_PARAMETER = "returnURL";
     /** Parameter for ids of jobs to change index to. May be repeated. */
     static final String JOB_ID_PARAMETER = "jobID";
     /** Parameter for label of an index. */
-    static final String INDEX_LABEL_PARAMETER ="label";
-    /** Parameter for locale to generate status */
+    static final String INDEX_LABEL_PARAMETER = "label";
+    /** Parameter for locale to generate status. */
     static final String LOCALE_PARAMETER = "locale";
 
-    /** Http header for location */
+    /** Http header for location. */
     private static final String LOCATION_HEADER = "Location";
-    /** Http header for content type */
+    /** Http header for content type. */
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
-    /** Http header value for content type text */
-    private static final String TEXT_PLAIN_MIMETYPE = "text/plain; charset=UTF-8";
+    /** Http header value for content type text. */
+    private static final String TEXT_PLAIN_MIMETYPE
+        = "text/plain; charset=UTF-8";
 
-    /** Http response code for redirect */
+    /** Http response code for redirect. */
     private static final int REDIRECT_RESPONSE_CODE = 303;
-    /** Http response code for OK */
+    /** Http response code for OK. */
     private static final int OK_RESPONSE_CODE = 200;
 
     /**
@@ -207,7 +208,7 @@ public class HTTPControllerServer extends CommandResolver {
      * @param request The HTTP request we are working on
      * @param response Response to handle result
      */
-    private void doClearRecordedURIs( Request request, Response response) {
+    private void doClearRecordedURIs(Request request, Response response) {
         setReturnResponseFromParameter(response, request);
         c.clearRecordedURIs();
     }

@@ -46,20 +46,36 @@ import dk.netarkivet.common.utils.StreamUtils;
 /** This implementation of FileBatchJob is a bridge to a jar file given as a
  * File object.
  * The given class will be loaded and used to perform
- * the actions of the FileBatchJob class. */
+ * the actions of the FileBatchJob class.
+ */
 public class LoadableJarBatchJob extends FileBatchJob {
+    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */ 
     transient FileBatchJob loadedJob;
+    /** The ClassLoader of type ByteJarLoader associated with this job. */
     private ClassLoader multipleClassLoader;
+    /** The log. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
+    /** The name of the loaded Job. */
     private String jobClass;
-
+    
+    /**
+     * ByteJarLoader is a ClassLoader that stores java classes in a map where
+     * the key to the map is the class name, and the value is the class stored
+     * as a byte array.
+     */
     static class ByteJarLoader extends ClassLoader implements Serializable {
+        /** The log. */
         transient Log log = LogFactory.getLog(this.getClass().getName());
-
+        
+        /** The map, that holds the class data. */
         Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
 
+        /** Constructor for the ByteLoader.
+         * 
+         * @param files An array of files, which are assumed to be jar-files,
+         *              but they need not have the extension .jar
+         */
         public ByteJarLoader(File... files) {
-
             ArgumentNotValid.checkNotNull(files, "File ... files");
             ArgumentNotValid.checkTrue(files.length != 0,
                     "Should not be empty array");
@@ -74,16 +90,24 @@ public class LoadableJarBatchJob extends FileBatchJob {
                         ByteArrayOutputStream out = new ByteArrayOutputStream(
                                 (int) entry.getSize());
                         StreamUtils.copyInputStreamToOutputStream(in, out);
-                        log.debug("Entering data for class: " + name);
+                        log.debug("Entering data for class '" + name + "'");
                         binaryData.put(name, out.toByteArray());
                     }
                 } catch (IOException e) {
-                    throw new IOFailure("Failed to load jar file '" + file
-                            + "': " + e);
+                    throw new IOFailure("Failed to load jar file '"
+                            + file.getAbsolutePath() + "': " + e);
                 }
             }
         }
-
+        
+        /**
+         * Lookup and return the Class with the given className.
+         * @param className The name of the class to lookup
+         * @throws ClassNotFoundException If the class could not be found 
+         * @return the Class with the given className.
+         * 
+         * @Overrides ClassLoader.findClass()
+         */
         public Class findClass(String className) throws ClassNotFoundException {
             ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
             // replace all dots in the className before looking it up in the
@@ -174,7 +198,11 @@ public class LoadableJarBatchJob extends FileBatchJob {
         loadedJob.finish(os);
     }
 
-    /** Override of the default toString to include name of loaded jar/class. */
+    /** 
+     * Human readable representation of this object. 
+     * Overrides FileBatchJob.toString to include name of loaded jar/class.
+     * @return a Human readable representation of this class
+     */
     public String toString() {
         return this.getClass().getName() + " processing " 
         + jobClass + " from " + multipleClassLoader.toString();
@@ -191,7 +219,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
         out.defaultWriteObject();
     }
 
-    /** Override of the default way to unserialize an object of this class.
+    /** Override of the default way to deserialize an object of this class.
      *
      * @param in Stream that the object can be read from.
      * @throws IOException If there is an error reading from the stream, or
