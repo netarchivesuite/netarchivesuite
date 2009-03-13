@@ -29,12 +29,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * Similar to a FilterIterator, but takes a java.sql.ResultSet (which is neither
  * Iterable, Iterator nor Enumeration).
  * @param <T> The type returned by the ResultSetIterator
- *
+ * //TODO this class is apparently not used in any code. Consider deleting.
  */
 
 public abstract class ResultSetIterator<T> implements Iterator<T> {
@@ -52,6 +53,7 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
      * @param res a ResultSet for this Iterator to operate on.
      */
     public ResultSetIterator(ResultSet res) {
+        ArgumentNotValid.checkNotNull(res, "ResultSet");
         this.res = res;
     }
 
@@ -78,10 +80,13 @@ public abstract class ResultSetIterator<T> implements Iterator<T> {
         }
         return objectCache != null;
     }
-    /**
-     * MISSING JAVADOC DESCRIPTION.
-     * @param result
-     * @return T
+
+    /** Returns the object corresponding to the given object, or null if
+     * that object is to be skipped.
+     *
+     *
+     * @param result An object in the source iterator domain
+     * @return An object in this iterators domain, or null
      */
     public abstract T filter(ResultSet result);
 

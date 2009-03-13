@@ -222,7 +222,7 @@ public class JMXUtils {
     public static Object executeCommand(MBeanServerConnection connection,
                                   String beanName, String command,
                                   String... arguments) {
-        ArgumentNotValid.checkNotNull(connection, 
+        ArgumentNotValid.checkNotNull(connection,
                 "MBeanServerConnection connection");
         ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
         ArgumentNotValid.checkNotNullOrEmpty(command, "String command");

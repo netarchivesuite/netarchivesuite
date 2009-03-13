@@ -389,7 +389,8 @@ public class DBUtils {
             try {
                 s.close();
             } catch (SQLException e) {
-                log.warn("Error closing SQL statement " + s + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+                log.warn("Error closing SQL statement " + s + "\n"
+                         + ExceptionUtils.getSQLExceptionCause(e), e);
             }
         }
     }
@@ -662,7 +663,8 @@ public class DBUtils {
             }
         } catch (SQLException e) {
             final String message = "SQL error deleting " + victim;
-            log.warn(message + "\n"  + ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn(message + "\n"  +
+                     ExceptionUtils.getSQLExceptionCause(e), e);
             throw new IOFailure(message + "\n"  + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             closeStatementIfOpen(s);
@@ -836,7 +838,8 @@ public class DBUtils {
             log.debug("Updated database using updates '" 
                     + StringUtils.conjoin(";", updates) + "'.");
         } catch (SQLException e) {
-            String msg = "SQL error updating database with sql: " + s + "\n" + ExceptionUtils.getSQLExceptionCause(e);
+            String msg = "SQL error updating database with sql: " + s + "\n"
+                         + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {

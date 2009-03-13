@@ -27,6 +27,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.SQLException;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
 /**
  * Utilities for reading a stacktrace.
  */
@@ -64,6 +66,7 @@ public class ExceptionUtils {
      * @return a String describing the exception
      */
     public static String getSQLExceptionCause(SQLException e) {
+        ArgumentNotValid.checkNotNull(e, "SQLException");
         StringBuffer message = new StringBuffer("SQLException trace:\n");
         do {
             message.append(getSingleSQLExceptionCause(e));
