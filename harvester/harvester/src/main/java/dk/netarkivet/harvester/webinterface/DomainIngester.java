@@ -36,6 +36,7 @@ import dk.netarkivet.harvester.datamodel.IngestDomainList;
  */
 
 public class DomainIngester extends Thread {
+    /** The log. */
     Log log = LogFactory.getLog(DomainIngester.class.getName());
     /** Whether or not the ingesting process is finished yet. */
     public boolean done = false;
@@ -56,8 +57,8 @@ public class DomainIngester extends Thread {
      * @param l the given locale
      */
     public DomainIngester(JspWriter out, File ingestFile, Locale l) {
-    	this.out = out;
-    	this.ingestFile = ingestFile;
+        this.out = out;
+        this.ingestFile = ingestFile;
         this.l = l;
     }
 
