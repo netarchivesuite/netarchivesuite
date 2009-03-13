@@ -55,7 +55,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkNotNullOrEmpty(String val, String name) {
+    public static void checkNotNullOrEmpty(String val, String name) {
         checkNotNull(val, name);
 
         if (val.equals("")) {
@@ -85,7 +85,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkNotNegative(int i, String name) {
+    public static void checkNotNegative(int i, String name) {
         if (i < 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must be non-negative, but is " + i + ".");
@@ -99,7 +99,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkNotNegative(long num, String name) {
+    public static void checkNotNegative(long num, String name) {
         if (num < 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must be non-negative, but is " + num + ".");
@@ -113,7 +113,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkPositive(int i, String name) {
+    public static void checkPositive(int i, String name) {
         if (i <= 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must be positive, but is " + i + ".");
@@ -127,7 +127,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkPositive(long num, String name) {
+    public static void checkPositive(long num, String name) {
         if (num <= 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must be positive, but is " + num + ".");
@@ -141,7 +141,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkNotNullOrEmpty(Collection c, String name) {
+    public static void checkNotNullOrEmpty(Collection c, String name) {
         checkNotNull(c, name);
 
         if (c.isEmpty()) {
@@ -157,7 +157,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param s the error message to be reported
      * @throws ArgumentNotValid if b is false
      */
-    static public void checkTrue(boolean b, String s) {
+    public static void checkTrue(boolean b, String s) {
         if (!b) {
             throw new ArgumentNotValid(s);
         }
