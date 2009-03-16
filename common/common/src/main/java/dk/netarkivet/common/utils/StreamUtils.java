@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -44,6 +46,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class StreamUtils {
     
+    
+    /** Constant for UTF-8. */
+    private static final String UTF8_CHARSET = "UTF-8";
+    
+    /** logger for this class. */
+    private static final Log log =
+            LogFactory.getLog(StreamUtils.class);
+    
     /**
      * Will copy everything from input stream to jsp writer, closing input
      * stream afterwards. Charset UTF-8 is assumed.
@@ -53,7 +63,8 @@ public class StreamUtils {
      * @throws ArgumentNotValid if either parameter is null
      * @throws IOFailure if a read or write error happens during copy
      */
-    public static void copyInputStreamToJspWriter(InputStream in, JspWriter out) {
+    public static void copyInputStreamToJspWriter(InputStream in,
+            JspWriter out) {
         ArgumentNotValid.checkNotNull(in, "InputStream in");
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
 
@@ -62,14 +73,16 @@ public class StreamUtils {
         try {
             try {
                 while ((read = in.read(buf)) != -1) {
-                    out.write(new String(buf, "UTF-8"), 0, read);
+                    out.write(new String(buf, UTF8_CHARSET), 0, read);
                 }
             } finally {
                 in.close();
             }
         } catch (IOException e) {
-            throw new IOFailure("Trouble copying inputstream " + in
-                    + " to JspWriter " + out, e);
+            String errMsg = "Trouble copying inputstream " + in
+            + " to JspWriter " + out;
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
    
@@ -117,8 +130,10 @@ public class StreamUtils {
                 in.close();
             }
         } catch (IOException e) {
-            throw new IOFailure("Trouble copying inputstream " + in
-                                + " to outputstream " + out, e);
+            String errMsg = "Trouble copying inputstream " + in
+            + " to outputstream " + out;
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 
@@ -132,11 +147,13 @@ public class StreamUtils {
      */
     public static void writeXmlToStream(Document doc,
                                         OutputStream os) {
+        ArgumentNotValid.checkNotNull(doc, "Document doc");
+        ArgumentNotValid.checkNotNull(doc, "OutputStream os");
         XMLWriter xwriter = null;
         try {
             try {
                 OutputFormat format = OutputFormat.createPrettyPrint();
-                format.setEncoding("UTF-8");
+                format.setEncoding(UTF8_CHARSET);
                 xwriter = new XMLWriter(os, format);
                 xwriter.write(doc);
             } finally {
@@ -146,7 +163,9 @@ public class StreamUtils {
                 os.flush();
             }
         } catch (IOException e) {
-            throw new IOFailure("Unable to write XML to stream", e);
+            String errMsg = "Unable to write XML to stream";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 }

@@ -35,6 +35,7 @@ jobid - The id of the job to show reports for.
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.utils.cdx.CDXRecord,
                  dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.CommandResolver,
                  dk.netarkivet.viewerproxy.GetDataResolver,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
@@ -50,7 +51,7 @@ jobid - The id of the job to show reports for.
     int jobid;
     List<CDXRecord> records;
     try {
-        jobid = HTMLUtils.parseAndCheckInteger(pageContext, "jobid",
+        jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM,
                                                1, Integer.MAX_VALUE);
         records = Reporting.getMetdataCDXRecordsForJob(jobid);
     } catch (ForwardedToErrorPage e) {

@@ -36,7 +36,9 @@ jobid - the id of the job to get the log for
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.utils.I18n,
-                 dk.netarkivet.common.utils.StreamUtils, dk.netarkivet.common.webinterface.HTMLUtils, dk.netarkivet.viewerproxy.webinterface.Reporting"
+                 dk.netarkivet.common.utils.StreamUtils, dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.viewerproxy.webinterface.Constants,
+                 dk.netarkivet.viewerproxy.webinterface.Reporting"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -47,13 +49,13 @@ jobid - the id of the job to get the log for
     HTMLUtils.setUTF8(request);
     String domain;
     int jobid;
-    File f;
+    File crawlLogExtract;
     try {
-        HTMLUtils.forwardOnMissingParameter(pageContext, "domain", "jobid");
-        domain = request.getParameter("domain");
-        jobid = HTMLUtils.parseAndCheckInteger(pageContext, "jobid", 1,
+        HTMLUtils.forwardOnMissingParameter(pageContext, Constants.DOMAIN_PARAM, Constants.JOBID_PARAM);
+        domain = request.getParameter(Constants.DOMAIN_PARAM);
+        jobid = HTMLUtils.parseAndCheckInteger(pageContext, Constants.JOBID_PARAM, 1,
                                                Integer.MAX_VALUE);
-        f = Reporting.getCrawlLogForDomainInJob(domain, jobid);
+        crawlLogExtract = Reporting.getCrawlLogForDomainInJob(domain, jobid);
     } catch (ForwardedToErrorPage e) {
         return;
     }
@@ -65,9 +67,8 @@ jobid - the id of the job to get the log for
 </fmt:message></h3>
 <pre>
 <%
-    StreamUtils.copyInputStreamToJspWriter(new FileInputStream(f), out);
-    //out.print(FileUtils.readFile(f));
-    FileUtils.remove(f);
+    StreamUtils.copyInputStreamToJspWriter(new FileInputStream(crawlLogExtract), out);
+    FileUtils.remove(crawlLogExtract);
 %>
 </pre>
 <%

@@ -34,6 +34,7 @@ jobid - The id of the job to show files for.
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
+                 dk.netarkivet.viewerproxy.webinterface.Constants,
                  dk.netarkivet.viewerproxy.CommandResolver,
                  dk.netarkivet.viewerproxy.GetDataResolver,
                  dk.netarkivet.viewerproxy.webinterface.Reporting"
@@ -48,7 +49,8 @@ jobid - The id of the job to show files for.
     int jobid;
     List<String> lines;
     try {
-        jobid = HTMLUtils.parseAndCheckInteger(pageContext, "jobid",
+        jobid = HTMLUtils.parseAndCheckInteger(pageContext, 
+        										Constants.JOBID_PARAM,
                                                1, Integer.MAX_VALUE);
         lines = Reporting.getFilesForJob(jobid);
     } catch (ForwardedToErrorPage e) {
