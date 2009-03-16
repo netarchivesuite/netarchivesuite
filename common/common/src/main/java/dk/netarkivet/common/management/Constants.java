@@ -51,7 +51,7 @@ public final class Constants {
     /** The priority key word.*/
     public static final String PRIORITY_KEY_PRIORITY = "priority";
     /** The replica key word.*/
-    public static final String PRIORITY_KEY_REPLICA = "replicaname";
+    public static final String PRIORITY_KEY_REPLICANAME = "replicaname";
     /** The index key word.*/
     public static final String PRIORITY_KEY_INDEX = "index";
 }

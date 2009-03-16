@@ -60,7 +60,7 @@ public class JMXSummaryUtils {
     public static final String JMXHarvestPriorityProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
     public static final String JMXArchiveReplicaNameProperty = 
-        dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICA;
+        dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICANAME;
     public static final String JMXIndexProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
     
@@ -74,15 +74,27 @@ public class JMXSummaryUtils {
         JMXHarvestPriorityProperty,
         JMXArchiveReplicaNameProperty,
         JMXIndexProperty};
-    
+
+    /** The log MBean name prefix.*/
     private static final String LOGGING_MBEAN_NAME_PREFIX =
             "dk.netarkivet.common.logging:";
 
     /** Internationalisation object. */
     private static final I18n I18N
             = new I18n(dk.netarkivet.monitor.Constants.TRANSLATIONS_BUNDLE);
+    
+    /** The character for show all.*/
+    private static final String CHARACTER_SHOW_ALL = "*";
+    /** The character for don't show column.*/
+    private static final String CHARACTER_NOT_COLUMN = "-";
+    /** The character for only seeing the first row of the log.*/
+    private static final String CHARACTER_FIRST_ROW = "0";
+    /** Status/Monitor-JMXsummary.jsp?*/
+    private static final String STATUS_MONITOR_JMXSUMMARY = 
+        "Status/Monitor-JMXsummary.jsp";
+    
 
-    /* Instance of class Random used to generate a unique id for each div. */
+    /** Instance of class Random used to generate a unique id for each div. */
     private static final Random random = new Random();
 
     /** Reduce the class name of an application to the essentials.
@@ -125,11 +137,13 @@ public class JMXSummaryUtils {
         StringBuilder res = new StringBuilder();
         
         for(String parameter : STARRABLE_PARAMETERS) {
-            if("-".equals(starredRequest.getParameter(parameter))) {
+            if(CHARACTER_NOT_COLUMN.equals(starredRequest
+                    .getParameter(parameter))) {
                 // generate the link, but use the parameter applied to the 
                 // table field value.
-                res.append(generateLink(starredRequest, parameter, "*", 
-                I18N.getString(l, "tablefield;" + parameter)));
+                res.append(generateLink(starredRequest, parameter, 
+                        CHARACTER_SHOW_ALL, I18N.getString(l, 
+                        "tablefield;" + parameter)));
                 res.append(",");
             }
         }
@@ -206,7 +220,11 @@ public class JMXSummaryUtils {
      */
     public static boolean showColumn(StarredRequest starredRequest, 
             String parameter) {
-        if ("-".equals(starredRequest.getParameter(parameter))) {
+        ArgumentNotValid.checkNotNull(starredRequest, 
+                "StarredRequest starredRequest");
+        ArgumentNotValid.checkNotNullOrEmpty(parameter, "String parameter");
+        if (CHARACTER_NOT_COLUMN.equals(starredRequest
+                .getParameter(parameter))) {
             return false;
         }
         return true;
@@ -234,7 +252,7 @@ public class JMXSummaryUtils {
             return linkText;
         }
         StringBuilder builder = new StringBuilder();
-        builder.append("<a href=\"/Status/Monitor-JMXsummary.jsp?");
+        builder.append("<a href=\"/" + STATUS_MONITOR_JMXSUMMARY + "?");
         boolean isFirst = true;
         for (String queryPart : STARRABLE_PARAMETERS) {
             if (isFirst) {
@@ -309,8 +327,9 @@ public class JMXSummaryUtils {
                                          StarredRequest starredRequest) {
         StringBuilder query = new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
         for (String queryPart : parameters) {
-            if (!"*".equals(starredRequest.getParameter(queryPart))
-        	    && !"-".equals(starredRequest.getParameter(queryPart))) {
+            if (!CHARACTER_SHOW_ALL.equals(starredRequest
+                    .getParameter(queryPart)) && !CHARACTER_NOT_COLUMN.equals(
+                    starredRequest.getParameter(queryPart))) {
                 query.append(",");
                 query.append(queryPart);
                 query.append("=");
@@ -407,15 +426,15 @@ public class JMXSummaryUtils {
             String value = req.getParameter(paramName);
             if (value == null || value.length() == 0) {
                 if (JMXIndexProperty.equals(paramName)) {
-                    return "0";
+                    return CHARACTER_FIRST_ROW;
                 } else if (JMXPhysLocationProperty.equals(paramName)) {
-                    return "-";
+                    return CHARACTER_NOT_COLUMN;
                 } else if (JMXApplicationInstIdProperty.equals(paramName)) {
-                    return "-";
+                    return CHARACTER_NOT_COLUMN;
                 } else if (JMXHttpportProperty.equals(paramName)) {
-                    return "-";
+                    return CHARACTER_NOT_COLUMN;
                 } else {
-                    return "*";
+                    return CHARACTER_SHOW_ALL;
                 }
             } else {
                 return value;
