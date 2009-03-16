@@ -55,7 +55,7 @@ public class SingleMBeanObjectTester extends TestCase {
                     + Constants.PRIORITY_KEY_APPLICATIONNAME + "=TestApp1,"
                     + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "=XX," 
                     + Constants.PRIORITY_KEY_PRIORITY + "=high,"
-                    + Constants.PRIORITY_KEY_REPLICA + "=ReplicaOne");
+                    + Constants.PRIORITY_KEY_REPLICANAME + "=ReplicaOne");
         } catch (MalformedObjectNameException e) {
             System.out.println(e);
         }
@@ -113,7 +113,7 @@ public class SingleMBeanObjectTester extends TestCase {
                                   MyTestInterface.class, ManagementFactory.getPlatformMBeanServer());
             fail("Should throw argument not valid on null argument");
         } catch (ArgumentNotValid e) {
-            assertTrue("Should complain about the right parameter",
+            assertTrue("Should complain about the right parameter 'domain'",
                        e.getMessage().contains("domain"));
         }
 
@@ -122,8 +122,8 @@ public class SingleMBeanObjectTester extends TestCase {
                                   ManagementFactory.getPlatformMBeanServer());
             fail("Should throw argument not valid on null argument");
         } catch (ArgumentNotValid e) {
-            assertTrue("Should complain about the right parameter",
-                       e.getMessage().contains("T o"));
+            assertTrue("Should complain about the right parameter 'I object'",
+                       e.getMessage().contains("I object"));
         }
 
         try {
