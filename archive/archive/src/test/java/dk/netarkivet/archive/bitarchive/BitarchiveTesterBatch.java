@@ -69,6 +69,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
     public void setUp() throws Exception {
         super.setUp();
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir");
+        fileDir.mkdirs();
         for (String filename : arcFiles) {
             FileUtils.copyFile(new File(getOriginalsDir(), filename),
                     new File(fileDir, filename));

@@ -29,6 +29,7 @@ import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
+import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.TemplateDAO;
@@ -56,9 +57,13 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
         super.setUp();
         // Add a DefinitionsSiteSection to the list of Sitesections being loaded
         // when GUIWebServer starts.
-        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.HARVESTDEFINITION_JSP_DIR);
-        //Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.HARVESTDEFINITION_WEBBASE);
-        Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
+        Settings.set(
+                CommonSettings.SITESECTION_WEBAPPLICATION, 
+                TestInfo.HARVESTDEFINITION_JSP_DIR);
+        Settings.set(
+                CommonSettings.SITESECTION_CLASS, 
+                TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
+ 
         JMSConnectionTestMQ.useJMSConnectionTestMQ();
     }
 
@@ -133,11 +138,28 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
      * @throws InterruptedException
      */
      public void testExitWithoutDefaultTemplateInTemplatesTable() throws InterruptedException {
+         String[] webApps = Settings.getAll(
+                 CommonSettings.SITESECTION_WEBAPPLICATION);
+         boolean harvestdefinitionFound = false;
+         for (String webapp : webApps) {
+             if (webapp.contains("HarvestDefinition")) {
+                 harvestdefinitionFound = true;
+                 break;
+             }
+         }
+         assertTrue("Test-requirement not met: "
+                 + "DefinitionsSiteSection not in default settings",
+                 harvestdefinitionFound);
+         
          TemplateDAO dao = TemplateDAO.getInstance();
          // remove default order.xml from dao
         dao.delete(Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML));
          try {
              gui = GUIWebServer.getInstance();
+             
+             for (SiteSection s: SiteSection.getSections()) {
+                 System.out.println(s);
+             }
              fail("Should fail if default template is gone");
          } catch (IOFailure e) {
              // expected

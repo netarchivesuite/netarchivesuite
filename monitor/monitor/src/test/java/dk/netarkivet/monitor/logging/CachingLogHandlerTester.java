@@ -360,12 +360,13 @@ public class CachingLogHandlerTester extends TestCase {
      */
     private static ObjectName getObjectName(int index) throws
                                                        MalformedObjectNameException {
-        return new ObjectName("dk.netarkivet.common.logging:location="
+        return new ObjectName("dk.netarkivet.common.logging:"
+                              + Constants.PRIORITY_KEY_LOCATION + "="
                               + Settings.get(
                                       CommonSettings.THIS_PHYSICAL_LOCATION)
                               + "," +  Constants.PRIORITY_KEY_MACHINE + "=" 
-                              + SystemUtils.getLocalHostName()
-                              + ",httpport="
+                              + SystemUtils.getLocalHostName() + ","
+                              + Constants.PRIORITY_KEY_HTTP_PORT + "="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
                               + "," + Constants.PRIORITY_KEY_REPLICANAME + "=replicaOne,"
                               + Constants.PRIORITY_KEY_PRIORITY + "=HIGHPRIORITY"
@@ -373,7 +374,8 @@ public class CachingLogHandlerTester extends TestCase {
                               + Settings.get(CommonSettings.APPLICATION_NAME)
                               + "," + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "="
                               + Settings.get(CommonSettings.APPLICATION_INSTANCE_ID)
-                              + "," + (index == -1 ? "*" : "index=" + index));
+                              + "," + (index == -1 ? "*" 
+                                      : Constants.PRIORITY_KEY_INDEX + "=" + index));
     }
 
     /**
@@ -385,10 +387,9 @@ public class CachingLogHandlerTester extends TestCase {
      * @throws InstanceNotFoundException
      * @throws MalformedObjectNameException
      */
-    private static ObjectInstance getObjectInstance(MBeanServer mBeanServer,
-                                                    int index) throws
-                                                               InstanceNotFoundException,
-                                                               MalformedObjectNameException {
+    private static ObjectInstance getObjectInstance(
+            MBeanServer mBeanServer, int index) throws InstanceNotFoundException,
+                                                       MalformedObjectNameException {
         return mBeanServer.getObjectInstance(
                 getObjectName(index));
     }

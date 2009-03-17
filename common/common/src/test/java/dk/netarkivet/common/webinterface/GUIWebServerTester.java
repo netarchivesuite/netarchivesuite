@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.TestInfo;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -39,21 +40,30 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Tests running a web server, represented by the GUIWebServer() class.
  */
 public class GUIWebServerTester extends TestCase {
-    TestInfo info = new TestInfo();
+    //TestInfo info = new TestInfo();
     private GUIWebServer server;
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
         rs.setUp();
-        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
-        Settings.set(CommonSettings.SITESECTION_CLASS, TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
-        Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+        Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, 
+                TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
+        Settings.set(CommonSettings.SITESECTION_CLASS, 
+                TestInfo.GUI_WEB_SERVER_SITESECTION_CLASS);
+        Settings.set(CommonSettings.HTTP_PORT_NUMBER, 
+                Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
+        
+        TestInfo.TEMPDIR.mkdirs();
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, 
+                TestInfo.TEMPDIR.getAbsolutePath());
+        
     }
 
     public void tearDown() {
         if (server != null) {
             server.cleanup();
         }
+        FileUtils.removeRecursively(TestInfo.TEMPDIR);
         rs.tearDown();
     }
 

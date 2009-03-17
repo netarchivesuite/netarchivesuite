@@ -86,11 +86,15 @@ public class BitarchiveServerTester extends TestCase {
                 readConfiguration(fis);
         fis.close();
         utrf.setUp();
+        File tmpdir = new File(TestInfo.UPLOADMESSAGE_TEMP_DIR, 
+                "commontempdir");
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.UPLOADMESSAGE_ORIGINALS_DIR, WORKING);
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                tmpdir.getAbsolutePath());
     }
 
     protected void tearDown() {

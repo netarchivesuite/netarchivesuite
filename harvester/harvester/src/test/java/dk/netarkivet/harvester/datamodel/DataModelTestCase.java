@@ -56,13 +56,17 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * sets up the various DAOs etc.
  */
 public class DataModelTestCase extends TestCase {
+   
+    
+    
     SetSystemProperty derbyLog
         = new SetSystemProperty(
                 "derby.stream.error.file",
                     new File(TestInfo.TEMPDIR, "derby.log")
                         .getAbsolutePath());
     ReloadSettings rs = new ReloadSettings();
-
+    File commonTempdir = new File(TestInfo.TEMPDIR, "commontempdir");
+    
 
     public DataModelTestCase(String s) {
         super(s);
@@ -75,11 +79,16 @@ public class DataModelTestCase extends TestCase {
         assertFalse("Tempdir '" +  TestInfo.TEMPDIR.getAbsolutePath()
                 +  "' exists ", TestInfo.TEMPDIR.exists());
         TestFileUtils.copyDirectoryNonCVS(TestInfo.DATADIR, TestInfo.TEMPDIR);
+        
         derbyLog.setUp();
         String derbyDBUrl = "jdbc:derby:" + TestInfo.TEMPDIR.getCanonicalPath()
         + "/fullhddb";
         Settings.set(CommonSettings.DB_URL, derbyDBUrl);
-
+        
+        commonTempdir.mkdir();
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                commonTempdir.getAbsolutePath());
+                
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
         TestUtils.resetDAOs();

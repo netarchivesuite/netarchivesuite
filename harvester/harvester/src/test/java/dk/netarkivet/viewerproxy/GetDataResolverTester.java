@@ -30,10 +30,12 @@ import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
@@ -48,6 +50,7 @@ import dk.netarkivet.viewerproxy.distribute.HTTPControllerServerTester;
 public class GetDataResolverTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);
+    File tempdir = new File(TestInfo.WORKING_DIR, "commontempdir");
     ArcRepositoryClient arcrep = null;
     MockupJMS mjms = new MockupJMS();
     ReloadSettings rs = new ReloadSettings();
@@ -62,6 +65,10 @@ public class GetDataResolverTester extends TestCase {
         mtf.setUp();
         mjms.setUp();
         utrf.setUp();
+        tempdir.mkdir();
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                tempdir.getAbsolutePath());
+        
         arcrep = new TestArcRepositoryClient(TestInfo.WORKING_DIR);
     }
 

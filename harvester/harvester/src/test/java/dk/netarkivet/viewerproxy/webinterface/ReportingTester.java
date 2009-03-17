@@ -49,13 +49,18 @@ public class ReportingTester extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     private ReloadSettings rs = new ReloadSettings();
     private TrivialArcRepositoryClient tarc;
+    private File working = new File("tests/dk/netarkivet/viewerproxy/data/working");
+    private File tempdir = new File(working, "commontempdir");
     private File dir;
 
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
         utrf.setUp();
-        Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
+        working.mkdirs();
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                tempdir.getAbsolutePath());
+              Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                      TrivialArcRepositoryClient.class.getName());
         ArcRepositoryClientFactory.getViewerInstance().close();
         tarc = (TrivialArcRepositoryClient) ArcRepositoryClientFactory
@@ -76,6 +81,7 @@ public class ReportingTester extends TestCase {
         if (dir != null && dir.isDirectory()) {
             FileUtils.removeRecursively(dir);
         }
+        FileUtils.removeRecursively(working);
         utrf.tearDown();
         rs.tearDown();
     }

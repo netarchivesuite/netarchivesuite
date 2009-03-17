@@ -100,13 +100,19 @@ public class BitarchiveMonitorServerTester extends TestCase {
         mjms.setUp();
         ulrf.setUp();
         mtf.setUp();
-
+        File commontempdir = new File(TestInfo.BAMON_WORKING, "commontempdir");
+        commontempdir.mkdir();
+        assertTrue("commontempdir not created", commontempdir.exists());
         con = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
-        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
-        Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY, String.valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
+        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, 
+                String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
+        Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY,
+                String.valueOf(TestInfo.BITARCHIVE_HEARTBEAT_FREQUENCY));
         Settings.set(ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY,
                      String.valueOf(
                              TestInfo.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY));
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR,
+                commontempdir.getAbsolutePath());
     }
 
 
