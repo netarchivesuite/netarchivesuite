@@ -300,11 +300,16 @@ public class FileUtils {
      *            original to copy
      * @param to
      *            destination of copy
-     * @throws IOFailure if an io error occurs while copying file.
+     * @throws IOFailure if an io error occurs while copying file,
+     * or the original file does not exist.
      */
     public static void copyFile(File from, File to) {
         ArgumentNotValid.checkNotNull(from, "File from");
         ArgumentNotValid.checkNotNull(to, "File to");
+        if (!from.exists()) {
+            throw new IOFailure("Original file '" + from.getAbsolutePath() 
+                    + "' does not exist");
+        }
         try {
             FileInputStream inStream = null;
             FileOutputStream outStream = null;
@@ -411,13 +416,19 @@ public class FileUtils {
      *
      * @param file A file to be read.
      * @return A byte array with the contents of the file.
-     * @throws IOFailure on IO trouble reading the file
+     * @throws IOFailure on IO trouble reading the file,
+     *  or the file does not exist
      * @throws IndexOutOfBoundsException If the file is too large to be 
      * in an array.
      */
     public static byte[] readBinaryFile(File file) throws IOFailure,
         IndexOutOfBoundsException {
         ArgumentNotValid.checkNotNull(file, "File file");
+        if (!file.exists()) {
+            throw new IOFailure("File '" + file.getAbsolutePath() 
+                    + "' does not exist");
+        }
+ 
         String errMsg;
         if (file.length() > Integer.MAX_VALUE) {
             errMsg = "File '" + file.getAbsolutePath()
@@ -514,10 +525,15 @@ public class FileUtils {
      * Read a all lines from a file into a list of strings.
      * @param file The file to read from.
      * @return The list of lines.
-     * @throws IOFailure on trouble reading the file.
+     * @throws IOFailure on trouble reading the file,
+     * or if the file does not exist
      */
     public static List<String> readListFromFile(File file) {
         ArgumentNotValid.checkNotNull(file, "File file");
+        if (!file.exists()) {
+            throw new IOFailure("File '" + file.getAbsolutePath() 
+                    + "' does not exist");
+        }
         List<String> lines = new ArrayList<String>();
         BufferedReader in = null;
         try {
@@ -939,12 +955,16 @@ public class FileUtils {
      *
      * @param file The file containing the unsorted data.
      * @param toFile The file that the sorted data can be put into.
-     * @throws IOFailure if there were errors running the sort process.
+     * @throws IOFailure if there were errors running the sort process, or
+     * if the file does not exist.
      */
     public static void sortCrawlLog(File file, File toFile) {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
-        
+        if (!file.exists()) {
+            throw new IOFailure("File '" + file.getAbsolutePath() 
+                    + "' does not exist");
+        }
         int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
                 // -k 4b means fourth field (from 1) ignoring leading blanks
                 // -o means output to (file)
@@ -964,11 +984,15 @@ public class FileUtils {
      *
      * @param file The raw unsorted CDX file.
      * @param toFile The file that the result will be put into.
+     * @throws IOFailure If the file does not exist, or could not be sorted
      */
     public static void sortCDX(File file, File toFile) {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
-        
+        if (!file.exists()) {
+            throw new IOFailure("File '" + file.getAbsolutePath() 
+                    + "' does not exist");
+        }
         int error = ProcessUtils.runProcess(new String[] {"LANG=C"},
                 "sort", file.getAbsolutePath(),
                 "-o", toFile.getAbsolutePath());

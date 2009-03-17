@@ -165,7 +165,8 @@ public class GetDataResolver extends CommandResolver {
                     }
                 }
             } catch (NumberFormatException e) {
-                throw new IOFailure("Parameter jobID is not a parsable job id",
+                throw new IOFailure("The value '" + idString
+                        + "' of Parameter jobID is not a parsable job id",
                         e);
             }
         }
@@ -195,7 +196,8 @@ public class GetDataResolver extends CommandResolver {
                 record.getData(response.getOutputStream());
                 response.setStatus(OK_RESPONSE_CODE);
             } catch (NumberFormatException e) {
-                throw new IOFailure("Unable to parse offsetstring as long", e);
+                throw new IOFailure("Unable to parse offsetstring '"
+                        + offsetString + "' as long", e);
             }
         }
     }
@@ -228,7 +230,8 @@ public class GetDataResolver extends CommandResolver {
                     }
                 }
             } catch (IOException e) {
-                throw new IOFailure(e.getMessage(), e);
+                throw new IOFailure("Failure to getFile '" + 
+                        fileName + "': ", e);
             }
         }
     }

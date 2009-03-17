@@ -190,12 +190,12 @@ public class SingleMBeanObject<I> {
                     new StandardMBean(exposedObject, asInterface), name);
             log.trace("Registered mbean '" + name + "'");
         } catch (InstanceAlreadyExistsException e) {
-            String msg = "this MBean is already registered on "
+            String msg = "this MBean '" + name + "' is already registered on "
                          + "the MBeanServer";
             log.warn(msg, e);
             throw new IllegalState(msg, e);
         } catch (JMException e) {
-            throw new IOFailure("Unable to register MBean", e);
+            throw new IOFailure("Unable to register MBean '" + name + "'", e);
         }
     }
 
@@ -216,7 +216,7 @@ public class SingleMBeanObject<I> {
                 mbserver.unregisterMBean(name);
             }
         } catch (JMException e) {
-            throw new IOFailure("Unable to unregister MBean", e);
+            throw new IOFailure("Unable to unregister MBean '" + name + "'", e);
         }
     }
 
