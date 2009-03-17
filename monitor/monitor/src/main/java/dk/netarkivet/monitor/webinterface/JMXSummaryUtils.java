@@ -38,29 +38,35 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import dk.netarkivet.common.management.Constants;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.
+ * and a bunch of JMX properties used by Monitor-JMXsummary.jsp. 
  */
 public class JMXSummaryUtils {
-    
-    /** JMX properties used by Monitor-JMXsummary.jsp. */
+    /** JMX property for the physical location.*/
     public static final String JMXPhysLocationProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_LOCATION;
+    /** JMX property for the machine name.*/
     public static final String JMXMachineNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_MACHINE;
+    /** JMX property for the application name.*/
     public static final String JMXApplicationNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_APPLICATIONNAME;
+    /** JMX property for the application instance id.*/
     public static final String JMXApplicationInstIdProperty = 
         dk.netarkivet.common.management.Constants
             .PRIORITY_KEY_APPLICATIONINSTANCEID;
+    /** JMX property for the HTTP port. */
     public static final String JMXHttpportProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_HTTP_PORT;
+    /** JMX property for the harvest priority*/
     public static final String JMXHarvestPriorityProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_PRIORITY;
+    /** JMX property for the replica name.*/
     public static final String JMXArchiveReplicaNameProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_REPLICANAME;
+    /** JMX property for the index. */
     public static final String JMXIndexProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
     
@@ -89,7 +95,7 @@ public class JMXSummaryUtils {
     private static final String CHARACTER_NOT_COLUMN = "-";
     /** The character for only seeing the first row of the log.*/
     private static final String CHARACTER_FIRST_ROW = "0";
-    /** Status/Monitor-JMXsummary.jsp?*/
+    /** Status/Monitor-JMXsummary.jsp. */
     private static final String STATUS_MONITOR_JMXSUMMARY = 
         "Status/Monitor-JMXsummary.jsp";
     
@@ -172,11 +178,12 @@ public class JMXSummaryUtils {
                                              String parameter, Locale l) {
         ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
         ArgumentNotValid.checkNotNull(parameter, "parameter");
-        if ("*".equals(starredRequest.getParameter(parameter))) {
+        if (CHARACTER_SHOW_ALL.equals(starredRequest.getParameter(parameter))) {
             return "";
         } else {
             return "("
-                    + generateLink(starredRequest, parameter, "*", 
+                    + generateLink(starredRequest, parameter, 
+                            CHARACTER_SHOW_ALL, 
                             I18N.getString(l, "showall"))
                     + ")";
         }
@@ -195,17 +202,20 @@ public class JMXSummaryUtils {
                                              String parameter, Locale l) {
         ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
         ArgumentNotValid.checkNotNull(parameter, "parameter");
-        if ("*".equals(starredRequest.getParameter(parameter))) {
+        if (CHARACTER_SHOW_ALL.equals(starredRequest.getParameter(parameter))) {
             return "("
-                   + generateLink(starredRequest, parameter, "-", 
+                   + generateLink(starredRequest, parameter, 
+                           CHARACTER_NOT_COLUMN, 
                            I18N.getString(l, "hide"))
                    + ")";
         } else {
             return "("
-                   + generateLink(starredRequest, parameter, "*", 
+                   + generateLink(starredRequest, parameter, 
+                           CHARACTER_SHOW_ALL,
                      I18N.getString(l, "showall"))
                    + ", "
-                   + generateLink(starredRequest, parameter, "-", 
+                   + generateLink(starredRequest, parameter,
+                           CHARACTER_NOT_COLUMN, 
                            I18N.getString(l, "hide"))
                    + ")";
         }
@@ -351,7 +361,9 @@ public class JMXSummaryUtils {
     public static String generateMessage(String logMessage, Locale l) {
         StringBuilder msg = new StringBuilder();
         logMessage = HTMLUtils.escapeHtmlValues(logMessage);
-        logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)", 
+        // All strings starting with "http:" or "https:" are replaced with 
+        // a proper HTML Anchor 
+        logMessage = logMessage.replaceAll("(https?://[^ \\t\\n\"]*)",
                 "<a href=\"$1\">$1</a>");
         BufferedReader sr = new BufferedReader(new StringReader(logMessage));
         msg.append("<pre>");

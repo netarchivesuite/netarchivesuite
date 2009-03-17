@@ -47,8 +47,7 @@ public class HeritrixLauncher {
      * Class encapsulating placement of various files.
      */
     private HeritrixFiles files;
-
-
+    
     /**
      * The CrawlController used.
      */

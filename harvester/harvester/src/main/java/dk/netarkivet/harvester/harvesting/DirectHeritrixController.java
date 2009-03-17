@@ -137,7 +137,7 @@ public class DirectHeritrixController implements HeritrixController {
     	ArgumentNotValid.checkNotNull(listener, "listener");
         myController.addCrawlStatusListener(listener);
     }
-
+    /** @see {@link HeritrixController#getQueuedUriCount()}*/
     public long getQueuedUriCount() {
         return myController.getFrontier().queuedUriCount();
     }
@@ -185,7 +185,7 @@ public class DirectHeritrixController implements HeritrixController {
     }
 
     /**
-     * @see  HeritrixController#cleanup()
+     * @see HeritrixController#cleanup()
      */
     public void cleanup() {
     }
@@ -193,6 +193,8 @@ public class DirectHeritrixController implements HeritrixController {
     /**
      * This version just returns a string that tells the harvester is running
      * inline.
+     * TODO Make this method respond after how the Harvester is really doing, and not
+     * just respond ("Running inline"). 
      * @return running inline.
      */
     public String getHarvestInformation() {

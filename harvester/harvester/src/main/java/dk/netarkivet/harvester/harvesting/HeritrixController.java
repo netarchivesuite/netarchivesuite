@@ -129,7 +129,8 @@ public interface HeritrixController {
     void cleanup();
 
     /**
-     * Get harvest information, like where to access.
+     * Get harvest information. An example of this can be an URL pointing
+     * to the GUI of a running Heritrix process.
      * @return information about the harvest process.
      */
     String getHarvestInformation();

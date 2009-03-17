@@ -68,27 +68,49 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * executes exactly one process that runs exactly one crawl job.
  */
 public class JMXHeritrixController implements HeritrixController {
+    /** The logger for this class. */
     private static final Log log = LogFactory.getLog(JMXHeritrixController.class);
 
-    /* Commands and attributes from org.archive.crawler.admin.CrawlJob.
+    /* The below commands and attributes are copied from 
+     * org.archive.crawler.admin.CrawlJob.
      * @see <A href="http://crawler.archive.org/xref/org/archive/crawler/admin/CrawlJob.html">
      *  org.archive.crawler.admin.CrawlJob</A>
+     *  
+     * These strings are currently not visible from outside the Heritrix class.
+     * See http://webteam.archive.org/jira/browse/HER-1285
      */
+    /** The command to submit a new crawljob to the Crawlcontroller. */
     private static final String ADD_JOB_COMMAND = "addJob";
+    /** The command to retrieve progress statistics for the currently 
+     * running job. */
     private static final String PROGRESS_STATISTICS_COMMAND
             = "progressStatistics";
+    /** The command to retrieve a progress statistics legend for the currently 
+     * running job. */
     private static final String PROGRESS_STATISTICS_LEGEND_COMMAND
             = "progressStatisticsLegend";
+    /** The attribute for the current download rate in kbytes for the
+     * currently running job. */
     private static final String CURRENT_KB_RATE_ATTRIBUTE = "CurrentKbRate";
+    /** The attribute for the number of currently running process-threads. */
     private static final String THREAD_COUNT_ATTRIBUTE = "ThreadCount";
+    /** The attribute for the number of discovered URIs for the
+     * currently running job. */
     private static final String DISCOVERED_COUNT_ATTRIBUTE = "DiscoveredCount";
+    /** The attribute for the number of downloaded URIs for the
+     * currently running job. */
     private static final String DOWNLOADED_COUNT_ATTRIBUTE = "DownloadedCount";
+    /** The attribute for the status for the currently running job. */
     private static final String STATUS_ATTRIBUTE = "Status";
 
 
-    /* Commands and attributes from org.archive.crawler.Heritrix
+    /* The below commands and attributes are copied from
+     * org.archive.crawler.Heritrix
      * @see <A href="http://crawler.archive.org/apidocs/org/archive/crawler/Heritrix.html">
      *  org.archive.crawler.Heritrix</A>
+     *
+     * These strings are currently not visible from outside the Heritrix class.
+     * See http://webteam.archive.org/jira/browse/HER-1285
      */
     /* Note: The Heritrix JMX interface has two apparent ways to stop crawling:
      * stopCrawling and terminateCurrentJob.  stopCrawling merely makes Heritrix
@@ -114,7 +136,9 @@ public class JMXHeritrixController implements HeritrixController {
 
     /** The part of the Job MBean name that designates the unique id.  For some
      * reason, this is not included in the normal Heritrix definitions in
-     * JmxUtils, otherwise we wouldn't have to define it.
+     * JmxUtils, otherwise we wouldn't have to define it. 
+     * I have committed a feature request: 
+     * http://webteam.archive.org/jira/browse/HER-1618
      */
     private static final String UID_PROPERTY = "uid";
 
@@ -149,16 +173,31 @@ public class JMXHeritrixController implements HeritrixController {
 
     /* The possible values of a request of the status attribute.
      * Copied from private values in
-     * {@link org.archive.crawler.framework.CrawlController} */
+     * {@link org.archive.crawler.framework.CrawlController} 
+     * 
+     * These strings are currently not visible from outside the 
+     * CrawlController class.
+     * See http://webteam.archive.org/jira/browse/HER-1285
+     */
+    /** The 'NASCENT' status. */
     private static final String NASCENT_STATUS = "NASCENT";
+    /** The 'RUNNING' status. */
     private static final String RUNNING_STATUS = "RUNNING";
+    /** The 'PAUSED' status. */
     private static final String PAUSED_STATUS = "PAUSED";
+    /** The 'PAUSING' status. */
     private static final String PAUSING_STATUS = "PAUSING";
+    /** The 'CHECKPOINTING' status. */
     private static final String CHECKPOINTING_STATUS = "CHECKPOINTING";
+    /** The 'STOPPING' status. */
     private static final String STOPPING_STATUS = "STOPPING";
+    /** The 'FINISHED' status. */
     private static final String FINISHED_STATUS = "FINISHED";
+    /** The 'STARTED status. */
     private static final String STARTED_STATUS = "STARTED";
+    /** The 'PREPARING' status. */
     private static final String PREPARING_STATUS = "PREPARING";
+    /** The 'Illegal State' status. */
     private static final String ILLEGAL_STATUS = "Illegal State";
 
     /** Create a JMXHeritrixController object.
@@ -402,6 +441,7 @@ public class JMXHeritrixController implements HeritrixController {
      *
      * @return True if the crawl has ended, either because Heritrix finished
      * or because we terminated it. Otherwise we return false.
+     * @See {@link HeritrixController#crawlIsEnded()
      */
     public synchronized boolean crawlIsEnded() {
         // End of crawl can be seen in one of three ways:
@@ -448,7 +488,14 @@ public class JMXHeritrixController implements HeritrixController {
         return false;
     }
 
-    /** @see HeritrixController#cleanup() */
+    /** 
+     * Cleanup after an Heritrix process.
+     * This entails sending the shutdown command to the Heritrix process,
+     * and killing it forcefully, if it is still alive after waiting 
+     * the period of time specified by the CommonSettings.PROCESS_TIMEOUT
+     * setting.
+     * 
+     * @see HeritrixController#cleanup() */
     public void cleanup() {
         try {
             executeHeritrixCommand(SHUTDOWN_COMMAND);
@@ -501,7 +548,6 @@ public class JMXHeritrixController implements HeritrixController {
      */
     public String getHarvestInformation() {
         return "http://" + getHostName() + ":" + getGUIPort();
-
     }
 
     /** Change an environment to be suitable for running Heritrix.
