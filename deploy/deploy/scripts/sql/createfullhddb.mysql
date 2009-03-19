@@ -42,7 +42,7 @@ create table IF NOT EXISTS schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 3);
+    values ( 'configurations', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -60,7 +60,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'fullharvests', 2);
+    values ( 'fullharvests', 3);
 insert into schemaversions ( tablename, version )
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version )
@@ -68,7 +68,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version )
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version )
-    values ( 'jobs', 4);
+    values ( 'jobs', 5);
 insert into schemaversions ( tablename, version )
     values ( 'job_configs', 1);
 
@@ -274,6 +274,8 @@ create table jobs (
     upload_error_details varchar(10000),
     startdate datetime, 
     enddate datetime, 
+    submitteddate datetime,
+    resubmitted_as_job bigint,
     num_configs int not null default 0,
     edition bigint not null 
 );

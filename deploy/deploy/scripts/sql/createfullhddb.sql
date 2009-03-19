@@ -56,7 +56,7 @@ create table schemaversions (
 insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
 insert into schemaversions ( tablename, version ) 
-    values ( 'configurations', 3);
+    values ( 'configurations', 4);
 insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
 insert into schemaversions ( tablename, version ) 
@@ -74,7 +74,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'fullharvests', 2);
+    values ( 'fullharvests', 3);
 insert into schemaversions ( tablename, version ) 
     values ( 'harvest_configs', 1);
 insert into schemaversions ( tablename, version ) 
@@ -82,7 +82,7 @@ insert into schemaversions ( tablename, version )
 insert into schemaversions ( tablename, version ) 
     values ( 'ordertemplates', 1);
 insert into schemaversions ( tablename, version ) 
-    values ( 'jobs', 4);
+    values ( 'jobs', 5);
 insert into schemaversions ( tablename, version ) 
     values ( 'job_configs', 1);
 
@@ -403,17 +403,21 @@ create table jobs (
     harvest_num int not null,       -- For repeating harvests, which run number
                                     --  of the harvest created this job 
     harvest_errors varchar(300),    -- Short description of all errors from the
-                                    --  harvest, if any
+                                    --  harvest, if any.
     harvest_error_details varchar(10000), -- Details of all errors from the 
-                                          --  harvest, if any
+                                          --  harvest, if any.
     upload_errors varchar(300),     -- Short description of all errors from 
-                                    --  upload, if any
+                                    --  upload, if any.
     upload_error_details varchar(10000), -- Details of all errors from upload,
-                                         --  if any
+                                         --  if any.
     startdate timestamp,                 -- The time when a crawler started 
-                                         --  executing this job
+                                         --  executing this job.
     enddate timestamp,                   -- The time when this job was reported 
-                                         --  done or failed
+                                         --  done or failed.
+    submitteddate timestamp, 			-- The time when this job was submitted
+    resubmitted_as_job bigint,          -- The jobId this job was resubmitted as.
+                                        --  This is null, if this job has not been 
+                                        --  resubmitted.  
     num_configs int not null default 0,  -- Number of configurations in the
                                          --  job, autocreated for optimization
                                          --  purposes
