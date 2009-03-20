@@ -81,6 +81,7 @@ public class SingleMBeanObject<I> {
      */
     private final MBeanServer mBeanServer;
 
+    /** Initialise the log for this class.*/
     private static Log log = LogFactory.getLog(SingleMBeanObject.class
             .getName());
 
