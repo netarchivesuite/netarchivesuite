@@ -216,7 +216,9 @@ public class Bitarchive {
      * @return A localBatchStatus
      */
     public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) {
-        ArgumentNotValid.checkNotNull(job, "job");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                bitarchiveAppId, "String bitarchiveAppId");
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         log.info("Starting batch job on bitarchive application with id '"
                 + bitarchiveAppId + "': " + job.getClass().getName());
         BatchStatus returnStatus;

@@ -165,9 +165,10 @@ public class GetDataResolver extends CommandResolver {
                     }
                 }
             } catch (NumberFormatException e) {
-                throw new IOFailure("The value '" + idString
-                        + "' of Parameter jobID is not a parsable job id",
-                        e);
+                String errMsg = "The value '" + idString
+                + "' of Parameter jobID is not a parsable job id";
+                log.warn(errMsg, e);
+                throw new IOFailure(errMsg, e);
             }
         }
     }
@@ -189,15 +190,18 @@ public class GetDataResolver extends CommandResolver {
                 Long offset = Long.parseLong(offsetString);
                 BitarchiveRecord record = client.get(fileName, offset);
                 if (record == null) {
-                    throw new IOFailure
-                        ("Null record returned by ViewerArcRepositoryClient.get("
+                    throw new IOFailure(
+                            "Null record returned by "
+                            + "ViewerArcRepositoryClient.get("
                                 + fileName + "," + offset + "),");
                 }
                 record.getData(response.getOutputStream());
                 response.setStatus(OK_RESPONSE_CODE);
             } catch (NumberFormatException e) {
-                throw new IOFailure("Unable to parse offsetstring '"
-                        + offsetString + "' as long", e);
+                String errMsg = "Unable to parse offsetstring '"
+                    + offsetString + "' as long";
+                log.warn(errMsg, e);
+                throw new IOFailure(errMsg, e);
             }
         }
     }
@@ -230,8 +234,9 @@ public class GetDataResolver extends CommandResolver {
                     }
                 }
             } catch (IOException e) {
-                throw new IOFailure("Failure to getFile '" + 
-                        fileName + "': ", e);
+                String errMsg = "Failure to getFile '" + fileName + "': ";
+                log.warn(errMsg, e);
+                throw new IOFailure(errMsg, e);
             }
         }
     }

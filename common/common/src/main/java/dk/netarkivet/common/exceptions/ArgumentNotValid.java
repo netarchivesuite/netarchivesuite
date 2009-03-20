@@ -49,7 +49,7 @@ public class ArgumentNotValid extends NetarkivetException {
     }
 
     /**
-     * Check if an argument is null or the empty string.
+     * Check if a String argument is null or the empty string.
      *
      * @param val  the value to check
      * @param name the name of the value being checked
@@ -58,20 +58,20 @@ public class ArgumentNotValid extends NetarkivetException {
     public static void checkNotNullOrEmpty(String val, String name) {
         checkNotNull(val, name);
 
-        if (val.equals("")) {
+        if (val.isEmpty()) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must not be an empty string.");
         }
     }
 
     /**
-     * Check if an argument is null.
+     * Check if an Object argument is null.
      *
      * @param val  the value to check
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    static public void checkNotNull(Object val, String name) {
+    public static void checkNotNull(Object val, String name) {
         if (val == null) {
             throw new ArgumentNotValid("The value of the variable '" + name
                     + "' must not be null.");
@@ -79,21 +79,21 @@ public class ArgumentNotValid extends NetarkivetException {
     }
 
     /**
-     * Check if an argument is less than 0.
+     * Check if an int argument is less than 0.
      *
-     * @param i    argument to check
+     * @param num  argument to check
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    public static void checkNotNegative(int i, String name) {
-        if (i < 0) {
+    public static void checkNotNegative(int num, String name) {
+        if (num < 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
-                    + "' must be non-negative, but is " + i + ".");
+                    + "' must be non-negative, but is " + num + ".");
         }
     }
 
     /**
-     * Check if an argument is less than 0.
+     * Check if a long argument is less than 0.
      *
      * @param num argument to check
      * @param name the name of the value being checked
@@ -107,21 +107,21 @@ public class ArgumentNotValid extends NetarkivetException {
     }
 
     /**
-     * Check if an argument is less than or equal to 0.
+     * Check if an int argument is less than or equal to 0.
      *
-     * @param i  argument to check
+     * @param num  argument to check
      * @param name the name of the value being checked
      * @throws ArgumentNotValid if test fails
      */
-    public static void checkPositive(int i, String name) {
-        if (i <= 0) {
+    public static void checkPositive(int num, String name) {
+        if (num <= 0) {
             throw new ArgumentNotValid("The value of the variable '" + name
-                    + "' must be positive, but is " + i + ".");
+                    + "' must be positive, but is " + num + ".");
         }
     }
 
     /**
-     * Check if an argument is less than 0.
+     * Check if a long argument is less than 0.
      *
      * @param num argument to check
      * @param name the name of the value being checked

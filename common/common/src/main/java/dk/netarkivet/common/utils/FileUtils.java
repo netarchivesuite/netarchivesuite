@@ -307,8 +307,10 @@ public class FileUtils {
         ArgumentNotValid.checkNotNull(from, "File from");
         ArgumentNotValid.checkNotNull(to, "File to");
         if (!from.exists()) {
-            throw new IOFailure("Original file '" + from.getAbsolutePath() 
-                    + "' does not exist");
+            String errMsg = "Original file '" + from.getAbsolutePath() 
+            + "' does not exist";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
         try {
             FileInputStream inStream = null;
@@ -425,8 +427,10 @@ public class FileUtils {
         IndexOutOfBoundsException {
         ArgumentNotValid.checkNotNull(file, "File file");
         if (!file.exists()) {
-            throw new IOFailure("File '" + file.getAbsolutePath() 
-                    + "' does not exist");
+            String errMsg = "File '" + file.getAbsolutePath() 
+            + "' does not exist";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
  
         String errMsg;
@@ -531,8 +535,10 @@ public class FileUtils {
     public static List<String> readListFromFile(File file) {
         ArgumentNotValid.checkNotNull(file, "File file");
         if (!file.exists()) {
-            throw new IOFailure("File '" + file.getAbsolutePath() 
-                    + "' does not exist");
+            String errMsg = "File '" + file.getAbsolutePath() 
+            + "' does not exist";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
         List<String> lines = new ArrayList<String>();
         BufferedReader in = null;
@@ -920,15 +926,16 @@ public class FileUtils {
     }
 
     /** Given a set, generate a reasonable file name from the set.
-     *
+     * @param <T> The type of objects, that the Set IDs argument contains.
      * @param IDs A set of IDs.
-     * @param suffix A suffix.
+     * @param suffix A suffix. May be empty string.
      * @return A reasonable file name.
      */
     public static <T extends Comparable<T>> String generateFileNameFromSet(
             Set<T> IDs, String suffix) {
         ArgumentNotValid.checkNotNull(IDs, "Set<T> IDs");
-
+        ArgumentNotValid.checkNotNull(suffix, "String suffix");
+       
         if (IDs.isEmpty()) {
             return "empty" + suffix;
         }
@@ -962,8 +969,10 @@ public class FileUtils {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (!file.exists()) {
-            throw new IOFailure("File '" + file.getAbsolutePath() 
-                    + "' does not exist");
+            String errMsg = "The file '" + file.getAbsolutePath()
+            + "' does not exist.";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
         int error = ProcessUtils.runProcess(new String[]{"LANG=C"},
                 // -k 4b means fourth field (from 1) ignoring leading blanks
@@ -990,8 +999,10 @@ public class FileUtils {
         ArgumentNotValid.checkNotNull(file, "File file");
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (!file.exists()) {
-            throw new IOFailure("File '" + file.getAbsolutePath() 
-                    + "' does not exist");
+            String errMsg = "The file '" + file.getAbsolutePath()
+            + "' does not exist.";
+            log.warn(errMsg);
+            throw new IOFailure(errMsg);
         }
         int error = ProcessUtils.runProcess(new String[] {"LANG=C"},
                 "sort", file.getAbsolutePath(),
@@ -1270,8 +1281,8 @@ public class FileUtils {
                 throw new IOFailure(msg);
             }
         } catch (IOException e){
-            String msg = "Problems making stream of resource in class path into "
-                    + "a file. Filepath: '" + filePath + "'";
+            String msg = "Problems making stream of resource in class path "
+                    + "into a file. Filepath: '" + filePath + "'";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         }

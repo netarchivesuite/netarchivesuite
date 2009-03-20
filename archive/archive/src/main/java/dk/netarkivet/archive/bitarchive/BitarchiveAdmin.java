@@ -150,24 +150,26 @@ public class BitarchiveAdmin {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFile");
         ArgumentNotValid.checkNotNegative(requestedSize, "requestedSize");
 
-        for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
-            File dir = i.next();
+        for (Iterator<File> it = archivePaths.iterator(); it.hasNext();) {
+            File dir = it.next();
             long bytesFreeInDir = FileUtils.getBytesFree(dir);
             // TODO If it turns out that it has not enough space for
             // this file, it should resend the Upload message
             // This should probably be handled in the 
             // method BitarchiveServer.visit(UploadMessage msg)
-            if (checkArchiveDir(dir) && bytesFreeInDir > minSpaceLeft) {
-                if (bytesFreeInDir > requestedSize) {
-                    File filedir = new File(
-                            dir, Constants.TEMPORARY_DIRECTORY_NAME);
-                    return new File(filedir, arcFileName);
-                } else {
-                    log.warn("Not enough space on dir '"
-                            + dir.getAbsolutePath() + "' for file '"
-                            + arcFileName + "' of size " + requestedSize 
-                            + " bytes. Only " + bytesFreeInDir + " left");
-                }
+            // This is bug 1586. 
+            //if (checkArchiveDir(dir) && bytesFreeInDir > minSpaceLeft) {
+            //    if (bytesFreeInDir > requestedSize) {
+            
+            if (checkArchiveDir(dir) && (bytesFreeInDir > minSpaceLeft + requestedSize)) {
+                File filedir = new File(
+                        dir, Constants.TEMPORARY_DIRECTORY_NAME);
+                return new File(filedir, arcFileName);
+            } else {
+                log.warn("Not enough space on dir '"
+                        + dir.getAbsolutePath() + "' for file '"
+                        + arcFileName + "' of size " + requestedSize 
+                        + " bytes. Only " + bytesFreeInDir + " left");
             }
         }
         String errMsg = "No space left to store file '" + arcFileName

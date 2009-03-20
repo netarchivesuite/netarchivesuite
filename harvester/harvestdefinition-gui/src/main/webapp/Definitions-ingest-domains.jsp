@@ -91,10 +91,10 @@ the progress of the ingestion.
     ingestThread.start();
 
     long totalTime = 0;
-    while (!ingestThread.done) {
+    while (!ingestThread.isDone()) {
         Thread.sleep(SLEEP_TIME);
         totalTime += SLEEP_TIME;
-        if (!ingestThread.done) {
+        if (!ingestThread.isDone()) {
             %>
 <fmt:message key="ingesting.domains.0.seconds">
     <fmt:param value="<%= totalTime %>"/>
@@ -107,10 +107,10 @@ the progress of the ingestion.
     %>
 <fmt:message key="ingesting.done"/><br/>
 <%
-    if (ingestThread.e != null) {
+    if (ingestThread.getException() != null) {
         %>
         <fmt:message key="errormsg;error.while.ingesting.0">
-            <fmt:param value="<%=ingestThread.e.getMessage()%>"/>
+            <fmt:param value="<%=ingestThread.getException().getMessage()%>"/>
         </fmt:message>
         <%
     }

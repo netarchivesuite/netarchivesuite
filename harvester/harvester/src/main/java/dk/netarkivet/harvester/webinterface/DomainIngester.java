@@ -29,6 +29,7 @@ import java.util.Locale;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.harvester.datamodel.IngestDomainList;
 
 /**
@@ -39,9 +40,9 @@ public class DomainIngester extends Thread {
     /** The log. */
     Log log = LogFactory.getLog(DomainIngester.class.getName());
     /** Whether or not the ingesting process is finished yet. */
-    public boolean done = false;
+    private boolean done = false;
     /** If an exception is thrown during ingest, it gets stored here. */
-    public Exception e;
+    private Exception e;
     /** The file containg a list of domains to ingest. */
     private File ingestFile;
     /** The JspWriter. */
@@ -57,6 +58,11 @@ public class DomainIngester extends Thread {
      * @param l the given locale
      */
     public DomainIngester(JspWriter out, File ingestFile, Locale l) {
+        // TODO Should we validate the JspWriter
+        // We currently don't, so we don't do it here either.
+        ArgumentNotValid.checkNotNull(ingestFile, "File ingestFile");
+        ArgumentNotValid.checkNotNull(l, "Locale l");
+        
         this.out = out;
         this.ingestFile = ingestFile;
         this.l = l;
@@ -68,11 +74,26 @@ public class DomainIngester extends Thread {
     public void run() {
         try {
             new IngestDomainList().updateDomainInfo(ingestFile, out, l);
-        } catch (Exception e) {
-            this.e = e;
-            log.warn("Update domains failed", e);
+        } catch (Exception ex) {
+            this.e = ex;
+            log.warn("Update domains failed", ex);
         } finally {
             done = true;
         }
+    }
+    
+    /**
+     * Check whether or not the DomainIngester is finished.
+     * @return true if finished; false otherwise
+     */
+    public boolean isDone() {
+        return done;
+    }
+    
+    /**
+     * @return any exception catched during ingest
+     */
+    public Exception getException() {
+        return e;
     }
 }
