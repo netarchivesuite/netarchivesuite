@@ -39,11 +39,12 @@ import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 
 /**
  * Utility class for creating CDX-files.
- * The CDX-format is described here: http://www.archive.org/web/researcher/cdx_file_format.php
- *
+ * The CDX-format is described here:
+ * http://www.archive.org/web/researcher/cdx_file_format.php
  */
-
 public class CDXUtils {
+    
+    /** The logger. */
     private static Log log = LogFactory.getLog(CDXUtils.class.getName());
 
     /**
