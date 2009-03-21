@@ -81,11 +81,14 @@ public class Constants {
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
     
     /** Names of the two directories for the sitesections belonging to
-     * the harvester package. 
+     * the harvester package, and the directory belonging to the viewerproxy
+     * package
      */
-    public static final String QA_SITESECTION_DIRNAME = "QA";
     public static final String DEFINITIONS_SITESECTION_DIRNAME =
         "HarvestDefinition";
+    public static final String HISTORY_SITESECTION_DIRNAME = "History";
+    public static final String QA_SITESECTION_DIRNAME = "QA";
+    
    
     /** The maximum length of a seed before it is truncated
      * before showing it. */
@@ -113,4 +116,9 @@ public class Constants {
 
     /** An edition that will never occur in existing DAO-controlled objects */
     public static final long NO_EDITION = 1L;
+    
+    /**
+     * String constant to denote: No next date.
+     */
+    public static final String NoNextDate = "-";
 }

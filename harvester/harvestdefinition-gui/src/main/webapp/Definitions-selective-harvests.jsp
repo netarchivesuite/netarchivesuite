@@ -41,11 +41,11 @@ inactive or vice-versa.
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-    private static final String HISTORY_SITESECTION_DIRNAME = "History";
+    
 %><%
     HTMLUtils.setUTF8(request);
     HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
-    String flipactive = request.getParameter("flipactive");
+    String flipactive = request.getParameter(Constants.FLIPACTIVE_PARAM);
     // Change activation if requested
     if (flipactive != null) {
         HarvestDefinition hd = dao.getHarvestDefinition(flipactive);
@@ -59,10 +59,9 @@ inactive or vice-versa.
         	// associated with this harvestdefinition
         	if (!hd.getActive()) {
         		if (!hd.getDomainConfigurations().hasNext()) {
-					            HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg;harvestdefinition.0.cannot.be.activated;"
-                    + "no.domains.selected.for.harvesting",
-                    hd.getName());
+					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                    	"errormsg;harvestdefinition.0.cannot.be.activated;"
+                    	+ "no.domains.selected.for.harvesting", hd.getName());
             	return;
             	}
         	}
@@ -94,7 +93,7 @@ if (!isph.iterator().hasNext()) { %>
     <%
         // Build the HTML page
         int rowCount = 0;
-        boolean inclHistory = SiteSection.isDeployed(HISTORY_SITESECTION_DIRNAME);
+        boolean inclHistory = SiteSection.isDeployed(Constants.HISTORY_SITESECTION_DIRNAME);
 
         for (SparsePartialHarvest sph : isph) {
             String name = sph.getName();
@@ -131,7 +130,7 @@ if (!isph.iterator().hasNext()) { %>
         <% // Only output the date, if the HarvestDefinition is active
         if (sph.isActive()) { %>
            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
-        <% } else { out.print("-"); } %>
+        <% } else { out.print(Constants.NoNextDate); } %>
         </td>
         <td width="15%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
         <td width="15%"><form 
