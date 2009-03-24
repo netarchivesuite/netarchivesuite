@@ -70,9 +70,9 @@ public class Constants {
     public static final int MAX_ERROR_DETAIL_SIZE = 10000;
     /** This is the default number set as max request rate. */
     public static final int DEFAULT_MAX_REQUEST_RATE = 60;
-    /** Max bytes of -1 means infinity */
+    /** Max bytes of -1 means infinity. */
     public static final long HERITRIX_MAXBYTES_INFINITY = -1L;
-    /** Max objects of -1 means infinity */
+    /** Max objects of -1 means infinity. */
     public static final long HERITRIX_MAXOBJECTS_INFINITY = -1L;
     /** This is the default number set as max bytes harvested.
      * Set to the max number of bytes we harvest from any domain per harvest,
@@ -85,12 +85,17 @@ public class Constants {
      * we use the byte limit. */
     public static final long DEFAULT_MAX_OBJECTS = HERITRIX_MAXOBJECTS_INFINITY;
     /**
-     * Default setting for alias timeout: 1 year TODO: make this into a setting
-     * in our settings.xml
+     * Default value for alias timeout, 1 year.
+     * TODO make this into a setting in HarvesterSettings
      */
     public static final long ALIAS_TIMEOUT_IN_MILLISECONDS = 365 * 24 * 60 * 60
                                                              * 1000L;
-
+    /** Descending sort order. */
+    public static final String DESCENDING_SORT_ORDER = "DESC";
+    /** Ascending sort order. */
+    public static final String ASCENDING_SORT_ORDER = "ASC";
+    
+    
     /** Uncallable constructor. */
     private Constants() { }
 

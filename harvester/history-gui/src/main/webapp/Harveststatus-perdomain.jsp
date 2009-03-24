@@ -45,7 +45,7 @@ displayed, if no domains are found a message is shown.
     HTMLUtils.setUTF8(request);
     String domainName = request.getParameter(Constants.DOMAIN_SEARCH_PARAM);
     if (domainName != null && domainName.length() > 0) {
-        //Domain name paarameter given
+        //Domain name parameter given
         domainName = domainName.trim();
         if (domainName.contains("?") || domainName.contains("*")) {
             //Wildcard search
@@ -116,14 +116,17 @@ displayed, if no domains are found a message is shown.
                             + hi.getJobID();
                     %>
                     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
+                    	<!-- td for the harvestname -->
                         <td><a href="<%=HTMLUtils.escapeHtmlValues(harvestLink)%>">
                             <%=HTMLUtils.escapeHtmlValues(hi.getHarvestName())%>
                         </a></td>
+                        <!-- td for the harvestnumber -->
                         <td><%=dk.netarkivet.harvester.webinterface
                                 .HarvestStatus
                                 .makeHarvestRunLink(hi.getHarvestID(),
                                                     hi.getHarvestNum())%>
                         </td>
+                        <!-- td for the Jobid -->
                         <td><%
                             if (hi.getJobID() == 0) {
                                 %>-<%

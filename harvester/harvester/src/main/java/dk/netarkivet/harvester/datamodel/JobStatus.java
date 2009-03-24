@@ -33,6 +33,7 @@ import dk.netarkivet.common.utils.I18n;
  *
  */
 public enum JobStatus {
+    
     /**
      * Job status new is used for a job that has been created but not yet 
      * sent to a JMS queue.
@@ -69,6 +70,23 @@ public enum JobStatus {
     
     /** Constant representing ALL states. */
     public static final int ALL_STATUS_CODE = -1;
+    
+    /** Localization key for the NEW JobStatus. */
+    public static String JOBSTATUS_NEW_KEY = "status.job.new";
+    /** Localization key for the SUBMITTED JobStatus. */
+    public static String JOBSTATUS_SUBMITTED_KEY = "status.job.submitted";
+    /** Localization key for the STARTED JobStatus. */
+    public static String JOBSTATUS_STARTED_KEY = "status.job.started";
+    /** Localization key for the DONE JobStatus. */
+    public static String JOBSTATUS_DONE_KEY = "status.job.done";
+    /** Localization key for the FAILED JobStatus. */
+    public static String JOBSTATUS_FAILED_KEY = "status.job.failed";
+    /** Localization key for the RESUBMITTED JobStatus. */
+    public static String JOBSTATUS_RESUBMITTED_KEY = "status.job.resubmitted";
+    /** Localization key for a unknown JobStatus. */
+    public static String JOBSTATUS_UNKNOWN_KEY = "status.job.unknown";
+    
+    
 
     /** Helper method that gives a proper object from e.g. a DB-stored value.
      *
@@ -84,7 +102,8 @@ public enum JobStatus {
             case 3: return DONE;
             case 4: return FAILED;
             case 5: return RESUBMITTED;
-            default: throw new ArgumentNotValid("Invalid job status " + status);
+            default: throw new ArgumentNotValid(
+                    "Invalid job status '" + status + "'");
         }
     }
 
@@ -102,19 +121,20 @@ public enum JobStatus {
         ArgumentNotValid.checkNotNull(l, "Locale l");
         switch (this) {
             case NEW:
-                return I18N.getString(l, "status.job.new");
+                return I18N.getString(l, JOBSTATUS_NEW_KEY);
             case SUBMITTED:
-                return I18N.getString(l, "status.job.submitted");
+                return I18N.getString(l, JOBSTATUS_SUBMITTED_KEY);
             case STARTED:
-                return I18N.getString(l, "status.job.started");
+                return I18N.getString(l, JOBSTATUS_STARTED_KEY);
             case DONE:
-                return I18N.getString(l, "status.job.done");
+                return I18N.getString(l, JOBSTATUS_DONE_KEY);
             case FAILED:
-                return I18N.getString(l, "status.job.failed");
+                return I18N.getString(l, JOBSTATUS_FAILED_KEY);
             case RESUBMITTED:
-                return I18N.getString(l, "status.job.resubmitted");
+                return I18N.getString(l, JOBSTATUS_RESUBMITTED_KEY);
             default:
-                return I18N.getString(l, "status.job.unknown", this.toString());
+                return I18N.getString(l, JOBSTATUS_UNKNOWN_KEY,
+                        this.toString());
         }
     }
 
@@ -125,6 +145,7 @@ public enum JobStatus {
      * to this new status
      */
     public boolean legalChange(JobStatus newStatus) {
+        ArgumentNotValid.checkNotNull(newStatus, "JobStatus newStatus");
         return newStatus.ordinal() >= ordinal();
     }
 }

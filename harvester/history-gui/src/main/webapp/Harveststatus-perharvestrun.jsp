@@ -166,8 +166,6 @@ This page displays harvest details for one harvest definition run
 </h4>
 </form>
 
-
-
 <h2 class="page_heading"><fmt:message key="pagetitle;status.for.harvest.0.run.1">
     <fmt:param value="<%=harvestLink%>"/>
     <fmt:param value="<%=harvestNum%>"/>

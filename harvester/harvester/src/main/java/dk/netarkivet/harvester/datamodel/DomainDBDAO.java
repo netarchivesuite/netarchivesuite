@@ -62,8 +62,8 @@ import java.util.Map;
 public class DomainDBDAO extends DomainDAO {
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
-
-    final static int CONFIGURATIONS_VERSION_NEEDED = 4;
+    /** The required version of the configurations table. */
+    static final int CONFIGURATIONS_VERSION_NEEDED = 4;
     
     
     /** Creates a database-based implementation of the DomainDAO.
@@ -77,11 +77,11 @@ public class DomainDBDAO extends DomainDAO {
 
         int configurationsVersion = DBUtils.getTableVersion("configurations");
         
-        if (configurationsVersion < CONFIGURATIONS_VERSION_NEEDED ) {
+        if (configurationsVersion < CONFIGURATIONS_VERSION_NEEDED) {
             log.info("Migrate table" + " 'configurations' to version "
-                    + CONFIGURATIONS_VERSION_NEEDED );
+                    + CONFIGURATIONS_VERSION_NEEDED);
             DBSpecifics.getInstance().updateTable("configurations", 
-                    CONFIGURATIONS_VERSION_NEEDED );
+                    CONFIGURATIONS_VERSION_NEEDED);
         }
         
         DBUtils.checkTableVersion("domains", 2);
@@ -123,7 +123,7 @@ public class DomainDBDAO extends DomainDAO {
             DBUtils.setName(s, 1, d, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, d, Constants.MAX_COMMENT_SIZE);
             DBUtils.setStringMaxLength(s, 3,
-                    StringUtils.conjoin("\n",d.getCrawlerTraps() ),
+                    StringUtils.conjoin("\n", d.getCrawlerTraps()),
                     Constants.MAX_CRAWLER_TRAP_SIZE, d, "crawlertraps");
             long initialEdition = 1;
             s.setLong(4, initialEdition);
@@ -176,9 +176,11 @@ public class DomainDBDAO extends DomainDAO {
             // Now that configs are defined, set the default config.
             s = c.prepareStatement("UPDATE domains SET defaultconfig = "
                     + "(SELECT config_id FROM configurations "
-                    + "WHERE configurations.name = ? AND configurations.domain_id = ?) "
+                    + "WHERE configurations.name = ? "
+                        + "AND configurations.domain_id = ?) "
                     + "WHERE domain_id = ?");
-            DBUtils.setName(s, 1, d.getDefaultConfiguration(), Constants.MAX_NAME_SIZE);
+            DBUtils.setName(s, 1, d.getDefaultConfiguration(),
+                    Constants.MAX_NAME_SIZE);
             s.setLong(2, d.getID());
             s.setLong(3, d.getID());
             s.executeUpdate();
@@ -196,8 +198,7 @@ public class DomainDBDAO extends DomainDAO {
             d.setEdition(initialEdition);
         } catch (SQLException e) {
             String message = "SQL error creating domain " + d + " in database"
-                    + "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -230,16 +231,17 @@ public class DomainDBDAO extends DomainDAO {
             }
             d.setID(domainID);
 
-            // The alias field is now updated using a separate select request rather
-            // than embedding the select inside the update statement.
-            // This change was needed to accommodate MySQL, and may lower performance.
+            // The alias field is now updated using a separate select request
+            // rather than embedding the select inside the update statement.
+            // This change was needed to accommodate MySQL, and may lower
+            // performance.
             s = c.prepareStatement("UPDATE domains SET "
                     + "comments = ?, crawlertraps = ?, edition = ?,"
                     + "alias = ?, lastAliasUpdate = ? "
                     + "WHERE domain_id = ? AND edition = ?");
             DBUtils.setComments(s, 1, d, Constants.MAX_COMMENT_SIZE);
             DBUtils.setStringMaxLength(s, 2,
-                    StringUtils.conjoin("\n",d.getCrawlerTraps() ),
+                    StringUtils.conjoin("\n", d.getCrawlerTraps()),
                     Constants.MAX_CRAWLER_TRAP_SIZE, d, "crawlertraps");
 
             final long newEdition = d.getEdition() + 1;
@@ -286,9 +288,8 @@ public class DomainDBDAO extends DomainDAO {
             c.commit();
             d.setEdition(newEdition);
         } catch (SQLException e) {
-            String message = "SQL error updating domain " + d + " in database" +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error updating domain " + d + " in database"
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -308,8 +309,10 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            Map<String,Long> oldNames = DBUtils.selectStringLongMap("SELECT name, password_id FROM passwords " +
-                    "WHERE domain_id = ?", d.getID());
+            Map<String, Long> oldNames 
+                = DBUtils.selectStringLongMap(
+                        "SELECT name, password_id FROM passwords "
+                        + "WHERE domain_id = ?", d.getID());
             s = c.prepareStatement("UPDATE passwords SET "
                     + "comments = ?, "
                     + "url = ?, "
@@ -342,15 +345,18 @@ public class DomainDBDAO extends DomainDAO {
                 }
             }
             s.close();
-            s = c.prepareStatement("DELETE FROM passwords " +
-                    "WHERE password_id = ?");
+            s = c.prepareStatement("DELETE FROM passwords "
+                    + "WHERE password_id = ?");
             for (Long gone : oldNames.values()) {
                 // Check that we're not deleting something that's in use
-                // Since deletion is very rare, this is allowed to take some time.
+                // Since deletion is very rare, this is allowed to take
+                // some time.
                 String usages = DBUtils.getUsages("SELECT configurations.name"
                         + "  FROM configurations, config_passwords"
-                        + " WHERE configurations.config_id = config_passwords.config_id"
-                        + "   AND config_passwords.password_id = ?", gone, gone);
+                        + " WHERE configurations.config_id = "
+                        +       "config_passwords.config_id"
+                        + "   AND config_passwords.password_id = ?",
+                        gone, gone);
                 if (usages != null) {
                     String name = DBUtils.selectStringValue("SELECT name"
                             + " FROM passwords WHERE password_id = ?", gone);
@@ -378,10 +384,11 @@ public class DomainDBDAO extends DomainDAO {
             throws SQLException {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
-        Map<String,Long> oldNames;
+        Map<String, Long> oldNames;
 
         try {
-            oldNames = DBUtils.selectStringLongMap("SELECT name, seedlist_id FROM seedlists "
+            oldNames = DBUtils.selectStringLongMap(
+                    "SELECT name, seedlist_id FROM seedlists "
                     + "WHERE domain_id = ?", d.getID());
             s = c.prepareStatement("UPDATE seedlists SET "
                     + "comments = ?, "
@@ -391,7 +398,8 @@ public class DomainDBDAO extends DomainDAO {
                 SeedList sl = sls.next();
                 if (oldNames.containsKey(sl.getName())) {
                     DBUtils.setComments(s, 1, sl, Constants.MAX_COMMENT_SIZE);
-                    DBUtils.setClobMaxLength(s, 2, sl.getSeedsAsString(), Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
+                    DBUtils.setClobMaxLength(s, 2, sl.getSeedsAsString(), 
+                            Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
                     s.setString(3, sl.getName());
                     s.setLong(4, d.getID());
                     s.executeUpdate();
@@ -407,11 +415,14 @@ public class DomainDBDAO extends DomainDAO {
                     + "WHERE seedlist_id = ?");
             for (Long gone : oldNames.values()) {
                 // Check that we're not deleting something that's in use
-                // Since deletion is very rare, this is allowed to take some time.
+                // Since deletion is very rare, this is allowed to take
+                // some time.
                 String usages = DBUtils.getUsages("SELECT configurations.name"
                         + "  FROM configurations, config_seedlists"
-                        + " WHERE configurations.config_id = config_seedlists.config_id"
-                        + "   AND config_seedlists.seedlist_id = ?", gone, gone);
+                        + " WHERE configurations.config_id = "
+                            + "config_seedlists.config_id"
+                        + "   AND config_seedlists.seedlist_id = ?",
+                        gone, gone);
                 if (usages != null) {
                     String name = DBUtils.selectStringValue("SELECT name"
                             + " FROM seedlists WHERE seedlist_id = ?", gone);
@@ -441,14 +452,16 @@ public class DomainDBDAO extends DomainDAO {
             throws SQLException {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
-        Map<String,Long> oldNames;
+        Map<String, Long> oldNames;
 
         try {
-            oldNames = DBUtils.selectStringLongMap("SELECT name, config_id FROM configurations "
+            oldNames = DBUtils.selectStringLongMap(
+                    "SELECT name, config_id FROM configurations "
                     + "WHERE domain_id = ?", d.getID());
             s = c.prepareStatement("UPDATE configurations SET "
                     + "comments = ?, "
-                    + "template_id = ( SELECT template_id FROM ordertemplates WHERE name = ? ), "
+                    + "template_id = ( SELECT template_id FROM ordertemplates "
+                                    + "WHERE name = ? ), "
                     + "maxobjects = ?, "
                     + "maxrate = ?, "
                     + "maxbytes = ? "
@@ -483,13 +496,16 @@ public class DomainDBDAO extends DomainDAO {
             for (Long gone : oldNames.values()) {
                 // Before deleting, check if this is unused.  Since deletion is
                 // rare, this is allowed to take some time to give good output
-                String usages = DBUtils.getUsages("SELECT harvestdefinitions.name"
+                String usages = DBUtils.getUsages(
+                        "SELECT harvestdefinitions.name"
                         + "  FROM harvestdefinitions, harvest_configs"
-                        + " WHERE harvestdefinitions.harvest_id = harvest_configs.harvest_id"
+                        + " WHERE harvestdefinitions.harvest_id = "
+                                + "harvest_configs.harvest_id"
                         + "   AND harvest_configs.config_id = ?", gone, gone);
                 if (usages != null) {
                     String name = DBUtils.selectStringValue(
-                            "SELECT name FROM configurations WHERE config_id = ?", gone);
+                            "SELECT name FROM configurations "
+                                + "WHERE config_id = ?", gone);
                     String message = "Cannot delete configuration " + name
                             + " as it is used in " + usages;
                     log.debug(message);
@@ -518,7 +534,8 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
 
         try {
-            List<Long> oldIDs = DBUtils.selectLongList("SELECT ownerinfo_id FROM ownerinfo "
+            List<Long> oldIDs = DBUtils.selectLongList(
+                    "SELECT ownerinfo_id FROM ownerinfo "
                     + "WHERE domain_id = ?", d.getID());
             s = c.prepareStatement("UPDATE ownerinfo SET "
                     + "created = ?, "
@@ -585,7 +602,8 @@ public class DomainDBDAO extends DomainDAO {
                     s.setLong(2, hi.getCountObjectRetrieved());
                     s.setLong(3, hi.getSizeDataRetrieved());
                     s.setLong(4, d.getID());
-                    s.setString(5, d.getConfiguration(hi.getDomainConfigurationName()).getName());
+                    s.setString(5, d.getConfiguration(
+                            hi.getDomainConfigurationName()).getName());
                     s.setLong(6, hi.getHarvestID());
                     if (hi.getJobID() != null) {
                         s.setLong(7, hi.getJobID());
@@ -621,15 +639,16 @@ public class DomainDBDAO extends DomainDAO {
         try {
             // Note that the config_id is grabbed from the configurations table.
             s = c.prepareStatement("INSERT INTO historyinfo "
-                    + "( stopreason, objectcount, bytecount, config_id, job_id, "
-                    + "harvest_id, harvest_time ) "
+                    + "( stopreason, objectcount, bytecount, config_id, "
+                    + "job_id, harvest_id, harvest_time ) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS);
             s.setInt(1, harvestInfo.getStopReason().ordinal());
             s.setLong(2, harvestInfo.getCountObjectRetrieved());
             s.setLong(3, harvestInfo.getSizeDataRetrieved());
-            // TODO: More stable way to get IDs, use a select
-            s.setLong(4, d.getConfiguration(harvestInfo.getDomainConfigurationName()).getID());
+            // TODO More stable way to get IDs, use a select
+            s.setLong(4, d.getConfiguration(
+                    harvestInfo.getDomainConfigurationName()).getID());
             if (harvestInfo.getJobID() != null) {
                 s.setLong(5, harvestInfo.getJobID());
             } else {
@@ -641,10 +660,8 @@ public class DomainDBDAO extends DomainDAO {
             harvestInfo.setID(DBUtils.getGeneratedID(s));
         } catch (SQLException e) {
             throw new IOFailure("SQL error while inserting harvest info "
-                    + harvestInfo + " for " + d +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e),
-                                e);
+                    + harvestInfo + " for " + d + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -684,13 +701,15 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement("INSERT INTO seedlists "
-                    + "( name, comments, domain_id, seeds ) VALUES ( ?, ?, ?, ? )",
+                    + "( name, comments, domain_id, seeds ) "
+                        + "VALUES ( ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS);
             // ID is autogenerated
             DBUtils.setName(s, 1, sl, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, sl, Constants.MAX_COMMENT_SIZE);
             s.setLong(3, d.getID());
-            DBUtils.setClobMaxLength(s, 4, sl.getSeedsAsString(), Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
+            DBUtils.setClobMaxLength(s, 4, sl.getSeedsAsString(),
+                    Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
             s.executeUpdate();
             sl.setID(DBUtils.getGeneratedID(s));
         } finally {
@@ -709,7 +728,8 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement("INSERT INTO passwords "
-                    + "( name, comments, domain_id, url, realm, username, password ) "
+                    + "( name, comments, domain_id, url, realm, username, "
+                            + "password ) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ? )",
                     Statement.RETURN_GENERATED_KEYS);
             // ID is autogenerated
@@ -743,16 +763,19 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            long template_id = DBUtils.selectLongValue("SELECT template_id FROM ordertemplates WHERE name = ?", dc.getOrderXmlName());
+            long templateId = DBUtils.selectLongValue(
+                    "SELECT template_id FROM ordertemplates WHERE name = ?",
+                    dc.getOrderXmlName());
             s = c.prepareStatement("INSERT INTO configurations "
-                    + "( name, comments, domain_id, template_id, maxobjects, maxrate, maxbytes ) "
+                    + "( name, comments, domain_id, template_id, maxobjects, "
+                        + "maxrate, maxbytes ) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             // Id is autogenerated
             DBUtils.setName(s, 1, dc, Constants.MAX_NAME_SIZE);
             DBUtils.setComments(s, 2, dc, Constants.MAX_COMMENT_SIZE);
             s.setLong(3, d.getID());
-            s.setLong(4, template_id);
+            s.setLong(4, templateId);
             s.setInt(5, dc.getMaxObjects());
             s.setInt(6, dc.getMaxRequestRate());
             s.setLong(7, dc.getMaxBytes());
@@ -770,11 +793,11 @@ public class DomainDBDAO extends DomainDAO {
 
     /** Delete all entries in the given crossref table that belong to the
      * configuration.
-     * @param config_id The domain configuration to remove entries for.
+     * @param configId The domain configuration to remove entries for.
      * @param table One of "config_passwords" or "config_seedlists"
      * @throws SQLException
      */
-    private void deleteConfigFromTable(long config_id,
+    private void deleteConfigFromTable(long configId,
                                        String table)
             throws SQLException {
         Connection c = DBConnect.getDBConnection();
@@ -782,7 +805,7 @@ public class DomainDBDAO extends DomainDAO {
         try {
             s = c.prepareStatement("DELETE FROM " + table
                     + " WHERE " + table + ".config_id = ?");
-            s.setLong(1, config_id);
+            s.setLong(1, configId);
             s.executeUpdate();
         } finally {
             DBUtils.closeStatementIfOpen(s);
@@ -880,7 +903,7 @@ public class DomainDBDAO extends DomainDAO {
         }
     }
 
-    /** Read a domain from the database
+    /** Read a domain from the database.
      *
      * @see DomainDAO#read(String)
      */
@@ -925,7 +948,8 @@ public class DomainDBDAO extends DomainDAO {
             d.setID(domainId);
             d.setEdition(edition);
             if (alias != null) {
-                d.setAliasInfo(new AliasInfo(domainName,alias,lastAliasUpdate));
+                d.setAliasInfo(new AliasInfo(
+                        domainName, alias, lastAliasUpdate));
             }
 
             readSeedlists(d);
@@ -939,8 +963,7 @@ public class DomainDBDAO extends DomainDAO {
             result = d;
         } catch (SQLException e) {
             throw new IOFailure("SQL Error while reading domain " + domainName
-                                + "\n" +
-                                ExceptionUtils.getSQLExceptionCause(e), e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -971,58 +994,67 @@ public class DomainDBDAO extends DomainDAO {
                     + "maxbytes"
                     + " FROM configurations, ordertemplates "
                     + "WHERE domain_id = ?"
-                    + "  AND configurations.template_id = ordertemplates.template_id");
+                    + "  AND configurations.template_id = "
+                        + "ordertemplates.template_id");
             s.setLong(1, d.getID());
             res = s.executeQuery();
             while (res.next()) {
-                long dc_id = res.getLong(1);
-                String dc_name = res.getString(2);
-                String dc_comments = res.getString(3);
+                long domainconfigId = res.getLong(1);
+                String domainconfigName = res.getString(2);
+                String domainConfigComments = res.getString(3);
                 String order = res.getString(4);
                 int maxobjects = res.getInt(5);
                 int maxrate = res.getInt(6);
                 long maxbytes = res.getLong(7);
                 s1 = c.prepareStatement(
-                        "SELECT seedlists.name FROM seedlists, config_seedlists "
+                        "SELECT seedlists.name "
+                            + "FROM seedlists, config_seedlists "
                         + "WHERE config_seedlists.config_id = ? "
-                        + "AND config_seedlists.seedlist_id = seedlists.seedlist_id");
-                s1.setLong(1, dc_id);
-                ResultSet seedlist_res = s1.executeQuery();
+                        + "AND config_seedlists.seedlist_id = "
+                            + "seedlists.seedlist_id");
+                s1.setLong(1, domainconfigId);
+                ResultSet seedlistResultset = s1.executeQuery();
                 List<SeedList> seedlists = new ArrayList<SeedList>();
-                while (seedlist_res.next()) {
-                    seedlists.add(d.getSeedList(seedlist_res.getString(1)));
+                while (seedlistResultset.next()) {
+                    seedlists.add(d.getSeedList(
+                            seedlistResultset.getString(1)));
                 }
                 s1.close();
                 if (seedlists.isEmpty()) {
-                    String message = "Configuration " + dc_name + " of " + d
-                            + " has no seedlists";
+                    String message = "Configuration " + domainconfigName
+                            + " of " + d + " has no seedlists";
                     log.warn(message);
                     throw new IOFailure(message);
                 }
 
                 s1 = c.prepareStatement(
-                        "SELECT passwords.name FROM passwords, config_passwords "
+                        "SELECT passwords.name "
+                            + "FROM passwords, config_passwords "
                         + "WHERE config_passwords.config_id = ? "
-                        + "AND config_passwords.password_id = passwords.password_id");
-                s1.setLong(1, dc_id);
-                ResultSet password_res = s1.executeQuery();
+                        + "AND config_passwords.password_id = "
+                            + "passwords.password_id");
+                s1.setLong(1, domainconfigId);
+                ResultSet passwordResultset = s1.executeQuery();
                 List<Password> passwords = new ArrayList<Password>();
-                while (password_res.next()) {
-                    passwords.add(d.getPassword(password_res.getString(1)));
+                while (passwordResultset.next()) {
+                    passwords.add(d.getPassword(
+                            passwordResultset.getString(1)));
                 }
                 DomainConfiguration dc =
-                        new DomainConfiguration(dc_name, d, seedlists, passwords);
+                        new DomainConfiguration(
+                                domainconfigName, d, seedlists, passwords);
                 dc.setOrderXmlName(order);
                 dc.setMaxObjects(maxobjects);
                 dc.setMaxRequestRate(maxrate);
-                dc.setComments(dc_comments);
+                dc.setComments(domainConfigComments);
                 dc.setMaxBytes(maxbytes);
-                dc.setID(dc_id);
+                dc.setID(domainconfigId);
                 d.addConfiguration(dc);
                 s1.close();
             }
             if (!d.getAllConfigurations().hasNext()) {
-                String message = "Loaded domain " + d + " with no configurations";
+                String message = "Loaded domain " + d
+                    + " with no configurations";
                 log.warn(message);
                 throw new IOFailure(message);
             }
@@ -1047,8 +1079,10 @@ public class DomainDBDAO extends DomainDAO {
             s.setLong(1, d.getID());
             res = s.executeQuery();
             while (res.next()) {
-                final DomainOwnerInfo ownerinfo = new DomainOwnerInfo(new Date(res.getTimestamp(2).getTime()),
-                        res.getString(3));
+                final DomainOwnerInfo ownerinfo
+                    = new DomainOwnerInfo(
+                            new Date(res.getTimestamp(2).getTime()),
+                            res.getString(3));
                 ownerinfo.setID(res.getLong(1));
                 d.addOwnerInfo(ownerinfo);
             }
@@ -1082,18 +1116,18 @@ public class DomainDBDAO extends DomainDAO {
                 StopReason stopreason = StopReason.getStopReason(stopreasonNum);
                 long objectCount = res.getLong(3);
                 long byteCount = res.getLong(4);
-                String config_name = res.getString(5);
-                Long job_id = res.getLong(6);
+                String configName = res.getString(5);
+                Long jobId = res.getLong(6);
                 if (res.wasNull()) {
-                    job_id = null;
+                    jobId = null;
                 }
-                long harvest_id = res.getLong(7);
-                Date harvest_time = new Date(res.getTimestamp(8).getTime());
+                long harvestId = res.getLong(7);
+                Date harvestTime = new Date(res.getTimestamp(8).getTime());
                 HarvestInfo hi;
                 // XML DAOs didn't keep the job id in harvestinfo, so some
                 // entries will be null.
-                hi = new HarvestInfo(harvest_id, job_id, d.getName(), config_name,
-                        harvest_time, byteCount, objectCount, stopreason);
+                hi = new HarvestInfo(harvestId, jobId, d.getName(), configName,
+                        harvestTime, byteCount, objectCount, stopreason);
                 hi.setID(hiID);
                 d.getHistory().addHarvestInfo(hi);
             }
@@ -1112,7 +1146,8 @@ public class DomainDBDAO extends DomainDAO {
         ResultSet res;
         // Read the passwords
         try {
-            s = c.prepareStatement("SELECT password_id, name, comments, url, realm, username, password "
+            s = c.prepareStatement("SELECT password_id, name, comments, url, "
+                    + "realm, username, password "
                     + "FROM passwords WHERE domain_id = ?");
             s.setLong(1, d.getID());
             res = s.executeQuery();
@@ -1144,15 +1179,16 @@ public class DomainDBDAO extends DomainDAO {
             s.setLong(1, d.getID());
             res = s.executeQuery();
             while (res.next()) {
-                final long sl_id = res.getLong(1);
+                final long seedlistId = res.getLong(1);
                 final String seedlistName = res.getString(2);
-                String sl_comments = res.getString(3);
+                String seedlistComments = res.getString(3);
                 Clob clob = res.getClob(4);
-                String seedlistContents = clob.getSubString(1, (int)clob.length());
+                String seedlistContents = clob.getSubString(
+                        1, (int) clob.length());
                 final SeedList seedlist =
                         new SeedList(seedlistName, seedlistContents);
-                seedlist.setComments(sl_comments);
-                seedlist.setID(sl_id);
+                seedlist.setComments(seedlistComments);
+                seedlist.setID(seedlistId);
                 d.addSeedList(seedlist);
             }
             s.close();
@@ -1184,7 +1220,8 @@ public class DomainDBDAO extends DomainDAO {
      * @return the above mentioned usage-string.
      */
     public String describeUsages(String domainName) {
-        long id = DBUtils.selectLongValue("SELECT domain_id FROM domains WHERE name = ?", domainName);
+        long id = DBUtils.selectLongValue(
+                "SELECT domain_id FROM domains WHERE name = ?", domainName);
         return describeUsages(domainName, id);
     }
 
@@ -1199,7 +1236,8 @@ public class DomainDBDAO extends DomainDAO {
                 + "FROM harvest_configs, configurations, harvestdefinitions "
                 + "WHERE harvest_configs.config_id = configurations.config_id"
                 + "  AND configurations.domain_id = ?"
-                + "  AND harvest_configs.harvest_id = harvestdefinitions.harvest_id",
+                + "  AND harvest_configs.harvest_id = "
+                +       "harvestdefinitions.harvest_id",
                 domainName, id);
         int harvestCount = DBUtils.selectIntValue("SELECT COUNT(*)"
                 + "  FROM historyinfo, configurations"
@@ -1232,17 +1270,20 @@ public class DomainDBDAO extends DomainDAO {
         PreparedStatement s = null;
         try {
             c.setAutoCommit(false);
-            long id = DBUtils.selectLongValue("SELECT domain_id FROM domains WHERE name = ?", domainName);
+            long id = DBUtils.selectLongValue(
+                    "SELECT domain_id FROM domains WHERE name = ?", domainName);
             String uses = describeUsages(domainName, id);
             if (uses != null) {
                 throw new PermissionDenied("Can't delete domain " + domainName
                         + " as it is used by the following: " + uses);
             }
-            List<Long> config_ids = DBUtils.selectLongList("SELECT config_id FROM configurations WHERE domain_id = ?", id);
-            for (long config_id : config_ids) {
-                deleteConfigFromTable(config_id, "config_seedlists");
-                deleteConfigFromTable(config_id, "config_passwords");
-                deleteConfigFromTable(config_id, "historyinfo");
+            List<Long> configIds = DBUtils.selectLongList(
+                    "SELECT config_id FROM configurations WHERE domain_id = ?",
+                    id);
+            for (long configId : configIds) {
+                deleteConfigFromTable(configId, "config_seedlists");
+                deleteConfigFromTable(configId, "config_passwords");
+                deleteConfigFromTable(configId, "historyinfo");
             }
             for (String tableName : new String[] {
                 "domains", "configurations", "seedlists", "passwords"
@@ -1252,9 +1293,9 @@ public class DomainDBDAO extends DomainDAO {
             log.debug("Deleting domain " + domainName);
             c.commit();
         } catch (SQLException e) {
-            String message = "SQL error deleting domain " + domainName + " in database"
-                    + "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error deleting domain " + domainName
+                    + " in database" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -1274,7 +1315,8 @@ public class DomainDBDAO extends DomainDAO {
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = c.prepareStatement("DELETE FROM " + table + " WHERE domain_id = ?");
+            s = c.prepareStatement(
+                    "DELETE FROM " + table + " WHERE domain_id = ?");
             s.setLong(1, id);
             s.executeUpdate();
         } finally {
@@ -1305,8 +1347,7 @@ public class DomainDBDAO extends DomainDAO {
             };
         } catch (SQLException e) {
             String message = "SQL error asking for all domains in database"
-                    + "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1337,8 +1378,7 @@ public class DomainDBDAO extends DomainDAO {
             };
         } catch (SQLException e) {
             String message = "SQL error asking for all domains in database"
-                    + "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1351,9 +1391,8 @@ public class DomainDBDAO extends DomainDAO {
         try {
             DBConnect.getDBConnection().close();
         } catch (SQLException e) {
-            String message = "SQL error closing Domain DAO DB connection" +
-                             "\n" +
-                             ExceptionUtils.getSQLExceptionCause(e);
+            String message = "SQL error closing Domain DAO DB connection"
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1363,12 +1402,12 @@ public class DomainDBDAO extends DomainDAO {
         // SQL uses % and _ instead of * and ?
         String sqlGlob = DBUtils.makeSQLGlob(glob);
         try {
-            return DBUtils.selectStringlist("SELECT name FROM domains WHERE name LIKE ?",
+            return DBUtils.selectStringlist(
+                    "SELECT name FROM domains WHERE name LIKE ?",
                     sqlGlob);
         } catch (SQLException e) {
             String message = "SQL error searching for domains with glob "
-                + glob + "\n" +
-                ExceptionUtils.getSQLExceptionCause(e);
+                    + glob + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
@@ -1405,8 +1444,10 @@ public class DomainDBDAO extends DomainDAO {
                     + "         harvestdefinitions"
                     + "   WHERE domains.name = ? "
                     + "     AND domains.domain_id = configurations.domain_id"
-                    + "     AND historyinfo.config_id = configurations.config_id"
-                    + "     AND historyinfo.harvest_id = harvestdefinitions.harvest_id"
+                    + "     AND historyinfo.config_id = "
+                                + "configurations.config_id"
+                    + "     AND historyinfo.harvest_id = "
+                    +           "harvestdefinitions.harvest_id"
                     + "  ) AS hist"
                     + " LEFT OUTER JOIN jobs"
                     + "   ON hist.job_id = jobs.job_id");
@@ -1424,15 +1465,16 @@ public class DomainDBDAO extends DomainDAO {
                 final long byteCount = res.getLong(9);
                 final StopReason reason
                         = StopReason.getStopReason(res.getInt(10));
-                domainHarvestInfos.add(new DomainHarvestInfo(
-                        domainName, jobID, harvestName, harvestID, harvestNum, configName,
-                        startDate, endDate, byteCount, objectCount, reason));
+                domainHarvestInfos.add(new DomainHarvestInfo(domainName, jobID,
+                        harvestName, harvestID, harvestNum, configName,
+                        startDate, endDate, byteCount,
+                        objectCount, reason));
             }
             return domainHarvestInfos;
         } catch (SQLException e) {
             String message = "SQL error getting domain harvest info for "
-                + domainName + "\n" +
-                ExceptionUtils.getSQLExceptionCause(e);
+                    + domainName + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -1499,10 +1541,8 @@ public class DomainDBDAO extends DomainDAO {
             }
             return new SparseDomain(domainName, domainConfigurationNames);
         } catch (SQLException e) {
-            throw new IOFailure("SQL Error while reading domain " + domainName +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e),
-                                e);
+            throw new IOFailure("SQL Error while reading domain " + domainName
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -1537,8 +1577,8 @@ public class DomainDBDAO extends DomainDAO {
                 resultSet.add(ai);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting alias-information" + "\n" +
-                                ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Failure getting alias-information" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1573,9 +1613,8 @@ public class DomainDBDAO extends DomainDAO {
                 resultSet.add(ai);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting alias-information" +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Failure getting alias-information" 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1604,9 +1643,8 @@ public class DomainDBDAO extends DomainDAO {
                 i.addSubdomain(domain);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting TLD-information" +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e),
+            throw new IOFailure("Failure getting TLD-information"
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e),
                                 e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
@@ -1619,7 +1657,8 @@ public class DomainDBDAO extends DomainDAO {
     /**
      * @see DomainDAO#getDomainJobInfo(Job, String, String)
      */
-    public HarvestInfo getDomainJobInfo(Job j, String domainName, String configName) {
+    public HarvestInfo getDomainJobInfo(
+            Job j, String domainName, String configName) {
         ArgumentNotValid.checkNotNull(j, "j");
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         ArgumentNotValid.checkNotNullOrEmpty(configName, "configName");
@@ -1638,7 +1677,8 @@ public class DomainDBDAO extends DomainDAO {
                     + "harvest_id = ?");
             s.setLong(1, j.getJobID());
             s.setLong(2, DBUtils.selectLongValue(
-                    "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
+                    "SELECT config_id FROM configurations "
+                    + "WHERE name = ? AND domain_id=?",
                     configName, domainId));
             s.setLong(3, j.getOrigHarvestDefinitionID());
             ResultSet res = s.executeQuery();
@@ -1649,13 +1689,14 @@ public class DomainDBDAO extends DomainDAO {
                 long objectCount = res.getLong(2);
                 long byteCount = res.getLong(3);
                 Date harvestTime = res.getDate(4);
-                resultInfo = new HarvestInfo(j.getOrigHarvestDefinitionID(), j.getJobID(),
+                resultInfo = new HarvestInfo(
+                        j.getOrigHarvestDefinitionID(), j.getJobID(),
                         domainName, configName, harvestTime,
                         byteCount, objectCount, reason);
             }
         } catch (SQLException e) {
-            throw new IOFailure("Failure getting DomainJobInfo" + "\n" +
-                                ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("Failure getting DomainJobInfo" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

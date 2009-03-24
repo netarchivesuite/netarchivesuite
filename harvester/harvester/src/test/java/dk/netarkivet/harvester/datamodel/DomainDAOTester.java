@@ -820,7 +820,7 @@ public class DomainDAOTester extends DataModelTestCase {
     
     /** Check constructor of DomainHarvestInfo(). */
     public void testDomainHarvestInfoConstructor() {
-        int jobId = 42; //FIXME jobID should be represented by a long (not an int)
+        long jobId = 42L;
         String domain = "netarkivet.dk";
         String harvestName = "TestHarvest";
         long harvestId = 1L;
@@ -832,7 +832,7 @@ public class DomainDAOTester extends DataModelTestCase {
         long docsdownloaded = 995L;
         StopReason theReason = StopReason.DOWNLOAD_COMPLETE;
         DomainHarvestInfo dhi = new DomainHarvestInfo(domain, jobId,
-                harvestName, harvestId, harvestNum, configName, startDate, 
+                harvestName, harvestId, harvestNum, configName, startDate,
                 endDate, bytesDownloaded, docsdownloaded, theReason);
         assertEquals(domain, dhi.getDomain());
         assertEquals(jobId, dhi.getJobID());

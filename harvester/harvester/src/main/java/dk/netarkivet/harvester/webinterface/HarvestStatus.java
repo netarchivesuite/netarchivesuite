@@ -47,24 +47,26 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
  */
 
 public class HarvestStatus {
-    /* parameters used by Harveststatus-alljobs.jsp */
+    /** Parameters used by the Harveststatus-alljobs.jsp page. */
     public static final String[] DEFAULTABLE_PARAMETERS = new String[]{
-    	Constants.JOBSTATUS_PARAM,
-    	Constants.JOBIDORDER_PARAM
+        Constants.JOBSTATUS_PARAM,
+        Constants.JOBIDORDER_PARAM
     };
 
-    //Sort order constants for job id
+    /** Ascending sort order for job id. */
     public static final String SORTORDER_ASCENDING = "ASC";
+    /** Descending sort order for job id. */
     public static final String SORTORDER_DESCENDING = "DESC";
 
-    //String code for choice of all statuses
+    /** The String code to select all states. */
     public static final String JOBSTATUS_ALL = "ALL";
 
-    //Default values for display parameters
+    /** Default sortorder (ascending). */
     public static final String DEFAULT_SORTORDER = SORTORDER_ASCENDING;
+    /** Default Jobstatus (STARTED). */
     public static final String DEFAULT_JOBSTATUS = JobStatus.STARTED.name();
 
-	/**
+    /**
      * Process a request from Harveststatus-alljobs.
      *
      * Will resubmit a job if requested, otherwise do nothing.
@@ -97,7 +99,7 @@ public class HarvestStatus {
         }
     }
 
-    /** Create a link to the harvest-run page for a given run
+    /** Create a link to the harvest-run page for a given run.
      *
      * @param harvestID The ID of the harvest
      * @param harvestRun The run # of the harvest (always 0 for snapshots)
@@ -116,16 +118,18 @@ public class HarvestStatus {
     }
 
     /** Find Job status to be shown based on parameters, including possibility
-     *  for All statuses
+     *  for All statuses.
      *
      * @param dfltRequest contains defaulted parameters
      * @return Integer value being the ordinal of a JobStatus or -1 for ALL 
      *         (job statuses)
      * @throws ArgumentNotValid, IllegalArgumentException
      */
-    public static Set<Integer> getSelectedJobStatusCodes(DefaultedRequest dfltRequest) {
-        ArgumentNotValid.checkNotNull(dfltRequest, "dfltRequest");
-        String[] values = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM);       
+    public static Set<Integer> getSelectedJobStatusCodes(
+            DefaultedRequest dfltRequest) {
+        ArgumentNotValid.checkNotNull(
+                dfltRequest, "DefaultedRequest dfltRequest");
+        String[] values = dfltRequest.getParameter(Constants.JOBSTATUS_PARAM);
         if (values == null || values.length == 0) {
             throw new ArgumentNotValid("No Jobstatus selected");
         }
@@ -143,7 +147,7 @@ public class HarvestStatus {
         return selectedJobStatusCodesSet;
     }
 
-    /** Find sort order of job ids to be shown based on parameters
+    /** Find sort order of job ids to be shown based on parameters.
      *
      * @param dfltRequest contains defaulted parameters
      * @return String constant for selected order
@@ -177,9 +181,7 @@ public class HarvestStatus {
      * @throws ArgumentNotValid
      */
     public static List<JobStatusInfo> getjobStatusList(
-    		                             Set<Integer> selectedJobStatusCodes, 
-    		                             String selectedSortOrder
-    		                          ) {
+            Set<Integer> selectedJobStatusCodes, String selectedSortOrder) {
         ArgumentNotValid.checkNotNullOrEmpty(selectedJobStatusCodes, 
                 "selectedJobStatusCodes");
         ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
@@ -203,7 +205,8 @@ public class HarvestStatus {
                 selectedJobStates.add(sortJobStatus);
             }
             
-            JobStatus[] jobstatusArray = new JobStatus[selectedJobStates.size()];
+            JobStatus[] jobstatusArray
+                = new JobStatus[selectedJobStates.size()];
             return JobDAO.getInstance().getStatusInfo(
                     asc, selectedJobStates.toArray(jobstatusArray)); 
         }
@@ -218,7 +221,7 @@ public class HarvestStatus {
     * @param selectedSortOrder string code whether job ids should come in asc.
     *        or desc. order
     * @return list of job (status) information to be shown
-    * @throws ArgumentNotValid
+    * @throws ArgumentNotValid If some of the arguments are invalid
     */
    public static List<JobStatusInfo> getjobStatusList(
                                           long harvestId,
@@ -230,12 +233,14 @@ public class HarvestStatus {
                "selectedJobStatusCodes");
        ArgumentNotValid.checkNotNullOrEmpty(selectedSortOrder,
                "selectedSortOrder");
-       
+       ArgumentNotValid.checkNotNegative(harvestId, "long harvestId");
+       ArgumentNotValid.checkNotNegative(harvestNum, "long harvestNum");
+
        boolean asc = selectedSortOrder.equals(SORTORDER_ASCENDING);
-       if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) { 
-           throw new ArgumentNotValid(
-                        "Invalid sort Order " + selectedSortOrder
-                     );
+       if (!asc && !selectedSortOrder.equals(SORTORDER_DESCENDING)) {
+           // no logging not considered necessary at this time
+           throw new ArgumentNotValid("Invalid sort Order: "
+                   + selectedSortOrder);
        }
        
        if (selectedJobStatusCodes.contains(
@@ -243,20 +248,25 @@ public class HarvestStatus {
            return JobDAO.getInstance().getStatusInfo(
                    harvestId, harvestNum, asc);
        } else {
+           Set<JobStatus> selectedJobStatusSet = new HashSet<JobStatus>();
+           for(int jobStatusOrdinal : selectedJobStatusCodes) {
+              selectedJobStatusSet.add(JobStatus.fromOrdinal(
+                      jobStatusOrdinal)); 
+           }
            return JobDAO.getInstance().getStatusInfo(
                    harvestId, harvestNum, 
-                   asc, selectedJobStatusCodes); 
+                   asc, selectedJobStatusSet); 
        }
    }
-    
 
     /** This class encapsulates a request for reload, making non-existing
      * parameters appear as there default value.
      */
     public static class DefaultedRequest {
+        /** the encapsulated servlet request. */
         ServletRequest req;
 
-        /** Constructor to 
+        /** Constructor.
          * @param req with parameters to jsp page which can be defaulted
          * @throws ArgumentNotValid
          */
@@ -266,24 +276,25 @@ public class HarvestStatus {
         }
         
         /** Gets a parameter from the original request, except if the
-         * parameter is unset, return the default value for the parameter
+         * parameter is unset, return the default value for the parameter.
          * @param paramName a parameter
-         * @return The parameter or the default value; never null.
+         * @return The parameter or the default value; never null or empty.
          * @throws ArgumentNotValid
          */
         public String[] getParameter(String paramName) {
-            ArgumentNotValid.checkNotNull(paramName, "paramName");
+            ArgumentNotValid.checkNotNullOrEmpty(paramName, "paramName");
             String[] values = req.getParameterValues(paramName);
             if (values == null || values.length == 0) {
                 if (paramName.equals(Constants.JOBSTATUS_PARAM)) {
                     return new String[]{DEFAULT_JOBSTATUS};
                 } else {
                     if (paramName.equals(Constants.JOBIDORDER_PARAM)) {
-                        return new String[]{ DEFAULT_SORTORDER };
+                        return new String[]{DEFAULT_SORTORDER};
                     } else {
+                        // no logging not considered necessary at this time
                         throw new ArgumentNotValid(
-                                     "Invalid parameter name " + paramName
-                                  );
+                                     "Invalid parameter name '" + paramName
+                                     + "'");
                     }
                 } 
             } else {
@@ -292,4 +303,3 @@ public class HarvestStatus {
         }
     }
 }
-    

@@ -31,7 +31,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Currently contains the TLD name and a count of subdomains.
  *
  */
-public class TLDInfo implements Comparable {
+public class TLDInfo implements Comparable<TLDInfo> {
     private final String tldName;
     private int count = 0;
     /** The special name for IP adresses, since they have no TLD */
@@ -113,9 +113,8 @@ public class TLDInfo implements Comparable {
      * @throws ClassCastException if the specified object's type prevents it
      *                            from being compared to this Object.
      */
-    public int compareTo(Object o) {
-        TLDInfo i = (TLDInfo) o;
-        return tldName.compareTo(i.tldName);
+    public int compareTo(TLDInfo o) {
+        return tldName.compareTo(o.tldName);
     }
 
     /** Get the TLD for a given domain.

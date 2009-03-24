@@ -62,7 +62,7 @@ public abstract class JobDAO implements Iterable<Job> {
      * Creates an instance in persistent storage of the given job.
      * If the job doesn't have an ID, one is generated for it.
      *
-     * @param job
+     * @param job a job to create in persistent storage.
      * @throws PermissionDenied If a job already exists in persistent storage
      *                          with id of the given job
      * @throws IOFailure        If some IOException occurs while
@@ -97,10 +97,11 @@ public abstract class JobDAO implements Iterable<Job> {
      * @param jobID The ID of the job to read
      * @return a Job instance
      * @throws ArgumentNotValid If failed to create job instance
-     *                          (in case configuration or priority is null or harvestID is invalid.
+                 in case the configuration or priority is null,
+                 or the harvestID is invalid.
      * @throws UnknownID        If the job with the given jobID
      *                          does not exist in persistent storage.
-     * @throws IOFailure        If the loaded ID of job does not match the expected.
+     * @throws IOFailure If the loaded ID of job does not match the expected.
      */
     public abstract Job read(Long jobID)
             throws ArgumentNotValid, UnknownID, IOFailure;
@@ -128,8 +129,8 @@ public abstract class JobDAO implements Iterable<Job> {
      *
      * @param status A given status.
      * @return A list of all job with given status
-     * @throws ArgumentNotValid If the given status is not one of the five valid statuses,
-     *                          specified in Job.
+     * @throws ArgumentNotValid If the given status is not one of the six
+     *                          valid states specified in JobStatus.
      */
     public abstract Iterator<Job> getAll(JobStatus status);
 
@@ -138,8 +139,8 @@ public abstract class JobDAO implements Iterable<Job> {
      *
      * @param status A given status.
      * @return A list of all job_id's representing jobs with given status
-     * @throws ArgumentNotValid If the given status is not one of the five valid statuses,
-     *                          specified in Job.
+     * @throws ArgumentNotValid If the given status is not one of the six
+     *                          valid states specified in JobStatus.
      */
     public abstract Iterator<Long> getAllJobIds(JobStatus status);
 
@@ -203,7 +204,8 @@ public abstract class JobDAO implements Iterable<Job> {
      *         all jobs with given job status and in given job id order.
      * @throws IOFailure on trouble in database access
      */
-    public abstract List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ... states );
+    public abstract List<JobStatusInfo> getStatusInfo(boolean asc,
+            JobStatus ... states);
 
     /** Return status information for all jobs with given job status.
      *
@@ -248,11 +250,33 @@ public abstract class JobDAO implements Iterable<Job> {
      */
     public abstract long rescheduleJob(long oldJobID);
 
+    /**
+     * Get the list of all jobs ordered by JobID (represented by JobStatusInfo
+     * objects) belonging to a specific harvestdefinition, and a specific 
+     * harvestnumber. Can be ordered in either ascending or descending mode.
+     * @param harvestId The Id of a specific harvestdefinition
+     * @param harvestNum A specific harvestnumber
+     * @param asc Should this list be ordered in ascending mode (true), or
+     *              descending mode (false)
+     * @return the list
+     */
+    public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
+            long harvestNum, boolean asc);
 
-    public abstract List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc);
-
-    public abstract List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
-            boolean asc, Set<Integer> selectedStatusCodes);
+    /**
+     * Get the list of all jobs ordered by JobID (represented by JobStatusInfo
+     * objects) belonging to a specific harvestdefinition, and a specific 
+     * harvestnumber, which have one of the JobStatus in the
+     * selectedJobStatusSet. The list can be ordered in either ascending or
+     * descending mode.
+     * @param harvestId The Id of a specific harvestdefinition
+     * @param harvestNum A specific harvestnumber 
+     * @param asc Should this list be ordered in ascending mode (true), or
+     *              descending mode (false)
+     * @param selectedJobStatusSet The set of chosen Jobstates
+     * @return the list             
+     */
+    public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
+            long harvestNum, boolean asc, Set<JobStatus> selectedJobStatusSet);
     
 }

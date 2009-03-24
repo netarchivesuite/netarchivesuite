@@ -27,7 +27,7 @@ This page shows details about a single job.
 
 Note that the response language for the page is set using requested locale
 of the client browser when fmt:setBundle is called. After that, fmt:format
-and reposne.getLocale use this locale.
+and reponse.getLocale use this locale.
 --%><%@ page import="java.util.Map,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.exceptions.UnknownID,
@@ -88,6 +88,9 @@ and reposne.getLocale use this locale.
         	}
         }
     } catch (UnknownID e) {
+    	// If no harvestdefinition is known with ID=harvestID
+    	// Set harvestname = an internationalized version of 
+    	// "Unknown harvest" + harvestID 
         harvestname = I18N.getString(response.getLocale(),
                 "unknown.harvest.0", harvestID);
     }
@@ -97,8 +100,13 @@ and reposne.getLocale use this locale.
     		+ "\">" + HTMLUtils.escapeHtmlValues(harvestname) + "</a>";
     }
     String jobstatusTdContents = job.getStatus().getLocalizedString(response.getLocale());
+    // If the status of the job is RESUBMITTED (and the new job is known),
+    // add a link to the new job
+    // Note: this information was only available from release 3.8.0
+    // So for historical jobs generated with previous versions of NetarchiveSuite,
+    // this information is not available. 
     if (job.getStatus().equals(JobStatus.RESUBMITTED)
-    	&& job.getResubmittedAsJob() != null) {
+    	&& job.getResubmittedAsJob() != null) { 
     	 jobstatusTdContents += "<br/>(<a href=\"" + jobdetailsUrl + "?" 
     	 	+ Constants.JOB_PARAM + "=" + job.getResubmittedAsJob() + "\">"
     	 	+ "Job " + job.getResubmittedAsJob() + "</a>" + ")";

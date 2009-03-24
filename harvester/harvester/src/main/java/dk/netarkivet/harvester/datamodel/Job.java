@@ -138,8 +138,6 @@ public class Job implements Serializable {
     /** The time when this job was submitted. */
     private Date submittedDate;
     
-    
-    
     /**
      * Edition is used by the DAO to keep track of changes.
      */
@@ -149,7 +147,7 @@ public class Job implements Serializable {
      * Resubmitted as the Job with this ID.
      * If null, this job has not been resubmitted.
      */
-    Long resubmittedAsJobWithID;
+    private Long resubmittedAsJobWithID;
     
     /**
      * A map (domainName, domainConfigurationName), must be accessible in order
@@ -212,9 +210,8 @@ public class Job implements Serializable {
             = Long.parseLong(
             Settings.get(HarvesterSettings.JOBS_MIN_ABSOLUTE_SIZE_DIFFERENCE));
     private final long LIM_MAX_TOTAL_SIZE
-            = Long.parseLong(Settings.get(HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
-
-    ;
+            = Long.parseLong(Settings.get(
+                    HarvesterSettings.JOBS_MAX_TOTAL_JOBSIZE));
 
     private static final int BYTES_PER_HERITRIX_BYTELIMIT_UNIT = 1024;
 
@@ -226,7 +223,8 @@ public class Job implements Serializable {
      * @param priority                 the priority of the job
      * @param forceMaxObjectsPerDomain the maximum number of objects harvested
      *                                 from a domain, overrides individual
-     *                                 configuration settings. -1 means no limit.
+     *                                 configuration settings. 
+     *                                 -1 means no limit
      * @param forceMaxBytesPerDomain The maximum number of objects harvested
      * from a domain, or -1 for no limit.
      * @param harvestNum               the run number of the harvest definition
@@ -235,14 +233,15 @@ public class Job implements Serializable {
      * @throws UnknownID        If the priority is invalid.
      */
     Job(Long harvestID, DomainConfiguration cfg, JobPriority priority,
-        long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain, int harvestNum)
-            throws ArgumentNotValid {
+        long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+        int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestID.longValue(), "harvestID");
         ArgumentNotValid.checkNotNull(priority, "priority");
         if (forceMaxObjectsPerDomain < -1) {
-            String msg = "forceMaxObjectsPerDomain must be either -1 or positive";
+            String msg
+                = "forceMaxObjectsPerDomain must be either -1 or positive";
             log.debug(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -268,13 +267,15 @@ public class Job implements Serializable {
         domainConfigurationMap = new HashMap<String, String>();
         origHarvestDefinitionID = harvestID;
         orderXMLname = cfg.getOrderXmlName();
-        orderXMLdoc = TemplateDAO.getInstance().read(cfg.getOrderXmlName()).getTemplate();
+        orderXMLdoc = TemplateDAO.getInstance().read(
+                cfg.getOrderXmlName()).getTemplate();
 
         this.priority = priority;
 
         setForceMaxObjectsPerDomain(forceMaxObjectsPerDomain);
 
-        long maxBytes = NumberUtils.minInf(forceMaxBytesPerDomain, cfg.getMaxBytes());
+        long maxBytes = NumberUtils.minInf(
+                forceMaxBytesPerDomain, cfg.getMaxBytes());
         configurationSetsLimit = (maxBytes != forceMaxBytesPerDomain);
         setMaxBytesPerDomain(maxBytes);
 
@@ -308,11 +309,12 @@ public class Job implements Serializable {
      * @param seedlist                 the combined seedlist from all configs.
      * @param harvestNum               the run number of the harvest definition
      */
-    Job(Long harvestID, Map<String, String> configurations, JobPriority priority,
-        long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
-        JobStatus status,
-        String orderXMLname,
-        Document orderXMLdoc, String seedlist, int harvestNum) {
+    Job(Long harvestID, Map<String, String> configurations,
+            JobPriority priority,
+            long forceMaxObjectsPerDomain, long forceMaxBytesPerDomain,
+            JobStatus status,
+            String orderXMLname,
+            Document orderXMLdoc, String seedlist, int harvestNum) {
         origHarvestDefinitionID = harvestID;
         domainConfigurationMap = configurations;
         this.priority = priority;
@@ -338,7 +340,8 @@ public class Job implements Serializable {
      * @return newly created Job.
      * @throws ArgumentNotValid if cfg is null or harvestID is invalid
      */
-    public static Job createJob(Long harvestID, DomainConfiguration cfg, int harvestNum) {
+    public static Job createJob(Long harvestID, DomainConfiguration cfg,
+            int harvestNum) {
         // Use -1 to indicate no limits for max objects and max bytes.
         return new Job(harvestID, cfg, JobPriority.HIGHPRIORITY,
                 Constants.HERITRIX_MAXOBJECTS_INFINITY,
@@ -355,8 +358,8 @@ public class Job implements Serializable {
      *
      * @param harvestID           the id of the harvestdefinition
      * @param cfg                 the configuration to base the Job on
-     * @param maxObjectsPerDomain the maximum number of objects to harvest from a
-     *                            domain, overrides individual configuration
+     * @param maxObjectsPerDomain the maximum number of objects to harvest from
+     *                            a domain, overrides individual configuration
      *                            settings unless the domain has overrideLimits
      *                            set.  0 means no limit.
      * @param maxBytesPerDomain the maximum number of bytes to harvest from a
@@ -372,8 +375,8 @@ public class Job implements Serializable {
                                         long maxObjectsPerDomain,
                                         long maxBytesPerDomain, int harvestNum)
             throws ArgumentNotValid {
-        return new Job(harvestID, cfg, JobPriority.LOWPRIORITY, maxObjectsPerDomain,
-                maxBytesPerDomain, harvestNum);
+        return new Job(harvestID, cfg, JobPriority.LOWPRIORITY,
+                maxObjectsPerDomain, maxBytesPerDomain, harvestNum);
     }
 
     /**
@@ -452,7 +455,8 @@ public class Job implements Serializable {
                     }
                     if (!seedASCII.equals(seedUrl)) {
                         log.trace("Converted " + seedUrl + " to " + seedASCII);
-                        seedListSet.add(seedASCII); // duplicates is silently ignored
+                        // Note that duplicates is silently ignored
+                        seedListSet.add(seedASCII);
                     }
                 } catch (IDNAException e) {
                     log.trace("Cannot convert seed "
@@ -500,7 +504,7 @@ public class Job implements Serializable {
      * @throws IllegalState
      *          If unable to update order.xml due to wrong order.xml format
      */
-    private void editOrderXML_crawlerTraps(Domain d) throws ArgumentNotValid {
+    private void editOrderXML_crawlerTraps(Domain d) {
         //Get the regexps to exclude
         List<String> crawlerTraps = d.getCrawlerTraps();
         if (crawlerTraps.size() == 0) {
@@ -568,15 +572,18 @@ public class Job implements Serializable {
 
         // check if template is same as this job.
         if (!orderXMLname.equals(cfg.getOrderXmlName())) {
-            log.debug("This Job only accept configurations using the harvest template '" +
-                    orderXMLname + "'. This configuration uses the harvest template '" +
-                    cfg.getOrderXmlName() + "'.");
+            log.debug("This Job only accept configurations "
+                    + "using the harvest template '" + orderXMLname
+                    + "'. This configuration uses the harvest template '"
+                    + cfg.getOrderXmlName() + "'.");
             return false;
         }
 
-        if (NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
+        if (NumberUtils.compareInf(
+                cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
             || (configurationSetsLimit
-                && NumberUtils.compareInf(cfg.getMaxBytes(), forceMaxBytesPerDomain) != 0)) {
+                    && NumberUtils.compareInf(
+                            cfg.getMaxBytes(), forceMaxBytesPerDomain) != 0)) {
             return false;
         }
 
@@ -670,7 +677,10 @@ public class Job implements Serializable {
     
 
     /**
-     * Get a list of settings.xml files.
+     * Get a list of Heritrix settings.xml files.
+     * Note that these files have nothing to do with NetarchiveSuite settings 
+     * files. They are files that supplement the Heritrix order.xml files,
+     * and contain overrides for specific domains.
      *
      * @return the list of Files as an array
      */
@@ -699,7 +709,7 @@ public class Job implements Serializable {
     /**
      * Set the id of this Job.
      *
-     * @param id
+     * @param id The Id for this job.
      */
     public void setJobID(Long id) {
         jobID = id;
@@ -720,7 +730,8 @@ public class Job implements Serializable {
      *
      * Sends a notification, if actualStart is set to a
      * time after actualStop.
-     * @param actualStart A Date object representing the time when this job was started.
+     * @param actualStart A Date object representing the time
+     *                    when this job was started.
      */
     public void setActualStart(Date actualStart) {
         ArgumentNotValid.checkNotNull(actualStart, "actualStart");
@@ -737,7 +748,8 @@ public class Job implements Serializable {
      * Set the actual time when this job was stopped/completed.
      * Sends a notification, if actualStop is set to a
      * time before actualStart.
-     * @param actualStop A Date object representing the time when this job was stopped.
+     * @param actualStop A Date object representing the time
+     *                   when this job was stopped.
      */
     public void setActualStop(Date actualStop) {
         ArgumentNotValid.checkNotNull(actualStop, "actualStop");
@@ -781,7 +793,7 @@ public class Job implements Serializable {
      * @return a list of sorted seeds for this job.
      */
     public List<String> getSortedSeedList() {
-        Map<String,Set<String>> urlMap = new HashMap<String,Set<String>>();
+        Map<String, Set<String>> urlMap = new HashMap<String, Set<String>>();
         for (String seed : seedListSet) {
             String url;
             // Assume the protocol is http://, if it is missing
@@ -853,7 +865,7 @@ public class Job implements Serializable {
      * @return the seedlist as a String
      */
     public String getSeedListAsString() {
-        return StringUtils.conjoin("\n",seedListSet );
+        return StringUtils.conjoin("\n", seedListSet);
     }
 
 
@@ -947,7 +959,7 @@ public class Job implements Serializable {
     /**
      * Set the edition number.
      *
-     * @param edition
+     * @param edition the new edition number
      */
     void setEdition(long edition) {
         this.edition = edition;
@@ -955,6 +967,8 @@ public class Job implements Serializable {
     
     /**
      * toString method for the Job class.
+     * @see Object#toString()
+     * @return a human readable string representing this object.
      */
     public String toString() {
         return "Job " + getJobID() + " (state = " + getStatus() + ", HD = "
@@ -992,7 +1006,9 @@ public class Job implements Serializable {
     }
 
     /**
-     * @param maxBytesPerDomain The maxBytesPerDomain to set, or -1 for no limit.
+     * Set the maxbytes per domain value.
+     * @param maxBytesPerDomain The maxBytesPerDomain to set,
+     *                          or -1 for no limit.
      */
     private void setMaxBytesPerDomain(long maxBytesPerDomain) {
         if (!underConstruction) {
@@ -1021,10 +1037,11 @@ public class Job implements Serializable {
      *           the orderXMLdoc Document
      * @throws IOFailure
      *           If the queue-total-budget element is not found in the orderXml.
-     * TODO: The queue-total-budget check should also be performed in
+     * TODO The queue-total-budget check should also be performed in
      * TemplateDAO.create, TemplateDAO.update
      */
-    private void editOrderXML_maxObjectsPerDomain(long forceMaxObjectsPerDomain) {
+    private void editOrderXML_maxObjectsPerDomain(
+            long forceMaxObjectsPerDomain) {
         String xpath = HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH;
         Node queueTotalBudgetNode = orderXMLdoc.selectSingleNode(xpath);
         if (queueTotalBudgetNode != null) {
@@ -1046,7 +1063,8 @@ public class Job implements Serializable {
      * with the value of the argument forceMaxBytesPerDomain
      *
      * @param forceMaxBytesPerDomain
-     *      The maximum number of byte to retrieve per domain, or -1 for no limit.
+     *      The maximum number of byte to retrieve per domain,
+     *      or -1 for no limit.
      *      Note that the number is divided by 1024 before being inserted into
      *      the orderXml, as Heritrix expects KB.
      * @throws PermissionDenied
@@ -1054,7 +1072,7 @@ public class Job implements Serializable {
      *      orderXMLdoc Document
      * @throws IOFailure
      *      If the group-max-all-kb element cannot be found.
-     * TODO: This group-max-all-kb check also be performed in
+     * TODO This group-max-all-kb check also be performed in
      * TemplateDAO.create, TemplateDAO.update
      */
     private void editOrderXML_maxBytesPerDomain(long forceMaxBytesPerDomain) {
@@ -1159,7 +1177,7 @@ public class Job implements Serializable {
     /**
      * Append to the list of harvest errors for this job.
      * Nothing happens, if argument harvestErrors is null.
-     * @param harvestErrors a string containing harvest errors.
+     * @param harvestErrors a string containing harvest errors (may be null)
      */
     public void appendHarvestErrors(String harvestErrors) {
         if (harvestErrors != null) {
@@ -1280,6 +1298,7 @@ public class Job implements Serializable {
     /**
      * Set the Date for when this job was submitted.
      * If null, this job has not been submitted.
+     * @param submittedDate The date when this was submitted
      */
     public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
@@ -1287,6 +1306,7 @@ public class Job implements Serializable {
 
     /**
      * Set the ID for the job which this job was resubmitted as.
+     * @param resubmittedAsJob An Id for a new job.
      */
     public void setResubmittedAsJob(Long resubmittedAsJob) {
         this.resubmittedAsJobWithID = resubmittedAsJob;

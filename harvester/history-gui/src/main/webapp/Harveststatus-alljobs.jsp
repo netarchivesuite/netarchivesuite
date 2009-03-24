@@ -155,6 +155,20 @@ if (jobStatusList.isEmpty()) {
             String harvestLink = "Harveststatus-perhd.jsp?"
                                  + Constants.HARVEST_PARAM + "="
                                  + HTMLUtils.encode(js.getHarvestDefinition());
+            String jobStatusTdContents = HTMLUtils.escapeHtmlValues(
+                        js.getStatus().getLocalizedString(
+                                response.getLocale()));
+            // If the status of the job is RESUBMITTED (and the new job is known),
+    		// add a link to the new job
+    		// Note: this information was only available from release 3.8.0
+    		// So for historical jobs generated with previous versions of 
+    		// NetarchiveSuite this information is not available. 
+    		if (js.getStatus().equals(JobStatus.RESUBMITTED)
+    			&& js.getResubmittedAsJob() != null) { 
+    	 		jobStatusTdContents += "<br/>(<a href=\"" + detailsLink + "?" 
+    	 			+ Constants.JOB_PARAM + "=" + js.getResubmittedAsJob() + "\">"
+    	 			+ "Job " + js.getResubmittedAsJob() + "</a>" + ")";
+    		}
     %>
             <tr class="<%=HTMLUtils.getRowClass(rowcount++)%>">
                 <td><a href="<%=detailsLink%>">
@@ -166,9 +180,8 @@ if (jobStatusList.isEmpty()) {
                 <td><%=HarvestStatus.makeHarvestRunLink(
                         js.getHarvestDefinitionID(), js.getHarvestNum())%>
                 </td>
-                <td><%=HTMLUtils.escapeHtmlValues(
-                        js.getStatus().getLocalizedString(
-                                response.getLocale()))%>
+                <td>
+                	<%=jobStatusTdContents%>
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
                        HTMLUtils.nullToHyphen(js.getHarvestErrors()))%>
