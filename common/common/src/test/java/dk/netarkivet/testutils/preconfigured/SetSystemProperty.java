@@ -1,7 +1,7 @@
-/* File:        $RCSfile: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

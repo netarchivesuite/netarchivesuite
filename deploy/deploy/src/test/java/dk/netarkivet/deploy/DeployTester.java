@@ -22,8 +22,6 @@
 */
 package dk.netarkivet.deploy;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.FileUtils;
@@ -646,29 +644,29 @@ public class DeployTester extends TestCase {
      * Tests if the complete settings file is correctly created.
      */
     public void testCompleteSettings() {
-	try {
-	    // the output directory is not automatically created, 
-	    // hence create it before running. 
-	    FileUtils.createDir(TestInfo.TMPDIR);
-	    
-	    String[] args = {TestInfo.FILE_COMPLETE_SETTINGS.getAbsolutePath()};	    
-	    BuildCompleteSettings.main(args);
-	    
-	    String differences = TestFileUtils.compareDirsText(
-		    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
-	    /**/
-	    if(differences.length() > 0) {
-		pss.tearDown();
-		System.out.println("testDeployTest");
-		System.out.println(differences);
-		pss.setUp();
-	    }
-	    /**/
+        try {
+            // the output directory is not automatically created,
+            // hence create it before running.
+            FileUtils.createDir(TestInfo.TMPDIR);
 
-	    assertEquals("No differences expected", 0, differences.length());	
-	} catch (Exception e) {
-	    // give error if exception caught.
-	    assertEquals(e.getMessage(), -1, 0);
-	}
+            String[] args = { TestInfo.FILE_COMPLETE_SETTINGS.getAbsolutePath() };
+            BuildCompleteSettings.main(args);
+
+            String differences = TestFileUtils.compareDirsText(
+                    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
+            /**/
+            if (differences.length() > 0) {
+                pss.tearDown();
+                System.out.println("testDeployTest");
+                System.out.println(differences);
+                pss.setUp();
+            }
+            /**/
+
+            assertEquals("No differences expected", 0, differences.length());
+        } catch (Exception e) {
+            // give error if exception caught.
+            assertEquals(e.getMessage(), -1, 0);
+        }
     }
 }
