@@ -104,7 +104,6 @@ dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exce
 	        <input type="hidden" name="bitarchive" value="<%=bitarchive.getName()%>"/>
 	        <table>
 	    <%
-	
 	    // Counter for number of files that can be uploaded with ADD_COMMAND.
 	    // This is increased in the loop below.
 	    int uploadableFiles = 0;
