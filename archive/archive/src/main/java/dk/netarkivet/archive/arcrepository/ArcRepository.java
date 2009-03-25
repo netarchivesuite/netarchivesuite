@@ -62,12 +62,12 @@ import dk.netarkivet.common.utils.Settings;
 
 /**
  * The Arcrepository handles the communication with the different bitarchives.
- * The Arcrepository ensures that arc files are stored in all available
- * bitarchives and verifies that the storage process succeeded Retrieval of data
+ * This class ensures that arc files are stored in all available
+ * bitarchives and verifies that the storage process succeeded. Retrieval of data
  * from a bitarchive goes through the JMSArcRepositoryClient that contacts the
  * appropriate (typically nearest) bitarchive and retrieves data from this
- * archive. Batch execution is sent to the appropriate bitarchive(s) Correction
- * operations are typically only allowed on one bitarchive.
+ * archive. Batch execution is sent to the bitarchive(s). Correction operations
+ * are typically only allowed on one bitarchive.
  */
 public class ArcRepository implements CleanupIF {
 
@@ -98,7 +98,7 @@ public class ArcRepository implements CleanupIF {
 
     /**
      * Map from MessageId to arcfiles for which there are outstanding checksum
-     * jobs. TODO: Consider moving this information into BatchReplyMessage
+     * jobs.
      */
     private final Map<String, String> outstandingChecksumFiles =
         new HashMap<String, String>();
@@ -121,7 +121,7 @@ public class ArcRepository implements CleanupIF {
      * A singular instance of JMSConnection, used for replying to Store
      * messages.
      */
-    private JMSConnection con;
+    private JMSConnection jmsCon;
 
     /**
      * Constructor for the ArcRepository. Connects the ArcRepository to all
@@ -130,12 +130,13 @@ public class ArcRepository implements CleanupIF {
      * @throws IOFailure
      *             if admin data cannot be read/initialised or we cannot'
      *             connect to some bitarchive.
-     * @throws PermissionDenied
+     * @throws IllegalState
      *             if inconsistent channel info is given in settings.
      */
-    private ArcRepository() throws IOFailure, PermissionDenied {
-        this.ad = UpdateableAdminData.getUpdateableInstance(); // Throws IOFailure
-        this.con = JMSConnectionFactory.getInstance();
+    private ArcRepository() throws IOFailure, IllegalState {
+        //UpdateableAdminData Throws IOFailure
+        this.ad = UpdateableAdminData.getUpdateableInstance(); 
+        this.jmsCon = JMSConnectionFactory.getInstance();
         this.arcReposhandler = new ArcRepositoryServer(this);
 
         // Get channels
@@ -159,11 +160,11 @@ public class ArcRepository implements CleanupIF {
      * @throws IOFailure
      *             if admin data cannot be read/initialised or we cannot'
      *             connect to some bitarchive.
-     * @throws PermissionDenied
+     * @throws IllegalState
      *             if inconsistent channel info is given in settings.
      */
     public static synchronized ArcRepository getInstance()
-            throws PermissionDenied, IOFailure {
+            throws IllegalState, IOFailure {
         if (instance == null) {
             instance = new ArcRepository();
         }
@@ -181,11 +182,11 @@ public class ArcRepository implements CleanupIF {
      *            The queues for bitarchives
      * @param theBamons
      *            The queues for bitarchive monitors
-     * @throws PermissionDenied
+     * @throws IllegalState
      *             if inconsistent data is found
      */
     private void checkChannels(ChannelID[] allBas, ChannelID[] anyBas,
-            ChannelID[] theBamons) throws PermissionDenied {
+            ChannelID[] theBamons) throws IllegalState {
 
         if (theBamons.length != allBas.length
                 || theBamons.length != anyBas.length) {
@@ -200,7 +201,7 @@ public class ArcRepository implements CleanupIF {
             values.append("\nTHE_BAMONs: ");
             values.append(Arrays.toString(theBamons));
 
-            throw new PermissionDenied(values.toString());
+            throw new IllegalState(values.toString());
         }
     }
 
@@ -208,13 +209,13 @@ public class ArcRepository implements CleanupIF {
      * Establish a connection to a new bitarchive.
      *
      * @param allBa
-     *            The ALL_BA channel of the given BitArhive
+     *            The ALL_BA channel of the given Bitarhive
      * @param anyBa
-     *            The ANY_BA channel of the given BitArhive
+     *            The ANY_BA channel of the given Bitarhive
      * @param theBamon
-     *            The THE_BAMON channel of the given BitArhive
+     *            The THE_BAMON channel of the given Bitarhive
      * @throws IOFailure
-     *             If we cannot connect to the bit archive.
+     *             If we cannot connect to the bitarchive.
      */
     private void connectToBitarchive(ChannelID allBa, ChannelID anyBa,
             ChannelID theBamon) throws IOFailure {
@@ -227,8 +228,9 @@ public class ArcRepository implements CleanupIF {
     /**
      * Stores a file in all known Bitarchives. This runs asynchronously, and
      * returns immediately. Side effects: 
-     * 1) The RemoteFile added to List outstandingRemoteFiles 
-     * 2) TODO: Document other side effects.
+     * 1) The RemoteFile added to List outstandingRemoteFiles, where overwrite
+     *    is allowed.
+     * 2) TODO: Check, if other sideeffects exist, and document them.
      *
      * @param rf
      *            A remotefile to be stored.
@@ -236,15 +238,22 @@ public class ArcRepository implements CleanupIF {
      *            A StoreMessage used to reply with success or failure.
      * @throws IOFailure
      *             If file couldn't be stored.
+     * @throws ArgumentNotValid
+     *             if a input parameter is null     
      */
     public synchronized void store(RemoteFile rf, StoreMessage replyInfo)
             throws IOFailure {
+        ArgumentNotValid.checkNotNull(rf, "rf");
+        ArgumentNotValid.checkNotNull(replyInfo, "replyInfo");
 
         final String filename = rf.getName();
         log.info("Store started: '" + filename + "'");
 
         // Record, that store of this filename is in progress
         // needed for retrying uploads.
+        if (outstandingRemoteFiles.containsKey(filename)) {
+            log.info("File: '" + filename + "' was outstanding from the start.");
+        }
         outstandingRemoteFiles.put(filename, rf);
 
         if (ad.hasEntry(filename)) {
@@ -273,7 +282,6 @@ public class ArcRepository implements CleanupIF {
 
         // Check state and reply if needed
         considerReplyingOnStore(filename);
-
     }
 
     /**
@@ -290,8 +298,8 @@ public class ArcRepository implements CleanupIF {
     private synchronized void startUpload(RemoteFile rf,
             BitarchiveClient bitarchiveClient, String bitarchiveId) {
         final String filename = rf.getName();
-        log.debug("Upload started '" + filename + "' at '" + bitarchiveId
-                + "'");
+        log.debug("Upload started of file '" + filename + "' at '"
+                   + bitarchiveId + "'");
 
         if (!ad.hasState(filename, bitarchiveId)) {
             // New upload
@@ -375,7 +383,7 @@ public class ArcRepository implements CleanupIF {
         clearRetries(arcFileName);
         log.info("Store OK: '" + arcFileName + "'");
         log.debug("Sending store OK reply to message '" + msg + "'");
-        con.reply(msg);
+        jmsCon.reply(msg);
     }
 
     /**
@@ -392,7 +400,7 @@ public class ArcRepository implements CleanupIF {
         msg.setNotOk("Failure while trying to store ARC file: " + arcFileName);
         log.warn("Store NOT OK: '" + arcFileName + "'");
         log.debug("Sending store NOT OK reply to message '" + msg + "'");
-        con.reply(msg);
+        jmsCon.reply(msg);
     }
 
     /**
@@ -414,6 +422,13 @@ public class ArcRepository implements CleanupIF {
         return true;
     }
 
+    /**
+     * Checks if there are at least one bitarchive that has reported that 
+     * storage has failed. If this is the case return true else false
+     *
+     * @param arcFileName  the file being stored
+     * @return true     only if at least one bitarchive report UPLOAD_FAILED
+     */
     private boolean oneBitArchiveHasFailed(String arcFileName) {
         for (String baname : connectedBitarchives.keySet()) {
             if (ad.getState(arcFileName, baname)
@@ -424,6 +439,13 @@ public class ArcRepository implements CleanupIF {
         return false;
     }
 
+    /**
+     * Checks if no bitarchive that has reported that upload is in started state.
+     * If this is the case return true else false
+     *
+     * @param arcFileName  the file being stored
+     * @return true     only if no bitarchive report UPLOAD_STARTED
+     */
     private boolean noBitArchiveInStateUploadStarted(String arcFileName) {
         for (String baname : connectedBitarchives.keySet()) {
             if (ad.getState(arcFileName, baname)
@@ -515,7 +537,8 @@ public class ArcRepository implements CleanupIF {
      * @param bitarchiveName
      *            the bitarchive that could not upload the file
      */
-    private void processUploadFailed(String arcfileName, String bitarchiveName) {
+    private void processUploadFailed(String arcfileName, 
+                                     String bitarchiveName) {
         log.warn("Upload failed for ARC file '" + arcfileName
                 + "' to bit archive '" + bitarchiveName + "'");
 
@@ -558,7 +581,7 @@ public class ArcRepository implements CleanupIF {
         }
 
         // Parse results
-        // if legel result is found it is placed in reportedChecksum
+        // if legal result is found it is placed in reportedChecksum
         // if illegal or errors occurs reportedChecksum is set to ""
         RemoteFile checksumResFile = msg.getResultFile();
         String reportedChecksum = "";
@@ -567,6 +590,7 @@ public class ArcRepository implements CleanupIF {
             checksumResFile instanceof NullRemoteFile) {
             log.debug("Message '" + msg.getID()
                             + "' returned no results"
+                            + (checksumResFile == null ? " (was null)" : "")
                             + "\nNo checksum to use for file '"
                             + arcfileName + "'");
         } else {
@@ -649,7 +673,7 @@ public class ArcRepository implements CleanupIF {
             //Check line format
             ignoreLine = (tokens.length == 0);
             if (tokens.length != 2 && !ignoreLine) { //wrong format
-                throw new IllegalState("Readen checksum line " +
+                throw new IllegalState("Read checksum line " +
                    (tokens.length == 0 ? "was empty": "had unexpected format")
                    + " '" + line + "'");
             }
@@ -661,15 +685,16 @@ public class ArcRepository implements CleanupIF {
                 if (checksum.length() == 0) { //wrong format of checksum
                     //do not exit - there may be more checksums
                     ignoreLine = true;
-                    log.warn("There were an empty checksum in result for checksums" 
-                             + "to arc-file '" + arcfileName 
+                    log.warn("There were an empty checksum in result for " 
+                             + "checksums to arc-file '" + arcfileName 
                              + "(line: '" + line + "')");
                 } else {
                     if (!readFileName.equals(arcfileName)) { //wrong arcfile
                         // do not exit - there may be more checksums
                         ignoreLine = true;
                         log.warn("There were an unexpected arc-file name in " 
-                                + "checksum result for arc-file '" + arcfileName
+                                + "checksum result for arc-file '" 
+                                + arcfileName
                                 + "'" + "(line: '" + line + "')");
                     }
                 }
@@ -727,10 +752,10 @@ public class ArcRepository implements CleanupIF {
      * @param orgChecksum
      *            The original checksum.
      * @param reportedChecksum
-     *            The checksum calculated by the bitarchive This value is "", if
-     *            an error has occured (except reply NOT ok from bitarchive).
+     *            The checksum calculated by the bitarchive. This value is "",
+     *            if an error has occured (except reply NOT ok from bitarchive).
      * @param checksumReadOk
-     *            Tells whether the checksum was readen ok by batch job.
+     *            Tells whether the checksum was read ok by batch job.
      */
     private synchronized void processCheckSum(String arcFileName,
             String bitarchiveName, String orgChecksum,
@@ -745,13 +770,13 @@ public class ArcRepository implements CleanupIF {
         //Log if we do not find file outstanding
         //we proceed anyway in order to be sure to update stae of file
         if (!outstandingRemoteFiles.containsKey(arcFileName)) {
-            log.warn("Could not find arc-file as outstanding " +
-                      "remote file: '" + arcFileName + "'");
+            log.warn("Could not find arc-file as outstanding " 
+                      + "remote file: '" + arcFileName + "'");
         }
 
         //If everything works fine complete process of this checksum
-        if (orgChecksum.equals(reportedChecksum) &&
-            !reportedChecksum.equals("")) {
+        if (orgChecksum.equals(reportedChecksum) 
+             && !reportedChecksum.isEmpty() ) {
             
             // Checksum is valid and job matches expected results
             ad.setState(arcFileName, bitarchiveName,
@@ -765,13 +790,14 @@ public class ArcRepository implements CleanupIF {
         } 
 
         //Log error or retry upload
-        if (reportedChecksum.equals("") ) { //no checksum found
+        if (reportedChecksum.isEmpty()) { //no checksum found
             if (checksumReadOk) { //no errors in finding no checksum
                 if (retryOk(bitarchiveName, arcFileName)) { // we can retry
                     if (outstandingRemoteFiles.containsKey(arcFileName)) {
                         RemoteFile rf = outstandingRemoteFiles.get(arcFileName);
-                        //Retry upload only if allowed and in case we are sure that the
-                        //empty checksum means that the arcfile is not in the archive
+                        //Retry upload only if allowed and in case we are sure 
+                        //that the empty checksum means that the arcfile is not 
+                        //in the archive
                         log.debug("Retrying upload of '" + arcFileName + "'");
                         ad.setState(rf.getName(), bitarchiveName,
                                 BitArchiveStoreState.UPLOAD_STARTED);
@@ -780,14 +806,14 @@ public class ArcRepository implements CleanupIF {
                         return;
                     } //else logning was done allready above
                 } else { //cannot retry
-                    log.warn("Cannot do more retry upload of " +
-                        "remote file: '" + arcFileName + "' to '"
+                    log.warn("Cannot do more retry upload of "
+                        + "remote file: '" + arcFileName + "' to '"
                         + bitarchiveName + "', reported checksum='"
                         + reportedChecksum + "'" );
                 }
             } else { //error in getting checksum
-                log.warn("Cannot retry upload of " +
-                    "remote file: '" + arcFileName + "' to '"
+                log.warn("Cannot retry upload of " 
+                    + "remote file: '" + arcFileName + "' to '"
                     + bitarchiveName + "', reported checksum='"
                     + reportedChecksum + "' due to earlier batchjob" 
                     + " error." );
@@ -831,7 +857,8 @@ public class ArcRepository implements CleanupIF {
             return true;
         }
 
-        if (retryCount >= Settings.getInt(ArchiveSettings.ARCREPOSITORY_UPLOAD_RETRIES)) {
+        if (retryCount  
+            >= Settings.getInt(ArchiveSettings.ARCREPOSITORY_UPLOAD_RETRIES)) {
             return false;
         }
 
@@ -928,7 +955,7 @@ public class ArcRepository implements CleanupIF {
             String refchecksum = ad.getCheckSum(msg.getArcfileName());
             if (msg.getCheckSum().equals(refchecksum)) {
                 throw new ArgumentNotValid(
-                        "Attempting to remove file with correct checksum. File="
+                       "Attempting to remove file with correct checksum. File="
                                 + msg.getArcfileName() + "; with checksum:"
                                 + msg.getCheckSum() + ";");
             }
@@ -938,8 +965,9 @@ public class ArcRepository implements CleanupIF {
         log.warn("Requesting remove of file '" + msg.getArcfileName()
                  + "' with checksum '" + msg.getCheckSum()
                  + "' from: '" + msg.getReplicaId() + "'");
-        NotificationsFactory.getInstance().errorEvent("Requesting remove of file '"
-                                 + msg.getArcfileName()
+        NotificationsFactory.getInstance().errorEvent(
+                "Requesting remove of file '"
+                 + msg.getArcfileName()
                  + "' with checksum '" + msg.getCheckSum()
                  + "' from: '" + msg.getReplicaId() + "'");
         BitarchiveClient bac = getBitarchiveClientFromReplicaId(msg
