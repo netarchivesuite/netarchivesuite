@@ -123,12 +123,13 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param appID the ID of the bitarchive that generated the life sign
      */
     public void signOfLife(String appID) {
+        ArgumentNotValid.checkNotNullOrEmpty(appID, "String appID");
         long now = System.currentTimeMillis();
         if ((!bitarchiveSignsOfLife.containsKey(appID))) {
             log.info("Bitarchive '" + appID + "' is now known by the bitarchive"
                      + " monitor");
         }
-        log.trace("Received sign of life from '" + appID + "'");
+        log.trace("Received sign of life from bitarchive '" + appID + "'");
         bitarchiveSignsOfLife.put(appID, now);
     }
 
@@ -227,6 +228,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                                              "String bitarchiveBatchID");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID,
                                              "String bitarchiveID");
+        ArgumentNotValid.checkNotNull(exceptions, "exceptions");
+        ArgumentNotValid.checkNotNegative(noOfFilesProcessed, 
+                "int noOfFilesProcessed");
+       
         BatchJobStatus bjs = runningBatchJobs.get(bitarchiveBatchID);
         if (bjs == null) {
             // If the batch ID does not correspond to any of the pending batch
@@ -354,8 +359,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                         bitarchiveBatchID, "batch_aggregation",
                         FileUtils.getTempDir());
             } catch (IOException e) {
-                throw new IOFailure("Unable to create file for batch output",
-                                    e);
+                final String errMsg = "Unable to create file for batch output";
+                log.warn(errMsg);
+                throw new IOFailure(errMsg, e);
             }
             this.filesFailed = new ArrayList<File>();
             //Null indicates no error
@@ -411,7 +417,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 remoteFile.cleanup();
                 return;
             }
-
+            // found is set to true, if bitarchiveID was among
+            // the missingRespondents, before it was deleted.
             boolean found = missingRespondents.remove(bitarchiveID);
 
             // Handle the reply, even though the bitarchive was not known to be
@@ -523,6 +530,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          *                          for.
          */
         public BatchTimeoutTask(String bitarchiveBatchID) {
+            ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
+                    "String bitarchiveBatchID");
             this.bitarchiveBatchID = bitarchiveBatchID;
         }
 

@@ -213,9 +213,10 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             throw new ArgumentNotValid(errorMsg, e);
         }
         if (!replyGetMsg.isOk()) {
-            log.warn("GetMessage failed: '" + replyGetMsg.getErrMsg() + "'");
-            throw new ArgumentNotValid(
-                    "GetMessage failed: '" + replyGetMsg.getErrMsg() + "'");
+            final String errMsg = "GetMessage failed: '"
+                + replyGetMsg.getErrMsg() + "'"; 
+            log.warn(errMsg);
+            throw new ArgumentNotValid(errMsg);
         }
         return replyGetMsg.getRecord();
     }
@@ -270,12 +271,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      */
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "file");
-        if (!file.isFile()) {
-            throw new ArgumentNotValid("The file '" + file.getPath() + "' is "
-                                       + "not an existing file.");
-        }
+        ArgumentNotValid.checkTrue(file.isFile(),
+                "The file '" + file.getPath() + "' is "
+                + "not an existing file.");
 
-        String messages = "";
+        StringBuilder messages = new StringBuilder();
         for (long i = 0; i < storeRetries; i++) {
             StoreMessage outMsg = null;
             try {
@@ -299,7 +299,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                             + file.getPath() + "' on attempt number " + (i + 1)
                             + " of " + storeRetries;
                     log.warn(msg);
-                    messages += (msg + "\n");
+                    messages.append(msg + "\n");
                 } else {
                     String msg = "The returned message '" + replyMsg
                             + "' was not ok"
@@ -308,15 +308,15 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                             + " of " + storeRetries + ". Error message was '"
                             + replyMsg.getErrMsg() + "'";
                     log.warn(msg);
-                    messages += (msg + "\n");
+                    messages.append(msg + "\n");
                 }
             } catch (NetarkivetException e) {
                 String msg = "Client-side exception occurred while storing '"
                         + file.getPath() + "' on attempt number " + (i + 1)
                         + " of " + storeRetries + ".";
                 log.warn(msg, e);
-                messages += (msg + "\n");
-                messages += ExceptionUtils.getStackTrace(e);
+                messages.append(msg + "\n");
+                messages.append(ExceptionUtils.getStackTrace(e));
             } finally {
                 if (outMsg != null) {
                     cleanUpAfterStore(outMsg);
@@ -393,12 +393,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** Request update of admin data to specific state.
      *
-     * TODO Don't ignore reply!
-     *
      * @param fileName The file for which admin data should be updated.
      * @param bitarchiveName The bitarchive for which admin data should be
      * updated.
      * @param newval The new value in admin data.
+     * @throws IOFailure If the reply to the request update timed out.
      * */
     public void updateAdminData(String fileName, String bitarchiveName,
             BitArchiveStoreState newval) {
@@ -413,15 +412,17 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         NotificationsFactory.getInstance().errorEvent(msg);
         AdminDataMessage aMsg =
             new AdminDataMessage(fileName, bitarchiveName, newval);
-        NetarkivetMessage replyMsg = sendAndWaitForOneReply(aMsg, 0);
+        // We only need to know that a reply to our message has arrived. 
+        // The replyMessage is thrown away, because it does not contain 
+        // any more useful knowledge.
+        sendAndWaitForOneReply(aMsg, 0);
     }
 
     /** Request update of admin data to specific checksum.
      *
-     * TODO Don't ignore reply!
-     *
      * @param filename The file for which admin data should be updated.
      * @param checksum The new checksum for the file
+     * @throws IOFailure If the reply to the request update timed out.
      */
     public void updateAdminChecksum(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
@@ -432,7 +433,10 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         AdminDataMessage aMsg = new AdminDataMessage(filename, checksum);
-        NetarkivetMessage replyMsg = sendAndWaitForOneReply(aMsg, 0);
+        // We only need to know that a reply to our message has arrived. 
+        // The replyMessage is thrown away, because it does not contain 
+        // any more useful knowledge.
+        sendAndWaitForOneReply(aMsg, 0);
     }
 
     /**
