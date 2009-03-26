@@ -548,12 +548,12 @@ private void checkThatNoLongerExist(File fileThatNoLongerShouldExist) {
 
 
 
-    private void findAndVerifyMetadata(File metadataArcFile, String url
-    ) throws IOException {
+    private void findAndVerifyMetadata(File metadataArcFile, String url)
+    throws IOException {
         ARCReader ar = null;
         try {
             ar = ARCReaderFactory.get(metadataArcFile);
-            Iterator it = ar.iterator();
+            Iterator<ArchiveRecord> it = ar.iterator();
             while (it.hasNext()) {
                 ARCRecord record = (ARCRecord) it.next();
                 String thisUrl = record.getMetaData().getUrl();

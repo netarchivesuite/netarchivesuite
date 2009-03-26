@@ -50,6 +50,7 @@ public class MySQLSpecificsTester extends TestCase {
     public void testLoadClass() {
         DBSpecifics instance = DBSpecifics.getInstance(
                 CommonSettings.DB_SPECIFICS_CLASS);
+        assertNotNull("instance should not be null", instance);
     }
     
    public void testGetDriverClassName() {

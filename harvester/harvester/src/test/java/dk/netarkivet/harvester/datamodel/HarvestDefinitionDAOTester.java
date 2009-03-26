@@ -579,9 +579,12 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
 
     public void testGetHarvestRunInfo() throws Exception {
+        // enforce migration of domain database.
         DomainDAO dao = DomainDAO.getInstance();
+        assertNotNull("dao should never be null", dao);
         // Migrate
         TemplateDAO tdao = TemplateDAO.getInstance();
+        assertNotNull("tdao should never be null", tdao);
         ScheduleDAO sdao = ScheduleDAO.getInstance();
         HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
         JobDAO jdao = JobDAO.getInstance();

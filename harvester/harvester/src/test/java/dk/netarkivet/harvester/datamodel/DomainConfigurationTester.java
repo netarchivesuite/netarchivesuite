@@ -82,7 +82,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
                 TestInfo.CONFIGURATION_NAME, cfg.getName());
         assertEquals("Expecting domain that we created the object with",
                 wd, cfg.getDomain());
-        Iterator seeds = cfg.getSeedLists();
+        Iterator<SeedList> seeds = cfg.getSeedLists();
         assertEquals("Expecting the seedlists that we created the object with",
                 TestInfo.seedlist,
                 seeds.next());

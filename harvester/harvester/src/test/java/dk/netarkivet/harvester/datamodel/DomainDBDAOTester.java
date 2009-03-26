@@ -96,7 +96,9 @@ public class DomainDBDAOTester extends DataModelTestCase {
 
     /** This stresstests the DB DAOs by running several updates in parallel. */
     public void testMultipleSavepoints() {
+        // Enforce possible database migration
         DomainDAO dummy = DomainDAO.getInstance();
+        assertNotNull("dummy should not be null", dummy);
         final int maxLoop = 300;
         // Make four threads doing updates in the daos
         final int[] done = new int[1];
@@ -105,7 +107,8 @@ public class DomainDBDAOTester extends DataModelTestCase {
             public void run() {
                 try {
                     ScheduleDAO dao = ScheduleDAO.getInstance();
-                    RepeatingSchedule s = (RepeatingSchedule)Schedule.getInstance(null, 1, new HourlyFrequency(1), "foo", "bar");
+                    RepeatingSchedule s = (RepeatingSchedule)Schedule.getInstance(
+                            null, 1, new HourlyFrequency(1), "foo", "bar");
                     dao.create(s);
                     for (int i = 0; i < maxLoop; i++) {
                         s.setComments("bar" + i);
@@ -128,12 +131,14 @@ public class DomainDBDAOTester extends DataModelTestCase {
                     HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
                     DomainDAO ddao = DomainDAO.getInstance();
                     Domain d = ddao.read("netarkivet.dk");
-                    DomainConfiguration dc = d.getDefaultConfiguration();
+                    d.getDefaultConfiguration();
                     List<DomainConfiguration> dcs = new ArrayList<DomainConfiguration>(1);
-                    final Schedule schedule = Schedule.getInstance(null, 1, new HourlyFrequency(1), "arg", "splat");
+                    final Schedule schedule = Schedule.getInstance(
+                            null, 1, new HourlyFrequency(1), "arg", "splat");
                     ScheduleDAO sDao = ScheduleDAO.getInstance();
                     sDao.create(schedule);
-                    PartialHarvest ph = HarvestDefinition.createPartialHarvest(dcs, schedule, "testme", "here");
+                    PartialHarvest ph = HarvestDefinition.createPartialHarvest(
+                            dcs, schedule, "testme", "here");
                     dao.create(ph);
                     for (int i = 0; i < maxLoop; i++) {
                         ph.setComments("foo" + i);
