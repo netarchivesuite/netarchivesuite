@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.indexserver;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +30,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
@@ -49,6 +48,9 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 
 
+/**
+ * Unit test(s) for the DedupCrawlLogIndexCache class.
+ */
 public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
     public DedupCrawlLogIndexCacheTester(String s) {
         super(s);
@@ -67,26 +69,38 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         Map<String, String> origins = new HashMap<String, String>(8);
 
         // "job" #4
-        origins.put("http://www.kb.dk/bevarbogen/images/menu_03.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220");
-        origins.put("http://www.kb.dk/bevarbogen/images/menu_06.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820");
-        origins.put("http://www.kb.dk/bevarbogen/images/menu_07.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220");
-        origins.put("http://www.kb.dk/bevarbogen/images/menutop.gif", "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42");
+        origins.put("http://www.kb.dk/bevarbogen/images/menu_03.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,92248220");
+        origins.put("http://www.kb.dk/bevarbogen/images/menu_06.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95056820");
+        origins.put("http://www.kb.dk/bevarbogen/images/menu_07.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,95468220");
+        origins.put("http://www.kb.dk/bevarbogen/images/menutop.gif",
+                "54-8-20050620183552-00016-kb-prod-har-002.kb.dk.arc,42");
         origins.put("http://www.kb.dk/bevarbogen/script.js", "check-arc,42");
 
         // "job" #1
-        origins.put("http://www.kb.dk/clear.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420");
-        origins.put("http://www.kb.dk/dither.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420");
-        origins.put("http://www.kb.dk/dither_blaa.gif", "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420");
+        origins.put("http://www.kb.dk/clear.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,55983420");
+        origins.put("http://www.kb.dk/dither.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,53985420");
+        origins.put("http://www.kb.dk/dither_blaa.gif",
+                "54-8-20050620183552-00016-kb-prod-har-001.kb.dk.arc,58593420");
 
         Map<Long, File> files = new HashMap<Long, File>();
         files.put(1L, TestInfo.CRAWL_LOG_1);
         files.put(4L, TestInfo.CRAWL_LOG_4);
 
+        Set<Long> requiredSet = new HashSet<Long>();
+        requiredSet.add(1L);
+        requiredSet.add(4L);
+        
+        
         DedupCrawlLogIndexCache cache = new DedupCrawlLogIndexCache();
         File resultFile = cache.getCacheFile(files.keySet());
         setDummyCDXCache(cache);
 
-        cache.combine(files);
+        cache.combine(files, requiredSet);
 
         assertTrue("Result file should have contents after combining",
                 resultFile.length() > 0);
@@ -147,7 +161,8 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         } catch (InvocationTargetException e) {
             // Real exception gets wrapped in the invoke call
             UnknownID cause = (UnknownID)e.getCause();
-            StringAsserts.assertStringContains("Should have job ID mentioned in message",
+            StringAsserts.assertStringContains(
+                    "Should have job ID mentioned in message",
                     "2", cause.getMessage());
         }
     }

@@ -31,6 +31,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -65,7 +66,8 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
      *
      * @param filesFound A map of IDs and the files caching their content.
      */
-    protected void combine(Map<Long, File> filesFound) {
+    protected void combine(Map<Long, File> filesFound,
+            Set<Long> filesRequired) {        
         File resultFile = getCacheFile(filesFound.keySet());
         concatenateFiles(filesFound.values(), resultFile);
         sortFile(resultFile);

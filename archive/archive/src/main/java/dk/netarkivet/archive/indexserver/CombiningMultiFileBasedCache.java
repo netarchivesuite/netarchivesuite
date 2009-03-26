@@ -72,7 +72,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
         Map<T, File> filesFound = prepareCombine(ids);
         File resultFile = getCacheFile(ids);
         if (filesFound.size() == ids.size()) {
-            combine(filesFound);
+            combine(filesFound, ids);
         } else {
             FileUtils.remove(resultFile);
         }
@@ -104,6 +104,7 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
      *
      * @param filesFound The files that were found for the IDs in the raw
      * data cache.  The map must not contain any null values.
+     * @param filesRequired The set of IDs required
      */
-    protected abstract void combine(Map<T, File> filesFound);
+    protected abstract void combine(Map<T, File> filesFound, Set<T> filesRequired);
 }

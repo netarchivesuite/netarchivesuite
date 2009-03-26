@@ -82,7 +82,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      */
     protected Map<Long, File> prepareCombine(Set<Long> IDs) {
         log.info("Starting to generate " + getCacheDir().getName()
-                 + " for jobs " + IDs);
+                 + " for jobs: " + IDs);
         Map<Long, File> returnMap = super.prepareCombine(IDs);
         Set<Long> missing = new HashSet<Long>();
         for (Long ID : returnMap.keySet()) {
@@ -91,6 +91,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 missing.add(ID);
             }
         }
+        log.info("Data not found for jobs: " +  missing);
         for (Long ID : missing) {
             returnMap.remove(ID);
         }
@@ -100,11 +101,17 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
     /** Combine a number of crawl.log files into one Lucene index.  This index
      * is placed as gzip files under the directory returned by getCacheFile().
      *
-     * @param rawfiles The map from job ID into crawl.log contents.  No
+     * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
+     * @param askedJobIds The set of jobIds actually needed
      */
-    protected void combine(Map<Long, File> rawfiles) {
-        File resultFile = getCacheFile(rawfiles.keySet());
+    protected void combine(Map<Long, File> rawfiles, Set<Long> askedJobIds) {
+        // Hack to fix bug 1566:
+        // base the name of the cachefile on the askedJobIDs instead
+        // of rawfiles.keySet()
+        //Old line: 
+        // File resultFile = getCacheFile(rawfiles.keySet());
+        File resultFile = getCacheFile(askedJobIds);
         String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
         try {
             // Setup Lucene for indexing our crawllogs
@@ -204,6 +211,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         try {
             final File tmpFile = File.createTempFile("sorted", "cdx",
                     FileUtils.getTempDir());
+            // This throws IOFailure, if the sorting operation fails 
             FileUtils.sortCDX(cdxcache.getCacheFile(cached), tmpFile);
             tmpFile.deleteOnExit();
             return tmpFile;
@@ -223,6 +231,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
         try {
             File tmpCrawlLog = File.createTempFile("sorted", "crawllog",
                     FileUtils.getTempDir());
+            // This throws IOFailure, if the sorting operation fails
             FileUtils.sortCrawlLog(file, tmpCrawlLog);
             tmpCrawlLog.deleteOnExit();
             return tmpCrawlLog;

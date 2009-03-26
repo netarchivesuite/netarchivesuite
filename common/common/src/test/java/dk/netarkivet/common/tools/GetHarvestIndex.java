@@ -67,7 +67,6 @@ public class GetHarvestIndex {
         Index<Set<Long>> index = cache.getIndex(jobIDs);
         }
 
-    
 
     private static void dieWithUsage() {
         System.out.println("Usage: java " + GetHarvestIndex.class.getName()

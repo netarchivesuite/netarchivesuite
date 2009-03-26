@@ -21,18 +21,19 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.indexserver;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.FileAsserts;
 
-
+/**
+ * Unit test(s) for the CDXIndexCache class.
+ */
 public class CDXIndexCacheTester extends CacheTestCase {
     public CDXIndexCacheTester(String s) {
         super(s);
@@ -53,7 +54,10 @@ public class CDXIndexCacheTester extends CacheTestCase {
         Map<Long, File> files = new HashMap<Long, File>();
         files.put(4L, TestInfo.METADATA_FILE_4);
         files.put(3L, TestInfo.METADATA_FILE_3);
-        cache.combine(files);
+        Set<Long> requiredSet = new HashSet<Long>();
+        requiredSet.add(3L);
+        requiredSet.add(4L);
+        cache.combine(files, requiredSet);
         File cacheFile = cache.getCacheFile(files.keySet());
         FileAsserts.assertFileNumberOfLines("Should have files 3 and 4",
                 cacheFile,

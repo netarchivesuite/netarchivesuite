@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.indexserver;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +35,9 @@ import java.util.Set;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 
+/**
+ * Unit test(s) for the CombiningMultiFileBasedCache class.
+ */
 public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
     public CombiningMultiFileBasedCacheTester(String s) {
         super(s);
@@ -49,6 +49,7 @@ public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
         CombiningMultiFileBasedCache<Integer> cache =
                 new CombiningMultiFileBasedCache<Integer>("test1",
                         new FileBasedCache<Integer>("rawtest1") {
+                    
                             public File getCacheFile(Integer id) {
                                 return new File(TestInfo.CRAWLLOGS_DIR,
                                         "crawl-" + id + ".log");
@@ -65,7 +66,7 @@ public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
                             }
                         }) {
 
-                    protected void combine(Map<Integer, File> filesFound) {
+                    protected void combine(Map<Integer, File> filesFound, Set<Integer> requiredSet) {
                         File resultFile = getCacheFile(filesFound.keySet());
                         combined.clear();
                         combined.putAll(filesFound);
@@ -75,6 +76,7 @@ public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
                             throw new IOFailure("Exception touching file", e);
                         }
                     }
+                  
                 };
 
         // Test that combine is call on all ids (1,4) in set.
