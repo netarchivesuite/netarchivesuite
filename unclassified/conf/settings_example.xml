@@ -502,8 +502,13 @@
                  environment, e.g., "KB" and "SB". 
                  NOTE: settings for checksum replicas are not use yet -->                 
             <replica>
+                <!--  the identifier of the replica. -->  
                 <replicaId>SB</replicaId>
+                <!--  the type of the replica. Bitarchive is currently 
+                	the only type used. A "checksum" type is implemented but not used by 
+                	NetarchiveSuite. -->
                 <replicaType>bitarchive</replicaType>
+                <!--  The name of the replica -->
                 <replicaName>SBB</replicaName>
             </replica>
             <replica>
@@ -524,6 +529,9 @@
         <!-- The name of the application, fx. "BitarchiveServerApplication".
              The monitor puts this with each log message -->
         <applicationName>NA</applicationName>
+        <!-- If more instances of the same application is running
+        	on a server, you need to distinguish between them by using distinct
+        	applicationInstanceIds -->
         <applicationInstanceId>XX</applicationInstanceId>
     </common>
     <harvester>
@@ -629,7 +637,9 @@
                      should probably be fairly large.  It can be specified in
                      the same way as for the -Xmx argument to Java, e.g.
                      512M, 2G etc.-->
-                <!-- the username/password used to connect to Heritrix via JMX. These values must correspond to what is written in jmxremote.password -->
+                <!-- the username/password used to connect to Heritrix via JMX. 
+                	These values must correspond to what is written in jmxremote.password 
+               	-->
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
@@ -689,10 +699,12 @@
         <baseDir>viewerproxy</baseDir>
     </viewerproxy>
     <monitor>
-        <!-- the username/password used to connect to the all Mbeanservers started by the application. These values must correspond to what is written in jmxremote.password -->
+        <!-- the username/password used to connect to the all Mbeanservers started by the application. 
+        	These values must correspond to what is written in jmxremote.password -->
 	    <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
         <logging>
+        	<!-- the number of logs-entries visible in the Systemstate -->
             <historySize>100</historySize>
         </logging>
     </monitor>

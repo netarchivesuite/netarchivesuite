@@ -119,16 +119,25 @@ public class ChannelID implements Serializable {
         String userId = environmentName;
         String id = "";
         if (useNodeId) {
+            // Replace the '.' in the IP-address with '_'
             id = SystemUtils.getLocalIP().replace('.', '_');
             if (useAppInstId) {
-                id += "_" + applicationAbbreviation;
+                id += Channels.CHANNEL_PART_SEPARATOR 
+                    + applicationAbbreviation;
                 if (!applicationInstanceId.isEmpty()) {
-                    id += ("_" + applicationInstanceId);
+                    id += (Channels.CHANNEL_PART_SEPARATOR 
+                            + applicationInstanceId);
                 }
             }
         }
-        return userId + "_" + replicaId + "_" + appPref
-            + (id.equals("") ? "" : ("_" + id));
+        
+        String resultingName = userId + Channels.CHANNEL_PART_SEPARATOR + replicaId 
+            + Channels.CHANNEL_PART_SEPARATOR + appPref;
+        if (!id.isEmpty()) {
+            resultingName += Channels.CHANNEL_PART_SEPARATOR + id; 
+        }
+        
+        return resultingName;
     }
     /**
      * Getter for the channel name.
@@ -156,17 +165,17 @@ public class ChannelID implements Serializable {
         return isTopic;
     }
     /**
-     * Method used by Java serialization.
+     * Method used by Java deserialization.
      * Our coding guidelines prescribes that this method should always
      * be implemented, even if it only calls the default method:
      * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
      * See also "Effective Java", pages 219 and 224.
-     * @param s
+     * @param ois the ObjectInputStream used to read in the object
      * @throws IOFailure if Java could not deserialize the object.
      */
-    private void readObject(ObjectInputStream s) {
+    private void readObject(ObjectInputStream ois) {
         try {
-            s.defaultReadObject();
+            ois.defaultReadObject();
         } catch (Exception e) {
             throw new IOFailure("Standard deserialization of ChannelID failed.",
                 e);
@@ -176,14 +185,14 @@ public class ChannelID implements Serializable {
      * Method used by Java serialization.
      * Our coding guidelines prescribes that this method should always
      * be implemented, even if it only calls the default method:
-     * http://asterix.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
+     * http://kb-prod-udv-001.kb.dk/twiki/bin/view/Netarkiv/ImplementeringOgTestAfSerializable
      * See also "Effective Java", pages 219 and 224.
-     * @param s
+     * @param oos the ObjectOutputStream used to serialize the object.
      * @throws IOFailure if Java could not serialize the object.
      */
-    private void writeObject(ObjectOutputStream s) {
+    private void writeObject(ObjectOutputStream oos) {
         try {
-            s.defaultWriteObject();
+            oos.defaultWriteObject();
         } catch (Exception e) {
             throw new IOFailure("Standard serialization of ChannelID failed.",
                     e);
@@ -238,10 +247,10 @@ public class ChannelID implements Serializable {
         }
         String shortName = p[p.length - 1];
         //put uppercase letters into abbr
-        String abbr ="";
+        String abbr = "";
         for (int i = 0; i< shortName.length(); i++) {
             if (Character.isUpperCase(shortName.charAt(i))) {
-                abbr += shortName.substring(i, i+1);
+                abbr += shortName.substring(i, i + 1);
             }
         }
         //return found abbreviation

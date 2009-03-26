@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 package dk.netarkivet.common.webinterface;
@@ -47,7 +47,6 @@ import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
@@ -55,12 +54,12 @@ import dk.netarkivet.common.utils.StringTree;
 /**
  * This is a utility class containing methods for use in the GUI for
  * netarkivet.
- *
  */
-
 public class HTMLUtils {
-    private static String REPLACEABLE_1 = "STRING_1";
-    private static String HEADER = "<!DOCTYPE html "
+    /** Web page title placeholder. */
+    private static String TITLE_PLACEHOLDER = "STRING_1";
+    /** Web page header template. */
+    private static String WEBPAGE_HEADER_TEMPLATE = "<!DOCTYPE html "
             + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
             + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
             + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
@@ -71,7 +70,7 @@ public class HTMLUtils {
             + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
             + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
             + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n"
-            + "<title>" + REPLACEABLE_1 + "</title>\n"
+            + "<title>" + TITLE_PLACEHOLDER + "</title>\n"
             + "<script type=\"text/javascript\">\n"
             + "<!--\n"
             + "function giveFocus() {\n"
@@ -105,33 +104,40 @@ public class HTMLUtils {
      * Private constructor. There is no reason to instantiate this class.
      */
     private HTMLUtils() {
-        //
+        // Nothing to initialize
     }
 
+
     /**
-     * Url encodes a string to UTF-8. This encodes _all_ non-letter non-number
-     * characters except '-', '_' and '.'. / and : are encoded.
+     * Url encodes a string in UTF-8. This encodes _all_ non-letter non-number
+     * characters except '-', '_' and '.'.
+     * The characters '/' and ':' are encoded.
      * @param s the string to encode
-     * @return  the encoded string
+     * @return the encoded string
      */
     public static String encode(String s) {
+        ArgumentNotValid.checkNotNull(s, "s");
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new ArgumentNotValid("java.net.Encoder does not support UTF-8", e);
+            throw new ArgumentNotValid(URLEncoder.class.getName()
+                    + " does not support UTF-8", e);
         }
     }
 
     /**
-     * Url decodes a string in UTF-8.
+     * Url decodes a string encoded in UTF-8.
      * @param s the string to decode
-     * @return  the decoded string
+     * @return the decoded string
      */
     public static String decode(String s) {
+        ArgumentNotValid.checkNotNull(s, "s");
         try {
             return URLDecoder.decode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new ArgumentNotValid("java.net.Decoder does not support UTF-8", e);
+            throw new ArgumentNotValid(
+                    URLDecoder.class.getName()
+                    + " does not support UTF-8", e);
         }
     }
 
@@ -145,6 +151,7 @@ public class HTMLUtils {
      */
     public static void generateHeader(PageContext context)
             throws IOException {
+        ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest())
                 .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
@@ -157,17 +164,20 @@ public class HTMLUtils {
      * the navigation menu, and links for changing the language.
      * @param title An internationalised title of the page.
      * @param context The context of the web page request.
-     * @throws IOException if an error occurs during writing of output.
+     * @throws IOException if an error occurs during writing to output.
      */
     public static void generateHeader(String title, PageContext context)
             throws IOException {
+        ArgumentNotValid.checkNotNull(title, "title");
+        ArgumentNotValid.checkNotNull(context, "context");
+     
         JspWriter out = context.getOut();
         String url = ((HttpServletRequest) context.getRequest())
                 .getRequestURL().toString();
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
-        out.print(HEADER.replace(REPLACEABLE_1, title));
+        out.print(WEBPAGE_HEADER_TEMPLATE.replace(TITLE_PLACEHOLDER, title));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
@@ -179,11 +189,12 @@ public class HTMLUtils {
     }
 
     /**
-     * Gets Locale according to header context information
+     * Get the locale according to header context information.
      * @param context The context of the web page request.
      * @return The locale given in the the page response.
      */
     public static Locale getLocaleObject(PageContext context) {
+        ArgumentNotValid.checkNotNull(context, "context");
         return context.getResponse().getLocale();
     }
 
@@ -227,8 +238,9 @@ public class HTMLUtils {
      * @param locale The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
-    private static void generateNavigationTree(
-            JspWriter out, String url, Locale locale)  throws IOException {
+    private static void generateNavigationTree(JspWriter out,
+                                               String url, Locale locale)
+            throws IOException {
         out.print("<td valign=\"top\" id=\"menu\">\n");
         // The list of menu items is presented as a 1-column table
         out.print("<table id=\"menu_table\">\n");
@@ -248,9 +260,10 @@ public class HTMLUtils {
     /**
      * Writes out footer information to close the page.
      * @param out the writer to which the information is written
-     * @throws IOException ifthe output cannot be written
+     * @throws IOException if the output cannot be written
      */
     public static void generateFooter(JspWriter out) throws IOException {
+        ArgumentNotValid.checkNotNull(out, "out");
         // Close the element containing the page content
         out.print("</td>\n");
         // Close the single row in the table
@@ -264,6 +277,8 @@ public class HTMLUtils {
         out.print("</div>");
         // Close the page
         out.print("</body></html>");
+
+
     }
 
     /** Create a table element containing the given string, escaping HTML
@@ -274,6 +289,7 @@ public class HTMLUtils {
      * @return The same string escaped and enclosed in td tags.
      */
     public static String makeTableElement(String s) {
+        ArgumentNotValid.checkNotNull(s, "s");
         return "<td>" + escapeHtmlValues(s) + "</td>";
     }
 
@@ -285,6 +301,7 @@ public class HTMLUtils {
      * @return The same string escaped and enclosed in th tags.
      */
     public static String makeTableHeader(String contents) {
+        ArgumentNotValid.checkNotNull(contents, "contents");
         return "<th>" + escapeHtmlValues(contents) + "</th>";
     }
 
@@ -297,6 +314,7 @@ public class HTMLUtils {
      * @return The same string escaped and enclosed in td tags.
      */
     public static String makeTableRow(String... contents) {
+        ArgumentNotValid.checkNotNull(contents, "contents");
         StringBuilder sb = new StringBuilder("<tr>");
         for (String element: contents) {
             sb.append(element);
@@ -324,7 +342,7 @@ public class HTMLUtils {
     /**
      * Returns the toString() value of an object or a hyphen if the
      * argument is null.
-     * @param o
+     * @param o the given object
      * @return o.toString() or "-" if o is null
      */
     public static String nullToHyphen(Object o) {
@@ -358,6 +376,7 @@ public class HTMLUtils {
      * @return The same string, encoded to be safely placed in a URL in HTML.
      */
     public static String encodeAndEscapeHTML(String input) {
+        ArgumentNotValid.checkNotNull(input, "input");
         return escapeHtmlValues(encode(input));
     }
 
@@ -420,6 +439,7 @@ public class HTMLUtils {
      * @param request The servlet request object
      */
     public static void setUTF8(HttpServletRequest request) {
+        ArgumentNotValid.checkNotNull(request, "request");
         // Why is this in an if block? Suppose we forward from a page where
         // we read file input from the request. Trying to set the character
         // encoding again here will throw an exception!
@@ -447,7 +467,7 @@ public class HTMLUtils {
      * @throws ArgumentNotValid if the given url or locale is null or
      * url is empty.
      */
-    public static String getTitle(String url, Locale locale) throws UnknownID {
+    public static String getTitle(String url, Locale locale) {
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ArgumentNotValid.checkNotNullOrEmpty(url, "String url");
         for (SiteSection section : SiteSection.getSections()) {
@@ -481,6 +501,7 @@ public class HTMLUtils {
      * otherwise.
      */
     public static String getLocale(HttpServletRequest request) {
+        ArgumentNotValid.checkNotNull(request, "request");
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -509,6 +530,13 @@ public class HTMLUtils {
     public static void forwardWithErrorMessage(PageContext context,
                                                I18n I18N, String label,
                                                Object... args) {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(I18N, "I18N");
+        ArgumentNotValid.checkNotNull(label, "label");
+        ArgumentNotValid.checkNotNull(args, "args");
+
         String msg = HTMLUtils.escapeHtmlValues(I18N.getString(
                 context.getResponse().getLocale(),
                 label, args));
@@ -516,14 +544,13 @@ public class HTMLUtils {
         RequestDispatcher rd
                 = context.getServletContext().getRequestDispatcher(
                 "/message.jsp");
+        final String errormsg = "Failed to forward on error " + msg;        
         try {
             rd.forward(context.getRequest(), context.getResponse());
         } catch (IOException e) {
-            final String errormsg = "Failed to forward on error " + msg;
             log.warn(errormsg, e);
             throw new IOFailure(errormsg, e);
         } catch (ServletException e) {
-            final String errormsg = "Failed to forward on error " + msg;
             log.warn(errormsg, e);
             throw new IOFailure(errormsg, e);
         }
@@ -545,7 +572,14 @@ public class HTMLUtils {
      */
     public static void forwardWithRawErrorMessage(PageContext context,
                                                   I18n i18n, String label,
-                                                  Object... args) {
+                                                  Object... args) {        
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(I18N, "I18N");
+        ArgumentNotValid.checkNotNull(label, "label");
+        ArgumentNotValid.checkNotNull(args, "args");
+        
         String msg = i18n.getString(context.getResponse().getLocale(),
                 label, args);
         context.getRequest().setAttribute("message", msg);
@@ -583,6 +617,13 @@ public class HTMLUtils {
     public static void forwardWithErrorMessage(PageContext context,
                                                I18n i18n, Throwable e,
                                                String label, Object... args) {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(I18N, "I18N");
+        ArgumentNotValid.checkNotNull(label, "label");
+        ArgumentNotValid.checkNotNull(args, "args");
+        
         String msg = HTMLUtils.escapeHtmlValues(i18n.getString(
                 context.getResponse().getLocale(),
                 label, args));
@@ -591,14 +632,13 @@ public class HTMLUtils {
         RequestDispatcher rd
                 = context.getServletContext().getRequestDispatcher(
                 "/message.jsp");
+        final String errormsg = "Failed to forward on error " + msg;        
         try {
             rd.forward(context.getRequest(), context.getResponse());
         } catch (IOException e1) {
-            final String errormsg = "Failed to forward on error " + msg;
             log.warn(errormsg, e1);
             throw new IOFailure(errormsg, e1);
         } catch (ServletException e1) {
-            final String errormsg = "Failed to forward on error " + msg;
             log.warn(errormsg, e1);
             throw new IOFailure(errormsg, e1);
         }
@@ -616,6 +656,11 @@ public class HTMLUtils {
     public static void forwardOnMissingParameter(PageContext context,
                                                  String... parameters)
             throws ForwardedToErrorPage {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(parameters, "parameters");
+        
         ServletRequest request = context.getRequest();
         for (String parameter : parameters) {
             String value = request.getParameter(parameter);
@@ -641,6 +686,11 @@ public class HTMLUtils {
      */
     public static void forwardOnEmptyParameter(PageContext context,
                                                String... parameters) {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(parameters, "parameters");
+        
         forwardOnMissingParameter(context, parameters);
         ServletRequest request = context.getRequest();
         for (String parameter : parameters) {
@@ -668,6 +718,12 @@ public class HTMLUtils {
                                                  String parameter,
                                                  String... legalValues)
             throws ForwardedToErrorPage {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(parameter, "parameter");
+        ArgumentNotValid.checkNotNull(legalValues, "legalValues");
+
         forwardOnMissingParameter(context, parameter);
         String value = context.getRequest().getParameter(parameter);
         for (String legalValue : legalValues) {
@@ -697,6 +753,11 @@ public class HTMLUtils {
                                            String param,
                                            int minValue, int maxValue)
             throws ForwardedToErrorPage {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
+        ArgumentNotValid.checkNotNull(param, "param");
+        
         forwardOnEmptyParameter(context, param);
         int value;
         String paramValue = context.getRequest().getParameter(param);
@@ -725,6 +786,7 @@ public class HTMLUtils {
      * @param context The context of the web request.
      * @param param The name of the parameter to parse
      * @param defaultValue A value to return if the parameter is not present
+     * (may be null).
      * @return Parsed value or default value if the parameter is missing
      * or empty. Null will only be returned if passed as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not
@@ -732,7 +794,11 @@ public class HTMLUtils {
      */
     public static Long parseOptionalLong(PageContext context,
                                          String param, Long defaultValue) {
+        // Note that we may not want to be to strict here
+        // as otherwise information could be lost.
+        ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
+        
         String paramValue = context.getRequest().getParameter(param);
         if (paramValue != null && paramValue.trim().length() > 0) {
             paramValue = paramValue.trim();
@@ -757,6 +823,7 @@ public class HTMLUtils {
      * @param format The format of the date, in
      *               the format defined by SimpleDateFormat
      * @param defaultValue A value to return if the parameter is not present
+     * (may be null)
      * @return Parsed value or default value if the parameter is missing
      * or empty. Null will only be returned if passed as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not

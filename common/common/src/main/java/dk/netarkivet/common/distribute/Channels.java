@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 package dk.netarkivet.common.distribute;
@@ -34,6 +34,30 @@ import dk.netarkivet.common.utils.Settings;
  */
 
 public class Channels {
+      
+   /**
+    * Channel type prefixes for the current set of channels. 
+    */
+    private static final String ALLBA_CHANNEL_PREFIX = "ALL_BA";
+    private static final String ANYBA_CHANNEL_PREFIX = "ANY_BA";
+    private static final String THEBAMON_CHANNEL_PREFIX = "THE_BAMON";
+    private static final String THESCHED_CHANNEL_PREFIX = "THE_SCHED";
+    private static final String THEREPOS_CHANNEL_PREFIX = "THE_REPOS";
+    private static final String ANYLOWHACO_CHANNEL_PREFIX 
+        = "ANY_LOWPRIORITY_HACO";
+    private static final String ANYHIGHHACO_CHANNEL_PREFIX
+        = "ANY_HIGHPRIORITY_HACO";
+    private static final String THISREPOSCLIENT_CHANNEL_PREFIX
+        = "THIS_REPOS_CLIENT";
+    private static final String ERROR_CHANNEL_PREFIX = "ERROR";
+    private static final String INDEXSERVER_CHANNEL_PREFIX = "INDEX_SERVER";
+    private static final String THISINDEXCLIENT_CHANNEL_PREFIX 
+        = "THIS_INDEX_CLIENT";
+    private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
+
+    /** Channel part separator. */
+    public static final String CHANNEL_PART_SEPARATOR = "_";
+    
     /**
      * The one existing instance of the Channels object. Not accessible from the
      * outside at all.
@@ -72,6 +96,13 @@ public class Channels {
     private final int indexOfUseReplicaId = Arrays.asList(allReplicaIds)
             .indexOf(useReplicaId);
     
+    /** The constructor of Channels class. 
+     *  Validates that the current value of the setting USE_REPLICA_ID
+     *  corresponds to one of the replicas listed in the settings.
+     *  Furthermore we here fill content in the ALL_BA_ARRAY, ANY_BA_ARRAY,
+     *  THE_BAMON_ARRAY, and initialize ALL_BA, ANY_BA, and THE_BAMON.
+     *  
+     */
     private Channels() {
         if (indexOfUseReplicaId < 0) {
              throw new ArgumentNotValid("Bad replicas " 
@@ -79,23 +110,25 @@ public class Channels {
         }
 
         for (int i = 0; i < allReplicaIds.length; i++) {
-            ALL_BA_ARRAY[i] = new ChannelID("ALL_BA", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
+            ALL_BA_ARRAY[i] = new ChannelID(ALLBA_CHANNEL_PREFIX,
+                    allReplicaIds[i], ChannelID.NO_IP,
+                    ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
         }
         ALL_BA = ALL_BA_ARRAY[indexOfUseReplicaId];
         for (int i = 0; i < allReplicaIds.length; i++) {
-            ANY_BA_ARRAY[i] = new ChannelID("ANY_BA", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            ANY_BA_ARRAY[i] = new ChannelID(ANYBA_CHANNEL_PREFIX,
+                    allReplicaIds[i], ChannelID.NO_IP,
+                    ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
         ANY_BA = ANY_BA_ARRAY[indexOfUseReplicaId];
         for (int i = 0; i < allReplicaIds.length; i++) {
-            THE_BAMON_ARRAY[i] = new ChannelID("THE_BAMON", allReplicaIds[i],
-                    ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            THE_BAMON_ARRAY[i] = new ChannelID(THEBAMON_CHANNEL_PREFIX,
+                    allReplicaIds[i], ChannelID.NO_IP,
+                    ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
         }
         THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplicaId];
     }
-
-    /* ******** Sort in order of the Distributed Architecture paper ******** */
+    
     /**
      * Returns the queue on which HarvestControllers reply with status messages
      * to the HarvestScheduler.
@@ -108,7 +141,7 @@ public class Channels {
         return getInstance().THE_SCHED;
     }
 
-    private final ChannelID THE_SCHED = new ChannelID("THE_SCHED",
+    private final ChannelID THE_SCHED = new ChannelID(THESCHED_CHANNEL_PREFIX,
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
@@ -133,11 +166,11 @@ public class Channels {
     }
 
     private final ChannelID ANY_LOWPRIORITY_HACO = new ChannelID(
-            "ANY_LOWPRIORITY_HACO", ChannelID.COMMON, ChannelID.NO_IP,
+            ANYLOWHACO_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     private final ChannelID ANY_HIGHPRIORITY_HACO = new ChannelID(
-            "ANY_HIGHPRIORITY_HACO", ChannelID.COMMON, ChannelID.NO_IP,
+            ANYHIGHHACO_CHANNEL_PREFIX, ChannelID.COMMON, ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
 
     /**
@@ -150,8 +183,9 @@ public class Channels {
         return getInstance().THIS_REPOS_CLIENT;
     }
 
-    private final ChannelID THIS_REPOS_CLIENT = new ChannelID("THIS_REPOS_CLIENT",
-            ChannelID.COMMON, ChannelID.INCLUDE_IP, ChannelID.INCLUDE_APPLINST_ID,
+    private final ChannelID THIS_REPOS_CLIENT = new ChannelID(
+            THISREPOSCLIENT_CHANNEL_PREFIX, ChannelID.COMMON,
+            ChannelID.INCLUDE_IP, ChannelID.INCLUDE_APPLINST_ID,
             ChannelID.QUEUE);
 
     /**
@@ -163,7 +197,7 @@ public class Channels {
         return getInstance().THE_REPOS;
     }
 
-    private final ChannelID THE_REPOS = new ChannelID("THE_REPOS",
+    private final ChannelID THE_REPOS = new ChannelID(THEREPOS_CHANNEL_PREFIX,
             ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
 
@@ -208,7 +242,8 @@ public class Channels {
      * and batch messages to all connected Bitarchive machines. The following is
      * the list of ALL_BA for all archives (i.e. archive replicas).
      */
-    private final ChannelID[] ALL_BA_ARRAY = new ChannelID[allReplicaIds.length];
+    private final ChannelID[] ALL_BA_ARRAY
+        = new ChannelID[allReplicaIds.length];
 
     /**
      * Returns the topic that all bitarchive machines on this replica
@@ -239,7 +274,8 @@ public class Channels {
      * Queue on which upload requests are sent out to bitarchive servers. The
      * following is the list of ANY_BA for all archives.
      */
-    private final ChannelID[] ANY_BA_ARRAY = new ChannelID[allReplicaIds.length];
+    private final ChannelID[] ANY_BA_ARRAY
+        = new ChannelID[allReplicaIds.length];
 
     /**
      * Returns the channel where exactly one of all the bitarchive machines at
@@ -267,8 +303,9 @@ public class Channels {
         return getInstance().ERROR;
     }
 
-    private final ChannelID ERROR = new ChannelID("ERROR", ChannelID.COMMON,
-            ChannelID.NO_IP, ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+    private final ChannelID ERROR = new ChannelID(ERROR_CHANNEL_PREFIX,
+            ChannelID.COMMON, ChannelID.NO_IP, ChannelID.NO_APPLINST_ID,
+            ChannelID.QUEUE);
 
     /**
      * Given an replica, returns the BAMON queue to which batch jobs
@@ -286,7 +323,9 @@ public class Channels {
         for (ChannelID bamon : bamons) {
             if (bamon.getName().equals(
                     Settings.get(CommonSettings.ENVIRONMENT_NAME)
-                    + "_" + replicaId + "_THE_BAMON")) {
+                            + CHANNEL_PART_SEPARATOR + replicaId
+                            + CHANNEL_PART_SEPARATOR 
+                            + THEBAMON_CHANNEL_PREFIX)) {
                 return bamon;
             }
         }
@@ -305,7 +344,7 @@ public class Channels {
     }
 
     private final ChannelID THE_INDEX_SERVER = new ChannelID(
-            "INDEX_SERVER",
+            INDEXSERVER_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
@@ -323,7 +362,7 @@ public class Channels {
 
     //TODO Should we use client channels for all our servers?
     private final ChannelID THIS_INDEX_CLIENT = new ChannelID(
-            "THIS_INDEX_CLIENT",
+            THISINDEXCLIENT_CHANNEL_PREFIX, 
             ChannelID.COMMON,
             ChannelID.INCLUDE_IP,
             ChannelID.INCLUDE_APPLINST_ID,
@@ -339,7 +378,7 @@ public class Channels {
     }
 
     private final ChannelID THE_MONITOR_SERVER = new ChannelID(
-            "MONITOR",
+            MONITOR_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
@@ -355,7 +394,7 @@ public class Channels {
     /**
      * Is a given name a ChannelName for a Topic or a Queue.
      * @param name a given name
-     * @return true, if arg name contains the string "ALL_BA"
+     * @return true, if arg name contains the string "_ALL_"
      */
     public static boolean isTopic(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name"); 

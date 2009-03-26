@@ -41,7 +41,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringTree;
 
 /**
- * This class encapsulates the bitarchive or chacksum replicas.
+ * This class encapsulates the bitarchive or checksum replicas.
  * It guarantees that there is only one Replica object per replica id/name.
  */
 public class Replica {
@@ -53,11 +53,12 @@ public class Replica {
     private final String name;
     /** The type of this replica (checksum or bitarchive). */
     private final ReplicaType type;
-    /** List of the replicas we know of. */
-    private static Map<String, Replica> known;
+    /** List of the replicas we know of. This list is initialized by the
+     * "first" call to initializeKnownReplicasList(). */
+    private static Map<String, Replica> knownReplicas;
 
     /** Private constructor that makes a new Replica object.  These will
-     * all be stored in the known map.
+     * all be stored in the knownReplicas map.
      *
      * @param repId Id of the replica (e.g. One)
      * @param repName Name of the replica (e.g. ReplicaOne)
@@ -72,11 +73,11 @@ public class Replica {
     /** Initialize the list of known replicas from settings.
      * This must be called before using known, but after settings are loaded.
      */
-    private static void initializeKnownList() {
-        if (known == null) {
+    private static void initializeKnownReplicasList() {
+        if (knownReplicas == null) {
             String[] replicaIds 
                 = Settings.getAll(CommonSettings.REPLICA_IDS);
-            known = new HashMap<String, Replica>(replicaIds.length);
+            knownReplicas = new HashMap<String, Replica>(replicaIds.length);
             StringTree<String> replicas 
                 = Settings.getTree(CommonSettings.REPLICAS_SETTINGS);
             List<StringTree<String>> replicaList = replicas.getSubTrees(
@@ -84,7 +85,7 @@ public class Replica {
             for (StringTree<String> replicaTree : replicaList) {
                 String replicaId = replicaTree.getValue(
                         CommonSettings.REPLICAID_TAG);
-                known.put(
+                knownReplicas.put(
                     replicaId, 
                     new Replica(
                             replicaId, 
@@ -103,30 +104,35 @@ public class Replica {
      *
      * @param id The given name of an replica
      * @return an object representing the replica with the given id
+     * @throws UnknownID if no replica is known with the given id
      */
     public static Replica getReplicaFromId(String id) {
-        initializeKnownList();
-        if (id == null || !known.containsKey(id)) {
+        ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
+        initializeKnownReplicasList();
+        if (!knownReplicas.containsKey(id)) {
             String message = "Can't find replica with id '" + id
-                    + "', only know of " + known.keySet();
+                    + "', only know of " + knownReplicas.keySet();
             log.debug(message);
             throw new UnknownID(message);
         }
-        return known.get(id);
+        return knownReplicas.get(id);
     }
 
     /** Get an object representing the replica with the given name.
     *
      * @param name The given name of an replica
      * @return an object representing the replica with the given name
+     * @throws UnknownID if no replica is known with the given name
     */
     public static Replica getReplicaFromName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        initializeKnownList();
-        Replica resRep = new Replica("NONE", "NONE",
-                ReplicaType.NO_REPLICA_TYPE);
+        initializeKnownReplicasList();
+        // Note that this null value will never be returned.
+        // will always be replaced by non-null value OR the method
+        // will throw an UnknownID exception.
+        Replica resRep = null; 
         boolean found = false; 
-        for (Replica rep : known.values()) {
+        for (Replica rep : knownReplicas.values()) {
             found = rep.getName().equals(name);
             if (found) { 
                 resRep = rep;
@@ -135,7 +141,7 @@ public class Replica {
         }
         if (!found) {
            String message = "Can't find replica with name '" + name
-                   + "', only know of names for " + known.keySet();
+                   + "', only know of names for " + knownReplicas.keySet();
            log.debug(message);
            throw new UnknownID(message);
         }
@@ -148,10 +154,10 @@ public class Replica {
      */
     public static boolean isKnownReplicaName(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
-        initializeKnownList();
+        initializeKnownReplicasList();
         boolean found = false;
-        for (String s : known.keySet()) {
-            found = known.get(s).getName().equals(name);
+        for (String s : knownReplicas.keySet()) {
+            found = knownReplicas.get(s).getName().equals(name);
             if (found) { break; }
         }
         return found;
@@ -163,9 +169,9 @@ public class Replica {
      */
     public static boolean isKnownReplicaId(String id) {
         ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
-        initializeKnownList();
+        initializeKnownReplicasList();
         boolean found = false;
-        for (String s : known.keySet()) {
+        for (String s : knownReplicas.keySet()) {
             found = s.equals(id);
             if (found) { break; }
         }
@@ -173,23 +179,23 @@ public class Replica {
     }   
 
     /** 
-     * Get all known replcias.
+     * Get all known replicas.
      * @return A unmodifiable view of the currently known replicas.
      */
     public static Collection<Replica> getKnown() {
-        initializeKnownList();
-        return Collections.unmodifiableCollection(known.values());
+        initializeKnownReplicasList();
+        return Collections.unmodifiableCollection(knownReplicas.values());
     }
     
     /**
-     * Get all known replica as ids.
+     * Get all known replicas as ids.
      * @return all known replicas as ids
      */
     public static String[] getKnownIds() {
-        initializeKnownList();
-        String[] knownIds = new String[known.keySet().size()];
+        initializeKnownReplicasList();
+        String[] knownIds = new String[knownReplicas.keySet().size()];
         int index = 0;
-        for (String s : known.keySet()) {
+        for (String s : knownReplicas.keySet()) {
             knownIds[index] = s;
             index++;
         }
@@ -201,35 +207,35 @@ public class Replica {
      * @return all known replicas as names
      */
     public static String[] getKnownNames() {
-        initializeKnownList();
-        String[] knownNames = new String[known.keySet().size()];
+        initializeKnownReplicasList();
+        String[] knownNames = new String[knownReplicas.keySet().size()];
         int index = 0;
-        for (String s : known.keySet()) {
-            knownNames[index] = known.get(s).getName();
+        for (String s : knownReplicas.keySet()) {
+            knownNames[index] = knownReplicas.get(s).getName();
             index++;
         }
         return knownNames;
     }
 
-    /** Get the type of an replica.
+    /** Get the type of this replica.
     *
-    * @return The type that this replica (bitarchive or checksum).
+    * @return The type of this replica (bitarchive or checksum).
     */
    public ReplicaType getType() {
        return type;
    }
 
-   /** Get the id of an replica.
+   /** Get the id of this replica.
     *
-    * @return The id that this replica (also used in queues).
+    * @return The id of this replica (also used in queues).
     */
    public String getId() {
        return id;
    }
 
-   /** Get the name of an replica.
+   /** Get the name of this replica.
      *
-     * @return The name that this replica is known as in interface.
+     * @return The name of this replica is known as in interface.
      */
     public String getName() {
         return name;
