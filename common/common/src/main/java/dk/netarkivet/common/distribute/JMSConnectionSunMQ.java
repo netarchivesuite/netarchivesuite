@@ -149,9 +149,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
         ((ConnectionFactory) cFactory).setProperty(
                 ConnectionConfiguration.imqConsumerFlowLimit,
                 "1");
-        /*((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled, "true");
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectAttempts, "2");
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectInterval, "10");*/
         return cFactory;
     }
 
@@ -176,10 +173,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
         ((ConnectionFactory) cFactory).setProperty(
                 ConnectionConfiguration.imqConsumerFlowLimit,
                 "1");
-        /*((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectEnabled, "true");
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectAttempts, "2");
-        ((com.sun.messaging.ConnectionFactory) cFactory).setProperty(com.sun.messaging.ConnectionConfiguration.imqReconnectInterval, "10");*/
-
         return cFactory;
     }
 
@@ -270,7 +263,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Does absolutely nothing, if already in the process of reconnecting.
      */
     private void performReconnect(){
-
         if (!reconnectInProgress.compareAndSet(false, true)) {
             log.debug("Reconnection already in progress. Do nothing");
             return;
@@ -343,7 +335,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @throws JMSException
      */
     private void reconnect() throws JMSException {
-
         try {
             myQSess.close();
         } catch (Exception e) {

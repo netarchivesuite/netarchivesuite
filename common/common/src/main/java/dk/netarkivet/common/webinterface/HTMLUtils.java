@@ -108,7 +108,6 @@ public class HTMLUtils {
         //
     }
 
-
     /**
      * Url encodes a string to UTF-8. This encodes _all_ non-letter non-number
      * characters except '-', '_' and '.'. / and : are encoded.
@@ -228,9 +227,8 @@ public class HTMLUtils {
      * @param locale The locale selecting the language.
      * @throws IOException if the output cannot be written.
      */
-    private static void generateNavigationTree(JspWriter out,
-                                               String url, Locale locale)
-            throws IOException {
+    private static void generateNavigationTree(
+            JspWriter out, String url, Locale locale)  throws IOException {
         out.print("<td valign=\"top\" id=\"menu\">\n");
         // The list of menu items is presented as a 1-column table
         out.print("<table id=\"menu_table\">\n");
@@ -266,8 +264,6 @@ public class HTMLUtils {
         out.print("</div>");
         // Close the page
         out.print("</body></html>");
-
-
     }
 
     /** Create a table element containing the given string, escaping HTML

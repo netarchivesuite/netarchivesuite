@@ -200,7 +200,6 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
             }
         }
 
-
         //Return the set of found jobs
         return foundJobs;
     }

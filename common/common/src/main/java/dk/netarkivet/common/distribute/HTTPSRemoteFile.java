@@ -123,7 +123,6 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
                                    multipleDownloads);
     }
 
-
     /**
      * Get the HTTPS serving registry for remote files. Overrides the HTTP
      * registry use by HTTPRemoteFile.
@@ -133,6 +132,4 @@ public class HTTPSRemoteFile extends HTTPRemoteFile {
     protected HTTPRemoteFileRegistry getRegistry() {
         return HTTPSRemoteFileRegistry.getInstance();
     }
-
-
 }
