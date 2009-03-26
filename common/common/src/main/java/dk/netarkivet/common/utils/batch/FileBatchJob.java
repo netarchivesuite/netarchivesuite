@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 
@@ -43,12 +46,18 @@ import dk.netarkivet.common.utils.StringUtils;
  */
 public abstract class FileBatchJob implements Serializable {
     
+    /** The class log. */
+    private static Log log = LogFactory.getLog(FileBatchJob.class.getName());
+    
+    /** Regexp that matches everything. */
+    private static final String EVERYTHING_REGEXP = ".*";
+        
     /** Regular expression for the files to process with this job.
      * By default, all files are processed.  This pattern must match the
      * entire filename, but not the path (e.g. .*foo.* for any file with
      * foo in it).
      */
-    private Pattern filesToProcess = Pattern.compile(".*");
+    private Pattern filesToProcess = Pattern.compile(EVERYTHING_REGEXP);
 
     /** The total number of files processed (including any that 
      * generated errors).
@@ -106,7 +115,7 @@ public abstract class FileBatchJob implements Serializable {
             }
             processOnlyFilesMatching(quoted);
         } else {
-            processOnlyFilesMatching(".*");
+            processOnlyFilesMatching(EVERYTHING_REGEXP);
         }
     }
 
@@ -161,21 +170,20 @@ public abstract class FileBatchJob implements Serializable {
     }
 
     /**
-     * Return the number of ARC-files processed in this job
-     * (at this bit archive application).
+     * Return the number of files processed in this job.
      *
-     * @return the number of ARC-files processed in this job
+     * @return the number of files processed in this job
      */
     public int getNoOfFilesProcessed() {
         return noOfFilesProcessed;
     }
 
     /**
-     * Return the list of names of ARC-files where processing
-     * (of one or more ARC records) failed or an empty list if none failed.
+     * Return the list of names of files where processing failed.
+     * An empty list is returned, if none failed.
      *
-     * @return the possibly empty list of names of ARC-files where processing
-     * (of one or more ARC records) failed
+     * @return the possibly empty list of names of files where processing
+     * failed
      */
     public Collection<File> getFilesFailed() {
         return filesFailed;
@@ -208,6 +216,12 @@ public abstract class FileBatchJob implements Serializable {
                     currentOffset,
                     outputOffset,
                     e));
+        } else {
+            log.trace("Exception not added, because max exceptions reached. "
+                    + "currentFile = " + currentFile.getAbsolutePath() + ","
+                    + "currentOffset = " + currentOffset
+                    + "outputOffset = " + outputOffset + ", exception: ",
+                    e);
         }
     }
     
@@ -221,6 +235,10 @@ public abstract class FileBatchJob implements Serializable {
     protected void addInitializeException(long outputOffset, Exception e) {
         if (!maxExceptionsReached()) {
             exceptions.add(new ExceptionOccurrence(true, outputOffset, e));
+        } else {
+            log.trace("Exception not added, because max exceptions reached. "
+                    + "outputOffset = " + outputOffset + ", exception: ",
+                    e);
         }
     }
 
@@ -234,6 +252,10 @@ public abstract class FileBatchJob implements Serializable {
     protected void addFinishException(long outputOffset, Exception e) {
         if (!maxExceptionsReached()) {
             exceptions.add(new ExceptionOccurrence(false, outputOffset, e));
+        } else {
+            log.trace("Exception not added, because max exceptions reached. "
+                    + "outputOffset = " + outputOffset + ", exception: ",
+                    e);
         }
     }
 
@@ -254,7 +276,8 @@ public abstract class FileBatchJob implements Serializable {
     public static class ExceptionOccurrence implements Serializable {
 
         /** The maximum number of exceptions we will accumulate before
-         * aborting processing.
+         * aborting processing. 
+         * TODO MAX_EXCEPTIONS should be added to our settings
          */
         private static final int MAX_EXCEPTIONS = 100;
 
@@ -327,7 +350,7 @@ public abstract class FileBatchJob implements Serializable {
                     + "non-negative or UNKNOWN_OFFSET");
             ArgumentNotValid.checkNotNull(exception, "Exception exception");
             this.fileName = null;
-            this.fileOffset = -1;
+            this.fileOffset = UNKNOWN_OFFSET;
             this.inFinish = !inInitialize;
             this.inInitialize = inInitialize;
             this.outputOffset = outputOffset;
@@ -390,11 +413,15 @@ public abstract class FileBatchJob implements Serializable {
             return inFinish;
         }
         
+        /**
+         * @return a Human readable representation of this
+         * ExceptionOccurence object.
+         */
         public String toString() {
             return "ExceptionOccurrence: (filename, fileoffset, outputoffset, "
-            		+ "exception, inInitialize, inFinish) = ("
-            		+ fileName + ", " + fileOffset +  ", " + outputOffset + ", "
-            		+ exception + ", " + inInitialize + ", " + inFinish + "). ";
+                    + "exception, inInitialize, inFinish) = (" + fileName
+                    + ", " + fileOffset + ", " + outputOffset + ", "
+                    + exception + ", " + inInitialize + ", " + inFinish + "). ";
         }
         
     }

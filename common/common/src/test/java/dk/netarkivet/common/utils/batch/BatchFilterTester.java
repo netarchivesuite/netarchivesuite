@@ -26,33 +26,33 @@ import junit.framework.TestCase;
 
 import java.awt.datatransfer.MimeTypeParseException;
 
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 
 public class BatchFilterTester extends TestCase {
     //Our main instance of BatchFilter:
-    BatchFilter bf;
+    ARCBatchFilter bf;
 
     /**
      * Verify that we can ask for a no-action filter.
      */
     public void testNoFilter() {
-        bf = BatchFilter.NO_FILTER;
+        bf = ARCBatchFilter.NO_FILTER;
     }
 
     /**
      * Verify that we can ask for a filter that exludes ARC file headers.
      */
     public void testExcludeFileHeaders() {
-        bf = BatchFilter.EXCLUDE_FILE_HEADERS;
+        bf = ARCBatchFilter.EXCLUDE_FILE_HEADERS;
     }
 
     /**
      * Verify that each possible filter can be identified for what it is.
      */
     public void testIdentifiable() {
-        bf = BatchFilter.NO_FILTER;
-        assertFalse(bf.equals(BatchFilter.EXCLUDE_FILE_HEADERS));
+        bf = ARCBatchFilter.NO_FILTER;
+        assertFalse(bf.equals(ARCBatchFilter.EXCLUDE_FILE_HEADERS));
     }
 
     /**
@@ -62,10 +62,10 @@ public class BatchFilterTester extends TestCase {
     public void testGetMimetype() {
         String invalidMimetype = new String("test");
         String validMimetype = "text/html";
-        BatchFilter cfilter = null;
+        ARCBatchFilter cfilter = null;
 
         try {
-            cfilter = BatchFilter.getMimetypeBatchFilter(invalidMimetype);
+            cfilter = ARCBatchFilter.getMimetypeBatchFilter(invalidMimetype);
             fail(
                 "MimeTypeParseException expected because of invalid mimetype: " +
                 invalidMimetype);
@@ -74,7 +74,7 @@ public class BatchFilterTester extends TestCase {
         }
 
         try {
-            cfilter = BatchFilter.getMimetypeBatchFilter(validMimetype);
+            cfilter = ARCBatchFilter.getMimetypeBatchFilter(validMimetype);
         } catch (MimeTypeParseException e) {
             fail(
                 "MimeTypeParseException not expected here with valid mimetype as argument: " +

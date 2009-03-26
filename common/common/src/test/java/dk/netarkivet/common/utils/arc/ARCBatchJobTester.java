@@ -36,7 +36,7 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.TestFileUtils;
 
@@ -162,8 +162,8 @@ public class ARCBatchJobTester extends TestCase {
         * as this is done in testBatchARCFiles().
         */
         ARCBatchJob job = new TestARCBatchJob() {
-                public BatchFilter getFilter() {
-                    return BatchFilter.EXCLUDE_FILE_HEADERS;
+                public ARCBatchFilter getFilter() {
+                    return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
                 }
             };
         job.processFile(ARC_FILE, new ByteArrayOutputStream());
@@ -278,8 +278,8 @@ public class ARCBatchJobTester extends TestCase {
          * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
          */
-        public BatchFilter getFilter() {
-            return BatchFilter.NO_FILTER;
+        public ARCBatchFilter getFilter() {
+            return ARCBatchFilter.NO_FILTER;
         }
 
         /**
@@ -312,8 +312,8 @@ public class ARCBatchJobTester extends TestCase {
          * @see ARCBatchJob#getFilter()
          * @return A filter that allows all records.
          */
-        public BatchFilter getFilter() {
-            return BatchFilter.NO_FILTER;
+        public ARCBatchFilter getFilter() {
+            return ARCBatchFilter.NO_FILTER;
         }
 
         /**

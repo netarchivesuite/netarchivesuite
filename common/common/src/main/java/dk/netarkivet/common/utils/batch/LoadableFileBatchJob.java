@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * The given class will be loaded and used to perform
  * the actions of the FileBatchJob class. */
 public class LoadableFileBatchJob extends FileBatchJob {
+    /** The class logger. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
 
     /** The job loaded from file. */
@@ -48,7 +49,9 @@ public class LoadableFileBatchJob extends FileBatchJob {
     /** The name of the file before they are turned into a class. */    
     String fileName;
 
-    /** Create a new batch job that runs the loaded class. */
+    /** Create a new batch job that runs the loaded class.
+     * @param classFile the classfile for the batch job we want to run.
+     */
     public LoadableFileBatchJob(File classFile) {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);

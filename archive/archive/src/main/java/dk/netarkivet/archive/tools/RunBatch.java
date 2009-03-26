@@ -114,6 +114,9 @@ public class RunBatch extends ToolRunnerBase {
         /** Default regexp that matches everything. */
         private static final String DEFAULT_REGEXP = ".*";
         
+        /** Character to separate jarfiles with option J. */
+        private static final String JARFILELIST_SEPARATOR = ",";
+        
         /** The regular expression that will be matched against
             file names in the archive, by default ".*".
         */
@@ -125,7 +128,7 @@ public class RunBatch extends ToolRunnerBase {
             Settings.get(
                 CommonSettings.USE_REPLICA_ID
             ));
-
+        
         /**
          * The outputfile, if any was given.
          */
@@ -134,9 +137,33 @@ public class RunBatch extends ToolRunnerBase {
         /** The errorfile, if any was given. */
         private File errorFile;
         
-        /** file types in input parameter. */
+        /** File types in input parameter. */
         private enum FileType {OTHER, JAR, CLASS};
         
+        /** File suffix denoting FileType.CLASS. */
+        private final String CLASS_FILE_SUFFIX = ".class";
+        
+        /** File suffix denoting FileType.JAR. */
+        private final String JAR_FILE_SUFFIX = ".jar";
+        
+        /** The jarfile option key. */
+        private static String JARFILE_OPTION_KEY = "J";
+        /** The classfile option key. */
+        private static String CLASSFILE_OPTION_KEY = "C";
+        /** The regexp option key. */
+        private static String REGEXP_OPTION_KEY = "R";
+        /** The replica option key. */
+        private static String REPLICA_OPTION_KEY = "B";
+        /** The outputfile option key. */
+        private static String OUTPUTFILE_OPTION_KEY = "O";
+        /** The errorfile option key. */
+        private static String ERRORFILE_OPTION_KEY = "E";
+        /** The classname option key. */
+        private static String CLASSNAME_OPTION_KEY = "N";
+
+        /** To contain parameters defined by options to batchjob. */
+        private BatchParameters parms = new BatchParameters();
+ 
         /** 
          * Getting FileType from given file name. 
          * @param fileName The file name to get file type from
@@ -144,12 +171,12 @@ public class RunBatch extends ToolRunnerBase {
          */
         private FileType getFileType(String fileName) {
             int i = fileName.lastIndexOf(".");
-            if (i > 0) {
+            if (i > 0) { // Does fileName have a suffix?
                 String s = fileName.substring(i).toLowerCase();
-                if (s.equals(".class")) {
+                if (s.equals(CLASS_FILE_SUFFIX)) {
                     return FileType.CLASS;
                 } else {
-                    if (s.equals(".jar")) {
+                    if (s.equals(JAR_FILE_SUFFIX)) {
                         return FileType.JAR;
                     } else {
                         return FileType.OTHER;
@@ -161,7 +188,8 @@ public class RunBatch extends ToolRunnerBase {
         }
 
         /** 
-         * Check, if you can write a file named fileName to CWD.
+         * Check, if you can write a file named fileName to current working
+         * directory.
          * @param fileName The file name
          * @param fileTag a tag for the fileName
          * @return true, if you can write such a file;
@@ -203,39 +231,42 @@ public class RunBatch extends ToolRunnerBase {
             private CommandLineParser parser = new PosixParser();
             CommandLine cmd;
             //HelpFormatter only prints directly, thus this is not used at
-            //the moment
-            //HelpFormatter formatter = new HelpFormatter();
-            //Instead the method listArguments is defined
+            //the moment. Instead the method usage is implemented
+            // in the listArguments() method.
+            // TODO Use the HelpFormatter class to print out Usage information.
             
             /**
              * Initialize options by setting legal parameters for batch jobs.
+             * Note that all our options has arguments.
              */
             BatchParameters() {
-                options.addOption(
-                    "C", true, "Class file to be run");
-                options.addOption(
-                    "J", true, "Jar file to be run (required if class file " 
-                               + "is in jar file)");
-                options.addOption(
-                        "N", true, "Name of the primary class to be run. Only " 
-                                   + "needed when using the Jar-file option");
-                    
-                options.addOption(
-                    "R", true, "Regular expression for files to be processed "
-                               + "(default: '" + regexp + "')");
-                options.addOption(
-                    "B", true, "Name of bitarchive replica where batch must "
-                                + "be run " + "(default: '" 
-                                + Replica.getReplicaFromId(
-                                     Settings.get(CommonSettings.USE_REPLICA_ID)
-                                  ).getName()
-                                + "')");
-                options.addOption(
-                    "O", true, "Output file to contain result (default is "
-                               + "stdout)");
-                options.addOption(
-                    "E", true, "Error file to contain errors from run "
-                               + "(default is stderr)");
+                final boolean hasArg = true;
+                options.addOption(CLASSFILE_OPTION_KEY, hasArg,
+                        "Class file to be run");
+                options.addOption(JARFILE_OPTION_KEY, hasArg,
+                        "Jar file to be run (required if class file "
+                                + "is in jar file)");
+                options.addOption(CLASSNAME_OPTION_KEY, hasArg,
+                        "Name of the primary class to be run. Only "
+                                + "needed when using the Jar-file option");
+
+                options.addOption(REGEXP_OPTION_KEY, hasArg,
+                        "Regular expression for files to be processed "
+                                + "(default: '" + regexp + "')");
+                options.addOption("B", hasArg,
+                        "Name of bitarchive replica where batch must "
+                                 + "be run "
+                                 + "(default: '"
+                                 + Replica.getReplicaFromId(
+                                         Settings.get(
+                                                 CommonSettings.USE_REPLICA_ID))
+                                                .getName() + "')");
+                options.addOption(OUTPUTFILE_OPTION_KEY, hasArg,
+                        "Output file to contain result (default is "
+                                + "stdout)");
+                options.addOption(ERRORFILE_OPTION_KEY, hasArg,
+                        "Error file to contain errors from run "
+                                + "(default is stderr)");
             }
             
             String parseParameters(String[] args) {
@@ -263,10 +294,6 @@ public class RunBatch extends ToolRunnerBase {
                 return s;
             }
         }
-        
-        
-        /** To contain parameters defined by options to batchjob. */
-        private BatchParameters parms = new BatchParameters();
         
         /**
          * Accept parameters and checks them for validity.
@@ -297,9 +324,10 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             //Check class file argument
-            String jars = parms.cmd.getOptionValue("J");
-            String className = parms.cmd.getOptionValue("N");
-            String classFileName = parms.cmd.getOptionValue("C");
+            String jars = parms.cmd.getOptionValue(JARFILE_OPTION_KEY);
+            String className = parms.cmd.getOptionValue(CLASSNAME_OPTION_KEY);
+            String classFileName = parms.cmd.getOptionValue(
+                    CLASSFILE_OPTION_KEY);
           
             if (classFileName == null && jars == null) {
                 msg = "Missing required class file argument ";
@@ -336,8 +364,8 @@ public class RunBatch extends ToolRunnerBase {
                     System.err.println(msg);
                     return false;
                 }
-
-                String[] jarList = jars.split(",");
+                
+                String[] jarList = jars.split(JARFILELIST_SEPARATOR);
                 for (String jar : jarList) {
                     if (!getFileType(jar).equals(FileType.JAR)) {
                         System.err.println("Argument '" + jar
@@ -351,12 +379,10 @@ public class RunBatch extends ToolRunnerBase {
                         return false;
                     }
                 }
-                
-                //TODO Validate class name
             } 
 
             //Check regular expression argument
-            String reg = parms.cmd.getOptionValue("R");
+            String reg = parms.cmd.getOptionValue(REGEXP_OPTION_KEY);
             if (reg != null) {
                 try {
                     Pattern.compile(reg);
@@ -368,7 +394,7 @@ public class RunBatch extends ToolRunnerBase {
             }
             
             //Check bitarchive replica argument
-            String rep = parms.cmd.getOptionValue("B");
+            String rep = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
             if (rep != null) {
                 if (!Replica.isKnownReplicaName(rep)) {
                     System.err.println("Unknown replica name '" + rep
@@ -379,7 +405,7 @@ public class RunBatch extends ToolRunnerBase {
             }
             
             //Check output file argument
-            String oFile = parms.cmd.getOptionValue("O");
+            String oFile = parms.cmd.getOptionValue(OUTPUTFILE_OPTION_KEY);
             if (oFile != null) {
                 if (!checkWriteFile(oFile, "Output file")) {
                     return false;
@@ -387,7 +413,7 @@ public class RunBatch extends ToolRunnerBase {
             }
 
             //Check output file argument
-            String eFile = parms.cmd.getOptionValue("E");
+            String eFile = parms.cmd.getOptionValue(ERRORFILE_OPTION_KEY);
             if (eFile != null) {
                 if (!checkWriteFile(eFile, "Error file")) {
                     return false;
@@ -429,9 +455,10 @@ public class RunBatch extends ToolRunnerBase {
          */
         public void run(String... args) {
             //Arguments are allready checked by checkArgs 
-            String jarArgs = parms.cmd.getOptionValue("J");
-            String classFileName = parms.cmd.getOptionValue("C");
-            String className = parms.cmd.getOptionValue("N");
+            String jarArgs = parms.cmd.getOptionValue(JARFILE_OPTION_KEY);
+            String classFileName = parms.cmd.getOptionValue(
+                    CLASSFILE_OPTION_KEY);
+            String className = parms.cmd.getOptionValue(CLASSNAME_OPTION_KEY);
 
             FileBatchJob job;
 
@@ -452,25 +479,25 @@ public class RunBatch extends ToolRunnerBase {
                 job = new LoadableJarBatchJob(className, jarFiles);
             }
             
-            String reg = parms.cmd.getOptionValue("R");
+            String reg = parms.cmd.getOptionValue(REGEXP_OPTION_KEY);
             if (reg != null) { 
                 regexp = reg;
                 job.processOnlyFilesMatching(regexp);
             }
             
-            String repName = parms.cmd.getOptionValue("B");
+            String repName = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
             if (repName != null) { 
                 batchReplica = Replica.getReplicaFromName(repName);
             }
             
             //Note: if no filename is given, output will be written to stdout
-            String oFile = parms.cmd.getOptionValue("O");
+            String oFile = parms.cmd.getOptionValue(OUTPUTFILE_OPTION_KEY);
             if (oFile != null) { 
                 outputFile = new File(oFile);
             }
             
             //Note: if no filename is given, errors will be written to stderr
-            String eFile = parms.cmd.getOptionValue("E");
+            String eFile = parms.cmd.getOptionValue(ERRORFILE_OPTION_KEY);
             if (eFile != null) {
                 errorFile = new File(eFile);
             }
@@ -501,8 +528,7 @@ public class RunBatch extends ToolRunnerBase {
                 status.appendResults(System.out);
             } else {
                 status.copyResults(outputFile);
-            }
-            
+            }   
             
             //Write to error file or stderr
             PrintStream errorOutput = System.err;
@@ -546,7 +572,6 @@ public class RunBatch extends ToolRunnerBase {
                     errorOutput.println("Exception w/stacktrace: ");
                     occurrence.getException().printStackTrace(errorOutput);
                 }
-                
             }
             errorOutput.close();
         }
@@ -559,6 +584,5 @@ public class RunBatch extends ToolRunnerBase {
         public String listParameters() {
             return parms.listArguments();
         }
-
     }
 }

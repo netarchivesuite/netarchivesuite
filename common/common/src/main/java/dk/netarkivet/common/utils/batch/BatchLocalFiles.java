@@ -40,22 +40,23 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 public class BatchLocalFiles {
     /** The list of files to run batch jobs on. */
     private File[] files;
+    /** The class logger. */
     private Log log = LogFactory.getLog(BatchLocalFiles.class);
 
     /**
      * Given an array of files, constructs a BatchLocalFiles instance
-     * to be used in running a batch job over those files
+     * to be used in running a batch job over those files.
      *
-     * @param incomingFiles The files that should be used for batching.
-     * @throws ArgumentNotValid if in_files is null or contains a null entry
+     * @param incomingFiles The files that should be used processed
+     * by the batchjob
+     * @throws ArgumentNotValid if incomingFiles is null or contains
+     * a null entry
      */
     public BatchLocalFiles(File[] incomingFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(incomingFiles, "incomingFiles");
         for (int i = 0; i < incomingFiles.length; i++) {
-            if (incomingFiles[i] == null) {
-                throw new ArgumentNotValid("Null element at index " + i +
-                        " in file list for batch.");
-            }
+            ArgumentNotValid.checkNotNull(incomingFiles[i],
+                    "Null element at index " + i + " in file list for batch.");
         }
         this.files = incomingFiles;
     }
@@ -76,17 +77,24 @@ public class BatchLocalFiles {
             job.initialize(os);
             //Process each file:
             for (File file : files) {
-                if (job.getFilenamePattern().matcher(file.getName()).matches()) {
+                if (job.getFilenamePattern().matcher(file.getName())
+                        .matches()) {
                     processFile(job, file, os);
                 }
             }
         } catch (Exception e) {
+            // TODO Consider adding this initialization exception to the list
+            // of exception accumulated:
+            // job.addInitializeException(outputOffset, e)
             log.warn("Exception while initializing job " + job, e);
         } finally {
             // Finally, allow the job to finish: */
             try {
                 job.finish(os);
             } catch (Exception e) {
+                // TODO consider adding this finalization exception to the list
+                // of exception accumulated:
+                // job.addFinishException(outputOffset, e)
                 log.warn("Exception while finishing job " + job, e);
             }
         }
@@ -98,13 +106,17 @@ public class BatchLocalFiles {
      * @param file The file to process
      * @param os Where to put the output.
      */
-    private void processFile(FileBatchJob job, final File file, OutputStream os) {
+    private void processFile(FileBatchJob job, final File file,
+            OutputStream os) {
         log.debug("Started processing of file '" +  file.getAbsolutePath()
                 + "'.");
         boolean success = false;
         try {
             success = job.processFile(file, os);
         } catch (Exception e) {
+            // TODO consider adding this exception to the list
+            // of exception accumulated:
+            // job.addException(currentFile, currentOffset, outputOffset, e)
             log.warn("Exception while processing file " + file
                      + " with job " + job, e);
         }

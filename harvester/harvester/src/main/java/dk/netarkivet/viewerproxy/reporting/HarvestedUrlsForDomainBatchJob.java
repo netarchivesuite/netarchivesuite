@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 /**
  * Batchjob that extracts lines referring to a specific domain from a crawl log.
@@ -66,8 +66,8 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
     public void initialize(OutputStream os) {
     }
 
-    public BatchFilter getFilter() {
-        return new BatchFilter("OnlyCrawlLog") {
+    public ARCBatchFilter getFilter() {
+        return new ARCBatchFilter("OnlyCrawlLog") {
             public boolean accept(ARCRecord record) {
                 return record.getHeader().getUrl().startsWith(SETUP_URL_FORMAT);
             }

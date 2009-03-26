@@ -43,21 +43,30 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 
-/** This implementation of FileBatchJob is a bridge to a jar file given as a
- * File object.
- * The given class will be loaded and used to perform
- * the actions of the FileBatchJob class.
+/**
+ * This implementation of FileBatchJob is a bridge to a jar file given as a File
+ * object. The given class will be loaded and used to perform the actions of the
+ * FileBatchJob class.
  */
 public class LoadableJarBatchJob extends FileBatchJob {
-    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */ 
+    /** The FileBatchJob that this LoadableJarBatchJob is a wrapper for. */
     transient FileBatchJob loadedJob;
+
     /** The ClassLoader of type ByteJarLoader associated with this job. */
     private ClassLoader multipleClassLoader;
+
     /** The log. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
+
     /** The name of the loaded Job. */
     private String jobClass;
-    
+
+    /** Java package separator. */
+    private static final String JAVA_PACKAGE_SEPARATOR = ".";
+
+    /** Directory separator. */
+    private static final String DIRECTOR_SEPARATOR = "/";
+
     /**
      * ByteJarLoader is a ClassLoader that stores java classes in a map where
      * the key to the map is the class name, and the value is the class stored
@@ -66,14 +75,16 @@ public class LoadableJarBatchJob extends FileBatchJob {
     static class ByteJarLoader extends ClassLoader implements Serializable {
         /** The log. */
         transient Log log = LogFactory.getLog(this.getClass().getName());
-        
+
         /** The map, that holds the class data. */
         Map<String, byte[]> binaryData = new HashMap<String, byte[]>();
 
-        /** Constructor for the ByteLoader.
+        /**
+         * Constructor for the ByteLoader.
          * 
-         * @param files An array of files, which are assumed to be jar-files,
-         *              but they need not have the extension .jar
+         * @param files
+         *            An array of files, which are assumed to be jar-files, but
+         *            they need not have the extension .jar
          */
         public ByteJarLoader(File... files) {
             ArgumentNotValid.checkNotNull(files, "File ... files");
@@ -99,24 +110,31 @@ public class LoadableJarBatchJob extends FileBatchJob {
                 }
             }
         }
-        
+
         /**
          * Lookup and return the Class with the given className.
-         * @param className The name of the class to lookup
-         * @throws ClassNotFoundException If the class could not be found 
+         * 
+         * @param className
+         *            The name of the class to lookup
+         * @throws ClassNotFoundException
+         *             If the class could not be found
          * @return the Class with the given className.
          * 
          * @Overrides ClassLoader.findClass()
          */
         public Class findClass(String className) throws ClassNotFoundException {
             ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
-            // replace all dots in the className before looking it up in the
+            // replace all dots with '/' in the className before looking it up
+            // in the
             // hashmap
             // Note: The class is stored in the hashmap with a .class extension
-            String realClassName = className.replace('.', '/') + ".class";
-            
+            String realClassName = className.replace(JAVA_PACKAGE_SEPARATOR,
+                    DIRECTOR_SEPARATOR)
+                    + ".class";
+
             if (binaryData.isEmpty()) {
-                log.warn("No data loaded!!!!!");
+                log.warn("No data loaded for class with name '" + className
+                        + "'");
             }
             if (binaryData.containsKey(realClassName)) {
                 final byte[] bytes = binaryData.get(realClassName);
@@ -127,14 +145,17 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
     }
 
-    /** Load a given class from a jar file.
-     *
-     * @param jarFiles The jar file(s) to load from.  This file may also contain
-     * other classes required by the FileBatchJob class.
-     * @param jobClass The class to load initially.  This must be a
-     * subclass of FileBatchJob
+    /**
+     * Load a given class from a jar file.
+     * 
+     * @param jarFiles
+     *            The jar file(s) to load from. This file may also contain other
+     *            classes required by the FileBatchJob class.
+     * @param jobClass
+     *            The class to load initially. This must be a subclass of
+     *            FileBatchJob
      */
-    public LoadableJarBatchJob(String jobClass, File ... jarFiles) {
+    public LoadableJarBatchJob(String jobClass, File... jarFiles) {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
         this.jobClass = jobClass;
@@ -151,13 +172,15 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Initialize the job before running. This is called before the
      * processFile() calls.
-     *
-     * @param os the OutputStream to which output should be written
+     * 
+     * @param os
+     *            the OutputStream to which output should be written
      */
     public void initialize(OutputStream os) {
+        ArgumentNotValid.checkNotNull(os, "os");
         try {
-            loadedJob = (FileBatchJob) multipleClassLoader
-                    .loadClass(jobClass).newInstance();
+            loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
+                    .newInstance();
         } catch (InstantiationException e) {
             final String msg = "Cannot instantiate loaded job class";
             log.warn(msg, e);
@@ -167,7 +190,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (ClassNotFoundException e) {
-            final String msg = "Cannout create job class from jar file";
+            final String msg = "Cannot create job class from jar file";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         }
@@ -176,10 +199,12 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /**
      * Process one file stored in the bit archive.
-     *
-     * @param file the file to be processed.
-     * @param os   the OutputStream to which output should be written
-     *
+     * 
+     * @param file
+     *            the file to be processed.
+     * @param os
+     *            the OutputStream to which output should be written
+     * 
      * @return true if the file was successfully processed, false otherwise
      */
     public boolean processFile(File file, OutputStream os) {
@@ -189,47 +214,55 @@ public class LoadableJarBatchJob extends FileBatchJob {
     }
 
     /**
-     * Finish up the job. This is called after the last process() call.
-     *
-     * @param os the OutputStream to which output should be written
+     * Finish the job. This is called after the last process() call.
+     * 
+     * @param os
+     *            the OutputStream to which output should be written
      */
     public void finish(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         loadedJob.finish(os);
     }
 
-    /** 
-     * Human readable representation of this object. 
-     * Overrides FileBatchJob.toString to include name of loaded jar/class.
+    /**
+     * Human readable representation of this object. Overrides
+     * FileBatchJob.toString to include name of loaded jar/class.
+     * 
      * @return a Human readable representation of this class
      */
     public String toString() {
-        return this.getClass().getName() + " processing " 
-        + jobClass + " from " + multipleClassLoader.toString();
+        return this.getClass().getName() + " processing " + jobClass + " from "
+                + multipleClassLoader.toString();
     }
 
-    /** Override of the default way to serialize this class.
-     *
-     * @param out Stream that the object will be written to.
-     * @throws IOException In case there is an error from the underlying stream,
-     * or this object cannot be serialized.
+    /**
+     * Override of the default way to serialize this class.
+     * 
+     * @param out
+     *            Stream that the object will be written to.
+     * @throws IOException
+     *             In case there is an error from the underlying stream, or this
+     *             object cannot be serialized.
      */
-    private void writeObject(ObjectOutputStream out)
-            throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
 
-    /** Override of the default way to deserialize an object of this class.
-     *
-     * @param in Stream that the object can be read from.
-     * @throws IOException If there is an error reading from the stream, or
-     * the serialized object cannot be deserialized due to errors in the
-     * serialized form.
-     * @throws ClassNotFoundException If the class definition of the
-     * serialized object cannot be found.
+    /**
+     * Override of the default way to deserialize an object of this class.
+     * 
+     * @param in
+     *            Stream that the object can be read from.
+     * @throws IOException
+     *             If there is an error reading from the stream, or the
+     *             serialized object cannot be deserialized due to errors in the
+     *             serialized form.
+     * @throws ClassNotFoundException
+     *             If the class definition of the serialized object cannot be
+     *             found.
      */
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
         in.defaultReadObject();
         log = LogFactory.getLog(this.getClass().getName());
     }

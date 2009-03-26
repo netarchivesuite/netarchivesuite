@@ -36,7 +36,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import static dk.netarkivet.testutils.CollectionUtils.list;
 import dk.netarkivet.testutils.FileAsserts;
@@ -313,8 +313,8 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         boolean finished;
         public List<String> processedFileList = new ArrayList<String>();
 
-        public BatchFilter getFilter() {
-            return BatchFilter.NO_FILTER;
+        public ARCBatchFilter getFilter() {
+            return ARCBatchFilter.NO_FILTER;
         }
 
         public void initialize(OutputStream os) {

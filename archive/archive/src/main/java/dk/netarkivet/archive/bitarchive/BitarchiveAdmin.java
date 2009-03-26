@@ -49,11 +49,11 @@ import dk.netarkivet.common.utils.Settings;
  * files.
  */
 public class BitarchiveAdmin {
+    /** The class logger. */
     private final Log log = LogFactory.getLog(getClass().getName());
 
     /**
      * The list of valid archive directories.
-     *
      */
     private List<File> archivePaths = new ArrayList<File>();
 
@@ -161,7 +161,8 @@ public class BitarchiveAdmin {
             //if (checkArchiveDir(dir) && bytesFreeInDir > minSpaceLeft) {
             //    if (bytesFreeInDir > requestedSize) {
             
-            if (checkArchiveDir(dir) && (bytesFreeInDir > minSpaceLeft + requestedSize)) {
+            if (checkArchiveDir(dir) && (bytesFreeInDir 
+                    > minSpaceLeft + requestedSize)) {
                 File filedir = new File(
                         dir, Constants.TEMPORARY_DIRECTORY_NAME);
                 return new File(filedir, arcFileName);
@@ -260,6 +261,8 @@ public class BitarchiveAdmin {
 
     /**
      * Check that the given file is a directory appropriate for use.
+     * A File is appropiate to use as archivedir, if the file is an
+     * existing directory, and is writable by this java process.
      *
      * @param file A file
      * @return true, if 'file' is an existing directory and is writable.
@@ -295,12 +298,12 @@ public class BitarchiveAdmin {
                     Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
                 File[] filesHere = archiveDir.listFiles();
-                for (int j = 0; j < filesHere.length; j++) {
-                    if (!filesHere[j].isFile()) {
-                        log.warn("Non-file '" + filesHere[j]
+                for (File file: filesHere) {
+                    if (!file.isFile()) {
+                        log.warn("Non-file '" + file.getAbsolutePath()
                                       + "' found among archive files");
                     } else {
-                        files.add(filesHere[j]);
+                        files.add(file);
                     }
                 }
             }
@@ -317,6 +320,7 @@ public class BitarchiveAdmin {
      * the regular expression on the filename (sans paths).
      */
     public File[] getFilesMatching(final Pattern regexp) {
+        ArgumentNotValid.checkNotNull(regexp, "Pattern regexp");
         List<File> files = new ArrayList<File>();
         for (File archivePath : archivePaths) {
             File archiveDir = new File(archivePath, 
@@ -326,7 +330,8 @@ public class BitarchiveAdmin {
                     public boolean accept(File dir, String name) {
                         if (regexp.matcher(name).matches()) {
                             if (!new File(dir, name).isFile()) {
-                                log.warn("Non-file '" + new File(dir, name)
+                                log.warn("Non regular file '" 
+                                        + new File(dir, name).getAbsolutePath()
                                         + "' found among archive files");
                                 return false;
                             } else {
@@ -340,7 +345,7 @@ public class BitarchiveAdmin {
                 files.addAll(Arrays.asList(filesHere));
             }
         }
-        return files.toArray(new File[0]);
+        return files.toArray(new File[files.size()]);
     }
 
     /**
@@ -361,13 +366,15 @@ public class BitarchiveAdmin {
                     if (filename.isFile()) {
                         return new BitarchiveARCFile(arcFileName, filename);
                     }
-                    log.fatal("Corrupt bitarchive: Non-file '" + filename
-                            + "' found in"
+                    log.fatal("Possibly corrupt bitarchive: Non-file '"
+                            + filename + "' found in"
                             + " place of archive file");
                 }
             }
         }
         // the arcfile named "arcFileName" does not exist in this bitarchive.
+        log.trace("The arcfile named '" + arcFileName 
+                + "' does not exist in this bitarchve");
         return null;
     }
 
@@ -385,12 +392,13 @@ public class BitarchiveAdmin {
                  .listFiles();
         // Check, that listFiles method returns valid information
         if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()) {
-                    // Add size of file files[i] to amount of bytes used.
-                    used += files[i].length(); 
+            for (File datafiles : files) {
+                if (datafiles.isFile()) {
+                    // Add size of file f to amount of bytes used.
+                    used += datafiles.length(); 
                 } else {
-                    log.warn("Non-file '" + files[i] + "' found in archive");
+                    log.warn("Non-file '" + datafiles.getAbsolutePath() 
+                            + "' found in archive");
                 }
             }
         } else {
@@ -401,14 +409,15 @@ public class BitarchiveAdmin {
                 Constants.TEMPORARY_DIRECTORY_NAME).listFiles();
         // Check, that listFiles() method returns valid information
         if (tempfiles != null) { 
-            for (int i = 0; i < tempfiles.length; i++) {
-                if (tempfiles[i].isFile()) {
-                    // Add size of file tempfiles[i] to amount of bytes used.
-                    used += tempfiles[i].length();
+            for (File tempfile : tempfiles) {
+                if (tempfile.isFile()) {
+                    // Add size of file f to amount of bytes used.
+                    used += tempfile.length();
                 } else {
                     log.warn(
-                            "Non-file '" + tempfiles[i] + "' found in archive");
-                }
+                            "Non-file '" + tempfile.getAbsolutePath() 
+                            + "' found in archive");
+                }         
             }
         } else {
             log.warn("filedir does not contain a directory named: "
@@ -417,13 +426,14 @@ public class BitarchiveAdmin {
         File[] atticfiles = new File(filedir, Constants.ATTIC_DIRECTORY_NAME)
                 .listFiles();
         // Check, that listFiles() method returns valid information
-        if (atticfiles != null) { 
-            for (int i = 0; i < atticfiles.length; i++) {
-                if (atticfiles[i].isFile()) {
+        if (atticfiles != null) {
+            
+            for (File atticfile : atticfiles) {
+                if (atticfile.isFile()) {
                     // Add size of file tempfiles[i] to amount of bytes used.
-                    used += atticfiles[i].length();
+                    used += atticfile.length();
                 } else {
-                    log.warn("Non-file '" + atticfiles[i]
+                    log.warn("Non-file '" + atticfile.getAbsolutePath()
                                 + "' found in archive");
                 }
             }
@@ -476,7 +486,6 @@ public class BitarchiveAdmin {
         // Ensure that 'atticdir' exists. If it doesn't, it is created
         File atticdir = new File(parentDir, Constants.ATTIC_DIRECTORY_NAME);
         ApplicationUtils.dirMustExist(atticdir);
-        return new File(atticdir,
-                        arcFileName);
+        return new File(atticdir, arcFileName);
     }
 }

@@ -24,7 +24,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,8 +36,8 @@ public class TestBatchJobRuns extends ARCBatchJob {
     public int records_processed;
     boolean finished;
 
-    public BatchFilter getFilter() {
-        return BatchFilter.NO_FILTER;
+    public ARCBatchFilter getFilter() {
+        return ARCBatchFilter.NO_FILTER;
     }
 
     public void initialize(OutputStream os) {

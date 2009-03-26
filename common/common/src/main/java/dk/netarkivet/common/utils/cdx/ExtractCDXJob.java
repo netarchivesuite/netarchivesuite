@@ -25,7 +25,7 @@ package dk.netarkivet.common.utils.cdx;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,9 +92,9 @@ public class ExtractCDXJob extends ARCBatchJob {
      * @return The filter that defines what ARC records are wanted
      * in the output CDX file.
      */
-    public BatchFilter getFilter() {
+    public ARCBatchFilter getFilter() {
         //Per default we want to index all records except ARC file headers:
-        return BatchFilter.EXCLUDE_FILE_HEADERS;
+        return ARCBatchFilter.EXCLUDE_FILE_HEADERS;
     }
 
     /**

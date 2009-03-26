@@ -37,13 +37,12 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NetarkivetException;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 
 /**
- *
- * Abstract class defining a batch job to run on an ARC archive.
+ * Abstract class defining a batch job to run on a set of ARC files.
  * Each implementation is required to define initialize() , processRecord() and
  * finish() methods. The bitarchive application then ensures that the batch
  * job run initialize(), runs processRecord() on each record in each file in
@@ -80,10 +79,11 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * archive on which this batch-job is performed. The default value is
      * a neutral filter which allows all records.
      *
-     * @return A filter telling which records should be given to processRecord().
+     * @return A filter telling which records should be given to
+     * processRecord().
      */
-    public BatchFilter getFilter() {
-        return BatchFilter.NO_FILTER;
+    public ARCBatchFilter getFilter() {
+        return ARCBatchFilter.NO_FILTER;
     }
 
     /**
@@ -116,7 +116,6 @@ public abstract class ARCBatchJob extends FileBatchJob {
 
                 return false; // Can't process file after exception
             }
-
             
             try {
                 Iterator<? extends ArchiveRecord> it = arcReader.iterator();
@@ -127,50 +126,50 @@ public abstract class ARCBatchJob extends FileBatchJob {
                     log.debug("No ARCRecords found in ARCfile '"
                             + arcFile.getName() + "'.");
                 }
+                ARCRecord record = null;
                 while (it.hasNext()) {
                     log.debug("At begin of processing-loop");
-                    ARCRecord record = null;
-
                     // Get a record from the file
-                    try {
-                        record = (ARCRecord) it.next();
-                    } catch (Exception unexpectedException) {
-                        handleException(unexpectedException, arcFile, arcFileIndex);
-                        return false;
-                    }
+                    record = (ARCRecord) it.next();
                     // Process with the job
                     try {
                         if (!getFilter().accept(record)) {
                             continue;
                         }
-                        log.debug("Processing ARCRecord #" + noOfRecordsProcessed
+                        log.debug(
+                                "Processing ARCRecord #" + noOfRecordsProcessed
                                 + " in ARCfile '" + arcFile.getName()  + "'.");
                         processRecord(record, os);
                         ++noOfRecordsProcessed;
-                    } catch (NetarkivetException e) { // Our exceptions don't stop us
+                    } catch (NetarkivetException e) {
+                        // Our exceptions don't stop us
                         success = false;
 
-                        // With our exceptions, we assume that just the processing
-                        // of this record got stopped, and we can easily find the next
+                        // With our exceptions, we assume that just the
+                        // processing of this record got stopped, and we can
+                        // easily find the next
                         handleOurException(e, arcFile, arcFileIndex);
                     } catch (Exception e) {
                         success = false; // Strange exceptions do stop us
 
                         handleException(e, arcFile, arcFileIndex);
-                        // With strange exceptions, we don't know if we've skipped records
+                        // With strange exceptions, we don't know
+                        // if we've skipped records
                         break;
                     }
                     // Close the record
                     try {
                         long arcRecordOffset =
-                                record.getBodyOffset() + record.getMetaData().getLength();
+                                record.getBodyOffset() 
+                                + record.getMetaData().getLength();
                         record.close();
                         arcFileIndex = arcRecordOffset;
                     } catch (IOException ioe) { // Couldn't close an ARCRecord
                         success = false;
 
                         handleException(ioe, arcFile, arcFileIndex);
-                        // If close fails, we don't know if we've skipped records
+                        // If close fails, we don't know if we've skipped
+                        // records
                         break;
                     }
                     log.debug("At end of processing-loop");
@@ -179,7 +178,8 @@ public abstract class ARCBatchJob extends FileBatchJob {
                 try {
                     arcReader.close();
                 } catch (IOException e) { //Some IOException
-                    // TODO: Discuss whether exceptions on close cause filesFailed addition
+                    // TODO Discuss whether exceptions on close cause
+                    // filesFailed addition
                     handleException(e, arcFile, arcFileIndex);
                 }
             }
@@ -189,8 +189,15 @@ public abstract class ARCBatchJob extends FileBatchJob {
         }
         return success;
     }
-
-    private void handleOurException(NetarkivetException e, File arcFile, long index) {
+    
+    /**
+     * Private method that handles our exception.
+     * @param e the given exception
+     * @param arcFile The ARCFile where the exception occurred.
+     * @param index The offset in the ARCFile where the exception occurred.
+     */
+    private void handleOurException(
+            NetarkivetException e, File arcFile, long index) {
         handleException(e, arcFile, index);
     }
 
@@ -198,20 +205,22 @@ public abstract class ARCBatchJob extends FileBatchJob {
      * When the org.archive.io.arc classes throw IOExceptions while reading,
      * this is where they go. Subclasses are welcome to override the default
      * functionality which simply logs and records them in a list.
-     * TODO: Actually use the arcfile/index entries in the exception list
+     * TODO Actually use the arcfile/index entries in the exception list
      *
      * @param e An Exception thrown by the org.archive.io.arc classes.
-     * @param arcfile The arcFile that was processed while the Exception was thrown
-     * @param index The index (in the ARC file) at which the Exception was thrown
+     * @param arcfile The arcFile that was processed while the Exception
+     * was thrown
+     * @param index The index (in the ARC file) at which the Exception
+     * was thrown
      * @throws ArgumentNotValid if e is null
      */
     public void handleException(Exception e, File arcfile, long index)
       throws ArgumentNotValid{
-        ArgumentNotValid.checkNotNull(e,"e");
+        ArgumentNotValid.checkNotNull(e, "e");
+        
         Log log = LogFactory.getLog(getClass().getName());
-        log.debug("Caught exception while running batch job " +
-          "on file " + arcfile + ", position " + index + ":\n" + e.getMessage(),
-                e);
+        log.debug("Caught exception while running batch job " + "on file "
+                + arcfile + ", position " + index + ":\n" + e.getMessage(), e);
         addException(arcfile, index, ExceptionOccurrence.UNKNOWN_OFFSET, e);
     }
 
@@ -233,6 +242,10 @@ public abstract class ARCBatchJob extends FileBatchJob {
         return exceptionList;
     }
     
+    /**
+     * 
+     * @return the number of records processed.
+     */
     public int noOfRecordsProcessed() {
         return noOfRecordsProcessed;
     }

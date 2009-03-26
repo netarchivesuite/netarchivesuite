@@ -70,6 +70,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <patternset id="jars.path.set">
                 <include name="db/derby-10.4.2.0.jar"/>
             	<include name="db/derbyclient-10.4.2.0.jar"/>
+            	<include name="db/derbytools-10.4.2.0.jar"/>
             	<include name="commons-cli-1.0.jar"/>
                 <include name="commons-fileupload-1.0.jar"/>
                 <include name="commons-net-1.4.1.jar"/>

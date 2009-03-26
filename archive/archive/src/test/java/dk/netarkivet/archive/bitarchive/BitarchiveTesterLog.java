@@ -30,7 +30,7 @@ import org.archive.io.arc.ARCRecord;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.BatchFilter;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 import dk.netarkivet.testutils.FileAsserts;
 
 
@@ -127,8 +127,8 @@ public class BitarchiveTesterLog extends BitarchiveTestCase {
             // Run the empty batch job.
             try {
                 archive.batch(TestInfo.baAppId, new ARCBatchJob() {
-                    public BatchFilter getFilter() {
-                        return BatchFilter.NO_FILTER;
+                    public ARCBatchFilter getFilter() {
+                        return ARCBatchFilter.NO_FILTER;
                     }
                     public void initialize(OutputStream os) { }
                     public void processRecord(ARCRecord record, OutputStream os) {

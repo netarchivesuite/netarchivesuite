@@ -35,13 +35,13 @@ import java.util.regex.Pattern;
  * The class in itself is abstract but contains implementation of several
  * filters.
  */
-public abstract class BatchFilter implements Serializable {
+public abstract class ARCBatchFilter implements Serializable {
     
     /** The name of the BatchFilter. */
     private String name;
     
     /** A default filter: Accepts everything. */
-    public static final BatchFilter NO_FILTER = new BatchFilter("NO_FILTER") {
+    public static final ARCBatchFilter NO_FILTER = new ARCBatchFilter("NO_FILTER") {
             public boolean accept(ARCRecord record) {
                 return true;
             }
@@ -56,7 +56,7 @@ public abstract class BatchFilter implements Serializable {
     private static final String EXCLUDE_FILE_HEADERS_FILTER_NAME
         = "EXCLUDE_FILE_HEADERS";
     /** A default filter: Accepts all but the first file. */
-    public static final BatchFilter EXCLUDE_FILE_HEADERS = new BatchFilter(
+    public static final ARCBatchFilter EXCLUDE_FILE_HEADERS = new ARCBatchFilter(
             EXCLUDE_FILE_HEADERS_FILTER_NAME) {
             public boolean accept(ARCRecord record) {
                 return !record.getMetaData().getUrl().startsWith(
@@ -72,7 +72,7 @@ public abstract class BatchFilter implements Serializable {
     /**
      * Filter that only accepts records where the url starts with http.
      */
-    public static final BatchFilter ONLY_HTTP_ENTRIES = new BatchFilter(
+    public static final ARCBatchFilter ONLY_HTTP_ENTRIES = new ARCBatchFilter(
             ONLY_HTTP_ENTRIES_FILTER_NAME) {
             public boolean accept(ARCRecord record) {
                 return record.getMetaData().getUrl().startsWith(
@@ -93,7 +93,7 @@ public abstract class BatchFilter implements Serializable {
      *
       * @param name The name of this filter, for debugging mostly.
      */
-    protected BatchFilter(String name) {
+    protected ARCBatchFilter(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         this.name = name;
     }
@@ -112,14 +112,15 @@ public abstract class BatchFilter implements Serializable {
      *  have this mimetype
      * @throws MimeTypeParseException If mimetype is invalid
      */
-    public static BatchFilter getMimetypeBatchFilter(final String mimetype)
+    public static ARCBatchFilter getMimetypeBatchFilter(final String mimetype)
         throws MimeTypeParseException {
+        ArgumentNotValid.checkNotNullOrEmpty(mimetype, "String mimetype");
         if (!mimetypeIsOk(mimetype)) {
             throw new MimeTypeParseException("Mimetype argument '" + mimetype
                 + "' is invalid");
         }
 
-        return new BatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
+        return new ARCBatchFilter(MIMETYPE_BATCH_FILTER_NAME_PREFIX + mimetype) {
                 public boolean accept(ARCRecord record) {
                     return record.getMetaData().getMimetype().startsWith(
                             mimetype);
