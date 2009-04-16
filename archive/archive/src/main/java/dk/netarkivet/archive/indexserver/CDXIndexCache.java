@@ -53,6 +53,7 @@ import dk.netarkivet.common.utils.ProcessUtils;
  */
 public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
         implements JobIndexCache {
+    /** A suffix used by the sortFile method in the sorting process. */
     private static final String WORK_SUFFIX = ".unsorted";
 
     /** Creates a new cache for CDX index files.
@@ -65,6 +66,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
     /** Combine parts of an index into one big index.
      *
      * @param filesFound A map of IDs and the files caching their content.
+     * @param filesRequired The Set of IDS required by the caller.
      */
     protected void combine(Map<Long, File> filesFound,
             Set<Long> filesRequired) {        
@@ -79,8 +81,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
      * @param resultFile The file where the files are concatenated into.
      */
     private static void concatenateFiles(Collection<File> files,
-                                         File resultFile)
-    {
+            File resultFile) {
         try {
             BufferedWriter out = null;
             try {
@@ -106,8 +107,8 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Couldn't combine indexes for "
-                    + files.size() + " jobs into " + resultFile, e);
+            throw new IOFailure("Couldn't combine indexes for " + files.size()
+                    + " jobs into " + resultFile, e);
         }
     }
 

@@ -49,11 +49,13 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
     /** The raw data cache that this cache gets data from. */
     FileBasedCache<T> rawcache;
 
-    /** Constructor for a CombiningMultiFileBasedCache
+    /** Constructor for a CombiningMultiFileBasedCache.
      *
+     * @param name The name of the cache
      * @param rawcache The underlying cache of single files.
      */
-    protected CombiningMultiFileBasedCache(String name, FileBasedCache<T> rawcache) {
+    protected CombiningMultiFileBasedCache(String name,
+            FileBasedCache<T> rawcache) {
         super(name);
         this.rawcache = rawcache;
     }
@@ -63,7 +65,8 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
      * necessary to get the data.  At the outset, the file for the given
      * IDs is expected to be not present.
      *
-     * @param ids
+     * @param ids The set of identifiers for which we want the corresponding
+     *            data
      * @return The set of IDs, or subset if data fetching failed for some IDs.
      * If some IDs failed, the file is not filled, though some data may be
      * cached at a lower level.
@@ -106,5 +109,6 @@ public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
      * data cache.  The map must not contain any null values.
      * @param filesRequired The set of IDs required
      */
-    protected abstract void combine(Map<T, File> filesFound, Set<T> filesRequired);
+    protected abstract void combine(Map<T, File> filesFound,
+            Set<T> filesRequired);
 }

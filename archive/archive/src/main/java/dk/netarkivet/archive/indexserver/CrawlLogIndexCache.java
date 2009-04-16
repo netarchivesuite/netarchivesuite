@@ -91,7 +91,9 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                 missing.add(ID);
             }
         }
-        log.info("Data not found for jobs: " +  missing);
+        if (!missing.isEmpty()) {
+            log.info("Data not found for jobs: " +  missing);
+        }
         for (Long ID : missing) {
             returnMap.remove(ID);
         }
@@ -141,7 +143,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             ZipUtils.gzipFiles(new File(indexLocation), resultFile);
         } catch (IOException e) {
             throw new IOFailure("Error setting up craw.log index framework for "
-                    + resultFile, e);
+                    + resultFile.getAbsolutePath(), e);
         } finally {
             FileUtils.removeRecursively(new File(indexLocation));
         }
