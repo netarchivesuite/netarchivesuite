@@ -47,7 +47,7 @@ public class GetHarvestIndex {
     private static Set<Long> findJobIds(String[] argv) {
         Set<Long> jobIds = new HashSet<Long>();
         for (String arg: argv) {
-            jobIds.add(Long.getLong(arg));
+            jobIds.add(Long.valueOf(arg));
         }
         return jobIds;
     }
