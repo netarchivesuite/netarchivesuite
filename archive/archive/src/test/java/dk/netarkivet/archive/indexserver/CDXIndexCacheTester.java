@@ -57,7 +57,7 @@ public class CDXIndexCacheTester extends CacheTestCase {
         Set<Long> requiredSet = new HashSet<Long>();
         requiredSet.add(3L);
         requiredSet.add(4L);
-        cache.combine(files, requiredSet);
+        cache.combine(files);
         File cacheFile = cache.getCacheFile(files.keySet());
         FileAsserts.assertFileNumberOfLines("Should have files 3 and 4",
                 cacheFile,

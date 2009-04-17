@@ -107,13 +107,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      * null values are allowed in this map.
      * @param askedJobIds The set of jobIds actually needed
      */
-    protected void combine(Map<Long, File> rawfiles, Set<Long> askedJobIds) {
-        // Hack to fix bug 1566:
-        // base the name of the cachefile on the askedJobIDs instead
-        // of rawfiles.keySet()
-        //Old line: 
-        // File resultFile = getCacheFile(rawfiles.keySet());
-        File resultFile = getCacheFile(askedJobIds);
+    protected void combine(Map<Long, File> rawfiles) {
+        File resultFile = getCacheFile(rawfiles.keySet());
         String indexLocation = resultFile.getAbsolutePath() + ".luceneDir";
         try {
             // Setup Lucene for indexing our crawllogs

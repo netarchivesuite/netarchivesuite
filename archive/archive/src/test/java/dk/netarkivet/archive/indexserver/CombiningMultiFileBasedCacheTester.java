@@ -66,7 +66,7 @@ public class CombiningMultiFileBasedCacheTester extends CacheTestCase {
                             }
                         }) {
 
-                    protected void combine(Map<Integer, File> filesFound, Set<Integer> requiredSet) {
+                    protected void combine(Map<Integer, File> filesFound) {
                         File resultFile = getCacheFile(filesFound.keySet());
                         combined.clear();
                         combined.putAll(filesFound);

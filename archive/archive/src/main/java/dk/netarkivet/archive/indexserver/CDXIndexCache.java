@@ -66,10 +66,8 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
     /** Combine parts of an index into one big index.
      *
      * @param filesFound A map of IDs and the files caching their content.
-     * @param filesRequired The Set of IDS required by the caller.
      */
-    protected void combine(Map<Long, File> filesFound,
-            Set<Long> filesRequired) {        
+    protected void combine(Map<Long, File> filesFound) {        
         File resultFile = getCacheFile(filesFound.keySet());
         concatenateFiles(filesFound.values(), resultFile);
         sortFile(resultFile);

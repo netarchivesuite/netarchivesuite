@@ -100,7 +100,7 @@ public class DedupCrawlLogIndexCacheTester extends CacheTestCase {
         File resultFile = cache.getCacheFile(files.keySet());
         setDummyCDXCache(cache);
 
-        cache.combine(files, requiredSet);
+        cache.combine(files);
 
         assertTrue("Result file should have contents after combining",
                 resultFile.length() > 0);
