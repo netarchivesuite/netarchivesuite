@@ -160,7 +160,14 @@ public abstract class FileBasedCache<I> {
                         if (cachedFile.exists()) {
                             return id;
                         }
-                        return cacheData(id);
+                        
+                        // Formerly this code was:
+                        // return cacheData(id);
+                        I found = cacheData(id);
+                        log.warn("Of the set (" + id 
+                                + ") only found cached data for ids:" +  found);
+                        // FIXME This tries to fix a problem with
+                        return id;
                     }
                 } finally {
                     if (lock != null) {
