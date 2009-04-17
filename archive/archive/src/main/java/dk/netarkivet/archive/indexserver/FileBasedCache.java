@@ -164,7 +164,9 @@ public abstract class FileBasedCache<I> {
                         // Formerly this code was:
                         // return cacheData(id);
                         I found = cacheData(id);
-                        log.warn("Of the set (" + id 
+                        // TODO Only write a log entry, if "found" 
+                        // is different from "id"
+                        log.info("Of the set (" + id 
                                 + ") only found cached data for ids:" +  found);
                         // FIXME This tries to fix a problem with
                         return id;
