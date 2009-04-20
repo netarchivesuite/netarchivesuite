@@ -57,6 +57,7 @@ public class Constants {
      */
     public static final String METADATA_FILE_PATTERN_SUFFIX
             = "-metadata-[0-9]+.arc";
+    /** The mimetype for a list of CDX entries. */
     public static final String CDX_MIME_TYPE =
         "application/x-cdx";
 
@@ -66,16 +67,16 @@ public class Constants {
     /** Extension of xml file names. */
     public static final String XML_EXTENSION = ".xml";
 
-    //It is QA's responsibility to update the following parameters on all release
-    //and codefreeze actions
+    //It is QA's responsibility to update the following parameters on all
+    // release and codefreeze actions
     /** Major version number. */
     public static final int MAJORVERSION = 3;
     /** Minor version number. */
-    public static final int MINORVERSION = 7;
+    public static final int MINORVERSION = 8;
     /** Patch version number. */
-    public static final int PATCHVERSION = 1;
+    public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.12.1b";
@@ -85,13 +86,15 @@ public class Constants {
      * than Integer.MAX_VALUE, since a call to fileChannel.transferFrom/To
      * fails with an error while calling mmap. */
     public static final long IO_CHUNK_SIZE = 65536L;
-    /** The dirname of the heritrix directory with arcfiles */
+    /** The dirname of the heritrix directory with arcfiles. */
     public static final String ARCDIRECTORY_NAME = "arcs";
     /** How big a buffer we use for read()/write() operations on InputStream/
      * OutputStream. */
     public static final int IO_BUFFER_SIZE = 4096;
+    /** The organization behind the harvesting. Only used by 
+     * the HarvestDocumentation class */
     public static final String ORGANIZATION_NAME = "netarkivet.dk";
-
+    /** The date format used for NetarchiveSuite dateformatting. */
     private static final String ISO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
     /**
@@ -100,7 +103,10 @@ public class Constants {
     public static final String TRANSLATIONS_BUNDLE =
             "dk.netarkivet.common.Translations";
 
-
+    /**
+     * Private constructor that does absolutely nothing.
+     * Necessary in order to prevent initialization.
+     */
     private Constants() {
         //Not to be initialised
     }
@@ -109,8 +115,8 @@ public class Constants {
      * @return A string telling current version and status of code.
      * */
     public static String getVersionString() {
-        return "Version: " + MAJORVERSION + "." + MINORVERSION + "." + PATCHVERSION + " status "
-               + BUILDSTATUS;
+        return "Version: " + MAJORVERSION + "." + MINORVERSION + "."
+            + PATCHVERSION + " status " + BUILDSTATUS;
     }
 
     /**
