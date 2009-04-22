@@ -50,20 +50,20 @@ public class DeployTester extends TestCase {
     
     public void setUp() {
         rs.setUp();
-	pss.setUp();
-	pse.setUp();
+        pss.setUp();
+        pse.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMPDIR);
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
+                TestInfo.WORKING_DIR);
     }
 
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         // reset Settings to before
-	pse.tearDown();
-	pss.tearDown();
+        pse.tearDown();
+        pss.tearDown();
         rs.tearDown();
     }
 

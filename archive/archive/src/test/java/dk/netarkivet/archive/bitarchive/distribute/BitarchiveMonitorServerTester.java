@@ -177,6 +177,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
         assertEquals("Should list no failed jobs", null, brf.failed);
         assertEquals("Should have gotten 2 messages", 2,
                      client.getNumReceived());
+        assertEquals("Should have gotten 0 Not OK messages, but got " + client.getNumNotOk(), 0, 
+                client.getNumNotOk());
         assertEquals("Should have gotten 2 OK messages", 2, client.getNumOk());
         assertBatchResultIs(client, 0, "job2", BlockingRF.WAKER_CONTENT);
         assertBatchResultIs(client, 1, "job1", BlockingRF.STD_CONTENT);
