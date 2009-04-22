@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.indexserver;
-/**
- * Testclass for class CrawlLogIndexCache.
- */
 
 import java.io.File;
 import java.util.HashSet;
@@ -35,7 +32,9 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 
-
+/**
+ * Testclass for class CrawlLogIndexCache.
+ */
 public class CrawlLogIndexCacheTester extends CacheTestCase {
     public CrawlLogIndexCacheTester(String s) {
         super(s);
@@ -114,7 +113,7 @@ public class CrawlLogIndexCacheTester extends CacheTestCase {
         cache.prepareCombine(jobIDs);
         LogUtils.flushLogs(CrawlLogIndexCache.class.getName());
         FileAsserts.assertFileContains("Should have info about starting index",
-                                       "Starting to generate fullcrawllogindex for jobs " + jobIDs,
+                                       "Starting to generate fullcrawllogindex for jobs: " + jobIDs,
                                        TestInfo.LOG_FILE);
     }
 }

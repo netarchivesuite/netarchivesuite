@@ -443,7 +443,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                                                     bas.getBitarchiveAppId());
         con.send(hbm);
         con.waitForConcurrentTasksToFinish();
-        Set runningBAApps = getLiveApps(bam_server);
+        Set<String> runningBAApps = getLiveApps(bam_server);
         assertTrue(
                 "The BA monitor's list of running BA applications was expected to contain: "
                 + bas.getBitarchiveAppId(),
@@ -485,7 +485,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
     /**
      * Invokes getRunningBAApplicationIds() through reflection.
      */
-    private Set getLiveApps(BitarchiveMonitorServer bamonServer) {
+    private Set<String> getLiveApps(BitarchiveMonitorServer bamonServer) {
         try {
             Field bamonField = ReflectUtils.getPrivateField(
                     BitarchiveMonitorServer.class, "bamon");
@@ -495,7 +495,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
             Method m = ReflectUtils.getPrivateMethod(BitarchiveMonitor.class,
                                                      "getRunningBitarchiveIDs");
             Object result = m.invoke(bamon);
-            return (Set) result;
+            return (Set<String>) result;
         } catch (Exception e) {
             e.printStackTrace();
             throw new PermissionDenied(
