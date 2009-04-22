@@ -228,7 +228,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                                              "String bitarchiveBatchID");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID,
                                              "String bitarchiveID");
-        ArgumentNotValid.checkNotNull(exceptions, "exceptions");
+        //ArgumentNotValid.checkNotNull(exceptions, "exceptions");
         ArgumentNotValid.checkNotNegative(noOfFilesProcessed, 
                 "int noOfFilesProcessed");
        
