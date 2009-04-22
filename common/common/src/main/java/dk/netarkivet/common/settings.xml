@@ -63,6 +63,7 @@
             <port>8100</port>
             <rmiPort>8200</rmiPort>
             <passwordFile>conf/jmxremote.password</passwordFile>
+            <accessFile>conf/jmxremote.access</accessFile>
             <timeout>120</timeout>
         </jmx>
         <webinterface> <!-- Settings for the web GUI -->

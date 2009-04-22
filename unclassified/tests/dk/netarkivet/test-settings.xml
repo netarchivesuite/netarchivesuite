@@ -35,6 +35,7 @@
 	<!-- to reduce running time of our unittests -->
 	<timeout>2</timeout>
 	<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
+	<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
 	</jmx>
 	<http>
     	<port>8076</port>

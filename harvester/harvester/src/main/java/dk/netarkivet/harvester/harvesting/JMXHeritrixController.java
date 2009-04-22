@@ -258,6 +258,10 @@ public class JMXHeritrixController implements HeritrixController {
                             + new File(Settings.get(
                             CommonSettings.JMX_PASSWORD_FILE))
                             .getAbsolutePath(),
+                    "-Dcom.sun.management.jmxremote.access.file="
+                            + new File(Settings.get(
+                                    CommonSettings.JMX_ACCESS_FILE))
+                                    .getAbsolutePath(),
                     "-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath(),
                     "-Djava.protocol.handler.pkgs=org.archive.net",
                     "-Ddk.netarkivet.settings.file=" + settingProperty,

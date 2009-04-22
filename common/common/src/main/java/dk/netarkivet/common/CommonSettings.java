@@ -160,6 +160,16 @@ public class CommonSettings {
             = "settings.common.jmx.passwordFile";
 
     /** 
+     * <b>settings.common.jmx.accessFile</b>: <br>
+     * The access file, containing information about who have which JMX roles
+     * have which access privileges. 
+     * The file has a format defined by the JMX standard,
+     * @see <URL:http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html#PasswordAccessFiles>*/
+    public static String JMX_ACCESS_FILE
+            = "settings.common.jmx.accessFile";
+
+    
+    /** 
      * <b>settings.common.jmx.timeout</b>: <br>
      * How many seconds we will wait before giving up on a JMX connection. */
     public static String JMX_TIMEOUT
