@@ -260,7 +260,8 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /** Test that starting a job does not throw an Exception.
-     * Will fail if conf/jmxremote.password has other rights than -r------ 
+     * Will fail if tests/dk/netarkivet/jmxremote.password has other rights 
+     * than -r------ 
      * @throws NoSuchFieldException
      * @throws IllegalAccessException */
     public void testStartJob()
