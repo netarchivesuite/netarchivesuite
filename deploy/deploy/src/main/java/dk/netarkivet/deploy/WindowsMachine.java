@@ -154,7 +154,7 @@ public class WindowsMachine extends Machine {
                 + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
                 + ScriptConstants.EXIST + Constants.SPACE);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
-        res.append(Constants.JMX_FILE_NAME);
+        res.append(Constants.JMX_PASSWORD_FILE_NAME);
         res.append(Constants.SPACE + ScriptConstants.ECHO_ONE);
         res.append(Constants.SPACE + Constants.BRACKET_END 
                 + Constants.SPACE + Constants.SQUARE_BRACKET_END
@@ -167,7 +167,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
                 + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
-        res.append(Constants.JMX_FILE_NAME + Constants.SPACE 
+        res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
         res.append(machineParameters.getMachineUserName().getText());
@@ -186,26 +186,10 @@ public class WindowsMachine extends Machine {
         res.append(Constants.COLON);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
         res.append(Constants.NEWLINE);
-        // - $'apply database script'
+        // APPLY DATABASE!
         res.append(osInstallDatabase());
-        // - echo make password files readonly 
-        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
-        res.append(Constants.NEWLINE);
-        // - echo Y | ssh 'login'@'machine' cmd /c cacls 
-        // 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
-        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
-                + Constants.SEPARATOR + Constants.SPACE + ScriptConstants.SSH
-                + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
-                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
-        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
-        res.append(Constants.JMX_FILE_NAME + Constants.SPACE 
-                + ScriptConstants.SLASH_P + Constants.SPACE 
-                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
-        res.append(machineParameters.getMachineUserName().getText());
-        res.append(ScriptConstants.COLON_R);
-        res.append(Constants.NEWLINE);
+        // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
+        res.append(getJMXremoteFilesCommand());
         // END OF SCRIPT
         return res.toString();
     }
@@ -296,6 +280,15 @@ public class WindowsMachine extends Machine {
      */
     protected String getLocalConfDirPath() {
         return getEnvironmentName() + Constants.CONF_DIR_WINDOWS;
+    }
+    
+    /**
+     * Creates the local path to the installation directory.
+     * 
+     * @return The path to the installation directory for ssh.
+     */
+    protected String getLocalInstallDirPath() {
+        return getEnvironmentName() + Constants.BACKSLASH;
     }
 
     /**
@@ -439,7 +432,7 @@ public class WindowsMachine extends Machine {
      * where:
      * id = the process identification number of the running application. 
      * 
-     * TODO: kill the potential heritrix process, created by a harvester.
+     * TODO kill the potential heritrix process, created by a harvester.
      * Just like on Linux/Unix. 
      * If we in the future add the possibility of running heritrix on Windows.
      * 
@@ -1063,5 +1056,152 @@ public class WindowsMachine extends Machine {
                 + Constants.BACKSLASH;
         return path.replace(Constants.BACKSLASH, 
                 ScriptConstants.SECURITY_DIR_SEPARATOR);
+    }
+
+    /**
+     * This method does the following:
+     * 
+     * Retrieves the path to the jmxremote.access and jmxremote.password files.
+     * 
+     * Moves these files, if they are different from standard.
+     * 
+     * Makes the jmxremote.access and jmxremote.password files readonly.
+     *  
+     * @return The commands for handling the jmxremote files.
+     */
+    @Override
+    protected String getJMXremoteFilesCommand() {
+        String accessFilePath;
+        String passwordFilePath;
+        String[] options;
+
+        // retrieve the access file path.
+        options = settings.getLeafValues(Constants
+                .SETTINGS_COMMON_JMX_ACCESSFILE);
+
+        // extract the path, if any. Else set default.
+        if(options == null || options.length < 0) {
+            accessFilePath = Constants.JMX_ACCESS_FILE_PATH_DEFAULT;
+        } else {
+            accessFilePath = options[0];
+            // warn if more than one access file is defined.
+            if(options.length > 1) {
+                log.debug(Constants.MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS);
+            }
+        }
+
+        // retrieve the password file path.
+        options = settings.getLeafValues(Constants
+                .SETTINGS_COMMON_JMX_PASSWORDFILE);
+
+        // extract the path, if any. Else set default.
+        if(options == null || options.length < 0) {
+            passwordFilePath = Constants.JMX_PASSWORD_FILE_PATH_DEFAULT;
+        } else {
+            passwordFilePath = options[0];
+            // warn if more than one access file is defined.
+            if(options.length > 1) {
+                log.debug(Constants.MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS);
+            }
+        }
+
+        // change the path to windows syntax.
+        accessFilePath = ScriptConstants.replaceWindowsDirSeparators(
+                accessFilePath);
+        passwordFilePath = ScriptConstants.replaceWindowsDirSeparators(
+                passwordFilePath);
+
+        // initialise the resulting command string.
+        StringBuilder res = new StringBuilder();
+
+        // - echo make password files readonly 
+        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
+        res.append(Constants.NEWLINE);
+
+        // IF NOT DEFAULT PATHS, THEN MAKE SCRIPT TO MOVE THE FILES.
+        if(!accessFilePath.equals(ScriptConstants.replaceWindowsDirSeparators(
+                Constants.JMX_ACCESS_FILE_PATH_DEFAULT))) {
+            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // installpath/conf/jmxremote.access installpath/accessFilePath"
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK);
+            res.append(ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE);
+            res.append(ScriptConstants.MOVE);
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.doubleBackslashes(
+                    getLocalInstallDirPath()));
+            res.append(ScriptConstants.replaceWindowsDirSeparators(
+                    Constants.JMX_ACCESS_FILE_PATH_DEFAULT));
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.doubleBackslashes(
+                    getLocalInstallDirPath()));
+            res.append(accessFilePath);
+            res.append(Constants.QUOTE_MARK);
+            res.append(Constants.NEWLINE);
+        }
+
+        if(!passwordFilePath.equals(ScriptConstants.replaceWindowsDirSeparators(
+                Constants.JMX_PASSWORD_FILE_PATH_DEFAULT))) {
+            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // installpath/conf/jmxremote.access installpath/accessFilePath"
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK);
+            res.append(ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE);
+            res.append(ScriptConstants.MOVE);
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.doubleBackslashes(
+                    getLocalInstallDirPath()));
+            res.append(ScriptConstants.replaceWindowsDirSeparators(
+                    Constants.JMX_PASSWORD_FILE_PATH_DEFAULT));
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.doubleBackslashes(
+                    getLocalInstallDirPath()));
+            res.append(passwordFilePath);
+            res.append(Constants.QUOTE_MARK);
+            res.append(Constants.NEWLINE);
+        }
+
+        // - echo Y | ssh 'login'@'machine' cmd /c cacls 
+        // 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
+        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
+                + Constants.SEPARATOR + Constants.SPACE + ScriptConstants.SSH
+                + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(
+            getLocalInstallDirPath()));
+        res.append(passwordFilePath);
+        res.append(Constants.SPACE 
+                + ScriptConstants.SLASH_P + Constants.SPACE 
+                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
+        res.append(machineParameters.getMachineUserName().getText());
+        res.append(ScriptConstants.COLON_R + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+
+        // - echo Y | ssh 'login'@'machine' cmd /c cacls 
+        // 'environmentName'\\conf\\jmxremote.access /P BITARKIV\\'login':R
+        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
+                + Constants.SEPARATOR + Constants.SPACE + ScriptConstants.SSH
+                + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(
+                getLocalInstallDirPath()));
+            res.append(passwordFilePath);
+        res.append(Constants.SPACE 
+                + ScriptConstants.SLASH_P + Constants.SPACE 
+                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
+        res.append(machineParameters.getMachineUserName().getText());
+        res.append(ScriptConstants.COLON_R + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+
+        System.out.println(res.toString());
+        return res.toString();
     }
 }

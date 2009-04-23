@@ -216,10 +216,26 @@ public final class Constants {
     static final String[] SETTINGS_HERITRIX_JMX_PASSWORD_LEAF = 
         HarvesterSettings.HERITRIX_JMX_PASSWORD
         .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+    /** The path to the jmx accessFile leaf from settings.*/
+    static final String[] SETTINGS_COMMON_JMX_ACCESSFILE =
+        CommonSettings.JMX_ACCESS_FILE
+        .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
+    /** The path to the jmx passwordFile leaf from settings.*/
+    static final String[] SETTINGS_COMMON_JMX_PASSWORDFILE = 
+        CommonSettings.JMX_PASSWORD_FILE
+        .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
 
     // File and directory names
     /** The name of the JMX remote password file.*/
-    static final String JMX_FILE_NAME = "jmxremote.password";
+    static final String JMX_PASSWORD_FILE_NAME = "jmxremote.password";
+    /** The name of the JMX remote access file.*/
+    static final String JMX_ACCESS_FILE_NAME = "jmxremote.access";
+    /** The default path to the jmxremote.password file.*/
+    static final String JMX_PASSWORD_FILE_PATH_DEFAULT = 
+        "conf/" + JMX_PASSWORD_FILE_NAME;
+    /** The default path to the jmxremote.access file.*/
+    static final String JMX_ACCESS_FILE_PATH_DEFAULT = 
+        "conf/" + JMX_ACCESS_FILE_NAME;
     /** The name of the security policy file.*/
     static final String SECURITY_POLICY_FILE_NAME = "security.policy";
     /** The prefix for the log property file for the application.*/
@@ -446,6 +462,11 @@ public final class Constants {
     /** The error message when a physical location has no name attribute.*/
     public static final String MSG_ERROR_PHYSICAL_LOCATION_NO_NAME =
         "A Physical Location has no name!";
+    /** The warning when more than one jmxremote.access or jmxremote.password 
+     * file path is defined.*/
+    public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
+        "Too many instances of jmxremote.password or jmxremote.access "
+        + "files defined.";
     
     // functions
     /**

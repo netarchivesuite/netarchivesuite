@@ -187,8 +187,9 @@ public abstract class Machine {
         createSecurityPolicyFile(machineDirectory);
         // create the log property files
         createLogPropertyFiles(machineDirectory);
-        // create the jmx remote file
+        // create the jmx remote files
         createJmxRemotePasswordFile(machineDirectory);
+        createJmxRemoteAccessFile(machineDirectory);
         // create the installCreateDir script
         createInstallDirScript(parentDirectory);
 
@@ -349,7 +350,7 @@ public abstract class Machine {
     protected void createJmxRemotePasswordFile(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make file
-        File jmxFile = new File(directory, Constants.JMX_FILE_NAME);
+        File jmxFile = new File(directory, Constants.JMX_PASSWORD_FILE_NAME);
         try {
             // init writer
             PrintWriter jw = new PrintWriter(jmxFile);
@@ -363,6 +364,44 @@ public abstract class Machine {
                 // Append the jmx logins for monitor and heritrix. 
                 logins.append(getMonitorLogin());
                 logins.append(getHeritrixLogin());
+                
+                jw.print(logins.toString());
+            } finally {
+                jw.close();
+            }
+        } catch (IOException e) {
+            String msg = "Problems creating jmxremote.password: " + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
+        } catch(Exception e) {
+            String msg = "Error in creating jmxremote.password " + e;
+            log.trace(msg);
+            System.out.println(msg);
+        }
+    }
+    
+    /**
+     * Creates the jmxremote.password file, based on the settings.
+     * 
+     * @param directory The local directory for this machine 
+     */
+    protected void createJmxRemoteAccessFile(File directory) {
+        ArgumentNotValid.checkNotNull(directory, "File directory");
+        // make file
+        File jmxFile = new File(directory, Constants.JMX_ACCESS_FILE_NAME);
+        try {
+            // init writer
+            PrintWriter jw = new PrintWriter(jmxFile);
+            try {
+                // Write the header of the jmxremote.password file.
+                jw.print(ScriptConstants.JMXREMOTE_ACCESS_HEADER);
+
+                // Get the username and password for monitor and heritrix.
+                StringBuilder logins = new StringBuilder();
+
+                // Append the jmx logins for monitor and heritrix. 
+                logins.append(getMonitorUsername());
+//                logins.append(getHeritrixLogin());
                 
                 jw.print(logins.toString());
             } finally {
@@ -456,6 +495,59 @@ public abstract class Machine {
         }
         return res.toString();
     }
+    
+    /**
+     * For retrieving the monitor username for the jmxremote.access file.
+     * This will have the rights 'readonly'.
+     * 
+     * @return The string for the jmxremote.access file for allowing the 
+     * monitor user to readonly.
+     */
+    protected String getMonitorUsername(){
+        StringBuilder res = new StringBuilder();
+        // initialise list of usernames and passwords to add
+        List<String> usernames = new ArrayList<String>();
+        String[] tmpVals;
+
+        // get values from applications and put them into the lists
+        for(Application app : applications) {
+            // get monitor.jmxUsername
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    usernames.add(st);
+                }
+            }
+        }
+
+        // if no usernames, and thus no passwords => DIE
+        if(usernames.size() == 0) {
+            String msg = "No usernames or passwords for monitor on machine: '"
+                + name + "'";
+            log.warn(msg);
+            throw new IllegalState(msg);
+        }
+        
+        // check if the usernames and passwords are the same.
+        for(int i = 1; i < usernames.size(); i++) {
+            if(!usernames.get(0).equals(usernames.get(i))) {
+                String msg = "Different usernames "
+                    + "under monitor on the same machine: '" + name + "'";
+                log.warn(msg);
+                throw new IllegalState(msg);
+            }
+        }
+        
+        // make the resulting string
+        if(usernames.size() > 0) {
+            res.append(usernames.get(0));
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.JMXREMOTE_ACCESS_MONITORROLE);
+            res.append(Constants.NEWLINE);
+        }
+        return res.toString();
+    }
 
     /**
      * For finding the jmxUsernames and jmxPasswords under the 
@@ -530,7 +622,60 @@ public abstract class Machine {
         }
         return res.toString();
     }
-    
+
+    /**
+     * For retrieving the hetrix username for the jmxremote.access file.
+     * This will have the rights 'readonly'.
+     * 
+     * @return The string for the jmxremote.access file for allowing the 
+     * heritrix user to readonly.
+     */
+    protected String getHeritrixUsername(){
+        StringBuilder res = new StringBuilder();
+        // initialise list of usernames and passwords to add
+        List<String> usernames = new ArrayList<String>();
+        String[] tmpVals;
+
+        // get values from applications and put them into the lists
+        for(Application app : applications) {
+            // get monitor.jmxUsername
+            tmpVals = app.getSettingsValues(
+                    Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
+            if(tmpVals != null && tmpVals.length > 0) {
+                for(String st : tmpVals) {
+                    usernames.add(st);
+                }
+            }
+        }
+
+        // if no usernames, and thus no passwords => DIE
+        if(usernames.size() == 0) {
+            String msg = "No usernames or passwords for monitor on machine: '"
+                + name + "'";
+            log.warn(msg);
+            throw new IllegalState(msg);
+        }
+        
+        // check if the usernames and passwords are the same.
+        for(int i = 1; i < usernames.size(); i++) {
+            if(!usernames.get(0).equals(usernames.get(i))) {
+                String msg = "Different usernames "
+                    + "under monitor on the same machine: '" + name + "'";
+                log.warn(msg);
+                throw new IllegalState(msg);
+            }
+        }
+        
+        // make the resulting string
+        if(usernames.size() > 0) {
+            res.append(usernames.get(0));
+            res.append(Constants.SPACE);
+            res.append(ScriptConstants.JMXREMOTE_ACCESS_CONTROLROLE);
+            res.append(Constants.NEWLINE);
+        }
+        return res.toString();
+    }
+
     /**
      * The string for accessing this machine through SSH.
      * 
@@ -671,6 +816,19 @@ public abstract class Machine {
      * @return The script for creating the application specified directories.
      */
     abstract protected String getAppDirectories();
+    
+    /**
+     * This method does the following:
+     * 
+     * Retrieves the path to the jmxremote.access and jmxremote.password files.
+     * 
+     * Moves these files, if they are different from standard.
+     * 
+     * Makes the jmxremote.access and jmxremote.password files readonly.
+     *  
+     * @return The commands for handling the jmxremote files.
+     */
+    abstract protected String getJMXremoteFilesCommand();
 
     /**
      * Function to create the script which installs the new directories.

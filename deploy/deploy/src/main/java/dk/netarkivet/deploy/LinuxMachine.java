@@ -126,12 +126,12 @@ public class LinuxMachine extends Machine {
                 + Constants.SPACE + ScriptConstants.LINUX_IF_EXIST
                 + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append(Constants.JMX_FILE_NAME);
+        res.append(Constants.JMX_PASSWORD_FILE_NAME);
         res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
                 + Constants.SPACE + ScriptConstants.LINUX_USER_ONLY 
                 + Constants.SPACE);
         res.append(getConfDirPath());
-        res.append(Constants.JMX_FILE_NAME + Constants.SEMICOLON 
+        res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SEMICOLON 
                 + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON
                 + Constants.SPACE + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
@@ -164,21 +164,9 @@ public class LinuxMachine extends Machine {
         res.append(Constants.STAR + Constants.SCRIPT_EXTENSION_LINUX 
                 + Constants.SPACE + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
-        // echo make password files readonly
-        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
-        res.append(Constants.NEWLINE);
-        // Allow only user to be able to only read jmxremote.password 
-        // (a=-rwx,u=+r) = 400.
-        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
-        // /home/dev/TEST/conf/jmxremote.password"
-        res.append(ScriptConstants.SSH + Constants.SPACE);
-        res.append(machineUserLogin());
-        res.append(Constants.SPACE + Constants.QUOTE_MARK
-                + ScriptConstants.LINUX_USER_400 + Constants.SPACE);
-        res.append(getConfDirPath());
-        res.append(Constants.JMX_FILE_NAME + Constants.QUOTE_MARK);
-        res.append(Constants.NEWLINE);
-        // 
+        // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
+        res.append(getJMXremoteFilesCommand());
+        // END OF SCRIPT 
         return res.toString();
     }
 
@@ -922,5 +910,126 @@ public class LinuxMachine extends Machine {
                 + Constants.SLASH;
         return path.replace(Constants.SLASH, 
                 ScriptConstants.SECURITY_DIR_SEPARATOR);
+    }
+
+    /**
+     * This method does the following:
+     * 
+     * Retrieves the path to the jmxremote.access and jmxremote.password files.
+     * 
+     * Moves these files, if they are different from standard.
+     * 
+     * Makes the jmxremote.access and jmxremote.password files readonly.
+     *  
+     * @return The commands for handling the jmxremote files.
+     */
+    @Override
+    protected String getJMXremoteFilesCommand() {
+        String accessFilePath;
+        String passwordFilePath;
+        String[] options;
+
+        // retrieve the access file path.
+        options = settings.getLeafValues(Constants
+                .SETTINGS_COMMON_JMX_ACCESSFILE);
+
+        // extract the path, if any. Else set default.
+        if(options == null || options.length < 0) {
+            accessFilePath = Constants.JMX_ACCESS_FILE_PATH_DEFAULT;
+        } else {
+            accessFilePath = options[0];
+            // warn if more than one access file is defined.
+            if(options.length > 1) {
+                log.debug(Constants.MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS);
+            }
+        }
+
+        // retrieve the password file path.
+        options = settings.getLeafValues(Constants
+                .SETTINGS_COMMON_JMX_PASSWORDFILE);
+
+        // extract the path, if any. Else set default.
+        if(options == null || options.length < 0) {
+            passwordFilePath = Constants.JMX_PASSWORD_FILE_PATH_DEFAULT;
+        } else {
+            passwordFilePath = options[0];
+            // warn if more than one access file is defined.
+            if(options.length > 1) {
+                log.debug(Constants.MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS);
+            }
+        }
+
+        // initialise the resulting command string.
+        StringBuilder res = new StringBuilder();
+
+        // echo make password files readonly
+        res.append(ScriptConstants.ECHO_MAKE_PASSWORD_FILES);
+        res.append(Constants.NEWLINE);
+
+        // IF NOT DEFAULT PATHS, THEN MAKE SCRIPT TO MOVE THE FILES.
+        if(accessFilePath != Constants.JMX_ACCESS_FILE_PATH_DEFAULT) {
+            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // installpath/conf/jmxremote.access installpath/accessFilePath"
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK);
+            res.append(ScriptConstants.MV);
+            res.append(Constants.SPACE);
+            res.append(getInstallDirPath());
+            res.append(Constants.SLASH);
+            res.append(Constants.JMX_ACCESS_FILE_PATH_DEFAULT);
+            res.append(Constants.SPACE);
+            res.append(getInstallDirPath());
+            res.append(Constants.SLASH);
+            res.append(accessFilePath);
+            res.append(Constants.QUOTE_MARK);
+            res.append(Constants.NEWLINE);
+        }
+
+        if(passwordFilePath != Constants.JMX_PASSWORD_FILE_PATH_DEFAULT) {
+            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // installpath/conf/jmxremote.access installpath/accessFilePath"
+            res.append(ScriptConstants.SSH + Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.SPACE + Constants.QUOTE_MARK);
+            res.append(ScriptConstants.MV);
+            res.append(Constants.SPACE);
+            res.append(getInstallDirPath());
+            res.append(Constants.SLASH);
+            res.append(Constants.JMX_PASSWORD_FILE_PATH_DEFAULT);
+            res.append(Constants.SPACE);
+            res.append(getInstallDirPath());
+            res.append(Constants.SLASH);
+            res.append(passwordFilePath);
+            res.append(Constants.QUOTE_MARK);
+            res.append(Constants.NEWLINE);
+        }
+
+        // Allow only user to be able to only read jmxremote.password 
+        // (a=-rwx,u=+r) = 400.
+        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
+        // /home/dev/TEST/conf/jmxremote.password"
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.LINUX_USER_400 + Constants.SPACE);
+        res.append(getInstallDirPath());
+        res.append(Constants.SLASH);
+        res.append(passwordFilePath);
+        res.append(Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+        // ssh dev@kb-test-adm-001.kb.dk "chmod 400 
+        // /home/dev/TEST/conf/jmxremote.access"
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.LINUX_USER_400 + Constants.SPACE);
+        res.append(getInstallDirPath());
+        res.append(Constants.SLASH);
+        res.append(accessFilePath);
+        res.append(Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+
+        return res.toString();
     }
 }

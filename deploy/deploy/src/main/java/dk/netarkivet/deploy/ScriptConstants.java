@@ -105,7 +105,6 @@ public final class ScriptConstants {
     static final String MULTI_SPACE = "      ";
     /** '    '.*/
     static final String MULTI_SPACE_2 = "    ";
-    
     /** ssh.*/
     static final String SSH = "ssh";
     /** scp.*/
@@ -116,7 +115,6 @@ public final class ScriptConstants {
     static final String KILL_9_PIDS = "    kill -9 $PIDS";
     /** "    export CLASSPATH=".*/
     static final String EXPORT_CLASSPATH = "    export CLASSPATH=";
-    
     /** to.*/
     static final String TO = "to";
     /** if.*/
@@ -171,6 +169,10 @@ public final class ScriptConstants {
     static final String MD = "md";
     /** mkdir. (linux for makedir).*/
     static final String MKDIR = "mkdir";
+    /** mv. (linux for moving file).*/
+    static final String MV = "mv";
+    /** move. (windows for moving file).*/
+    static final String MOVE = "move";
     /** classpath.*/
     static final String CLASSPATH = "classpath";
     /** $CLASSPATH.*/
@@ -195,6 +197,11 @@ public final class ScriptConstants {
     static final String DASH_R = "-r";
     /** BITARKIV\\\\ - prefix for windows user rights.*/
     static final String BITARKIV_BACKSLASH_BACKSLASH = "BITARKIV\\\\";
+    /** readonly - for the monitorRole.*/
+    static final String JMXREMOTE_ACCESS_MONITORROLE = "readonly";
+    /** readonly - for the controlRole.*/
+    static final String JMXREMOTE_ACCESS_CONTROLROLE = "readwrite";
+    
     
     // echos
     /** echo.*/
@@ -215,7 +222,7 @@ public final class ScriptConstants {
         "echo copying settings and scripts";
     /** echo make password files readonly.*/
     static final String ECHO_MAKE_PASSWORD_FILES =
-        "echo make password files readonly";
+        "echo make password and access files readonly";
     /** echo Killing all applications on.*/
     static final String ECHO_KILL_ALL_APPS = "echo Killing all applications on";
     /** echo Starting all applications on.*/
@@ -489,5 +496,117 @@ public final class ScriptConstants {
         + "# as described above."
         + NEWLINE
         + "#"
-        + NEWLINE;    
+        + NEWLINE;
+    /** The header for the jmxremote.access file.*/
+    public static final String JMXREMOTE_ACCESS_HEADER = 
+        "#################################################################"
+        + "#####"
+        + NEWLINE
+        + "#Default Access Control File for Remote JMX(TM) Monitoring"
+        + NEWLINE
+        + "################################################################"
+        + "######"
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# Access control file for Remote JMX API access to monitoring."
+        + NEWLINE
+        + "# This file defines the allowed access for different roles.  The"
+        + NEWLINE
+        + "# password file (jmxremote.password by default) defines the "
+        + "roles and their"
+        + NEWLINE
+        + "# passwords.  To be functional, a role must have an entry in"
+        + NEWLINE
+        + "# both the password and the access files."
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# Default location of this file is "
+        + "$JRE/lib/management/jmxremote.access"
+        + NEWLINE
+        + "# You can specify an alternate location by specifying a property in"
+        + NEWLINE
+        + "# the management config file "
+        + "$JRE/lib/management/management.properties"
+        + NEWLINE
+        + "# (See that file for details)"
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# The file format for password and access files is syntactically "
+        + "the same"
+        + NEWLINE
+        + "# as the Properties file format.  The syntax is described in "
+        + "the Javadoc"
+        + NEWLINE
+        + "# for java.util.Properties.load."
+        + NEWLINE
+        + "# Typical access file has multiple  lines, where each line is blank,"
+        + NEWLINE
+        + "# a comment (like this one), or an access control entry."
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# An access control entry consists of a role name, and an"
+        + NEWLINE
+        + "# associated access level.  The role name is any string that "
+        + "does not"
+        + NEWLINE
+        + "# itself contain spaces or tabs.  It corresponds to an entry in the"
+        + NEWLINE
+        + "# password file (jmxremote.password).  The access level is one "
+        + "of the"
+        + NEWLINE
+        + "# following:"
+        + NEWLINE
+        + "#       \"readonly\" grants access to read attributes of MBeans."
+        + NEWLINE
+        + "#                   For monitoring, this means that a remote "
+        + "client in this"
+        + NEWLINE
+        + "#                   role can read measurements but cannot perform "
+        + "any action"
+        + NEWLINE
+        + "#                   that changes the environment of the "
+        + "running program."
+        + NEWLINE
+        + "#       \"readwrite\" grants access to read and write attributes "
+        + "of MBeans,"
+        + NEWLINE
+        + "#                   to invoke operations on them, and to create "
+        + "or remove them."
+        + NEWLINE
+        + "#                   This access should be granted to only "
+        + "trusted clients,"
+        + NEWLINE
+        + "#                   since they can potentially interfere with "
+        + "the smooth"
+        + NEWLINE
+        + "#                   operation of a running program"
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# A given role should have at most one entry in this file.  "
+        + "If a role"
+        + NEWLINE
+        + "# has no entry, it has no access."
+        + NEWLINE
+        + "# If multiple entries are found for the same role name, "
+        + "then the last"
+        + NEWLINE
+        + "# access entry is used."
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "#"
+        + NEWLINE
+        + "# Default access control entries:"
+        + NEWLINE
+        + "# o The \"monitorRole\" role has readonly access."
+        + NEWLINE
+        + "# o The \"controlRole\" role has readwrite access."
+        + NEWLINE
+        + ""
+        + NEWLINE;
 }
