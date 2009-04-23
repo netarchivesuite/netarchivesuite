@@ -198,9 +198,9 @@ public final class ScriptConstants {
     /** BITARKIV\\\\ - prefix for windows user rights.*/
     static final String BITARKIV_BACKSLASH_BACKSLASH = "BITARKIV\\\\";
     /** readonly - for the monitorRole.*/
-    static final String JMXREMOTE_ACCESS_MONITORROLE = "readonly";
+    static final String JMXREMOTE_ACCESS_MONITOR = "readonly";
     /** readonly - for the controlRole.*/
-    static final String JMXREMOTE_ACCESS_CONTROLROLE = "readwrite";
+    static final String JMXREMOTE_ACCESS_CONTROL = "readwrite";
     
     
     // echos

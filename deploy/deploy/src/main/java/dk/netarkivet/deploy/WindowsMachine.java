@@ -1201,7 +1201,6 @@ public class WindowsMachine extends Machine {
         res.append(ScriptConstants.COLON_R + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
 
-        System.out.println(res.toString());
         return res.toString();
     }
 }

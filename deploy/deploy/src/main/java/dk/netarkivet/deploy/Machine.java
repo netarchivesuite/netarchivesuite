@@ -401,7 +401,7 @@ public abstract class Machine {
 
                 // Append the jmx logins for monitor and heritrix. 
                 logins.append(getMonitorUsername());
-//                logins.append(getHeritrixLogin());
+                logins.append(getHeritrixUsername());
                 
                 jw.print(logins.toString());
             } finally {
@@ -464,14 +464,11 @@ public abstract class Machine {
             log.warn(msg);
             throw new Exception(msg);
         }
-        
 
-        // if no usernames, and thus no passwords => DIE
+        // warn if no usernames for monitor.
         if(usernames.size() == 0) {
-            String msg = "No usernames or passwords for monitor on machine: '"
-                + name + "'";
-            log.warn(msg);
-            throw new IllegalState(msg);
+            log.warn("No usernames or passwords for monitor on machine: '"
+                    + name + "'");
         }
         
         // check if the usernames and passwords are the same.
@@ -520,14 +517,6 @@ public abstract class Machine {
                 }
             }
         }
-
-        // if no usernames, and thus no passwords => DIE
-        if(usernames.size() == 0) {
-            String msg = "No usernames or passwords for monitor on machine: '"
-                + name + "'";
-            log.warn(msg);
-            throw new IllegalState(msg);
-        }
         
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
@@ -543,7 +532,7 @@ public abstract class Machine {
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
-            res.append(ScriptConstants.JMXREMOTE_ACCESS_MONITORROLE);
+            res.append(ScriptConstants.JMXREMOTE_ACCESS_MONITOR);
             res.append(Constants.NEWLINE);
         }
         return res.toString();
@@ -648,14 +637,6 @@ public abstract class Machine {
             }
         }
 
-        // if no usernames, and thus no passwords => DIE
-        if(usernames.size() == 0) {
-            String msg = "No usernames or passwords for monitor on machine: '"
-                + name + "'";
-            log.warn(msg);
-            throw new IllegalState(msg);
-        }
-        
         // check if the usernames and passwords are the same.
         for(int i = 1; i < usernames.size(); i++) {
             if(!usernames.get(0).equals(usernames.get(i))) {
@@ -670,7 +651,7 @@ public abstract class Machine {
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
-            res.append(ScriptConstants.JMXREMOTE_ACCESS_CONTROLROLE);
+            res.append(ScriptConstants.JMXREMOTE_ACCESS_CONTROL);
             res.append(Constants.NEWLINE);
         }
         return res.toString();
