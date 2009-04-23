@@ -408,11 +408,11 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating jmxremote.password: " + e;
+            String msg = "Problems creating jmxremote.access: " + e;
             log.trace(msg);
             throw new IOFailure(msg);
         } catch(Exception e) {
-            String msg = "Error in creating jmxremote.password " + e;
+            String msg = "Error in creating jmxremote.access: " + e;
             log.trace(msg);
             System.out.println(msg);
         }
@@ -522,7 +522,7 @@ public abstract class Machine {
         for(int i = 1; i < usernames.size(); i++) {
             if(!usernames.get(0).equals(usernames.get(i))) {
                 String msg = "Different usernames "
-                    + "under monitor on the same machine: '" + name + "'";
+                    + "for the monitor on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -532,7 +532,7 @@ public abstract class Machine {
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
-            res.append(ScriptConstants.JMXREMOTE_ACCESS_MONITOR);
+            res.append(ScriptConstants.JMXREMOTE_MONITOR_PRIVILEGES);
             res.append(Constants.NEWLINE);
         }
         return res.toString();
@@ -613,8 +613,8 @@ public abstract class Machine {
     }
 
     /**
-     * For retrieving the hetrix username for the jmxremote.access file.
-     * This will have the rights 'readonly'.
+     * For retrieving the Heritrix username for the jmxremote.access file.
+     * This will have the rights 'readwrite'.
      * 
      * @return The string for the jmxremote.access file for allowing the 
      * heritrix user to readonly.
@@ -627,7 +627,7 @@ public abstract class Machine {
 
         // get values from applications and put them into the lists
         for(Application app : applications) {
-            // get monitor.jmxUsername
+            // get heritrix.jmxUsername
             tmpVals = app.getSettingsValues(
                     Constants.SETTINGS_HERITRIX_JMX_USERNAME_LEAF);
             if(tmpVals != null && tmpVals.length > 0) {
@@ -641,7 +641,7 @@ public abstract class Machine {
         for(int i = 1; i < usernames.size(); i++) {
             if(!usernames.get(0).equals(usernames.get(i))) {
                 String msg = "Different usernames "
-                    + "under monitor on the same machine: '" + name + "'";
+                    + "for Heritrix on the same machine: '" + name + "'";
                 log.warn(msg);
                 throw new IllegalState(msg);
             }
@@ -651,7 +651,7 @@ public abstract class Machine {
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
-            res.append(ScriptConstants.JMXREMOTE_ACCESS_CONTROL);
+            res.append(ScriptConstants.JMXREMOTE_HERITRIX_PRIVELEGES);
             res.append(Constants.NEWLINE);
         }
         return res.toString();
@@ -682,14 +682,14 @@ public abstract class Machine {
      * 
      * @param directory The directory for this machine (use global variable?).
      */
-    abstract protected void createApplicationKillScripts(File directory);
+    protected abstract void createApplicationKillScripts(File directory);
 
     /**
      * Creates the start scripts for all the applications.
      * 
      * @param directory The directory for this machine (use global variable?).
      */
-    abstract protected void createApplicationStartScripts(File directory);
+    protected abstract void createApplicationStartScripts(File directory);
 
     /**
      * This function creates the script to start all applications on this 
@@ -698,7 +698,7 @@ public abstract class Machine {
      * 
      * @param directory The directory for this machine (use global variable?).
      */
-    abstract protected void createOSLocalStartAllScript(File directory);
+    protected abstract void createOSLocalStartAllScript(File directory);
 
     /**
      * This function creates the script to kill all applications on this 
@@ -707,28 +707,28 @@ public abstract class Machine {
      * 
      * @param directory The directory for this machine (use global variable?).
      */
-    abstract protected void createOSLocalKillAllScript(File directory);
+    protected abstract void createOSLocalKillAllScript(File directory);
 
     /** 
      * The operation system specific path to the installation directory.
      *  
      * @return Install path.
      */
-    abstract protected String getInstallDirPath();
+    protected abstract String getInstallDirPath();
 
     /**
      * The operation system specific path to the conf directory.
      * 
      * @return Conf path.
      */
-    abstract protected String getConfDirPath();
+    protected abstract String getConfDirPath();
 
     /**
      * Creates the operation system specific killing script for this machine.
      * 
      * @return Operation system specific part of the killscript.
      */
-    abstract protected String osKillScript();
+    protected abstract String osKillScript();
 
     /**
      * Creates the operation system specific installation script for 
@@ -736,21 +736,21 @@ public abstract class Machine {
      * 
      * @return Operation system specific part of the installscript.
      */
-    abstract protected String osInstallScript();
+    protected abstract String osInstallScript();
     
     /**
      * Creates the specified directories in the deploy-configuration file.
      * 
      * @return The script for creating the directories.
      */
-    abstract protected String osInstallScriptCreateDir();
+    protected abstract String osInstallScriptCreateDir();
 
     /**
      * Creates the operation system specific starting script for this machine.
      * 
      * @return Operation system specific part of the startscript.
      */
-    abstract protected String osStartScript();
+    protected abstract String osStartScript();
 
     /**
      * Makes all the class paths into the operation system specific syntax,
@@ -760,7 +760,7 @@ public abstract class Machine {
      * @param app The application which has the class paths.
      * @return The class paths in operation system specific syntax.
      */
-    abstract protected String osGetClassPath(Application app);
+    protected abstract String osGetClassPath(Application app);
     
     /**
      * Checks if a specific directory for the database is given in the settings,
@@ -775,7 +775,7 @@ public abstract class Machine {
      * 
      * @return The script for installing the database (if needed).
      */
-    abstract protected String osInstallDatabase();
+    protected abstract String osInstallDatabase();
     
     /**
      * This functions makes the script for creating the new directories.
@@ -789,14 +789,14 @@ public abstract class Machine {
      * @return The lines of code for creating the directories.
      * @see #createInstallDirScript(File)
      */
-    abstract protected String scriptCreateDir(String dir, boolean clean);
+    protected abstract String scriptCreateDir(String dir, boolean clean);
     
     /**
      * Creates the script for creating the application specified directories.
      * 
      * @return The script for creating the application specified directories.
      */
-    abstract protected String getAppDirectories();
+    protected abstract String getAppDirectories();
     
     /**
      * This method does the following:
@@ -809,7 +809,7 @@ public abstract class Machine {
      *  
      * @return The commands for handling the jmxremote files.
      */
-    abstract protected String getJMXremoteFilesCommand();
+    protected abstract String getJMXremoteFilesCommand();
 
     /**
      * Function to create the script which installs the new directories.
@@ -817,7 +817,7 @@ public abstract class Machine {
      * 
      * @param dir The directory to put the file
      */
-    abstract protected void createInstallDirScript(File dir);
+    protected abstract void createInstallDirScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security 
@@ -825,5 +825,5 @@ public abstract class Machine {
      * @param path The current path.
      * @return The formatted path.
      */
-    abstract protected String changeFileDirPathForSecurity(String path);
+    protected abstract String changeFileDirPathForSecurity(String path);
 }
