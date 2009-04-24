@@ -1,0 +1,58 @@
+/*
+ * This is a template for the security policy file.
+ * The following variables should be replaced 
+ * (and is automatically replaced by deploy):
+ * tmpdircommon and monitorRole.
+ * The file directories should granted read-only access at the end of the file. 
+ */
+grant codeBase "file:lib/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:${java.home}/-" {
+  permission java.security.AllPermission;
+};
+
+grant principal javax.management.remote.JMXPrincipal "monitorRole" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:lib/heritrix/lib/-" {
+  permission java.security.AllPermission;
+};
+
+/* Each web site section requires an AllPermission for the JSP compilation to
+ * work, but we don't want to give AllPermission to all of commontempdir, lest
+ * third-party classes get that permission, too. */
+grant codeBase "file:tmpdircommon/Status/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tmpdircommon/QA/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tmpdircommon/History/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tmpdircommon/HarvestDefinition/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:tmpdircommon/BitPreservation/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+/* This allows third-party batch classes to figure out which location they're at
+*/
+grant {
+  permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
+};
+
+/* Directories in the bitarchives should be added below.
+ */
+grant {
+  permission java.io.FilePermission "${/}netarkiv${/}0001${/}filedir${/}-", "read";
+  permission java.io.FilePermission "${/}netarkiv${/}0002${/}filedir${/}-", "read";
+};
