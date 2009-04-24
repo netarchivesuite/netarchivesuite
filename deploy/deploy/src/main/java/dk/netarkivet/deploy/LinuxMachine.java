@@ -967,7 +967,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
 
         // IF NOT DEFAULT PATHS, THEN MAKE SCRIPT TO MOVE THE FILES.
-        if(accessFilePath != Constants.JMX_ACCESS_FILE_PATH_DEFAULT) {
+        if(!accessFilePath.equals(Constants.JMX_ACCESS_FILE_PATH_DEFAULT)) {
             // ssh dev@kb-test-adm-001.kb.dk "mv 
             // installpath/conf/jmxremote.access installpath/accessFilePath"
             res.append(ScriptConstants.SSH + Constants.SPACE);
@@ -986,7 +986,7 @@ public class LinuxMachine extends Machine {
             res.append(Constants.NEWLINE);
         }
 
-        if(passwordFilePath != Constants.JMX_PASSWORD_FILE_PATH_DEFAULT) {
+        if(!passwordFilePath.equals(Constants.JMX_PASSWORD_FILE_PATH_DEFAULT)) {
             // ssh dev@kb-test-adm-001.kb.dk "mv 
             // installpath/conf/jmxremote.access installpath/accessFilePath"
             res.append(ScriptConstants.SSH + Constants.SPACE);
