@@ -17,7 +17,8 @@
                 <port>7676</port>
             </jms>
             <jmx>
-                <passwordFile>conf/jmxremote.password</passwordFile>
+                <passwordFile>./jmxremote.password</passwordFile>
+                <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
             <port>8111</port><rmiPort>8211</rmiPort></jmx>
             <indexClient>
@@ -55,7 +56,7 @@
                 </notifications><useReplicaId>KB</useReplicaId><thisPhysicalLocation>K</thisPhysicalLocation><applicationName>dk.netarkivet.archive.indexserver.IndexServerApplication</applicationName></common>
 
         <monitor>
-            <jmxUsername>monitorRole</jmxUsername>
+            <jmxUsername>myMonitorRole</jmxUsername>
             <jmxPassword>test</jmxPassword>
         </monitor>
         

@@ -76,6 +76,9 @@ public class DeployTester extends TestCase {
      * test are intended and correct, when all output files are verified
      * correct, replace the target files in SVN with the new set of
      * output files.
+     * 
+     * This also tests the consequences of non-default jmxremote files 
+     * and non-default monitor user-name and Heritrix user-name.
      */
     public void testDeploy() {
         String[] args = {
@@ -136,7 +139,7 @@ public class DeployTester extends TestCase {
     }
     
     /** 
-     * Test that we can deploy with a single location.
+     * Test that we can deploy with a database defined.
      */
     public void testDeployDatabase() {
         String database_it_conf_xml_name = 

@@ -47,7 +47,7 @@ public class TestInfo {
     public static final File IT_CONF_SINGLE_FILE = new File(
 	    WORKING_DIR, "deploy_single_config.xml");
     public static final File IT_CONF_DATABASE_FILE = new File(
-	    WORKING_DIR, "it_database_config.xml");
+	    WORKING_DIR, "deploy_database_config.xml");
     public static final File FILE_NETATCHIVE_SUITE = new File(
             WORKING_DIR, "null.zip");
     public static final File FILE_SECURITY_POLICY = new File(

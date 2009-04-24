@@ -2,7 +2,7 @@
  * This is a template for the security policy file.
  * The following variables should be replaced 
  * (and is automatically replaced by deploy):
- * tmpdircommon and monitorRole.
+ * tmpdircommon and myMonitorRole.
  * The file directories should granted read-only access at the end of the file. 
  */
 grant codeBase "file:lib/-" {
@@ -13,7 +13,7 @@ grant codeBase "file:${java.home}/-" {
   permission java.security.AllPermission;
 };
 
-grant principal javax.management.remote.JMXPrincipal "monitorRole" {
+grant principal javax.management.remote.JMXPrincipal "myMonitorRole" {
   permission java.security.AllPermission;
 };
 

@@ -87,7 +87,8 @@
                 <port>7676</port>
             </jms>
             <jmx>
-                <passwordFile>conf/jmxremote.password</passwordFile>
+                <passwordFile>./jmxremote.password</passwordFile>
+                <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
             </jmx>
             <indexClient>
@@ -118,7 +119,7 @@
         </common>
 
         <monitor>
-            <jmxUsername>monitorRole</jmxUsername>
+            <jmxUsername>myMonitorRole</jmxUsername>
             <jmxPassword>test</jmxPassword>
         </monitor>
         
@@ -286,7 +287,7 @@
                                  <guiPort>8190</guiPort> 
                                  <!-- T: jmxPort to be modified by test (was 8091) -->
                                  <jmxPort>8191</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
+                                 <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                              </heritrix>
  			    <serverDir>harvester_low</serverDir>
@@ -319,7 +320,7 @@
                                 <guiPort>8190</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8191</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
+                                 <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
  			    <serverDir>harvester_low</serverDir>
@@ -344,7 +345,7 @@
                                 <guiPort>8192</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8093) -->
                                 <jmxPort>8193</jmxPort> 
-                                 <jmxUsername>controlRole</jmxUsername>
+                                 <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
  			    <serverDir>harvester_high</serverDir>
@@ -437,7 +438,7 @@
                                 <guiPort>8190</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
                                 <jmxPort>8191</jmxPort>
-                                 <jmxUsername>controlRole</jmxUsername>
+                                 <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
 			    <serverDir>harvester_high</serverDir>

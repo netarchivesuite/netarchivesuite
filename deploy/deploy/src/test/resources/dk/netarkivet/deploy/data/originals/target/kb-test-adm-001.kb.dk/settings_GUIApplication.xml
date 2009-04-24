@@ -17,7 +17,8 @@
                 <port>7676</port>
             </jms>
             <jmx>
-                <passwordFile>conf/jmxremote.password</passwordFile>
+                <passwordFile>./jmxremote.password</passwordFile>
+                <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
             <port>8110</port><rmiPort>8210</rmiPort></jmx>
             <indexClient>
@@ -57,7 +58,7 @@
                         </http><applicationName>dk.netarkivet.common.webinterface.GUIApplication</applicationName></common>
 
         <monitor>
-            <jmxUsername>monitorRole</jmxUsername>
+            <jmxUsername>myMonitorRole</jmxUsername>
             <jmxPassword>test</jmxPassword>
         </monitor>
         
