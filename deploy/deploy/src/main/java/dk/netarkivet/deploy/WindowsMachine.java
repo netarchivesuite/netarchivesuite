@@ -1193,7 +1193,7 @@ public class WindowsMachine extends Machine {
                 + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
         res.append(ScriptConstants.doubleBackslashes(
                 getLocalInstallDirPath()));
-            res.append(passwordFilePath);
+            res.append(accessFilePath);
         res.append(Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
