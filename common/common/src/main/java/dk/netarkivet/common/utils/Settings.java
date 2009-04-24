@@ -25,6 +25,7 @@ package dk.netarkivet.common.utils;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +43,8 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * to be packaged in the jar files, to provide a fallback for settings.
  * 2) Overriding settings in XML files in file systems. These are intended to
  * override the necessary values with minimal XML files. The location of these
- * files are either specified by the system property {@link #SETTINGS_FILE_PROPERTY},
+ * files are either specified by the system property 
+ * {@link #SETTINGS_FILE_PROPERTY},
  * multiple files can be separated by {@link File#pathSeparator}, that is
  * ':' on linux and ';' on windows; or if that property is not set, the
  * default location is {@link #DEFAULT_SETTINGS_FILEPATH}.
@@ -69,7 +71,8 @@ public class Settings {
      * settings files. If more files are specified, they should be separated by
      * {@link File#pathSeparatorChar}
      */
-    public static final String SETTINGS_FILE_PROPERTY = "dk.netarkivet.settings.file";
+    public static final String SETTINGS_FILE_PROPERTY
+        = "dk.netarkivet.settings.file";
 
     /**
      * The file path to look for settings in, if the system property
@@ -90,7 +93,8 @@ public class Settings {
      * @return The settings file.
      */
     public static List<File> getSettingsFiles() {
-        String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY, DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
+        String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY, 
+                DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
         List<File> result = new ArrayList<File>();
         for (String path : pathList) {
             if (path.trim().length() != 0) {
@@ -135,14 +139,14 @@ public class Settings {
         }
 
         // Key not in System.properties try loaded data instead
-        for (SimpleXml settingsXml : fileSettingsXmlList) {
+        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
             if (settingsXml.hasKey(key)) {
                 return settingsXml.getString(key);
             }
         }
 
         // Key not in file based settings, try classpath settings instead
-        for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
             if (settingsXml.hasKey(key)) {
                 return settingsXml.getString(key);
             }
@@ -245,7 +249,7 @@ public class Settings {
                 + "Is this OK?");
         }
         // Key not in System.properties try loaded data instead
-        for (SimpleXml settingsXml : fileSettingsXmlList) {
+        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
             List<String> result
                     = settingsXml.getList(key);
             if (result.size() == 0) {
@@ -257,7 +261,7 @@ public class Settings {
         }
 
         // Key not in file based settings, try settings from classpath
-        for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
             List<String> result
                     = settingsXml.getList(key);
             if (result.size() == 0) {
@@ -336,7 +340,7 @@ public class Settings {
             if (settingsFile.isFile()) {
                 simpleXmlList.add(new SimpleXml(settingsFile));
             } else {
-                log.warn ("The file '"
+                log.warn("The file '"
                         + settingsFile.getAbsolutePath()
                         + "' is not a file, and therefore not loaded");
             }
@@ -378,18 +382,32 @@ public class Settings {
      * @return The part of the setting structure below the element given.
      */
     public static StringTree<String> getTree(String path) {
-        for (SimpleXml settingsXml : fileSettingsXmlList) {
+        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
             if (settingsXml.hasKey(path)) {
                 return settingsXml.getTree(path);
             }
         }
 
         // Key not in file based settings, try classpath settings instead
-        for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
             if (settingsXml.hasKey(path)) {
                 return settingsXml.getTree(path);
             }
         }
         throw new UnknownID("No match for key '" + path + "' in settings");
+    }
+    
+    /** 
+     * @return an unmodifiable version of the fileSettingsXmlList
+     */
+    private static List<SimpleXml> getFileSettingsXmlList() {
+        return Collections.unmodifiableList(fileSettingsXmlList);
+    }
+    
+    /** 
+     * @return an unmodifiable version of the defaultClasspathSettingsXmlList
+     */
+    private static List<SimpleXml> getDefaultClasspathSettingsXmlList() {
+        return Collections.unmodifiableList(defaultClasspathSettingsXmlList);
     }
 }
