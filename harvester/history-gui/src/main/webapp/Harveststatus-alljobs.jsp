@@ -149,8 +149,9 @@ if (jobStatusList.isEmpty()) {
     </tr>
     <%
         int rowcount = 0;
+        String detailsPage = "Harveststatus-jobdetails.jsp";
         for (JobStatusInfo js : jobStatusList) {
-            String detailsLink = "Harveststatus-jobdetails.jsp?"
+            String detailsLink = detailsPage + "?"
                                  + Constants.JOB_PARAM + "=" + js.getJobID();
             String harvestLink = "Harveststatus-perhd.jsp?"
                                  + Constants.HARVEST_PARAM + "="
@@ -165,7 +166,7 @@ if (jobStatusList.isEmpty()) {
     		// NetarchiveSuite this information is not available. 
     		if (js.getStatus().equals(JobStatus.RESUBMITTED)
     			&& js.getResubmittedAsJob() != null) { 
-    	 		jobStatusTdContents += "<br/>(<a href=\"" + detailsLink + "?" 
+    	 		jobStatusTdContents += "<br/>(<a href=\"" + detailsPage + "?" 
     	 			+ Constants.JOB_PARAM + "=" + js.getResubmittedAsJob() + "\">"
     	 			+ "Job " + js.getResubmittedAsJob() + "</a>" + ")";
     		}
