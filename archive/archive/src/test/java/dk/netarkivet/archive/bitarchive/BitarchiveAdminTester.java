@@ -25,6 +25,7 @@ package dk.netarkivet.archive.bitarchive;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -106,6 +107,21 @@ public class BitarchiveAdminTester extends TestCase {
                      BA_DIR_1.getAbsolutePath(),
                      tempfile.getParentFile()
                      .getParentFile().getAbsolutePath());
+
+        // Note: This might fail if something is writing heavily to the disk
+        // during unit test execution.
+        long df = FileUtils.getBytesFree(BA_DIR_1);
+        tempfile = ad.getTemporaryPath(ARC_FILE_NAME, df - Settings.getLong(
+                ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED) - 10000);
+
+        assertEquals("Filename should be as requested",
+                     ARC_FILE_NAME, tempfile.getName());
+        assertEquals("File should go to temporary directory",
+                     TEMPDIR, tempfile.getParentFile().getName());
+        assertEquals("File should go in bitarchive dir",
+                     BA_DIR_1.getAbsolutePath(),
+                     tempfile.getParentFile()
+                     .getParentFile().getAbsolutePath());
     }
 
     public void testGetTemporaryPathThrowsException() throws Exception {
@@ -130,6 +146,18 @@ public class BitarchiveAdminTester extends TestCase {
         } catch (IOFailure e) {
             //expected
         }
+
+        // Note: This might fail if something is writing heavily to the disk
+        // during unit test execution.
+        df = FileUtils.getBytesFree(BA_DIR_1);
+        try {
+            ad.getTemporaryPath(ARC_FILE_NAME, df - Settings.getLong(
+                    ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED) + 10000);
+            fail("should throw iofailure on no space left for file");
+        } catch (IOFailure e) {
+            //expected
+        }
+
     }
 
 
@@ -314,7 +342,7 @@ public class BitarchiveAdminTester extends TestCase {
         assertEquals("Should find no files since regexp doesn't match start", 0,
                 files.length);
         files = ad.getFilesMatching(Pattern.compile("file[24]"));
-        assertEquals("Should find two files buf found " + files,
+        assertEquals("Should find two files buf found " + Arrays.asList(files),
                 2, files.length);
         List<String> filePaths = new ArrayList<String>();
         for (File f : files) {

@@ -28,7 +28,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -69,9 +68,17 @@ public class BitarchiveAdmin {
     private final long minSpaceLeft;
 
     /**
+     * How much space we require available *in every dir*
+     * after we have accepted an upload.
+     */
+    private final long minSpaceRequired;
+
+    /**
      * Creates a new BitarchiveAdmin object for an existing bit archive.
      * Reads the directories to use from settings.
      *
+     * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive
+     *                          or the setting for minSpaceRequired is negative. 
      * @throws PermissionDenied If any of the directories cannot be created or
      *                          are not writeable.
      */
@@ -90,16 +97,29 @@ public class BitarchiveAdmin {
                     + minSpaceLeft);
         }
 
-        log.info("Requiring at least " + minSpaceLeft + " bytes free.");
+        minSpaceRequired = Settings.getLong(
+                ArchiveSettings.BITARCHIVE_MIN_SPACE_REQUIRED);
+        // Check, if value of minSpaceRequired is at least zero
+        if (minSpaceLeft < 0L) {
+            log.warn(
+                    "Wrong setting of minSpaceRequired read from Settings: "
+                    + minSpaceLeft);
+            throw new ArgumentNotValid(
+                    "Wrong setting of minSpaceRequired read from Settings: "
+                    + minSpaceLeft);
+        }
 
-        for (int i = 0; i < filedirnames.length; i++) {
-            File basedir = new File(filedirnames[i]);
+        log.info("Requiring at least " + minSpaceRequired + " bytes free.");
+        log.info("Listening if at least " + minSpaceLeft + " bytes free.");
+
+        for (String filedirname : filedirnames) {
+            File basedir = new File(filedirname);
             File filedir = new File(basedir, Constants.FILE_DIRECTORY_NAME);
 
             // Ensure that 'filedir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(filedir);
-            File tempdir = new File(basedir, 
-                    Constants.TEMPORARY_DIRECTORY_NAME);
+            File tempdir = new File(basedir,
+                                    Constants.TEMPORARY_DIRECTORY_NAME);
 
             // Ensure that 'tempdir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(tempdir);
@@ -109,10 +129,10 @@ public class BitarchiveAdmin {
             // Ensure that 'atticdir' exists. If it doesn't, it is created
             ApplicationUtils.dirMustExist(atticdir);
             archivePaths.add(basedir);
-            final Long bytesUsedInDir = new Long(calculateBytesUsed(basedir));
+            final Long bytesUsedInDir = calculateBytesUsed(basedir);
             log.info("Using bit archive directory '" + basedir + "' with "
-                    + bytesUsedInDir + " bytes of content and "
-                    + FileUtils.getBytesFree(basedir) + " bytes free");
+                     + bytesUsedInDir + " bytes of content and "
+                     + FileUtils.getBytesFree(basedir) + " bytes free");
         }
     }
 
@@ -150,32 +170,31 @@ public class BitarchiveAdmin {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFile");
         ArgumentNotValid.checkNotNegative(requestedSize, "requestedSize");
 
-        for (Iterator<File> it = archivePaths.iterator(); it.hasNext();) {
-            File dir = it.next();
+        for (File dir : archivePaths) {
             long bytesFreeInDir = FileUtils.getBytesFree(dir);
             // TODO If it turns out that it has not enough space for
             // this file, it should resend the Upload message
-            // This should probably be handled in the 
+            // This should probably be handled in the
             // method BitarchiveServer.visit(UploadMessage msg)
-            // This is bug 1586. 
-            //if (checkArchiveDir(dir) && bytesFreeInDir > minSpaceLeft) {
-            //    if (bytesFreeInDir > requestedSize) {
-            
-            if (checkArchiveDir(dir) && (bytesFreeInDir 
-                    > minSpaceLeft + requestedSize)) {
+            // This is bug 1586.
+
+            if (checkArchiveDir(dir)
+                && (bytesFreeInDir > minSpaceLeft)
+                && (bytesFreeInDir - requestedSize > minSpaceRequired)) {
                 File filedir = new File(
                         dir, Constants.TEMPORARY_DIRECTORY_NAME);
                 return new File(filedir, arcFileName);
             } else {
-                log.warn("Not enough space on dir '"
-                        + dir.getAbsolutePath() + "' for file '"
-                        + arcFileName + "' of size " + requestedSize 
-                        + " bytes. Only " + bytesFreeInDir + " left");
+                log.debug("Not enough space on dir '"
+                          + dir.getAbsolutePath() + "' for file '"
+                          + arcFileName + "' of size " + requestedSize
+                          + " bytes. Only " + bytesFreeInDir + " left");
             }
         }
         String errMsg = "No space left to store file '" + arcFileName
             + "' of size " + requestedSize;
-        log.fatal(errMsg);
+
+        log.error(errMsg);
         throw new IOFailure(errMsg);
     }
 
@@ -245,8 +264,7 @@ public class BitarchiveAdmin {
         ArgumentNotValid.checkNotNull(theDir, "File theDir");
         try {
             theDir = theDir.getCanonicalFile();
-            for (Iterator<File> i = archivePaths.iterator(); i.hasNext(); ) {
-                File knowndir = i.next();
+            for (File knowndir : archivePaths) {
                 if (knowndir.getCanonicalFile().equals(theDir)) {
                     return true;
                 }
@@ -293,22 +311,22 @@ public class BitarchiveAdmin {
      */
     public File[] getFiles() {
         List<File> files = new ArrayList<File>();
-        for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
-            File archiveDir = new File(i.next(), 
-                    Constants.FILE_DIRECTORY_NAME);
+        for (File archivePath : archivePaths) {
+            File archiveDir = new File(archivePath,
+                                       Constants.FILE_DIRECTORY_NAME);
             if (checkArchiveDir(archiveDir)) {
                 File[] filesHere = archiveDir.listFiles();
-                for (File file: filesHere) {
+                for (File file : filesHere) {
                     if (!file.isFile()) {
                         log.warn("Non-file '" + file.getAbsolutePath()
-                                      + "' found among archive files");
+                                 + "' found among archive files");
                     } else {
                         files.add(file);
                     }
                 }
             }
         }
-        return (files.toArray(new File[0]));
+        return files.toArray(new File[files.size()]);
     }
 
     /** Return an array of all files in this archive that match a given
@@ -357,8 +375,9 @@ public class BitarchiveAdmin {
      */
     public BitarchiveARCFile lookup(String arcFileName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcFileName, "arcFileName");
-        for (Iterator<File> i = archivePaths.iterator(); i.hasNext();) {
-            File archiveDir = new File(i.next(), Constants.FILE_DIRECTORY_NAME);
+        for (File archivePath : archivePaths) {
+            File archiveDir = new File(archivePath,
+                                       Constants.FILE_DIRECTORY_NAME);
 
             if (checkArchiveDir(archiveDir)) {
                 File filename = new File(archiveDir, arcFileName);
@@ -367,8 +386,8 @@ public class BitarchiveAdmin {
                         return new BitarchiveARCFile(arcFileName, filename);
                     }
                     log.fatal("Possibly corrupt bitarchive: Non-file '"
-                            + filename + "' found in"
-                            + " place of archive file");
+                              + filename + "' found in"
+                              + " place of archive file");
                 }
             }
         }

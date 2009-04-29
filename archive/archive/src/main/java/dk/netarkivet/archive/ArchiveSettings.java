@@ -76,10 +76,23 @@ public class ArchiveSettings {
             = "settings.archive.bitarchive.minSpaceLeft";
     
     /**
+     * <b>settings.archive.bitarchive.minSpaceRequired</b>: <br>
+     * The minimum amount of bytes required left *in all dirs* after we have
+     * accepted an upload.  If no dir has enough space to store a received file
+     * and still have at least this much space left, the operation will result
+     * in an error.
+     */
+    public static final String BITARCHIVE_MIN_SPACE_REQUIRED
+            = "settings.archive.bitarchive.minSpaceRequired";
+
+    /**
      * <b>settings.archive.bitarchive.baseFileDir</b>: <br>
      * These are the directories where ARC files are stored (in a subdir).
      * If more than one is given, they are used from one end.
-     * This setting may be repeated, to define multiple directories. 
+     * This setting may be repeated, to define multiple directories.
+     * Note: This value should always be so much lower than minSpaceRequired,
+     * that the difference matches at least the size of files we expect to 
+     * receive.
      */
     public static String BITARCHIVE_SERVER_FILEDIR
             = "settings.archive.bitarchive.baseFileDir";
