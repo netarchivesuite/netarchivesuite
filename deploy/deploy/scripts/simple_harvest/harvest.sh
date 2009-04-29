@@ -29,7 +29,7 @@
 ## configuration which should be necessary is setting the paths to the JMS
 ## broker, JRE, and NetarchiveSuite project below.
 
-## Path for Java 1.5.0_06 or higher, can be overridden by $JAVA or $JAVA_HOME
+## Path for Java 1.6.0_07 or higher, can be overridden by $JAVA or $JAVA_HOME
 JAVA=${JAVA:=${JAVA_HOME:=/usr/java}}
 
 ## Path for the JMS broker, can be overriden by $IMQ

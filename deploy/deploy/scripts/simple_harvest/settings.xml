@@ -70,6 +70,7 @@
             <port>8100</port>
             <rmiPort>8200</rmiPort>
             <passwordFile>scripts/simple_harvest/quickstart.jmxremote.password</passwordFile>
+            <accessFile>scripts/simple_harvest/quickstart.jmxremote.access</accessFile>
             <timeout>120</timeout>
         </jmx>
         <webinterface>
