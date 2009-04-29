@@ -101,6 +101,7 @@ function makeCommonOptions {
     echo "-Dsettings.common.jmx.port=$JMXPORT \
       -Dsettings.common.jmx.rmiPort=$(( $JMXPORT + 100 )) \
       -Dsettings.common.jmx.passwordFile=$ARCREP_HOME/quickstart.jmxremote.password \
+      -Dsettings.common.jmx.accessFile=$ARCREP_HOME/quickstart.jmxremote.access \
       -Dcom.sun.management.jmxremote \
       -Ddk.netarkivet.quickstart.basedir=$NETARCHIVEDIR \
       -Djava.security.manager \
