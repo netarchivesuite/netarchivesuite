@@ -82,6 +82,10 @@
                 <locale>en</locale>
                 <name>English</name>
             </language>
+            <language>
+            	<locale>de</locale>
+                <name>Deutsch</name>
+            </language>
             <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
                 <webapplication>../../webpages/HarvestDefinition.war</webapplication>
