@@ -194,7 +194,7 @@ public class BitarchiveAdmin {
         String errMsg = "No space left to store file '" + arcFileName
             + "' of size " + requestedSize;
 
-        log.error(errMsg);
+        log.warn(errMsg);
         throw new IOFailure(errMsg);
     }
 

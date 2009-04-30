@@ -82,7 +82,7 @@ public class ArchiveSettings {
      * and still have at least this much space left, the operation will result
      * in an error.
      */
-    public static final String BITARCHIVE_MIN_SPACE_REQUIRED
+    public static String BITARCHIVE_MIN_SPACE_REQUIRED
             = "settings.archive.bitarchive.minSpaceRequired";
 
     /**
