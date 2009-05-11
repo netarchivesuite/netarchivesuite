@@ -115,6 +115,10 @@ public class ARCLookup {
         ARCKey key = luceneLookup(uri.getScheme() + ":" +
                                   uri.getSchemeSpecificPart());
         if (key == null) {
+            key = luceneLookup(uri.getScheme() + ":" +
+                               uri.getRawSchemeSpecificPart());
+        }
+        if (key == null) {
             return null; // key not found
         } else {
             final BitarchiveRecord bitarchiveRecord =
