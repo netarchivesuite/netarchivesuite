@@ -7,6 +7,8 @@
         <bitarchive>
             <!-- The default value amounts to 190 MBytes. -->
             <minSpaceLeft>200000000</minSpaceLeft>
+            <!-- The default value amounts to a little less than 10 MBytes. -->
+            <minSpaceRequired>10000000</minSpaceRequired>
             <baseFileDir>bitarchive</baseFileDir>
             <heartbeatFrequency>1000</heartbeatFrequency>
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
