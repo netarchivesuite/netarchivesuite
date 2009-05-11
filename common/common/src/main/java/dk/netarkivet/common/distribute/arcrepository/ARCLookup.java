@@ -101,8 +101,13 @@ public class ARCLookup {
     }
 
     /** Look up a given URI and return the contents as an InputStream.
+     * The uri is first checked using url-decoding (e.g. "," in the argument
+     * is converted to "%2C"). If this returns no match, the method then
+     * searches for a non-url-decoded match. If neither returns a match
+     * the method returns null.
+     *
      * @param uri The URI to find in the archive.  If the URI does not
-     * match any entries in the archive, IOFailure is thrown.
+     * match any entries in the archive, null is returned.
      * @return An InputStream Containing all the data in the entry, or
      * null if the entry was not found
      * @throws IOFailure If the ARC file was found in the Lucene index but not
@@ -115,6 +120,7 @@ public class ARCLookup {
         ARCKey key = luceneLookup(uri.getScheme() + ":" +
                                   uri.getSchemeSpecificPart());
         if (key == null) {
+            // the URI.getRawSchemeSpecificPart() returns the uri in non-decoded form
             key = luceneLookup(uri.getScheme() + ":" +
                                uri.getRawSchemeSpecificPart());
         }
