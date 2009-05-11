@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     heritrix-dependencies/fastutil-5.0.3-heritrix-subset-1.0.jar
     heritrix-dependencies/je-3.3.75.jar
     heritrix-dependencies/mg4j-1.0.1.jar
-    commons-httpclient-3.0.1.jar
+    commons-httpclient-3.1.jar
     commons-logging-1.0.4.jar
     httpunit-1.6.jar
     jaxen-1.1.jar
