@@ -31,6 +31,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -190,7 +191,8 @@ public class IndexRequestServerTester extends TestCase {
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionTestMQ conn
                 = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
-        conn.setListener(irm.getReplyTo(), listener);
+        ChannelID channelID = irm.getReplyTo();
+        conn.setListener(channelID, listener);
 
         //Execute visit
         server.visit(irm);
@@ -236,6 +238,8 @@ public class IndexRequestServerTester extends TestCase {
                 longFromExtractFile.containsAll(JOB_SET));
         
         FileUtils.remove(mmfbc.getCacheFile(JOB_SET));
+
+        conn.removeListener(channelID, listener);
     }
 
     /**

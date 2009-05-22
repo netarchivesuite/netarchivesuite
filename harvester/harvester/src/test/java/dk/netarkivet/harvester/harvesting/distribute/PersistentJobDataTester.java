@@ -29,11 +29,24 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.harvester.datamodel.Job;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Test class PersistentJobData.
  */
 public class PersistentJobDataTester extends TestCase {
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+                                          TestInfo.WORKING_DIR);
+
+    public void setUp() throws Exception {
+        super.setUp();
+        mtf.setUp();
+    }
+
+    public void tearDown() throws Exception {
+        mtf.tearDown();
+        super.tearDown();
+    }
 
     /**
      * Test constructor for PersistentJobData.

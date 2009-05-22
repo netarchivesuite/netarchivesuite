@@ -28,14 +28,14 @@ import javax.jms.MessageListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.Permission;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
-
+import dk.netarkivet.archive.indexserver.distribute.IndexRequestClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -44,19 +44,20 @@ import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
+import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupIndexServer;
@@ -64,11 +65,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Integrity tests for the dk.harvester.harvesting.distribute 
- * package. Both tests assume that a JMSBroker is running on localhost 
- * at port 7676
- * FIXME Both tests fail at the moment
+ * package. Both tests assume an FTP server is running.
  */
-public class IntegrityTests extends TestCase{
+public class IntegrityTests extends DataModelTestCase {
     /** The message to write to log when starting the server. */
     private static final String START_MESSAGE =
         "Starting HarvestControllerServer.";
@@ -90,8 +89,13 @@ public class IntegrityTests extends TestCase{
         super(sTestName);
     }
 
-    public void setUp() throws IOException, SQLException, IllegalAccessException {
+    public void setUp() throws Exception, SQLException, IllegalAccessException {
+        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.setUp();
+        ChannelsTester.resetChannels();
+        super.setUp();
+        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        con = JMSConnectionFactory.getInstance();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         try {
@@ -108,15 +112,12 @@ public class IntegrityTests extends TestCase{
         } catch (IOException e) {
             fail("Could not load the testlog.prop file");
         }
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        con = JMSConnectionFactory.getInstance();
-        ChannelsTester.resetChannels();
-        TestUtils.resetDAOs();
+//        TestUtils.resetDAOs();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR,
                      TestInfo.WORKING_DIR.getPath()
                          + "/harvestControllerServerDir");
 
-        /** Do not send notification by email. Print them to STDOUT. */
+        /* Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 RememberNotifications.class.getName());
         
@@ -134,11 +135,13 @@ public class IntegrityTests extends TestCase{
             }
         });
         // Copy database to working dir: TestInfo.WORKING_DIR
-        File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
-        DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
-                TestInfo.WORKING_DIR);
-        TestUtils.resetDAOs();
+//        File databaseJarFile = new File(TestInfo.DATA_DIR, "fullhddb.jar");
+//        DatabaseTestUtils.getHDDB(databaseJarFile, "fullhddb",
+//                TestInfo.WORKING_DIR);
+//        TestUtils.resetDAOs();
         mis.setUp();
+        FileUtils.createDir(IndexRequestClient.getInstance(
+                RequestType.DEDUP_CRAWL_LOG).getCacheDir());
      }
 
     /**
@@ -146,6 +149,11 @@ public class IntegrityTests extends TestCase{
      * @throws Exception
      */
     public void tearDown() throws Exception {
+        super.tearDown();
+        //Reset index request client listener
+        Field field = ReflectUtils.getPrivateField(IndexRequestClient.class,
+                                                   "synchronizer");
+        field.set(null, null);
         mis.tearDown();
         if (hcc != null) {
             hcc.close();
@@ -173,32 +181,11 @@ public class IntegrityTests extends TestCase{
     //8) Waits for message on the sched, indicating doOneCrawl ended
     //9) Checks that we listen for jobs again
     public void testListenersAddedAndRemoved() throws IOException {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
-        fail("This unittest does not complete at the moment, "
-                + "so therefore we stop it now.");
-        done = false;
-        String priority2 = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result2;
-        if (priority2.equals(JobPriority.LOWPRIORITY.toString())) {
-            result2 = Channels.getAnyLowpriorityHaco();
-        } else {
-            if (priority2.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result2 = Channels.getAnyHighpriorityHaco();
-            } else {
-                throw new UnknownID(priority2 + " is not a valid priority");
-            }
-        }
-        List<MessageListener> listeners =
-                ((JMSConnectionTestMQ) con).getListeners(result2);
-        assertEquals("The HACO should listen before job",
-                     1, listeners.size());
+        ChannelID hacoQueue = Channels.getAnyHighpriorityHaco();
 
         //Listener that waits for a message, notifies us, and then waits for
         //notification before continuing.
-        //Used as arcrepository
+        //Used as arcrepository and scheduler
         MessageListener listenerDummy = new MessageListener() {
             public void onMessage(Message message) {
                 NetarkivetMessage nMsg = JMSConnection.unpack(message);
@@ -206,70 +193,91 @@ public class IntegrityTests extends TestCase{
                 synchronized(this) {
                     done = true;
                     notifyAll();
-                }
-                //then wait
-                try {
-                    while(done) {
-                        synchronized(this) {
-                            wait();
+                    //then wait
+                    try {
+                        while(done) {
+                                wait();
                         }
+                    } catch (InterruptedException e) {
+                        fail("Interrupted!!");
                     }
-                } catch (InterruptedException e) {
-                    fail("Interrupted!!");
                 }
                 //reply when waken
                 con.reply(nMsg);
             }
         };
-        con.setListener(Channels.getTheRepos(), listenerDummy);
 
-        //Send job
+        //Be ready to receive store messages, and block.
+        con.setListener(Channels.getTheRepos(), listenerDummy);
+        done = false;
+
+        //Sanity test: Make sure we listen at the start
+        List<MessageListener> listeners =
+                ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
+        assertEquals("The HACO should listen before job",
+                     1, listeners.size());
+
+        //Prepare job
         Job j = TestInfo.getJob();
         JobDAO.getInstance().create(j);
         j.setStatus(JobStatus.SUBMITTED);
-        //FIXME Fix the next line
-        hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
-        //wait until we know file is uploaded, listener will tell us so
+
+        // Okay, ready to roll!
+        // We send the job, and wait for the uploads now. We expect two files
+        // to be uploaded.
         synchronized(listenerDummy) {
+            //Send the job
+            hcc.doOneCrawl(j, new ArrayList<MetadataEntry>());
+
+            //wait until we know files are uploaded
             while (!done) {
                 try {
+                    //Wait until first store message is received
                     listenerDummy.wait();
                 } catch (InterruptedException e) {
                     fail("interrupted");
                 }
             }
+            //Figure out how many more files to wait for.
+            int nooffiles = new File(new File(TestInfo.WORKING_DIR, "harvestControllerServerDir").listFiles()[0], "arcs").listFiles().length; 
+
+            for (int i = 0; i < nooffiles; i++) {
+                //Wake up listener to reply to first store message
+                done = false;
+                listenerDummy.notifyAll();
+
+                while (!done) {
+                    try {
+                        //Wait until next store message is received
+                        listenerDummy.wait();
+                    } catch (InterruptedException e) {
+                        fail("interrupted");
+                    }
+                }
+            }
         }
-        //done listening for store reply
+
+        //done listening for store replies
         con.removeListener(Channels.getTheRepos(), listenerDummy);
         //now listen for crawl ended
         con.setListener(Channels.getTheSched(), listenerDummy);
 
-        //Check listener is not there
-        String priority1 = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result1;
-        if (priority1.equals(JobPriority.LOWPRIORITY.toString())) {
-            result1 = Channels.getAnyLowpriorityHaco();
-        } else {
-            if (priority1.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result1 = Channels.getAnyHighpriorityHaco();
-            } else {
-                throw new UnknownID(priority1 + " is not a valid priority");
-            }
-        }
-        listeners =
-                ((JMSConnectionTestMQ) con).getListeners(result1);
+        // At this point we know we are during the upload process, because we
+        // have blocked the process while waiting for upload replies. At that
+        // point we should not yet have re-added the listener.
+
+        //Check listener is not there anymore
+        listeners = ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
         assertEquals("Noone should listen to the HACO queue",
                      0, listeners.size());
 
-        //wake listener to send the reply
-        done = false;
-        synchronized(listenerDummy) {
+        //wake listener to send the store reply. Then wait for the scheduler to
+        //receive the crawl done message.
+        synchronized (listenerDummy) {
+            // Wake listener, so it replies to the second store message
+            done = false;
             listenerDummy.notifyAll();
-        }
-
-        //wait till we know job is done
-        synchronized(listenerDummy) {
+            // Now wait for the scheduler queue to receive a message
             while (!done) {
                 try {
                     listenerDummy.wait();
@@ -279,21 +287,15 @@ public class IntegrityTests extends TestCase{
             }
         }
 
-        //Check HACO listener is back
-        String priority = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else {
-            if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else {
-                throw new UnknownID(priority + " is not a valid priority");
-            }
+        //Wait a little for the listener to be readded.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //Nevermind
         }
-        listeners =
-                ((JMSConnectionTestMQ) con).getListeners(result);
+
+        //Check HACO listener is back
+        listeners = ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
         assertEquals("The HACO should listen again",
                      1, listeners.size());
 
@@ -302,7 +304,6 @@ public class IntegrityTests extends TestCase{
         synchronized(listenerDummy) {
             listenerDummy.notifyAll();
         }
-        con.removeListener(Channels.getTheSched(), listenerDummy);
     }
 
     /**
@@ -314,12 +315,9 @@ public class IntegrityTests extends TestCase{
      */
     public void testCrawlJob() throws IOException,
                                       InterruptedException {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         // make a dummy job
         Job j = TestInfo.getJob();
-        assertTrue("The order.xml for the job has no content!",
+        assertTrue("The order.xml for the job must have content!",
                 j.getOrderXMLdoc().hasContent());
 
         JobDAO.getInstance().create(j);
@@ -385,6 +383,6 @@ public class IntegrityTests extends TestCase{
         DomainHarvestReport dhr = csm.getDomainHarvestReport();
         assertTrue("Should not be empty", dhr.getDomainNames().size() > 0);
         assertTrue("Did not find expected domain crawled",
-                   dhr.getByteCount("www.netarkivet.dk") > 0);
+                   dhr.getByteCount("netarkivet.dk") > 0);
     }
 }

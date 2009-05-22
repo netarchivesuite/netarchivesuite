@@ -17,7 +17,7 @@
 
     <string name="state-path">state</string>
     <string name="scratch-path">scratch</string>
-    <long name="max-bytes-download">0</long>
+    <long name="max-bytes-download">10000</long>
     <long name="max-document-download">0</long>
     <long name="max-time-sec">0</long>
     <integer name="max-toe-threads">50</integer>
@@ -213,7 +213,7 @@
         <boolean name="enabled">true</boolean>
         <map name="filters">
         </map>
-        <boolean name="compress">true</boolean>
+        <boolean name="compress">false</boolean>
 
         <string name="prefix">IAH</string>
         <string name="suffix">${HOSTNAME}</string>
@@ -221,7 +221,7 @@
         <stringList name="path">
           <string>arcs</string>
         </stringList>
-        <integer name="pool-max-active">5</integer>
+        <integer name="pool-max-active">1</integer>
 
         <integer name="pool-max-wait">300000</integer>
         <long name="total-bytes-to-write">0</long>

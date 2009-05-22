@@ -177,6 +177,8 @@ public class JMSConnectionTestMQ extends JMSConnection {
                     channelIDListenerPairs) {
                 if ((channelIDListenerPair).channelID.equals(sentTo)) {
                     //channelIDListenerPair.messageListener.onMessage(new WrappedMessage(nMsg));
+                    log.debug("Delivered message '" + nMsg + "' to listener '"
+                              + to + "'");
                     CallOnMessageThread t = new CallOnMessageThread(
                             channelIDListenerPair.messageListener,
                             new WrappedMessage(nMsg));
@@ -184,14 +186,21 @@ public class JMSConnectionTestMQ extends JMSConnection {
                     synchronized (concurrentTasksToComplete) {
                         concurrentTasksToComplete.add(t);
                     }
+                    if (!sentTo.isTopic()) {
+                        break;
+                    }
                 }
             }
         }
+        if (newTasksTocomplete.isEmpty()) {
+            log.warn("Noone was listening for the message '" + nMsg
+                     + "' on channel '" + sentTo + "'. Listeners are: "
+                     + channelIDListenerPairs);
+        }
 
         // Start all threads that call the listeners
-        for (Thread aNewTasksTocomplete : newTasksTocomplete) {
-            Thread t = (Thread) aNewTasksTocomplete;
-            t.start();
+        for (Thread task : newTasksTocomplete) {
+            task.start();
         }
     }
 

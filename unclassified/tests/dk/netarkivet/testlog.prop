@@ -1,5 +1,5 @@
 #define Handlers
-handlers=java.util.logging.FileHandler,dk.netarkivet.monitor.logging.CachingLogHandler
+handlers=java.util.logging.FileHandler
 #define default logging level
 .level=INFO
 #setup the File Handler

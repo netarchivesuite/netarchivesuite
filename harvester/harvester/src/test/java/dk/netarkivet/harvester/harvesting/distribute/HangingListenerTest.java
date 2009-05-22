@@ -59,10 +59,10 @@ public class HangingListenerTest extends TestCase {
     public static Integer messages_received = 0;
 
     public void setUp(){
-        //Settings.set(Settings.JMS_BROKER_CLASS, "SunMQ");
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionSunMQ.class.getName());
         //JMSConnection.getInstance();
         ChannelsTester.resetChannels();
-        /** Do not send notification by email. Print them to STDOUT. */
+        /* Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
     }

@@ -113,7 +113,7 @@ public class IntegrityTests extends TestCase {
         rs.setUp();
         //new UseTestRemoteFile().setUp();
 
-        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String.valueOf(1000));
+        Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, String.valueOf(2000));
 
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
@@ -232,7 +232,8 @@ public class IntegrityTests extends TestCase {
      * Test that monitor can receive and aggregate data from more than one
      * BitarchiveServer and aggregate the data and upload it via FTPRemoteFile.
      */
-    public void testBatchEndedMessageAggregation() throws InterruptedException {
+    public void testBatchEndedMessageAggregation()
+             throws InterruptedException, IOException {
          Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
          bas.close();
          JMSConnection con = JMSConnectionFactory.getInstance();
@@ -263,7 +264,6 @@ public class IntegrityTests extends TestCase {
         JMSConnectionTestMQ.updateMsgID(hbm2, "heartbeat2");
         bam.visit(hbm);
         bam.visit(hbm2);
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
 
         //Trigger the bams with the batch message
         bam.visit(bm);
@@ -284,17 +284,15 @@ public class IntegrityTests extends TestCase {
          BatchEndedMessage bem2 = new BatchEndedMessage(Channels.getTheBamon(),
                  baID2, forwardedID, rf2);
 
-
          JMSConnectionTestMQ.updateMsgID(bem1, "testmsgid1");
          bam.visit(bem1);
          JMSConnectionTestMQ.updateMsgID(bem2, "testmsgid2");
          bam.visit(bem2);
 
-         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
-         Thread.sleep(5000);
+         Thread.sleep(3000);
          ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
 
-         //Now there should also be one BatchReplyMessage in the listener and the
+         //Now there should also one BatchReplyMessage in the listener and the
          //monitor should have written the data to a remote file we can collect
          assertEquals("Should have received exactly two messages, but got " + listener.getAllReceived(), 2,
                 listener.getNumReceived());
@@ -307,7 +305,7 @@ public class IntegrityTests extends TestCase {
          }
 
         FileAsserts.assertFileNumberOfLines("Aggregated file should have two " +
-                "lines", output_file, 2);
+                "lines. Content is: " + FileUtils.readFile(output_file), output_file, 2);
         FileAsserts.assertFileContains("File contents not as expected",
                 "1", output_file);
         FileAsserts.assertFileContains("File contents not as expected",

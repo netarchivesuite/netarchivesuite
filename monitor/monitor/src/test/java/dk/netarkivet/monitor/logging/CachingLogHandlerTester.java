@@ -312,9 +312,6 @@ public class CachingLogHandlerTester extends TestCase {
         assertEquals("42 new MBeans should be registered.",
                      LOG_HISTORY_SIZE, after - before);
 
-        
-        
-        
         //Check 42 mbeans of this type
         assertEquals("Should have 42 mbeans matching object name",
                      LOG_HISTORY_SIZE,
@@ -368,7 +365,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + SystemUtils.getLocalHostName() + ","
                               + Constants.PRIORITY_KEY_HTTP_PORT + "="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + "," + Constants.PRIORITY_KEY_REPLICANAME + "=replicaOne,"
+                              + "," + Constants.PRIORITY_KEY_REPLICANAME + "=ReplicaOne,"
                               + Constants.PRIORITY_KEY_PRIORITY + "=HIGHPRIORITY"
                               + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
                               + Settings.get(CommonSettings.APPLICATION_NAME)

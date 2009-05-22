@@ -30,7 +30,6 @@ import javax.jms.TopicConnection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,6 +48,7 @@ import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -58,30 +58,13 @@ public class IntegrityTests extends TestCase {
     /**
      * We need two arbitrary (but different) queues for testing send and reply.
      */
-    private static final ChannelID sendQ;
-
-    static {
-        String priority = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        if (priority.equals(JobPriority.LOWPRIORITY.toString())) {
-            result = Channels.getAnyLowpriorityHaco();
-        } else
-        {
-            if (priority.equals(JobPriority.HIGHPRIORITY.toString())) {
-                result = Channels.getAnyHighpriorityHaco();
-            } else
-            throw new UnknownID(priority + " is not a valid priority");
-        }
-        sendQ = result;
-    }
+    private static final ChannelID sendQ = Channels.getAnyLowpriorityHaco();
 
     private static final ChannelID replyQ = Channels.getTheSched();
 
     private static final ChannelID sendTopic = Channels.getAllBa();
 
     private static final int WAIT_MS = 9000;
-    private SecurityManager originalSecurityManager;
 
     /**
      * Used in methods testNListenersToTopic and
@@ -89,31 +72,28 @@ public class IntegrityTests extends TestCase {
      */
     private static final int NO_OF_LISTENERS = 4;
 
+    private static final PreventSystemExit pes = new PreventSystemExit();
+
     private JMSConnection conn;
 
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
         rs.setUp();
+        Settings.set(CommonSettings.JMS_BROKER_CLASS,
+                     JMSConnectionSunMQ.class.getName());
+        /* Do not send notification by email. Print them to STDOUT. */
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                     RememberNotifications.class.getName());
         JMSConnectionFactory.getInstance().close();
         conn = JMSConnectionFactory.getInstance();
-        originalSecurityManager = System.getSecurityManager();
-        SecurityManager manager = new SecurityManager() {
-            public void checkPermission(Permission perm) {
-                if(perm.getName().equals("exitVM")) {
-                    throw new SecurityException("Thou shalt not exit in a unit test");
-                }
-            }
-        };
-        System.setSecurityManager(manager);
-        /** Do not send notification by email. Print them to STDOUT. */
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        pes.setUp();
     }
 
     public void tearDown() {
         ChannelsTester.resetChannels();
-        System.setSecurityManager(originalSecurityManager);
         JMSConnectionFactory.getInstance().close();
+        pes.tearDown();
         rs.tearDown();
     }
 

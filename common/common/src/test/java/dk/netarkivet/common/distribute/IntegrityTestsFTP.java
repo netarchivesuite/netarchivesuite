@@ -112,7 +112,7 @@ public class IntegrityTestsFTP extends TestCase {
             fail("Could not setup configuration for");
         }
 
-        /** Read ftp-related settings from settings.xml. */
+        /* Read ftp-related settings from settings.xml. */
         final String ftpServerName = Settings.get(
                 FTPRemoteFile.FTP_SERVER_NAME);
         final int ftpServerPort = Integer.parseInt(Settings.get(
@@ -121,7 +121,7 @@ public class IntegrityTestsFTP extends TestCase {
         final String ftpUserPassword = Settings.get(
                 FTPRemoteFile.FTP_USER_PASSWORD);
 
-        /** Connect to test ftp-server. */
+        /* Connect to test ftp-server. */
         theFTPClient = new FTPClient();
         
         try {

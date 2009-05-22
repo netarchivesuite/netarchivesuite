@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -109,9 +109,9 @@ public class TestInfo {
                     String.class, Integer.TYPE);
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
                                  JobPriority.HIGHPRIORITY, -1L, -1L,
-                                 JobStatus.NEW, "default_template",
-                                 DocumentFactory.getInstance().createDocument(),
-                                 "", 1);
+                                 JobStatus.NEW, "default_orderxml",
+                                 XmlUtils.getXmlDoc(ORDER_FILE),
+                                 "www.netarkivet.dk", 1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -129,8 +129,8 @@ public class TestInfo {
             return c.newInstance(42L, Collections.<String, String>emptyMap(),
                                  JobPriority.LOWPRIORITY, -1L, -1L,
                                  JobStatus.NEW, "default_template",
-                                 DocumentFactory.getInstance().createDocument(),
-                                 "", 1);
+                                 XmlUtils.getXmlDoc(ORDER_FILE),
+                                 "www.netarkivet.dk", 1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
