@@ -1,10 +1,10 @@
 = Third party software used by NetarchiveSuite =
 ||<tablewidth="100%"12% style="vertical-align: top;">'''Software''' ||<9% style="vertical-align: top;">'''Version''' ||<18% style="vertical-align: top;">'''File''' ||<8% style="vertical-align: top;">'''License''' ||<30% style="vertical-align: top;">'''Project usage''' ||<25% style="vertical-align: top;">'''Software home''' ||
-||[:HeritrixPatches:Heritrix (with patches)] ||1.12.1b ||heritrix-1.12.1b.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Harvesting, ARC file handling ||http://crawler.archive.org ||
+||Heritrix ||1.14.3 ||heritrix-1.14.3.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Harvesting, ARC file handling ||http://crawler.archive.org ||
 ||Jetty ||6.1.6 ||jetty-6.1.6.jar jetty-util-6.1.6.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Webinterface, Viewerproxy, HTTPRemoteFile ||http://mortbay.org ||
 ||Derby ||10.4.2.0 ||derby-10.4.2.0.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Database for harvest definition data ||http://db.apache.org/derby/ ||
 ||OpenMQ ||4.1-b22g ||imq-4.1-b22g.jar jmx-4.1-b22g.jar ||[http://www.sun.com/cddl/cddl.html CDDL] ||JMS communication ||http://mq.dev.java.net/ ||
-||[:DeduplicatorPatches:Deduplicator (with patches)] ||0.3.0-20061218-patched-20080527 ||deduplicator-0.3.0-20061218-patched-20080527.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Deduplicating ||http://deduplicator.sourceforge.net/ ||
+||Deduplicator ||0.4.0 ||deduplicator-0.4.0 ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Deduplicating ||http://deduplicator.sourceforge.net/ ||
 ||Dom4J ||1.5.2 ||dom4j-1.5.2.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||XML handling ||http://dom4j.org ||
 ||Commons Fileupload ||1.0 ||commons-fileupload-1.0 ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Web interface file uploads ||http://jakarta.apache.org/commons/fileupload/ ||
 ||Java mail ||1.4 ||mail-1.4.jar ||[:JavamailLicense:License] ||Mail notifications ||http://java.sun.com/products/javamail/ ||
@@ -16,7 +16,7 @@
 ||Commons CLI ||1.0 ||commons-cli-1.0.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] || ||http://jakarta.apache.org/commons/cli/ ||
 ||Commons Codec ||1.3 ||commons-codec-1.3.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] || ||http://jakarta.apache.org/commons/codec/ ||
 ||Commons Collections ||3.1 ||commons-collections-3.1.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] || ||http://jakarta.apache.org/commons/collections/ ||
-||Commons HTTP client ||3.0.1 ||commons-httpclient-3.0.1.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Also used in !NetarchiveSuite test code ||http://jakarta.apache.org/commons/httpclient/ ||
+||Commons HTTP client ||3.1 ||commons-httpclient-3.1.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Also used in !NetarchiveSuite test code ||http://jakarta.apache.org/commons/httpclient/ ||
 ||Commons Lang ||2.3 ||commons-lang-2.3.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] || ||http://jakarta.apache.org/commons/lang/ ||
 ||Commons Logging ||1.0.4 ||commons-logging-1.0.4.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Also used for !NetarchiveSuite logging ||http://jakarta.apache.org/commons/logging/ ||
 ||Commons Net ||1.4.1 ||commons-net-1.4.1.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] ||Also used for !NetarchiveSuite FTPRemoteFile ||http://jakarta.apache.org/commons/net/ ||
@@ -25,8 +25,8 @@
 ||Fastutil subset ||5.0.3 heritrix-subset 1.0 ||fastutil-5.0.3-heritrix-subset-1.0.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] || ||http://fastutil.dsi.unimi.it/ ||
 ||iText ||1.2.0 ||itext-1.2.0.jar ||[http://www.mozilla.org/MPL/MPL-1.1.txt MPL]/[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] || ||http://www.lowagie.com/iText/ ||
 ||Java SWF ||CVS Snapshot ||javaswf-CVS-SNAPSHOT-1.jar ||[http://www.anotherbigidea.com/javaswf/JavaSWF2-BSD.LICENSE.html BSD] || ||http://www.anotherbigidea.com/javaswf/ ||
-||Berkeley DB Java Edition ||3.2.23 ||je-3.2.23.jar ||[http://www.oracle.com/technology/software/products/berkeley-db/htdocs/jeoslicense.html JEOS] || ||http://www.oracle.com/database/berkeley-db/je ||
-||Jericho HTML Parser ||2.3 ||jericho-html-2.3.jar ||[http://www.eclipse.org/legal/epl-v10.html EPL]/[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] || ||http://jerichohtml.sourceforge.net/doc/index.html ||
+||Berkeley DB Java Edition ||3.3.75 ||je-3.3.75.jar ||[http://www.oracle.com/technology/software/products/berkeley-db/htdocs/jeoslicense.html JEOS] || ||http://www.oracle.com/database/berkeley-db/je ||
+||Jericho HTML Parser ||2.6 ||jericho-html-2.6.jar ||[http://www.eclipse.org/legal/epl-v10.html EPL]/[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] || ||http://jerichohtml.sourceforge.net/doc/index.html ||
 ||!JetS3t ||0.5.0 ||jets3t-0.5.0.jar ||[http://apache.org/licenses/LICENSE-2.0.txt Apache 2.0] || ||https://jets3t.dev.java.net/ ||
 ||JUnit ||3.8.2 ||junit-3.8.2.jar ||[http://www.opensource.org/licenses/cpl1.0.txt CPL] ||Also used for !NetarchiveSuite unit tests ||http://junit.org/index.htm ||
 ||libIDN ||0.5.9 ||libidn-0.5.9.jar ||[http://www.fsf.org/licensing/licenses/lgpl.txt LGPL] ||Also used for !NetarchiveSuite puny-coding of domains ||http://www.gnu.org/software/libidn/ ||
