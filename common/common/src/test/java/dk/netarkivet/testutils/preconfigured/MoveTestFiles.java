@@ -22,13 +22,13 @@
  */
 package dk.netarkivet.testutils.preconfigured;
 
+import java.io.File;
+import java.io.IOException;
+
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 public class MoveTestFiles implements TestConfigurationIF {
     private File originalsDir;
@@ -44,7 +44,23 @@ public class MoveTestFiles implements TestConfigurationIF {
     }
 
     public void tearDown() {
+        setReadWrite(workingDir);
         FileUtils.removeRecursively(workingDir);
+    }
+
+    /**
+     * Recursively set all files readable and writable. Used to ensure working
+     * dir is deletable.
+     * @param file File or directory to start from.
+     */
+    private void setReadWrite(File file) {
+        file.setReadable(true);
+        file.setWritable(true);
+        if (file.isDirectory()) {
+            for(File file1 : file.listFiles()) {
+                setReadWrite(file1);
+            }
+        }
     }
 
     public File working(File f) {

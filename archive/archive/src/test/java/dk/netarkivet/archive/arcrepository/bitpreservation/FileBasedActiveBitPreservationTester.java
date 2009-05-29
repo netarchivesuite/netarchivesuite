@@ -84,15 +84,13 @@ import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
  */
 public class FileBasedActiveBitPreservationTester extends TestCase {
     private UseTestRemoteFile rf = new UseTestRemoteFile();
-
-    static boolean to_fail;
-    FileBasedActiveBitPreservation abp;
-    
-    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
-                                                  TestInfo.WORKING_DIR);
     private ReloadSettings rs = new ReloadSettings();
     private MockupJMS mj = new MockupJMS();
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+                                                  TestInfo.WORKING_DIR);
 
+    FileBasedActiveBitPreservation abp;
+    
     private static final Replica ONE = Replica.getReplicaFromId("ONE");
     private static final Replica TWO = Replica.getReplicaFromId("TWO");
 
@@ -104,8 +102,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         mj.setUp();
         rf.setUp();
 
-        to_fail = false;
-
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                      MockupArcRepositoryClient.class.getName());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
@@ -113,7 +109,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        super.tearDown();
         // Make sure admin data instance is closed.
         UpdateableAdminData.getInstance().close();
 
@@ -131,6 +126,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         mtf.tearDown();
         mj.tearDown();
         rs.tearDown();
+        super.tearDown();
     }
 
     /**
@@ -274,7 +270,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             // expected
         }
 
-        Replica replica = Replica.getReplicaFromId(TestInfo.VALID_REPLICA_ID);
+        Replica replica = Replica.getReplicaFromId(TestInfo.REPLICA_ID_ONE);
         runChecksumJob.invoke(acp, replica);
 
         File unsortedOutput = WorkFiles.getFile(replica,
@@ -399,8 +395,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                     throw new IOFailure("Can't make empty file " + file, e);
                 }
                 return new BatchStatus(replicaId, new HashSet<File>(), 0,
-                                       new TestRemoteFile(file, to_fail,
-                                                           to_fail, to_fail),
+                                       new TestRemoteFile(file, false,
+                                                          false, false),
                                                            job.getExceptions());
             }
 
@@ -444,7 +440,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 = FileBasedActiveBitPreservation.getInstance();
 
         // Check normal run
-        final String replicaId = TestInfo.REPLICA_ID;
+        final String replicaId = TestInfo.REPLICA_ID_TWO;
         Replica replica = Replica.getReplicaFromId(replicaId);
         //final String otherLocationName = TestInfo.OTHER_LOCATION_NAME;
         // Location otherLocation = Location.get(otherLocationName);
@@ -648,7 +644,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             os.close();
             RemoteFile resultFile = RemoteFileFactory.getInstance(tmpfile, true,
                                                                   false, true);
-            if (to_fail) {
+            if (false) {
                 File artificialFailure = new File(bitarchive_dir,
                                                    TestInfo.REFERENCE_FILES[0]);
                 List<File> l = new ArrayList<File>();

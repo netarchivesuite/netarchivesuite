@@ -25,34 +25,34 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.Serial;
-import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
- * Unit tests for the abstract class FileBatchJob, and its subclass
- * FileListJob.
+ * Unit tests for FileListJob.
  */
 public class FileListJobTester extends TestCase {
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+                                                 TestInfo.WORKING_DIR);
 
-     public void setUp() {
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+    public void setUp() throws Exception {
+        super.setUp();
+        mtf.setUp();
     }
 
-    public void tearDown() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+    public void tearDown() throws Exception {
+        mtf.tearDown();
+        super.tearDown();
     }
 
     /**
      * Test that FileBatchJob outputs the right data.
      */
-    public void testJobRuns() {
+    public void testProcessFile() {
         File bitarchive = new File(TestInfo.WORKING_DIR, "bitarchive1");
         File arcfile = new File(bitarchive, "integrity1.ARC");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -65,10 +65,9 @@ public class FileListJobTester extends TestCase {
     /**
      * Tests serializability of this class, under the assumption that its
      * toString() method is dependent on its entire relevant state.
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws Exception On any error
      */
-    public void testSerializable() throws IOException, ClassNotFoundException {
+    public void testSerializable() throws Exception {
         FileBatchJob job = new FileListJob();
         FileBatchJob job2 = (FileBatchJob) Serial.serial(job);
         assertEquals("Should have same toString()", job.toString(),

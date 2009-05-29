@@ -46,8 +46,8 @@ public class BitPreservationTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(ChecksumJobTester.class);
+        suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(FileListJobTester.class);
         suite.addTestSuite(WorkFilesTester.class);
     }

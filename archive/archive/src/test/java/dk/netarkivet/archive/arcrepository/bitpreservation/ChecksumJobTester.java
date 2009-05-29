@@ -22,121 +22,212 @@
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.testutils.Serial;
+import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Unit tests for the class ChecksumJob.
  */
 public class ChecksumJobTester extends TestCase {
-    public ChecksumJobTester(String s) {
-        super(s);
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+                                                 TestInfo.WORKING_DIR);
+
+    public void setUp() throws Exception {
+        super.setUp();
+        mtf.setUp();
     }
 
-    public void setUp() {
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
-    }
-
-    public void tearDown() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+    public void tearDown() throws Exception {
+        mtf.tearDown();
+        super.tearDown();
     }
 
     /**
      * Test that processFile correctly returns the checksums of the
-     * files in the specified format (which sucks).
+     * files in the specified format.
      *
-     * @throws Exception
+     * @throws IOException if unit test has trouble generating ref. checksums
      */
-    public void testProcessFile() throws Exception {
+    public void testProcessFile() throws IOException {
         ChecksumJob job = new ChecksumJob();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         job.initialize(out);
         File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir")
             .listFiles(TestFileUtils.NON_CVS_DIRS_FILTER);
         Map<String,String> ourChecksums = new HashMap<String,String>();
-        for (int i = 0; i < inputfiles.length; i++) {
-            job.processFile(inputfiles[i], out);
-            try {
-                ourChecksums.put(inputfiles[i].getName(),
-                        MD5.generateMD5onFile(inputfiles[i]));
-            } catch(Exception e) {
-                //okay, should just be a failed file
-            }
+        for (File inputfile : inputfiles) {
+            job.processFile(inputfile, out);
+            ourChecksums.put(inputfile.getName(),
+                             MD5.generateMD5onFile(inputfile));
         }
         job.finish(out);
-        out.close();
 
-        // Cannot check # of files processed, as that is counted outside
-        // processFile now.  So just check the results.
-
+        // Check the results.
         String result = out.toString();
         String[] result_parts = result.split("\n");
-        assertEquals("Must have as many lines in result as files processed",
-                ourChecksums.size(), result_parts.length);
-        for (int i = 0; i < result_parts.length; i++) {
-            String[] line_parts = result_parts[i].split(
-                    dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
-            assertEquals("Line " + i + " in the checksum result must have two parts split by "
-                    + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR,
-                    2, line_parts.length);
-            assertTrue("File '" + line_parts[0] + "' must be in our checksum table",
-                    ourChecksums.containsKey(line_parts[0]));
-            assertEquals("Checksum for '" + line_parts[0] + "' should be correct",
-                    ourChecksums.get(line_parts[0]), line_parts[1]);
+        assertEquals("Must have as many lines in result as files processed."
+                     + " Results is\n" + result + "\nOur checksums are \n"
+                     + ourChecksums,
+                     ourChecksums.size(), result_parts.length);
+        for (String result_part : result_parts) {
+            String[] line_parts = result_part.split(
+                    Constants.STRING_FILENAME_SEPARATOR);
+            assertEquals("Line in the checksum result must have two"
+                         + " parts split by '"
+                         + Constants.STRING_FILENAME_SEPARATOR + "', but was '"
+                         + result_part + "' "
+                         + " Results is\n" + result + "\nOur checksums are \n"
+                         + ourChecksums,
+                         2, line_parts.length);
+            assertTrue("File '" + line_parts[0]
+                       + "' from result must be in our checksum table."
+                       + " Results is\n" + result + "\nOur checksums are \n"
+                       + ourChecksums,
+                       ourChecksums.containsKey(line_parts[0]));
+            assertEquals("Checksum for '" + line_parts[0]
+                         + "' should be correct"
+                         + " Results is\n" + result + "\nOur checksums are \n"
+                         + ourChecksums,
+                         ourChecksums.get(line_parts[0]), line_parts[1]);
         }
     }
 
-    public void testSerializability() throws IOException,
-                                             ClassNotFoundException {
+    /** Tests that makeLine works as expected. */
+    public void testMakeLine() {
+        assertEquals("Should generate lines as expected",
+                     "A" + Constants.STRING_FILENAME_SEPARATOR + "b",
+                     ChecksumJob.makeLine("A", "b"));
+        try {
+            ChecksumJob.makeLine(null, "a");
+            fail("Should throw ANV on null parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("Should mention parameter name",
+                                               "filename", e.getMessage());
+        }
+
+        try {
+            ChecksumJob.makeLine("a", null);
+            fail("Should throw ANV on null parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("Should mention parameter name",
+                                               "checksum", e.getMessage());
+        }
+
+        try {
+            ChecksumJob.makeLine("", "a");
+            fail("Should throw ANV on empty parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("Should mention parameter name",
+                                               "filename", e.getMessage());
+        }
+
+        try {
+            ChecksumJob.makeLine("a", "");
+            fail("Should throw ANV on empty parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("Should mention parameter name",
+                                               "checksum", e.getMessage());
+        }
+    }
+
+    public void testParseLine() {
+        KeyValuePair<String, String> pair = ChecksumJob.parseLine(
+                "a" + Constants.STRING_FILENAME_SEPARATOR + "b");
+        assertEquals("Should get right key", "a", pair.getKey());
+        assertEquals("Should get right value", "b", pair.getValue());
+
+        try {
+            ChecksumJob.parseLine(null);
+            fail("Should throw ANV on null parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("not on checksum output form",
+                                               e.getMessage());
+        }
+
+        try {
+            ChecksumJob.parseLine("x");
+            fail("Should throw ANV on malformed parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("not on checksum output form",
+                                               e.getMessage());
+        }
+
+        try {
+            ChecksumJob.parseLine("x" + Constants.STRING_FILENAME_SEPARATOR);
+            fail("Should throw ANV on malformed parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("not on checksum output form",
+                                               e.getMessage());
+        }
+
+        try {
+            ChecksumJob.parseLine("x" + Constants.STRING_FILENAME_SEPARATOR
+                                  + Constants.STRING_FILENAME_SEPARATOR + "y");
+            fail("Should throw ANV on malformed parameter");
+        } catch (ArgumentNotValid e) {
+            //Expected
+            StringAsserts.assertStringContains("not on checksum output form",
+                                               e.getMessage());
+        }
+    }
+
+    /** Test that relevant state is preserved as expected, and that
+     * extensions in readObject are honoured.
+     *
+     * @throws Exception on serialization trouble.
+     */
+    public void testSerializability() throws Exception {
         //make a job:
         ChecksumJob job = new ChecksumJob();
+
+        //run the job to get some state
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        job.initialize(out);
         File[] inputfiles = new File(TestInfo.FAIL_ARCHIVE_DIR, "filedir")
             .listFiles(TestFileUtils.NON_CVS_DIRS_FILTER);
-        Map<String,String> ourChecksums = new HashMap<String,String>();
-        for (int i = 0; i < inputfiles.length; i++) {
-            job.processFile(inputfiles[i], out);
-            ourChecksums.put(inputfiles[i].getName(), MD5.generateMD5onFile(
-                    inputfiles[i]));
-        }
-        job.finish(out);
+        inputfiles[0].setReadable(false);
+        new BatchLocalFiles(inputfiles).run(job, out);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream ous = new ObjectOutputStream(baos);
-        ous.writeObject(job);
-        ous.close();
-        baos.close();
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
-                baos.toByteArray()));
-        ChecksumJob job2;
-        job2 = (ChecksumJob) ois.readObject();
+        //Serialize and deserialize
+        ChecksumJob job2 = Serial.serial(job);
+
         //Finally, compare their visible states:
-        assertEquals("After serialization the states differed:\n"
+        assertEquals("After serialization state should be the same,"
+                     + " but was befora:\n"
                      + relevantState(job) + "\n"
+                     + "and after:"
                      + relevantState(job2),
                      relevantState(job), relevantState(job2));
 
-        assertNotNull("Logget must be reinitialised after serialization",
+        assertNotNull("Logger must be reinitialised after serialization",
                       job2.log);
     }
 
     private String relevantState(ChecksumJob job) {
-        return "Job. processed:" + job.getNoOfFilesProcessed()
-               + "Failures" + job.getFilesFailed();
+        return "Checksum Job. Processed: " + job.getNoOfFilesProcessed()
+               + " Failures: " + job.getFilesFailed()
+                + " Pattern: " + job.getFilenamePattern().toString()
+                + " Exceptions: " + job.getExceptions();
     }
 
 }

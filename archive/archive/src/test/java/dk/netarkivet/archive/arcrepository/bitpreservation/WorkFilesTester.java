@@ -32,22 +32,23 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.CollectionAsserts;
-import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 
 /**
  * Unittest for the class WorkFiles.
- *
  */
 public class WorkFilesTester extends TestCase {
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+                                                  TestInfo.WORKING_DIR);
+
     public void setUp() throws Exception {
         super.setUp();
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+        mtf.setUp();
     }
 
     public void tearDown() throws Exception {
+        mtf.tearDown();
         super.tearDown();
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
     }
 
     public void testGetSortedFile() throws Exception {
