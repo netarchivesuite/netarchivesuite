@@ -121,15 +121,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         </fileset>
     </path>
 
-    <target name="clean"
-            description="Remove all compiled code and generated wars and jars">
+    <target name="cleanwars"
+	    description="Remove all compiled wars">
+      <delete dir="${classdir}/webpages"/>
+      <delete verbose="false">
+        <fileset dir="webpages">
+          <include name="*.war"/>
+        </fileset>
+      </delete>
+    </target>
+
+    <target name="clean" 
+            description="Remove all compiled code and generated wars andjars">
         <delete dir="${classdir}/dk"/>
-        <delete dir="${classdir}/webpages"/>
-        <delete verbose="false">
-           <fileset dir="webpages">
-              <include name="*.war"/>
-           </fileset>
-        </delete>
         <delete verbose="false">
            <fileset dir="lib">
               <include name="dk.netarkivet.*.jar"/>
@@ -209,11 +213,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="jarfiles"
-            depends="commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar"
+            depends="clean, commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar"
             description="Compile all jar files">
     </target>
 
-    <target name="warfiles" depends="clean"
+    <target name="warfiles" depends="cleanwars"
             description="Compile all war files">
         <!-- make the WAR-files -->
         <war destfile="${webpages}/HarvestDefinition.war" basedir="${webpages}/HarvestDefinition" update="no" webxml="${webpages}/HarvestDefinition/WEB-INF/web.xml">
