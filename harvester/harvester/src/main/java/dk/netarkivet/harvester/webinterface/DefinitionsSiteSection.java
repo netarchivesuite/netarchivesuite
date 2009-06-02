@@ -49,7 +49,7 @@ public class DefinitionsSiteSection extends SiteSection {
     /** The scheduler being started to schedule and monitor jobs. */
     private HarvestScheduler theScheduler;
     /** number of pages visible in the left menu. */
-    private final static int PAGES_VISIBLE_IN_MENU = 8;
+    private static final int PAGES_VISIBLE_IN_MENU = 8;
 
     /**
      * Create a new definition SiteSection object.
@@ -64,7 +64,8 @@ public class DefinitionsSiteSection extends SiteSection {
                       {"create-domain", "pagetitle;create.domain"},
                       {"domain-statistics", "pagetitle;domain.statistics"},
                       {"alias-summary", "pagetitle;alias.summary"},
-                      {"edit-harvest-templates", "pagetitle;edit.harvest.templates"},
+                      {"edit-harvest-templates", 
+                          "pagetitle;edit.harvest.templates"},
                       // The pages listed below are not visible in the left menu
                       {"upload-harvest-template",
                               "pagetitle;upload.template"},
@@ -98,7 +99,7 @@ public class DefinitionsSiteSection extends SiteSection {
                 HarvesterSettings.DOMAIN_DEFAULT_ORDERXML))) {
             String message = "The default order template '"
                     + Settings.get(HarvesterSettings.DOMAIN_DEFAULT_ORDERXML)
-                    + "' does not exist in the template DAO. Please use the"
+                    + "' does not exist in the template DAO. Please use the "
                     + HarvestTemplateApplication.class.getName()
                     + " tool to upload this template before"
                     + " loading the Definitions site section in the"
