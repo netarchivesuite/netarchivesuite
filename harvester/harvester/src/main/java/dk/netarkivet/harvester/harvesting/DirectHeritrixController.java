@@ -55,7 +55,7 @@ public class DirectHeritrixController implements HeritrixController {
      */
     CrawlController myController = new CrawlController();
 
-    /** The set of files that Heritrix needs Heritrix */
+    /** The set of files that Heritrix needs Heritrix. */
     private HeritrixFiles files;
 
     /** Create a new DirectHeritrixController object with a given set of files.
@@ -137,7 +137,7 @@ public class DirectHeritrixController implements HeritrixController {
     	ArgumentNotValid.checkNotNull(listener, "listener");
         myController.addCrawlStatusListener(listener);
     }
-    /** @see {@link HeritrixController#getQueuedUriCount()}*/
+    /** @see HeritrixController#getQueuedUriCount() */
     public long getQueuedUriCount() {
         return myController.getFrontier().queuedUriCount();
     }
@@ -193,8 +193,8 @@ public class DirectHeritrixController implements HeritrixController {
     /**
      * This version just returns a string that tells the harvester is running
      * inline.
-     * TODO Make this method respond after how the Harvester is really doing, and not
-     * just respond ("Running inline"). 
+     * TODO Make this method respond after how the Harvester is really doing,
+     * and not just respond ("Running inline"). 
      * @return running inline.
      */
     public String getHarvestInformation() {
@@ -215,18 +215,18 @@ public class DirectHeritrixController implements HeritrixController {
         private Log log = LogFactory.getLog(SimpleCrawlStatusListener.class);
 
         /**
-         * Sets the value of crawlIsEnded to false
+         * Sets the value of crawlIsEnded to false.
          */
         public SimpleCrawlStatusListener() {
             crawlIsEnded.set(false);
         }
 
         /**
-		 * Fired by the crawler, when the crawl has started.
-		 *
-		 * @param s Message to attach
-		 * @see CrawlStatusListener#crawlStarted(java.lang.String)
-		 */
+         * Fired by the crawler, when the crawl has started.
+         *
+         * @param s Message to attach
+         * @see CrawlStatusListener#crawlStarted(java.lang.String)
+         */
         public void crawlStarted(String s) {
             log.debug("Crawl started: " + s);
         }
@@ -298,7 +298,7 @@ public class DirectHeritrixController implements HeritrixController {
          */
         public void crawlCheckpoint(File checkpointDir) throws Exception {
             log.debug("Crawl checkpoint to " + checkpointDir);
-            // TODO: Should we store some of the parent class' information here?
+            // TODO Should we store some of the parent class' information here?
         }
     }
 }

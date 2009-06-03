@@ -45,7 +45,7 @@ import dk.netarkivet.common.utils.ZipUtils;
 /**
  * A cache that serves Lucene indices of crawl logs for given job IDs.
  * Uses the DigestIndexer in the deduplicator software:
- * http://vefsofnun.bok.hi.is/deduplicator/api/is/hi/bok/deduplicator/DigestIndexer.html
+ * http://deduplicator.sourceforge.net/apidocs/is/hi/bok/deduplicator/DigestIndexer.html
  * Upon combination of underlying files, each file in the Lucene index is
  * gzipped and the compressed versions are stored in the directory given by
  * getCacheFile().
@@ -53,19 +53,31 @@ import dk.netarkivet.common.utils.ZipUtils;
  * included.
  *
  */
-
-public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Long>
-        implements JobIndexCache {
+public abstract class CrawlLogIndexCache extends
+                CombiningMultiFileBasedCache<Long> implements JobIndexCache {
     /** Needed to find origin information, which is file+offset from CDX index.
      */
     private final CDXDataCache cdxcache = new CDXDataCache();
     /** Optimizes Lucene index, if set to true. */
     private static final boolean OPTIMIZE_INDEX = true;
+    /** the useBlacklist set to true results in docs matching the
+       mimefilter being ignored. */
     private boolean useBlacklist;
+    /** An regular expression for the mimetypes to include or exclude from
+     * the index. See useBlackList.
+     */
     private String mimeFilter;
+    /** The log. */
     private static Log log
             = LogFactory.getLog(CrawlLogIndexCache.class.getName());
-
+    /**
+     * Constructor for the CrawlLogIndexCache class.
+     * @param name The name of the CrawlLogIndexCache
+     * @param blacklist Shall the mimefilter be considered a blacklist 
+     *  or a whitelist?
+     * @param mimeFilter A regular expression for the mimetypes to
+     * exclude/include
+     */
     public CrawlLogIndexCache(String name, boolean blacklist,
                               String mimeFilter) {
         super(name, new CrawlLogDataCache());
@@ -105,7 +117,6 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      *
      * @param rawfiles The map from job ID into crawl.log contents. No
      * null values are allowed in this map.
-     * @param askedJobIds The set of jobIds actually needed
      */
     protected void combine(Map<Long, File> rawfiles) {
         File resultFile = getCacheFile(rawfiles.keySet());
@@ -152,7 +163,7 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
      * @param indexer The indexer to add to.
      */
     private void indexFile(Long ID, File file, DigestIndexer indexer) {
-        // the blacklist set to true results in docs matching the
+        // variable 'blacklist' set to true results in docs matching the
         // mimefilter being ignored.
         boolean blacklist = useBlacklist;
         final String mimefilter = mimeFilter;
@@ -165,10 +176,10 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
             cdxFile = getSortedCDX(ID);
             cdxBuffer = new BufferedReader(new FileReader(cdxFile));
             tmpCrawlLog = getSortedCrawlLog(file);
-            crawlLogIterator = new CDXOriginCrawlLogIterator
-                    (tmpCrawlLog, cdxBuffer);
-            indexer.writeToIndex
-                    (crawlLogIterator, mimefilter, blacklist, "ERROR", verbose);
+            crawlLogIterator = new CDXOriginCrawlLogIterator(
+                    tmpCrawlLog, cdxBuffer);
+            indexer.writeToIndex(
+                    crawlLogIterator, mimefilter, blacklist, "ERROR", verbose);
         } catch (IOException e) {
             throw new IOFailure("Fatal error indexing " + ID, e);
         } finally {
@@ -186,8 +197,8 @@ public abstract class CrawlLogIndexCache extends CombiningMultiFileBasedCache<Lo
                     FileUtils.remove(cdxFile);
                 }
             } catch (IOException e) {
-                log.info("Error cleaning up after" +
-                        " crawl log index cache generation", e);
+                log.info("Error cleaning up after"
+                        + " crawl log index cache generation", e);
             }
         }
     }

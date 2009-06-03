@@ -36,6 +36,6 @@ public interface JobIndexCache {
      * This file must not be modified or deleted, since it is part of the cache
      * of data.
      */
-    public Index<Set<Long>> getIndex(Set<Long> jobIDs);
+    Index<Set<Long>> getIndex(Set<Long> jobIDs);
 
 }

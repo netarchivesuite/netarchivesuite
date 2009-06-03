@@ -112,7 +112,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
         }
 
         /**
-         * Lookup and return the Class with the given className.
+         * Lookup and return the Class with the given className. This method overrides the
+         * ClassLoader.findClass method.
          * 
          * @param className
          *            The name of the class to lookup
@@ -120,7 +121,6 @@ public class LoadableJarBatchJob extends FileBatchJob {
          *             If the class could not be found
          * @return the Class with the given className.
          * 
-         * @Overrides ClassLoader.findClass()
          */
         public Class findClass(String className) throws ClassNotFoundException {
             ArgumentNotValid.checkNotNullOrEmpty(className, "String className");

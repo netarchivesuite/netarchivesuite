@@ -962,7 +962,7 @@ public class JobDBDAO extends JobDAO {
     }
     
     /**
-     * @See {@link JobDAO#getStatusInfo(long, long, boolean)}
+     * @see JobDAO#getStatusInfo(long, long, boolean)
      */
     public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
             boolean asc) {
@@ -988,7 +988,7 @@ public class JobDBDAO extends JobDAO {
     
     /**
      * Get statusInfo.
-     * @See {@link JobDAO#getStatusInfo(long, long, boolean, Set)}
+     * @see JobDAO#getStatusInfo(long, long, boolean, Set)
      */
     public List<JobStatusInfo> getStatusInfo(long harvestId, long harvestNum,
             boolean asc, Set<JobStatus> selectedStatusSet) {

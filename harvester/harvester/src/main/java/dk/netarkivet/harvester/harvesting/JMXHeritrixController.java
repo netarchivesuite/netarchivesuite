@@ -69,7 +69,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
  */
 public class JMXHeritrixController implements HeritrixController {
     /** The logger for this class. */
-    private static final Log log = LogFactory.getLog(JMXHeritrixController.class);
+    private static final Log log = LogFactory.getLog(
+            JMXHeritrixController.class);
 
     /* The below commands and attributes are copied from 
      * org.archive.crawler.admin.CrawlJob.
@@ -118,6 +119,7 @@ public class JMXHeritrixController implements HeritrixController {
      * start using more than one job at a time, terminateCurrentJob will only
      * stop one job.
      */
+    /** Command to start crawling. */
     private static final String START_CRAWLING_COMMAND = "startCrawling";
     /** Make the currently active (selected?) job stop. */
     private static final String TERMINATE_CURRENT_JOB_COMMAND
@@ -421,8 +423,8 @@ public class JMXHeritrixController implements HeritrixController {
     private void initializeProgressStatisticsLegend() {
         new Thread() {
             public void run() {
-                progressStatisticsLegend = (String)executeCrawlJobCommand
-                        (PROGRESS_STATISTICS_LEGEND_COMMAND);
+                progressStatisticsLegend = (String) executeCrawlJobCommand(
+                        PROGRESS_STATISTICS_LEGEND_COMMAND);
             }
         }.start();
     }
@@ -435,8 +437,8 @@ public class JMXHeritrixController implements HeritrixController {
         if (status == null) {
             return false;
         } else {
-            return status.equals(PAUSED_STATUS) ||
-                   status.equals(PAUSING_STATUS);
+            return status.equals(PAUSED_STATUS)
+                || status.equals(PAUSING_STATUS);
         }
     }
 
@@ -445,7 +447,7 @@ public class JMXHeritrixController implements HeritrixController {
      *
      * @return True if the crawl has ended, either because Heritrix finished
      * or because we terminated it. Otherwise we return false.
-     * @See {@link HeritrixController#crawlIsEnded()
+     * @see HeritrixController#crawlIsEnded()
      */
     public synchronized boolean crawlIsEnded() {
         // End of crawl can be seen in one of three ways:
@@ -459,8 +461,8 @@ public class JMXHeritrixController implements HeritrixController {
                 (TabularData) executeHeritrixCommand(
                         COMPLETED_JOBS_COMMAND);
         if (jobs != null && jobs.size() > 0) {
-            for (CompositeData value :
-                    (Collection<CompositeData>) jobs.values()) {
+            for (CompositeData value
+                    : (Collection<CompositeData>) jobs.values()) {
                 String thisJobID = value.get(JmxUtils.NAME)
                                    + "-" + value.get(UID_PROPERTY);
                 if (thisJobID.equals(jobName)) {
@@ -598,7 +600,7 @@ public class JMXHeritrixController implements HeritrixController {
             throw new IOFailure("Heritrix jar file not found");
         }
         environment.put("CLASSPATH",
-                StringUtils.conjoin(FILE_PATH_SEPARATOR, classPathParts ));
+                StringUtils.conjoin(FILE_PATH_SEPARATOR, classPathParts));
     }
 
     /** Write various info on the system we're using into the given file.
@@ -731,14 +733,14 @@ public class JMXHeritrixController implements HeritrixController {
                 break; // It's ready, we can move on.
             }
 
-            // If there's an error in the job configuration, the job will be put in Heritrix'
-            // completed jobs list.
+            // If there's an error in the job configuration, the job will be put
+            // in Heritrix' completed jobs list.
             doneJobs = (TabularData) executeHeritrixCommand(
                     COMPLETED_JOBS_COMMAND);
             if (doneJobs != null && doneJobs.size() >= 1) {
-                // Since we haven't allowed Heritrix to start any crawls yet, the only
-                // way the job could have ended and then put into the list of completed jobs
-                // is by error.
+                // Since we haven't allowed Heritrix to start any crawls yet,
+                //  the only way the job could have ended and then put into 
+                //  the list of completed jobs is by error.
                 if (doneJobs.size() > 1) {
                     throw new IllegalState("More than one job in done list: "
                                         + doneJobs);
@@ -811,7 +813,8 @@ public class JMXHeritrixController implements HeritrixController {
     private String getJMXAdminName() {
         String jmxUsername = Settings.get(
                 HarvesterSettings.HERITRIX_JMX_USERNAME);
-        log.debug("The JMX username used for connecting to the Heritrix GUI is: "
+        log.debug("The JMX username used for connecting to "
+                + "the Heritrix GUI is: "
                 + "'" + jmxUsername + "'.");
         return jmxUsername;
         }
