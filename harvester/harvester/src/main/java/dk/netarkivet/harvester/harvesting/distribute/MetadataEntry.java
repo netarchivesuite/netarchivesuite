@@ -22,11 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.distribute;
 
-/**
- * Class used to carries metadata in DoOneCrawl messages, including URL
- * relevant to write to metadata ARC files
- */
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,6 +34,10 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.AliasInfo;
 
+/**
+ * Class used to carry metadata in DoOneCrawl messages, including the URL
+ * and mimetype necessary to write the metadata to metadata ARC files.
+ */
 public class MetadataEntry implements Serializable {
     /** The URL for this metadataEntry: Used as the unique identifier for this
      *  bit of metadata in the Netarchive.
@@ -53,8 +52,11 @@ public class MetadataEntry implements Serializable {
     /** the metadata itself as byte array. */
     private byte[] data;
 
+    /** Regular expression for a valid mimetype. */
     private static final String MIMETYPE_REGEXP = "\\w+/\\w+";
-    private static final Pattern MIMETYPE_PATTERN = Pattern.compile(MIMETYPE_REGEXP);
+    /** The corresponding pattern for the regexp MIMETYPE_REGEXP. */
+    private static final Pattern MIMETYPE_PATTERN
+        = Pattern.compile(MIMETYPE_REGEXP);
 
     /** The url should be valid according to RFC 2396
      * This URL_REGEXP is taken from org.archive.util.SURT v. 1.12
@@ -68,13 +70,15 @@ public class MetadataEntry implements Serializable {
     private static String URL_REGEXP =
             "^(\\w+://)(?:([-\\w\\.!~\\*'\\(\\)%;:&=+$,]+?)(@))?(\\S+?)(:\\d+)?(/\\settingsStructure*)?$";
     //        1           2                                 3   4      5       6
+    /** The corresponding pattern for the regexp URL_REGEXP. */
     private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEXP);
 
     /** Mimetype for metadata url. */
     private static final String MIMETYPE_TEXT_PLAIN = "text/plain";
 
     /** Suffix for both metadata URLs. */
-    private static final String METADATA_URL_SUFFIX = "?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s";
+    private static final String METADATA_URL_SUFFIX
+        = "?majorversion=1&minorversion=0&harvestid=%s&harvestnum=%s&jobid=%s";
 
     /** Metadata URL for aliases. */
     private static final String ALIAS_METADATA_URL
@@ -82,7 +86,7 @@ public class MetadataEntry implements Serializable {
                + METADATA_URL_SUFFIX;
 
 
-    /** Common prefix for all deduplication metadata URLs */
+    /** Common prefix for all deduplication metadata URLs. */
     private static final String DUPLICATEREDUCTION_METADATA_URL_PREFIX
         = "metadata://netarkivet.dk/crawl/setup/duplicatereductionjobs";
     /** Metadata URL pattern for duplicate reduction jobs. */
@@ -114,20 +118,24 @@ public class MetadataEntry implements Serializable {
     /** Generate a MetadataEntry from a list of AliasInfo objects (VERSION 2)
      * Expired aliases is skipped by this method.
      * @param aliases the list of aliases (possibly empty)
-     * @param origHarvestDefinitionID
-     * @param harvestNum
-     * @param jobId
+     * @param origHarvestDefinitionID The harvestdefinition that is behind 
+     *  the job with the given jobId
+     * @param harvestNum The number of the harvest that the job with the given
+     *  jobid belongs to
+     * @param jobId The id of the Job, which this metadata belongs to
      *
      * @return null, if the list if empty (or only consists of expired aliases),
-     *    otherwise returns a MetadataEntry from a list of AliasInfo objects containing unexpired
-     *    aliases.
+     *    otherwise returns a MetadataEntry from a list of AliasInfo objects
+     *    containing unexpired aliases.
      */
-    public static MetadataEntry makeAliasMetadataEntry(List<AliasInfo> aliases,
-                                                       Long origHarvestDefinitionID,
-                                                       int harvestNum,
-                                                       Long jobId) {
+    public static MetadataEntry makeAliasMetadataEntry(
+            List<AliasInfo> aliases,
+            Long origHarvestDefinitionID,
+            int harvestNum,
+            Long jobId) {
         ArgumentNotValid.checkNotNull(aliases, "aliases");
-        ArgumentNotValid.checkNotNull(origHarvestDefinitionID, "Long origHarvestDefinitionID");
+        ArgumentNotValid.checkNotNull(origHarvestDefinitionID,
+                "Long origHarvestDefinitionID");
         ArgumentNotValid.checkNotNegative(harvestNum, "int harvestNum");
         ArgumentNotValid.checkNotNull(jobId, "Long jobId");
         if (aliases.isEmpty()) {
@@ -155,16 +163,19 @@ public class MetadataEntry implements Serializable {
             sb.append(alias.getDomain()).append(" is an alias for ").append(
                     alias.getAliasOf()).append("\n");
         }
-        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN, sb.toString());
+        return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
+                sb.toString());
     }
 
 
     /** Generate a MetadataEntry from a list of job ids for duplicate reduction.
      *
      * @param jobIDsForDuplicateReduction the list of jobids (possibly empty)
-     * @param origHarvestDefinitionID
-     * @param harvestNum
-     * @param jobId
+     * @param origHarvestDefinitionID The harvestdefinition that is behind 
+     *  the job with the given jobId
+     * @param harvestNum The number of the harvest that the job with the given
+     *  jobid belongs to
+     * @param jobId The id of the Job, which this metadata belongs to
      *
      * @return null, if the list is empty,
      *    otherwise returns a MetadataEntry from the list of jobids.
@@ -176,7 +187,8 @@ public class MetadataEntry implements Serializable {
             Long jobId) {
         ArgumentNotValid.checkNotNull(jobIDsForDuplicateReduction,
                                       "List<Long> jobIDsForDuplicateReduction");
-        ArgumentNotValid.checkNotNull(origHarvestDefinitionID, "Long origHarvestDefinitionID");
+        ArgumentNotValid.checkNotNull(origHarvestDefinitionID,
+                "Long origHarvestDefinitionID");
         ArgumentNotValid.checkNotNegative(harvestNum, "int harvestNum");
         ArgumentNotValid.checkNotNull(jobId, "Long jobId");
 
@@ -192,7 +204,7 @@ public class MetadataEntry implements Serializable {
 
         return new MetadataEntry(metadataUrl, MIMETYPE_TEXT_PLAIN,
                                  StringUtils.conjoin(
-                                         ",",jobIDsForDuplicateReduction ));
+                                         ",", jobIDsForDuplicateReduction));
     }
 
     /**
@@ -209,6 +221,11 @@ public class MetadataEntry implements Serializable {
         return mimeType;
     }
 
+    /**
+     * Set the mimetype for this object.
+     * @param mimetype a given mimetype
+     * @throws ArgumentNotValid if the mimetype is not valid
+     */
     private void setMimetype(String mimetype) {
         if (isMimetypeValid(mimetype)) {
             this.mimeType = mimetype;
@@ -224,7 +241,12 @@ public class MetadataEntry implements Serializable {
     public String getURL() {
         return url;
     }
-
+    
+    /**
+     * Set the url for this object.
+     * @param url a given URL
+     * @throws ArgumentNotValid if the URL is not valid
+     */
     private void setURL(String url){
         if (isURLValid(url)) {
             this.url = url;
@@ -237,9 +259,10 @@ public class MetadataEntry implements Serializable {
     /**
      * Method needed to de-serializable an object of this class.
      * @param s the given ObjectInputStream
-     * @throws ClassNotFoundException
-     * @throws IOException
-     *
+     * @throws ClassNotFoundException If the class of the serialized object
+     * could not be found
+     * @throws IOException If an I/O error occurred while reading the serialized
+     * object
      */
     private void readObject(ObjectInputStream s)
     throws ClassNotFoundException, IOException {
@@ -249,11 +272,10 @@ public class MetadataEntry implements Serializable {
     /**
      * Method needed to serializable an object of this class.
      * @param s the given ObjectOutputStream
-     * @throws ClassNotFoundException
-     * @throws IOException
+     * @throws IOException If an I/O error occurred while writing to the
+     * outputstream
      */
-    private void writeObject(ObjectOutputStream s)
-    throws ClassNotFoundException, IOException {
+    private void writeObject(ObjectOutputStream s) throws IOException {
         s.defaultWriteObject();
     }
 
@@ -285,6 +307,13 @@ public class MetadataEntry implements Serializable {
     public boolean isDuplicateReductionMetadataEntry() {
         return this.getURL().startsWith(DUPLICATEREDUCTION_METADATA_URL_PREFIX);
     }
-
+    
+    /**
+     * @return a string representation of this object 
+     */
+    public String toString() {
+        return "URL= " + getURL() + " ; mimetype= " + getMimeType()
+        + " ; data= " + new String(getData());
+    }
 
 }
