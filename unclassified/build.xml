@@ -62,6 +62,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     libidn-0.5.9.jar
     lucene-core-2.0.0.jar
     deduplicator-0.4.0.jar
+    wayback-core-1.4.0.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
     <path id="jars.path">
@@ -100,6 +101,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="libidn-0.5.9.jar"/>
                 <include name="lucene-core-2.0.0.jar"/>
                 <include name="deduplicator-0.4.0.jar"/>
+                <include name="wayback-core-1.4.0.jar"/>
             </patternset>
         </fileset>
     </path>
@@ -262,7 +264,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <javadoc author="false"
                  destdir="docs/apidocs"
                  packagenames="dk.netarkivet.common.*,dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
-                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*"
+                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*, dk.netarkivet.wayback.*"
                  sourcepath="src"
                  use="true"
                  version="false"
@@ -414,6 +416,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             </manifest>
         </jar>
     </target>
+    <target name="waybackjar" depends="compileclean"
+            description="Build a jar file with dk.netarkivet.wayback package with all required libs in the manifest class path">
+         <jar destfile="lib/dk.netarkivet.wayback.jar" basedir="${classdir}" update="no">
+             <include name="dk/netarkivet/wayback/**/*.class"/>
+            <include name="dk/netarkivet/wayback/**/*.properties"/>
+            <include name="dk/netarkivet/wayback/**/*.xml"/>
+            <manifest>
+                <attribute name="Builder" value="${builder}"/>
+                <attribute name="Class-Path"
+                           value="dk.netarkivet.common.jar
+                                  dk.netarkivet.archive.jar
+                                  ${jarclasspath}"/>
+            </manifest>
+         </jar>
+    </target>
 
     <target name="checkdep" depends="jarfiles"
             description="Print a line of any referenced classes that are not in the classpath after generating jars">
@@ -432,6 +449,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <path path="./lib/dk.netarkivet.viewerproxy.jar"/>
                 <path path="./lib/dk.netarkivet.deploy.jar"/>
                 <path path="./lib/dk.netarkivet.monitor.jar"/>
+                <path path="./lib/dk.netarkivet.wayback.jar"/>
                 <path refid="unittest.jars.path"/>
             </classpath>
             <arg value="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication"/>
