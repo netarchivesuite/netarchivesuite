@@ -24,6 +24,7 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,8 @@ public class DeployConfiguration {
         // make sure that directory outputDir exists
         FileUtils.createDir(outputDir);
         extractElements();
+        
+        copyNetarchiveSuiteFile();
     }
 
     /**
@@ -130,6 +133,51 @@ public class DeployConfiguration {
                     netarchiveSuiteFile.getName(), logPropFile, 
                     secPolicyFile, databaseFileName, resetDirectory));
         }
+    }
+    
+    /**
+     * Method for copying the NetarchiveSuite file to output directory.
+     * This handles the following three scenarios: 
+     * 
+     * 1 - outputDir == directory of zip file
+     *    Do nothing.
+     * 2 - outputDir != directory of zip file, but another zip file with same 
+     * name exists in the directory
+     *    Issue warning, but do not copy the file.
+     * 3 - outputDir != directory of zip file and no other zip file
+     *    Copy file to output directory.  
+     */
+    private void copyNetarchiveSuiteFile() {
+	try {
+	    // initialise the new file. This should have the same name 
+	    // as the original file, but be placed in the output directory.
+	    File newNetarchiveSuiteFile = new File(outputDir, 
+		    netarchiveSuiteFile.getName());
+
+	    // check first scenario
+	    if(newNetarchiveSuiteFile.getCanonicalPath().equals(
+		    netarchiveSuiteFile.getCanonicalPath())) {
+		// thus first scenario is true, and nothing should be done.
+		return;
+	    }
+
+	    // Check whether second or third scenario. 
+	    // If the file exists = second scenario, else third scenario. 
+	    if(newNetarchiveSuiteFile.exists()) { 
+		// issue warning
+		System.out.println(Constants.MSG_WARN_ZIPFILE_ALREADY_EXISTS + 
+			newNetarchiveSuiteFile.getCanonicalPath());
+	    } else {
+		// copy the file.
+		FileUtils.copyFile(netarchiveSuiteFile, newNetarchiveSuiteFile);	    
+	    }
+	} catch (IOException e) {
+	    // handle exceptions
+	    System.out.println(Constants.MSG_ERROR_ZIP_CANNOCIAL_PATH 
+		    + netarchiveSuiteFile.getAbsolutePath());
+	    System.err.println(e);
+	    System.exit(0);
+	}
     }
 
     /**

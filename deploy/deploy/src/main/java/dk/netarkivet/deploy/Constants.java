@@ -83,7 +83,6 @@ public final class Constants {
     /** * - Star.*/
     static final String STAR = "*";
     
-    
     // deploy specific parameters.
     /** The path to the class path branches.*/
     static final String DEPLOY_CLASS_PATH = "deployClassPath";
@@ -462,11 +461,18 @@ public final class Constants {
     /** The error message when a physical location has no name attribute.*/
     public static final String MSG_ERROR_PHYSICAL_LOCATION_NO_NAME =
         "A Physical Location has no name!";
+    /** The error message when IOException during cannocial path of zip file.*/
+    public static final String MSG_ERROR_ZIP_CANNOCIAL_PATH = 
+	"Warning: The NetarchiveSuite file already exists: ";
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
         "Too many instances of jmxremote.password or jmxremote.access "
         + "files defined.";
+    /** The warning when the NetarchiveSuite file cannot be copied, since 
+     * another file with same name exists.*/
+    public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
+	"Warning: The NetarchiveSuite file already exists: ";
     
     // functions
     /**
