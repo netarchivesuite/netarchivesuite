@@ -68,6 +68,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
+                <javaOpts></javaOpts>
             </heritrix>
         </harvesting>
     </harvester>

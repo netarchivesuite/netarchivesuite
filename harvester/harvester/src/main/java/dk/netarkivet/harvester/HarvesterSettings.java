@@ -255,5 +255,12 @@ public class HarvesterSettings {
      * the -Xmx argument to Java, e.g. 512M, 2G etc. */
     public static String HERITRIX_HEAP_SIZE
             = "settings.harvester.harvesting.heritrix.heapSize";
+    
+    /** 
+     * <b>settings.harvester.harvesting.heritrix.javaOpts</b>: <br>
+     * Additional JVM options for the Heritrix sub-process. 
+     */
+    public static String HERITRIX_JVM_OPTS= 
+    	"settings.harvester.harvesting.heritrix.javaOpts";
 }
 

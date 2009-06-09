@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -247,32 +248,47 @@ public class JMXHeritrixController implements HeritrixController {
                 settingProperty.deleteCharAt(0);
             }
 
-            ProcessBuilder builder = new ProcessBuilder(
-                    new File(new File(System.getProperty("java.home"),
-                                      "bin"), "java").getAbsolutePath(),
-                    "-Xmx" + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE),
-
-                    //"-XX:+HeapDumpOnOutOfMemoryError",
-                    "-Dheritrix.home=" + files.getCrawlDir().getAbsolutePath(),
-                    "-Dcom.sun.management.jmxremote.port=" + getJMXPort(),
-                    "-Dcom.sun.management.jmxremote.ssl=false",
-                    "-Dcom.sun.management.jmxremote.password.file="
-                            + new File(Settings.get(
-                            CommonSettings.JMX_PASSWORD_FILE))
-                            .getAbsolutePath(),
-                    "-Dcom.sun.management.jmxremote.access.file="
-                            + new File(Settings.get(
-                                    CommonSettings.JMX_ACCESS_FILE))
-                                    .getAbsolutePath(),
-                    "-Dheritrix.out=" + heritrixOutputFile.getAbsolutePath(),
-                    "-Djava.protocol.handler.pkgs=org.archive.net",
-                    "-Ddk.netarkivet.settings.file=" + settingProperty,
-
-                    Heritrix.class.getName(),
-                    "--bind", "/",
-                    "--port=" + getGUIPort(),
-                    "--admin=" + getHeritrixAdminName()
-                    + ":" + getHeritrixAdminPassword());
+            List<String> allOpts = new LinkedList<String>();
+            allOpts.add(new File(new File(System.getProperty("java.home"),
+            			"bin"), "java").getAbsolutePath());
+            allOpts.add("-Xmx"
+            		+ Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
+            //allOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
+            allOpts.add("-Dheritrix.home=" 
+            		+ files.getCrawlDir().getAbsolutePath());
+            
+            String jvmOptsStr = 
+            	Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
+            if ((jvmOptsStr != null) && (! jvmOptsStr.isEmpty())) {
+            	String[] add = jvmOptsStr.split(" ");
+            	for (String additionalOpt : add) {
+            		allOpts.add(additionalOpt);
+            	}
+            }
+            
+            allOpts.add("-Dcom.sun.management.jmxremote.port=" + getJMXPort());
+            allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
+            allOpts.add("-Dcom.sun.management.jmxremote.password.file="
+            		+ new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE))
+            		.getAbsolutePath());
+            allOpts.add("-Dcom.sun.management.jmxremote.access.file="
+            		+ new File(Settings.get(CommonSettings.JMX_ACCESS_FILE))
+            		.getAbsolutePath());
+            allOpts.add("-Dheritrix.out=" 
+            		+ heritrixOutputFile.getAbsolutePath());
+            allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
+            allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
+            allOpts.add(Heritrix.class.getName());
+            allOpts.add("--bind");
+            allOpts.add("/");
+            allOpts.add("--port=" + getGUIPort());
+            allOpts.add("--admin=" + getHeritrixAdminName() 
+            		+ ":" + getHeritrixAdminPassword());
+            
+            ProcessBuilder builder = 
+            	new ProcessBuilder((String[]) allOpts.toArray(
+            			new String[allOpts.size()]));
+            
             updateEnvironment(builder.environment());
             FileUtils.copyDirectory(new File("lib/heritrix"),
                                     files.getCrawlDir());
