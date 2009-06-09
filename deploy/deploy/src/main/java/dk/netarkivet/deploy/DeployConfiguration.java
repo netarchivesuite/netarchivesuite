@@ -148,36 +148,36 @@ public class DeployConfiguration {
      *    Copy file to output directory.  
      */
     private void copyNetarchiveSuiteFile() {
-	try {
-	    // initialise the new file. This should have the same name 
-	    // as the original file, but be placed in the output directory.
-	    File newNetarchiveSuiteFile = new File(outputDir, 
-		    netarchiveSuiteFile.getName());
+        try {
+            // initialise the new file. This should have the same name 
+            // as the original file, but be placed in the output directory.
+            File newNetarchiveSuiteFile = new File(outputDir, 
+                    netarchiveSuiteFile.getName());
 
-	    // check first scenario
-	    if(newNetarchiveSuiteFile.getCanonicalPath().equals(
-		    netarchiveSuiteFile.getCanonicalPath())) {
-		// thus first scenario is true, and nothing should be done.
-		return;
-	    }
+            // check first scenario
+            if(newNetarchiveSuiteFile.getCanonicalPath().equals(
+                    netarchiveSuiteFile.getCanonicalPath())) {
+                // thus first scenario is true, and nothing should be done.
+                return;
+            }
 
-	    // Check whether second or third scenario. 
-	    // If the file exists = second scenario, else third scenario. 
-	    if(newNetarchiveSuiteFile.exists()) { 
-		// issue warning
-		System.out.println(Constants.MSG_WARN_ZIPFILE_ALREADY_EXISTS + 
-			newNetarchiveSuiteFile.getCanonicalPath());
-	    } else {
-		// copy the file.
-		FileUtils.copyFile(netarchiveSuiteFile, newNetarchiveSuiteFile);	    
-	    }
-	} catch (IOException e) {
-	    // handle exceptions
-	    System.out.println(Constants.MSG_ERROR_ZIP_CANNOCIAL_PATH 
-		    + netarchiveSuiteFile.getAbsolutePath());
-	    System.err.println(e);
-	    System.exit(0);
-	}
+            // Check whether second or third scenario. 
+            // If the file exists = second scenario, else third scenario. 
+            if(newNetarchiveSuiteFile.exists()) { 
+                // issue warning
+                System.out.println(Constants.MSG_WARN_ZIPFILE_ALREADY_EXISTS
+                        + newNetarchiveSuiteFile.getCanonicalPath());
+            } else {
+                // copy the file.
+                FileUtils.copyFile(netarchiveSuiteFile, newNetarchiveSuiteFile);
+            }
+        } catch (IOException e) {
+            // handle exceptions
+            System.out.println(Constants.MSG_ERROR_ZIP_CANNOCIAL_PATH 
+                    + netarchiveSuiteFile.getAbsolutePath());
+            System.err.println(e);
+            System.exit(0);
+        }
     }
 
     /**

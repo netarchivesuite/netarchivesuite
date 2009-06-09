@@ -463,7 +463,7 @@ public final class Constants {
         "A Physical Location has no name!";
     /** The error message when IOException during cannocial path of zip file.*/
     public static final String MSG_ERROR_ZIP_CANNOCIAL_PATH = 
-	"Warning: The NetarchiveSuite file already exists: ";
+        "Warning: The NetarchiveSuite file already exists: ";
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
@@ -472,7 +472,7 @@ public final class Constants {
     /** The warning when the NetarchiveSuite file cannot be copied, since 
      * another file with same name exists.*/
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
-	"Warning: The NetarchiveSuite file already exists: ";
+        "Warning: The NetarchiveSuite file already exists: ";
     
     // functions
     /**
