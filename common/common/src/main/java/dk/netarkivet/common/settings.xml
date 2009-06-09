@@ -398,6 +398,7 @@
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <backupInitHour>3</backupInitHour>
+            <validityCheckTimeout>0</validityCheckTimeout>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->

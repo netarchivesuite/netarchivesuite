@@ -61,31 +61,42 @@ public class DBConnect {
      * driver).
      */
     public static Connection getDBConnection() {
-        if (connectionPool.get(Thread.currentThread()) == null) {
-            try {
-                Class.forName(DBSpecifics.getInstance().getDriverClassName());
-                Connection connection = DriverManager.getConnection(
-                        Settings.get(CommonSettings.DB_URL));
-                connectionPool.put(Thread.currentThread(), connection);
-                log.info("Connected to database using DBurl '"
-                        + Settings.get(CommonSettings.DB_URL) + "'  using driver '"
-                        + DBSpecifics.getInstance().getDriverClassName() + "'");
-            } catch (ClassNotFoundException e) {
-                final String message = "Can't find driver '"
-                        + DBSpecifics.getInstance().getDriverClassName() + "'";
-                log.warn(message, e);
-                throw new IOFailure(message, e);
-            } catch (SQLException e) {
-                final String message = "Can't connect to database with DBurl: '"
-                        + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                        + DBSpecifics.getInstance().getDriverClassName() + "'" +
-                        "\n" +
-                        ExceptionUtils.getSQLExceptionCause(e);
-                log.warn(message, e);
-                throw new IOFailure(message, e);
-            }
+    	
+    	try {    		
+    		int validityCheckTimeout = Settings.getInt(
+    				CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
+    		
+    		Connection connection = connectionPool.get(Thread.currentThread());
+        	boolean renew = ((connection == null) 
+        			|| (! connection.isValid(validityCheckTimeout)));
+        	
+        	if (renew) {  
+        		Class.forName(DBSpecifics.getInstance().getDriverClassName());
+        		connection = DriverManager.getConnection(
+        				Settings.get(CommonSettings.DB_URL));
+        		connectionPool.put(Thread.currentThread(), connection);
+        		log.info("Connected to database using DBurl '"
+        				+ Settings.get(CommonSettings.DB_URL) 
+        				+ "'  using driver '"
+        				+ DBSpecifics.getInstance().getDriverClassName() + "'");
+        	}
+        	
+        	return connection;
+        } catch (ClassNotFoundException e) {
+            final String message = "Can't find driver '"
+                    + DBSpecifics.getInstance().getDriverClassName() + "'";
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } catch (SQLException e) {
+            final String message = "Can't connect to database with DBurl: '"
+                    + Settings.get(CommonSettings.DB_URL) + "' using driver '"
+                    + DBSpecifics.getInstance().getDriverClassName() + "'" +
+                    "\n" +
+                    ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
         }
-        return connectionPool.get(Thread.currentThread());
+        
     }
 
     /** Update a table by executing all the statements in

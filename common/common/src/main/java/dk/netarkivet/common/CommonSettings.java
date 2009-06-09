@@ -236,6 +236,14 @@ public class CommonSettings {
      */
     public static String DB_URL
             = "settings.common.database.url";
+    
+    /**
+     * <b>settings.common.database.validityCheckTimeout</b>: <br>
+     * Timeout in seconds to check for the validity of a JDBC connection on 
+     * the server.
+     */
+    public static String DB_CONN_VALID_CHECK_TIMEOUT
+            = "settings.common.database.validityCheckTimeout";
 
     /**
      * <b>settings.common.database.backupInitHour</b>: <br>
