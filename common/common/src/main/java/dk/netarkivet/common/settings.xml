@@ -117,6 +117,10 @@
             <tld>arpa</tld>
             <tld>as</tld>
             <tld>at</tld>
+            <tld>gv.at</tld>
+            <tld>ac.at</tld>
+            <tld>or.at</tld>
+            <tld>co.at</tld>
             <tld>au</tld>
             <tld>aw</tld>
             <tld>ax</tld>
@@ -278,6 +282,8 @@
             <tld>nc</tld>
             <tld>ne</tld>
             <tld>net</tld>
+            <tld>net.tf</tld>
+            <tld>at.tf</tld>
             <tld>nf</tld>
             <tld>ng</tld>
             <tld>ni</tld>
