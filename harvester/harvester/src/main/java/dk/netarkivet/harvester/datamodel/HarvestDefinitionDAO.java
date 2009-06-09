@@ -406,4 +406,23 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
      * @throws IOFailure        on any other error talking to the database
      */
     public abstract boolean isSnapshot(Long harvestDefinitionID);
+    
+    /** Get a sorted list of all domainnames of a HarvestDefintion
+    *
+    * @param name of HarvestDefintion
+    * @return List of all domains of the HarvestDefintion.
+    * @throws ArgumentNotValid on null argument
+    * @throws IOFailure        on any other error talking to the database
+    */
+    public abstract List<String> getListOfDomainsOfHarvestDefinition(String harvestName);
+    
+    /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
+    *
+    * @param name of HarvestDefintion
+    * @param name of Domain
+    * @return List of all seeds of the Domain in the HarvestDefintion.
+    * @throws ArgumentNotValid on null argument
+    * @throws IOFailure        on any other error talking to the database
+    */
+    public abstract List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName);
 }

@@ -29,12 +29,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1087,4 +1090,113 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             DBUtils.closeStatementIfOpen(s);
         }
     }
+    
+    
+    /** Get a sorted list of all domainnames of a HarvestDefintion
+    *
+    * @param name of HarvestDefintion
+    * @return List of all domains of the HarvestDefintion.
+    * @throws ArgumentNotValid on null argument
+    * @throws IOFailure        on any other error talking to the database
+    */
+    public List<String> getListOfDomainsOfHarvestDefinition(String harvestName) {
+        ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            s = c.prepareStatement(
+                    "SELECT do.name"+
+                    " FROM     domains do,"+
+                    "          configurations co,"+
+                    "          harvest_configs haco,"+
+                    "          harvestdefinitions hd"+
+                    " WHERE    co.domain_id = do.domain_id"+
+                    "          AND haco.config_id = co.config_id"+
+                    "          AND haco.harvest_id = hd.harvest_id"+
+                    "          AND hd.name = ?" +
+                    " ORDER BY do.name");
+            s.setString(1, harvestName);
+            ResultSet res = s.executeQuery();
+            List<String> domains = new ArrayList<String>();
+
+            while (res.next()) {
+                domains.add(res.getString(1));
+            }
+            return domains;
+        } catch (SQLException e) {
+            throw new IOFailure("SQL error getting seeds of a domain of a harvest definition" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+
+    /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
+    *
+    * @param name of HarvestDefintion
+    * @param name of Domain
+    * @return List of all seeds of the Domain in the HarvestDefintion.
+    * @throws ArgumentNotValid on null argument
+    * @throws IOFailure        on any other error talking to the database
+    */
+    public List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName) {
+        ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
+        ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
+        Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            s = c.prepareStatement(
+                    "SELECT sl.seeds"+
+                    " FROM   configurations co,"+
+                    "        harvest_configs haco,"+
+                    "        harvestdefinitions hd,"+
+                    "        seedlists sl,"+
+                    "        config_seedlists cose,"+
+                    "        domains do"+
+                    " WHERE  cose.seedlist_id = sl.seedlist_id"+
+                    "        AND co.config_id = cose.config_id"+
+                    "        AND co.config_id = haco.config_id"+
+                    "        AND haco.harvest_id = hd.harvest_id"+
+                    "        AND co.domain_id = do.domain_id"+
+                    "        AND do.name = ?" +
+                    "        AND hd.name = ?");
+            s.setString(1, domainName);
+            s.setString(2, harvestName);
+            ResultSet res = s.executeQuery();
+            List<String> seeds = new ArrayList<String>();
+
+            while (res.next()) {
+                String seedsOfDomain = res.getString(1);
+                
+                    StringTokenizer st = new StringTokenizer(seedsOfDomain, "\n");
+                    
+                    while(st.hasMoreTokens()) {
+                        String seed = st.nextToken();
+                        
+                        boolean bFound = false;
+                        for (String entry: seeds) {
+                            if (entry.equals(seed)) {
+                                bFound = true;
+                                break;
+                            }
+                        }
+                        
+                        // duplicates will not be added
+                        if (!bFound) {
+                            seeds.add(seed);
+                        }
+                    }
+            }
+            
+            Collections.sort(seeds, Collator.getInstance());     
+            
+            return seeds;
+        } catch (SQLException e) {
+            throw new IOFailure("SQL error getting seeds of a domain" + "\n" +
+                                ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+    
 }

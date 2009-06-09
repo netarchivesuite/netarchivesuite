@@ -87,7 +87,7 @@ if (!isph.iterator().hasNext()) { %>
         <th><fmt:message key="harvestdefinition.selective.header.numberofruns"/></th>
         <th><fmt:message key="harvestdefinition.selective.header.nextrun"/></th>
         <th><fmt:message key="harvestdefinition.selective.header.status"/></th>
-        <th colspan="3"><fmt:message key="harvestdefinition.selective.header.commands"/></th>
+        <th colspan="4"><fmt:message key="harvestdefinition.selective.header.commands"/></th>
     </tr>
 
     <%
@@ -103,6 +103,9 @@ if (!isph.iterator().hasNext()) { %>
             String historicLink = "/History/Harveststatus-perhd.jsp?"
                     + Constants.HARVEST_PARAM + "="
                     + HTMLUtils.encode(name);
+            String seedsLink = "/History/Harveststatus-seeds.jsp?"
+                + Constants.HARVEST_PARAM + "="
+                + HTMLUtils.encode(name);
 
             String isActive;
             String flipActiveText;
@@ -132,8 +135,8 @@ if (!isph.iterator().hasNext()) { %>
            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
         <% } else { out.print(Constants.NoNextDate); } %>
         </td>
-        <td width="15%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
-        <td width="15%"><form 
+        <td width="12%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
+        <td width="12%"><form 
                            id="flipActiveForm<%=sph.getOid()%>" 
                            action="Definitions-selective-harvests.jsp" 
                            method="post"
@@ -144,12 +147,17 @@ if (!isph.iterator().hasNext()) { %>
                          /><%=flipactiveLink%>
                         </form>
         </td>
-        <td width="15%">
+        <td width="12%">
             <a href="<%=HTMLUtils.escapeHtmlValues(editLink)%>">
                 <fmt:message key="edit"/>
             </a>
         </td>
-        <td width="15%">
+        <td width="12%">
+            <a href="<%=HTMLUtils.escapeHtmlValues(seedsLink)%>">
+                <fmt:message key="harvestdefinition.linktext.seeds"/>
+            </a>
+        </td>
+        <td width="12%">
             <% if (inclHistory)  { %>
                 <a href="<%=HTMLUtils.escapeHtmlValues(historicLink)%>">
                    <fmt:message key="harvestdefinition.linktext.historical"/></a>

@@ -86,6 +86,7 @@ public class DataModelTesterSuite {
         suite.addTestSuite(TimedScheduleTester.class);
         suite.addTestSuite(TLDInfoTester.class);
         suite.addTestSuite(WeeklyFrequencyTester.class);
+        suite.addTestSuite(SeedListTester.class);
     }
 
     public static void main(String[] args) {

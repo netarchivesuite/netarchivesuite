@@ -902,5 +902,18 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
             // Expected
         }
     }
+    
+    public void testGetDomains() throws Exception {
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        
+        List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(TestInfo.DEFAULT_HARVEST_NAME);
+        
+    }
+    /**
+     * Tests the getHarvestInfo() method.
+     */
+    public void testGetSeeds() {
+    }
+    
 
 }
