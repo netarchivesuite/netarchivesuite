@@ -259,6 +259,7 @@ public class HarvesterSettings {
     /** 
      * <b>settings.harvester.harvesting.heritrix.javaOpts</b>: <br>
      * Additional JVM options for the Heritrix sub-process. 
+     * By default there is no additional JVM option. 
      */
     public static String HERITRIX_JVM_OPTS= 
     	"settings.harvester.harvesting.heritrix.javaOpts";

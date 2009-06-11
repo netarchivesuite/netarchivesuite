@@ -244,64 +244,65 @@ public class JMXHeritrixController implements HeritrixController {
                 settingProperty.append(file.getAbsolutePath());
             }
             if (settingProperty.length() > 0) {
-                //delete last path-separator
+                // delete last path-separator
                 settingProperty.deleteCharAt(0);
             }
 
             List<String> allOpts = new LinkedList<String>();
             allOpts.add(new File(new File(System.getProperty("java.home"),
-            			"bin"), "java").getAbsolutePath());
+                    "bin"), "java").getAbsolutePath());
             allOpts.add("-Xmx"
-            		+ Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
-            //allOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
-            allOpts.add("-Dheritrix.home=" 
-            		+ files.getCrawlDir().getAbsolutePath());
-            
+                    + Settings.get(HarvesterSettings.HERITRIX_HEAP_SIZE));
+            allOpts.add("-Dheritrix.home="
+                    + files.getCrawlDir().getAbsolutePath());
+
             String jvmOptsStr = 
-            	Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
-            if ((jvmOptsStr != null) && (! jvmOptsStr.isEmpty())) {
-            	String[] add = jvmOptsStr.split(" ");
-            	for (String additionalOpt : add) {
-            		allOpts.add(additionalOpt);
-            	}
+                Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
+            if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
+                String[] add = jvmOptsStr.split(" ");
+                for (String additionalOpt : add) {
+                    allOpts.add(additionalOpt);
+                }
             }
-            
+
             allOpts.add("-Dcom.sun.management.jmxremote.port=" + getJMXPort());
             allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
             allOpts.add("-Dcom.sun.management.jmxremote.password.file="
-            		+ new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE))
-            		.getAbsolutePath());
+                    + new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE))
+                            .getAbsolutePath());
             allOpts.add("-Dcom.sun.management.jmxremote.access.file="
-            		+ new File(Settings.get(CommonSettings.JMX_ACCESS_FILE))
-            		.getAbsolutePath());
-            allOpts.add("-Dheritrix.out=" 
-            		+ heritrixOutputFile.getAbsolutePath());
+                    + new File(Settings.get(CommonSettings.JMX_ACCESS_FILE))
+                            .getAbsolutePath());
+            allOpts.add("-Dheritrix.out="
+                    + heritrixOutputFile.getAbsolutePath());
             allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
             allOpts.add("-Ddk.netarkivet.settings.file=" + settingProperty);
             allOpts.add(Heritrix.class.getName());
             allOpts.add("--bind");
             allOpts.add("/");
             allOpts.add("--port=" + getGUIPort());
-            allOpts.add("--admin=" + getHeritrixAdminName() 
-            		+ ":" + getHeritrixAdminPassword());
-            
-            ProcessBuilder builder = 
-            	new ProcessBuilder((String[]) allOpts.toArray(
-            			new String[allOpts.size()]));
-            
+            allOpts.add("--admin=" + getHeritrixAdminName() + ":"
+                    + getHeritrixAdminPassword());
+
+            String[] args = 
+                (String[]) allOpts.toArray(new String[allOpts.size()]);
+            log.info("Starting Heritrix process with args" 
+                    + Arrays.toString(args));
+            ProcessBuilder builder = new ProcessBuilder(args);
+
             updateEnvironment(builder.environment());
-            FileUtils.copyDirectory(new File("lib/heritrix"),
-                                    files.getCrawlDir());
+            FileUtils.copyDirectory(
+                    new File("lib/heritrix"), 
+                    files.getCrawlDir());
             builder.directory(files.getCrawlDir());
             builder.redirectErrorStream(true);
             writeSystemInfo(heritrixOutputFile, builder);
             FileUtils.appendToFile(heritrixOutputFile, "Working directory: "
-                                                    + files.getCrawlDir());
+                    + files.getCrawlDir());
             addProcessKillerHook();
             heritrixProcess = builder.start();
             ProcessUtils.writeProcessOutput(heritrixProcess.getInputStream(),
-                    heritrixOutputFile,
-                    collectionThreads);
+                    heritrixOutputFile, collectionThreads);
         } catch (IOException e) {
             throw new IOFailure("Error starting Heritrix process", e);
         }
