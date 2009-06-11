@@ -54,49 +54,50 @@ public class DBConnect {
     private static final Log log = LogFactory.getLog(DBConnect.class);
 
     /**
-     * Get a connection to our database.
+     * Get a connection to our database. If a connection is already registered 
+     * to the current thread, checks that it is valid, and if not renews it. 
      * Assumes that AutoCommit is true.
      * @return a connection to our database
      * @throws IOFailure if we cannot connect to the database (or find the
      * driver).
      */
     public static Connection getDBConnection() {
-    	
-    	try {    		
-    		int validityCheckTimeout = Settings.getInt(
-    				CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
-    		
-    		Connection connection = connectionPool.get(Thread.currentThread());
-        	boolean renew = ((connection == null) 
-        			|| (! connection.isValid(validityCheckTimeout)));
-        	
-        	if (renew) {  
-        		Class.forName(DBSpecifics.getInstance().getDriverClassName());
-        		connection = DriverManager.getConnection(
-        				Settings.get(CommonSettings.DB_URL));
-        		connectionPool.put(Thread.currentThread(), connection);
-        		log.info("Connected to database using DBurl '"
-        				+ Settings.get(CommonSettings.DB_URL) 
-        				+ "'  using driver '"
-        				+ DBSpecifics.getInstance().getDriverClassName() + "'");
-        	}
-        	
-        	return connection;
+
+        try {    		
+            int validityCheckTimeout = Settings.getInt(
+                    CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
+
+            Connection connection = connectionPool.get(Thread.currentThread());
+            boolean renew = ((connection == null) 
+                    || (! connection.isValid(validityCheckTimeout)));
+
+            if (renew) {  
+                Class.forName(DBSpecifics.getInstance().getDriverClassName());
+                connection = DriverManager.getConnection(
+                        Settings.get(CommonSettings.DB_URL));
+                connectionPool.put(Thread.currentThread(), connection);
+                log.info("Connected to database using DBurl '"
+                        + Settings.get(CommonSettings.DB_URL) 
+                        + "'  using driver '"
+                        + DBSpecifics.getInstance().getDriverClassName() + "'");
+            }
+
+            return connection;
         } catch (ClassNotFoundException e) {
             final String message = "Can't find driver '"
-                    + DBSpecifics.getInstance().getDriverClassName() + "'";
+                + DBSpecifics.getInstance().getDriverClassName() + "'";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
-                    + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                    + DBSpecifics.getInstance().getDriverClassName() + "'" +
-                    "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
+                + Settings.get(CommonSettings.DB_URL) + "' using driver '"
+                + DBSpecifics.getInstance().getDriverClassName() + "'" +
+                "\n" +
+                ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
-        
+
     }
 
     /** Update a table by executing all the statements in
@@ -115,7 +116,8 @@ public class DBConnect {
         log.info("Updating table to version " + newVersion);
 
         String[] sqlStatements = new String[updates.length + 1];
-        final String updateSchemaversionSql = "UPDATE schemaversions SET version = "
+        final String updateSchemaversionSql = 
+            "UPDATE schemaversions SET version = "
             + newVersion + " WHERE tablename = '" + table + "'"; 
         for (int i = 0; i < updates.length; i++) {
             sqlStatements[i] = updates[i];

@@ -240,7 +240,13 @@ public class CommonSettings {
     /**
      * <b>settings.common.database.validityCheckTimeout</b>: <br>
      * Timeout in seconds to check for the validity of a JDBC connection on 
-     * the server.
+     * the server. This is the time in seconds to wait for the database 
+     * operation used to validate the connection to complete. 
+     * If the timeout period expires before the operation completes, this 
+     * method returns false. A value of 0 indicates a timeout is not 
+     * applied to the database operation. 
+     * 
+     * {@link java.sql.Connection#isValid(int)}
      */
     public static String DB_CONN_VALID_CHECK_TIMEOUT
             = "settings.common.database.validityCheckTimeout";
