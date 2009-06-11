@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -146,5 +145,32 @@ public class LocalArcRepositoryClientTester extends TestCase {
         status = arcrep.batch(new FileListJob(), "BA");
         assertEquals("Should have one file processed at end",
                      1, status.getNoOfFilesProcessed());
+    }
+    
+    public void testStoreAndGet() {
+        
+        File basedir = new File(TestInfo.WORKING_DIR, "localArcRepository");
+        Settings.set(
+                "settings.common.arcrepositoryClient.fileDir", 
+                basedir.getAbsolutePath());
+        
+        String testArcName = 
+            "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
+                
+        ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
+        
+        File srcArcFile = new File(TestInfo.ORIGINALS_DIR, 
+                "bitarchive1" + File.separator 
+                + "filedir" + File.separator 
+                + testArcName);
+        
+        File uploadFile = new File(TestInfo.WORKING_DIR, testArcName);
+        FileUtils.copyFile(srcArcFile, uploadFile);
+        
+        arcrep.store(uploadFile);
+        
+        BitarchiveRecord bar = arcrep.get(testArcName, 0); 
+        assertNotNull(bar);
+        
     }
 }

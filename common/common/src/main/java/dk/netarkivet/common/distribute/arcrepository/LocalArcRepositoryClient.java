@@ -144,8 +144,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         ARCReader reader = null;
         ARCRecord record = null;
         try {
-//            reader = ARCReaderFactory.get(new File(f, arcfile), index);
-        	reader = ARCReaderFactory.get(f, index);
+            reader = ARCReaderFactory.get(f, index);
             record = (ARCRecord) reader.get();
             return new BitarchiveRecord(record);
         } catch (IOException e) {
