@@ -55,6 +55,9 @@ public class TemplateDBDAO extends TemplateDAO {
     /** the log.*/
     private final Log log = LogFactory.getLog(getClass());
 
+    /** Default constructor.
+     * Only used by TemplateDAO,getInstance().
+     */
     TemplateDBDAO() {
         DBUtils.checkTableVersion("ordertemplates", 1);
     }
@@ -66,7 +69,8 @@ public class TemplateDBDAO extends TemplateDAO {
      * @return The contents of this order.xml document
      */
     public synchronized HeritrixTemplate read(String orderXmlName) {
-        ArgumentNotValid.checkNotNullOrEmpty(orderXmlName, "String orderXmlName");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
@@ -79,13 +83,13 @@ public class TemplateDBDAO extends TemplateDAO {
             }
             Clob clob = res.getClob(1);
             SAXReader reader = new SAXReader();
-            // TODO: Check what happens on non-ascii
+            // TODO Check what happens on non-ascii
             Document orderXMLdoc = reader.read(clob.getCharacterStream());
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for "
-                + orderXmlName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                + orderXmlName
+                + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (DocumentException e) {
@@ -105,11 +109,12 @@ public class TemplateDBDAO extends TemplateDAO {
      */
     public synchronized Iterator<String> getAll() {
         try {
-            List<String> names = DBUtils.selectStringlist("SELECT name FROM ordertemplates ORDER BY name");
+            List<String> names = DBUtils.selectStringlist(
+                    "SELECT name FROM ordertemplates ORDER BY name");
             return names.iterator();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error finding order.xml names" +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error finding order.xml names" 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
@@ -117,9 +122,15 @@ public class TemplateDBDAO extends TemplateDAO {
      *
      * @param orderXmlName Name of an order.xml template (without .xml).
      * @return True if such a template exists.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      */
     public synchronized boolean exists(String orderXmlName) {
-        int count = DBUtils.selectIntValue("SELECT COUNT(*) FROM ordertemplates WHERE name = ?", orderXmlName);
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
+
+        int count = DBUtils.selectIntValue(
+                "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
+                orderXmlName);
         return count == 1;
     }
 
@@ -127,8 +138,15 @@ public class TemplateDBDAO extends TemplateDAO {
      *
      * @param orderXmlName Name of the template.
      * @param orderXml XML documents that is a Heritrix order.xml template.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
+     * or the orderXml is null.
      */
-    public synchronized void create(String orderXmlName, HeritrixTemplate orderXml) {
+    public synchronized void create(String orderXmlName,
+            HeritrixTemplate orderXml) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
+        ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
+        
         if (exists(orderXmlName)) {
             throw new PermissionDenied("An order template called "
                     + orderXmlName + " already exists");
@@ -144,8 +162,8 @@ public class TemplateDBDAO extends TemplateDAO {
                     Constants.MAX_ORDERXML_SIZE, "size", orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error creating template " + orderXmlName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error creating template " + orderXmlName
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -154,14 +172,19 @@ public class TemplateDBDAO extends TemplateDAO {
     /** Describe where a given template has been used.
      *
      * @param orderXmlName Name of the template.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      * @return A string describing the usages of the template, or null if it
      *  is not used.
      */
     public String describeUsages(String orderXmlName) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
+        
         return DBUtils.getUsages("SELECT DISTINCT domains.name "
                 + "  FROM domains, configurations, ordertemplates"
                 + " WHERE ordertemplates.name = ?"
-                + "   AND configurations.template_id = ordertemplates.template_id"
+                + "   AND configurations.template_id "
+                +       "= ordertemplates.template_id"
                 + "   AND domains.domain_id = configurations.domain_id",
                 orderXmlName, orderXmlName);
     }
@@ -170,9 +193,17 @@ public class TemplateDBDAO extends TemplateDAO {
      *
      * @param orderXmlName Name of the template.
      * @param orderXml XML document that is a Heritrix order.xml template.
-     * @throws ArgumentNotValid if not valid order.xml
+     * @throws PermissionDenied If the template does not exist
+     * @throws IOFailure If the template could not be 
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String,
+     * or the orderXml is null.
      */
-    public synchronized void update(String orderXmlName, HeritrixTemplate orderXml) {
+    public synchronized void update(String orderXmlName,
+            HeritrixTemplate orderXml) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
+        ArgumentNotValid.checkNotNull(orderXml, "HeritrixTemplate orderXml");
+        
         if (!exists(orderXmlName)) {
             throw new PermissionDenied("No order template called "
                     + orderXmlName + " exists");
@@ -188,9 +219,8 @@ public class TemplateDBDAO extends TemplateDAO {
             s.setString(2, orderXmlName);
             s.executeUpdate();
         } catch (SQLException e) {
-            throw new IOFailure("SQL error updating template "
-                    + orderXmlName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error updating template " + orderXmlName
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -199,20 +229,24 @@ public class TemplateDBDAO extends TemplateDAO {
     /** Delete a template entirely from the database.
      *
      * @param orderXmlName Name of the template to delete.
-     * @throws ArgumentNotValid if the template is in use.
+     * @throws PermissionDenied if the template is in use or the template
+     * does not exist.
+     * @throws ArgumentNotValid If the orderXmlName is null or an empty String
      */
     public synchronized void delete(String orderXmlName) {
+        ArgumentNotValid.checkNotNullOrEmpty(
+                orderXmlName, "String orderXmlName");
         if (!exists(orderXmlName)) {
-            throw new PermissionDenied("No order template called "
-                    + orderXmlName + " exists");
+            throw new PermissionDenied("No order template called '"
+                    + orderXmlName + "' exists");
         }
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
             String usages = describeUsages(orderXmlName);
             if (usages != null) {
-                String message = "Cannot delete " + orderXmlName
-                        + " as it is used in " + usages;
+                String message = "Cannot delete template '" + orderXmlName
+                        + "' as it is used in " + usages;
                 log.debug(message);
                 throw new PermissionDenied(message);
             }
@@ -220,11 +254,10 @@ public class TemplateDBDAO extends TemplateDAO {
                                 + "WHERE name = ?");
             s.setString(1, orderXmlName);
             s.executeUpdate();
-            log.debug("Deleting template " + orderXmlName);
+            log.debug("Deleting template '" + orderXmlName + "'");
         } catch (SQLException e) {
-            throw new IOFailure("SQL error deleting template "
-                    + orderXmlName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error deleting template '" + orderXmlName
+                    + "'\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

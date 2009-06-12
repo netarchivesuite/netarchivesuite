@@ -48,7 +48,7 @@ public abstract class TemplateDAO {
      * Gets the TemplateDAO singleton.
      * @return the singleton.
      */
-    public synchronized static TemplateDAO getInstance() {
+    public static synchronized TemplateDAO getInstance() {
         if (instance == null) {
             instance = new TemplateDBDAO();
         }

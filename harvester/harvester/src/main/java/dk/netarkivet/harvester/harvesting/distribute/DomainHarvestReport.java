@@ -60,7 +60,7 @@ public abstract class DomainHarvestReport implements Serializable {
      *
      * @return a Set of Strings
      */
-    final public Set<String> getDomainNames() {
+    public final Set<String> getDomainNames() {
         return Collections.unmodifiableSet(domainstats.keySet());
     }
 
@@ -71,7 +71,7 @@ public abstract class DomainHarvestReport implements Serializable {
      * @return How many objects were collected for that domain
      * @throws ArgumentNotValid if null or empty domainName
      */
-    final public Long getObjectCount(String domainName) {
+    public final Long getObjectCount(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
         if (domainStats != null) {
@@ -102,7 +102,7 @@ public abstract class DomainHarvestReport implements Serializable {
      * @return the StopReason for the given domain.
      * @throws ArgumentNotValid if null or empty domainName
      */
-    final public StopReason getStopReason(String domainName) {
+    public final StopReason getStopReason(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
         if (domainStats != null) {

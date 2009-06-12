@@ -72,7 +72,7 @@ public class CreateLogsMetadataFile extends ToolRunnerBase {
            implements SimpleCmdlineTool {
 
        /** HashMap containing jobid-harvestid mappings. */
-       private HashMap<String,String> hm;
+       private HashMap<String, String> hm;
 
        /** Check that valid arguments are given.
         *
@@ -86,26 +86,30 @@ public class CreateLogsMetadataFile extends ToolRunnerBase {
            }
            if (args.length > 2) {
                System.err.println("Too many arguments: '"
-                       + StringUtils.conjoin("', '",Arrays.asList(args) )
+                       + StringUtils.conjoin("', '", Arrays.asList(args))
                        + "'");
                return false;
            }
            if (!(new File(args[0])).isFile()) {
-               System.err.println("The first argument is not a file or it does not exist: '"
-                       + StringUtils.conjoin("', '",Arrays.asList(args) )
+               System.err.println(
+                       "The first argument is not a file or " 
+                       + "it does not exist: '"
+                       + StringUtils.conjoin("', '", Arrays.asList(args))
                        + "'");
                return false;
            }
            if (!(new File(args[1])).isDirectory()) {
-               System.err.println("The second argument is not a directory or it does not exist: '"
-                       + StringUtils.conjoin("', '",Arrays.asList(args) )
+               System.err.println(
+                       "The second argument is not a directory or "
+                       + "it does not exist: '"
+                       + StringUtils.conjoin("', '", Arrays.asList(args))
                        + "'");
                return false;
            }
            if (!(new File(args[1], "harvestInfo.xml").exists())) {
                System.err.println("The second argument is not a valid jobsdir. "
                        + "It does not contain a harvestInfo.xml file: "
-                       + StringUtils.conjoin("', '",Arrays.asList(args) )
+                       + StringUtils.conjoin("', '", Arrays.asList(args))
                        + "'");
                return false;
            }
@@ -124,7 +128,7 @@ public class CreateLogsMetadataFile extends ToolRunnerBase {
       public void setUp(String... args) {
           File inputFile = new File(args[0]);
           List<String> idmappings = FileUtils.readListFromFile(inputFile);
-          hm = new HashMap<String,String>();
+          hm = new HashMap<String, String>();
           for (String mapping: idmappings) {
               String[] components = mapping.split(",");
               hm.put(components[0], components[1]);

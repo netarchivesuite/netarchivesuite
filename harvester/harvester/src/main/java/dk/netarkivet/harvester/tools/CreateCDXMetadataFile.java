@@ -70,7 +70,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         new CreateCDXMetadataFile().runTheTool(argv);
     }
 
-    /** Create the tool instance
+    /** Create the tool instance.
      *
      * @return A new tool object.
      */
@@ -82,7 +82,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
      */
     private static class CreateCDXMetadataFileTool
             implements SimpleCmdlineTool {
-        /** The connection to the arc repository */
+        /** The connection to the arc repository. */
         private ViewerArcRepositoryClient arcrep;
         /** The file pattern that matches an ARC file name without the jobID.
          * If combined with a jobID, this will match filenames like
@@ -104,7 +104,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             }
             if (args.length > 1) {
                 System.err.println("Too many arguments: '"
-                        + StringUtils.conjoin("', '",Arrays.asList(args) )
+                        + StringUtils.conjoin("', '", Arrays.asList(args))
                         + "'");
                 return false;
             }
@@ -144,8 +144,9 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             JMSConnectionFactory.getInstance().cleanup();
         }
 
-        /** The workhorse method of this tool: Batches, copies the result,
-         * then turns the result into a proper metadata file.
+        /** The workhorse method of this tool: Runs the batch job,
+         * copies the result, then turns the result into a proper
+         * metadata file.
          *
          * @param args Arguments given on the command line.
          */
@@ -153,9 +154,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
             long jobID = Long.parseLong(args[0]);
             FileBatchJob job = new ExtractCDXJob();
             job.processOnlyFilesMatching(jobID + REMAINING_ARC_FILE_PATTERN);
-            BatchStatus status = arcrep.batch(job,
-                                              Settings.get(
-                                                      CommonSettings.USE_REPLICA_ID));
+            BatchStatus status = arcrep.batch(
+                    job, Settings.get(CommonSettings.USE_REPLICA_ID));
             if (status.hasResultFile()) {
                 File resultFile = null;
                 try {
@@ -165,8 +165,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     status.copyResults(resultFile);
                     arcifyResultFile(resultFile, jobID);
                 } catch (IOException e) {
-                    throw new IOFailure("Error getting results for job " + jobID,
-                            e);
+                    throw new IOFailure("Error getting results for job "
+                            + jobID, e);
                 } finally {
                     if (resultFile != null) {
                         FileUtils.remove(resultFile);
@@ -182,7 +182,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param resultFile The CDX file returned by a ExtractCDXJob for the
          * given jobID.
          * @param jobID The jobID we work on.
-         * @throws IOException
+         * @throws IOException If an I/O error occurs, or the resultFile
+         * does not exist
          */
         private void arcifyResultFile(File resultFile, long jobID)
                 throws IOException {
@@ -190,8 +191,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                     = new BufferedReader(new FileReader(resultFile));
             try {
                 ARCWriter writer = ARCUtils.createARCWriter(
-                        new File(HarvestDocumentation.getMetadataARCFileName
-                                (Long.toString(jobID))));
+                        new File(HarvestDocumentation.getMetadataARCFileName(
+                                        Long.toString(jobID))));
                 try {
                     String line;
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -204,8 +205,8 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                             continue;
                         }
                         if (!parser.getFilename().equals(lastFilename)) {
-                            // When we reach the end of a block of lines from one
-                            // ARC file, we write those as a single entry.
+                            // When we reach the end of a block of lines from
+                            // one ARC file, we write those as a single entry.
                             writeCDXEntry(writer, parser, baos);
                             lastFilename = parser.getFilename();
                         }
@@ -283,7 +284,7 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
         }
 
         /** Return a string describing the parameters accepted by the
-         * CreateCDXMetadataFile tool
+         * CreateCDXMetadataFile tool.
          *
          * @return String with description of parameters.
          */
