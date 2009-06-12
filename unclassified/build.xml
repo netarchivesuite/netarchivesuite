@@ -263,8 +263,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Build the javadocs">
         <javadoc author="false"
                  destdir="docs/apidocs"
-                 packagenames="dk.netarkivet.common.*,dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
-                        dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*, dk.netarkivet.wayback.*"
+                 packagenames="dk.netarkivet.common.*, dk.netarkivet.deploy.*,
+        						dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
+                        		dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*,
+        						dk.netarkivet.wayback.*"
                  sourcepath="src"
                  use="true"
                  version="false"
