@@ -48,7 +48,7 @@
             			<integer name="max-repetitions">3</integer>
           		</newObject>
 			<newObject name="acceptIfTranscluded" class="org.archive.crawler.deciderules.TransclusionDecideRule">
-            			<integer name="max-trans-hops">25</integer>
+            			<integer name="max-trans-hops">3</integer>
             			<integer name="max-speculative-hops">1</integer>
           		</newObject>
 			<newObject name="pathdepthfilter" class="org.archive.crawler.deciderules.TooManyPathSegmentsDecideRule">
