@@ -244,7 +244,7 @@
             <float name="delay-factor">0</float>
             <integer name="max-delay-ms">0</integer>
             <integer name="min-delay-ms">0</integer>
-            <integer name="max-retries">3</integer>
+            <integer name="max-retries">5</integer>
             <long name="retry-delay-seconds">30</long>
             <integer name="preference-embed-hops">1</integer>
             <integer name="total-bandwidth-usage-KB-sec">500</integer>

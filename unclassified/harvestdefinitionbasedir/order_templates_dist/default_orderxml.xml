@@ -152,7 +152,7 @@
             <float name="delay-factor">1.0</float>
             <integer name="max-delay-ms">1000</integer>
             <integer name="min-delay-ms">300</integer>
-            <integer name="max-retries">3</integer>
+            <integer name="max-retries">5</integer>
             <long name="retry-delay-seconds">300</long>
             <integer name="preference-embed-hops">1</integer>
             <integer name="total-bandwidth-usage-KB-sec">1500</integer>
