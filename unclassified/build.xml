@@ -215,7 +215,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="jarfiles"
-            depends="clean, commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar"
+            depends="clean, commonjar, harvesterjar, archivejar, viewerproxyjar, monitorjar, deployjar, waybackjar"
             description="Compile all jar files">
     </target>
 
