@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -78,6 +79,19 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
 
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
 
+        String capture_result_string = "Retrieving \n"+
+        "Date = '" + captureSearchResult.getCaptureDate() + "'\n" +
+        "Timstamp = '" + captureSearchResult.getCaptureTimestamp() + "'\n" +
+        "File = '" + captureSearchResult.getFile() + "'\n" +
+        "Http code = '" + captureSearchResult.getHttpCode() + "'\n" +
+        "Mime Type = '" + captureSearchResult.getMimeType() + "'\n" +
+        "Offset ='" + captureSearchResult.getOffset() + "'\n" +
+        "Original host = '" + captureSearchResult.getOriginalHost() + "'\n" +
+        "Original url = '" + captureSearchResult.getOriginalUrl() + "'\n" +
+        "Redirect url = '" + captureSearchResult.getRedirectUrl() + "'\n" +
+        "url key = '" + captureSearchResult.getUrlKey();
+        logger.info(capture_result_string);
+
         String arcfile = captureSearchResult.getFile();
         long offset = captureSearchResult.getOffset();
         Map metadata = new HashMap();
@@ -92,6 +106,8 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         
         BitarchiveRecord bitarchive_record = client.get(arcfile, offset);
         if (bitarchive_record == null) {
+            //log here because we don't trust wayback not to swallow our log messages
+            logger.info("Resource not in archive");
             throw new ResourceNotAvailableException("Resource not in archive");
         }
         //metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, statuscode);
@@ -101,7 +117,7 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, captureSearchResult.getMimeType());
         metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, "HTTP/1.1");
         metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "0");
-        metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, ""+bitarchive_record.getLength());        
+        metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, ""+bitarchive_record.getLength());
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '" + offset + "'");
         InputStream is = bitarchive_record.getData();
         ARCRecord arc_record;
@@ -146,6 +162,14 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
             logger.info("Could not create header", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
+        //TODO fix the logic of the following. If the response code is 302 and the
+        //redirect url is identical to this url, then change the response code to 404
+        //print the warning
+       /* if (responsecode.equals("302")) {
+            logger.info("Reseting redirect to 404");
+            responsecode = "404";
+            is = new ByteArrayInputStream("This record was redirected. Please try a later harvest result".getBytes()) ;
+        }*/
         try {
             arc_record = new ARCRecord(is,header,0,false,false,true);
             int code = arc_record.getStatusCode();
