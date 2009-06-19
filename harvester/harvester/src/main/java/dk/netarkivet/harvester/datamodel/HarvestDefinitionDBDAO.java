@@ -61,7 +61,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     private final Log log = LogFactory.getLog(getClass());
     
-    final static int FULLHARVESTS_VERSION_NEEDED = 3;
+    static final int FULLHARVESTS_VERSION_NEEDED = 3;
 
     /** Create a new HarvestDefinitionDAO using database.
      */
@@ -1094,10 +1094,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     
     /** Get a sorted list of all domainnames of a HarvestDefintion
     *
-    * @param name of HarvestDefintion
+    * @param harvestName of HarvestDefintion
     * @return List of all domains of the HarvestDefintion.
-    * @throws ArgumentNotValid on null argument
-    * @throws IOFailure        on any other error talking to the database
     */
     public List<String> getListOfDomainsOfHarvestDefinition(String harvestName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
@@ -1105,16 +1103,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    "SELECT do.name"+
-                    " FROM     domains do,"+
-                    "          configurations co,"+
-                    "          harvest_configs haco,"+
-                    "          harvestdefinitions hd"+
-                    " WHERE    co.domain_id = do.domain_id"+
-                    "          AND haco.config_id = co.config_id"+
-                    "          AND haco.harvest_id = hd.harvest_id"+
-                    "          AND hd.name = ?" +
-                    " ORDER BY do.name");
+                    "SELECT do.name"
+                    +" FROM     domains do,"
+                    +"          configurations co,"
+                    +"          harvest_configs haco,"
+                    +"          harvestdefinitions hd"
+                    +" WHERE    co.domain_id = do.domain_id"
+                    +"          AND haco.config_id = co.config_id"
+                    +"          AND haco.harvest_id = hd.harvest_id"
+                    +"          AND hd.name = ?" 
+                    +" ORDER BY do.name");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             List<String> domains = new ArrayList<String>();
@@ -1124,8 +1122,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             }
             return domains;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting seeds of a domain of a harvest definition" + "\n" +
-                                ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error getting seeds of a domain of a harvest definition" + "\n"
+                                +ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -1133,11 +1131,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
-    * @param name of HarvestDefintion
-    * @param name of Domain
+    * @param harvestName of HarvestDefintion
+    * @param domainName of Domain
     * @return List of all seeds of the Domain in the HarvestDefintion.
-    * @throws ArgumentNotValid on null argument
-    * @throws IOFailure        on any other error talking to the database
     */
     public List<String> getListOfSeedsOfDomainOfHarvestDefinition(String harvestName, String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(harvestName, "harvestName");
@@ -1146,20 +1142,20 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    "SELECT sl.seeds"+
-                    " FROM   configurations co,"+
-                    "        harvest_configs haco,"+
-                    "        harvestdefinitions hd,"+
-                    "        seedlists sl,"+
-                    "        config_seedlists cose,"+
-                    "        domains do"+
-                    " WHERE  cose.seedlist_id = sl.seedlist_id"+
-                    "        AND co.config_id = cose.config_id"+
-                    "        AND co.config_id = haco.config_id"+
-                    "        AND haco.harvest_id = hd.harvest_id"+
-                    "        AND co.domain_id = do.domain_id"+
-                    "        AND do.name = ?" +
-                    "        AND hd.name = ?");
+                    "SELECT sl.seeds"
+                    +" FROM   configurations co,"
+                    +"        harvest_configs haco,"
+                    +"        harvestdefinitions hd,"
+                    +"        seedlists sl,"
+                    +"        config_seedlists cose,"
+                    +"        domains do"
+                    +" WHERE  cose.seedlist_id = sl.seedlist_id"
+                    +"        AND co.config_id = cose.config_id"
+                    +"        AND co.config_id = haco.config_id"
+                    +"        AND haco.harvest_id = hd.harvest_id"
+                    +"        AND co.domain_id = do.domain_id"
+                    +"        AND do.name = ?" 
+                    +"        AND hd.name = ?");
             s.setString(1, domainName);
             s.setString(2, harvestName);
             ResultSet res = s.executeQuery();
@@ -1192,8 +1188,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             
             return seeds;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting seeds of a domain" + "\n" +
-                                ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error getting seeds of a domain" + "\n"
+                                +ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }

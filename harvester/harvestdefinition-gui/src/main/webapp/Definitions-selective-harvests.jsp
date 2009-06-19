@@ -41,7 +41,9 @@ inactive or vice-versa.
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-    
+
+    private static final String COMMANDWIDTH="12%";
+
 %><%
     HTMLUtils.setUTF8(request);
     HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
@@ -135,8 +137,8 @@ if (!isph.iterator().hasNext()) { %>
            <fmt:formatDate type="both" value="<%=sph.getNextDate()%>"/>
         <% } else { out.print(Constants.NoNextDate); } %>
         </td>
-        <td width="12%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
-        <td width="12%"><form 
+        <td width="<%=COMMANDWIDTH%>"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
+        <td width="<%=COMMANDWIDTH%>"><form 
                            id="flipActiveForm<%=sph.getOid()%>" 
                            action="Definitions-selective-harvests.jsp" 
                            method="post"
@@ -147,17 +149,17 @@ if (!isph.iterator().hasNext()) { %>
                          /><%=flipactiveLink%>
                         </form>
         </td>
-        <td width="12%">
+        <td width="<%=COMMANDWIDTH%>">
             <a href="<%=HTMLUtils.escapeHtmlValues(editLink)%>">
                 <fmt:message key="edit"/>
             </a>
         </td>
-        <td width="12%">
+        <td width="<%=COMMANDWIDTH%>">
             <a href="<%=HTMLUtils.escapeHtmlValues(seedsLink)%>">
                 <fmt:message key="harvestdefinition.linktext.seeds"/>
             </a>
         </td>
-        <td width="12%">
+        <td width="<%=COMMANDWIDTH%>">
             <% if (inclHistory)  { %>
                 <a href="<%=HTMLUtils.escapeHtmlValues(historicLink)%>">
                    <fmt:message key="harvestdefinition.linktext.historical"/></a>

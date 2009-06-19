@@ -409,8 +409,8 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     
     /** Get a sorted list of all domainnames of a HarvestDefintion
     *
-    * @param name of HarvestDefintion
-    * @return List of all domains of the HarvestDefintion.
+    * @param harvestName of HarvestDefintion
+    * @return List of all domains of the HarvestDefinition.
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
@@ -418,9 +418,9 @@ public abstract class HarvestDefinitionDAO implements Iterable<HarvestDefinition
     
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
-    * @param name of HarvestDefintion
-    * @param name of Domain
-    * @return List of all seeds of the Domain in the HarvestDefintion.
+    * @param harvestName of HarvestDefintion
+    * @param domainName of Domain
+    * @return List of all seeds of the Domain in the HarvestDefinition.
     * @throws ArgumentNotValid on null argument
     * @throws IOFailure        on any other error talking to the database
     */
