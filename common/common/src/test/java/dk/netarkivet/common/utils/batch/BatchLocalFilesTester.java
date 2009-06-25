@@ -31,7 +31,6 @@ import java.util.Set;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
-import dk.netarkivet.testutils.TestUtils;
 
 import junit.framework.TestCase;
 
@@ -119,9 +118,6 @@ public class BatchLocalFilesTester extends TestCase {
      * the processing but is caught and collected.
      */
     public void testOneJob_ExceptionInProcess() {
-        if (!TestUtils.runningAs("SVC")) {
-            return;
-        }
         FileBatchJob job = new TestBatchJob() {
                 private boolean done = false;
 
