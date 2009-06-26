@@ -55,6 +55,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.JMXUtils;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.ProcessUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
@@ -519,13 +520,23 @@ public class JMXHeritrixController implements HeritrixController {
             heritrixProcess.destroy();
             exitValue = ProcessUtils.waitFor(heritrixProcess,
                                              maxWait);
-            // If it's not dead now, there's little we can do.
             if (exitValue != null) {
                 log.info("Heritrix process of " + this
                          + " exited with exit code " + exitValue);
             } else {
+                // If it's not dead now, there's little we can do.
                 log.warn("Heritrix process of " + this
-                         + " not dead after destroy");
+                         + " not dead after destroy. "
+                         + "Exiting harvest controller. "
+                         + "Make sure you kill the runaway Heritrix "
+                         + "before you restart.");
+                NotificationsFactory.getInstance().errorEvent(
+                        "Heritrix process of " + this
+                         + " not dead after destroy. "
+                         + "Exiting harvest controller. "
+                         + "Make sure you kill the runaway Heritrix "
+                         + "before you restart.");
+                System.exit(1);
             }
         }
         Runtime.getRuntime().removeShutdownHook(processKillerHook);
