@@ -144,6 +144,8 @@ public class HarvestDocumentation {
             if (preharvestMetadata.exists()) {
                 ARCUtils.insertARCFile(preharvestMetadata, aw);
             }
+            //TODO: This is a good place to copy deduplicate information from the
+            //crawl log to the cdx file. 
 
             // Insert harvestdetails into metadata arcfile.
             List<File> filesAdded =
