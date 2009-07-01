@@ -29,8 +29,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +49,7 @@ import org.archive.util.ArchiveUtils;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.InputStreamUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 
 /**
@@ -58,6 +63,15 @@ import dk.netarkivet.common.utils.SystemUtils;
 public class ARCUtils {
     /** The log. */
     private static Log log = LogFactory.getLog(ARCUtils.class.getName());
+
+    /** Matches HTTP header lines like
+     * HTTP/1.1 404 Page has gone south
+     * Groups:  111 2222222222222222222. */
+    private static final Pattern HTTP_HEADER_PATTERN =Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
+
+    /** Extra ARC Record metadata */
+    public static final String RESPONSETEXT = "RESPONSETEXT";  
+
 
     /** Insert the contents of an ARC file (skipping an optional initial
      *  filedesc: header) in another ARCfile.
@@ -124,7 +138,7 @@ public class ARCUtils {
      * @return new ARCWriter, writing to arcfile newFile.
      */
     public static ARCWriter createARCWriter(File newFile) {
-        ARCWriter aw = null;
+        ARCWriter aw;
         PrintStream ps = null;
         try {
             ps = new PrintStream(new FileOutputStream(newFile));
@@ -195,7 +209,7 @@ public class ARCUtils {
      * @param stream the given PrintStream.
      * @param destinationArcfile the given destination ARC file.
      * @return ARCWriter to be used by tools ArcMerge and ArcWrap
-     * @throws IOException
+     * @throws IOException redirect from ARCWriter constructure
      */
     public static ARCWriter getToolsARCWriter(PrintStream stream,
             File destinationArcfile) throws IOException {
@@ -253,4 +267,55 @@ public class ARCUtils {
            return tmpbuffer;
        }
    }
+
+    /**
+     * TODO: write unit test
+     * @param in pointing at start of ARC record
+     * @param offset into ARC file
+     * @return pairwise headers
+     * @throws IOException if fails to read ARC files or ARC files isn't valid.
+     */
+    public static Map<String, Object> getHeadersFromARCFile(InputStream in, Long offset) throws IOException {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        // exstra needed headers
+        headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
+        headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
+
+        String line;
+        while((line = InputStreamUtils.readLine(in)).length() <= 0) {
+            // go forward to start of record, if offset is to early (happens in tests cases)
+        }
+        String[] tmp = line.split("\\s");
+
+        // decode header
+        if(tmp.length == 5) {
+            headers.put(ARCRecordMetaData.URL_FIELD_KEY, tmp[0]);
+            headers.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, tmp[1]);
+            headers.put(ARCRecordMetaData.DATE_FIELD_KEY, tmp[2]);
+            headers.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, tmp[3]);
+            headers.put(ARCRecordMetaData.LENGTH_FIELD_KEY, tmp[4]);
+        } else {
+            throw new IOException("Does not include required metadata to be sa valid ARC header: " + line);
+        }
+        // Matches rest of header lines.
+        line = InputStreamUtils.readLine(in);
+        Matcher m = HTTP_HEADER_PATTERN.matcher(line);
+
+        if(m.matches()) {
+            headers.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, m.group(1));
+            // not valid META DATA
+            headers.put(RESPONSETEXT, line);
+        }
+        while((line = InputStreamUtils.readLine(in)) != null && line.length() > 0 && line.startsWith("<") /* arc/warc header */) {
+            int index = line.indexOf(':');
+            if(index != -1) {
+                headers.put(line.substring(0, index), line.substring(index+2));
+            } else {
+                throw new IOException("Inputstream doesn't not point to valid ARC record");
+            }
+            index = -1;
+        }
+
+        return headers;
+     }
 }
