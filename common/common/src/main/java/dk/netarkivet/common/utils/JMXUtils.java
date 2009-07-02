@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -247,7 +248,7 @@ public class JMXUtils {
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
                     }
                 } catch (IOException e) {
                     log.warn("Exception thrown while executing " + command +
@@ -255,7 +256,7 @@ public class JMXUtils {
                              Arrays.toString(arguments) + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
                     }
                 }
             } while (tries < MAX_TRIES);
@@ -303,14 +304,14 @@ public class JMXUtils {
                              + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
                     }
                 } catch (IOException e) {
                     log.warn("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries);
+                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
                     }
                 }
             } while (tries < MAX_TRIES);
@@ -360,8 +361,7 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
         
         JMXServiceURL rmiurl = getUrl(hostName, jmxPort, -1);
-        Map<String, ?> environment =
-                (Map<String, ?>) packageCredentials(login, password);
+        Map<String, ?> environment = packageCredentials(login, password);
         Throwable lastException;
         int retries = 0;
         do {
@@ -369,19 +369,22 @@ public class JMXUtils {
                 return JMXConnectorFactory.connect(rmiurl, environment);
             } catch (IOException e) {
                 lastException = e;
-                if (retries < MAX_TRIES &&
-                    e.getCause() != null
+                if (retries < MAX_TRIES && e.getCause() != null
                     && (e.getCause() instanceof ServiceUnavailableException ||
                         e.getCause() instanceof SocketTimeoutException) ) {   
                     // Sleep a bit before trying again
-                    TimeUtils.exponentialBackoffSleep(retries);
+                    TimeUtils.exponentialBackoffSleep(retries, Calendar.SECOND);
+                    /*  called exponentialBackoffSleep(retries) which used
+                        Calendar.MILISECOND as time unit, which means we only
+                        wait an exponential number of miliseconds.            */
                     continue;
                 }
                 break;
             }
         } while (retries++ < MAX_TRIES);
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " attempts",
+                            + retries + " of " + MAX_TRIES + " attempts.\nException type: "
+                            + lastException.getCause().getClass().getName(),
                             lastException);
     }
 
@@ -416,7 +419,7 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(command, "String command");
         ArgumentNotValid.checkNotNull(arguments, "String... arguments");
 
-        MBeanServerConnection connection = null;
+        MBeanServerConnection connection;
         try {
             connection = connector.getMBeanServerConnection();
         } catch (IOException e) {
@@ -449,7 +452,7 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
         ArgumentNotValid.checkNotNullOrEmpty(attribute, "String attribute");
         
-        MBeanServerConnection connection = null;
+        MBeanServerConnection connection;
         try {
             connection = connector.getMBeanServerConnection();
         } catch (IOException e) {
