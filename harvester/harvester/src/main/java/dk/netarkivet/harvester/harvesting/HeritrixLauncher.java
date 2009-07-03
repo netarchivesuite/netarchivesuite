@@ -47,7 +47,12 @@ public class HeritrixLauncher {
      * Class encapsulating placement of various files.
      */
     private HeritrixFiles files;
-    
+
+    /**
+     * the arguements passed to the HeritricController constructor
+     */
+    private Object[] args;
+
     /**
      * The CrawlController used.
      */
@@ -148,6 +153,7 @@ public class HeritrixLauncher {
                     + files.getSeedsTxtFile().getAbsolutePath());
         }
         this.files = files;
+        this.args = new Object[]{files};
     }
 
     /**
@@ -163,6 +169,16 @@ public class HeritrixLauncher {
             throws ArgumentNotValid {
     	ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         return new HeritrixLauncher(files);
+    }
+
+    /**
+     * Generic constructor to allow HeritrixLauncher to use any implementation
+     * of HeritrixController
+     * @param args the arguments to be passed to the constructor or non-static
+     * factory method of the HeritrixController class specified in settings
+     */
+    public HeritrixLauncher(Object ... args) {
+        this.args = args;
     }
 
     /**
@@ -186,7 +202,7 @@ public class HeritrixLauncher {
 
         try {
             // Initialize Heritrix settings according to the order.xml
-            heritrixController = new JMXHeritrixController(files);
+            heritrixController = HeritrixControllerFactory.getDefaultHeritrixController(args);
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();

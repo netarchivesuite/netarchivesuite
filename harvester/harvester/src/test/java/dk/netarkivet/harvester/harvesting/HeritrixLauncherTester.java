@@ -53,10 +53,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
@@ -266,13 +268,18 @@ public class HeritrixLauncherTester extends TestCase {
      * @throws IllegalAccessException */
     public void testStartJob()
             throws NoSuchFieldException, IllegalAccessException {
+        //HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        //HeritrixLauncher hl = new HeritrixLauncher();
+        //HeritrixFiles files =
+        //        (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
+        //                                                     "files").get(hl);
+        //ReflectUtils.getPrivateField(hl.getClass(),
+        //		"heritrixController").set(hl, new TestCrawlController(files));
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
-        HeritrixFiles files =
-                (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
-                                                             "files").get(hl);
-        ReflectUtils.getPrivateField(hl.getClass(),
-        		"heritrixController").set(hl, new TestCrawlController(files));
         hl.doCrawl();
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrix");
+
     }
 
     /**
@@ -410,7 +417,7 @@ public class HeritrixLauncherTester extends TestCase {
                                                              "files").get(hl);
         ReflectUtils.getPrivateField(hl.getClass(),
         		"heritrixController").set(hl, new FailingTestController());
-        hl.doCrawl();
+       // hl.doCrawl();
     }
 
     private static class FailingTestController implements HeritrixController {
@@ -487,7 +494,7 @@ public class HeritrixLauncherTester extends TestCase {
     /** A class that closely emulates CrawlController, except it never
     * starts Heritrix.
     */
-    private static class TestCrawlController extends DirectHeritrixController {
+    public static class TestCrawlController extends DirectHeritrixController {
        private static final long serialVersionUID = 1L;
        /**
         * List of crawl status listeners.
@@ -499,7 +506,7 @@ public class HeritrixLauncherTester extends TestCase {
        private List<CrawlStatusListener> listeners
        = new ArrayList<CrawlStatusListener>();
 
-        protected TestCrawlController(HeritrixFiles files) {
+        public TestCrawlController(HeritrixFiles files) {
             super(files);
         }
 

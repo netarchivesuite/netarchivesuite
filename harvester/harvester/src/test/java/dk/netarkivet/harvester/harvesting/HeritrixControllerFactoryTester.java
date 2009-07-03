@@ -46,6 +46,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
 
      private MoveTestFiles mtf;
     private File dummyLuceneIndex;
+    private String defaultController;
 
     public HeritrixControllerFactoryTester() {
         mtf = new MoveTestFiles (TestInfo.CRAWLDIR_ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -55,10 +56,12 @@ public class HeritrixControllerFactoryTester extends TestCase {
         mtf.setUp();
         dummyLuceneIndex = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(dummyLuceneIndex);
+        defaultController = Settings.get(HarvesterSettings.HERITRIX_CONTROLLER_CLASS);
     }
 
     public void tearDown() {
         mtf.tearDown();
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, defaultController);
     }
 
     /**
@@ -88,6 +91,7 @@ public class HeritrixControllerFactoryTester extends TestCase {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixControllerFactoryTester$DummyHeritrixController");
         HeritrixController hc = HeritrixControllerFactory.getDefaultHeritrixController("hello world");
         assertTrue("Should have got a DummyHeritrixController, not " + hc, hc instanceof DummyHeritrixController);
+
     }
 
     /**
