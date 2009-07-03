@@ -47,6 +47,7 @@ public class HarvestingTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(DomainnameQueueAssignmentPolicyTester.class);
+        suite.addTestSuite(HeritrixControllerFactoryTester.class);
         suite.addTestSuite(HarvestControllerTester.class);
         suite.addTestSuite(HarvestDocumentationTester.class);
         suite.addTestSuite(HeritrixDomainHarvestReportTester.class);

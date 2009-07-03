@@ -398,6 +398,92 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
 
+    /**
+     * Tests that HeritrixLauncher will continue a call even if some calls to
+     * the HeritrixController fail
+     */
+    public void testJMXExceptionBehaviour()
+            throws NoSuchFieldException, IllegalAccessException {
+         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        HeritrixFiles files =
+                (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
+                                                             "files").get(hl);
+        ReflectUtils.getPrivateField(hl.getClass(),
+        		"heritrixController").set(hl, new FailingTestController());
+        hl.doCrawl();
+    }
+
+    private static class FailingTestController implements HeritrixController {
+
+
+
+        public void initialize() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void requestCrawlStart() throws IOFailure {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void beginCrawlStop() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void requestCrawlStop(String reason) {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean atFinish() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean crawlIsEnded() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getActiveToeCount() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public long getQueuedUriCount() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public int getCurrentProcessedKBPerSec() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getProgressStats() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public boolean isPaused() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public void cleanup() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+
+        public String getHarvestInformation() {
+            //TODO: implement method
+            throw new RuntimeException("Not implemented");
+        }
+    }
+
+
     /** A class that closely emulates CrawlController, except it never
     * starts Heritrix.
     */

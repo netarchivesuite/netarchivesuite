@@ -263,5 +263,12 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_JVM_OPTS= 
     	"settings.harvester.harvesting.heritrix.javaOpts";
+
+    /**
+     * <b>settings.harvester.harvesting.heritrixControllerClass</b>:<br/>
+     * The implementation of the HeritrixController interface to be used.
+     */
+    public static String HERITRIX_CONTROLLER_CLASS =
+            "settings.harvester.harvesting.heritrixController.class";
 }
 

@@ -70,6 +70,9 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts></javaOpts>
             </heritrix>
+            <heritrixController>
+                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+            </heritrixController>
         </harvesting>
     </harvester>
 </settings>
