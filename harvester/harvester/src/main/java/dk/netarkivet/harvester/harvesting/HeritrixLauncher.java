@@ -31,6 +31,7 @@ import org.dom4j.Node;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -211,6 +212,12 @@ public class HeritrixLauncher {
             } else {
                 doCrawlLoop();
             }
+        } catch (IOFailure e) {
+            log.warn("Error during initialisation of crawl", e);
+            throw(e);
+        } catch (Exception e) {
+            log.warn("Exception during crawl", e);
+            throw new RuntimeException("Exception during crawl",e);
         } finally {
             if (heritrixController != null) {
                 heritrixController.cleanup();
@@ -223,22 +230,53 @@ public class HeritrixLauncher {
      * Monitors the crawling performed by Heritrix. Regularly checks whether any
      * progress is made. If no progress has been made for too long, the crawl is
      * ended.
+     * @throws IOFailure if the call to HeritrixController.requestCrawlStop()
+     * fails. Other failures in calls to the controller are caught and logged.
      */
-    private void doCrawlLoop() {
+    private void doCrawlLoop() throws IOFailure{
+        String errorMessage = "Non-fatal error in JMX call during crawl";
         long lastNonZeroActiveQueuesTime = System.currentTimeMillis();
         long lastTimeReceivedData = System.currentTimeMillis();
-        while (!heritrixController.crawlIsEnded()) {
+        boolean crawlIsEnded = false;
+        try {
+            crawlIsEnded = heritrixController.crawlIsEnded();
+        } catch (IOFailure e) {
+            log.warn(errorMessage, e);
+        }
+        while (!crawlIsEnded) {
+            String harvestInformation = null;
+            String progressStats = null;
+            try {
+                harvestInformation = heritrixController.getHarvestInformation();
+                progressStats = heritrixController.getProgressStats();
+            } catch (IOFailure e) {
+                log.warn(errorMessage, e);
+            }
             log.info("Job ID: " + files.getJobID()
                             + ", Harvest ID: " + files.getHarvestID()
-                            + ", " + heritrixController.getHarvestInformation()
-                            + "\n" + heritrixController.getProgressStats());
+                            + ", " + harvestInformation
+                            + "\n" + progressStats);
             // Note that we don't check for timeout while paused.
-            if (heritrixController.getCurrentProcessedKBPerSec() > 0 ||
-                heritrixController.isPaused()) {
+            int processedKBPerSec = 0;
+            boolean paused = false;
+            try {
+                processedKBPerSec = heritrixController.getCurrentProcessedKBPerSec();
+                paused = heritrixController.isPaused();
+            } catch (IOFailure e) {
+                log.warn(errorMessage, e);
+            }
+            if (processedKBPerSec > 0 || paused) {
                 lastTimeReceivedData = System.currentTimeMillis();
             }
-            if (heritrixController.getActiveToeCount() > 0 ||
-                heritrixController.isPaused()) {
+            int activeToeCount = 0;
+            paused = false;
+            try {
+                activeToeCount = heritrixController.getActiveToeCount();
+                paused = heritrixController.isPaused();
+            } catch (IOFailure e) {
+                log.warn(errorMessage, e);
+            }
+            if (activeToeCount > 0 || paused) {
                 lastNonZeroActiveQueuesTime = System.currentTimeMillis();
             }
             if ((lastNonZeroActiveQueuesTime + timeOutInMillis
@@ -249,6 +287,12 @@ public class HeritrixLauncher {
                         timeOutInMillis / 1000.0;
                 final double noDataReceivedTimeoutInSeconds =
                         timeOutInMillisReceivedData / 1000.0;
+                long queuedUriCount = 0;
+                try {
+                    queuedUriCount = heritrixController.getQueuedUriCount();
+                } catch (IOFailure e) {
+                    log.warn(errorMessage, e);
+                }
                 log.warn("Aborting crawl because of inactivity. "
                          + "No active queues for the last "
                          + ((System.currentTimeMillis()
@@ -261,13 +305,20 @@ public class HeritrixLauncher {
                          + " seconds (timeout is "
                          + noDataReceivedTimeoutInSeconds
                          + " seconds). URLs in queue:"
-                         + heritrixController.getQueuedUriCount());
+                         + queuedUriCount);
+                // The following is the only controller command exception we don't
+                // catch here. Otherwise we might loop forever.
                 heritrixController.requestCrawlStop(
                         "Aborting because of inactivity");
             }
 
             //Optimization: don't wait if ended since beginning of the loop
-            if (!heritrixController.crawlIsEnded()) {
+            try {
+                crawlIsEnded = heritrixController.crawlIsEnded();
+            } catch (IOFailure e) {
+                log.warn(errorMessage, e);
+            }
+            if (!crawlIsEnded) {
                 try {
                     /* Wait for heritrix to do something.
                     * WAIT_PERIOD is the interval between checks of whether

@@ -300,14 +300,14 @@ public class JMXUtils {
                               + " returned " + ret);
                     return ret;
                 } catch (InstanceNotFoundException e) {
-                    log.warn("Error while getting attribute " + attribute
+                    log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {
                         TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
                     }
                 } catch (IOException e) {
-                    log.warn("Error while getting attribute " + attribute
+                    log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
                     if (tries < MAX_TRIES) {

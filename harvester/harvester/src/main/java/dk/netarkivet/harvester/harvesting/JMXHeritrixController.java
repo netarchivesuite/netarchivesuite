@@ -69,7 +69,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * as a separate process and uses JMX to communicate with it.  Each instance
  * executes exactly one process that runs exactly one crawl job.
  */
-public class JMXHeritrixController implements HeritrixController {
+public class
+        JMXHeritrixController implements HeritrixController {
     /** The logger for this class. */
     private static final Log log = LogFactory.getLog(
             JMXHeritrixController.class);

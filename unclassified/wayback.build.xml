@@ -5,7 +5,7 @@ wayback with the netarchivesuite plugin
 <project>
     <import file="build.xml" />
 
-    <property name="wayback.conf.root" value="wayback/pligt"/>
+    <property name="wayback.conf.root" value="wayback/prod"/>
     <!--
     Path to the wayback webapp as downloaded from  http://sourceforge.net/project/showfiles.php?group_id=118427
     -->

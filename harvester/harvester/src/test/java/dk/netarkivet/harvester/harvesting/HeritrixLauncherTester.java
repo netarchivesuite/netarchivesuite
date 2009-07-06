@@ -278,7 +278,7 @@ public class HeritrixLauncherTester extends TestCase {
         Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
         hl.doCrawl();
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrix");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
     }
 
@@ -406,88 +406,178 @@ public class HeritrixLauncherTester extends TestCase {
 
 
     /**
-     * Tests that HeritrixLauncher will continue a call even if some calls to
-     * the HeritrixController fail
+     * Tests that HeritricLauncher will fail on an error in
+     * HeritrixController.initialize()
      */
-    public void testJMXExceptionBehaviour()
+    public void testFailOnInitialize()
             throws NoSuchFieldException, IllegalAccessException {
-         HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
-        HeritrixFiles files =
-                (HeritrixFiles) ReflectUtils.getPrivateField(hl.getClass(),
-                                                             "files").get(hl);
-        ReflectUtils.getPrivateField(hl.getClass(),
-        		"heritrixController").set(hl, new FailingTestController());
-       // hl.doCrawl();
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$SucceedOnCleanupTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        try {
+            hl.doCrawl();
+            fail("HeritrixLanucher should throw an exception when it fails to initialize");
+        } catch (IOFailure e) {
+            assertTrue("Error message should be from initialiser", e.getMessage().contains("initialize"));
+            //expected
+        }
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
     }
 
-    private static class FailingTestController implements HeritrixController {
+    /**
+     * When the an exception is thrown in cleanup, any exceptions thrown in the
+     * initialiser are lost
+     */
+    public void testFailOnCleanup() {
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        try {
+            hl.doCrawl();
+            fail("HeritrixLanucher should throw an exception when it fails to initialize");
+        } catch (IOFailure e) {
+            assertTrue("Error message should be from cleanup", e.getMessage().contains("cleanup"));
+            //expected
+        }
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+    }
+
+    /**
+     * A failure to communicate with heritrix during the crawl should be logged
+     * but not be in any way fatal to the crawl.
+     */
+    public void testFailDuringCrawl() {
+          Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
+          "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        hl.doCrawl();
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+
+    }
+
+    /**
+     * A test heritrixController which starts and stops a crawl cleanly but fails
+     * during the crawl itself.
+     */
+    public static class FailDuringCrawlTestController extends FailingTestController {
+
+        private int isEndedCalls = 0;
+
+        public FailDuringCrawlTestController(HeritrixFiles files) {
+            super(files);
+        }
+
+        public void requestCrawlStop(String reason) {
+
+        }
+
+        public void initialize() {
 
 
+        }
+
+        public void requestCrawlStart() throws IOFailure {
+
+
+        }
+
+        public boolean atFinish() {
+          return false;
+        }
+
+        public void beginCrawlStop() {
+        }
+
+        public void cleanup() {
+
+        }
+
+        public boolean crawlIsEnded() {
+           if (isEndedCalls >= 3) {
+               return true;
+           } else {
+               isEndedCalls++;
+               throw new IOFailure("Failure in crawlIsEnded");
+           }
+        }
+    }
+
+    /**
+     * A Heritrix Controller which fails on every call
+     */
+    public static class FailingTestController implements HeritrixController {
+
+        public FailingTestController(HeritrixFiles files) {};
 
         public void initialize() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Failed to initialize");
         }
 
         public void requestCrawlStart() throws IOFailure {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public void beginCrawlStop() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public void requestCrawlStop(String reason) {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public boolean atFinish() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public boolean crawlIsEnded() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public int getActiveToeCount() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public long getQueuedUriCount() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public int getCurrentProcessedKBPerSec() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public String getProgressStats() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public boolean isPaused() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
 
         public void cleanup() {
-            //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("cleanup failure");
         }
 
         public String getHarvestInformation() {
             //TODO: implement method
-            throw new RuntimeException("Not implemented");
+            throw new IOFailure("Not implemented");
         }
+    }
+
+    /**
+     * A heritrix controller which fails on everything except cleanup
+     */
+    public static class SucceedOnCleanupTestController extends FailingTestController {
+        public SucceedOnCleanupTestController(HeritrixFiles files) {super(files);}
+        public void cleanup(){return;}
     }
 
 
