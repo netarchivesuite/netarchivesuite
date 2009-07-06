@@ -42,7 +42,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * and some specialised settings to define the way to harvest a domain.
  *
  */
-public class DomainConfiguration implements Named {
+public class    DomainConfiguration implements Named {
     private String configName;
     private String orderXmlName = "";
     /** maximum number of objects harvested for this configuration in a snapshot
@@ -314,15 +314,15 @@ public class DomainConfiguration implements Named {
      * configuration, unless override is in effect.  It is used to modify
      * the expected number of objects based on what we know of object sizes.
      * -1 means not limit.
-     * @return The expected number.
+     * @return The expected number of objects.
      */
     public long getExpectedNumberOfObjects(long objectLimit, long byteLimit) {
         long prevresultfactor
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
-        long bestguessfactor
-                = Settings.getLong(
-                HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS);
+        //long bestguessfactor
+        //        = Settings.getLong(
+        //        HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS);
 
         HarvestInfo best = getBestHarvestInfoExpectation();
 
@@ -331,7 +331,7 @@ public class DomainConfiguration implements Named {
 
         long expectedObjectSize = getExpectedBytesPerObject(best);
         // The maximum number of objects that the maxBytes setting gives.
-        long maximum;
+        long maximum = -1;
         if (objectLimit != Constants.HERITRIX_MAXOBJECTS_INFINITY
             || byteLimit != Constants.HERITRIX_MAXBYTES_INFINITY) {
             maximum = minObjectsBytesLimit(objectLimit, byteLimit,
@@ -340,24 +340,30 @@ public class DomainConfiguration implements Named {
                    || maxBytes != Constants.HERITRIX_MAXBYTES_INFINITY) {
             maximum = minObjectsBytesLimit(maxObjects, maxBytes,
                                            expectedObjectSize);
-        } else {
+        } /*else {
             maximum = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
-        }
+        } */
+
         long minimum;
         if (best != null) {
             minimum = best.getCountObjectRetrieved();
         } else {
             minimum = 0;
         }
+        // Calculate the expectated number of objects we will harvest.
         long expectation;
         if (best != null
-            && best.getStopReason() == StopReason.DOWNLOAD_COMPLETE) {
+            && best.getStopReason() == StopReason.DOWNLOAD_COMPLETE
+            && maximum != -1) {
             //We set the expectation, so our harvest will exceed the expectation
             //at most <factor> times if the domain is a lot larger than
             //our best guess.
             expectation = minimum + ((maximum - minimum) / prevresultfactor);
         } else {
-            expectation = minimum + ((maximum - minimum) / bestguessfactor);
+            // old calculation
+            //expectation = minimum + ((maximum - minimum) / bestguessfactor);
+            // use Settings to define max domain settins bug #928
+            expectation = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
         }
         // Always limit to domain specifics if set to do so. We always expect
         // to actually hit this limit
@@ -378,7 +384,7 @@ public class DomainConfiguration implements Named {
     }
 
     /** Return the lowest limit for the two values, or MAX_DOMAIN_SIZE if both
-     * are infinite
+     * are infinite, which is the max size we harvest from this domain.
      *
      * @param objectLimit A long value defining an object limit, or 0 for
      * infinite
