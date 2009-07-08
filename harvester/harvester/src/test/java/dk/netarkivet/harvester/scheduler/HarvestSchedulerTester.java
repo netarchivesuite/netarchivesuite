@@ -131,7 +131,7 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Testing close() For the moment, we only test that this does not throw an
      * exception.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testClose() throws Exception {
         hsch = submitNewJobsAndGetSchedulerInstance();
@@ -142,7 +142,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that running the scheduler creates certain jobs.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testRun() throws Exception {
         JobDAO dao = JobDAO.getInstance();
@@ -181,7 +181,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test that the getInstance method works.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testCreateInstance() throws Exception {
         JobDAO dao = JobDAO.getInstance();
@@ -194,7 +194,7 @@ public class HarvestSchedulerTester extends TestCase {
     /**
      * Submit new jobs and return Scheduler instance.
      * @return a Scheduler instance.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     private HarvestScheduler submitNewJobsAndGetSchedulerInstance() throws Exception {
         final HarvestScheduler instance = HarvestScheduler.getInstance();
@@ -207,7 +207,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /**
      * Test private method getHoursPassedSince().
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testGetHoursPassedSince() throws Exception {
         hsch = submitNewJobsAndGetSchedulerInstance();
@@ -216,18 +216,19 @@ public class HarvestSchedulerTester extends TestCase {
         Calendar c = new GregorianCalendar();
         c.add(Calendar.MINUTE, 45);
         Object result = getHoursPassedSince.invoke(hsch, c.getTime());
-        assertEquals("Should return -1 on date after now", new Integer(-1), result);
+        assertEquals("Should return -1 on date after now", -1, result);
         c.add(Calendar.HOUR,  -1);
         result = getHoursPassedSince.invoke(hsch, c.getTime());
-        assertEquals("Should return 0 on date close to now", new Integer(0), result);
+        assertEquals("Should return 0 on date close to now", 0, result);
         c.add(Calendar.HOUR,  -12);
         result = getHoursPassedSince.invoke(hsch, c.getTime());
-        assertEquals("Should return 12 on date 12 hours before", new Integer(12), result);
+        assertEquals("Should return 12 on date 12 hours before", 12, result);
     }
+
 
     /**
      * Test that HarvestScheduler is a singleton.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testSingletonicity() throws Exception {
         ClassAsserts.assertSingleton(HarvestScheduler.class);
@@ -243,6 +244,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /** Test that runNewJobs skips bad jobs without crashing (bug #627).
      * TODO The setActualStop/setActualStart no longer throws exception, so we need to find a way making jobs bad
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testSubmitNewJobs() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -285,7 +287,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /** 
      * Test that runNewJobs generates correct alias information for the job.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesAliasInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -339,7 +341,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Run method
         m.invoke(hsch);
-        ((JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance())
+        JMSConnectionTestMQ.getInstance()
                 .waitForConcurrentTasksToFinish();
 
         //Check result
@@ -368,7 +370,7 @@ public class HarvestSchedulerTester extends TestCase {
 
     /** 
      * Test that runNewJobs makes correct duplication reduction information.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testSubmitNewJobsMakesDuplicateReductionInfo() throws Exception {
         Method m = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
@@ -412,7 +414,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Run method
         m.invoke(hsch);
-        ((JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance())
+        JMSConnectionTestMQ.getInstance()
                 .waitForConcurrentTasksToFinish();
 
         //Check result
@@ -436,9 +438,74 @@ public class HarvestSchedulerTester extends TestCase {
                      new String(metadataEntry.getData()));
     }
 
+    public void testStoppedOldJobs() throws Exception {
+        hsch = HarvestScheduler.getInstance();
+        HarvestDefinitionDAOTester.waitForJobGeneration();
+
+        final DomainDAO dao = DomainDAO.getInstance();
+        Iterator<Domain> domainsIterator = dao.getAllDomains();
+        assertTrue("Should be at least one domain in domains table",
+                domainsIterator.hasNext());
+        DomainConfiguration cfg = domainsIterator.next().getDefaultConfiguration();
+        final JobDAO jdao = JobDAO.getInstance();
+        
+        final Long harvestID = 1L;
+        // Verify that harvestDefinition with ID=1L exists
+        assertTrue("harvestDefinition with ID=" + harvestID
+                + " does not exist, but should have",
+                HarvestDefinitionDAO.getInstance().exists(harvestID));
+        // Create 6 jobs - with start time minus 60*60*24*7 - 60 (one week minus one min) ago
+        for (int i=0; i<6; i++) {
+            Job newJob = Job.createJob(harvestID, cfg, 1);
+            newJob.setActualStart(new Date( (new Date()).getTime() - 604740) );
+            newJob.setStatus(JobStatus.STARTED);
+            jdao.create(newJob);
+        }
+        // Create 6 new jobs with now
+        for (int i=0; i<6; i++) {
+            Job newJob = Job.createJob(harvestID, cfg, 1);
+            newJob.setActualStart(new Date());
+            newJob.setStatus(JobStatus.STARTED);
+            jdao.create(newJob);
+        }
+        List<JobStatusInfo> oldInfos = jdao.getStatusInfo();
+        // Since initial DB contains one NEW job, we now have one of each
+        // status plus one extra NEW (i.e. 7 jobs).
+        assertTrue("There should have been 13 jobs now, but there was "
+                + oldInfos.size(), oldInfos.size() == 13);
+
+        Iterator<Long> ids = jdao.getAllJobIds(JobStatus.STARTED);
+        int size = 0;
+        while(ids.hasNext()) {
+            ids.next();
+            size++;
+        }
+        assertTrue("There should be 12 jobs with status STARTED, there are " + size, size == 12);
+        System.out.println("Sleeps for 100 seconds, be patiant");
+        Thread.sleep(10000);
+        hsch.run();
+
+        // check that we have 6 failed and 6 submitted job after we have stopped
+        // old jobs
+        ids = jdao.getAllJobIds(JobStatus.FAILED);
+        size = 0;
+        while(ids.hasNext()) {
+            ids.next();
+            size++;
+        }
+        assertTrue("There should be 6 jobs with status FAILED, there are " + size, size == 6);
+        ids = jdao.getAllJobIds(JobStatus.STARTED);
+        size = 0;
+        while(ids.hasNext()) {
+            ids.next();
+            size++;
+        }
+        assertTrue("There should be 6 jobs with status STARTED, there are " + size, size == 6);
+    }
+
     /**
      * Unit test testing the private method rescheduleJob.
-     * @throws Exception
+     * @throws Exception if HarvestScheduler throws exception
      */
     public void testRescheduleJobs() throws Exception {
         hsch = HarvestScheduler.getInstance();
@@ -459,7 +526,7 @@ public class HarvestSchedulerTester extends TestCase {
         // Create 6 jobs, one in each JobStatus:
         // (NEW, SUBMITTED, STARTED, DONE, FAILED, RESUBMITTED) 
         for (JobStatus status : JobStatus.values()) {
-            Job newJob = Job.createJob(harvestID, cfg, 1);
+            Job newJob = Job.createJob(harvestID, cfg, 1); 
             newJob.setStatus(status);
             jdao.create(newJob);
         }

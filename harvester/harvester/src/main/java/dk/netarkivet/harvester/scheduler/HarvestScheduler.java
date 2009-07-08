@@ -41,6 +41,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
@@ -156,6 +157,9 @@ public class HarvestScheduler implements CleanupIF {
             // Schedule running every GENERATE_JOBS_PERIOD milliseconds
             // presently one minut.
             scheduleJobs();
+            // stop STARTED jobs which have been on for more than
+            // settings.harvester.scheduler.jobtimeouttime time
+            stopOldJob();
             timer = new Timer(true);
             timer.scheduleAtFixedRate(task, cal.getTime(),
                     GENERATE_JOBS_PERIOD);
@@ -193,6 +197,31 @@ public class HarvestScheduler implements CleanupIF {
         log.info(resubmitcount + " has been resubmitted.");
     }
 
+    /**
+     * Stops job if its started more than ... time ago
+     *
+     */
+    private void stopOldJob() {
+        final JobDAO dao = JobDAO.getInstance();
+        final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.STARTED);
+        int stoppedJobs = 0;
+        while (jobs.hasNext()) {
+            long id = jobs.next();
+            Job job = dao.read(id);
+
+            long timeDiff = Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME);
+            Date endTime = new Date();
+            endTime.setTime(job.getActualStart().getTime() + timeDiff);
+            //System.out.println("endTime " + endTime.getTime() + " , Date() " + new Date().getTime());
+            if (new Date().after(endTime)) {
+                log.warn("Update job " + id + " to status equals FAILED");
+                job.setStatus(JobStatus.FAILED);
+                dao.update(job);
+                stoppedJobs++;
+            }
+        }
+        log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
+    }
 
     /** Schedule all jobs ready for execution and perform backup if required. */
     private void scheduleJobs() {

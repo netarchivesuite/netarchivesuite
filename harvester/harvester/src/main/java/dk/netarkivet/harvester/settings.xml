@@ -51,6 +51,8 @@
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <!-- one week in seconds  - time before jobs terminate -->
+            <jobtimeouttime>604800</jobtimeouttime>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>

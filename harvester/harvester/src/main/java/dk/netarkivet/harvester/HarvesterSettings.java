@@ -149,6 +149,12 @@ public class HarvesterSettings {
     public static String MAX_CONFIGS_PER_JOB_CREATION
             = "settings.harvester.scheduler.configChunkSize";
 
+    /** <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
+     *  Time before a STARTED job times out and change status to FAILED;
+     */
+    public static String JOB_TIMEOUT_TIME =
+            "settings.harvester.scheduler.jobtimeouttime";
+
     /**
      * <b>settings.harvester.harvesting.serverDir</b>: <br>
      * Each job gets a subdir of this dir. Job data is written and
@@ -270,5 +276,6 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_CONTROLLER_CLASS =
             "settings.harvester.harvesting.heritrixController.class";
+
 }
 

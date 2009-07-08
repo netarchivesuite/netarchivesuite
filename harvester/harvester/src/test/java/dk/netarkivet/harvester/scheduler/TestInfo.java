@@ -58,6 +58,7 @@ public class TestInfo {
 
     /**
      * Get a simple job.
+     * @return Job
      */
     static Job getJob() {
         // This job doesn't get an ID here, because we want to see what happens
@@ -67,7 +68,7 @@ public class TestInfo {
         } catch (SQLException e) {
             throw new IOFailure(e.getMessage());
         }
-        return Job.createJob(new Long(0), 
+        return Job.createJob(0L,
                 DomainDAO.getInstance()
                 .read("netarkivet.dk")
                 .getConfiguration("Engelsk_netarkiv_et_niveau"), 0);
