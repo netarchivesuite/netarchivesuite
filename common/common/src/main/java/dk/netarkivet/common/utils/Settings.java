@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -129,6 +130,7 @@ public class Settings {
      *
      * @throws ArgumentNotValid if key is null or the empty string
      * @throws UnknownID        if no setting loaded matches key
+     * @throws IOFailure        if IO Failure
      */
     public static String get(String key)
             throws UnknownID, IOFailure, ArgumentNotValid {
@@ -214,6 +216,8 @@ public class Settings {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         return new File(get(key));
     }
+
+
     /**
      * Gets a list of settings.
      * First it is checked, if the key is registered as a System property.

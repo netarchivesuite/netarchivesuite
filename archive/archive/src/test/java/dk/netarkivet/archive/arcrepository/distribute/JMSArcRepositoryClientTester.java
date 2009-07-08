@@ -221,7 +221,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * This tests the getFile()-method returns a file via JMS. The reply file
      * should contain a string: <code>filename+" "+index</code>.
      *
-     * @throws IOException
+     * @throws IOException if arc throws one
      */
     public void testGetFile() throws IOException {
         DummyGetFileMessageReplyServer replyServer =
@@ -231,7 +231,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         Replica replica =
                 Replica.getReplicaFromId(Settings.get(
                         CommonSettings.USE_REPLICA_ID));
-        arc.getFile(filename, replica, toFile);
+        arc.getFile(filename, replica, toFile); 
         assertTrue("Result file should exist", toFile.exists());
         assertEquals("Result file should contain right text",
                      FileUtils.readFile(new File(ARCDIR, filename)),
@@ -299,7 +299,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * Testing that a message is sent via JMS and a ArgumentNotValid is thrown
      * when message is incorrect.
      *
-     * @throws IOException
+     * @throws IOException if we cant create new file
      */
     public void testStoreMessageNotOK() throws IOException {
         DummyStoreMessageReplyServer replyServer
@@ -307,24 +307,27 @@ public class JMSArcRepositoryClientTester extends TestCase {
         PreservationArcRepositoryClient arc
                 = ArcRepositoryClientFactory.getPreservationInstance();
         File f = new File(WORKING, "notok.arc");
-        f.createNewFile();
-        try {
-            arc.store(f);
-            fail("Exception expected when submitting notok.arc file");
-        } catch (IOFailure e) {
-            // Expected
+        if(f.createNewFile()) {
+            try {
+                arc.store(f);
+                fail("Exception expected when submitting notok.arc file");
+            } catch (IOFailure e) {
+                // Expected
+            }
+            replyServer.close();
+            CollectionAsserts.assertListEquals(
+                    "Should have no remaining remote files after failure",
+                    new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
+        } else {
+            fail("Can't create new file");
         }
-        replyServer.close();
-        CollectionAsserts.assertListEquals(
-                "Should have no remaining remote files after failure",
-                new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
     }
 
     /**
      * tests that a successful store reply will result in the RemoteFile being
      * deleted.
      *
-     * @throws InterruptedException
+     * @throws InterruptedException if ...
      */
     public void testStoreDelete() throws InterruptedException {
         // Set a listener on PRES
@@ -442,15 +445,19 @@ public class JMSArcRepositoryClientTester extends TestCase {
                      42, lbStatus.getNoOfFilesProcessed());
     }
 
+    /**
+     * Tests StoreRetreies
+     * @throws IOException if creation of files fails
+     */
     public void testStoreRetries() throws IOException {
         DummyStoreMessageReplyServer ar = new DummyStoreMessageReplyServer();
 
         File fail1 = new File(WORKING, "fail1");
-        fail1.createNewFile();
         File fail2 = new File(WORKING, "fail2");
-        fail2.createNewFile();
         File fail3 = new File(WORKING, "fail3");
-        fail3.createNewFile();
+        if(!fail1.createNewFile() || !fail2.createNewFile() || !fail3.createNewFile()) {
+            fail("Can't create files");
+        }
         arc.store(fail1);
         assertEquals("Should have succeeded on second try", 2, ar.received);
         ar.reset();
@@ -508,8 +515,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * Tests that locally generated exceptions in the JMSArcRepositoryClient
      * gives a message.  See bug #867
      *
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException if field doens't exists
+     * @throws IllegalAccessException if access denied
      */
     public void testStoreException()
             throws NoSuchFieldException, IllegalAccessException {
@@ -537,7 +544,10 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
     }
 
-    /** Test that remote files are cleaned up after exceptions. Bug #1080 */
+    /** Test that remote files are cleaned up after exceptions. Bug #1080
+     * @throws IllegalAccessException if field doens't exists
+     * @throws NoSuchFieldException if access denied
+     **/
     public void testStoreFailed()
             throws NoSuchFieldException, IllegalAccessException {
         // Set Synchronizers request field to null to get an appropriately
@@ -577,6 +587,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                                               new ArrayList<File>(),
                                               new NullRemoteFile()));
             } catch (IOFailure e) {
+                // can't clean up
             }
         }
     }
@@ -618,6 +629,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 }
                 conn.reply(netMsg);
             } catch (IOFailure e) {
+                // can't clean up
             }
         }
 
@@ -649,8 +661,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                     String field = (String) aREQUIRED_VERSION_1_HEADER_FIELDS;
                     metadata.put(field, "");
                 }
-                metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, new Long(
-                        0L)); // Offset not stored as String but as Long
+                metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 0L); // Offset not stored as String but as Long
                 byte[] encodedKey = encode(netMsg.getArcFile(),
                                            netMsg.getIndex());
                 try {
@@ -683,6 +694,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
                 conn.reply(netMsg);
             } catch (IOFailure e) {
+                // can't clean up
             }
         }
 

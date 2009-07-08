@@ -237,7 +237,7 @@ public class Job implements Serializable {
         int harvestNum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cfg, "cfg");
         ArgumentNotValid.checkNotNull(harvestID, "harvestID");
-        ArgumentNotValid.checkNotNegative(harvestID.longValue(), "harvestID");
+        ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
         ArgumentNotValid.checkNotNull(priority, "priority");
         if (forceMaxObjectsPerDomain < -1) {
             String msg
@@ -805,7 +805,7 @@ public class Job implements Serializable {
             String domain = getDomain(url);
             Set<String> set;
             if (urlMap.containsKey(domain)) {
-                set = (TreeSet<String>) urlMap.get(domain);
+                set = urlMap.get(domain);
             } else {
                 set = new TreeSet<String>();
                 urlMap.put(domain, set);

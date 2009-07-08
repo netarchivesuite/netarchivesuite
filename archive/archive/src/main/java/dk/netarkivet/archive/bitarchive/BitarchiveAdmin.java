@@ -378,7 +378,6 @@ public class BitarchiveAdmin {
         for (File archivePath : archivePaths) {
             File archiveDir = new File(archivePath,
                                        Constants.FILE_DIRECTORY_NAME);
-
             if (checkArchiveDir(archiveDir)) {
                 File filename = new File(archiveDir, arcFileName);
                 if (filename.exists()) {

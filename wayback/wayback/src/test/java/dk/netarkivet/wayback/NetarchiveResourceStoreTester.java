@@ -119,6 +119,7 @@ public class NetarchiveResourceStoreTester extends TestCase {
         arc.close();
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(dk.netarkivet.wayback.TestInfo.WORKING_DIR);
+        FileUtils.remove(TestInfo.LOG_FILE);
         // Empty the log file.
         try {
             new FileOutputStream(dk.netarkivet.wayback.TestInfo.LOG_FILE).close();

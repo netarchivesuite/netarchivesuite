@@ -185,23 +185,23 @@ public class
      * See http://webteam.archive.org/jira/browse/HER-1285
      */
     /** The 'NASCENT' status. */
-    private static final String NASCENT_STATUS = "NASCENT";
+    //private static final String NASCENT_STATUS = "NASCENT";
     /** The 'RUNNING' status. */
-    private static final String RUNNING_STATUS = "RUNNING";
+    //private static final String RUNNING_STATUS = "RUNNING";
     /** The 'PAUSED' status. */
     private static final String PAUSED_STATUS = "PAUSED";
     /** The 'PAUSING' status. */
     private static final String PAUSING_STATUS = "PAUSING";
     /** The 'CHECKPOINTING' status. */
-    private static final String CHECKPOINTING_STATUS = "CHECKPOINTING";
+    //private static final String CHECKPOINTING_STATUS = "CHECKPOINTING";
     /** The 'STOPPING' status. */
-    private static final String STOPPING_STATUS = "STOPPING";
+    //private static final String STOPPING_STATUS = "STOPPING";
     /** The 'FINISHED' status. */
     private static final String FINISHED_STATUS = "FINISHED";
     /** The 'STARTED status. */
-    private static final String STARTED_STATUS = "STARTED";
+    //private static final String STARTED_STATUS = "STARTED";
     /** The 'PREPARING' status. */
-    private static final String PREPARING_STATUS = "PREPARING";
+    //private static final String PREPARING_STATUS = "PREPARING";
     /** The 'Illegal State' status. */
     private static final String ILLEGAL_STATUS = "Illegal State";
 
@@ -262,9 +262,7 @@ public class
                 Settings.get(HarvesterSettings.HERITRIX_JVM_OPTS);
             if ((jvmOptsStr != null) && (!jvmOptsStr.isEmpty())) {
                 String[] add = jvmOptsStr.split(" ");
-                for (String additionalOpt : add) {
-                    allOpts.add(additionalOpt);
-                }
+                allOpts.addAll(Arrays.asList(add));
             }
 
             allOpts.add("-Dcom.sun.management.jmxremote.port=" + getJMXPort());
@@ -286,8 +284,7 @@ public class
             allOpts.add("--admin=" + getHeritrixAdminName() + ":"
                     + getHeritrixAdminPassword());
 
-            String[] args = 
-                (String[]) allOpts.toArray(new String[allOpts.size()]);
+            String[] args = allOpts.toArray(new String[allOpts.size()]);
             log.info("Starting Heritrix process with args" 
                     + Arrays.toString(args));
             ProcessBuilder builder = new ProcessBuilder(args);
@@ -453,12 +450,8 @@ public class
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
         log.debug("Heritrix state: '" + status + "'");
         // Either Pausing or Paused in case of not null
-        if (status == null) {
-            return false;
-        } else {
-            return status.equals(PAUSED_STATUS)
-                || status.equals(PAUSING_STATUS);
-        }
+        return status != null
+               && (status.equals(PAUSED_STATUS) || status.equals(PAUSING_STATUS));
     }
 
     /** Check if the crawl has ended, either because Heritrix finished
@@ -491,8 +484,8 @@ public class
         }
         String status = (String) getCrawlJobAttribute(STATUS_ATTRIBUTE);
         return status == null
-               || status.equals(FINISHED_STATUS)
-               || status.equals(ILLEGAL_STATUS);
+                || status.equals(FINISHED_STATUS)
+                || status.equals(ILLEGAL_STATUS);
     }
 
     /** Return true if the Heritrix process has exited, logging the exit
@@ -928,13 +921,13 @@ public class
      * @return Bean name, to be passed into JMXUtils#getBeanName(String)
      */
     private String getHeritrixBeanName() {
-        final String beanName = "org.archive.crawler:"
-                                + JmxUtils.NAME + "=Heritrix,"
-                                + JmxUtils.TYPE + "=CrawlService,"
-                                + JmxUtils.JMX_PORT + "=" + getJMXPort() + ","
-                                + JmxUtils.GUI_PORT + "=" + getGUIPort() + ","
-                                + JmxUtils.HOST + "=" + getHostName();
-        return beanName;
+        return "org.archive.crawler:"
+               + JmxUtils.NAME + "=Heritrix,"
+               + JmxUtils.TYPE + "=CrawlService,"
+               + JmxUtils.JMX_PORT + "=" + getJMXPort() + ","
+               + JmxUtils.GUI_PORT + "=" + getGUIPort() + ","
+               + JmxUtils.HOST + "=" + getHostName();
+
     }
 
     /** Get the name for the bean of a single job.  This bean does not exist
@@ -943,13 +936,12 @@ public class
      * @return Bean name, to be passed into JMXUtils#getBeanName(String)
      */
     private String getCrawlJobBeanName() {
-        final String beanName = "org.archive.crawler:"
-                                + JmxUtils.NAME + "=" + jobName + ","
-                                + JmxUtils.TYPE + "=CrawlService.Job,"
-                                + JmxUtils.JMX_PORT + "=" + getJMXPort() + ","
-                                + JmxUtils.MOTHER + "=Heritrix,"
-                                + JmxUtils.HOST + "=" + getHostName();
-        return beanName;
+        return "org.archive.crawler:"
+               + JmxUtils.NAME + "=" + jobName + ","
+               + JmxUtils.TYPE + "=CrawlService.Job,"
+               + JmxUtils.JMX_PORT + "=" + getJMXPort() + ","
+               + JmxUtils.MOTHER + "=Heritrix,"
+              + JmxUtils.HOST + "=" + getHostName();
     }
 
     /** Get the JMX connector to Heritrix.
@@ -957,10 +949,8 @@ public class
      * @return A connector that connects to a local Heritrix instance.
      */
     private JMXConnector getHeritrixJMXConnector() {
-        JMXConnector connector
-                = JMXUtils.getJMXConnector(SystemUtils.LOCALHOST, getJMXPort(),
-                                           getJMXAdminName(),
-                                           getJMXAdminPassword());
-        return connector;
+        return JMXUtils.getJMXConnector(SystemUtils.LOCALHOST, getJMXPort(),
+                                        getJMXAdminName(),
+                                        getJMXAdminPassword());
     }
 }
