@@ -180,7 +180,9 @@ public class HarvestDocumentation {
             if (arcFilesDir.isDirectory()) {
                 moveAwayForeignFiles(arcFilesDir, jobID);
                 //Generate CDX
-                // TODO: Place results in IngestableFiles-defined area
+                // TODO: Place r
+                //
+                // esults in IngestableFiles-defined area
                 File cdxFilesDir = FileUtils.createUniqueTempDir(crawlDir,
                                                                  "cdx");
                 CDXUtils.generateCDX(arcFilesDir, cdxFilesDir);
