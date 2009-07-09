@@ -52,8 +52,12 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  * scripts/sql/createfullhddb.sql and scripts/sql/createfullhddb.mysql.
  */
 public class ScheduleDBDAO extends ScheduleDAO {
+    /** The logger. */
     private final Log log = LogFactory.getLog(getClass());
-
+    
+    /** Constructor for this class, that only checks that the
+     * schedules table has the expected version (1).
+     */
     protected ScheduleDBDAO() {
         DBUtils.checkTableVersion("schedules", 1);
     }
@@ -78,8 +82,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
         try {
             s = c.prepareStatement("INSERT INTO schedules "
                           + "( name, comments, startdate, enddate, maxrepeats, "
-                          + "timeunit, numtimeunits, anytime, onminute, onhour, "
-                          + "ondayofweek, ondayofmonth, edition )"
+                          + "timeunit, numtimeunits, anytime, onminute, onhour,"
+                          + " ondayofweek, ondayofmonth, edition )"
                           + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
                             Statement.RETURN_GENERATED_KEYS);
             setScheduleParameters(s, schedule);
@@ -89,9 +93,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             schedule.setID(DBUtils.getGeneratedID(s));
             schedule.setEdition(edition);
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while creating schedule "
-                    + schedule +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error while creating schedule " + schedule
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -105,7 +108,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @param schedule a given schedule.
      * @throws SQLException If the operation fails.
      */
-    private void setScheduleParameters(PreparedStatement s, Schedule schedule) throws SQLException {
+    private void setScheduleParameters(PreparedStatement s, Schedule schedule)
+    throws SQLException {
         DBUtils.setName(s, 1, schedule, Constants.MAX_NAME_SIZE);
         DBUtils.setComments(s, 2, schedule, Constants.MAX_COMMENT_SIZE);
         final Date startDate = schedule.getStartDate();
@@ -138,7 +142,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @throws ArgumentNotValid if the schedulename is null or empty
      */
     public synchronized boolean exists(String scheduleName) {
-        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                scheduleName, "String scheduleName");
         final int count = DBUtils.selectIntValue(
                 "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
         return (1 == count);
@@ -153,13 +158,15 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @throws UnknownID        if the schedule doesn't exist
      */
     public synchronized Schedule read(String scheduleName) {
-        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                scheduleName, "String scheduleName");
         Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                                "SELECT schedule_id, comments, startdate, enddate, "
-                                + "maxrepeats, timeunit, numtimeunits, anytime, onminute, "
+                                "SELECT schedule_id, comments, startdate, "
+                                + "enddate, maxrepeats, timeunit, "
+                                + "numtimeunits, anytime, onminute, "
                                 + "onhour, ondayofweek, ondayofmonth, edition "
                                 + "FROM schedules WHERE name = ?");
             s.setString(1, scheduleName);
@@ -183,42 +190,49 @@ public class ScheduleDBDAO extends ScheduleDAO {
             Integer dayofweek = DBUtils.getIntegerMaybeNull(rs, 11);
             Integer dayofmonth = DBUtils.getIntegerMaybeNull(rs, 12);
             log.debug("Creating frequency for "
-                    + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek,dayofmonth)"
-                    + "= (" + timeunit + ", "
+                    + "(timeunit,anytime,numtimeunits,hour, minute, dayofweek," 
+                    + "dayofmonth) = (" + timeunit + ", "
                     + anytime + ","
                     + numtimeunits + ","
                     + minute + ","
                     + hour + ","
                     + dayofweek + ","
                     + dayofmonth + ","
-                    + ")");	
+                    + ")");
             Frequency freq = Frequency.getNewInstance(timeunit, anytime,
                     numtimeunits, minute, hour, dayofweek, dayofmonth);
             long edition = rs.getLong(13);
             final Schedule schedule;
             if (isTimedSchedule) {
-                schedule = Schedule.getInstance(startdate, enddate, freq, scheduleName, comments);
+                schedule = Schedule.getInstance(
+                        startdate, enddate, freq, scheduleName, comments);
             } else {
-                schedule = Schedule.getInstance(startdate, maxrepeats, freq, scheduleName, comments);
+                schedule = Schedule.getInstance(
+                        startdate, maxrepeats, freq, scheduleName, comments);
             }
             schedule.setID(id);
             schedule.setEdition(edition);
             return schedule;
         } catch (SQLException e) {
-            throw new IOFailure("SQL error reading schedule " + scheduleName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error reading schedule " + scheduleName
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
     }
 
+    /**
+     * @see ScheduleDAO#describeUsages(String) 
+     */
     public String describeUsages(String scheduleName) {
-        ArgumentNotValid.checkNotNullOrEmpty(scheduleName, "String scheduleName");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                scheduleName, "String scheduleName");
         return DBUtils.getUsages("SELECT harvestdefinitions.name "
                 + "FROM schedules, partialharvests, harvestdefinitions "
                 + "WHERE schedules.name = ?"
                 + "  AND schedules.schedule_id = partialharvests.schedule_id"
-                + "  AND partialharvests.harvest_id = harvestdefinitions.harvest_id",
+                + "  AND partialharvests.harvest_id " 
+                        + "= harvestdefinitions.harvest_id",
                 scheduleName, scheduleName);
     }
 
@@ -252,8 +266,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             log.debug("Deleting schedule " + scheduleName);
         } catch (SQLException e) {
             final String message = "SQL error deleting schedule "
-                + scheduleName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                    + scheduleName + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
@@ -308,9 +322,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
             }
             schedule.setEdition(newEdition);
         } catch (SQLException e) {
-            throw new IOFailure("SQL error while creating schedule "
-                    + schedule +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error while creating schedule " + schedule
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -327,8 +340,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
                 "SELECT name FROM schedules ORDER BY name");
             return new FilterIterator<String, Schedule>(names.iterator()) {
                 /**
-                 * Returns the object corresponding to the given object, or null if
-                 * that object is to be skipped.
+                 * Returns the object corresponding to the given object,
+                 *  or null if that object is to be skipped.
                  *
                  * @param s An object in the source iterator domain
                  * @return An object in this iterators domain, or null
@@ -338,15 +351,22 @@ public class ScheduleDBDAO extends ScheduleDAO {
                 }
             };
         } catch (SQLException e) {
-            throw new IOFailure("SQL error getting all schedules" +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            throw new IOFailure("SQL error getting all schedules" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 
+
+    /**
+     * @see ScheduleDAO#getCountSchedules() 
+     */
     public synchronized int getCountSchedules() {
         return DBUtils.selectIntValue("SELECT COUNT(*) FROM schedules");
     }
 
+    /**
+     * @see ScheduleDAO#mayDelete(Schedule)    
+     */
     public boolean mayDelete(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
         return !DBUtils.selectAny("SELECT harvest_id"

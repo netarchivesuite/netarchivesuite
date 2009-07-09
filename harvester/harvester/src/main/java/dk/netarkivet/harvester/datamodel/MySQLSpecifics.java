@@ -103,8 +103,8 @@ public class MySQLSpecifics extends DBSpecifics {
             s = c.prepareStatement("DROP TEMPORARY TABLE " +  tableName);
             s.execute();
         } catch (SQLException e) {
-            log.warn("Couldn't drop temporary table " + tableName +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e), e);
+            log.warn("Couldn't drop temporary table " + tableName + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -117,7 +117,7 @@ public class MySQLSpecifics extends DBSpecifics {
      * by the DB_BACKUP_INIT_HOUR settings.
      *
      * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException 
+     * @throws SQLException This will never happen
      */
     public void backupDatabase(File backupDir) throws SQLException {
         log.warn("Attempt to backup the database to directory '" 
@@ -142,13 +142,13 @@ public class MySQLSpecifics extends DBSpecifics {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv3tov4() {
-        String[] SqlStatements = {
+        String[] sqlStatements = {
             "ALTER TABLE jobs CHANGE COLUMN forcemaxbytes forcemaxbytes"
             + " bigint not null default -1",
             "ALTER TABLE jobs CHANGE COLUMN num_configs num_configs"
             + " int not null default 0"
         };
-        DBConnect.updateTable("jobs", 4, SqlStatements);
+        DBConnect.updateTable("jobs", 4, sqlStatements);
     }
     
     /** Migrates the 'jobs' table from version 4 to version 5
@@ -156,35 +156,34 @@ public class MySQLSpecifics extends DBSpecifics {
      * @throws IOFailure in case of problems in interacting with the database
      */
     protected synchronized void migrateJobsv4tov5() {
-        String[] SqlStatements = {
-                "ALTER TABLE jobs ADD COLUMN submitteddate datetime AFTER enddate",
+        String[] sqlStatements = {
+                "ALTER TABLE jobs ADD COLUMN submitteddate datetime "
+                    + "AFTER enddate",
                 "ALTER TABLE jobs ADD COLUMN resubmitted_as_job bigint"    
             };
-        DBConnect.updateTable("jobs", 5, SqlStatements);
+        DBConnect.updateTable("jobs", 5, sqlStatements);
     }
     
     /** Migrates the 'configurations' table from version 3 to version 4.
      * This consists of altering the default value of field 'maxbytes' to -1.
-     * FIXME Complete implementation
      */
     protected synchronized void migrateConfigurationsv3ov4() {
      // Update configurations table to version 4
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE configurations ALTER maxbytes SET DEFAULT -1"
             };
-        DBConnect.updateTable("configurations", 4, SqlStatements);
+        DBConnect.updateTable("configurations", 4, sqlStatements);
     }
  
     /** Migrates the 'fullharvests' table from version 2 to version 3.
-     * This consists of altering the default value of field 'maxbytes' to -1.
-     * FIXME Complete implementation
+     * This consists of altering the default value of field 'maxbytes' to -1
      */
     protected synchronized void migrateFullharvestsv2tov3() {
         // Update fullharvests table to version 3
-        String[] SqlStatements = {
+        String[] sqlStatements = {
                 "ALTER TABLE fullharvests ALTER maxbytes SET DEFAULT -1"
             };
-        DBConnect.updateTable("fullharvests", 3, SqlStatements);
+        DBConnect.updateTable("fullharvests", 3, sqlStatements);
     }
     
 }

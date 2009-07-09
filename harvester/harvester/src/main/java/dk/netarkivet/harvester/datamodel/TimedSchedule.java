@@ -67,7 +67,8 @@ public class TimedSchedule extends Schedule {
 
         final TimedSchedule timedSchedule = (TimedSchedule) o;
 
-        if (endDate != null ? !endDate.equals(timedSchedule.endDate) : timedSchedule.endDate != null) return false;
+        if (endDate != null ? !endDate.equals(timedSchedule.endDate)
+                : timedSchedule.endDate != null) return false;
 
         return true;
     }

@@ -40,7 +40,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Currently only handles a single .cdx file.
  * */
 public class BinSearch {
-    private final static Log log =
+    /** The logger. */
+    private static final Log log =
             LogFactory.getLog(BinSearch.class.getName());
 
     /** Our own comparison function.  Right now just does prefix match.
@@ -97,11 +98,11 @@ public class BinSearch {
      * prefix matches.
      * */
     private static class PrefixIterable implements Iterable<String> {
-        /** File we're reading from */
+        /** File we're reading from. */
         private final File file;
         /** The prefix of all lines we return. */
         private final String prefix;
-        /** Where to start reading - seek to this without reading it */
+        /** Where to start reading - seek to this without reading it. */
         private final long offset;
 
         /** Construct an Iterable from the given file, offset and prefix.
@@ -155,7 +156,8 @@ public class BinSearch {
                     try {
                         line = infile.readLine();
                     } catch (IOException e) {
-                        String message = "IOException reading file '" + file + "'";
+                        String message = "IOException reading file '" 
+                            + file + "'";
                         log.warn(message, e);
                         throw new IOFailure(message, e);
                     }
@@ -175,7 +177,8 @@ public class BinSearch {
                     try {
                         infile.close();
                     } catch (IOException e) {
-                        String message = "IOException closing file '" + file + "'";
+                        String message = "IOException closing file '"
+                            + file + "'";
                         log.warn(message, e);
                         throw new IOFailure(message, e);
                     }
@@ -227,7 +230,7 @@ public class BinSearch {
      *            the start of a line that matches 'find'
      * @return The offset into the file of the first line matching 'find'.
      *         Guaranteed to be <= matchingline.
-     * @throws IOException
+     * @throws IOException If the matchingLine < 0 or some I/O error occurs.
      */
     private static long findFirstLine(RandomAccessFile in,
                                       String find, long matchingline)
@@ -280,7 +283,7 @@ public class BinSearch {
      * @param pos The position to start at.
      * @return A new position in the file.  The file's pointer (as given by
      * getFilePointer()) is updated to match.
-     * @throws IOException
+     * @throws IOException If some I/O error occurs
      */
     private static long skipToLine(RandomAccessFile in, long pos)
             throws IOException {
@@ -294,7 +297,7 @@ public class BinSearch {
      * Note that this may not be the first line, if there be duplicates.
      * @param in the RandomAccessFile
      * @param find The String to look for in the above file
-     * @throws IOException
+     * @throws IOException If some I/O error occurs
      * @return The index of a line matching find, or -1 if none found.
      */
     private static long binSearch(RandomAccessFile in,
@@ -358,7 +361,7 @@ public class BinSearch {
      * a line or EOF.
      * @return The position of a line s.t. startpos < returnval < endpos,
      * or -1 if no such line can be found.
-     * @throws IOException
+     * @throws IOException If some I/O error occurs
      */
     private static long findMiddleLine(RandomAccessFile in,
                                        long startpos, long endpos)
@@ -389,7 +392,8 @@ public class BinSearch {
             newmidpos = skipToLine(in, newmidpos);
         }
         // Now the midpos should be != startpos && != endpos
-        assert newmidpos != startpos : "Invariant violated: Newmidpos > startpos";
+        assert newmidpos != startpos
+            : "Invariant violated: Newmidpos > startpos";
         return newmidpos;
     }
 }

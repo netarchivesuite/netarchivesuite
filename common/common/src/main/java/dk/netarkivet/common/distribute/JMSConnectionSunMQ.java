@@ -76,19 +76,19 @@ public class JMSConnectionSunMQ extends JMSConnection {
     protected static JMSConnectionSunMQ instance = null;
 
     /** The errorcode for failure of the JMSbroker to acknowledge a message. */
-    final static String PACKET_ACK_FAILED = "C4000";
+    static final String PACKET_ACK_FAILED = "C4000";
 
     /** The errorcode signifying that the current session to the JMSbroker
      * has been closed by the jmsbroker.
      * One of the reasons: that the JMSbroker has been shutdown previously.
      */
-    final static String SESSION_IS_CLOSED = "C4059";
+    static final String SESSION_IS_CLOSED = "C4059";
 
     /**
      * The errorcode signifying that the JMSbroker
      * has been shutdown. This errorcode is issued by the JMS-client.
      */
-    final static String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
+    static final String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
@@ -120,7 +120,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * @throws IOFailure when connection to JMS broker failed
      */
     public static synchronized JMSConnectionSunMQ getInstance()
-    throws UnknownID, IOFailure {
+    throws IOFailure {
         if (instance == null) {
             instance = new JMSConnectionSunMQ();
         }
@@ -134,7 +134,10 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Notice: The return type is explicitly defined with package prefix to
      * avoid name collision with javax.jms.QueueConnectionFactory
      *
-     * @throws JMSException
+     * @throws JMSException If unable to create a QueueConnectionfactory
+     * with the necessary properties: imqConsumerflowLimit set to 1,
+     * imqBrokerHostname and imqBrokerHostPort set to the values defined
+     * in our settings.
      * @return QueueConnectionFactory
      */
     protected QueueConnectionFactory getQueueConnectionFactory()
@@ -159,10 +162,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * Notice: The return type is explicitly defined with package prefix to
      * avoid name collision with javax.jms.TopicConnectionFactory
      *
-     * @throws JMSException
+     * @throws JMSException If unable to create a TopicConnectionfactory
+     * with the necessary properties: imqConsumerflowLimit set to 1,
+     * imqBrokerHostname and imqBrokerHostPort set to the values defined
+     * in our settings.
      * @return TopicConnectionFactory
      */
-    protected TopicConnectionFactory getTopicConnectionFactory() throws JMSException {
+    protected TopicConnectionFactory getTopicConnectionFactory()
+    throws JMSException {
         TopicConnectionFactory cFactory = new TopicConnectionFactory();
         ((ConnectionFactory) cFactory).setProperty(
                 ConnectionConfiguration.imqBrokerHostName,
@@ -181,7 +188,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * If no queue exists a new one will be created.
      *
      * @param queueName the name of the queue.
-     * @throws JMSException
+     * @throws JMSException If unable to get Queue with given queueName
      * @return Queue
      */
     protected Queue getQueue(String queueName) throws JMSException {
@@ -193,7 +200,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      * If no topic exists a new one will be created.
      *
      * @param topicName the name of the topic.
-     * @throws JMSException
+     * @throws JMSException If unable to get Topic with given topicName
      * @return Topic
      */
     protected Topic getTopic(String topicName) throws JMSException {
@@ -332,7 +339,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     /**
      * Reconnect to JMSBroker and reestablish sessions.
      * Resets senders and publishers.
-     * @throws JMSException
+     * @throws JMSException If unable to reconnect to JMSBroker 
+     * and/or reestablish sesssions
      */
     private void reconnect() throws JMSException {
         try {

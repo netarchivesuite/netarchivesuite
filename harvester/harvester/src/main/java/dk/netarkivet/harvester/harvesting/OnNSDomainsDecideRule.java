@@ -43,12 +43,13 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
 
-    /** This is what SurtPrefixSet.prefixFromPlain returns for a non valid URI. */
-    public final static String NON_VALID_DOMAIN = "http://(http,)";
+    /** This is what SurtPrefixSet.prefixFromPlain returns for
+     *  a non valid URI. */
+    public static final String NON_VALID_DOMAIN = "http://(http,)";
     
     /** Pattern that matches the first part of SURT - until ?? */
-    public final static Pattern SURT_FIRSTPART_PATTERN
-    	= Pattern.compile("http\\://\\([^\\)]*");
+    public static final Pattern SURT_FIRSTPART_PATTERN
+        = Pattern.compile("http\\://\\([^\\)]*");
     /** 
      * Constructor for the class OnNSDomainsDecideRule. 
      * @param s The name of this DecideRule
@@ -99,7 +100,7 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
                 for (int j = parts.length - 1; j >= 0; j--) {
                     domnameBuilder.append(parts[j]);
                     if (j != 0) {
-                    	domnameBuilder.append(".");
+                        domnameBuilder.append(".");
                     }
                 }
                 //add the new domain name to surtPrefixes
@@ -141,7 +142,8 @@ public class OnNSDomainsDecideRule extends SurtPrefixedDecideRule {
             // allow to continue with original string uri
         }
         try {
-            return policy.getClassKey(null, CandidateURI.fromString(u.toString()));
+            return policy.getClassKey(
+                    null, CandidateURI.fromString(u.toString()));
         } catch (URIException e) {
             // illegal URI - return a SURT that will not match any real URIs
             return NON_VALID_DOMAIN;

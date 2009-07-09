@@ -50,7 +50,7 @@ public abstract class ScheduleDAO implements Iterable<Schedule> {
      *
      * @return ScheduleDAO singleton
      */
-    public synchronized static ScheduleDAO getInstance() {
+    public static synchronized ScheduleDAO getInstance() {
         if (instance == null) {
             instance = new ScheduleDBDAO();
         }

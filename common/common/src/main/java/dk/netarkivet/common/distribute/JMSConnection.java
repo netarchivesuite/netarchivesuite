@@ -94,26 +94,29 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * The Session handling messages sent to / received from
      * the NetarchiveSuite topics.
      */
-
     protected TopicSession myTSess;
 
     /** Semaphore for whether or not a reconnect is in progress.  */
-    protected static AtomicBoolean reconnectInProgress = new AtomicBoolean(false);
+    protected static final AtomicBoolean reconnectInProgress 
+        = new AtomicBoolean(false);
 
     /**
      * Map for caching Queue senders.
      */
-    protected Map<String, QueueSender> senders = new HashMap<String, QueueSender>();
+    protected Map<String, QueueSender> senders
+        = new HashMap<String, QueueSender>();
     /**
      *  Map for caching Topic publishers.
      */
-   protected Map<String, TopicPublisher> publishers = new HashMap<String, TopicPublisher>();
+   protected Map<String, TopicPublisher> publishers
+       = new HashMap<String, TopicPublisher>();
 
     /**
      * Set for caching consumers (topic-subscribers and queue-receivers). Serves
      * the purpose of closing all consumers on call to JMSConnection.close()
      */
-    protected Map<String, MessageConsumer> consumers = new HashMap<String, MessageConsumer>();
+    protected Map<String, MessageConsumer> consumers 
+        = new HashMap<String, MessageConsumer>();
 
     /**
      * Separator used in the consumerkey. Separates the ChannelName from the
@@ -138,10 +141,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /**
      * Initializes the JMS connection. Creating and starting connections to
      * queues and topics. Adds the JMSConnection to a shutdown hook.
-     * Adds this object as ExceptionListener for the queue and topic connections.
+     * Adds this object as ExceptionListener for the queue and topic
+     * connections.
      * @throws IOFailure if initialization fails.
      */
-    protected void initConnection() {
+    protected void initConnection() throws IOFailure {
         log.info("Initializing a JMS connection of type '" + getClass()
                  + "' to Broker at " + getHost() + ":" + getPort() + ".");
 
@@ -178,8 +182,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /**
      * Helper method to establish one QueueConnection and associated Session,
      * and one TopicConnection and associated Session.
-     * @throws JMSException
-     */
+     * @throws JMSException If some JMS error occurred during the
+     * creation of the required JMS connections and sessions
+     */ 
     protected void establishConnectionAndSessions() throws JMSException {
         myQConnFactory = getQueueConnectionFactory();
         myTConnFactory = getTopicConnectionFactory();
@@ -197,7 +202,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Should be implemented according to a specific JMS broker.
      *
      * @return QueueConnectionFactory
-     * @throws JMSException
+     * @throws JMSException If unable to get QueueConnectionFactory
      */
     protected abstract QueueConnectionFactory getQueueConnectionFactory()
             throws JMSException;
@@ -206,7 +211,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Should be implemented according to a specific JMS broker.
      *
      * @return TopicConnectionFactory
-     * @throws JMSException
+     * @throws JMSException If unable to get TopicConnectionFactory
      */
     protected abstract TopicConnectionFactory getTopicConnectionFactory()
             throws JMSException;
@@ -217,7 +222,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @param queueName
      *            the name of the wanted Queue
      * @return Queue
-     * @throws JMSException
+     * @throws JMSException If unable to get a Topic
      */
     protected abstract Queue getQueue(String queueName) throws JMSException;
 
@@ -227,7 +232,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @param topicName
      *            The name of the wanted Topic
      * @return Topic
-     * @throws JMSException
+     * @throws JMSException If unable to get a Topic
      */
     protected abstract Topic getTopic(String topicName) throws JMSException;
 
@@ -284,8 +289,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                     senders.put(queueName, queueSender);
                 }
                 synchronized (nMsg) {
-                    log.info("Sending message to destination '" + queueName + "', ID = "
-                            + nMsg.replyOfId);
+                    log.info("Sending message to destination '" + queueName
+                            + "', ID = " + nMsg.replyOfId);
 
                     queueSender.send(msg);
                     log.debug("Sent message to "
@@ -511,7 +516,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws ArgumentNotValid
      *             when msg in valid or reply from JMS server is invalid
      */
-    public static NetarkivetMessage unpack(Message msg) throws ArgumentNotValid {
+    public static NetarkivetMessage unpack(Message msg)
+    throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         ObjectMessage objMsg = null;
@@ -580,7 +586,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 // If a Channel is not a Topic, it is a Queue:
                 else {
                     Queue queue = getQueue(mq.getName());
-                    QueueReceiver myQueueReceiver = myQSess.createReceiver(queue);
+                    QueueReceiver myQueueReceiver
+                        = myQSess.createReceiver(queue);
                     myQueueReceiver.setMessageListener(ml);
 
                     if (consumers.get(key) == null) {
@@ -612,8 +619,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             throws IOFailure {
         ArgumentNotValid.checkNotNull(mq, "ChannelID mq");
         ArgumentNotValid.checkNotNull(ml, "MessageListener ml");
-        String errMsg = "JMS-error - could not remove Listener from queue/topic: "
-            + mq.getName();
+        String errMsg = "JMS-error - could not remove Listener from " 
+            + "queue/topic: " + mq.getName();
         int tries = 0;
         JMSException lastException = null;
         boolean operationSuccessful = false;
@@ -705,7 +712,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         if (!operationSuccessful) {
             throw new IOFailure(message, lastException);
         }
-        log.info("Removed " + messages.size() + " messages from channel: " + mq);
+        log.info("Removed " + messages.size() + " messages from channel: "
+                        + mq);
         return messages;
     }
 

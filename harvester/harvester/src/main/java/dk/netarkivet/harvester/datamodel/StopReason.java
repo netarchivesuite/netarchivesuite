@@ -117,10 +117,12 @@ public enum StopReason {
            case SIZE_LIMIT :
                return I18N.getString(l, "stopreason.max.bytes.limit.reached");
            case CONFIG_SIZE_LIMIT :
-               return I18N.getString(l, "stopreason.max.domainconfig.limit.reached");
+               return I18N.getString(l, 
+                       "stopreason.max.domainconfig.limit.reached");
            case DOWNLOAD_UNFINISHED:
                return I18N.getString(l, "stopreason.download.unfinished");
+           default:            
+               return I18N.getString(l, "stopreason.unknown.0", this);
        }
-       return I18N.getString(l, "stopreason.unknown.0", this);
    }
 }

@@ -87,7 +87,7 @@ public abstract class DomainHarvestReport implements Serializable {
      * @return How many bytes were collected for that domain
      * @throws ArgumentNotValid if null or empty domainName
      */
-    final public Long getByteCount(String domainName) {
+    public final Long getByteCount(String domainName) {
         ArgumentNotValid.checkNotNullOrEmpty(domainName, "domainName");
         final DomainStats domainStats = domainstats.get(domainName);
         if (domainStats != null) {

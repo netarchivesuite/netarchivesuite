@@ -32,9 +32,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class TLDInfo implements Comparable<TLDInfo> {
+    /** The name of this TLD. */
     private final String tldName;
+    /** Number of subdomains we have registered under this TLD.  All IP
+    * addresses are lumped together as one TLD. */
     private int count = 0;
-    /** The special name for IP adresses, since they have no TLD */
+    /** The special name for IP adresses, since they have no TLD. */
     static final String IP_ADDRESS_NAME = "IP Address";
 
     /** Create TLD info holder.
@@ -69,7 +72,7 @@ public class TLDInfo implements Comparable<TLDInfo> {
      * This tests that the given domain does in fact belong to this TLD, but
      * not whether it has been added before.
      *
-     * @param name
+     * @param name A name of a domain
      */
     void addSubdomain(String name) {
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
@@ -84,7 +87,10 @@ public class TLDInfo implements Comparable<TLDInfo> {
         }
         count++;
     }
-
+    
+    /**
+     * @see Object#equals(Object) 
+     */
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -96,6 +102,11 @@ public class TLDInfo implements Comparable<TLDInfo> {
         return true;
     }
 
+    /**
+     * @return the hashcode for this object which is equal to the hashCode for
+     * the name of the tld.
+     * @see Object#hashCode()
+     */
     public int hashCode() {
         return tldName.hashCode();
     }
@@ -110,8 +121,6 @@ public class TLDInfo implements Comparable<TLDInfo> {
      * @param o the Object to be compared.
      * @return a negative integer, zero, or a positive integer as this object
      *         is less than, equal to, or greater than the specified object.
-     * @throws ClassCastException if the specified object's type prevents it
-     *                            from being compared to this Object.
      */
     public int compareTo(TLDInfo o) {
         return tldName.compareTo(o.tldName);
