@@ -101,7 +101,7 @@ no parameters.
      }
 %>
     </select>
-    <input type="file"   name="upload_file"/><br/>
+    <input type="file" name="upload_file" size="60" /><br/>
     <input type="submit" name="upload"
            value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
 </form>
@@ -110,8 +110,8 @@ no parameters.
 <form method="post" action="Definitions-upload-harvest-template.jsp"
       enctype="multipart/form-data">
     <fmt:message key="harvestdefinition.templates.upload.to.create"/><br />
- <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="20" value="">
-<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" name="upload_file"/><br/>
+ <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="30" value="">
+<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="60" name="upload_file"/><br/>
 <input type="submit" name="upload"
        value="<fmt:message key="harvestdefinition.templates.upload.create"/>"/>
 </form>
