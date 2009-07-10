@@ -320,9 +320,6 @@ public class    DomainConfiguration implements Named {
         long prevresultfactor
                 = Settings.getLong(
                 HarvesterSettings.ERRORFACTOR_PERMITTED_PREVRESULT);
-        //long bestguessfactor
-        //        = Settings.getLong(
-        //        HarvesterSettings.ERRORFACTOR_PERMITTED_BESTGUESS);
 
         HarvestInfo best = getBestHarvestInfoExpectation();
 
@@ -330,7 +327,8 @@ public class    DomainConfiguration implements Named {
                   + toString() + "'");
 
         long expectedObjectSize = getExpectedBytesPerObject(best);
-        // The maximum number of objects that the maxBytes setting gives.
+        // The maximum number of objects that the maxBytes or MAX_DOMAIN_SIZE
+        // setting gives.
         long maximum = -1;
         if (objectLimit != Constants.HERITRIX_MAXOBJECTS_INFINITY
             || byteLimit != Constants.HERITRIX_MAXBYTES_INFINITY) {
@@ -339,11 +337,11 @@ public class    DomainConfiguration implements Named {
         } else if (maxObjects != Constants.HERITRIX_MAXOBJECTS_INFINITY
                    || maxBytes != Constants.HERITRIX_MAXBYTES_INFINITY) {
             maximum = minObjectsBytesLimit(maxObjects, maxBytes,
-                                           expectedObjectSize);
-        } /*else {
+                                           expectedObjectSize);            
+        } else {
             maximum = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
-        } */
-
+        }
+        // get last number of objects harvested
         long minimum;
         if (best != null) {
             minimum = best.getCountObjectRetrieved();
@@ -352,17 +350,21 @@ public class    DomainConfiguration implements Named {
         }
         // Calculate the expectated number of objects we will harvest.
         long expectation;
-        if (best != null
-            && best.getStopReason() == StopReason.DOWNLOAD_COMPLETE
-            && maximum != -1) {
-            //We set the expectation, so our harvest will exceed the expectation
-            //at most <factor> times if the domain is a lot larger than
-            //our best guess.
-            expectation = minimum + ((maximum - minimum) / prevresultfactor);
+        if (best != null) {
+            if(best.getStopReason() == StopReason.DOWNLOAD_COMPLETE && maximum != -1) {
+                //We set the expectation, so our harvest will exceed the expectation
+                //at most <factor> times if the domain is a lot larger than
+                //our best guess.
+                expectation = minimum + ((maximum - minimum) / prevresultfactor);
+            } else {
+                long add = 0L;
+                // if stoppede for different reason than DOWNLOAD_COMPLETE we add half the
+                // harvested size to expectation
+                expectation = minimum + ((maximum - minimum) / 2); 
+            }
         } else {
             // old calculation
             //expectation = minimum + ((maximum - minimum) / bestguessfactor);
-            // use Settings to define max domain settins bug #928
             expectation = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
         }
         // Always limit to domain specifics if set to do so. We always expect

@@ -175,12 +175,13 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
     public void testGetExpectedNumberOfObjects() throws Exception {
         DomainConfiguration dc = Domain.getDefaultDomain("testdomain01.dk").getDefaultConfiguration();
-        dc.setMaxObjects(4000);
-        assertEquals("Unharvested config should expect half the limit of the "
-                     + "configuration with no limit", 2000,
+        assertEquals("Unharvested config should return the default given number", 5000,
                      dc.getExpectedNumberOfObjects(-1L, -1L));
-        assertEquals("Unharvested config should expect half the limit given",
-                     3000,
+        dc.setMaxObjects(4000);
+        assertEquals("Unharvested config should the set number of objects", 4000,
+                     dc.getExpectedNumberOfObjects(-1L, -1L));
+        assertEquals("Unharvested config should expect the configured number (4000 objects)",
+                     4000,
                      dc.getExpectedNumberOfObjects(6000, -1L));
 
         Date d1 = new GregorianCalendar(1970, 01, 01).getTime();
@@ -199,6 +200,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
 
         dc = Domain.getDefaultDomain("testdomain03.dk").getDefaultConfiguration();
         addHistoryObject(dc, d1, 100L, 1L, StopReason.OBJECT_LIMIT);
+
         dc.setMaxObjects(1100);
         assertEquals("Unfinished harvest should add 50% of difference", 600L,
                      dc.getExpectedNumberOfObjects(-1L, -1L));
@@ -206,7 +208,7 @@ public class DomainConfigurationTester extends DataModelTestCase {
         dc.setMaxObjects(5000);
         assertEquals("Override flag should not affect lower limits", 1150L,
                 dc.getExpectedNumberOfObjects(2200L, -1L));
-
+        System.out.println("-------");
         dc.setMaxObjects(200);
         assertEquals("Override flag should be a maximum of the end result", 200L,
                 dc.getExpectedNumberOfObjects(2200L, -1L));
