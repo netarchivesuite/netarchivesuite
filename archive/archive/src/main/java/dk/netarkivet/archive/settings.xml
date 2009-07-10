@@ -36,12 +36,14 @@
             <uploadRetries>1</uploadRetries>
         </arcrepository>
         <bitarchive>
-            <!-- The default value amounts to 190 MBytes. -->
-            <minSpaceLeft>200000000</minSpaceLeft>
+            <!-- The default value amounts to 1907 MBytes. -->
+            <minSpaceLeft>2000000000</minSpaceLeft>
             <!-- The default value amounts to a little less than 10 MBytes. -->
             <minSpaceRequired>10000000</minSpaceRequired>
             <baseFileDir>bitarchive</baseFileDir>
+            <!-- The default amounts to one second -->
             <heartbeatFrequency>1000</heartbeatFrequency>
+            <!-- The default amounts to one minute -->
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
             <!-- The default value amounts to 14 days. -->
             <batchMessageTimeout>1209600000</batchMessageTimeout>

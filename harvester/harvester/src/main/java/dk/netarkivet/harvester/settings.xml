@@ -61,8 +61,10 @@
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority>HIGHPRIORITY</queuePriority>
             <heritrix>
-                <inactivityTimeout>100</inactivityTimeout>
-                <noresponseTimeout>100</noresponseTimeout>
+                <!-- 30 minutes -->
+                <inactivityTimeout>1800</inactivityTimeout>
+                <!-- 30 minutes -->
+                <noresponseTimeout>1800</noresponseTimeout>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>

@@ -31,8 +31,9 @@
 -->
 <settings>
     <common>
-     <indexClient>
-            <indexRequestTimeout>43200000</indexRequestTimeout>
+        <indexClient>
+            <!-- Default amounts to 1 hour -->
+            <indexRequestTimeout>3600000</indexRequestTimeout>
         </indexClient>
     </common>
 </settings>
