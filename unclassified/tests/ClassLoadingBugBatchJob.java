@@ -1,4 +1,5 @@
 import java.io.OutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.archive.io.arc.ARCRecord;
@@ -7,6 +8,11 @@ import org.archive.net.UURIFactory;
 import org.apache.commons.httpclient.URIException;
 
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.wayback.MyUURIFactory;
+
+import gnu.inet.encoding.IDNA;
+import gnu.inet.encoding.IDNAException;
+import it.unimi.dsi.mg4j.util.MutableString;
 
 /**
  * This class illustrates Bug 1719.
@@ -27,6 +33,52 @@ public class ClassLoadingBugBatchJob extends ARCBatchJob {
             //This runs fine
             Method method = urifactory.getMethod("getInstance", String.class);
         } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            os.write(("\n"+UURIFactory.IGNORED_SCHEME+"\n").getBytes());            
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        UURI uuri = null;
+        try {
+            uuri = new UURI("http://foo.bar", false){
+
+            };
+        } catch (URIException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            os.write(("Created UURI:'" + uuri.toString()+"'\n").getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String s1 = null;
+        try {
+            s1 = IDNA.toASCII("astringø");
+        } catch (IDNAException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            os.write(("IDNA'ed a string:'" + s1 + "'\n").getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        MutableString ms = new MutableString("hello world");
+        try {
+            os.write(("created a mutable string:'"+ms.toString()+"'\n").getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            uuri = MyUURIFactory.getInstance("http://foo.bar");
+        } catch (URIException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            os.write(("Created a uuri from cut'n'paste factory: '" + uuri.toString() + "'\n").getBytes());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try {
