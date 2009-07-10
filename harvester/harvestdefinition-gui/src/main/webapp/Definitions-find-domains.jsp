@@ -114,7 +114,8 @@ asked if they should be created.
         <tr>
             <td><fmt:message key="prompt;enter.name.of.domain.to.find"/></td>
             <td><span id="focusElement">
-                <input name="<%=Constants.DOMAIN_PARAM%>" size="20" value=""/>
+                <input name="<%=Constants.DOMAIN_PARAM%>" 
+                	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value=""/>
                 </span>
             </td>
             <td><input type="submit" value="<fmt:message key="search"/>"/></td>

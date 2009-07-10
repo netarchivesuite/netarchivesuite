@@ -82,7 +82,7 @@ public class Constants {
     
     /** Names of the two directories for the sitesections belonging to
      * the harvester package, and the directory belonging to the viewerproxy
-     * package
+     * package.
      */
     public static final String DEFINITIONS_SITESECTION_DIRNAME =
         "HarvestDefinition";
@@ -101,7 +101,6 @@ public class Constants {
     public static final String END_TIME_FIELD = "endTimeField";
     public static final String HOW_OFTEN_FIELD = "howOftenField";
     
-    
     /**
      * This constant is used as a prefix to identify a request parameter as a
      * domain/configuration pair. Ie one sets such a pair as
@@ -114,11 +113,15 @@ public class Constants {
      */
     public static final String XML_EXTENSION = ".xml";
 
-    /** An edition that will never occur in existing DAO-controlled objects */
+    /** An edition that will never occur in existing DAO-controlled objects. */
     public static final long NO_EDITION = 1L;
     
     /**
      * String constant to denote: No next date.
      */
     public static final String NoNextDate = "-";
+    
+    /** The size of field for a domain name. */
+    public static final int DOMAIN_NAME_FIELD_SIZE = 40;
+       
 }

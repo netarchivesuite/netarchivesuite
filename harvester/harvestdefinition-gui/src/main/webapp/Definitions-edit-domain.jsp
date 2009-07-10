@@ -121,6 +121,7 @@ Display all the form information for this domain
            value="<%= domain.getEdition() %>"/>
     <fmt:message key="domain.name"/>:&nbsp; <input type="text"
                              name="<%= Constants.DOMAIN_PARAM%>"
+                             size="<%=Constants.DOMAIN_NAME_FIELD_SIZE%>"
                              value="<%=HTMLUtils.escapeHtmlValues(domainName) %>"
                              readonly="readonly"/>
     <br/>
@@ -133,7 +134,8 @@ Display all the form information for this domain
         <fmt:message key="prompt;domains.aliases.of.domain"/><%= aliasesString %><br/>
     <% } else { %>
         <fmt:message key="prompt;alias.of"/>
-    <input type="text" name="<%=Constants.ALIAS_PARAM%>" value="<%= alias %>"/>
+    <input type="text" name="<%=Constants.ALIAS_PARAM%>" 
+    	size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>" value="<%= alias %>"/>
     <%    if (info != null) {
             Date aliasTimeoutDate =
                     new Date(info.getLastChange().getTime() +
@@ -254,7 +256,7 @@ Display all the form information for this domain
         </tr>
         <tr id="crawlertrapRow">
             <td>
-                <textarea rows="8" cols="40"
+                <textarea rows="20" cols="60"
                           name="<%=Constants.CRAWLERTRAPS_PARAM%>"><%=HTMLUtils.escapeHtmlValues(
                             StringUtils.conjoin("\n", domain.getCrawlerTraps()))
                     %></textarea>
@@ -265,7 +267,7 @@ Display all the form information for this domain
 
 <a id="showCrawlertraps" href="" onclick="showCrawlertraps();return false;">
     <fmt:message key="show.crawler.traps"/></a>
-
+    
 <script type="text/javascript">
     document.getElementById("crawlertrapRow").style.display = "none";
     function showCrawlertraps() {
