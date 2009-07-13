@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -29,8 +29,10 @@ import org.archive.net.UURI;
 import org.apache.commons.httpclient.URIException;
 
 /**
- * This is a cut'n'paste job from the wayback subversion repository. At some point, calls to it can
- * be replaced with calls to org.archive.wayback.util.url.UrlOperations
+ * This is a cut'n'paste job from the wayback subversion repository. At some
+ * point, calls to it can be replaced with calls to
+ * org.archive.wayback.util.url.UrlOperations
+ * 
  * @author csr
  * @since Jul 10, 2009
  */

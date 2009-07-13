@@ -1,8 +1,7 @@
-package dk.netarkivet.wayback;
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -20,7 +19,7 @@ package dk.netarkivet.wayback;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
+package dk.netarkivet.wayback;
 
 import org.archive.net.UURI;
 import org.archive.net.LaxURLCodec;
@@ -41,10 +40,10 @@ import org.apache.commons.httpclient.URIException;
 import org.archive.util.TextUtils;
 
 /**
- * This is a cut and paste version of the class org.archive.net.UURIFactory, but omitting
- * calls to read system properties. It can therefore be used in batch jobs without violating our
- * security permissions.
- *
+ * This is a cut and paste version of the class org.archive.net.UURIFactory, but
+ * omitting calls to read system properties. It can therefore be used in batch
+ * jobs without violating our security permissions.
+ * 
  * @author csr
  * @since Jul 9, 2009
  */
