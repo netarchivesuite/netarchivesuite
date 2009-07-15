@@ -252,7 +252,7 @@ public class HeritrixTests extends TestCase {
     		// ok, the right exception was thrown
     	} catch (Exception ex) {
     		fail("An exception different from IOFailure has been thrown " +
-    				"when launching with a non existing file (" + passwordFile.getAbsolutePath() + ")");
+    				"when launching with a non existing file (" + passwordFile.getAbsolutePath() + ")" + ex.getMessage());
     		// a different exception was thrown
     	}
 	}

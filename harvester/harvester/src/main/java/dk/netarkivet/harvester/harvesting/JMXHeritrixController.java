@@ -249,14 +249,12 @@ public class
                 String absolutePath = file.getAbsolutePath(); 
                 // check that the settings files not only exist but 
                 // are readable
-                try {
-                	FileInputStream fin = new FileInputStream(absolutePath);
-                	fin.close();
-                } catch (FileNotFoundException e) {
-            	    final String errMsg = "The file '" + absolutePath + "' is missing. ";
-            	    log.warn(errMsg);
-                	throw new IOFailure("Failed to read file '" + absolutePath + "'", e);
-                } 
+                boolean readable = new File(absolutePath).canRead(); 
+                if (!readable) {
+                    final String errMsg = "The file '" + absolutePath + "' is missing. ";
+                    log.warn(errMsg);
+                    throw new IOFailure("Failed to read file '" + absolutePath + "'");
+                }
                 settingProperty.append(absolutePath);                
             }
             if (settingProperty.length() > 0) {
@@ -281,12 +279,26 @@ public class
 
             allOpts.add("-Dcom.sun.management.jmxremote.port=" + getJMXPort());
             allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
+            // check that JMX password and access files are readable. This should 
+            // probably be extracted to a method? 
+            File passwordFile = new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE));
+            String pwAbsolutePath = passwordFile.getAbsolutePath();
+            if (!passwordFile.canRead()) {
+                final String errMsg = "The file '" + passwordFile.getAbsolutePath() + "' is missing. ";
+                log.warn(errMsg);
+                throw new IOFailure("Failed to read file '" + pwAbsolutePath + "'");
+            }
+            File accessFile = new File(Settings.get(CommonSettings.JMX_ACCESS_FILE));
+            String acAbsolutePath = accessFile.getAbsolutePath();
+            if (!accessFile.canRead()) {
+                final String errMsg = "The file '" + acAbsolutePath + "' is missing. ";
+                log.warn(errMsg);
+                throw new IOFailure("Failed to read file '" + acAbsolutePath + "'");
+            }            
             allOpts.add("-Dcom.sun.management.jmxremote.password.file="
-                    + new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE))
-                            .getAbsolutePath());
+                    + new File(pwAbsolutePath));
             allOpts.add("-Dcom.sun.management.jmxremote.access.file="
-                    + new File(Settings.get(CommonSettings.JMX_ACCESS_FILE))
-                            .getAbsolutePath());
+                    + new File(acAbsolutePath));
             allOpts.add("-Dheritrix.out="
                     + heritrixOutputFile.getAbsolutePath());
             allOpts.add("-Djava.protocol.handler.pkgs=org.archive.net");
