@@ -54,6 +54,7 @@ import org.dom4j.io.XMLWriter;
 import org.dom4j.util.XMLErrorHandler;
 import org.xml.sax.SAXException;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FileUtils;
@@ -160,6 +161,7 @@ public class HeritrixTests extends TestCase {
      *  - Copies the given seeds.txt to the proper place in the given crawlDir.
      *  - Copies the given indexDir to the proper place in the given crawlDir (index)
      *  - Constructs a HeritrixLauncher and returns it
+     *  Uses the values of JMX_PASSWORD_FILE and JMX_ACCESS_FILE read in settings.
      *  @param origOrderXml the given order.xml
      *  @param origSeedsFile the given seeds file
      *  @param origIndexDir the given index directory
@@ -172,6 +174,32 @@ public class HeritrixTests extends TestCase {
                                                  File origSeedsFile,
                                                  File origIndexDir)
             throws IOException {
+        
+        return getHeritrixLauncher(origOrderXml, origSeedsFile, origIndexDir, 
+                new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
+                new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
+    }
+
+    /**
+     *  * Centralized place for tests to construct a HeritrixLauncher.
+     *  - Constructs the given crawlDir.
+     *  - Copies the given order.xml to the proper place in the given crawlDir.
+     *  - Copies the given seeds.txt to the proper place in the given crawlDir.
+     *  - Copies the given indexDir to the proper place in the given crawlDir (index)
+     *  - Constructs a HeritrixLauncher and returns it
+     * @param origOrderXml the given order.xml
+     * @param origSeedsFile the given seeds file
+     * @param origIndexDir the given index directory
+     * @param jmxPasswordFile The jmx password file to be used by Heritrix
+     * @param jmxAccessFile The jmx access file to be used by Heritrix
+     * @return
+     */
+    private HeritrixLauncher getHeritrixLauncher(File origOrderXml,
+            File origSeedsFile,
+            File origIndexDir,
+            File jmxPasswordFile,
+            File jmxAccessFile) {
+     
         if (!origOrderXml.exists()){
             fail ("order-File does not exist: " + origOrderXml.getAbsolutePath());
         }
@@ -198,8 +226,9 @@ public class HeritrixTests extends TestCase {
         }
         FileUtils.copyFile(origSeedsFile,seedsTxt);
         HeritrixFiles files = new HeritrixFiles(crawlDir,
-                TestInfo.JOBID, TestInfo.HARVESTID);
-
+                TestInfo.JOBID, TestInfo.HARVESTID, 
+                jmxPasswordFile, 
+                jmxAccessFile);
         /*
         File tempDir = mtf.newTmpDir();
         LuceneUtils.makeDummyIndex(tempDir);
@@ -210,7 +239,7 @@ public class HeritrixTests extends TestCase {
 
         return HeritrixLauncher.getInstance(files);
     }
-
+        
     /**
      * Run heritrix with the given order, seeds file and index.
      *
@@ -232,7 +261,6 @@ public class HeritrixTests extends TestCase {
      * impossible to open for other reasons. 
      * 
      */ 
-    
     public void testIOFailureThrown() throws IOException {
     	// Here it would make sense to get all the settings files and do the control
     	// for all of them, but it seems that the Settings are not initialised in the 
@@ -241,7 +269,9 @@ public class HeritrixTests extends TestCase {
     	File passwordFile = new File(TestInfo.WORKING_DIR, "quickstart.jmxremote.password");
 		FileUtils.remove(passwordFile);
     	File tempDir = mtf.newTmpDir();
-    	hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir);
+    	hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir,
+    	        passwordFile, 
+    	        new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     	try {
     		// invoke JMXHeritrixController
     		hl.doCrawl();
@@ -249,14 +279,16 @@ public class HeritrixTests extends TestCase {
     		fail("An IOFailure should have been thrown when launching " +
     				"with a non existing file (" + passwordFile.getAbsolutePath() + ")"); 
     	} catch (IOFailure iof) {
+    	    assertTrue("Wrong type of IOFailure thrown: " + iof, 
+    	            iof.getMessage().contains("is missing"));
     		// ok, the right exception was thrown
     	} catch (Exception ex) {
     		fail("An exception different from IOFailure has been thrown " +
-    				"when launching with a non existing file (" + passwordFile.getAbsolutePath() + ")" + ex.getMessage());
+    				"when launching with a non existing file (" 
+    		        + passwordFile.getAbsolutePath() + ")" + ex.getMessage());
     		// a different exception was thrown
     	}
-	}
-    
+	}    
 
     
     /**

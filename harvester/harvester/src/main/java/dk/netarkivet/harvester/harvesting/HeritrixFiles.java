@@ -32,10 +32,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 
 /**
@@ -53,6 +55,11 @@ public class HeritrixFiles {
     /** The job ID this object represents files for. */
     private final Long harvestID;
 
+    /** The JMX password file to be used by Heritrix. */
+    private final File jmxPasswordFile;
+    /** The JMX access file to be used by Heritrix. */
+    private final File jmxAccessFile;
+    
 
     /** Types of Heritrix reports we want to preserve.
      * All these reportnames assume "-report.txt" as a suffix
@@ -79,6 +86,7 @@ public class HeritrixFiles {
     /** The name of the index directory. */
     private File indexDir;
 
+    /** The logger. */
     private Log log = LogFactory.getLog(getClass().getName());
 
     /** The name of the progress statistics log. */
@@ -89,28 +97,46 @@ public class HeritrixFiles {
     /** The name of the stdout/stderr file from Heritrix. */
     private static final String OUTPUT_FILENAME = "heritrix.out";
 
-    /** Create a new object for a job.
+    /** Create a new HeritrixFiles object for a job.
      * @param crawlDir The dir, where the crawl-files are placed
      * @param jobID The JobID of this crawl.
      * @param harvestID The harvestID of this crawl.
+     * @param jmxPasswordFile The jmx password file to be used by Heritrix
+     * @param jmxAccessFile The JMX access file to be used by Heritrix
      *
      * Assumes, that crawlDir exists already.
      *
      * @throws ArgumentNotValid if null crawlDir,
      *  or non-positive jobID and harvestID
      */
-    public HeritrixFiles(File crawlDir, long jobID, long harvestID) {
+    public HeritrixFiles(File crawlDir, long jobID, long harvestID,
+            File jmxPasswordFile, File jmxAccessFile) {
         ArgumentNotValid.checkNotNull(crawlDir, "crawlDir");
-
         ArgumentNotValid.checkPositive(jobID, "jobID");
         ArgumentNotValid.checkPositive(harvestID, "harvestID");
-
+        ArgumentNotValid.checkNotNull(jmxPasswordFile, "jmxPasswordFile");
+        ArgumentNotValid.checkNotNull(jmxAccessFile, "jmxAccessFile");
         this.crawlDir = crawlDir;
         this.arcFilePrefix = jobID + "-" + harvestID;
         this.jobID = jobID;
         this.harvestID = harvestID;
+        this.jmxPasswordFile = jmxPasswordFile;
+        this.jmxAccessFile = jmxAccessFile;
     }
 
+    /**
+     * Alternate constructor that by default reads the jmxPasswordFile,
+       and jmxAccessFile from the current settings.
+     * @param crawlDir The dir, where the crawl-files are placed
+     * @param jobID The JobID of this crawl.
+     * @param harvestID The harvestID of this crawl.
+     */
+     public HeritrixFiles(File crawlDir, long jobID, long harvestID) {
+         this(crawlDir, jobID, harvestID,
+                 new File(Settings.get(CommonSettings.JMX_PASSWORD_FILE)),
+                 new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
+     }
+    
     /** Returns the directory that crawls are performed inside.
      *
      * @return A directory (that is created as part of harvest setup) that
@@ -154,7 +180,8 @@ public class HeritrixFiles {
      */
     public void writeSeedsTxt(String seeds) {
         ArgumentNotValid.checkNotNullOrEmpty(seeds, "String seeds");
-        log.debug("Writing seeds to disk as file: " + getSeedsTxtFile().getAbsolutePath());
+        log.debug("Writing seeds to disk as file: " 
+                + getSeedsTxtFile().getAbsolutePath());
         FileUtils.writeBinaryFile(getSeedsTxtFile(), seeds.getBytes());
     }
 
@@ -166,8 +193,10 @@ public class HeritrixFiles {
      */
     public void writeOrderXml(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
-        ArgumentNotValid.checkTrue(doc.hasContent(), "XML document must not be empty");
-        log.debug("Writing order-file to disk as file: " + getOrderXmlFile().getAbsolutePath());
+        ArgumentNotValid.checkTrue(doc.hasContent(),
+                "XML document must not be empty");
+        log.debug("Writing order-file to disk as file: "
+                + getOrderXmlFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
     }
 
@@ -329,5 +358,19 @@ public class HeritrixFiles {
      */
     public File getArcsDir() {
         return new File(crawlDir, Constants.ARCDIRECTORY_NAME);
+    }
+    
+    /**
+     * @return the jmxPasswordFile
+     */
+    public File getJmxPasswordFile() {
+        return jmxPasswordFile;
+    }
+
+    /**
+     * @return the jmxAccessFile
+     */
+    public File getJmxAccessFile() {
+        return jmxAccessFile;
     }
 }
