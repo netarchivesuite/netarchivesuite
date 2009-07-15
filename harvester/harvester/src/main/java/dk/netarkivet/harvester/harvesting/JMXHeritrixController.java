@@ -26,6 +26,8 @@ package dk.netarkivet.harvester.harvesting;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 import javax.management.remote.JMXConnector;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -244,6 +246,18 @@ public class
             for (File file : Settings.getSettingsFiles()) {
                 settingProperty.append(File.pathSeparator);
                 settingProperty.append(file.getAbsolutePath());
+                String absolutePath = file.getAbsolutePath(); 
+                // check that the settings files not only exist but 
+                // are readable
+                try {
+                	FileInputStream fin = new FileInputStream(absolutePath);
+                	fin.close();
+                } catch (FileNotFoundException e) {
+            	    final String errMsg = "The file '" + absolutePath + "' is missing. ";
+            	    log.warn(errMsg);
+                	throw new IOFailure("Failed to read file '" + absolutePath + "'", e);
+                } 
+                settingProperty.append(absolutePath);                
             }
             if (settingProperty.length() > 0) {
                 // delete last path-separator

@@ -73,6 +73,8 @@ import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.common.utils.Settings;
+
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
@@ -224,6 +226,39 @@ public class HeritrixTests extends TestCase {
         hl.doCrawl();
     }
 
+    /**
+     * Check that IOFailure is thrown by the JMXHeritrixController
+     * if the JMXPasswordFile does not exist / is hidden / unreadable /
+     * impossible to open for other reasons. 
+     * 
+     */ 
+    
+    public void testIOFailureThrown() throws IOException {
+    	// Here it would make sense to get all the settings files and do the control
+    	// for all of them, but it seems that the Settings are not initialised in the 
+    	// setUp. Therefore the test is made only for jmxremote.password. It would be good 
+    	// to find a way to do the test for all the files. 
+    	File passwordFile = new File(TestInfo.WORKING_DIR, "quickstart.jmxremote.password");
+		FileUtils.remove(passwordFile);
+    	File tempDir = mtf.newTmpDir();
+    	hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir);
+    	try {
+    		// invoke JMXHeritrixController
+    		hl.doCrawl();
+    		// if the exception is not thrown
+    		fail("An IOFailure should have been thrown when launching " +
+    				"with a non existing file (" + passwordFile.getAbsolutePath() + ")"); 
+    	} catch (IOFailure iof) {
+    		// ok, the right exception was thrown
+    	} catch (Exception ex) {
+    		fail("An exception different from IOFailure has been thrown " +
+    				"when launching with a non existing file (" + passwordFile.getAbsolutePath() + ")");
+    		// a different exception was thrown
+    	}
+	}
+    
+
+    
     /**
      * Check that all urls in the given array are listed in the crawl log.
      * Calls fail() at the first url that is not found or if the crawl log is not
