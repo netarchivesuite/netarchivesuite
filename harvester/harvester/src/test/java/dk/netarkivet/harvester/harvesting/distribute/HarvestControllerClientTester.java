@@ -40,7 +40,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -76,7 +76,7 @@ public class HarvestControllerClientTester extends TestCase {
             IOException, SQLException, IllegalAccessException,
             NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -109,7 +109,7 @@ public class HarvestControllerClientTester extends TestCase {
         result = Channels.getAnyHighpriorityHaco();
         JMSConnectionFactory.getInstance().setListener(result, listener);
         hcc.doOneCrawl(TestInfo.getJob(), metadata);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         assertEquals("the server should have received exactly 1 message", 1, listener.messages.size());
     }
 
@@ -151,7 +151,7 @@ public class HarvestControllerClientTester extends TestCase {
 
         //send a high priority job
         hcc.doOneCrawl(TestInfo.getJob(), metadata);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 1 message", 1, listener0.messages.size());
         assertEquals("The LOWPRIORITY server should have received exactly 0 messages", 0, listener1.messages.size());
 
@@ -161,7 +161,7 @@ public class HarvestControllerClientTester extends TestCase {
 
         //send a low priority job
         hcc.doOneCrawl(TestInfo.getJobLowPriority(), metadata);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         assertEquals("The HIGHPRIORITY server should have received exactly 0 message", 0, listener0.messages.size());
         assertEquals("The LOWPRIORITY server should have received exactly 1 messages", 1, listener1.messages.size());
     }
@@ -185,7 +185,7 @@ public class HarvestControllerClientTester extends TestCase {
      */
     public void testLogSendingMessage() throws IOException {
         hcc.doOneCrawl(TestInfo.getJob(), metadata);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
 
         StringAsserts.assertStringContains(
                 "Logfile does has NOT logged the sending of a DoOneCrawlMessage",

@@ -27,7 +27,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.archive.indexserver.IndexServer;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
@@ -56,7 +56,7 @@ public class StandaloneApplication {
     public static void main(String[] args) {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         Settings.set(CommonSettings.REPLICA_IDS, Settings.get(
                                    CommonSettings.USE_REPLICA_ID));
         //???Settings.set(CommonSettings.ENVIRONMENT_USE_REPLICA_ID, Settings.get(

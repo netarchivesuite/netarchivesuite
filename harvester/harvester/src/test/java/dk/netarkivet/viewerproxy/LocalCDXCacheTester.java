@@ -41,7 +41,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -81,7 +81,7 @@ public class LocalCDXCacheTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ViewerProxySettings.VIEWERPROXY_DIR, TestInfo.WORKING_DIR.getAbsolutePath());
@@ -98,7 +98,7 @@ public class LocalCDXCacheTester extends TestCase {
         Field dirField = ReflectUtils.getPrivateField(
                 LocalCDXCache.class, "CACHE_DIR");
         FileUtils.removeRecursively((File) dirField.get(null));
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
     }
 

@@ -43,7 +43,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -80,7 +80,7 @@ public class BitarchiveServerTester extends TestCase {
 
     protected void setUp() throws IOException {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().
                 readConfiguration(fis);
@@ -102,7 +102,7 @@ public class BitarchiveServerTester extends TestCase {
             bas.close();
         }
         FileUtils.removeRecursively(WORKING);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         utrf.tearDown();
         for (String dir: dirs) {
             FileUtils.removeRecursively(new File(dir));
@@ -149,7 +149,7 @@ public class BitarchiveServerTester extends TestCase {
 
         bas = BitarchiveServer.getInstance();
         ChannelID anyBa = Channels.getAnyBa();
-        JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         assertEquals("We should not listen to " + anyBa
                 + " if we are out of space",
@@ -176,7 +176,7 @@ public class BitarchiveServerTester extends TestCase {
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
-        JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
 
         GenericMessageListener listener = new GenericMessageListener();
@@ -225,7 +225,7 @@ public class BitarchiveServerTester extends TestCase {
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
-        JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
 
         GenericMessageListener listener = new GenericMessageListener();
@@ -273,7 +273,7 @@ public class BitarchiveServerTester extends TestCase {
         bas = BitarchiveServer.getInstance();
         ChannelID arcReposQ = Channels.getTheRepos();
         ChannelID anyBa = Channels.getAnyBa();
-        JMSConnectionTestMQ conn = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
 
         GenericMessageListener listener = new GenericMessageListener();
@@ -319,7 +319,7 @@ public class BitarchiveServerTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
@@ -327,7 +327,7 @@ public class BitarchiveServerTester extends TestCase {
         GetMessage msg = new GetMessage(Channels.getAllBa(),
                 Channels.getTheRepos(), "NetarchiveSuite-upload1.arc",
                 arcfileOffset);
-        JMSConnectionTestMQ.updateMsgID(msg, "AnId");
+        JMSConnectionMockupMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
         // Should now be one reply message in the listener, containing the
@@ -349,14 +349,14 @@ public class BitarchiveServerTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
         final long arcfileOffset = 3L;
         GetMessage msg = new GetMessage(Channels.getAllBa(),
                 Channels.getTheRepos(), "Upload2.ARC", arcfileOffset);
-        JMSConnectionTestMQ.updateMsgID(msg, "AnId");
+        JMSConnectionMockupMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
         // Should now be no messages in listener
@@ -374,7 +374,7 @@ public class BitarchiveServerTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         con.setListener(Channels.getTheRepos(), listener);
         // Construct a get message for a file in the bitarchive
@@ -382,7 +382,7 @@ public class BitarchiveServerTester extends TestCase {
         GetMessage msg = new GetMessage(Channels.getAllBa(),
                 Channels.getTheRepos(), "NetarchiveSuite-upload1.arc",
                 arcfileOffset);
-        JMSConnectionTestMQ.updateMsgID(msg, "AnId");
+        JMSConnectionMockupMQ.updateMsgID(msg, "AnId");
         bas.visit(msg);
         con.waitForConcurrentTasksToFinish();
         // Should now be one not-ok reply message in the listener
@@ -413,7 +413,7 @@ public class BitarchiveServerTester extends TestCase {
                         new ChecksumJob(),
                         Settings.get(CommonSettings.USE_REPLICA_ID));
 
-        JMSConnectionTestMQ.updateMsgID(bm, "ID45");
+        JMSConnectionMockupMQ.updateMsgID(bm, "ID45");
         bas.visit(bm);
         int batchTries = 0;
         boolean threadAlive;
@@ -428,7 +428,7 @@ public class BitarchiveServerTester extends TestCase {
                 }
             }
         } while (threadAlive && batchTries++ < 100);
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
 
         // Listener should have received one BatchEndedMessage and a bunch
         // of Heartbeat messages
@@ -492,8 +492,8 @@ public class BitarchiveServerTester extends TestCase {
                         new TimedChecksumJob(),
                         Settings.get(CommonSettings.USE_REPLICA_ID));
 
-        JMSConnectionTestMQ.updateMsgID(bm1, "ID45");
-        JMSConnectionTestMQ.updateMsgID(bm2, "ID46");
+        JMSConnectionMockupMQ.updateMsgID(bm1, "ID45");
+        JMSConnectionMockupMQ.updateMsgID(bm2, "ID46");
         int beforeCount = Thread.activeCount();
         bas.visit(bm1);
         bas.visit(bm2);
@@ -517,7 +517,7 @@ public class BitarchiveServerTester extends TestCase {
             }
         } while (keepGoing);
 
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
 
         // Listener should have received one BatchEndedMessage and a bunch
         // of Heartbeat messages

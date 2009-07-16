@@ -44,8 +44,8 @@ public class SynchronizerTester extends TestCase {
 
     public void setUp() throws IOException {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         con = JMSConnectionFactory.getInstance();
     }
 
@@ -284,7 +284,7 @@ public class SynchronizerTester extends TestCase {
          */
         // Send message
         sr.sendAndWaitForOneReply();
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
         try {
             synchronized (this) {
                 this.wait(2000);

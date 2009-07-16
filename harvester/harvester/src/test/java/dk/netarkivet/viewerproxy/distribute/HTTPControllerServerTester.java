@@ -40,7 +40,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -76,7 +76,7 @@ public class HTTPControllerServerTester extends TestCase {
     }
 
     public void setUp() throws Exception {
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ur = new TestURIResolver();
         c = new TestDelegatingController();
         response = new TestResponse();

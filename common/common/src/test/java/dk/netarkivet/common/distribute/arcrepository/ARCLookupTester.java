@@ -28,9 +28,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -79,7 +79,7 @@ public class ARCLookupTester extends TestCase {
         rs.setUp();
         TestInfo.GIF_URL = new URI("http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
 
         //Although we also need some real data
@@ -115,7 +115,7 @@ public class ARCLookupTester extends TestCase {
             arcReader.close();
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
         super.tearDown();
     }

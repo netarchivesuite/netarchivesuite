@@ -35,7 +35,6 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -86,8 +85,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /** Listens on this queue for replies. */
     private ChannelID replyQ;
-    /** Connection to JMS-broker. */
-    private JMSConnection conn;
 
     /** The number of times to try sending a store message before giving up. */
     private long storeRetries;
@@ -141,8 +138,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                    + " milliseconds, and timeout on each getrequest after "
                    + getTimeout + " milliseconds.");
         replyQ = Channels.getThisReposClient();
-        conn = JMSConnectionFactory.getInstance();
-        conn.setListener(replyQ, this);
+        JMSConnectionFactory.getInstance().setListener(replyQ, this);
         log.info("JMSArcRepository listens for replies on channel '"
                  + replyQ + "'");
     }
@@ -164,10 +160,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      */
     public void close() {
         synchronized (this.getClass()) {
-            if (conn != null) {
-                conn.removeListener(replyQ, this);
-                conn = null;
-            }
+            JMSConnectionFactory.getInstance().removeListener(replyQ, this);
             instance = null;
         }
     }

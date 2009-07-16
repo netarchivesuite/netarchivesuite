@@ -35,7 +35,7 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
@@ -58,7 +58,7 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
 
     public void setUp() {
         TestRemoteFile.removeRemainingFiles();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -68,7 +68,7 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
 
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
     }
 
 

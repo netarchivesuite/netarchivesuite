@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,15 +65,17 @@ public class JMXUtils {
     private static final String JNDI_INITIAL_CONTEXT_PROPERTY =
         "java.naming.factory.initial";
 
-    /** The JMX timeout in milliseconds. */
-    private static final double TIMEOUT
-            = (double) Settings.getLong(CommonSettings.JMX_TIMEOUT) * 1000.0;
+
     /** The maximum number of times we back off on getting an mbean or a job.
      * The cumulative time trying is 2^(MAX_TRIES) milliseconds,
-     * thus the constant is defined as log2(TIMEOUT), as set in settings.
+     * thus the constant is defined as log_2(TIMEOUT), as set in settings.
+     * @return The number of tries
      */
-    public static final int MAX_TRIES = (int) Math.ceil(
-            Math.log(TIMEOUT) / Math.log(2.0));
+    public static int getMaxTries() {
+        return (int) Math.ceil(
+                Math.log((double) Settings.getLong(CommonSettings.JMX_TIMEOUT)
+                         * 1000.0) / Math.log(2.0));
+    }
 
     /**
      * If no initial JNDI context has been configured,
@@ -247,19 +248,19 @@ public class JMXUtils {
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
-                    if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
+                    if (tries < getMaxTries()) {
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
                     log.warn("Exception thrown while executing " + command +
                              " with args " +
                              Arrays.toString(arguments) + " on " + beanName, e);
                     lastException = e;
-                    if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
+                    if (tries < getMaxTries()) {
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < MAX_TRIES);
+            } while (tries < getMaxTries());
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for executing " + command
                                 + " after " + tries + " attempts",
@@ -303,18 +304,18 @@ public class JMXUtils {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
+                    if (tries < getMaxTries()) {
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
                     log.trace("Error while getting attribute " + attribute
                              + " on " + beanName, e);
                     lastException = e;
-                    if (tries < MAX_TRIES) {
-                        TimeUtils.exponentialBackoffSleep(tries, Calendar.SECOND);
+                    if (tries < getMaxTries()) {
+                        TimeUtils.exponentialBackoffSleep(tries);
                     }
                 }
-            } while (tries < MAX_TRIES);
+            } while (tries < getMaxTries());
             throw new IOFailure("Failed to find MBean " + beanName
                                 + " for getting attribute " + attribute
                                 + " after " + tries + " attempts",
@@ -369,11 +370,11 @@ public class JMXUtils {
                 return JMXConnectorFactory.connect(rmiurl, environment);
             } catch (IOException e) {
                 lastException = e;
-                if (retries < MAX_TRIES && e.getCause() != null
+                if (retries < getMaxTries() && e.getCause() != null
                     && (e.getCause() instanceof ServiceUnavailableException ||
                         e.getCause() instanceof SocketTimeoutException) ) {   
                     // Sleep a bit before trying again
-                    TimeUtils.exponentialBackoffSleep(retries, Calendar.SECOND);
+                    TimeUtils.exponentialBackoffSleep(retries);
                     /*  called exponentialBackoffSleep(retries) which used
                         Calendar.MILISECOND as time unit, which means we only
                         wait an exponential number of miliseconds.            */
@@ -381,9 +382,9 @@ public class JMXUtils {
                 }
                 break;
             }
-        } while (retries++ < MAX_TRIES);
+        } while (retries++ < getMaxTries());
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " of " + MAX_TRIES + " attempts.\nException type: "
+                            + retries + " of " + getMaxTries() + " attempts.\nException type: "
                             + lastException.getCause().getClass().getName(),
                             lastException);
     }

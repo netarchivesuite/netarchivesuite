@@ -23,8 +23,8 @@
 package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,6 @@ import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -53,7 +52,6 @@ import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -118,12 +116,6 @@ public class ArcRepository implements CleanupIF {
         new HashMap<String, Map<String, Integer>>();
 
     /**
-     * A singular instance of JMSConnection, used for replying to Store
-     * messages.
-     */
-    private JMSConnection jmsCon;
-
-    /**
      * Constructor for the ArcRepository. Connects the ArcRepository to all
      * BitArchives, and initialises admin data
      *
@@ -136,7 +128,6 @@ public class ArcRepository implements CleanupIF {
     private ArcRepository() throws IOFailure, IllegalState {
         //UpdateableAdminData Throws IOFailure
         this.ad = UpdateableAdminData.getUpdateableInstance(); 
-        this.jmsCon = JMSConnectionFactory.getInstance();
         this.arcReposhandler = new ArcRepositoryServer(this);
 
         // Get channels
@@ -383,7 +374,7 @@ public class ArcRepository implements CleanupIF {
         clearRetries(arcFileName);
         log.info("Store OK: '" + arcFileName + "'");
         log.debug("Sending store OK reply to message '" + msg + "'");
-        jmsCon.reply(msg);
+        JMSConnectionFactory.getInstance().reply(msg);
     }
 
     /**
@@ -400,7 +391,7 @@ public class ArcRepository implements CleanupIF {
         msg.setNotOk("Failure while trying to store ARC file: " + arcFileName);
         log.warn("Store NOT OK: '" + arcFileName + "'");
         log.debug("Sending store NOT OK reply to message '" + msg + "'");
-        jmsCon.reply(msg);
+        JMSConnectionFactory.getInstance().reply(msg);
     }
 
     /**

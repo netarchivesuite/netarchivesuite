@@ -597,7 +597,7 @@ public class
                 break;
             }
             TimeUtils.exponentialBackoffSleep(attempt);
-        } while (attempt++ < JMXUtils.MAX_TRIES);
+        } while (attempt++ < JMXUtils.getMaxTries());
     }
 
     /**
@@ -776,7 +776,7 @@ public class
         TabularData pendingJobs = null;
         TabularData doneJobs;
         int retries = 0;
-        while (retries++ < JMXUtils.MAX_TRIES) {
+        while (retries++ < JMXUtils.getMaxTries()) {
             // If the job turns up in Heritrix' pending jobs list, it's ready
             pendingJobs =
                     (TabularData) executeHeritrixCommand(
@@ -802,7 +802,7 @@ public class
                                         + job.get(STATUS_ATTRIBUTE));
                 }
             }
-            if (retries < JMXUtils.MAX_TRIES) {
+            if (retries < JMXUtils.getMaxTries()) {
                 TimeUtils.exponentialBackoffSleep(retries);
             }
         }
@@ -810,7 +810,7 @@ public class
         // jobs list.
         if (pendingJobs == null || pendingJobs.size() == 0) {
             throw new IOFailure("Heritrix has not created a job after "
-                                + (Math.pow(2, JMXUtils.MAX_TRIES) / 1000)
+                                + (Math.pow(2, JMXUtils.getMaxTries()) / 1000)
                                 + " seconds, giving up.");
         } else if (pendingJobs.size() > 1) {
             throw new IllegalState("More than one pending job: " + pendingJobs);

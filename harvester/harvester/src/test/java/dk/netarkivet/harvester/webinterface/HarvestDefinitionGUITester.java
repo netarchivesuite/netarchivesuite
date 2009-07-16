@@ -25,7 +25,7 @@ package dk.netarkivet.harvester.webinterface;
 import java.io.IOException;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
@@ -64,7 +64,7 @@ public class HarvestDefinitionGUITester extends DataModelTestCase {
                 CommonSettings.SITESECTION_CLASS, 
                 TestInfo.HARVESTDEFINITION_SITESECTIONCLASS);
  
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     public void tearDown() throws Exception {

@@ -25,7 +25,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -39,7 +39,7 @@ public class UploadMessageTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     public void tearDown() {

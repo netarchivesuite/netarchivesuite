@@ -45,7 +45,7 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
@@ -116,8 +116,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TEMP_DIR.getAbsolutePath());
 
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
 
         ChannelsTester.resetChannels();
 
@@ -144,7 +144,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         FileUtils.removeRecursively(ARCHIVE_DIR);
         FileUtils.removeRecursively(TEMP_DIR);
 
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rf.tearDown();
         rs.tearDown();
     }
@@ -162,7 +162,7 @@ public class ArcRepositoryTesterStore extends TestCase {
     public void testStoreFileAlreadyStored() throws InterruptedException,
             IOException {
         //Set listeners
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -183,7 +183,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -232,7 +232,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     public void testStoreOtherChecksum() {
         //Set listeners
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -252,7 +252,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -291,7 +291,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     public void testStoreNewFile() throws IOException {
         //Set listeners
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -307,7 +307,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -350,7 +350,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Also test that state is changed to UPLOADED
      */
     public void testStoreFailedFile() throws IOException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -371,7 +371,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -429,7 +429,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Also test that state is still UPLOADED
      */
     public void testStoreUploadedFile() throws IOException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -450,7 +450,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -508,7 +508,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Also test that state is still STARTED
      */
     public void testStoreStartedFile() throws IOException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -529,7 +529,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.store(msg.getRemoteFile(), msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -587,7 +587,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Also test that state is data uploaded
      */
     public void testOnUploadMessageOK() throws IOException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -610,7 +610,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                                               RemoteFileFactory.getInstance(
                                                       STORABLE_FILE, true, false,
                                                       true));
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.onUpload(msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -658,7 +658,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      * Also test that state is upload failed
      */
     public void testOnUploadMessageNotOK() throws IOException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -683,7 +683,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                                                       STORABLE_FILE, true, false,
                                                       true));
         msg.setNotOk("NOT OK!");
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-0");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-0");
         arcRepos.onUpload(msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -727,7 +727,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     public void testOnBatchReplyOk() throws IOException, NoSuchFieldException,
             IllegalAccessException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -759,7 +759,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-1");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -804,7 +804,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     public void testOnBatchReplyNotOkOnUpload() throws IOException,
             NoSuchFieldException, IllegalAccessException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -837,7 +837,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false,
                                               true));
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-1");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
         con.waitForConcurrentTasksToFinish();
 
@@ -881,7 +881,7 @@ public class ArcRepositoryTesterStore extends TestCase {
      */
     public void testOnBatchReplyNotOkOnRetry() throws IOException,
             NoSuchFieldException, IllegalAccessException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         GenericMessageListener gmlAnyBa = new GenericMessageListener();
         con.setListener(Channels.getAnyBa(), gmlAnyBa);
         GenericMessageListener gmlAllBa = new GenericMessageListener();
@@ -914,7 +914,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false,
                                               true));
-        JMSConnectionTestMQ.updateMsgID(msg, "Msg-id-1");
+        JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
         con.waitForConcurrentTasksToFinish();
 

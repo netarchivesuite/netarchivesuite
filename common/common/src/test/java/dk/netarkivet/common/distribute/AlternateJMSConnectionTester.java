@@ -48,7 +48,7 @@ public class AlternateJMSConnectionTester extends TestCase {
              TimeUtils.exponentialBackoffSleep(1, Calendar.MINUTE);
              msgNr++;
         }
-        con.close();
+        con.cleanup();
     }
 
     private static class TestMessage extends NetarkivetMessage {

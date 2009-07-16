@@ -30,8 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import dk.netarkivet.common.distribute.JMSConnection;
-import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 
 /**
@@ -126,13 +124,5 @@ public class TestMessageListener implements MessageListener {
             }
         }
         return result;
-    }
-
-    /**
-     * Waits for our mockup JMS to finish all message sending.
-     * Throws an exception if the mockup JMS is not currently used!
-     */
-    public static boolean waitForConcurrentTasksToFinish() {
-        return ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
     }
 }

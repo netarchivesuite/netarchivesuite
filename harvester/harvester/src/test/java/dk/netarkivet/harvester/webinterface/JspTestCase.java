@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import javax.el.ELContext;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -33,8 +32,6 @@ import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ExpressionEvaluator;
-import javax.servlet.jsp.el.VariableResolver;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -74,7 +71,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 public class JspTestCase extends TestCase {
     protected static final File WEB_BASE_DIR = new File("webpages/HarvestDefinition");
     public static final File TOP_DATA_DIR =
-            new File("tests/dk/netarkivet/webinterface/data/");
+            new File("tests/dk/netarkivet/harvester/datamodel/data/");
     protected static final File WORKING_DIR = new File(TOP_DATA_DIR, "working");
     protected static Map<String, Class<HttpJspBase>> compiledPages =
             new HashMap<String, Class<HttpJspBase>>();
@@ -251,6 +248,18 @@ public class JspTestCase extends TestCase {
                         return new InputSource(new FileReader(new File(
                                 TOP_DATA_DIR + "/DTD/xhtml",
                                 "xhtml1-strict.dtd")));
+                    } else if (systemId.equals(
+                                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd")) {
+                            // return a special input source
+                            return new InputSource(new FileReader(new File(
+                                    TOP_DATA_DIR + "/DTD/xhtml",
+                                    "xhtml1-transitional.dtd")));
+                    } else if (systemId.endsWith(
+                                "xhtml-lat1-ent")) {
+                            // return a special input source
+                            return new InputSource(new FileReader(new File(
+                                    TOP_DATA_DIR + "/DTD/xhtml",
+                                    "xhtml-lat1-ent")));
                     } else {
                         // use the default behaviour
                         return null;

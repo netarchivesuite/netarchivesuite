@@ -47,7 +47,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -87,7 +87,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
      * The BA monitor client and server used for testing
      */
     BitarchiveMonitorServer bam_server;
-    JMSConnectionTestMQ con;
+    JMSConnectionMockupMQ con;
 
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.BAMON_ORIGINALS,
                                                   TestInfo.BAMON_WORKING);
@@ -103,7 +103,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         File commontempdir = new File(TestInfo.BAMON_WORKING, "commontempdir");
         commontempdir.mkdir();
         assertTrue("commontempdir not created", commontempdir.exists());
-        con = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, 
                 String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
         Settings.set(ArchiveSettings.BITARCHIVE_HEARTBEAT_FREQUENCY,
@@ -171,7 +171,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         synchronized (this) {
             wait(400);
         }
-        TestMessageListener.waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
 
         // check results
         assertEquals("Should list no failed jobs", null, brf.failed);
@@ -205,7 +205,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                             }
                         },
                         Settings.get(CommonSettings.USE_REPLICA_ID));
-        JMSConnectionTestMQ.updateMsgID(result, id);
+        JMSConnectionMockupMQ.updateMsgID(result, id);
         return result;
     }
 
@@ -281,7 +281,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         // register a listener that simulates the arc repository
         TestListener arcrepos = new TestListener();
-        con.addListener(Channels.getTheRepos(), arcrepos);
+        con.setListener(Channels.getTheRepos(), arcrepos);
 
         // send a heartbeat to let monitor know that ba_App_Id is alive
         HeartBeatMessage hbm = new HeartBeatMessage(Channels.getTheBamon(),
@@ -291,7 +291,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         // register a listener that simulates a bitarchive
         TestListener bitarchive = new TestListener();
-        con.addListener(Channels.getAllBa(), bitarchive);
+        con.setListener(Channels.getAllBa(), bitarchive);
 
         // send a batch message to the monitor
         BatchMessage bm = new BatchMessage(THE_BAMON, Channels.getTheRepos(),
@@ -375,8 +375,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
     private void testListeningPerReplica(String replicaId,
                                           String otherReplicaId) {
         Settings.set(CommonSettings.USE_REPLICA_ID, replicaId);
-        JMSConnectionTestMQ jms
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ jms
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         BitarchiveMonitorServer bamon = BitarchiveMonitorServer.getInstance();
         assertTrue("The BAMON should listen to THE_BAMON",
                    jms.getListeners(Channels.getBaMonForReplica(
@@ -526,7 +526,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         TestBatchReplyListener batchReplyListener
                 = new TestBatchReplyListener();
-        con.addListener(THE_ARCREPOS, batchReplyListener);
+        con.setListener(THE_ARCREPOS, batchReplyListener);
 
         long timeout = System.currentTimeMillis() + 500L;
 
@@ -616,7 +616,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                                            Channels.getTheRepos(),
                                            new ChecksumJob(), Settings.get(
                 CommonSettings.USE_REPLICA_ID));
-        JMSConnectionTestMQ.updateMsgID(bm, "ID50");
+        JMSConnectionMockupMQ.updateMsgID(bm, "ID50");
 
         //Invent two BitarchiveServers and send heartbeats from them
         String baID1 = "BA1";
@@ -644,11 +644,11 @@ public class BitarchiveMonitorServerTester extends TestCase {
         RemoteFile rf1 = RemoteFileFactory.getInstance(data1, true, false, true);
         BatchEndedMessage bem1 = new BatchEndedMessage(Channels.getTheBamon(),
                                                        baID1, forwardedID, rf1);
-        JMSConnectionTestMQ.updateMsgID(bem1, "ID42");
+        JMSConnectionMockupMQ.updateMsgID(bem1, "ID42");
         RemoteFile rf2 = RemoteFileFactory.getInstance(data2, true, false, true);
         BatchEndedMessage bem2 = new BatchEndedMessage(Channels.getTheBamon(),
                                                        baID2, forwardedID, rf2);
-        JMSConnectionTestMQ.updateMsgID(bem2, "ID54");
+        JMSConnectionMockupMQ.updateMsgID(bem2, "ID54");
         bms.visit(bem1);
         bms.visit(bem2);
         con.waitForConcurrentTasksToFinish();
@@ -720,7 +720,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         }
 
         private String getIDOfLatestJob() {
-            waitForConcurrentTasksToFinish();
+            ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
             return getLastInstance(BatchMessage.class).getID();
         }
     }

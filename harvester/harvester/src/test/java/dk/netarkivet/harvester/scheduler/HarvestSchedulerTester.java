@@ -45,7 +45,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
@@ -93,7 +93,7 @@ public class HarvestSchedulerTester extends TestCase {
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -158,12 +158,12 @@ public class HarvestSchedulerTester extends TestCase {
                 throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
             }
         }
-        JMSConnectionTestMQ.getInstance().setListener(result, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
         hsch = submitNewJobsAndGetSchedulerInstance();
         assertEquals("Should have created one job, but got " 
                     + dao.getCountJobs(),
                 1, dao.getCountJobs());
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
         .waitForConcurrentTasksToFinish();
         List<Job> jobs = IteratorUtils.toList(dao.getAll(JobStatus.NEW));
         assertEquals("No jobs should be left with status new, but got " + jobs,
@@ -310,7 +310,7 @@ public class HarvestSchedulerTester extends TestCase {
                 throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
             }
         }
-        JMSConnectionTestMQ.getInstance().setListener(result, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
 
         //Create the following domains:
         //kb.dk with aliases alias1.dk and alias2.dk
@@ -341,7 +341,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Run method
         m.invoke(hsch);
-        JMSConnectionTestMQ.getInstance()
+        JMSConnectionMockupMQ.getInstance()
                 .waitForConcurrentTasksToFinish();
 
         //Check result
@@ -397,7 +397,7 @@ public class HarvestSchedulerTester extends TestCase {
                 throw new UnknownID(JobPriority.HIGHPRIORITY.toString() + " is not a valid priority");
             }
         }
-        JMSConnectionTestMQ.getInstance().setListener(result1, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(result1, hacoListener);
         ChannelID result;
         if (JobPriority.LOWPRIORITY.toString().equals(JobPriority.LOWPRIORITY.toString())) {
             result = Channels.getAnyLowpriorityHaco();
@@ -410,11 +410,11 @@ public class HarvestSchedulerTester extends TestCase {
                 throw new UnknownID(JobPriority.LOWPRIORITY.toString() + " is not a valid priority");
             }
         }
-        JMSConnectionTestMQ.getInstance().setListener(result, hacoListener);
+        JMSConnectionMockupMQ.getInstance().setListener(result, hacoListener);
 
         //Run method
         m.invoke(hsch);
-        JMSConnectionTestMQ.getInstance()
+        JMSConnectionMockupMQ.getInstance()
                 .waitForConcurrentTasksToFinish();
 
         //Check result

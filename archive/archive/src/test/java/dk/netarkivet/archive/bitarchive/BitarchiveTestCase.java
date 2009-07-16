@@ -30,7 +30,7 @@ import java.util.logging.LogManager;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -56,7 +56,7 @@ public abstract class BitarchiveTestCase extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         try {
             // This forces an emptying of the log file.
@@ -83,7 +83,7 @@ public abstract class BitarchiveTestCase extends TestCase {
             archive.close();
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rf.tearDown();
         rs.tearDown();
         super.tearDown();

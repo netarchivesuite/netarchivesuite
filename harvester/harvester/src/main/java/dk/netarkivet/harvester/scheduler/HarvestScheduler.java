@@ -174,17 +174,6 @@ public class HarvestScheduler implements CleanupIF {
      * Reschedule all jobs with JobStatus SUBMITTED.
      */
     private void rescheduleJobs() {
-        // In case we were shut down without JMS queues being cleaned, remove
-        // those messages left
-        //TODO Implementation fails
-//        List<Message> loprimsgs 
-//            = JMSConnectionFactory.getInstance().removeAllMessages
-//            (Channels.getAnyLowpriorityHaco());
-//        List<Message> hiprimsgs 
-//        = JMSConnectionFactory.getInstance().removeAllMessages
-//            (Channels.getAnyHighpriorityHaco());
-        // TODO Resubmit those just taken out with same ID, as we know no
-        // harvester is using them.
         final JobDAO dao = JobDAO.getInstance();
         final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.SUBMITTED);
         int resubmitcount = 0;

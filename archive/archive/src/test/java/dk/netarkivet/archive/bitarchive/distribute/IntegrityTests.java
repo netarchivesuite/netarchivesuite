@@ -45,7 +45,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.FTPRemoteFile;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -170,7 +170,7 @@ public class IntegrityTests extends TestCase {
                     e.getCause());
         }
 
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
 
@@ -250,24 +250,24 @@ public class IntegrityTests extends TestCase {
          BatchMessage bm = new BatchMessage(Channels.getTheBamon(), Channels.getTheRepos(),
                 new ChecksumJob(),
                 Settings.get(CommonSettings.USE_REPLICA_ID));
-         JMSConnectionTestMQ.updateMsgID(bm, "testmsgid0");
+         JMSConnectionMockupMQ.updateMsgID(bm, "testmsgid0");
 
 
         //Invent two BitarchiveServers and send heartbeats from them
         String baID1 = "BA1";
         HeartBeatMessage hbm = new HeartBeatMessage(Channels.getTheBamon(),
                 baID1);
-        JMSConnectionTestMQ.updateMsgID(hbm, "heartbeat1");
+        JMSConnectionMockupMQ.updateMsgID(hbm, "heartbeat1");
         String baID2 = "BA2";
         HeartBeatMessage hbm2 = new HeartBeatMessage(Channels.getTheBamon(),
                 baID2);
-        JMSConnectionTestMQ.updateMsgID(hbm2, "heartbeat2");
+        JMSConnectionMockupMQ.updateMsgID(hbm2, "heartbeat2");
         bam.visit(hbm);
         bam.visit(hbm2);
 
         //Trigger the bams with the batch message
         bam.visit(bm);
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
 
          //Now pick up the forwarded Batch message and get its ID
          String forwardedID =
@@ -284,13 +284,13 @@ public class IntegrityTests extends TestCase {
          BatchEndedMessage bem2 = new BatchEndedMessage(Channels.getTheBamon(),
                  baID2, forwardedID, rf2);
 
-         JMSConnectionTestMQ.updateMsgID(bem1, "testmsgid1");
+         JMSConnectionMockupMQ.updateMsgID(bem1, "testmsgid1");
          bam.visit(bem1);
-         JMSConnectionTestMQ.updateMsgID(bem2, "testmsgid2");
+         JMSConnectionMockupMQ.updateMsgID(bem2, "testmsgid2");
          bam.visit(bem2);
 
          Thread.sleep(3000);
-         ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+         ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
 
          //Now there should also one BatchReplyMessage in the listener and the
          //monitor should have written the data to a remote file we can collect
@@ -368,13 +368,13 @@ public class IntegrityTests extends TestCase {
             }
         }
 
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             //ignore
         }
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
 
         //assertEquals("Number of messages received by the server", 4 * LARGE_MESSAGE_COUNT, bas.getCountMessages());
 

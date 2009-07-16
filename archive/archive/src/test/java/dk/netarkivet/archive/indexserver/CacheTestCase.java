@@ -28,7 +28,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -53,7 +53,7 @@ public class CacheTestCase extends TestCase {
         super.setUp();
         rs.setUp();
         // This just is needed to allow an instance of CDXIndexCache to be made
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         utrf.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
                 TestInfo.WORKING_DIR);

@@ -25,7 +25,7 @@
         <jms>
             <!-- Selects the broker class to be used. Must be a subclass of
             dk.netarkivet.common.distribute.JMSConnection. -->
-            <class>dk.netarkivet.common.distribute.JMSConnectionTestMQ</class>
+            <class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
             <!-- The JMS broker host contacted by the JMS connection -->
             <broker>localhost</broker>
             <!-- The port the JMS connection should use -->

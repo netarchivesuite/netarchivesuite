@@ -40,12 +40,12 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -112,7 +112,7 @@ public class ArcRepositoryTesterGet extends TestCase {
     protected void setUp() {
         rs.setUp();
         ChannelsTester.resetChannels();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
 
         rf.setUp();
@@ -144,7 +144,7 @@ public class ArcRepositoryTesterGet extends TestCase {
         arcRepository.close();
         bitArchiveServer.close();
         FileUtils.removeRecursively(WORKING_DIR);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rf.tearDown();
         RememberNotifications.resetSingleton();
         rs.tearDown();
@@ -187,7 +187,7 @@ public class ArcRepositoryTesterGet extends TestCase {
                 CommonSettings.USE_REPLICA_ID));
         client.getFile(GETTABLE_FILES.get(1), replica, result);
         byte[] buffer = FileUtils.readBinaryFile(result);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
                 .waitForConcurrentTasksToFinish();
         assertNotNull("Buffer should not be null", buffer);
         byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(
@@ -222,7 +222,7 @@ public class ArcRepositoryTesterGet extends TestCase {
                    copyOfFile.exists());
 
         byte[] buffer = FileUtils.readBinaryFile(copyOfFile);
-        ((JMSConnectionTestMQ) JMSConnectionFactory.getInstance())
+        ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance())
                 .waitForConcurrentTasksToFinish();
         assertNotNull("Buffer should not be null", buffer);
         byte targetbuffer[] = FileUtils.readBinaryFile(new File(new File(

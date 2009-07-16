@@ -52,7 +52,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -62,8 +62,8 @@ import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -106,7 +106,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         rs.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         utrf.setUp();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
@@ -116,7 +116,12 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
     protected void tearDown() throws Exception {
         if (arc != null) {
-            arc.close();
+            try {
+                arc.close();
+            } catch (ArgumentNotValid e) {
+                // Just ignore, happens because we fiddle with internal state in 
+                // a few tests
+            }
         }
         if (arcrepos != null) {
             arcrepos.close();
@@ -356,7 +361,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         // Send the message back to indicate a succesful store
         con.resend(sm, Channels.getThisReposClient());
         // Let the other thread process the message
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
         // And check that the file has been deleted
         synchronized (t) {
             try {
@@ -530,9 +535,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
         ChannelID replyQ = (ChannelID) arcReplyQ.get(arc);
         arcReplyQ.set(arc, null);
         // Must remove listener from replyQ or tearDown dies.
-        JMSConnectionTestMQ testMQ = JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ testMQ = JMSConnectionMockupMQ.getInstance();
         List<MessageListener> listeners = testMQ.getListeners(replyQ);
-        testMQ.removeListener(replyQ, listeners.get(0));
+        for (MessageListener listener : listeners) {
+            testMQ.removeListener(replyQ, listener);
+        }
         try {
             arc.store(ARCFILE);
             fail("Should have an IOFailure after forcing internal exception");
@@ -557,7 +564,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         try {
             arc.store(ARCFILE);
             fail("Should have an IOFailure after forcing internal exception");
-        } catch (NullPointerException e) {
+        } catch (IOFailure e) {
             // Expected to happen
         }
         CollectionAsserts.assertListEquals(

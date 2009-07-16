@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.scheduler;
 
+import javax.jms.JMSException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,14 +31,12 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.logging.LogManager;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-
 import junit.framework.TestCase;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -88,7 +87,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     private static final StopReason DEFAULT_STOPREASON =
         StopReason.DOWNLOAD_COMPLETE;
     ReloadSettings rs = new ReloadSettings();
-    
+
     /**
      * setUp method for this set of unit tests.
      */
@@ -99,8 +98,8 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         FileInputStream fis = new FileInputStream(TestInfo.TESTLOGPROP);
         LogManager.getLogManager().readConfiguration(fis);
         fis.close();
-        
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestUtils.resetDAOs();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
@@ -121,7 +120,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
     public void tearDown() throws SQLException, IllegalAccessException, NoSuchFieldException {
         TestUtils.resetDAOs();
         FileUtils.removeRecursively(WORKING);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         HarvestSchedulerMonitorServer.getInstance().close();
         DatabaseTestUtils.dropHDDB();
         JobDAO.reset();
@@ -136,21 +135,23 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * @throws JMSException
      */
     public void testOnMessageUsesUnpack() throws JMSException {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
-                .getInstance();
         HarvestSchedulerMonitorServer hsms
             = HarvestSchedulerMonitorServer.getInstance();
         NetarkivetMessage nmsg = new CrawlStatusMessage(1, JobStatus.STARTED);
-        ObjectMessage omsg = con.getObjectMessage(nmsg);
+        JMSConnectionMockupMQ.TestObjectMessage omsg
+                = (JMSConnectionMockupMQ.TestObjectMessage)
+                JMSConnectionMockupMQ.getObjectMessage(nmsg);
+        omsg.id = "IDXXX";
         hsms.onMessage(omsg);
-        nmsg.getID();
+        assertEquals("NetarchiveMessage should have the same ID as JMS message",
+                     "IDXXX", nmsg.getID());
     }
 
     /**
      * Test that HSMS actually listens to THE_SCHED (see bug 203).
      */
     public void testListens() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         HarvestSchedulerMonitorServer hsms
             = HarvestSchedulerMonitorServer.getInstance();
@@ -166,7 +167,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * for a successful crawl job.
      */
     public void testOnMessageGoodJob() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = dk.netarkivet.harvester.scheduler.TestInfo.getJob();
         the_dao.create(j1);
@@ -182,13 +183,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
         DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
                 CRAWL_REPORT, DEFAULT_STOPREASON);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
-        hsms.onMessage(con.getObjectMessage(csm_done));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "done"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status DONE: ",
@@ -210,7 +211,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * behavior should be identical to the case with a DONE message.
      */
     public void testOnMessageFailedJobWithReport() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
@@ -226,7 +227,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
 
         // Send a job-failed message
         DomainHarvestReport hhr = new HeritrixDomainHarvestReport(
@@ -234,7 +235,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
-        hsms.onMessage(con.getObjectMessage(csm_failed));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "done"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status FAILED: ",
@@ -244,7 +245,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         Iterator<HarvestInfo> hist = nk_domain.getHistory().getHarvestInfo();
         assertTrue("Should have one harvest remembered", hist.hasNext());
         HarvestInfo dh = (HarvestInfo) hist.next();
-        assertEquals("Unexpected number of objects retireved", 
+        assertEquals("Unexpected number of objects retireved",
                 22, dh.getCountObjectRetrieved());
         assertFalse("Should NOT have two harvests remembered", hist.hasNext());
     }
@@ -254,9 +255,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * report returned.
      */
     public void testOnMessageFailedJobNoReport() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
-        
+
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
         j1.setStatus(JobStatus.NEW);
@@ -272,13 +273,13 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-failed message
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.FAILED, null);
         csm_failed.setNotOk("Simulated failed message");
-        hsms.onMessage(con.getObjectMessage(csm_failed));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status FAILED: ", JobStatus.FAILED,
@@ -324,7 +325,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * be ignored.
      */
     public void testStartedAfterDone() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
@@ -343,14 +344,14 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CRAWL_REPORT, DEFAULT_STOPREASON);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
-        hsms.onMessage(con.getObjectMessage(csm_done));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         //
         // Send the STARTED message
         //
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         //
         //All usual tests should work and job status should still be done
         //
@@ -376,7 +377,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * This STARTED message should be ignored.
      */
     public void testStartedAfterFailed() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         JobDAO.getInstance().create(j1);
@@ -397,14 +398,14 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CrawlStatusMessage(j1ID, JobStatus.FAILED, hhr);
         csm_failed.setNotOk("Simulated failed message");
 
-        hsms.onMessage(con.getObjectMessage(csm_failed));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         //
         // Send the STARTED message
         //
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         //
         //All usual tests should work and job status should still be done
         //
@@ -425,7 +426,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * If FAILED arrives after DONE, the job is marked as FAILED.
      */
     public void testFailedAfterDone() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         the_dao.create(j1);
@@ -441,18 +442,18 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
         // Send a job-done message
         DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, DEFAULT_STOPREASON);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
-        hsms.onMessage(con.getObjectMessage(csm_done));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Send a job-failed message
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.FAILED, null);
         csm_failed.setNotOk("Failed");
-        hsms.onMessage(con.getObjectMessage(csm_failed));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Job should now have status "failed"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
@@ -474,7 +475,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
      * If DONE arrives after FAILED, the job should be marked FAILED.
      */
      public void testDoneAfterFailed() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         the_dao.create(j1);
@@ -489,19 +490,19 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         // Send a message job-started message to onMessage
         CrawlStatusMessage csm_start = new
                 CrawlStatusMessage(j1ID, JobStatus.STARTED);
-        hsms.onMessage(con.getObjectMessage(csm_start));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_start));
          // Send a job-failed message
         CrawlStatusMessage csm_failed = new
                 CrawlStatusMessage(j1ID,
                                    JobStatus.FAILED, null);
         csm_failed.setNotOk("Simulated failed message");
 
-        hsms.onMessage(con.getObjectMessage(csm_failed));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_failed));
         // Send a job-done message
         DomainHarvestReport hhr = new HeritrixDomainHarvestReport(CRAWL_REPORT, DEFAULT_STOPREASON);
         CrawlStatusMessage csm_done = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
-        hsms.onMessage(con.getObjectMessage(csm_done));
+        hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csm_done));
         // Job should now have status "failed"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status Failed: ", JobStatus.FAILED, j1.getStatus());
@@ -520,7 +521,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
       * but is logged.
       */
     public void testDoneAfterSubmitted() {
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Job j1 = TestInfo.getJob();
         the_dao.create(j1);
@@ -539,7 +540,7 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 CRAWL_REPORT, DEFAULT_STOPREASON);
         CrawlStatusMessage csmDone = new
                 CrawlStatusMessage(j1ID, JobStatus.DONE, hhr);
-        hsms.onMessage(con.getObjectMessage(csmDone));
+         hsms.onMessage(JMSConnectionMockupMQ.getObjectMessage(csmDone));
         // Job should now have status "done"
         j1 = the_dao.read(new Long(j1ID));
         assertEquals("Job should have status DONE: ", JobStatus.DONE, j1.getStatus());
@@ -620,11 +621,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         //Check correct historyinfo for kb.dk: complete
         dom = DomainDAO.getInstance().read("kb.dk");
         HarvestInfo dh = dom.getHistory().getSpecifiedHarvestInfo(
-                snapshot.getOid(), 
+                snapshot.getOid(),
                 dom.getDefaultConfiguration().getName());
         assertEquals("Should have expected number of objects retrieved",
                 1, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 
+        assertEquals("Should have expected total size of harvest",
                 521, dh.getSizeDataRetrieved());
         assertEquals("Should be marked as complete",
                 StopReason.DOWNLOAD_COMPLETE, dh.getStopReason());
@@ -645,9 +646,9 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         dom = DomainDAO.getInstance().read("dr.dk");
         dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(),
                 dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 
+        assertEquals("Should have expected number of objects retrieved",
                 2, dh.getCountObjectRetrieved());
-        assertEquals("Should have expected total size of harvest", 
+        assertEquals("Should have expected total size of harvest",
                 580, dh.getSizeDataRetrieved());
         assertEquals("Should be marked as stopped due to size limit",
                 StopReason.CONFIG_SIZE_LIMIT, dh.getStopReason());
@@ -674,11 +675,11 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
         dom = DomainDAO.getInstance().read("dr.dk");
         dh = dom.getHistory().getSpecifiedHarvestInfo(snapshot.getOid(),
                 dom.getDefaultConfiguration().getName());
-        assertEquals("Should have expected number of objects retrieved", 
+        assertEquals("Should have expected number of objects retrieved",
                 2, dh.getCountObjectRetrieved());
         assertEquals("Should have expected total size of harvest",
                 580, dh.getSizeDataRetrieved());
-        assertEquals("Should be marked as size limit reached", 
+        assertEquals("Should be marked as size limit reached",
                 StopReason.SIZE_LIMIT, dh.getStopReason());
     }
 }

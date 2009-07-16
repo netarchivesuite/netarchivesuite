@@ -40,7 +40,7 @@ import org.archive.io.arc.ARCRecordMetaData;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -81,8 +81,8 @@ public class HarvestControllerTester extends TestCase {
             throws Exception, IllegalAccessException, IOException {
         super.setUp();
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.CRAWLDIR_ORIGINALS_DIR,
                                           TestInfo.WORKING_DIR);
         rf.setUp();
@@ -96,7 +96,7 @@ public class HarvestControllerTester extends TestCase {
     public void tearDown() throws Exception {
         super.tearDown();
         mis.tearDown();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rf.tearDown();
         if (hc != null) {

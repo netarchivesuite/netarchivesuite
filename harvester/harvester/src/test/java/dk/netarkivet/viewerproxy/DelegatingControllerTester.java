@@ -32,7 +32,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.indexserver.Index;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -51,14 +51,14 @@ public class DelegatingControllerTester extends TestCase {
     }
 
     public void setUp() {
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         mur = new TestMissingURIRecorder();
         cc = new TestCDXCache();
         aaa = new TestARCArchiveAccess();
     }
 
     public void tearDown() {
-        JMSConnectionTestMQ.getInstance().cleanup();
+        JMSConnectionMockupMQ.getInstance().cleanup();
     }
 
     /** Tests constructor. Only thing really testable is that ArgumentNotValid

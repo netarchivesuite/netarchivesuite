@@ -38,7 +38,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -92,7 +92,7 @@ public class BitarchiveClientTester extends TestCase {
      * Number of ARC records in the file uploaded.
      */
     private static final int NUM_RECORDS = 13;
-    private JMSConnectionTestMQ con;
+    private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
 
@@ -102,14 +102,14 @@ public class BitarchiveClientTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         
         rf.setUp();
 
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
 
         handler = new MessageTestHandler();
-        con = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         con.setListener(Channels.getTheRepos(), handler);
         bac = BitarchiveClient.getInstance(ALL_BA, ANY_BA, THE_BAMON);
 
@@ -126,7 +126,7 @@ public class BitarchiveClientTester extends TestCase {
         bas.close();
         bac.close();
         bam.close();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         if (con != null) {
             con.cleanup();
         }

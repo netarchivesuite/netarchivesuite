@@ -271,7 +271,7 @@ public class BitarchiveTesterBatch extends BitarchiveTestCase {
         failedFiles.addAll(lbs.getFilesFailed());
         File fileDir = new File(TestInfo.WORKING_DIR, "filedir").getCanonicalFile();
         
-        assertTrue("Number of failed files should be 2", 2 == failedFiles.size());
+        assertEquals("Number of failed files should be 2", 2, failedFiles.size());
         assertTrue("failedFiles should contain fyensdk.arc", 
                 failedFiles.contains(new File(fileDir, "fyensdk.arc")));
         assertTrue("failedFiles should contain Upload3.ARC", 

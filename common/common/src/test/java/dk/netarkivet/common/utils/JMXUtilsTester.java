@@ -41,19 +41,9 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 import javax.management.ReflectionException;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.remote.JMXServiceURL;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.net.MalformedURLException;
 
 import junit.framework.TestCase;
 
@@ -61,8 +51,6 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-
-import com.sun.jndi.rmi.registry.RegistryContextFactory;
 
 /**
  * 
@@ -78,16 +66,9 @@ public class JMXUtilsTester extends TestCase {
     }
 
     public void setUp() {
-
-        // Set JMX_timeout to 1 second.
-        // When run as part of the unittestersuite, it has no
-        // effect.
-        
-        Settings.set(CommonSettings.JMX_TIMEOUT, "1");
-        // Note: without the next statement, the former statement has no effect!
-        int JMXMaxtries = JMXUtils.MAX_TRIES;
-        
         rs.setUp();
+        // Set JMX_timeout to 1 second.
+        Settings.set(CommonSettings.JMX_TIMEOUT, "1");
     }
 
     public void tearDown() {
@@ -131,7 +112,7 @@ test any project code
                      "a:aBean=1:anAttribute", o);
 
         Date then = new Date();
-        connection.failCount = JMXUtils.MAX_TRIES + 1;
+        connection.failCount = JMXUtils.getMaxTries() + 1;
         try {
             o = JMXUtils.getAttribute("a:aBean=1", "anAttribute", connection);
             fail("Should time out");
@@ -140,11 +121,11 @@ test any project code
         }
         Date now = new Date();
         long time = now.getTime()-then.getTime();
-        assertTrue("Should take at least 2^" + JMXUtils.MAX_TRIES
+        assertTrue("Should take at least 2^" + JMXUtils.getMaxTries()
                    + " milliseconds, but was " + time + ", should be "
-                   + Math.pow(2, JMXUtils.MAX_TRIES),
-                   time >= Math.pow(2, JMXUtils.MAX_TRIES));
-        assertEquals("Should have been called " + JMXUtils.MAX_TRIES + " times.",
+                   + Math.pow(2, JMXUtils.getMaxTries()),
+                   time >= Math.pow(2, JMXUtils.getMaxTries()));
+        assertEquals("Should have been called " + JMXUtils.getMaxTries() + " times.",
                     1,
                     connection.failCount);
     }

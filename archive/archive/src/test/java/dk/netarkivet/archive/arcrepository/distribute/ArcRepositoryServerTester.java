@@ -37,7 +37,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.JMSConnectionTester;
 import dk.netarkivet.common.distribute.JMSConnectionTester.DummyServer;
 import dk.netarkivet.common.distribute.NullRemoteFile;
@@ -98,7 +98,7 @@ public class ArcRepositoryServerTester extends TestCase {
         rs.setUp();
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
         FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
@@ -175,7 +175,7 @@ public class ArcRepositoryServerTester extends TestCase {
 
         new ArcRepositoryServer(arc).visit(msg);
 
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
 
         assertEquals("Server should have received 1 message", 1,
                      serverTheBamonQueue.msgReceived);
@@ -206,7 +206,7 @@ public class ArcRepositoryServerTester extends TestCase {
 
         new ArcRepositoryServer(arc).visit(msg);
 
-        ((JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance())
+        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
                 .waitForConcurrentTasksToFinish();
 
         assertFalse("Message should have been tagged NotOK", msg.isOk());
@@ -236,10 +236,10 @@ public class ArcRepositoryServerTester extends TestCase {
         file = new File(BITARCHIVE_DIR, STORABLE_FILES.get(0).toString());
         GetMessage msg = new GetMessage(Channels.getTheRepos(), Channels
                 .getError(), "", 0);
-        JMSConnectionTestMQ testCon = (JMSConnectionTestMQ) JMSConnectionTestMQ
+        JMSConnectionMockupMQ testCon = (JMSConnectionMockupMQ) JMSConnectionMockupMQ
                 .getInstance();
         TestMessageListener listener = new TestMessageListener();
-        testCon.addListener(Channels.getAllBa(), listener);
+        testCon.setListener(Channels.getAllBa(), listener);
         new ArcRepositoryServer(ArcRepository.getInstance()).visit(msg);
         testCon.waitForConcurrentTasksToFinish();
         assertEquals("Message should have been sent to the bitarchive queue",

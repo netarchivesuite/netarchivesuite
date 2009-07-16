@@ -45,7 +45,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -116,8 +116,8 @@ public class HarvestControllerServerTester extends TestCase {
 
     public void setUp() throws Exception {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -151,7 +151,7 @@ public class HarvestControllerServerTester extends TestCase {
         if (hcs != null) {
             hcs.close();
         }
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         FileUtils.removeRecursively(TestInfo.CRAWL_DIR_COPY);
@@ -210,7 +210,7 @@ public class HarvestControllerServerTester extends TestCase {
             throw new UnknownID(priority + " is not a valid priority");
         }
         assertEquals("Should have no listeners to the HACO queue",
-                     0, ((JMSConnectionTestMQ) JMSConnectionFactory
+                     0, ((JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance())
                          .getListeners(result).size());
     }
@@ -253,12 +253,12 @@ public class HarvestControllerServerTester extends TestCase {
         j.setStatus(JobStatus.DONE);
         NetarkivetMessage nMsg = new DoOneCrawlMessage(j, TestInfo.SERVER_ID,
                                                                                                   TestInfo.emptyMetadata);
-        JMSConnectionTestMQ.updateMsgID(nMsg, "UNIQUE_ID");
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        JMSConnectionMockupMQ.updateMsgID(nMsg, "UNIQUE_ID");
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         CrawlStatusMessageListener listener = new CrawlStatusMessageListener();
         con.setListener(Channels.getTheSched(), listener);
-        ObjectMessage msg = con.getObjectMessage(nMsg);
+        ObjectMessage msg = JMSConnectionMockupMQ.getObjectMessage(nMsg);
         hcs.onMessage(msg);
         con.waitForConcurrentTasksToFinish();
         //
@@ -329,11 +329,10 @@ public class HarvestControllerServerTester extends TestCase {
             throw new UnknownID(priority + " is not a valid priority");
         }
         NetarkivetMessage naMsg = new DoOneCrawlMessage(theJob, result, TestInfo.emptyMetadata);
-        JMSConnectionTestMQ.updateMsgID(naMsg, "id1");
-        ObjectMessage oMsg = ((JMSConnectionTestMQ) con)
-                .getObjectMessage(naMsg);
+        JMSConnectionMockupMQ.updateMsgID(naMsg, "id1");
+        ObjectMessage oMsg = JMSConnectionMockupMQ.getObjectMessage(naMsg);
         hcs.onMessage(oMsg);
-        ((JMSConnectionTestMQ) con).waitForConcurrentTasksToFinish();
+        ((JMSConnectionMockupMQ) con).waitForConcurrentTasksToFinish();
         // Should send job-started and job-failed messages
         assertEquals("Should have received two messages", 2,
                 listener.messagesReceived.size());
@@ -379,7 +378,7 @@ public class HarvestControllerServerTester extends TestCase {
             int numberOfStoreMessagesExpected,
             String storeFailFile) {
         //System.out.println("StoreFailFile: " + storeFailFile);
-        final JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionFactory
+        final JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionFactory
                 .getInstance();
         Settings.set(HarvesterSettings.HARVEST_CONTROLLER_SERVERDIR, crawlDir.getParentFile()
                 .getAbsolutePath());

@@ -33,9 +33,8 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.TestObjectMessage;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobStatus;
@@ -54,8 +53,8 @@ public class HarvesterMessageHandlerTester extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         tmh = new TestMessageHandler();
         // Allow reading of the log
         FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
@@ -71,15 +70,15 @@ public class HarvesterMessageHandlerTester extends TestCase {
 
     public final void testOnMessage() {
         TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
-        JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
-        tmh.onMessage(new TestObjectMessage(testMessage));
+        JMSConnectionMockupMQ.updateMsgID(testMessage, "ID89");
+        tmh.onMessage(JMSConnectionMockupMQ.getObjectMessage(testMessage));
         assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
         // test that tmh.onMessage issues a "Invalid message type" warning, if the message embeddded in the TestObjectMessage is not a
         // HarvesterMessage
         IllegalTestMessage illegalMessage = new IllegalTestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "43");
-        JMSConnectionTestMQ.updateMsgID(illegalMessage, "ID90");
+        JMSConnectionMockupMQ.updateMsgID(illegalMessage, "ID90");
         
-        tmh.onMessage(new TestObjectMessage(illegalMessage));
+        tmh.onMessage(JMSConnectionMockupMQ.getObjectMessage(illegalMessage));
         File logfile = new File("tests/testlogs/netarkivtest.log");
         LogUtils.flushLogs(HarvesterMessageHandler.class.getName());
         FileAsserts.assertFileContains("Log should have given warning",

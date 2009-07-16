@@ -31,7 +31,7 @@ import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 
 public class MockupArcRepositoryClient implements TestConfigurationIF, MessageListener {
     /** Fail on all attempts to store these files */
@@ -47,7 +47,7 @@ public class MockupArcRepositoryClient implements TestConfigurationIF, MessageLi
     }
 
     public void tearDown() {
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
 

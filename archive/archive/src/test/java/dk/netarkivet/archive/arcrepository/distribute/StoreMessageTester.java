@@ -27,7 +27,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -41,7 +41,7 @@ public class StoreMessageTester extends TestCase {
 
     public void setUp() {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     public void tearDown() {

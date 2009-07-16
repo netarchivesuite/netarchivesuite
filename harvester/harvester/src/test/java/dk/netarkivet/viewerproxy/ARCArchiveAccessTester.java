@@ -47,7 +47,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
@@ -123,7 +123,7 @@ public class ARCArchiveAccessTester extends TestCase {
         GIF_URL = new URI(
                 "http://netarkivet.dk/netarchive_alm/billeder/spacer.gif");
 
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         ChannelsTester.resetChannels();
 
         //We need a controller that doesn't do much more than return a test
@@ -158,7 +158,7 @@ public class ARCArchiveAccessTester extends TestCase {
             realArcRepos.close();
         }
         FileUtils.removeRecursively(WORKING);
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         rs.tearDown();
     }
 

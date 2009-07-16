@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -119,8 +119,8 @@ public class IndexRequestServerTester extends TestCase {
         IndexRequestMessage irMsg = new IndexRequestMessage(
                 RequestType.CDX, JOB_SET);
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ conn
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ conn
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         conn.setListener(irMsg.getReplyTo(), listener);
 
         server.visit(irMsg);
@@ -189,8 +189,8 @@ public class IndexRequestServerTester extends TestCase {
 
         //Listen for replies
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ conn
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ conn
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         ChannelID channelID = irm.getReplyTo();
         conn.setListener(channelID, listener);
 
@@ -255,9 +255,9 @@ public class IndexRequestServerTester extends TestCase {
         //Send OK message
         IndexRequestMessage irm = new IndexRequestMessage(RequestType.CDX,
                                                           JOB_SET);
-        JMSConnectionTestMQ.updateMsgID(irm, "ID-0");
-        JMSConnectionTestMQ conn
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ.updateMsgID(irm, "ID-0");
+        JMSConnectionMockupMQ conn
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         conn.send(irm);
         conn.waitForConcurrentTasksToFinish();
         //Give a little time to reply
@@ -268,7 +268,7 @@ public class IndexRequestServerTester extends TestCase {
 
         //Send not-OK message
         irm = new IndexRequestMessage(RequestType.CDX, JOB_SET);
-        JMSConnectionTestMQ.updateMsgID(irm, "ID-1");
+        JMSConnectionMockupMQ.updateMsgID(irm, "ID-1");
         irm.setNotOk("Not OK");
         conn.send(irm);
         conn.waitForConcurrentTasksToFinish();
@@ -313,8 +313,8 @@ public class IndexRequestServerTester extends TestCase {
 
         //Execute visit
         server.visit(irm);
-        JMSConnectionTestMQ conn
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ conn
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         conn.waitForConcurrentTasksToFinish();
         //Give a little time to reply
         Thread.sleep(200);
@@ -357,8 +357,8 @@ public class IndexRequestServerTester extends TestCase {
 
         //Listen for replies
         GenericMessageListener listener = new GenericMessageListener();
-        JMSConnectionTestMQ conn
-                = (JMSConnectionTestMQ) JMSConnectionFactory.getInstance();
+        JMSConnectionMockupMQ conn
+                = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         conn.setListener(irm.getReplyTo(), listener);
 
         //Send both messages

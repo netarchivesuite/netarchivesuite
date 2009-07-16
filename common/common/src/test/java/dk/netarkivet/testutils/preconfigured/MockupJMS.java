@@ -24,7 +24,7 @@ package dk.netarkivet.testutils.preconfigured;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.Settings;
 
 public class MockupJMS implements TestConfigurationIF {
@@ -32,13 +32,13 @@ public class MockupJMS implements TestConfigurationIF {
 
     public void setUp() {
         originalClass = Settings.get(CommonSettings.JMS_BROKER_CLASS);
-        Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionTestMQ.class.getName());
+        Settings.set(CommonSettings.JMS_BROKER_CLASS, JMSConnectionMockupMQ.class.getName());
         JMSConnectionFactory.getInstance().cleanup();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
     }
 
     public void tearDown() {
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.clearTestQueues();
         try {
             JMSConnectionFactory.getInstance().cleanup();
         } catch (Exception e) {

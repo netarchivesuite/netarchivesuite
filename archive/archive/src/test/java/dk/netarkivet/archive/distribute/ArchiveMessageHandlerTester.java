@@ -36,8 +36,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
-import dk.netarkivet.common.distribute.TestObjectMessage;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -49,8 +48,8 @@ public class ArchiveMessageHandlerTester extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
-        JMSConnectionTestMQ.clearTestQueues();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         tmh = new TestMessageHandler();
     }
 
@@ -61,8 +60,8 @@ public class ArchiveMessageHandlerTester extends TestCase {
 
     public final void testOnMessage() {
         TestMessage testMessage = new TestMessage(Channels.getTheRepos(), Channels.getTheBamon(), "42");
-        JMSConnectionTestMQ.updateMsgID(testMessage, "ID89");
-        tmh.onMessage(new TestObjectMessage(testMessage));
+        JMSConnectionMockupMQ.updateMsgID(testMessage, "ID89");
+        tmh.onMessage(JMSConnectionMockupMQ.getObjectMessage(testMessage));
         assertEquals("Message should have been unpacked and accept() should have been called", testMessage.acceptCalled, 1);
     }
 

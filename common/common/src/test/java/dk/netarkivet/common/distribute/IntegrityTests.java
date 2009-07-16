@@ -85,14 +85,14 @@ public class IntegrityTests extends TestCase {
         /* Do not send notification by email. Print them to STDOUT. */
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
-        JMSConnectionFactory.getInstance().close();
+        JMSConnectionFactory.getInstance().cleanup();
         conn = JMSConnectionFactory.getInstance();
         pes.setUp();
     }
 
     public void tearDown() {
         ChannelsTester.resetChannels();
-        JMSConnectionFactory.getInstance().close();
+        JMSConnectionFactory.getInstance().cleanup();
         pes.tearDown();
         rs.tearDown();
     }

@@ -41,7 +41,6 @@ import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
@@ -53,7 +52,6 @@ import dk.netarkivet.common.utils.Settings;
 public class ArcRepositoryServer extends ArchiveMessageHandler {
     private final Log log = LogFactory.getLog(getClass());
     private final ArcRepository ar;
-    private final JMSConnection con = JMSConnectionFactory.getInstance();
 
     /**
      * Creates and adds a ArcRepositoryMessageHandler as listener on
@@ -66,7 +64,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ChannelID channel = Channels.getTheRepos();
         log.info("Listening for arc repository messages on channel '"
                  + channel + "'");
-        con.setListener(channel, this);
+        JMSConnectionFactory.getInstance().setListener(channel, this);
     }
 
     /**
@@ -84,7 +82,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle store request", t);
             msg.setNotOk(t);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 
@@ -106,7 +104,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle request to remove file", t);
             msg.setNotOk(t);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 
@@ -121,11 +119,11 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
 
         try {
             ar.updateAdminData(msg);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle request to change admin data", t);
             msg.setNotOk(t);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 
@@ -180,7 +178,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
                     msg.getReplyTo(), Channels.getError(), msg.getID(),
                     0, Collections.<File>emptyList(), null);
             replyMessage.setNotOk(t);
-            con.send(replyMessage);
+            JMSConnectionFactory.getInstance().send(replyMessage);
         }
     }
 
@@ -201,7 +199,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle get request", t);
             msg.setNotOk(t);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 
@@ -223,7 +221,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle get file request", t);
             msg.setNotOk(t);
-            con.reply(msg);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 
@@ -231,6 +229,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Removes the ArcRepositoryMessageHandler as listener.
      */
     public void close() {
-        con.removeListener(Channels.getTheRepos(), this);
+        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
     }
 }

@@ -39,7 +39,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.StringRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
@@ -63,7 +63,7 @@ public class ArcRepositoryTester extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
@@ -252,7 +252,7 @@ public class ArcRepositoryTester extends TestCase {
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0),
                 new StringRemoteFile(arcname1
                 + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR + "f00\n"));
-        JMSConnectionTestMQ.updateMsgID(bamsg0, id1);
+        JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
         LogUtils.flushLogs(ArcRepository.class.getName());
         //System.out.println(FileUtils.readFile(TestInfo.LOG_FILE));
@@ -268,7 +268,7 @@ public class ArcRepositoryTester extends TestCase {
         ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
-        JMSConnectionTestMQ.updateMsgID(bamsg2, id1);
+        JMSConnectionMockupMQ.updateMsgID(bamsg2, id1);
         bamsg2.setNotOk("Test an error");
         a.onBatchReply(bamsg2);
         LogUtils.flushLogs(ArcRepository.class.getName());
@@ -285,7 +285,7 @@ public class ArcRepositoryTester extends TestCase {
         outstanding.put(id1, arcname1);
         BatchReplyMessage bamsg3 = new BatchReplyMessage(Channels.getTheRepos(),
                 Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
-        JMSConnectionTestMQ.updateMsgID(bamsg3, id1);
+        JMSConnectionMockupMQ.updateMsgID(bamsg3, id1);
         bamsg3.setNotOk("Test another error");
         try {
             a.onBatchReply(bamsg3);

@@ -38,7 +38,7 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
@@ -71,7 +71,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
 
     public void setUp() throws Exception {
         rs.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
         if (!Replica.isKnownReplicaId("TWO") || !Replica.isKnownReplicaId("ONE")) {
             List<String> knownIds = new ArrayList<String>();
@@ -269,7 +269,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         
         
         public void cleanup() {
-            JMSConnectionTestMQ.useJMSConnectionTestMQ();
+            JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
             super.cleanup();
         }
     }

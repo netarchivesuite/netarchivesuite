@@ -100,10 +100,10 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testGetIDSame() {
         NetarkivetMessage m = new TestMessage(toQ, replyToQ);
-        JMSConnectionTestMQ.updateMsgID(m, "TESTMSGID5");
+        JMSConnectionMockupMQ.updateMsgID(m, "TESTMSGID5");
         String id = m.getID();
         //should not update ID - id already set
-        JMSConnectionTestMQ.updateMsgID(m, "TESTMSGID6");
+        JMSConnectionMockupMQ.updateMsgID(m, "TESTMSGID6");
         assertEquals(
                 "Method getId() returned different values on same message.",
                 id, m.getID());
@@ -217,7 +217,7 @@ public class NetarkivetMessageTester extends TestCase {
         //Work on it for a bit:
         m1.setNotOk(ERR_MSG);
         //Now serialize and deserialize the study object:
-        JMSConnectionTestMQ.updateMsgID(m1, "TESTMESSAGEID54");
+        JMSConnectionMockupMQ.updateMsgID(m1, "TESTMESSAGEID54");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(baos);
         ous.writeObject(m1);

@@ -42,7 +42,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.indexserver.RequestType;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -94,7 +94,7 @@ public class IntegrityTests extends DataModelTestCase {
         rs.setUp();
         ChannelsTester.resetChannels();
         super.setUp();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         con = JMSConnectionFactory.getInstance();
         FileUtils.removeRecursively(TestInfo.SERVER_DIR);
         TestInfo.WORKING_DIR.mkdirs();
@@ -213,7 +213,7 @@ public class IntegrityTests extends DataModelTestCase {
 
         //Sanity test: Make sure we listen at the start
         List<MessageListener> listeners =
-                ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
+                ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
         assertEquals("The HACO should listen before job",
                      1, listeners.size());
 
@@ -267,7 +267,7 @@ public class IntegrityTests extends DataModelTestCase {
         // point we should not yet have re-added the listener.
 
         //Check listener is not there anymore
-        listeners = ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
+        listeners = ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
         assertEquals("Noone should listen to the HACO queue",
                      0, listeners.size());
 
@@ -295,7 +295,7 @@ public class IntegrityTests extends DataModelTestCase {
         }
 
         //Check HACO listener is back
-        listeners = ((JMSConnectionTestMQ) con).getListeners(hacoQueue);
+        listeners = ((JMSConnectionMockupMQ) con).getListeners(hacoQueue);
         assertEquals("The HACO should listen again",
                      1, listeners.size());
 

@@ -33,7 +33,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.JMSConnectionTestMQ;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -86,7 +86,7 @@ public class IntegrityTests extends TestCase {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, TestRemoteFile.class.getName());
         Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, ARCHIVE_DIR.getAbsolutePath());
         archive = Bitarchive.getInstance();
-        JMSConnectionTestMQ.useJMSConnectionTestMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         server = BitarchiveServer.getInstance();
     }
 
@@ -147,7 +147,7 @@ public class IntegrityTests extends TestCase {
         setupBitarchiveWithDirs(new String[] {
             dir1.getAbsolutePath(),
         });
-        JMSConnectionTestMQ con = (JMSConnectionTestMQ) JMSConnectionTestMQ.getInstance();
+        JMSConnectionMockupMQ con = (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
         assertEquals("We should listen to ANY_BA at the start",
                 1, con.getListeners(Channels.getAnyBa()).size());
         // Try big file

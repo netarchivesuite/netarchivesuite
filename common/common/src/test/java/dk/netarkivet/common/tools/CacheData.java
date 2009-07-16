@@ -23,12 +23,10 @@
 
 package dk.netarkivet.common.tools;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageListener;
-import javax.jms.Queue;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.Topic;
-import javax.jms.TopicConnectionFactory;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -97,24 +95,24 @@ public class CacheData {
             return new JMSConnectionDummy();
         }
 
-        protected QueueConnectionFactory getQueueConnectionFactory()
+        protected ConnectionFactory getConnectionFactory()
                 throws JMSException {
             //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
-        protected TopicConnectionFactory getTopicConnectionFactory()
+        protected ConnectionFactory getTopicConnectionFactory()
                 throws JMSException {
             //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
-        protected Queue getQueue(String queueName) throws JMSException {
+        protected Destination getDestination(String queueName) throws JMSException {
             //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
 
-        protected Topic getTopic(String topicName) throws JMSException {
+        protected Destination getTopic(String topicName) throws JMSException {
             //TODO: implement method
             throw new NotImplementedException("Not implemented");
         }
@@ -145,7 +143,7 @@ public class CacheData {
             // TODO Auto-generated method stub
             
         }
-        
-        
+
+
     }
 }

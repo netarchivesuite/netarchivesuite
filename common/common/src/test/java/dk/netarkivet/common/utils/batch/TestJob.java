@@ -23,27 +23,14 @@
 package dk.netarkivet.common.utils.batch;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.common.distribute.ChannelID;
 
-/**
- *
- */
 public class TestJob extends ChecksumJob {
     private String testId;
-    private ChannelID sentToChannel;
-
     public TestJob(String in_testId) {
         testId = in_testId;
     }
 
     public String getTestId() {
         return testId;
-    }
-
-    public void setSentToChannel(ChannelID in_sentToChannel) {
-        sentToChannel = in_sentToChannel;
-    }
-    public ChannelID getSentToChannel() {
-        return sentToChannel;
     }
 }
