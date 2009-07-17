@@ -121,7 +121,6 @@ public class WebProxy extends DefaultHandler
      */
     public void handle(String target, HttpServletRequest request,
                        HttpServletResponse response, int dispatch) {
-        URI uri = null;
         HttpResponse netarkivetResponse = new HttpResponse(response);
         HttpRequest netarkivetRequest = new HttpRequest(request);
         try {
@@ -132,7 +131,8 @@ public class WebProxy extends DefaultHandler
             uriResolver.lookup(netarkivetRequest, netarkivetResponse);
             ((org.mortbay.jetty.Request)request).setHandled(true);
         } catch (Exception e) {
-            createErrorResponse(uri, netarkivetResponse, e);
+            createErrorResponse(netarkivetRequest.getURI(),
+                                netarkivetResponse, e);
         }
     }
 
