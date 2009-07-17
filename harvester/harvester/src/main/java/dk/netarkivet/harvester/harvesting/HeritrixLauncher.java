@@ -200,10 +200,10 @@ public class HeritrixLauncher {
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile();
-
+        heritrixController 
+            = HeritrixControllerFactory.getDefaultHeritrixController(args);
         try {
             // Initialize Heritrix settings according to the order.xml
-            heritrixController = HeritrixControllerFactory.getDefaultHeritrixController(args);
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();
@@ -217,7 +217,7 @@ public class HeritrixLauncher {
             throw(e);
         } catch (Exception e) {
             log.warn("Exception during crawl", e);
-            throw new RuntimeException("Exception during crawl",e);
+            throw new RuntimeException("Exception during crawl", e);
         } finally {
             if (heritrixController != null) {
                 heritrixController.cleanup();
