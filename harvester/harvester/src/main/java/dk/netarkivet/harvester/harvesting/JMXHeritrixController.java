@@ -605,7 +605,7 @@ public class
      * @return the URL for monitoring this instance.
      */
     public String getHarvestInformation() {
-        return "http://" + getHostName() + ":" + getGUIPort();
+        return "http://" + SystemUtils.getLocalHostName() + ":" + getGUIPort();
     }
 
     /** Change an environment to be suitable for running Heritrix.
