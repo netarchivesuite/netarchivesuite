@@ -341,4 +341,13 @@ public class CommonSettings {
      * the same machine. */
     public static String APPLICATION_INSTANCE_ID
             = "settings.common.applicationInstanceId";
+    
+    /** 
+     * <b>settings.common.freespaceprovider.class</b>: <br>
+     * The implementation class for free space provider, 
+     * e.g. DefaultFreeSpaceProvider. 
+     * The class must extend dk.netarkivet.common.utils.FreeSpaceProvider */
+    public static String FREESPACEPROVIDER_CLASS
+            = "settings.common.freespaceprovider.class";
+    
 }

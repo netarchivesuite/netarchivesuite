@@ -24,6 +24,8 @@
 package dk.netarkivet.archive.bitarchive;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +38,9 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileFreeSpaceProvider;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.MockFreeSpaceProvider;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -110,6 +114,92 @@ public class IntegrityTests extends TestCase {
         archive = Bitarchive.getInstance();
     }
 
+    /**
+     * Verify that the correct value of free space will be returned, when calling 
+     * the DefaultFreeSpaceProvider
+     */
+    public void testDefaultFreeSpaceProvider() {
+        final File dir1 = new File(ARCHIVE_DIR, "dir1");
+        setupBitarchiveWithDirs(new String[] {
+            dir1.getAbsolutePath(),
+        });
+        
+        Settings.set(CommonSettings.FREESPACEPROVIDER_CLASS, "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
+        assertEquals(FileUtils.getBytesFree(new File("/not/existing/dir")), 0);
+        
+        Settings.set(CommonSettings.FREESPACEPROVIDER_CLASS, "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
+        long expectedBytes = dir1.getUsableSpace();
+        
+        assertEquals(FileUtils.getBytesFree(dir1), expectedBytes);
+    }
+
+    /**
+     * Verify that the correct value of free space will be returned, when calling 
+     * the MockFreeSpaceProvider
+     */
+    public void testMockFreeSpaceProvider() {
+        final File dir1 = new File(ARCHIVE_DIR, "dir1");
+        setupBitarchiveWithDirs(new String[] {
+            dir1.getAbsolutePath(),
+        });
+        
+        Settings.set(CommonSettings.FREESPACEPROVIDER_CLASS, "dk.netarkivet.common.utils.MockFreeSpaceProvider");
+        assertEquals(FileUtils.getBytesFree(ARCHIVE_DIR), MockFreeSpaceProvider.ONETB);
+    }
+
+    /**
+     * Verify that the correct value of free space will be returned, when calling 
+     * the FileSpaceProvider
+     */
+    public void testFileFreeSpaceProvider1() {
+        final File dir1 = new File(ARCHIVE_DIR, "dir1");
+        setupBitarchiveWithDirs(new String[] {
+            dir1.getAbsolutePath(),
+        });
+        
+        File freeSpaceFile = new File(System.getProperty("java.io.tmpdir"), dir1.getName());
+        
+        Writer fw = null;
+        String DUMMY_VALUE = "1000";
+        
+        try {
+            fw = new FileWriter(freeSpaceFile); 
+            fw.write(DUMMY_VALUE); 
+        } 
+        catch (Exception ex) {
+            fail("Exception not expected! + "+ ex);;
+        }
+        finally {
+            if (fw != null) 
+            try {
+                fw.close();
+            }
+            catch (Exception ex) { } 
+        }
+        
+        Settings.set(CommonSettings.FREESPACEPROVIDER_CLASS, "dk.netarkivet.common.utils.FileFreeSpaceProvider");
+        Settings.set(FileFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, System.getProperty("java.io.tmpdir"));
+
+        assertEquals(FileUtils.getBytesFree(dir1), Integer.parseInt(DUMMY_VALUE));
+        
+        freeSpaceFile.delete();
+    }
+    
+    /**
+     * Verify that the correct value of free space will be returned, when calling 
+     * the FileSpaceProvider
+     */
+    public void testFileFreeSpaceProvider2() {
+        final File dir1 = new File(ARCHIVE_DIR, "dir1");
+        setupBitarchiveWithDirs(new String[] {
+            dir1.getAbsolutePath(),
+        });
+        
+        Settings.set(CommonSettings.FREESPACEPROVIDER_CLASS, "dk.netarkivet.common.utils.FileFreeSpaceProvider");
+        Settings.set(FileFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, "/not/existing/dir");
+        assertEquals(FileUtils.getBytesFree(dir1), 0);
+    }
+    
 
     /** Verify that we spill into the next directory
      * This test requires special setup to run.

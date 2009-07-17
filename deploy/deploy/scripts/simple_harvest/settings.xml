@@ -63,6 +63,9 @@
             <sender>edit@this.mail.address</sender>
             <receiver>edit@this.mail.address</receiver>
         </notifications>
+        <freespaceprovider>
+            <class>dk.netarkivet.common.utils.FreeSpaceProvider</class>
+        </freespaceprovider>
         <mail>
             <server>your.mail.server</server>
         </mail>

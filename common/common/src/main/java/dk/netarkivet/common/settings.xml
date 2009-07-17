@@ -56,6 +56,9 @@
         <notifications>
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
         </notifications>
+        <freespaceprovider>
+            <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
+        </freespaceprovider>
         <mail>
             <server>localhost</server>
         </mail>

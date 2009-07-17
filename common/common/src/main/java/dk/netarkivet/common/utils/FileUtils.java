@@ -682,21 +682,15 @@ public class FileUtils {
     }
 
     /**
-     * Returns the number of bytes free on the file system that the given file
-     * resides on. Will return 0 on non-existing files.
+     * Returns the number of bytes free on the file system calling
+     *  the FreeSpaceCalculation class defined in settings.xml.
      *
      * @param f a given file
-     * @return the number of bytes free on the file system where file f resides.
-     * 0 if the file cannot be found.
+     * @return the number of bytes free, calculated by the
+     * FreeSpaceCalculation class
      */
     public static long getBytesFree(File f) {
-        ArgumentNotValid.checkNotNull(f, "f");
-        if (!f.exists()) {
-            log.warn("The file '" +  f.getAbsolutePath()
-                    + "' does not exist. The value 0 returned.");
-            return 0;
-        }
-        return f.getUsableSpace();
+        return FreeSpaceProviderFactory.getInstance().getBytesFree(f);
     }
 
     /**

@@ -46,6 +46,9 @@
         <notifications>
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
         <receiver>root@localhost</receiver><sender>root@localhost</sender></notifications>
+        <freespaceprovider>
+            <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
+        </freespaceprovider>
         <mail>
             <server>localhost</server>
         </mail>
@@ -107,6 +110,10 @@
             <tld>arpa</tld>
             <tld>as</tld>
             <tld>at</tld>
+            <tld>gv.at</tld>
+            <tld>ac.at</tld>
+            <tld>or.at</tld>
+            <tld>co.at</tld>
             <tld>au</tld>
             <tld>aw</tld>
             <tld>ax</tld>
@@ -323,6 +330,8 @@
             <tld>tc</tld>
             <tld>td</tld>
             <tld>tf</tld>
+            <tld>net.tf</tld>
+            <tld>at.tf</tld>
             <tld>tg</tld>
             <tld>th</tld>
             <tld>tj</tld>

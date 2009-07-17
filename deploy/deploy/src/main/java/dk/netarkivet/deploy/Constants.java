@@ -312,6 +312,7 @@ public final class Constants {
         "dk/netarkivet/archive/indexserver/distribute/"
             + "IndexRequestClientSettings.xml",
         "dk/netarkivet/common/utils/EMailNotificationsSettings.xml",
+        "dk/netarkivet/common/utils/FileFreeSpaceProviderSettings.xml",
         "dk/netarkivet/common/distribute/FTPRemoteFileSettings.xml",
         "dk/netarkivet/common/distribute/HTTPRemoteFileSettings.xml",
         "dk/netarkivet/common/distribute/HTTPSRemoteFileSettings.xml",
