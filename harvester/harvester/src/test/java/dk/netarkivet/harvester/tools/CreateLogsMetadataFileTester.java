@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
@@ -213,9 +215,9 @@ public class CreateLogsMetadataFileTester extends TestCase {
             infixMap.put(prefix + s + suffix, s);
         }
         ARCReader arcReader = ARCReaderFactory.get(metadataArcFile);
-        Iterator arcs = arcReader.iterator();
+        Iterator<ArchiveRecord> arcs = arcReader.iterator();
         while (arcs.hasNext()) {
-            ARCRecord rec = (ARCRecord)arcs.next();
+            ARCRecord rec = (ARCRecord) arcs.next();
             String url = rec.getMetaData().getUrl();
             if (url.equals("filedesc://4-metadata-2.arc")) {
                 continue; // Added at start of arc file

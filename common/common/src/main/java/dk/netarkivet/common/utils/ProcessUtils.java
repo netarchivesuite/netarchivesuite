@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,6 +51,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 
 public class ProcessUtils {
+    /** The logger. */
     private static Log log = LogFactory.getLog(ProcessUtils.class);
 
     /** Runs an external process that takes no input, discarding its output.
@@ -58,8 +60,8 @@ public class ProcessUtils {
      * @param programAndArgs The program and its arguments.
      * @return The return code of the process.
      */
-
-    public static int runProcess(String[] environment, String... programAndArgs) {
+    public static int runProcess(String[] environment,
+            String... programAndArgs) {
         try {
             Process p = Runtime.getRuntime().exec(programAndArgs, environment);
             discardProcessOutput(p.getInputStream());
@@ -73,7 +75,8 @@ public class ProcessUtils {
                 }
             }
         } catch (IOException e) {
-            throw new IOFailure("Failure while running " + programAndArgs, e);
+            throw new IOFailure("Failure while running " 
+                    + Arrays.toString(programAndArgs), e);
         }
     }
 
@@ -188,8 +191,8 @@ public class ProcessUtils {
                     }
                 } catch (IOException e) {
                     // This seems ugly
-                    throw new RuntimeException("Couldn't close streams for " +
-                                               "process.", e);
+                    throw new RuntimeException("Couldn't close streams for "
+                            + "process.", e);
                 }
             }
         };
