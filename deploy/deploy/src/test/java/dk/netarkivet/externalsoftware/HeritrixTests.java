@@ -89,8 +89,6 @@ import dk.netarkivet.common.utils.Settings;
  * //import org.archive.net.UURI;
  * //import dk.netarkivet.common.utils.FixedUURI;
  * 
- * 
- * 
  */
 public class HeritrixTests extends TestCase {
 
@@ -269,8 +267,8 @@ public class HeritrixTests extends TestCase {
     	File passwordFile = new File(TestInfo.WORKING_DIR, "quickstart.jmxremote.password");
 		FileUtils.remove(passwordFile);
     	File tempDir = mtf.newTmpDir();
-    	hl = getHeritrixLauncher(TestInfo.EMPTY_ORDER_FILE, TestInfo.SEEDS_FILE, tempDir,
-    	        passwordFile, 
+    	hl = getHeritrixLauncher(TestInfo.DEFAULT_ORDERXML_FILE, TestInfo.SEEDS_FILE, tempDir,
+    	        passwordFile,
     	        new File(Settings.get(CommonSettings.JMX_ACCESS_FILE)));
     	try {
     		// invoke JMXHeritrixController
@@ -283,10 +281,15 @@ public class HeritrixTests extends TestCase {
     	            iof.getMessage().contains("is missing"));
     		// ok, the right exception was thrown
     	} catch (Exception ex) {
-    		fail("An exception different from IOFailure has been thrown " +
-    				"when launching with a non existing file (" 
-    		        + passwordFile.getAbsolutePath() + ")" + ex.getMessage());
-    		// a different exception was thrown
+    	    // a different exception than IOFailure was thrown but the
+    	    // proper IOFailure may be the cause of this exception
+ 
+    	    if (!ex.getCause().getMessage().contains(
+    	            "Failed to read file '" + passwordFile.getAbsolutePath() + "'")) {
+    	        fail("An exception different from IOFailure has been thrown " +
+                        "when launching with a non existing file (" 
+                        + passwordFile.getAbsolutePath() + ")" + ex);
+    	    }
     	}
 	}    
 
@@ -353,8 +356,6 @@ public class HeritrixTests extends TestCase {
             // Expected case
         }
     }
-
-
 
     /**
      * Test that the launcher actually launches Heritrix and generates
@@ -467,7 +468,7 @@ public class HeritrixTests extends TestCase {
         runHeritrix(TestInfo.ORDER_FILE, TestInfo.SEEDS_FILE2, tempDir);
 
         assertAllUrlsInCrawlLog(new String[]{
-            "http://netarkivet.dk/website/sources/JavaArcUtils-0.1.tar.gz",
+            "http://netarkivet.dk/kildetekster/JavaArcUtils-0.3.tar.gz",
             "http://netarkivet.dk/website/press/Bryllup-20040706.pdf",
             "http://netarkivet.dk/proj/pilot_juli2001.pdf"
         });
