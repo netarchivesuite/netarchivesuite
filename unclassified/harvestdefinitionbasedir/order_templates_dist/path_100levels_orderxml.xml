@@ -352,6 +352,7 @@
         	<string name="origin"/>
         	<string name="origin-handling">Use index information</string>
         	<boolean name="stats-per-host">true</boolean>
+            <boolean name="use-sparse-range-filter">true</boolean>
     	   </newObject>
     	<newObject name="Archiver" class="org.archive.crawler.writer.ARCWriterProcessor">
                 <boolean name="enabled">true</boolean>
