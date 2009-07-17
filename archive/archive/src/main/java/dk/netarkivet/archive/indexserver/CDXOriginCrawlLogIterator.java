@@ -155,7 +155,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                 }
             }
             if (foundRecord == null) {
-            	log.debug("No matching CDX for URL '" + item.getURL()
+            	log.trace("No matching CDX for URL '" + item.getURL()
             			+ "'. Last CDX was for URL '"
                         + (lastRecord == null ? "(none)" : lastRecord.getURL()) 
                         + "'");
@@ -165,7 +165,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             String origin = foundRecord.getArcfile()
                     + "," + foundRecord.getOffset();
             item.setOrigin(origin);
-            log.debug("URL '" +  item.getURL() + "' combined with origin '"
+            log.trace("URL '" +  item.getURL() + "' combined with origin '"
                     +  origin + "'.");
         }
         return item;
