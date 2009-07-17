@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -141,16 +140,20 @@ public class Settings {
         }
 
         // Key not in System.properties try loaded data instead
-        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
-            if (settingsXml.hasKey(key)) {
-                return settingsXml.getString(key);
+        synchronized (fileSettingsXmlList) {
+            for (SimpleXml settingsXml : fileSettingsXmlList) {
+                if (settingsXml.hasKey(key)) {
+                    return settingsXml.getString(key);
+                }
             }
         }
 
         // Key not in file based settings, try classpath settings instead
-        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
-            if (settingsXml.hasKey(key)) {
-                return settingsXml.getString(key);
+        synchronized (defaultClasspathSettingsXmlList) {
+            for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+                if (settingsXml.hasKey(key)) {
+                    return settingsXml.getString(key);
+                }
             }
         }
         throw new UnknownID("No match for key '" + key + "' in settings");
@@ -253,27 +256,31 @@ public class Settings {
                 + "Is this OK?");
         }
         // Key not in System.properties try loaded data instead
-        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
-            List<String> result
-                    = settingsXml.getList(key);
-            if (result.size() == 0) {
-                continue;
+        synchronized (fileSettingsXmlList) {
+            for (SimpleXml settingsXml : fileSettingsXmlList) {
+                List<String> result
+                        = settingsXml.getList(key);
+                if (result.size() == 0) {
+                    continue;
+                }
+                log.debug("Value found in loaded data: "
+                        + StringUtils.conjoin(",", result));
+                return result.toArray(new String[result.size()]);
             }
-            log.debug("Value found in loaded data: " 
-                    + StringUtils.conjoin(",", result));
-            return result.toArray(new String[result.size()]);
         }
 
         // Key not in file based settings, try settings from classpath
-        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
-            List<String> result
-                    = settingsXml.getList(key);
-            if (result.size() == 0) {
-                continue;
+        synchronized (defaultClasspathSettingsXmlList) {
+            for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+                List<String> result
+                        = settingsXml.getList(key);
+                if (result.size() == 0) {
+                    continue;
+                }
+                log.debug("Value found in classpath data: "
+                        + StringUtils.conjoin(",", result));
+                return result.toArray(new String[result.size()]);
             }
-            log.debug("Value found in classpath data: " 
-                    + StringUtils.conjoin(",", result));
-            return result.toArray(new String[result.size()]);
         }
         throw new UnknownID("No match for key '" + key + "' in settings");
     }
@@ -352,7 +359,7 @@ public class Settings {
                 lastModified = settingsFile.lastModified();
             }
         }
-        fileSettingsXmlList = simpleXmlList;
+        fileSettingsXmlList = Collections.synchronizedList(simpleXmlList);
     }
     
     /**
@@ -370,7 +377,9 @@ public class Settings {
                 .getResourceAsStream(defaultClasspathSettingsPath);
         if (stream != null) {
             if (defaultClasspathSettingsXmlList == null) {
-                defaultClasspathSettingsXmlList = new ArrayList<SimpleXml>();
+                defaultClasspathSettingsXmlList
+                        = Collections.synchronizedList(
+                        new ArrayList<SimpleXml>());
             }
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
         } else {
@@ -386,32 +395,23 @@ public class Settings {
      * @return The part of the setting structure below the element given.
      */
     public static StringTree<String> getTree(String path) {
-        for (SimpleXml settingsXml : getFileSettingsXmlList()) {
-            if (settingsXml.hasKey(path)) {
-                return settingsXml.getTree(path);
+        synchronized (fileSettingsXmlList) {
+            for (SimpleXml settingsXml : fileSettingsXmlList) {
+                if (settingsXml.hasKey(path)) {
+                    return settingsXml.getTree(path);
+                }
             }
         }
 
         // Key not in file based settings, try classpath settings instead
-        for (SimpleXml settingsXml : getDefaultClasspathSettingsXmlList()) {
-            if (settingsXml.hasKey(path)) {
-                return settingsXml.getTree(path);
+        synchronized (defaultClasspathSettingsXmlList) {
+            for (SimpleXml settingsXml : defaultClasspathSettingsXmlList) {
+                if (settingsXml.hasKey(path)) {
+                    return settingsXml.getTree(path);
+                }
             }
         }
         throw new UnknownID("No match for key '" + path + "' in settings");
     }
-    
-    /** 
-     * @return an unmodifiable version of the fileSettingsXmlList
-     */
-    private static List<SimpleXml> getFileSettingsXmlList() {
-        return Collections.unmodifiableList(fileSettingsXmlList);
-    }
-    
-    /** 
-     * @return an unmodifiable version of the defaultClasspathSettingsXmlList
-     */
-    private static List<SimpleXml> getDefaultClasspathSettingsXmlList() {
-        return Collections.unmodifiableList(defaultClasspathSettingsXmlList);
-    }
+
 }
