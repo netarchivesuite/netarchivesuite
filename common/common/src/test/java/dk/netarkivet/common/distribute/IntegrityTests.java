@@ -22,11 +22,11 @@
  */
 package dk.netarkivet.common.distribute;
 
+import javax.jms.Connection;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.TopicConnection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -523,9 +523,9 @@ public class IntegrityTests extends TestCase {
              return;
          }
          JMSConnection con = JMSConnectionFactory.getInstance();
-         Field topicConnectionField = con.getClass().getSuperclass().getDeclaredField("myTConn");
-         topicConnectionField.setAccessible(true);
-         TopicConnection qc = (TopicConnection) topicConnectionField.get(con);
+         Field connectionField = con.getClass().getSuperclass().getDeclaredField("connection");
+         connectionField.setAccessible(true);
+         Connection qc = (Connection) connectionField.get(con);
          ExceptionListener qel = qc.getExceptionListener();
          assertNotNull("There should be an exception listener on the queue", qel);
          try {
