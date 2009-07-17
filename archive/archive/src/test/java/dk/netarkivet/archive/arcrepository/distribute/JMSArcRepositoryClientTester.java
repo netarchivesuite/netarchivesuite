@@ -535,7 +535,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
         ChannelID replyQ = (ChannelID) arcReplyQ.get(arc);
         arcReplyQ.set(arc, null);
         // Must remove listener from replyQ or tearDown dies.
-        JMSConnectionMockupMQ testMQ = JMSConnectionMockupMQ.getInstance();
+        JMSConnectionMockupMQ testMQ
+                = ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance());
         List<MessageListener> listeners = testMQ.getListeners(replyQ);
         for (MessageListener listener : listeners) {
             testMQ.removeListener(replyQ, listener);

@@ -66,12 +66,6 @@ public class JMSConnectionSunMQ extends JMSConnection {
         );
     }
 
-    /**
-     * Singleton pattern is be used for this class. This is the one and only
-     * instance.
-     */
-    protected static JMSConnectionSunMQ instance;
-
     /** The errorcode for failure of the JMSbroker to acknowledge a message. */
     static final String PACKET_ACK_FAILED = "C4000";
 
@@ -124,7 +118,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *
      * @throws IOFailure when connection to JMS broker failed
      */
-    public static synchronized JMSConnectionSunMQ getInstance()
+    public static synchronized JMSConnection getInstance()
             throws IOFailure {
         if (instance == null) {
             instance = new JMSConnectionSunMQ();

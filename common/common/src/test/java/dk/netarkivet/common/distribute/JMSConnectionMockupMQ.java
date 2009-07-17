@@ -71,9 +71,6 @@ import dk.netarkivet.common.utils.batch.TestJob;
  * for testing.
  */
 public class JMSConnectionMockupMQ extends JMSConnection {
-    /** Singleton pattern is be used for this class. This is the one instance. */
-    private static JMSConnectionMockupMQ instance;
-
     /**
      * A set of threads where onMessage has been called. This object is notified
      * when all threads have finished executing.
@@ -96,7 +93,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
      *
      * @return A JMSConnection
      */
-    public static JMSConnectionMockupMQ getInstance() {
+    public static JMSConnection getInstance() {
         if (instance == null) {
             instance = new JMSConnectionMockupMQ();
             instance.initConnection();
@@ -880,7 +877,8 @@ public class JMSConnectionMockupMQ extends JMSConnection {
                                    TestObjectMessage wMsg) {
             this.listener = listener;
             this.msg = wMsg;
-            JMSConnectionMockupMQ.getInstance().concurrentTasksToComplete.add(
+            ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
+                    .concurrentTasksToComplete.add(
                     this);
         }
 
@@ -890,7 +888,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
             }
 
             Set<Thread> concurrentTasksToComplete
-                    = JMSConnectionMockupMQ.getInstance().concurrentTasksToComplete;
+                    = ((JMSConnectionMockupMQ)
+                    JMSConnectionMockupMQ.getInstance())
+                    .concurrentTasksToComplete;
             synchronized (concurrentTasksToComplete) {
                 concurrentTasksToComplete.remove(Thread.currentThread());
                 if (concurrentTasksToComplete.isEmpty()) {

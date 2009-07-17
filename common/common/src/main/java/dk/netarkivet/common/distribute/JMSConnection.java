@@ -102,6 +102,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
     /** Shutdown hook that closes the JMS connection. */
     protected Thread closeHook;
+    /**
+     * Singleton pattern is be used for this class. This is the one and only
+     * instance.
+     */
+    protected static JMSConnection instance;
 
     /**
      * Should be implemented according to a specific JMS broker.

@@ -341,7 +341,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Run method
         m.invoke(hsch);
-        JMSConnectionMockupMQ.getInstance()
+        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
                 .waitForConcurrentTasksToFinish();
 
         //Check result
@@ -414,7 +414,7 @@ public class HarvestSchedulerTester extends TestCase {
 
         //Run method
         m.invoke(hsch);
-        JMSConnectionMockupMQ.getInstance()
+        ((JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance())
                 .waitForConcurrentTasksToFinish();
 
         //Check result
