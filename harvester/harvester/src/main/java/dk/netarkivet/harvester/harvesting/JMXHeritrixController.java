@@ -866,8 +866,7 @@ public class
         String jmxUsername = Settings.get(
                 HarvesterSettings.HERITRIX_JMX_USERNAME);
         log.debug("The JMX username used for connecting to "
-                + "the Heritrix GUI is: "
-                + "'" + jmxUsername + "'.");
+                + "the Heritrix GUI is: " + "'" + jmxUsername + "'.");
         return jmxUsername;
         }
 
