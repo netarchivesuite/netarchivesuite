@@ -30,14 +30,14 @@ no parameters.
                  java.util.List,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
-                 dk.netarkivet.harvester.Constants,
+                 dk.netarkivet.harvester.webinterface.Constants,
                  dk.netarkivet.harvester.datamodel.TemplateDAO"
           pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
+/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
-            = new I18n(Constants.TRANSLATIONS_BUNDLE);
+            = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
     HTMLUtils.generateHeader(
@@ -101,7 +101,7 @@ no parameters.
      }
 %>
     </select>
-    <input type="file" name="upload_file" size="60" /><br/>
+    <input type="file" name="upload_file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" /><br/>
     <input type="submit" name="upload"
            value="<fmt:message key="harvestdefinition.templates.upload.replace"/>"/>
 </form>
@@ -110,8 +110,8 @@ no parameters.
 <form method="post" action="Definitions-upload-harvest-template.jsp"
       enctype="multipart/form-data">
     <fmt:message key="harvestdefinition.templates.upload.to.create"/><br />
- <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="30" value="">
-<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="60" name="upload_file"/><br/>
+ <fmt:message key="harvestdefinition.templates.upload.template.name"/> <input name="order_xml_to_upload" size="<%=Constants.TEMPLATE_NAME_WIDTH %>" value="">
+<fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/><input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/><br/>
 <input type="submit" name="upload"
        value="<fmt:message key="harvestdefinition.templates.upload.create"/>"/>
 </form>

@@ -48,7 +48,9 @@ update: if non-empty, the method DomainDefinition.processRequest is called
                  dk.netarkivet.harvester.datamodel.Domain,
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
-                 dk.netarkivet.harvester.datamodel.SeedList, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.DomainDefinition"
+                 dk.netarkivet.harvester.datamodel.SeedList, 
+                 dk.netarkivet.harvester.webinterface.Constants, 
+                 dk.netarkivet.harvester.webinterface.DomainDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -256,7 +258,7 @@ Display all the form information for this domain
         </tr>
         <tr id="crawlertrapRow">
             <td>
-                <textarea rows="20" cols="60"
+                <textarea rows="<%=Constants.CRAWLERTRAPS_ROWS%>" cols="<%=Constants.CRAWLERTRAPS_COLUMNS%>"
                           name="<%=Constants.CRAWLERTRAPS_PARAM%>"><%=HTMLUtils.escapeHtmlValues(
                             StringUtils.conjoin("\n", domain.getCrawlerTraps()))
                     %></textarea>
