@@ -58,11 +58,18 @@ public class Settings {
     /** Logger for this class. */
     private static final Log log
             = LogFactory.getLog(Settings.class.getName());
-    /** The objects representing the contents of the settings xml files. */
+    
+    /** 
+     * The objects representing the contents of the settings xml files. 
+     * For handling multithreaded instances this list must be initialised 
+     * through the method Collections.synchronizedList().
+     */
     private static List<SimpleXml> fileSettingsXmlList;
     /**
      * The objects representing the contents of the default settings xml files
      * in classpath.
+     * For handling multithreaded instances this list must be initialised 
+     * through the method Collections.synchronizedList().
      */
     private static List<SimpleXml> defaultClasspathSettingsXmlList
             = new ArrayList<SimpleXml>();
