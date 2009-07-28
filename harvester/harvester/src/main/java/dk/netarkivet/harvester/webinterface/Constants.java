@@ -123,5 +123,25 @@ public class Constants {
     
     /** The size of field for a domain name. */
     public static final int DOMAIN_NAME_FIELD_SIZE = 40;
-       
+ 
+    /** 
+     * The number of columns when showing the crawlertraps associated with
+     * a domain.
+     */
+    public static final int CRAWLERTRAPS_COLUMNS = 60;
+ 
+    /** 
+     * The number of rows when showing the crawlertraps associated with
+     * a domain.
+     */
+    public static final int CRAWLERTRAPS_ROWS = 20;
+ 
+    /** 
+     * The width of the field for the upload file.
+     */
+    public static final int UPLOAD_FILE_FIELD_WIDTH = 60;
+    
+    /** The width of the harvest template name. */
+    public static final int TEMPLATE_NAME_WIDTH = 30;
+    
 }
