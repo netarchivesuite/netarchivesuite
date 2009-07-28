@@ -150,7 +150,7 @@ public class HarvesterSettings {
             = "settings.harvester.scheduler.configChunkSize";
 
     /** <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
-     *  Time before a STARTED job times out and change status to FAILED;
+     *  Time before a STARTED job times out and change status to FAILED.
      */
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";

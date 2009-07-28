@@ -159,7 +159,7 @@ public class HarvestScheduler implements CleanupIF {
             scheduleJobs();
             // stop STARTED jobs which have been on for more than
             // settings.harvester.scheduler.jobtimeouttime time
-            stopOldJob();
+            stopTimeoutJobs();
             timer = new Timer(true);
             timer.scheduleAtFixedRate(task, cal.getTime(),
                     GENERATE_JOBS_PERIOD);
@@ -187,10 +187,10 @@ public class HarvestScheduler implements CleanupIF {
     }
 
     /**
-     * Stops job if its started more than ... time ago
+     * Stop any job that has been in status STARTED a very long time defined by the HarvesterSettings.JOB_TIMEOUT_TIME setting
      *
      */
-    private void stopOldJob() {
+    private void stopTimeoutJobs() {
         final JobDAO dao = JobDAO.getInstance();
         final Iterator<Long> jobs = dao.getAllJobIds(JobStatus.STARTED);
         int stoppedJobs = 0;
@@ -201,9 +201,9 @@ public class HarvestScheduler implements CleanupIF {
             long timeDiff = Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME);
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
-            //System.out.println("endTime " + endTime.getTime() + " , Date() " + new Date().getTime());
+            
             if (new Date().after(endTime)) {
-                log.warn("Update job " + id + " to status equals FAILED");
+                log.warn(" Job " + id + " has exceeded its timeout of XXX minutes. Its status has now been changed to FAILED.");
                 job.setStatus(JobStatus.FAILED);
                 dao.update(job);
                 stoppedJobs++;
