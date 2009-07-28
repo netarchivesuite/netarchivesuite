@@ -279,25 +279,23 @@ public class
 
             allOpts.add("-Dcom.sun.management.jmxremote.port=" + getJMXPort());
             allOpts.add("-Dcom.sun.management.jmxremote.ssl=false");
-            // check that JMX password and access files are readable. This
-            // should probably be extracted to a method?
+            // check that JMX password and access files are readable. 
+            // TODO This should probably be extracted to a method?
             File passwordFile = files.getJmxPasswordFile();
             String pwAbsolutePath = passwordFile.getAbsolutePath();
             if (!passwordFile.canRead()) {
-                final String errMsg = "The file '"
-                    + passwordFile.getAbsolutePath() + "' is missing. ";
+                final String errMsg = "Failed to read the password file '" 
+                    + pwAbsolutePath + "'. It is possibly missing.";
                 log.warn(errMsg);
-                throw new IOFailure("Failed to read file '" 
-                        + pwAbsolutePath + "'");
+                throw new IOFailure(errMsg);
             }
             File accessFile = files.getJmxAccessFile();
             String acAbsolutePath = accessFile.getAbsolutePath();
             if (!accessFile.canRead()) {
-                final String errMsg = "The file '" + acAbsolutePath 
-                    + "' is missing. ";
+                final String errMsg = "Failed to read the access file '" 
+                    + acAbsolutePath + "'. It is possibly missing.";
                 log.warn(errMsg);
-                throw new IOFailure("Failed to read file '"
-                        + acAbsolutePath + "'");
+                throw new IOFailure(errMsg);
             }            
             allOpts.add("-Dcom.sun.management.jmxremote.password.file="
                     + new File(pwAbsolutePath));

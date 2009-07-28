@@ -60,7 +60,6 @@ public class HeritrixFiles {
     /** The JMX access file to be used by Heritrix. */
     private final File jmxAccessFile;
     
-
     /** Types of Heritrix reports we want to preserve.
      * All these reportnames assume "-report.txt" as a suffix
      */
@@ -98,16 +97,17 @@ public class HeritrixFiles {
     private static final String OUTPUT_FILENAME = "heritrix.out";
 
     /** Create a new HeritrixFiles object for a job.
-     * @param crawlDir The dir, where the crawl-files are placed
+     *
+     * @param crawlDir The dir, where the crawl-files are placed.
+     * Assumes, that crawlDir exists already.
      * @param jobID The JobID of this crawl.
      * @param harvestID The harvestID of this crawl.
-     * @param jmxPasswordFile The jmx password file to be used by Heritrix
-     * @param jmxAccessFile The JMX access file to be used by Heritrix
-     *
-     * Assumes, that crawlDir exists already.
-     *
+     * @param jmxPasswordFile The jmx password file to be used by Heritrix.
+     * The existence of this file is checked another place.
+     * @param jmxAccessFile The JMX access file to be used by Heritrix.
+     * The existence of this file is checked another place.
      * @throws ArgumentNotValid if null crawlDir,
-     *  or non-positive jobID and harvestID
+     *  or non-positive jobID and harvestID.
      */
     public HeritrixFiles(File crawlDir, long jobID, long harvestID,
             File jmxPasswordFile, File jmxAccessFile) {
@@ -361,14 +361,18 @@ public class HeritrixFiles {
     }
     
     /**
-     * @return the jmxPasswordFile
+     * Method for retrieving the jmxremote.password file.
+     * 
+     * @return the jmxPasswordFile.
      */
     public File getJmxPasswordFile() {
         return jmxPasswordFile;
     }
 
     /**
-     * @return the jmxAccessFile
+     * Method for retrieving the jmxremote.access file.
+     * 
+     * @return the jmxAccessFile.
      */
     public File getJmxAccessFile() {
         return jmxAccessFile;
