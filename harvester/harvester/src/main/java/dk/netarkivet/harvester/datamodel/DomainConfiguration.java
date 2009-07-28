@@ -42,7 +42,7 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * and some specialised settings to define the way to harvest a domain.
  *
  */
-public class    DomainConfiguration implements Named {
+public class DomainConfiguration implements Named {
     private String configName;
     private String orderXmlName = "";
     /** maximum number of objects harvested for this configuration in a snapshot
@@ -50,7 +50,7 @@ public class    DomainConfiguration implements Named {
      */
     private int maxObjects;
     private int maxRequestRate;
-    /** Maximum number of bytes to download in a harvest */
+    /** Maximum number of bytes to download in a harvest. */
     private long maxBytes;
     private Domain domain;
 
@@ -66,10 +66,10 @@ public class    DomainConfiguration implements Named {
     private final Log log = LogFactory.getLog(DomainConfiguration.class);
 
     /** How many objects should be harvested in a harvest to trust that our
-     * expected size of objects is less than the default number
+     * expected size of objects is less than the default number.
      */
     private static final long MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION = 50L;
-    /** The smallest number of bytes we accept per object */
+    /** The smallest number of bytes we accept per object. */
     private static final int MIN_EXPECTATION = 1;
 
     /** Create a new configuration for a domain.
@@ -93,7 +93,7 @@ public class    DomainConfiguration implements Named {
         this.passwords = passwords;
         this.comments = "";
         this.maxRequestRate = Constants.DEFAULT_MAX_REQUEST_RATE;
-        this.maxObjects = (int) Constants.DEFAULT_MAX_OBJECTS;
+        this.maxObjects = new Long(Constants.DEFAULT_MAX_OBJECTS).intValue();
         this.maxBytes = Constants.DEFAULT_MAX_BYTES;
     }
 
@@ -104,7 +104,7 @@ public class    DomainConfiguration implements Named {
      * @throws ArgumentNotValid if filename null or empty
      */
     public void setOrderXmlName(String ordername) {
-        ArgumentNotValid.checkNotNullOrEmpty(ordername, "filename");
+        ArgumentNotValid.checkNotNullOrEmpty(ordername, "ordername");
         orderXmlName = ordername;
     }
 
@@ -116,7 +116,7 @@ public class    DomainConfiguration implements Named {
      */
     public void setMaxObjects(int max) {
         if (max < -MIN_EXPECTATION) {
-            String msg = "maxObjects must be either -1 or positive";
+            String msg = "maxObjects must be either -1 or positive, but was " + max;
             log.debug(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -160,6 +160,10 @@ public class    DomainConfiguration implements Named {
         return configName;
     }
 
+    /**
+     * Returns comments
+     * @return string containing comments
+     */
     public String getComments() {
         return comments;
     }
@@ -253,6 +257,10 @@ public class    DomainConfiguration implements Named {
         return passwords.iterator();
     }
 
+    /**
+     * Add password
+     * @param password to add
+     */
     public void addPassword(Password password) {
         ArgumentNotValid.checkNotNull(password, "password");
         Password domainPassword = domain.getPassword(password.getName());
@@ -268,7 +276,9 @@ public class    DomainConfiguration implements Named {
 
     /**
     * Gets the harvest info giving best information for expectation
-    * or how many objects a harvest using this configuration will retrieve.
+    * or how many objects a harvest using this configuration will retrieve, we
+     * will prioritice the most recently harvest, where we have a full
+     * harvest.
     *
     * @return The Harvest Information for the harvest defining the best
     * expectation, including the number retrieved and the stop reason.
@@ -306,9 +316,9 @@ public class    DomainConfiguration implements Named {
      * this configuration will retrieve, given a job with a maximum limit pr.
      * domain
      *
-     * @param objectLimit The maximum limit, or 0 for no limit.
-     * This limit overrides the limit set on the configuration,
-     * unless override is in effect.
+     * @param objectLimit The maximum limit, or
+     * Constants.HERITRIX_MAXOBJECTS_INFINITY for no limit. This limit overrides
+     * the limit set on the configuration, unless override is in effect.
      * @param byteLimit The maximum number of bytes that will be used as
      * limit in the harvest.  This limit overrides the limit set on the
      * configuration, unless override is in effect.  It is used to modify
@@ -329,7 +339,7 @@ public class    DomainConfiguration implements Named {
         long expectedObjectSize = getExpectedBytesPerObject(best);
         // The maximum number of objects that the maxBytes or MAX_DOMAIN_SIZE
         // setting gives.
-        long maximum = -1;
+        long maximum;
         if (objectLimit != Constants.HERITRIX_MAXOBJECTS_INFINITY
             || byteLimit != Constants.HERITRIX_MAXBYTES_INFINITY) {
             maximum = minObjectsBytesLimit(objectLimit, byteLimit,
@@ -346,7 +356,7 @@ public class    DomainConfiguration implements Named {
         if (best != null) {
             minimum = best.getCountObjectRetrieved();
         } else {
-            minimum = 0;
+            minimum = Constants.HERITRIX_MAXOBJECTS_INFINITY;
         }
         // Calculate the expectated number of objects we will harvest.
         long expectation;
@@ -357,7 +367,6 @@ public class    DomainConfiguration implements Named {
                 //our best guess.
                 expectation = minimum + ((maximum - minimum) / prevresultfactor);
             } else {
-                long add = 0L;
                 // if stoppede for different reason than DOWNLOAD_COMPLETE we add half the
                 // harvested size to expectation
                 expectation = minimum + ((maximum - minimum) / 2); 
@@ -450,6 +459,7 @@ public class    DomainConfiguration implements Named {
      * @param comments User-entered free-form comments.
      */
     public void setComments(String comments) {
+        ArgumentNotValid.checkNotNullOrEmpty(comments, "comments");
         this.comments = comments;
     }
 
@@ -475,6 +485,7 @@ public class    DomainConfiguration implements Named {
      * @return whether the given password is used
      */
     public boolean usesPassword(String passwordName) {
+        ArgumentNotValid.checkNotNullOrEmpty(passwordName, "passwordName");
         for (Password p: passwords) {
             if (p.getName().equals(passwordName)) {
                 return true;
@@ -531,6 +542,10 @@ public class    DomainConfiguration implements Named {
         return id != null;
     }
 
+    /**
+     * ToString of DomainConfiguration class
+     * @return a string with info about the instance of this class.
+     */
     public String toString() {
         return "Configuration '" + getName()
                 + "' of domain '" + getDomain().getName() + "'";
