@@ -321,9 +321,7 @@ public class DomainConfiguration implements Named {
      * the limit set on the configuration, unless override is in effect.
      * @param byteLimit The maximum number of bytes that will be used as
      * limit in the harvest.  This limit overrides the limit set on the
-     * configuration, unless override is in effect.  It is used to modify
-     * the expected number of objects based on what we know of object sizes.
-     * -1 means not limit.
+     * configuration, unless override is in effect.  
      * @return The expected number of objects.
      */
     public long getExpectedNumberOfObjects(long objectLimit, long byteLimit) {
@@ -361,14 +359,15 @@ public class DomainConfiguration implements Named {
         // Calculate the expectated number of objects we will harvest.
         long expectation;
         if (best != null) {
-            if(best.getStopReason() == StopReason.DOWNLOAD_COMPLETE && maximum != -1) {
-                //We set the expectation, so our harvest will exceed the expectation
-                //at most <factor> times if the domain is a lot larger than
-                //our best guess.
+            if(best.getStopReason() == StopReason.DOWNLOAD_COMPLETE
+               && maximum != -1) {
+                // We set the expectation, so our harvest will exceed the
+                // expectation at most <factor> times if the domain is a lot
+                // larger than our best guess.
                 expectation = minimum + ((maximum - minimum) / prevresultfactor);
             } else {
-                // if stoppede for different reason than DOWNLOAD_COMPLETE we add half the
-                // harvested size to expectation
+                // if stopped for different reason than DOWNLOAD_COMPLETE we
+                // add half the harvested size to expectation
                 expectation = minimum + ((maximum - minimum) / 2); 
             }
         } else {
@@ -399,7 +398,8 @@ public class DomainConfiguration implements Named {
      *
      * @param objectLimit A long value defining an object limit, or 0 for
      * infinite
-     * @param byteLimit A long value defining a byte limit, or -1 for inifite.
+     * @param byteLimit A long value defining a byte limit, or
+     * HarvesterSettings.MAX_DOMAIN_SIZE for infinite.
      * @param expectedObjectSize The expected number of bytes per object
      * @return The lowest of the two boundaries, or MAX_DOMAIN_SIZE if both are
      * unlimited.
@@ -437,20 +437,20 @@ public class DomainConfiguration implements Named {
      * EXPECTED_AVERAGE_BYTES_PER_OBJECT <= 0).
      */
     private long getExpectedBytesPerObject(HarvestInfo bestInfo) {
-        long default_expectation = Settings.getLong(
+        long defaultExpectation = Settings.getLong(
                 HarvesterSettings.EXPECTED_AVERAGE_BYTES_PER_OBJECT);
         if (bestInfo != null && bestInfo.getCountObjectRetrieved() > 0) {
             long expectation = Math.max(MIN_EXPECTATION,
                                         bestInfo.getSizeDataRetrieved()
                                           / bestInfo.getCountObjectRetrieved());
-            if (expectation < default_expectation
+            if (expectation < defaultExpectation
                 && bestInfo.getCountObjectRetrieved()
                    < MIN_OBJECTS_TO_TRUST_SMALL_EXPECTATION) {
-                    return default_expectation;
+                    return defaultExpectation;
             }
             return expectation;
         } else {
-            return default_expectation;
+            return defaultExpectation;
         }
     }
 
