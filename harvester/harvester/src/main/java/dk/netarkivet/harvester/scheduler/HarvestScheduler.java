@@ -187,7 +187,8 @@ public class HarvestScheduler implements CleanupIF {
     }
 
     /**
-     * Stop any job that has been in status STARTED a very long time defined by the HarvesterSettings.JOB_TIMEOUT_TIME setting
+     * Stop any job that has been in status STARTED a very long time defined
+     * by the HarvesterSettings.JOB_TIMEOUT_TIME setting
      *
      */
     private void stopTimeoutJobs() {
@@ -198,12 +199,17 @@ public class HarvestScheduler implements CleanupIF {
             long id = jobs.next();
             Job job = dao.read(id);
 
-            long timeDiff = Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME);
+            long timeDiff =
+                    Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME);
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             
             if (new Date().after(endTime)) {
-                log.warn(" Job " + id + " has exceeded its timeout of XXX minutes. Its status has now been changed to FAILED.");
+                log.warn(" Job " + id
+                         + " has exceeded its timeout of " +
+                         Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)
+                         + " minutes. Its status has now been changed to " +
+                         "FAILED.");
                 job.setStatus(JobStatus.FAILED);
                 dao.update(job);
                 stoppedJobs++;
@@ -212,14 +218,16 @@ public class HarvestScheduler implements CleanupIF {
         log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
     }
 
-    /** Schedule all jobs ready for execution and perform backup if required. */
+    /**
+     * Schedule all jobs ready for execution and perform backup if required. 
+     */
     private void scheduleJobs() {
         synchronized (this) {
             if (running) {
                 log.debug("Previous scheduleJobs not finished, "
                                + "skipping new one.");
                 return;
-            }
+            }                                                                                                                
             running = true;
         }
         if (backupNow()) { // Check if we want to backup the database now?
