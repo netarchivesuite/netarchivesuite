@@ -44,11 +44,7 @@ import dk.netarkivet.common.utils.MockFreeSpaceProvider;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/**
- * lc forgot to comment this!
- *
- */
-
+/** A number of integrity tests for the bitarchive package. */
 public class IntegrityTests extends TestCase {
     /** The archive directory to work on.
      */
@@ -61,8 +57,8 @@ public class IntegrityTests extends TestCase {
     /** The external interface */
     private static BitarchiveServer server;
 
-    /** The directory from where we upload the ARC files.
-     *
+    /**
+     * The directory from where we upload the ARC files.
      */
     private static final File ORIGINALS_DIR =
             new File("tests/dk/netarkivet/bitarchive/data/upload/originals/");
@@ -81,8 +77,8 @@ public class IntegrityTests extends TestCase {
         super(sTestName);
     }
 
-    /** At start of test, set up an archive we can run against.
-     *
+    /** 
+     * At start of test, set up an archive we can run against.
      */
     public void setUp() {
         rs.setUp();
@@ -94,8 +90,8 @@ public class IntegrityTests extends TestCase {
         server = BitarchiveServer.getInstance();
     }
 
-    /** At end of test, remove any files we managed to upload.
-     *
+    /**
+     * At end of test, remove any files we managed to upload.
      */
     public void tearDown() {
         archive.close();
@@ -124,10 +120,12 @@ public class IntegrityTests extends TestCase {
             dir1.getAbsolutePath(),
         });
         
-        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
+        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, 
+                "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
         assertEquals(FileUtils.getBytesFree(new File("/not/existing/dir")), 0);
         
-        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
+        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, 
+                "dk.netarkivet.common.utils.DefaultFreeSpaceProvider");
         long expectedBytes = dir1.getUsableSpace();
         
         assertEquals(FileUtils.getBytesFree(dir1), expectedBytes);
@@ -143,7 +141,8 @@ public class IntegrityTests extends TestCase {
             dir1.getAbsolutePath(),
         });
         
-        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.MockFreeSpaceProvider");
+        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, 
+                "dk.netarkivet.common.utils.MockFreeSpaceProvider");
         assertEquals(FileUtils.getBytesFree(ARCHIVE_DIR), MockFreeSpaceProvider.ONETB);
     }
 
@@ -177,8 +176,10 @@ public class IntegrityTests extends TestCase {
             catch (Exception ex) { } 
         }
         
-        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");
-        Settings.set(FilebasedFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, System.getProperty("java.io.tmpdir"));
+        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, 
+                "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");
+        Settings.set(FilebasedFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, 
+                System.getProperty("java.io.tmpdir"));
 
         assertEquals(FileUtils.getBytesFree(dir1), Integer.parseInt(DUMMY_VALUE));
         
@@ -195,8 +196,10 @@ public class IntegrityTests extends TestCase {
             dir1.getAbsolutePath(),
         });
         
-        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");
-        Settings.set(FilebasedFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, "/not/existing/dir");
+        Settings.set(CommonSettings.FREESPACE_PROVIDER_CLASS, 
+                "dk.netarkivet.common.utils.FilebasedFreeSpaceProvider");
+        Settings.set(FilebasedFreeSpaceProvider.FREESPACEPROVIDER_DIR_SETTING, 
+                "/not/existing/dir");
         assertEquals(FileUtils.getBytesFree(dir1), 0);
     }
     

@@ -345,7 +345,7 @@ public class CommonSettings {
     /** 
      * <b>settings.common.freespaceprovider.class</b>: <br>
      * The implementation class for free space provider, 
-     * e.g. DefaultFreeSpaceProvider. 
+     * e.g. dk.netarkivet.common.utils.DefaultFreeSpaceProvider. 
      * The class must implement FreeSpaceProvider-Interface.  */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";

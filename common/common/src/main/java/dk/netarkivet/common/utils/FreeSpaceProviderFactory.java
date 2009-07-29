@@ -1,7 +1,7 @@
-/* File:        $Id:$
- * Revision:    $Rev:$
- * Author:      $Author:$
- * Date:        $Date:$
+/* File:        $Id$
+ * Revision:    $Rev$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -30,10 +30,11 @@ import dk.netarkivet.common.CommonSettings;
  *
  */
 public class FreeSpaceProviderFactory extends SettingsFactory<Notifications> {
-    /** Get a FreeSpaceProvider instance to inform about the free space
+    /** Get a FreeSpaceProvider instance to inform about the free space.
      * @return The FreeSpaceProvider instance.
      */
     public static FreeSpaceProvider getInstance() {
-        return SettingsFactory.getInstance(CommonSettings.FREESPACE_PROVIDER_CLASS);
+        return SettingsFactory.getInstance(
+                CommonSettings.FREESPACE_PROVIDER_CLASS);
     }
 }

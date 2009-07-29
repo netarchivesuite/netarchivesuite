@@ -1,7 +1,7 @@
-/* File:        $Id:$
- * Revision:    $Rev:$
- * Author:      $Author:$
- * Date:        $Date:$
+/* File:        $Id$
+ * Revision:    $Rev$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  
+ * USA
  */
 
 package dk.netarkivet.common.utils;
@@ -36,5 +37,5 @@ public interface FreeSpaceProvider {
     * @return the number of bytes free on the file system where file f resides.
     * 0 if the file cannot be found.
     */
-    public abstract long getBytesFree(File f);
+    long getBytesFree(File f);
 }
