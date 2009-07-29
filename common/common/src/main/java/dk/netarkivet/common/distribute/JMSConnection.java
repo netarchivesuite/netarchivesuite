@@ -268,7 +268,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         removeListener(ml, mq.getName());
     }
 
-    /** Clean up. */
+    /**
+     * Clean up. FIXME This method sets the producers and consumers
+     * datastructures to null without initializing them again elsewhere. This is
+     * problematic when cleanup() is called as part of the reconnection
+     * procedure
+     */
     public synchronized void cleanup() {
         log.info("Starting cleanup");
         try {
