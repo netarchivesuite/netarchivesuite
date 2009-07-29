@@ -62,7 +62,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             .getName());
 
     /**
-     * Separator used in the consumerkey. Separates the ChannelName from the
+     * Separator used in the consumer key. Separates the ChannelName from the
      * MessageListener.toString().
      */
     protected static final String CONSUMER_KEY_SEPARATOR = "##";
@@ -195,8 +195,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure        if the operation failed.
      */
     public final void send(NetarkivetMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "nMsg");
-        log.trace("Sending message:\n" + msg.toString());
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        log.trace("Sending message (" + msg.toString() + ") to " + msg.getTo());
         sendMessage(msg, msg.getTo());
     }
 
@@ -210,7 +210,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     public final void resend(NetarkivetMessage msg, ChannelID to) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         ArgumentNotValid.checkNotNull(to, "to");
-        log.trace("Resending message:\n" + msg.toString());
+        log.trace("Resending message (" + msg.toString() + ") to " 
+                + to.getName());
         sendMessage(msg, to);
     }
 
@@ -225,8 +226,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws IOFailure        if unable to reply.
      */
     public final void reply(NetarkivetMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "nMsg");
-        // TODO: The below is probably a faulty check: It assumes that you
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        log.trace("Reply on message (" + msg.toString() + ") to " 
+                + msg.getReplyTo().getName());
+        // TODO The below is probably a faulty check: It assumes that you
         // only use reply on sent messages, but sometimes we reply by using a
         // new message, and still use the reply function (at least in unit
         // tests) Commented for now.
@@ -266,7 +269,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /** Clean up. */
-    public void cleanup() {
+    public synchronized void cleanup() {
         log.info("Starting cleanup");
         try {
             if (closeHook != null) {
@@ -372,7 +375,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 if (tries < JMS_MAXTRIES) {
                     log.debug("Will sleep a while before trying to"
                               + " send again");
-                    //TODO: Is it reasonable to reconnect here? 
+                    //TODO Is it reasonable to reconnect here? 
                     TimeUtils.exponentialBackoffSleep(tries,
                                                       Calendar.MINUTE);
                 }
@@ -440,6 +443,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws JMSException If a new producer cannot be created.
      */
     private MessageProducer getProducer(String queueName) throws JMSException {
+        // FIXME Added null check that may not be needed here. This prevents
+        // an NPE when accessing getProducer() after calling cleanup()
+        if (producers == null) {
+            producers = new HashMap<String, MessageProducer>();
+        }
+
         // Check if producer is in cache
         // If it is not, it is created and stored in cache:
         MessageProducer producer = producers.get(queueName);
@@ -466,15 +475,33 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     private MessageConsumer getConsumer(String channelName, MessageListener ml)
             throws JMSException {
         String key = getConsumerKey(channelName, ml);
-        MessageConsumer consumer = consumers.get(key);
-        if (consumer == null) {
-            consumer = getSessionForDestination(channelName).createConsumer(
-                    getDestination(channelName));
-            consumers.put(key, consumer);
+        // FIXME Added null check that may not be needed.
+        // Currently avoid NPE that may occur if calling getConsumer() after 
+        // having called cleanup(). 
+        synchronized (consumers) {
+            if (consumers == null) {
+                consumers = new HashMap<String, MessageConsumer>();
+            }
+            MessageConsumer consumer = consumers.get(key);
+            if (consumer == null) {
+                consumer = getSessionForDestination(channelName)
+                        .createConsumer(getDestination(channelName));
+                consumers.put(key, consumer);
+            }
+            return consumer;
         }
-        return consumer;
     }
-
+    
+    /**
+     * Helper method that converts a NetarkivetMessage to an
+     * ObjectMessage for a specific channel.
+     * 
+     * @param channel the channel to be used for transmitting
+     * the message.
+     * @param nMsg a NetarkivetMessage
+     * @return An ObjectMessage that includes a NetarkivetMessage
+     * @throws JMSException If unable to create the needed ObjectMessage
+     */
     private ObjectMessage getObjectMessage(ChannelID channel,
                                            NetarkivetMessage nMsg)
             throws JMSException {
@@ -483,9 +510,16 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 channel.getName()).createObjectMessage(nMsg);
         return objectMessage;
     }
-
-    private Session getSessionForDestination(String queueName) {
-        if (Channels.isTopic(queueName)) {
+    
+    /**
+     * Helper method that returns the appropiate JMS Session
+     * for the specificed channel.
+     * @param channelName A name of the channel
+     * @return The appropiate JMS Session
+     * for the specificed channel.
+     */
+    private Session getSessionForDestination(String channelName) {
+        if (Channels.isTopic(channelName)) {
             return myTSess;
         } else {
             return myQSess;
@@ -594,7 +628,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             throw new IOFailure(errMsg, lastException);
         }
     }
-
+    
+    /**
+     * Remove a messagelistener from a channel (a queue or a topic).  
+     * @param ml A specific MessageListener
+     * @param channelName a channelname
+     */
     private void removeListener(MessageListener ml, String channelName) {
         String errMsg = "JMS-error - could not remove Listener from "
                         + "queue/topic: " + channelName;

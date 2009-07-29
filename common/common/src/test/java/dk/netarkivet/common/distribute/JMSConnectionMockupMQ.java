@@ -114,6 +114,9 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     protected Destination getDestination(String channelName)
             throws JMSException {
+        if (destinations == null) {
+            destinations = new HashMap<String, TestDestination>();
+        }
         TestDestination destination = destinations.get(channelName);
         if (destination == null) {
             if (Channels.isTopic(channelName)) {
