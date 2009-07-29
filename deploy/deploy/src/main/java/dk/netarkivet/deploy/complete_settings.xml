@@ -5,12 +5,14 @@
             <uploadRetries>1</uploadRetries>
         </arcrepository>
         <bitarchive>
-            <!-- The default value amounts to 190 MBytes. -->
-            <minSpaceLeft>200000000</minSpaceLeft>
+            <!-- The default value amounts to 1907 MBytes. -->
+            <minSpaceLeft>2000000000</minSpaceLeft>
             <!-- The default value amounts to a little less than 10 MBytes. -->
             <minSpaceRequired>10000000</minSpaceRequired>
             <baseFileDir>bitarchive</baseFileDir>
+            <!-- The default amounts to one second -->
             <heartbeatFrequency>1000</heartbeatFrequency>
+            <!-- The default amounts to one minute -->
             <acceptableHeartbeatDelay>60000</acceptableHeartbeatDelay>
             <!-- The default value amounts to 14 days. -->
             <batchMessageTimeout>1209600000</batchMessageTimeout>
@@ -40,7 +42,7 @@
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
-        <indexRequestTimeout>43200000</indexRequestTimeout></indexClient>
+        <indexRequestTimeout>3600000</indexRequestTimeout></indexClient>
         <cacheDir>cache</cacheDir>
         <processTimeout>5000</processTimeout>
         <notifications>
@@ -48,7 +50,7 @@
         <receiver>root@localhost</receiver><sender>root@localhost</sender></notifications>
         <freespaceprovider>
             <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
-        </freespaceprovider>
+        <dir>/home/netarchivesuite/freespace</dir></freespaceprovider>
         <mail>
             <server>localhost</server>
         </mail>
@@ -109,11 +111,11 @@
             <tld>ar</tld>
             <tld>arpa</tld>
             <tld>as</tld>
-            <tld>at</tld>
             <tld>gv.at</tld>
             <tld>ac.at</tld>
             <tld>or.at</tld>
             <tld>co.at</tld>
+            <tld>at</tld>
             <tld>au</tld>
             <tld>aw</tld>
             <tld>ax</tld>
@@ -329,9 +331,9 @@
             <tld>sz</tld>
             <tld>tc</tld>
             <tld>td</tld>
-            <tld>tf</tld>
-            <tld>net.tf</tld>
             <tld>at.tf</tld>
+            <tld>net.tf</tld>
+            <tld>tf</tld>
             <tld>tg</tld>
             <tld>th</tld>
             <tld>tj</tld>
@@ -391,6 +393,7 @@
             <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <backupInitHour>3</backupInitHour>
+            <validityCheckTimeout>0</validityCheckTimeout>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->
@@ -433,6 +436,8 @@
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <!-- one week in seconds  - time before jobs terminate -->
+            <jobtimeouttime>604800</jobtimeouttime>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>
@@ -441,8 +446,10 @@
             <oldjobsDir>oldjobs</oldjobsDir>
             <queuePriority>HIGHPRIORITY</queuePriority>
             <heritrix>
-                <inactivityTimeout>100</inactivityTimeout>
-                <noresponseTimeout>100</noresponseTimeout>
+                <!-- 30 minutes -->
+                <inactivityTimeout>1800</inactivityTimeout>
+                <!-- 30 minutes -->
+                <noresponseTimeout>1800</noresponseTimeout>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
@@ -450,7 +457,11 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
+                <javaOpts/>
             </heritrix>
+            <heritrixController>
+                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+            </heritrixController>
         </harvesting>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>

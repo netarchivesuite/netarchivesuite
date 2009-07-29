@@ -645,6 +645,11 @@ public class DeployTester extends TestCase {
     
     /**
      * Tests if the complete settings file is correctly created.
+     * If this test fails, it is most likely because the file tests/dk/netarkivet/deploy/
+     * data/originals/complete_settings/complete_settings.xml is obsolete.
+     * You probably need to rebuild the file src/dk/netarkivet/deploy/complete_settings.xml
+     * using the program dk.netarkivet.deploy.BuildCompleteSettings and replace the version
+     * in ../originals/complete_settings/complete_settings.xml with the new version.
      */
     public void testCompleteSettings() {
         try {
