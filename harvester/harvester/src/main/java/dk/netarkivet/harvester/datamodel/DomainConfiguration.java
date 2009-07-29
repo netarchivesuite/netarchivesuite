@@ -116,7 +116,8 @@ public class DomainConfiguration implements Named {
      */
     public void setMaxObjects(int max) {
         if (max < -MIN_EXPECTATION) {
-            String msg = "maxObjects must be either -1 or positive, but was " + max;
+            String msg = "maxObjects must be either -1 or positive, but was "
+                         + max;
             log.debug(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -364,7 +365,8 @@ public class DomainConfiguration implements Named {
                 // We set the expectation, so our harvest will exceed the
                 // expectation at most <factor> times if the domain is a lot
                 // larger than our best guess.
-                expectation = minimum + ((maximum - minimum) / prevresultfactor);
+                expectation =
+                        minimum + ((maximum - minimum) / prevresultfactor);
             } else {
                 // if stopped for different reason than DOWNLOAD_COMPLETE we
                 // add half the harvested size to expectation
@@ -459,7 +461,7 @@ public class DomainConfiguration implements Named {
      * @param comments User-entered free-form comments.
      */
     public void setComments(String comments) {
-        ArgumentNotValid.checkNotNullOrEmpty(comments, "comments");
+        ArgumentNotValid.checkNotNull(comments, "comments");
         this.comments = comments;
     }
 
