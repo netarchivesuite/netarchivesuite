@@ -57,6 +57,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  *
  */
 public class JMXUtils {
+    /** The logger. */
     public static final Log log = LogFactory.getLog(JMXUtils.class.getName());
 
     /** The system property that Java uses to get an initial context
@@ -161,7 +162,7 @@ public class JMXUtils {
                 + "' on jmxport/rmiport=" + jmxPort + "/" + rmiPort
                 + " using username=" + userName);
         JMXServiceURL jmxServiceUrl = getUrl(server, jmxPort, rmiPort);
-        Map<String,String[]> credentials =
+        Map<String, String[]> credentials =
             packageCredentials(userName, password);
         return getMBeanServerConnection(jmxServiceUrl, credentials);
     }
@@ -179,7 +180,7 @@ public class JMXUtils {
      */
     public static MBeanServerConnection getMBeanServerConnection(
             JMXServiceURL url,
-            Map<String,String[]> credentials) {
+            Map<String, String[]> credentials) {
         ArgumentNotValid.checkNotNull(url, "JMXServiceURL url");
         ArgumentNotValid.checkNotNull(credentials, 
                 "Map<String,String[]> credentials");
@@ -202,11 +203,11 @@ public class JMXUtils {
      * @param password The password to use for that user
      * @return the packaged credentials
      */
-    public static Map<String,String[]> packageCredentials(
+    public static Map<String, String[]> packageCredentials(
             String userName, String password) {
         ArgumentNotValid.checkNotNullOrEmpty(userName, "String userName");
-        ArgumentNotValid.checkNotNullOrEmpty(password, "String password");        
-        Map<String,String[]> credentials = new HashMap<String,String[]>(1);
+        ArgumentNotValid.checkNotNullOrEmpty(password, "String password");
+        Map<String, String[]> credentials = new HashMap<String, String[]>(1);
         credentials.put("jmx.remote.credentials",
                 new String[]{userName, password});
         return credentials;
@@ -230,8 +231,8 @@ public class JMXUtils {
         ArgumentNotValid.checkNotNullOrEmpty(command, "String command");
         ArgumentNotValid.checkNotNull(arguments, "String... arguments");
 
-        log.debug("Preparing to execute " + command + " with args " +
-                  Arrays.toString(arguments) + " on " + beanName);
+        log.debug("Preparing to execute " + command + " with args " 
+                + Arrays.toString(arguments) + " on " + beanName);
         try {
             final String[] signature = new String[arguments.length];
             Arrays.fill(signature, String.class.getName());
@@ -242,9 +243,11 @@ public class JMXUtils {
             do {
                 tries++;
                 try {
-                    Object ret = connection.invoke(getBeanName(beanName), command,
-                                                   arguments, signature);
-                    log.debug("Executed command " + command + " returned " + ret);
+                    Object ret = connection.invoke(
+                            getBeanName(beanName), command,
+                                        arguments, signature);
+                    log.debug("Executed command " + command + " returned " 
+                            + ret);
                     return ret;
                 } catch (InstanceNotFoundException e) {
                     lastException = e;
@@ -252,9 +255,9 @@ public class JMXUtils {
                         TimeUtils.exponentialBackoffSleep(tries);
                     }
                 } catch (IOException e) {
-                    log.warn("Exception thrown while executing " + command +
-                             " with args " +
-                             Arrays.toString(arguments) + " on " + beanName, e);
+                    log.warn("Exception thrown while executing " + command
+                             + " with args " + Arrays.toString(arguments) 
+                             + " on " + beanName, e);
                     lastException = e;
                     if (tries < getMaxTries()) {
                         TimeUtils.exponentialBackoffSleep(tries);
@@ -283,7 +286,8 @@ public class JMXUtils {
                                       MBeanServerConnection connection) {
         ArgumentNotValid.checkNotNullOrEmpty(beanName, "String beanName");
         ArgumentNotValid.checkNotNullOrEmpty(attribute, "String attribute");
-        ArgumentNotValid.checkNotNull(connection, "MBeanServerConnection connection");
+        ArgumentNotValid.checkNotNull(connection, 
+                "MBeanServerConnection connection");
         
         log.debug("Preparing to get attribute " + attribute
                  + " on " + beanName);
@@ -384,7 +388,8 @@ public class JMXUtils {
             }
         } while (retries++ < getMaxTries());
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " of " + getMaxTries() + " attempts.\nException type: "
+                            + retries + " of " + getMaxTries() 
+                            + " attempts.\nException type: "
                             + lastException.getCause().getClass().getName(),
                             lastException);
     }
