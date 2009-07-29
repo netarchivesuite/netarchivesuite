@@ -46,7 +46,7 @@ public class MockFreeSpaceProvider implements FreeSpaceProvider {
      * @return 1 TB of bytes free
      */
     public long getBytesFree(File f) {
-        ArgumentNotValid.checkNotNull(f, "f");
+        ArgumentNotValid.checkNotNull(f, "File f");
         
         return ONETB;
     }
