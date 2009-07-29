@@ -683,7 +683,9 @@ public class FileUtils {
 
     /**
      * Returns the number of bytes free on the file system calling
-     *  the FreeSpaceCalculation class defined in settings.xml.
+     *  the FreeSpaceProvider class defined by the setting
+     *  CommonSettings.FREESPACE_PROVIDER_CLASS (a.k.a. 
+     *  settings.common.freespaceprovider.class)
      *
      * @param f a given file
      * @return the number of bytes free defined in the settings.xml
