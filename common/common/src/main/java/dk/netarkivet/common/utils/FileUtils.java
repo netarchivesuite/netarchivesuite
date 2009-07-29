@@ -686,8 +686,7 @@ public class FileUtils {
      *  the FreeSpaceCalculation class defined in settings.xml.
      *
      * @param f a given file
-     * @return the number of bytes free, calculated by the
-     * FreeSpaceCalculation class
+     * @return the number of bytes free defined in the settings.xml
      */
     public static long getBytesFree(File f) {
         return FreeSpaceProviderFactory.getInstance().getBytesFree(f);

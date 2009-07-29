@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--  
- * File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id:$
+ * Revision:    $Rev:$
+ * Author:      $Author:$
+ * Date:        $Date:$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -22,18 +20,34 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
--->
-<!-- 
-	This file contains the default settings used by the ExternalFreeSpaceProvider
-	class.
 
-	For documentation of the individual settings, please refer to the javadoc
-	for dk.netarkivet.common.utils.FileFreeSpaceProvider.java
--->
-<settings>
-    <common>
-        <freespaceprovider>
-            <dir>/home/netarchivesuite/freespace</dir>
-        </freespaceprovider>
-    </common>
-</settings>
+package dk.netarkivet.common.utils;
+
+import java.io.File;
+
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+
+/**
+ * Mock Free Space Provider of the number of bytes free on the file system.
+ */
+public class MockFreeSpaceProvider implements FreeSpaceProvider {
+
+    /**
+     * 1 TB in bytes.
+     */
+    public static final long ONETB = 1024*1024*1024*1024;
+    
+    /**
+     * Returns 1 TB of bytes as the number of bytes free
+     * on the file system that the given file
+     * resides on.
+     *
+     * @param f a given file
+     * @return 1 TB of bytes free
+     */
+    public long getBytesFree(File f) {
+        ArgumentNotValid.checkNotNull(f, "f");
+        
+        return ONETB;
+    }
+}

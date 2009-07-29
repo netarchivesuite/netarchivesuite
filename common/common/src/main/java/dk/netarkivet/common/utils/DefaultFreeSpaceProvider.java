@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id:$
+ * Revision:    $Rev:$
+ * Author:      $Author:$
+ * Date:        $Date:$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -33,7 +33,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * Default Free Space Provider of the number of bytes free on the file system.
  */
-public class DefaultFreeSpaceProvider extends FreeSpaceProvider {
+public class DefaultFreeSpaceProvider implements FreeSpaceProvider {
     
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
@@ -47,7 +47,7 @@ public class DefaultFreeSpaceProvider extends FreeSpaceProvider {
      * 0 if the file cannot be found.
      */
     public long getBytesFree(File f) {
-        ArgumentNotValid.checkNotNull(f, "f");
+        ArgumentNotValid.checkNotNull(f, "File f");
         if (!f.exists()) {
             log.warn("The file '" +  f.getAbsolutePath()
                     + "' does not exist. The value 0 returned.");

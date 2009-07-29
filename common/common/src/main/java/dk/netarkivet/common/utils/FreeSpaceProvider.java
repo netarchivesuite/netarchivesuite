@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id:$
+ * Revision:    $Rev:$
+ * Author:      $Author:$
+ * Date:        $Date:$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -26,11 +26,11 @@ package dk.netarkivet.common.utils;
 import java.io.File;
 
 /**
- * This class encapsulates providing the number of bytes
+ * This interface encapsulates providing the number of bytes
  * free on the file system.
  *
  */
-public abstract class FreeSpaceProvider {
+public interface FreeSpaceProvider {
     /**
     * @param f a given file
     * @return the number of bytes free on the file system where file f resides.

@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:        $Id:$
+ * Revision:    $Rev:$
+ * Author:      $Author:$
+ * Date:        $Date:$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -37,14 +37,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * File Free Space Provider returns the number of bytes free out of a file.
  */
 
-public class FileFreeSpaceProvider extends FreeSpaceProvider {
+public class FilebasedFreeSpaceProvider implements FreeSpaceProvider {
     
     /** The error logger we notify about error messages on. */
     private Log log = LogFactory.getLog(getClass());
 
     /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/common/utils/FileFreeSpaceProvider.xml";
+            = "dk/netarkivet/common/utils/FilebasedFreeSpaceProvider.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -71,14 +71,14 @@ public class FileFreeSpaceProvider extends FreeSpaceProvider {
     /**
      * Returns the number of bytes free which is read out of a file
      * containing the bytes free information. This file is located 
-     * in the FREESPACEPROVIDER_DIR and has the name of parameter f.
+     * in the FREESPACEPROVIDER_DIR and has the name as parameter f.
      * Will return 0 on any IO- or Format-Exceptions.
      *
      * @param f a given file
      * @return the number of bytes free.
      */
     public long getBytesFree(File f) {
-        ArgumentNotValid.checkNotNull(f, "f");
+        ArgumentNotValid.checkNotNull(f, "File f");
 
         BufferedReader reader = null;
         String content;
@@ -87,11 +87,10 @@ public class FileFreeSpaceProvider extends FreeSpaceProvider {
 
         try {
            reader = new BufferedReader(new FileReader(bytesFreeFile));
-           while ((content = reader.readLine()) != null) {
-               bytes = Long.parseLong(content);
-           }
-        } catch (IOException e) {
-            log.warn("IO Exception while reading " 
+           content = reader.readLine();     // only read first line
+           bytes = Long.parseLong(content);
+        } catch (Exception e) {
+            log.warn("Exception while reading " 
                     + bytesFreeFile.getAbsolutePath() 
                     + ". The value 0 returned.");
             return 0;
