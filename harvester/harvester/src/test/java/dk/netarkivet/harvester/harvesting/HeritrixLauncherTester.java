@@ -47,7 +47,6 @@ import org.archive.crawler.settings.SettingsHandler;
 import org.archive.net.UURI;
 import org.archive.net.UURIFactory;
 import org.dom4j.Document;
-import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -55,7 +54,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.LuceneUtils;
-import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -113,7 +111,7 @@ public class HeritrixLauncherTester extends TestCase {
                                                 Long.parseLong(TestInfo.ARC_HARVEST_ID));
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
-        if (orderXml.exists() && orderXml.length() > 0 &&
+        if (orderXml.exists() && orderXml.length() > 0 &&    
             HeritrixLauncher.isDeduplicationEnabled(XmlUtils.getXmlDoc(orderXml))) {
             assertNotNull("Must have a non-null index when deduplication is enabled",
                           indexDir);
@@ -168,7 +166,7 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /**
-     * Test that the launcher aborts given a non-existing order-file
+     * Test that the launcher aborts given a non-existing order-file.
      */
     public void testStartMissingOrderFile() {
         try {
@@ -181,7 +179,7 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /**
-     * Test that the launcher aborts given a non-existing seeds-file
+     * Test that the launcher aborts given a non-existing seeds-file.
      */
     public void testStartMissingSeedsFile() {
         try {
@@ -230,7 +228,7 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /**
-     * This method is used to test various scenarios with bad order-files
+     * This method is used to test various scenarios with bad order-files.
      *
      * @param orderfile
      */
@@ -275,15 +273,20 @@ public class HeritrixLauncherTester extends TestCase {
         //                                                     "files").get(hl);
         //ReflectUtils.getPrivateField(hl.getClass(),
         //		"heritrixController").set(hl, new TestCrawlController(files));
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$TestCrawlController");
+        HeritrixLauncher hl = getHeritrixLauncher(
+                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, 
+                null);
         hl.doCrawl();
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
     }
 
     /**
-     * Test that the HostnameQueueAssignmentPolicy returns correct queue-names for different URL's
+     * Test that the HostnameQueueAssignmentPolicy returns correct queue-names
+     * for different URLs.
      * The HostnameQueueAssignmentPolicy is the default in heritrix
      * - our own DomainnameQueueAssignmentPolicy extends this one and expects that it returns the ritht values
      */
@@ -369,14 +372,14 @@ public class HeritrixLauncherTester extends TestCase {
          * Check the DeduplicationType.NO_DEDUPLICATION type of deduplication is setup correctly
          */
 
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        HeritrixLauncher hl = getHeritrixLauncher(
+                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, 
+                null);
         hl.setupOrderfile();
 
         File orderFile = new File (TestInfo.HERITRIX_TEMP_DIR, "order.xml");
         Document doc = XmlUtils.getXmlDoc(orderFile);
         /* check, that deduplicator is not enabled in the order */
-
-        Node dedup_node = doc.selectSingleNode(HeritrixLauncher.DEDUPLICATOR_XPATH);
         assertFalse("Should not have deduplication enabled",
                     HeritrixLauncher.isDeduplicationEnabled(doc));
 
@@ -391,7 +394,6 @@ public class HeritrixLauncherTester extends TestCase {
 
         // check, that the deduplicator is present in the order
         doc = XmlUtils.getXmlDoc(orderFile);
-        dedup_node = doc.selectSingleNode(HeritrixLauncher.DEDUPLICATOR_XPATH);
         assertTrue("Should have deduplication enabled",
                    HeritrixLauncher.isDeduplicationEnabled(doc));
         XmlAsserts.assertNodeWithXpath(
@@ -407,12 +409,14 @@ public class HeritrixLauncherTester extends TestCase {
 
     /**
      * Tests that HeritricLauncher will fail on an error in
-     * HeritrixController.initialize()
+     * HeritrixController.initialize().
      */
     public void testFailOnInitialize()
             throws NoSuchFieldException, IllegalAccessException {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$SucceedOnCleanupTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$SucceedOnCleanupTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(
+                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         try {
             hl.doCrawl();
             fail("HeritrixLanucher should throw an exception when it fails to initialize");
@@ -420,24 +424,29 @@ public class HeritrixLauncherTester extends TestCase {
             assertTrue("Error message should be from initialiser", e.getMessage().contains("initialize"));
             //expected
         }
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
     }
 
     /**
      * When the an exception is thrown in cleanup, any exceptions thrown in the
-     * initialiser are lost
+     * initialiser are lost.
      */
     public void testFailOnCleanup() {
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailingTestController");
+        HeritrixLauncher hl = getHeritrixLauncher(
+                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         try {
             hl.doCrawl();
             fail("HeritrixLanucher should throw an exception when it fails to initialize");
         } catch (IOFailure e) {
-            assertTrue("Error message should be from cleanup", e.getMessage().contains("cleanup"));
+            assertTrue("Error message should be from cleanup", 
+                    e.getMessage().contains("cleanup"));
             //expected
         }
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
     }
 
     /**
@@ -447,9 +456,11 @@ public class HeritrixLauncherTester extends TestCase {
     public void testFailDuringCrawl() {
           Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS,
           "dk.netarkivet.harvester.harvesting.HeritrixLauncherTester$FailDuringCrawlTestController");
-        HeritrixLauncher hl = getHeritrixLauncher(TestInfo.ORDER_FILE, null);
+        HeritrixLauncher hl = getHeritrixLauncher(
+                TestInfo.ORDER_FILE_WITH_DEDUPLICATION_DISABLED, null);
         hl.doCrawl();
-        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
+        Settings.set(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, 
+                "dk.netarkivet.harvester.harvesting.JMXHeritrixController");
 
     }
 
@@ -501,7 +512,7 @@ public class HeritrixLauncherTester extends TestCase {
     }
 
     /**
-     * A Heritrix Controller which fails on every call
+     * A Heritrix Controller which fails on every call.
      */
     public static class FailingTestController implements HeritrixController {
 

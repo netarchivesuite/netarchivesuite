@@ -67,6 +67,8 @@ public class TestInfo {
     //(We should ALWAYS move these to WORKING_DIR and reference the copies!)
     static final File ORDER_FILE
             = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order.xml");
+    static final File ORDER_FILE_WITH_DEDUPLICATION_DISABLED 
+            = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order-without-deduplication.xml");
     static final File DEDUP_ORDER_FILE
             = new File(ORDER_AND_SEEDS_ORIGINALS_DIR, "order-deduplicator.xml");
     static final File DEDUPFETCH_ORDER_FILE
