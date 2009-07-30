@@ -261,6 +261,7 @@
             <string name="cost-policy">org.archive.crawler.frontier.UnitCostAssignmentPolicy</string>
             <long name="snooze-deactivate-ms">300000</long>
             <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>
+            <boolean name="dump-pending-at-close">false</boolean>
         </newObject>
         <map name="uri-canonicalization-rules">
             <newObject name="Lowercase" class="org.archive.crawler.url.canonicalize.LowercaseRule">
@@ -352,6 +353,7 @@
                 <boolean name="send-connection-close">true</boolean>
                 <boolean name="send-referer">true</boolean>
                 <boolean name="send-range">false</boolean>
+                <string name="http-bind-address"/>
             </newObject>
         </map>
         <map name="extract-processors">
@@ -366,6 +368,9 @@
                 </map>
                 <boolean name="treat-frames-as-embed-links">true</boolean>
                 <boolean name="ignore-form-action-urls">true</boolean>
+                <boolean name="extract-javascript">true</boolean>
+		        <boolean name="extract-value-attributes">true</boolean>
+		        <boolean name="ignore-unexpected-html">true</boolean>
             </newObject>
             <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS">
                 <boolean name="enabled">true</boolean>

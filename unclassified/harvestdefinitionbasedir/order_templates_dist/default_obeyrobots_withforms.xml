@@ -173,6 +173,7 @@
             <long name="snooze-deactivate-ms">300000</long>
 	    <integer name="target-ready-backlog">50</integer>	
             <string name="uri-included-structure">org.archive.crawler.util.BdbUriUniqFilter</string>
+            <boolean name="dump-pending-at-close">false</boolean>
         </newObject>
 
         <map name="uri-canonicalization-rules">
@@ -286,7 +287,7 @@
                 <boolean name="send-connection-close">true</boolean>
                 <boolean name="send-referer">true</boolean>
                 <boolean name="send-range">false</boolean>
-		<string name="bind-address"/>
+		<string name="http-bind-address"/>
     </newObject>
         </map> <!-- end of Heritrix Fetch processors -->
                
@@ -308,7 +309,7 @@
 		<boolean name="extract-javascript">true</boolean>
 		<boolean name="treat-frames-as-embed-links">true</boolean>
 		<boolean name="ignore-form-action-urls">false</boolean>
-		<boolean name="overly-eager-link-detection">true</boolean>
+		<boolean name="extract-value-attributes">true</boolean>
 		<boolean name="ignore-unexpected-html">true</boolean>
             </newObject>
             <newObject name="ExtractorCSS" class="org.archive.crawler.extractor.ExtractorCSS">
