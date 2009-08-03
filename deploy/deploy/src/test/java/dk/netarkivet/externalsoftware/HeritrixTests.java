@@ -57,6 +57,7 @@ import org.xml.sax.SAXException;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.XmlUtils;
@@ -283,12 +284,15 @@ public class HeritrixTests extends TestCase {
     	} catch (Exception ex) {
     	    // a different exception than IOFailure was thrown but the
     	    // proper IOFailure may be the cause of this exception
- 
+    	    //ex.printStackTrace(); 
+  
+            //System.out.println("ex.getCause().getMessage():" + ex.getCause().getMessage()); 
     	    if (!ex.getCause().getMessage().contains(
-    	            "Failed to read file '" + passwordFile.getAbsolutePath() + "'")) {
+    	            "Failed to read the password file '" + passwordFile.getAbsolutePath() + "'")) {
+    	        ex.printStackTrace(); 
     	        fail("An exception different from IOFailure has been thrown " +
                         "when launching with a non existing file (" 
-                        + passwordFile.getAbsolutePath() + ")" + ex);
+                        + passwordFile.getAbsolutePath() + ")" + ExceptionUtils.getStackTrace(ex));
     	    }
     	}
 	}    
