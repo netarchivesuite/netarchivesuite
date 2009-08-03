@@ -64,7 +64,7 @@
             <receiver>edit@this.mail.address</receiver>
         </notifications>
         <freespaceprovider>
-            <class>dk.netarkivet.common.utils.FreeSpaceProvider</class>
+            <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
         </freespaceprovider>
         <mail>
             <server>your.mail.server</server>
