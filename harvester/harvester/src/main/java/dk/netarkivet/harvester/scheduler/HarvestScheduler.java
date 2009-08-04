@@ -205,14 +205,16 @@ public class HarvestScheduler implements CleanupIF {
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             
             if (new Date().after(endTime)) {
-                log.warn(" Job " + id
+                final String msg = " Job " + id
                          + " has exceeded its timeout of " +
                          Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)
                          + " minutes. Its status has now been changed to " +
-                         "FAILED.");
+                         "FAILED.";
+                log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
                 dao.update(job);
                 stoppedJobs++;
+                job.appendHarvestErrors(msg);
             }
         }
         log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
