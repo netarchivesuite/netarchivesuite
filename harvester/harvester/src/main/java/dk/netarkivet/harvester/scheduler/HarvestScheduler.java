@@ -157,9 +157,6 @@ public class HarvestScheduler implements CleanupIF {
             // Schedule running every GENERATE_JOBS_PERIOD milliseconds
             // presently one minut.
             scheduleJobs();
-            // stop STARTED jobs which have been on for more than
-            // settings.harvester.scheduler.jobtimeouttime time
-            stopTimeoutJobs();
             timer = new Timer(true);
             timer.scheduleAtFixedRate(task, cal.getTime(),
                     GENERATE_JOBS_PERIOD);
@@ -188,7 +185,7 @@ public class HarvestScheduler implements CleanupIF {
 
     /**
      * Stop any job that has been in status STARTED a very long time defined
-     * by the HarvesterSettings.JOB_TIMEOUT_TIME setting
+     * by the HarvesterSettings.JOB_TIMEOUT_TIME setting.
      *
      */
     private void stopTimeoutJobs() {
@@ -200,24 +197,26 @@ public class HarvestScheduler implements CleanupIF {
             Job job = dao.read(id);
 
             long timeDiff =
-                    Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME);
+                    Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) * 1000;
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             
             if (new Date().after(endTime)) {
                 final String msg = " Job " + id
                          + " has exceeded its timeout of " +
-                         Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)
-                         + " minutes. Its status has now been changed to " +
-                         "FAILED.";
+                         (Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)
+                         / 60) + " minutes. Its status has now been changed to "
+                         + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
+                job.appendHarvestErrors(msg);
                 dao.update(job);
                 stoppedJobs++;
-                job.appendHarvestErrors(msg);
             }
         }
-        log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
+        if(stoppedJobs > 0 ) {
+            log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
+        }
     }
 
     /**
@@ -232,6 +231,11 @@ public class HarvestScheduler implements CleanupIF {
             }                                                                                                                
             running = true;
         }
+
+        // stop STARTED jobs which have been on for more than
+        // settings.harvester.scheduler.jobtimeouttime time.
+        stopTimeoutJobs();
+
         if (backupNow()) { // Check if we want to backup the database now?
             File backupDir = new File("DB-Backup-"
                                       + System.currentTimeMillis());
@@ -259,6 +263,7 @@ public class HarvestScheduler implements CleanupIF {
             }
         }
     }
+    
     /**
      * Is it now time to backup the database?
      * Check that no jobs are being generated, that we backup as soon as

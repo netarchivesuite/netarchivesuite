@@ -151,6 +151,7 @@ public class HarvesterSettings {
 
     /** <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
      *  Time before a STARTED job times out and change status to FAILED.
+     *  In seconds.
      */
     public static String JOB_TIMEOUT_TIME =
             "settings.harvester.scheduler.jobtimeouttime";
