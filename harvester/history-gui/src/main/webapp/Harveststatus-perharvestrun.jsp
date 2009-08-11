@@ -38,7 +38,8 @@ This page displays harvest details for one harvest definition run
 %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
-/><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
+/><fmt:setBundle scope="page"
+                 basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
@@ -49,17 +50,40 @@ This page displays harvest details for one harvest definition run
     } catch (ForwardedToErrorPage e) {
         return;
     }
-    //After a resubmit, forward to this page
+
+    // Look for optional parameters for search of jobs.
+    // Moved up to make it possible to transfer paraemters when redirecting.
+    HarvestStatus.DefaultedRequest dfltRequest =
+        new HarvestStatus.DefaultedRequest(request);
+    Set<Integer> selectedJobStatusCodes =
+            HarvestStatus.getSelectedJobStatusCodes(dfltRequest);
+    String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
+
+    // After a resubmit, forward to this page.
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
+        // TODO insert all jobstatusname
+        String jobsStatusCodes = "&";
+        for (JobStatus st : JobStatus.values()) {
+            if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
+                jobsStatusCodes = jobsStatusCodes.concat(Constants.JOBSTATUS_PARAM + "=" +
+                st.name() + "&");
+            }
+        }
         response.sendRedirect("Harveststatus-perharvestrun.jsp?"
                               + Constants.HARVEST_ID_PARAM + "="
                               + request.getParameter(Constants.HARVEST_ID_PARAM)
                               + "&" + Constants.HARVEST_NUM_PARAM + "="
-                              + request.getParameter(Constants.HARVEST_NUM_PARAM));
+                              + request.getParameter(Constants.HARVEST_NUM_PARAM)
+                              + "&" + Constants.JOBIDORDER_PARAM + "="
+                              + request.getParameter(Constants.JOBIDORDER_PARAM)
+                              + "&" + Constants.JOBSTATUS_PARAM + "="
+                              + request.getParameter(Constants.JOBSTATUS_PARAM)
+                              + jobsStatusCodes
+                                );
         return;
     }
 	// Local variables to hold the value of the HARVEST_ID_PARAM and the 
-	// HARVEST_NUM_PARAM
+	// HARVEST_NUM_PARAM.
     long harvestID;
     long harvestNum;
     try {
@@ -67,22 +91,16 @@ This page displays harvest details for one harvest definition run
                                                    Constants.HARVEST_ID_PARAM,
                                                    0, Integer.MAX_VALUE);
         harvestNum = HTMLUtils.parseAndCheckInteger(pageContext,
-                                                         Constants.HARVEST_NUM_PARAM,
-                                                         0, Integer.MAX_VALUE);
+                                                    Constants.HARVEST_NUM_PARAM,
+                                                    0, Integer.MAX_VALUE);
     } catch (ForwardedToErrorPage e) {
         return;
     }
         
     
-    //Look for optional parameters for search of jobs
-    HarvestStatus.DefaultedRequest dfltRequest =
-        new HarvestStatus.DefaultedRequest(request);
-    Set<Integer> selectedJobStatusCodes = HarvestStatus.getSelectedJobStatusCodes(
-                                    dfltRequest
-                                );
-    String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
 
-    //list of information to be shown
+
+    // List of information to be shown.
     List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(
                                             harvestID,
                                             harvestNum,
@@ -99,24 +117,25 @@ This page displays harvest details for one harvest definition run
                          + "</a>";
     HTMLUtils.generateHeader(pageContext);
     String selected;
+    List<String> selectedJobs = new ArrayList<String>();
 %>
 
 
-<%--Make line with comboboxes with job status and order to be shown --%>
+<%--Make line with comboboxes with job status and order to be shown. --%>
 <form method="get" action="Harveststatus-perharvestrun.jsp">
 <input type="hidden" name="<%=Constants.HARVEST_ID_PARAM%>"
-                                       value="<%=request.getParameter(Constants.HARVEST_ID_PARAM)%>"/>
+       value="<%=request.getParameter(Constants.HARVEST_ID_PARAM)%>"/>
 <input type="hidden" name="<%=Constants.HARVEST_NUM_PARAM%>"
-                                       value="<%=request.getParameter(Constants.HARVEST_NUM_PARAM)%>"/>
+       value="<%=request.getParameter(Constants.HARVEST_NUM_PARAM)%>"/>
 <h4>
 
 <fmt:message key="status.0.sort.order.1.job.choice">
 <fmt:param>
-<select multiple name="<%= Constants.JOBSTATUS_PARAM %>" size="<%= JobStatus.values().length %>">
+<select multiple name="<%= Constants.JOBSTATUS_PARAM %>"
+        size="<%= JobStatus.values().length %>">
     <%
     selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
-                      ? "selected=\"selected\""
-                      : "";
+               ? "selected=\"selected\"" : "";
     %>
         <option <%=selected%>  value="<%=HarvestStatus.JOBSTATUS_ALL%>">
              <fmt:message key="status.job.all"/>
@@ -126,6 +145,7 @@ This page displays harvest details for one harvest definition run
         selected = "";
         if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
             selected = "selected=\"selected\"";
+            selectedJobs.add(st.name());
         }
     %>
         <option <%=selected%> value="<%=st.name()%>">
@@ -142,8 +162,7 @@ This page displays harvest details for one harvest definition run
 <fmt:param>
 <select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
     <%
-    selected = 
-               (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
+    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
                ? "selected=\"selected\""
                : "";
     %>
@@ -166,10 +185,12 @@ This page displays harvest details for one harvest definition run
 </h4>
 </form>
 
-<h2 class="page_heading"><fmt:message key="pagetitle;status.for.harvest.0.run.1">
-    <fmt:param value="<%=harvestLink%>"/>
-    <fmt:param value="<%=harvestNum%>"/>
-</fmt:message></h2>
+<h2 class="page_heading">
+    <fmt:message key="pagetitle;status.for.harvest.0.run.1">
+        <fmt:param value="<%=harvestLink%>"/>
+        <fmt:param value="<%=harvestNum%>"/>
+    </fmt:message>
+</h2>
 
 <h3 class="page_heading"><fmt:message key="pagetitle;jobstatus"/></h3>
 <table class="selection_table">
@@ -204,14 +225,15 @@ This page displays harvest details for one harvest definition run
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
                        HTMLUtils.nullToHyphen(js.getHarvestErrors()))%>
-                    <%if (js.getStatus().equals(JobStatus.FAILED)
+                    <%/*if (js.getStatus().equals(JobStatus.FAILED)
                           && js.getHarvestErrors() != null
                           && js.getHarvestErrors().length() > 0
                           && SiteSection.isDeployed(
-                            Constants.DEFINITIONS_SITESECTION_DIRNAME)) {
-                        //Note: The form is only displayed if Definitions
-                        //sitesection is deployed. Thus you cannot change any
-                        //state using the history sitesection only.
+                            Constants.DEFINITIONS_SITESECTION_DIRNAME)) {*/
+                        //TODO uncomment
+                        // Note: The form is only displayed if Definitions
+                        // sitesection is deployed. Thus you cannot change any
+                        // state using the history sitesection only.
                     %>&nbsp;<form class ="inlineform" method="post"
                                   action="Harveststatus-perharvestrun.jsp">
                                 <input type="hidden"
@@ -223,11 +245,24 @@ This page displays harvest details for one harvest definition run
                                 <input type="hidden"
                                        name="<%=Constants.HARVEST_NUM_PARAM%>"
                                        value="<%=harvestNum%>"/>
+                                <input type="hidden"
+                                       name="<%=Constants.JOBIDORDER_PARAM%>"
+                                       value="<%=selectedSortOrder%>"/>
+                                <%
+                                // Add jobstatusname to param list.
+                                for(String job: selectedJobs) {
+                                    %>
+                                    <input type="hidden"
+                                           name="<%=Constants.JOBSTATUS_PARAM%>"
+                                           value="<%=job%>"/>
+                                    <%
+                                }
+                                %>
                                 <input type="submit"
                                        value="<fmt:message key="button;restart"/>"/>
                             </form>
                     <%
-                        }
+                    //}
                     %>
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
@@ -241,25 +276,27 @@ This page displays harvest details for one harvest definition run
     %>
 
 </table>
-<%-- display index link for DONE or FAILED job ID's --%>
-<%-- display the index link, only if QA webpages are deployed --%>
+<%-- Display index link for DONE or FAILED job ID's. --%>
+<%-- Display the index link, only if QA webpages are deployed. --%>
 <%
     if (!jobIDs.isEmpty() && SiteSection.isDeployed(Constants.QA_SITESECTION_DIRNAME)) { %>
 <h3><fmt:message key="subtitle.job.qa.selection"/></h3>
 <table class="selection_table">
     <tr>
         <td>
-            <form action="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp" method="POST" name="QAform"
-                  id="QAform">
+            <form action="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"
+                  method="POST" name="QAform" id="QAform">
                 <% for (Long jobID : jobIDs) { %>
-                <input type="hidden" name="<%=Constants.JOB_PARAM%>" value="<%=jobID%>"/>
+                <input type="hidden" name="<%=Constants.JOB_PARAM%>"
+                       value="<%=jobID%>"/>
                 <% } %>
-                <input type="hidden" name="<%=Constants.INDEXLABEL_PARAM%>" value="<fmt:message key="harvest.0.run.1">
+                <input type="hidden" name="<%=Constants.INDEXLABEL_PARAM%>"
+                       value="<fmt:message key="harvest.0.run.1">
                     <fmt:param value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
                     <fmt:param value="<%=harvestNum%>"/>
                 </fmt:message>">
                 <p><a href="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"
-                   onclick="document.getElementById('QAform').submit();return false">
+                      onclick="document.getElementById('QAform').submit();return false">
                     <fmt:message key="select.jobs.for.qa.with.viewerproxy"/>
                 </a></p>
             </form>
