@@ -23,7 +23,9 @@
 package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
+import java.util.List;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -116,4 +118,46 @@ public interface PreservationArcRepositoryClient  {
      */
     File removeAndGetFile(String fileName, String replicaId,
                           String checksum, String credentials);
+    
+    /**
+     * Retrieves all the checksum from the replica through a 
+     * GetAllChecksumMessage.
+     * 
+     * This is the checksum archive alternative to running a ChecksumBatchJob. 
+     * 
+     * @param replicaId The id of the replica from which the checksums should 
+     * be retrieved.
+     * @return A list of ChecksumEntries which is the results of the 
+     * GetAllChecksumMessage.
+     * @see dk.netarkivet.archive.checksum.GetAllChecksumMessage
+     */
+    File getAllChecksums(String replicaId);
+    
+    /**
+     * Retrieves the names of all the files in the replica through a 
+     * GetAllFilenamesMessage.
+     * 
+     * This is the checksum archive alternative to running a FilelistBatchJob. 
+     * 
+     * @param replicaId The id of the replica from which the list of filenames
+     * should be retrieved.
+     * @return A list of all the filenames within the archive of the given 
+     * replica.
+     * @see dk.netarkivet.archive.checksum.GetAllFilenamesMessage
+     */
+    File getAllFilenames(String replicaId);
+    
+    /**
+     * Method for correcting a file in a replica.
+     * 
+     * This is the checksum archive method for correcting a file entry in the 
+     * archive. The bitarchive uses 'removeAndGetFile' followed by a 'store'.
+     * 
+     * @param replicaId The identification of the replica.
+     * @param file The new file to replace the old one.
+     * @param credentials The password for allowing to remove a file entry in
+     * the archive. 
+     */
+    void correct(String replicaId, String checksum, File file, 
+	    String credentials);
 }

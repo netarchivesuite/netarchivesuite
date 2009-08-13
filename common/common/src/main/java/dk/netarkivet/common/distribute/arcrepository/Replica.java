@@ -247,7 +247,15 @@ public class Replica {
      * Please do not parse its name!
      */
     public ChannelID getChannelID() {
-        return Channels.getBaMonForReplica(id);
+	// This is the channel used by the connected replicas in the 
+	// ArcRepository.
+	if(type == ReplicaType.BITARCHIVE) {
+	    return Channels.getBaMonForReplica(id);
+	} else if (type == ReplicaType.CHECKSUM) {
+	    return Channels.getTheCrForReplica(id);
+	} else {
+	    throw new UnknownID("No channel for replica " + toString());
+	}
     }
 
     /** Returns a human-readable representation of the object.

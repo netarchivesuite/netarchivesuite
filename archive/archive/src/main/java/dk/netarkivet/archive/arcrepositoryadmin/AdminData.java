@@ -179,37 +179,41 @@ public abstract class AdminData {
      * ARC file at the given bit archive.
      *
      * @param arcfileName The file to retrieve the state for
-     * @param bitArchiveId  The bitarchive id to retrieve the state for
+     * @param replicaChannelName  The name of the identification channel for 
+     * the replica the state should be retrieved for.
      * @return true if BitArchiveStoreState is registered, false otherwise.
      */
-    public boolean hasState(String arcfileName, String bitArchiveId) {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitArchiveId, "bitArchiveId");
+    public boolean hasState(String arcfileName, String replicaChannelName) {
+        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
+        	"String replicaChannelName");
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
         if (entry == null) {
             log.warn("No entry found in storeEntries for arcfilename: "
                     + arcfileName);
         }
-        return entry != null && entry.hasStoreState(bitArchiveId);
+        return entry != null && entry.hasStoreState(replicaChannelName);
     }
 
     /**
-     * Retrieves the storage state of a file for a specific bitarchive.
+     * Retrieves the storage state of a file for a specific replica.
      *
-     * @param arcfileName The file to retrieve the state for
-     * @param bitArchiveId  The bitarchive id to retrieve the state for
-     * @return The storage state
-     * @throws UnknownID When no record exists
+     * @param arcfileName The file to retrieve the state for.
+     * @param replicaChannelName  The name of the identification channel for 
+     * the replica the state should be retrieved for.
+     * @return The storage state.
+     * @throws UnknownID When no record exists.
      */
-    public BitArchiveStoreState getState(String arcfileName, String bitArchiveId)
-            throws UnknownID {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitArchiveId, "bitArchiveId");
-        if (!hasState(arcfileName, bitArchiveId)) {
+    public BitArchiveStoreState getState(String arcfileName, 
+	    String replicaChannelName) throws UnknownID {
+        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
+        	"String replicaChannelName");
+        if (!hasState(arcfileName, replicaChannelName)) {
             throw new UnknownID("No store state recorded for '"
-                    + arcfileName + "' in '" + bitArchiveId + "'");
+                    + arcfileName + "' in '" + replicaChannelName + "'");
         }
-        return storeEntries.get(arcfileName).getStoreState(bitArchiveId);
+        return storeEntries.get(arcfileName).getStoreState(replicaChannelName);
     }
 
     /**

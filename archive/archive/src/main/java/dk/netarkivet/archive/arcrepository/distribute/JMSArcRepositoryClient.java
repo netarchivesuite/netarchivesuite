@@ -23,21 +23,29 @@
 package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -47,6 +55,7 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NetarkivetException;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -84,7 +93,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     protected final Log log = LogFactory.getLog(getClass());
 
     /** Listens on this queue for replies. */
-    private ChannelID replyQ;
+    private final ChannelID replyQ;
 
     /** The number of times to try sending a store message before giving up. */
     private long storeRetries;
@@ -138,6 +147,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                    + " milliseconds, and timeout on each getrequest after "
                    + getTimeout + " milliseconds.");
         replyQ = Channels.getThisReposClient();
+        ArgumentNotValid.checkNotNull(replyQ, "ReplyQ");
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
         log.info("JMSArcRepository listens for replies on channel '"
                  + replyQ + "'");
@@ -233,6 +243,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         
         log.debug("Requesting get of file '" + arcfilename + "' from '"
                   + replica + "'");
+        //ArgumentNotValid.checkNotNull(replyQ, "replyQ must not be null");
         GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(),
                 replyQ, arcfilename, replica.getId());
         GetFileMessage getFileMessage
@@ -487,5 +498,152 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             log.warn(message);
             throw new IOFailure(message);
         }
+    }
+
+    /**
+     * Retrieves all the checksum from the replica through a 
+     * GetAllChecksumMessage.
+     * 
+     * This is the checksum archive alternative to running a ChecksumBatchJob. 
+     * 
+     * @param replicaId The id of the replica from which the checksums should 
+     * be retrieved.
+     * @return A list of ChecksumEntries which is the results of the 
+     * GetAllChecksumMessage.
+     * @see dk.netarkivet.archive.checksum.GetAllChecksumMessage
+     */
+    public File getAllChecksums(String replicaId) {
+	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+	log.debug("Sending GetAllChecksumMessage to replica '" + replicaId 
+		+ "'.");
+	// time this.
+	long start = System.currentTimeMillis();
+	// make and send the message to the replica.
+	GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(
+		Channels.getTheRepos(), replyQ, replicaId);
+	NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg, 
+		getTimeout);
+	
+	// calculate and log the time spent on handling the message.
+	long timePassed = System.currentTimeMillis() - start;
+	log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+	// check whether the output was valid.
+	if (replyNetMsg == null) {
+	    log.info("Request for all checksum timed out after "
+	    + (getTimeout / 1000)
+	    + " seconds. Returning empty list.");
+	    // return an empty list
+	    return null;
+	}
+	// convert to the correct type of message.
+	GetAllChecksumMessage replyCSMsg;
+	try {
+	    replyCSMsg = (GetAllChecksumMessage) replyNetMsg;
+	} catch (ClassCastException e) {
+	    String errorMsg = "Received invalid reply message: '"
+		+ replyNetMsg;
+	    log.warn(errorMsg, e);
+	    throw new IOFailure(errorMsg, e);
+	}
+	
+	try {
+	    // retrieve the data from this message.
+	    File result = File.createTempFile("tmp", "tmp");
+	    replyCSMsg.getData(result);
+	    
+	    return result;
+	} catch (IOException e) {
+	    String errMsg = "Cannot create a temporary file for retrieving "
+		+ " the data remote from checksum message: " + replyCSMsg;
+	    log.warn(errMsg);
+	    throw new IOFailure(errMsg, e);
+	}
+    }
+
+    /**
+     * Retrieves the names of all the files in the replica through a 
+     * GetAllFilenamesMessage.
+     * 
+     * This is the checksum archive alternative to running a FilelistBatchJob. 
+     * 
+     * @param replicaId The id of the replica from which the list of filenames
+     * should be retrieved.
+     * @return A list of all the filenames within the archive of the given 
+     * replica.
+     * @see dk.netarkivet.archive.checksum.GetAllFilenamesMessage
+     */
+    public File getAllFilenames(String replicaId) {
+	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+	log.debug("Sending GetAllChecksumMessage to replica '" + replicaId 
+		+ "'.");
+	// time this.
+	long start = System.currentTimeMillis();
+	// make and send the message to the replica.
+	GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(
+		Channels.getTheRepos(), replyQ, replicaId);
+	NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg, 
+		getTimeout);
+	
+	// calculate and log the time spent on handling the message.
+	long timePassed = System.currentTimeMillis() - start;
+	log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+	// check whether the output was valid.
+	if (replyNetMsg == null) {
+	    log.info("Request for all filenames timed out after "
+	    + (getTimeout / 1000)
+	    + " seconds. Returning empty list.");
+	    // return an empty list
+	    return null;
+	}
+	// convert to the correct type of message.
+	GetAllFilenamesMessage replyCSMsg;
+	try {
+	    replyCSMsg = (GetAllFilenamesMessage) replyNetMsg;
+	} catch (ClassCastException e) {
+	    String errorMsg = "Received invalid reply message: '"
+		+ replyNetMsg;
+	    log.warn(errorMsg, e);
+	    throw new IOFailure(errorMsg, e);
+	}
+	
+	try {
+	    // retrieve the data from this message.
+	    File result = File.createTempFile("tmp", "tmp");
+	    replyCSMsg.getData(result);
+	    
+	    return result;
+	} catch (IOException e) {
+	    String errMsg = "Cannot create a temporary file for retrieving "
+		+ " the data remote from checksum message: " + replyCSMsg;
+	    log.warn(errMsg);
+	    throw new IOFailure(errMsg, e);
+	}
+    }
+
+    @Override
+    public void correct(String replicaId, String checksum, File file, 
+	    String credentials) {
+	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+	ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+	ArgumentNotValid.checkNotNull(file, "File file");
+	ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
+
+	RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
+	CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
+		replyQ, checksum, rm);
+	CorrectMessage responseMessage = (CorrectMessage) 
+	        sendAndWaitForOneReply(correctMsg, 0);
+
+	if (responseMessage == null) {
+	    String msg = "Correct Message timed out before returning."
+		+ "File not found?";
+	    log.debug(msg);
+	    throw new IOFailure(msg);
+	} else if (!responseMessage.isOk()) {
+	    String msg = "CorrectMessage failed: " 
+		+ responseMessage.getErrMsg();
+	    log.warn(msg);
+	    throw new IOFailure(msg);
+	} 
     }
 }

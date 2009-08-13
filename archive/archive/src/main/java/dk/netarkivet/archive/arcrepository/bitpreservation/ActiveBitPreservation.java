@@ -184,8 +184,9 @@ public interface ActiveBitPreservation {
      * @param credentials The credentials used to perform this replace operation
      * @param checksum  The known bad checksum. Only a file with this bad
      * checksum is attempted repaired.
-     * @throws IOFailure if the file cannot be reestablished
-     * @throws PermissionDenied if the file is not in correct state
+     * @throws IOFailure if the file cannot be reestablished.
+     * @throws PermissionDenied if the file is not in correct state.
+     * @throws ArgumentNotValid if any of the arguments are not valid.
      */
     void replaceChangedFile(Replica replica, String filename,
                             String credentials, String checksum);

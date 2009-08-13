@@ -124,12 +124,14 @@ public class ArcRepositoryEntry {
      */
     public ArchiveStoreState getGeneralStoreState() {
         Set<String> bitarchives = storeStates.keySet();
-
-        String[] bitarchiveNames = bitarchives.toArray(
-                new String[bitarchives.size()]);
+        // Check whether scenario 1.
         if (bitarchives.size() == 0) {
             return new ArchiveStoreState(BitArchiveStoreState.UPLOAD_FAILED);
         }
+
+        String[] bitarchiveNames = bitarchives.toArray(
+                new String[bitarchives.size()]);
+        // Check whether scenario 2.
         if (bitarchives.size() == 1){
            ArchiveStoreState ass = storeStates.get(bitarchiveNames[0]);
            return new ArchiveStoreState(ass.getState(), ass.getLastChanged());
@@ -168,7 +170,7 @@ public class ArcRepositoryEntry {
         //     return this state together with the the latest timestamp
 
         return new ArchiveStoreState(lowestStoreState, lastChanged);
-       }
+    }
 
 
     /**
@@ -262,7 +264,8 @@ public class ArcRepositoryEntry {
         o.print(md5sum);
         o.print(GENERAL_DELIMITER + getGeneralStoreState().toString());
 
-        for (Map.Entry entry : storeStates.entrySet()) {
+        for (Map.Entry<String, ArchiveStoreState> entry 
+        	: storeStates.entrySet()) {
             o.print(ENTRY_COMPONENT_SEPARATOR_STRING + entry.getKey()
                     + GENERAL_DELIMITER + entry.getValue());
         }

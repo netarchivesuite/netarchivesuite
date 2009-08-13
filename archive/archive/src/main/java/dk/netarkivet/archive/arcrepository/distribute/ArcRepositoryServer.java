@@ -38,6 +38,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
+import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -169,7 +170,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         try {
-            BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
+            ReplicaClient bc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
             bc.batch(msg);
         } catch (Throwable t) {
@@ -192,7 +193,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        BitarchiveClient bc = ar.getBitarchiveClientFromReplicaId(
+        ReplicaClient bc = ar.getReplicaClientFromReplicaId(
                 Settings.get(CommonSettings.USE_REPLICA_ID));
         try {
             bc.get(msg);
@@ -214,8 +215,8 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        BitarchiveClient bc =
-            ar.getBitarchiveClientFromReplicaId(msg.getReplicaId());
+        ReplicaClient bc =
+            ar.getReplicaClientFromReplicaId(msg.getReplicaId());
         try {
             bc.getFile(msg);
         } catch (Throwable t) {

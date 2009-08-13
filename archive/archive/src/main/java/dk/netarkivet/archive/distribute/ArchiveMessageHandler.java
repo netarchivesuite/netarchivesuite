@@ -38,6 +38,10 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -214,4 +218,49 @@ public abstract class ArchiveMessageHandler
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg an CorrectMessage for correcting a record.
+     * @throws PermissionDenied when invoked
+     */
+    public void visit(CorrectMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg the GetChecksumMessage
+     * @throws PermissionDenied when invoked
+     */
+    public void visit(GetChecksumMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+    
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg the GetAllChecksumMessage
+     * @throws PermissionDenied when invoked
+     */
+    public void visit(GetAllChecksumMessage msg) throws PermissionDenied {
+	ArgumentNotValid.checkNotNull(msg, "msg");
+	deny(msg);
+    }
+    
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg an GetAllFilenamesMessage
+     * @throws PermissionDenied when invoked
+     */
+    public void visit(GetAllFilenamesMessage msg) throws PermissionDenied {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+    
 }

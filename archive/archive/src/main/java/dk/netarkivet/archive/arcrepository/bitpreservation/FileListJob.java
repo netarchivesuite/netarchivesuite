@@ -27,12 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -110,4 +112,16 @@ public class FileListJob extends FileBatchJob {
                 + "\nFiles  failed = " + filesFailedCount);
     }
 
+    /**
+     * Method for retrieving the list of filenames from the resulting output
+     * file of a FileListJob.
+     * 
+     * @param outputFile The resulting file from a FileListJob.
+     * @return The list of filenames within the file.
+     */
+    public static List<String> extractListFromOutputFile(File outputFile) {
+	ArgumentNotValid.checkNotNull(outputFile, "File outputFile");
+	
+	return FileUtils.readListFromFile(outputFile);
+    }
 }

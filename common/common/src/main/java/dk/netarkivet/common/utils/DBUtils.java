@@ -86,7 +86,8 @@ public class DBUtils {
 
     /** Execute an SQL statement and return the single int in the result set.
      * This variant takes a query string and a single string arg and combines
-     * them to form a normal query.
+     * them to form a normal query. 
+     * This method is only usable for the harvester database.
      *
      * @param query a query with ? for parameters (must not be null or
      * empty string)
@@ -98,6 +99,39 @@ public class DBUtils {
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
         Connection c = DBConnect.getDBConnection();
+        PreparedStatement s = null;
+        try {
+            s = DBUtils.prepareStatement(c, query, args);
+            // We do not test for 0-values here, already tested in
+            // selectIntValue(s)
+            return selectIntValue(s);
+        } catch (SQLException e) {
+            throw new IOFailure("SQL error preparing statement "
+                    + query + " args " + Arrays.toString(args) + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+    
+    /** 
+     * Execute an SQL statement and return the single int in the result set.
+     * This variant takes a query string and a single string arg and combines
+     * them to form a normal query. 
+     * This method can use any database.
+     *
+     * @param c The connection to the specific database.
+     * @param query a query with ? for parameters (must not be null or
+     * empty string)
+     * @param args parameters of type string, int, long or boolean
+     * @return The integer result
+     * @throws IOFailure if the statement didn't result in exactly one integer
+     */
+    public static Integer selectIntValue(Connection c, String query, 
+	    Object... args) {
+	ArgumentNotValid.checkNotNull(c, "Connection c");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
         PreparedStatement s = null;
         try {
             s = DBUtils.prepareStatement(c, query, args);
@@ -172,7 +206,36 @@ public class DBUtils {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-
+    
+    /** Execute an SQL statement and return the single long in the result set.
+     * This variant takes a query string and a single string arg and combines
+     * them to form a normal query.
+     *
+     * @param query a query with ? for parameters (must not be null or
+     * empty string)
+     * @param args parameters of type string, int, long or boolean
+     * @return The long result
+     * @throws IOFailure if the statement didn't result in exactly one long
+     * value
+     */
+    public static Long selectLongValue(Connection c, String query,
+                                       Object... args) {
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = DBUtils.prepareStatement(c, query, args);
+            // We do not test for 0-values here, already tested in
+            // selectLongValue(s)
+            return selectLongValue(s);
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args) 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
     /** Execute an SQL statement and return the first long in the result set,
      * or null if resultset is empty.
      *
@@ -247,7 +310,8 @@ public class DBUtils {
     }
 
     /** Execute an SQL statement and return the list of strings
-     * in its result set.
+     * in its result set. This uses specifically the harvester database.
+     * 
      *  @param query the given sql-query (must not be null or empty)
      *  @param args The arguments to insert into this query (must not be null)
      *  @throws SQLException If this query fails
@@ -273,6 +337,46 @@ public class DBUtils {
                 results.add(result.getString(1));
             }
             return results;
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+    
+    /**
+     * Execute an SQL statement and return the list of strings
+     * in its result set. This is usable for any database.
+     * 
+     * @param c The connection to the database where the SQL statement should be
+     * executed. 
+     * @param query The SQL query to execute.
+     * @param args The argument to the query.
+     * @return The resulting list of strings from the database.
+     */
+    public static List<String> selectStringlist(Connection c, String query,
+            Object... args) {
+	ArgumentNotValid.checkNotNull(c, "Connection c");
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(c, query, args);
+            ResultSet result = s.executeQuery();
+            List<String> results = new ArrayList<String>();
+            while (result.next()) {
+                if (result.getString(1) == null){
+                    String warning =
+                        "NULL pointer found in resultSet from query: " + query;
+                    log.warn(warning);
+                    throw new IOFailure(warning);
+                }
+                results.add(result.getString(1));
+            }
+            return results;
+        } catch (SQLException e) {
+            String msg = "SQL error during executing of '" + query + "'\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -343,6 +447,41 @@ public class DBUtils {
                 results.add(result.getLong(1));
             }
             return results;
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    }
+    
+    /** Execute an SQL statement and return the list of Long-objects
+     * in its result set.
+     *  @param query the given sql-query (must not be null or empty string)
+     *  @param args The arguments to insert into this query
+     *  @return the list of Long-objects in its resultset
+     *  @throws SQLException If this query fails
+     */
+    public static List<Long> selectLongList(Connection c, String query, 
+	    Object... args) {
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(c, query, args);
+            ResultSet result = s.executeQuery();
+            List<Long> results = new ArrayList<Long>();
+            while (result.next()) {
+                if (result.getLong(1) == 0L && result.wasNull()){
+                    String warning = "NULL value encountered in query: "
+                                     + query;
+                    log.warn(warning);
+                    //throw new IOFailure(warning);
+                }
+                results.add(result.getLong(1));
+            }
+            return results;
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args) 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
@@ -792,6 +931,8 @@ public class DBUtils {
     /** Execute an SQL statement and return the single string in the result set.
      * This variant takes a query string and a single string arg and combines
      * them to form a normal query.
+     * 
+     * This assumes the connection is to the harvester database.
      *
      * @param query a query with ? for parameters (must not be null or
      * an empty string)
@@ -819,6 +960,41 @@ public class DBUtils {
             closeStatementIfOpen(s);
         }
     }
+    
+    /** Execute an SQL statement and return the single string in the result set.
+     * This variant takes a query string and a single string arg and combines
+     * them to form a normal query. 
+     * 
+     * This works with any connection.
+     *
+     * @param c The connection to the database.
+     * @param query a query with ? for parameters (must not be null or
+     * an empty string)
+     * @param args parameters of type string, int, long or boolean
+     * @return The string result
+     * @throws IOFailure if the statement didn't result in exactly one string
+     * value
+     */
+    public static String selectStringValue(Connection c, String query, 
+	    Object... args) {
+        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
+        ArgumentNotValid.checkNotNull(args, "Object... args");
+        
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(c, query, args);
+            // We do not test for null-values here, already tested in
+            // selectStringValue(s)
+            return DBUtils.selectStringValue(s);
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement " + query
+                    + " args " + Arrays.toString(args) + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
+        }
+    }
+
 
     /** Execute an SQL statement and return the single string in the result set.
      *
@@ -924,5 +1100,4 @@ public class DBUtils {
             closeStatementIfOpen(st);
         }
     }
-    
 }

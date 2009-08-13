@@ -25,13 +25,19 @@ package dk.netarkivet.archive.bitarchive.distribute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
+import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 
@@ -39,7 +45,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Proxy for remote bitarchive.
  * Establishes a JMS connection to the remote bitarchive
  */
-public class BitarchiveClient {
+public class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
     protected static final Log log
             = LogFactory.getLog(BitarchiveClient.class.getName());
@@ -209,5 +215,39 @@ public class BitarchiveClient {
      */
     public void close() {
         log.debug("Client has been shutdown");
+    }
+
+    @Override
+    public void correct(RemoteFile arcfile, String checksum) {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: implement me!");
+    }
+
+    @Override
+    public GetAllFilenamesMessage getAllFilenames() {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: implement me!");
+    }
+
+    /**
+     * This creates a batch job for retrieving the checksums.
+     * 
+     * @param arcName The name of the arcfile to retrieve the checksum from.
+     */
+    @Override
+    public GetChecksumMessage getChecksum(String arcName) {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: implement me!");
+    }
+
+    /**
+     * Method for retrieving the type of replica.
+     * 
+     * @return The type of this replica.
+     */
+    @Override
+    public ReplicaType getType() {
+	// Returns the current replica type in the settings.
+	return ReplicaType.BITARCHIVE;
     }
 }

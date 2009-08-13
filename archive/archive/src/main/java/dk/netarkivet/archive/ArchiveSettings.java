@@ -139,4 +139,17 @@ public class ArchiveSettings {
      */
     public static String DIR_ARCREPOSITORY_BITPRESERVATION
             = "settings.archive.bitpreservation.baseDir";
+    
+    public static String URL_ARCREPOSITORY_BITPRESERVATION_DATABASE
+            = "settings.archive.bitpreservation.database.url";
+    
+    public static String CLASS_ARCREPOSITORY_BITPRESERVATION_DATABASE
+            = "settings.archive.bitpreservation.database.class";
+    
+    
+    /**
+     * The name for the checksum file.
+     */
+    public static String CHECKSUM_FILENAME = 
+	"settings.archive.checksum.filename";
 }

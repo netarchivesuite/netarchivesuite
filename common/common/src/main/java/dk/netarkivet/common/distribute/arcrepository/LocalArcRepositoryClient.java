@@ -39,10 +39,12 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
@@ -335,5 +337,24 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
             }
         }
         return null;
+    }
+
+    @Override
+    public File getAllChecksums(String replicaId) {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: Implement me!");
+    }
+
+    @Override
+    public File getAllFilenames(String replicaId) {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: Implement me!");
+    }
+
+    @Override
+    public void correct(String replicaId, String checksum, File file, 
+	    String credentials) {
+	// TODO Auto-generated method stub
+	throw new NotImplementedException("TODO: Implement me!");
     }
 }

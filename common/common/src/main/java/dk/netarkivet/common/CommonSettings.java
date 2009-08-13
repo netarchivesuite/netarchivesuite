@@ -308,9 +308,18 @@ public class CommonSettings {
             = "replicaType";
 
     /**
-     * The identifiers of all replicas in the environment. */
+     * <b>settings.common.replicas.replica.replicaId</b>: <br>
+     * The identifiers of all replicas in the environment. 
+     */
     public static String REPLICA_IDS
             = REPLICAS_SETTINGS + "." + REPLICA_TAG + "." + REPLICAID_TAG;
+    
+    /**
+     * <b>settings.common.replicas.replica.replicaType</b>: <br>
+     * The types for all replicas in the environment.
+     */
+    public static String REPLICA_TYPES = REPLICAS_SETTINGS + "." + REPLICA_TAG 
+            + "." + REPLICATYPE_TAG;
 
     /** 
      * <b>settings.common.useReplicaId</b>: <br>

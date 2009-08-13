@@ -49,8 +49,15 @@
             <batchMessageTimeout>1209600000</batchMessageTimeout>
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
+        <checksum>
+            <filename>checksum.md5</filename>
+        </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
+            <database>
+                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+                <url>jdbc:derby:bitpreservationdb</url>
+            </database>
         </bitpreservation>
     </archive>
 </settings>

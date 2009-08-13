@@ -33,6 +33,10 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
 
 /**
@@ -53,65 +57,89 @@ public interface ArchiveMessageVisitor {
      *
      * @param msg A received message.
      */
-    public void visit(BatchEndedMessage msg);
+    void visit(BatchEndedMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(BatchMessage msg);
+    void visit(BatchMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(BatchReplyMessage msg);
+    void visit(BatchReplyMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(GetFileMessage msg);
+    void visit(GetFileMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(GetMessage msg);
+    void visit(GetMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(HeartBeatMessage msg);
+    void visit(HeartBeatMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(StoreMessage msg);
+    void visit(StoreMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(UploadMessage msg);
+    void visit(UploadMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(AdminDataMessage msg);
+    void visit(AdminDataMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(RemoveAndGetFileMessage msg);
+    void visit(RemoveAndGetFileMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(IndexRequestMessage msg);
+    void visit(IndexRequestMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+     * 
+     * @param msg A received message.
+     */
+    void visit(GetChecksumMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+     * 
+     * @param msg A received message.
+     */
+    void visit(GetAllChecksumMessage msg);
+
+    /** This method should be overridden to handle the receipt of a message.
+     * 
+     * @param msg A received message.
+     */
+    void visit(CorrectMessage msg);
+
+    /** This method should be overridden to handle the receipt of a message.
+     * 
+     * @param msg A received message.
+     */
+    void visit(GetAllFilenamesMessage msg);
 }
