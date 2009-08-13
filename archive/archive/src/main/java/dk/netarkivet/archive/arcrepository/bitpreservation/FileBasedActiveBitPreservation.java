@@ -37,6 +37,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
@@ -45,6 +46,7 @@ import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -493,8 +495,13 @@ public class FileBasedActiveBitPreservation
         log.trace("runFileListJob for replica '" + replica
                   + "', output file '" + batchOutputFile + "'");
 
-        // Send filelist batch job
-        runBatchJob(new FileListJob(), replica, null, batchOutputFile);
+        if(replica.getType() == ReplicaType.CHECKSUM) {
+            batchOutputFile = ArcRepositoryClientFactory
+                    .getPreservationInstance().getAllFilenames(replica.getId());
+        } else { // assume Bitarchive 
+            // Send filelist batch job
+            runBatchJob(new FileListJob(), replica, null, batchOutputFile);
+        }
     }
 
     /**
@@ -638,10 +645,15 @@ public class FileBasedActiveBitPreservation
         File outputFile = WorkFiles.getFile(replica,
                                             WorkFiles.CHECKSUMS_ON_BA);
 
-        // Send checksum batch job
-        log.info("Bit integrity check started on bit archive "
-                 + replica);
-        runBatchJob(new ChecksumJob(), replica, null, outputFile);
+        if(replica.getType() == ReplicaType.CHECKSUM) {
+            outputFile = ArcRepositoryClientFactory
+                    .getPreservationInstance().getAllChecksums(replica.getId());
+        } else {// assume Bitarchive 
+            // Send checksum batch job
+            log.info("Bit integrity check started on bit archive "
+        	    + replica);
+            runBatchJob(new ChecksumJob(), replica, null, outputFile);
+        }
     }
 
     /**
