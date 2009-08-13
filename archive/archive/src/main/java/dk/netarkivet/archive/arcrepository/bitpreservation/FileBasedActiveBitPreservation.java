@@ -496,8 +496,9 @@ public class FileBasedActiveBitPreservation
                   + "', output file '" + batchOutputFile + "'");
 
         if(replica.getType() == ReplicaType.CHECKSUM) {
-            batchOutputFile = ArcRepositoryClientFactory
-                    .getPreservationInstance().getAllFilenames(replica.getId());
+            FileUtils.copyFile(ArcRepositoryClientFactory
+                    .getPreservationInstance().getAllFilenames(replica.getId()),
+                    batchOutputFile);
         } else { // assume Bitarchive 
             // Send filelist batch job
             runBatchJob(new FileListJob(), replica, null, batchOutputFile);
@@ -646,8 +647,9 @@ public class FileBasedActiveBitPreservation
                                             WorkFiles.CHECKSUMS_ON_BA);
 
         if(replica.getType() == ReplicaType.CHECKSUM) {
-            outputFile = ArcRepositoryClientFactory
-                    .getPreservationInstance().getAllChecksums(replica.getId());
+            FileUtils.copyFile(ArcRepositoryClientFactory
+                    .getPreservationInstance().getAllChecksums(replica.getId()),
+                    outputFile);
         } else {// assume Bitarchive 
             // Send checksum batch job
             log.info("Bit integrity check started on bit archive "
