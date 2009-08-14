@@ -146,6 +146,8 @@ public class ArchiveSettings {
     public static String CLASS_ARCREPOSITORY_BITPRESERVATION_DATABASE
             = "settings.archive.bitpreservation.database.class";
     
+    public static String CLASS_ARCREPOSITORY_BITPRESERVATION
+            = "settings.archive.bitpreservation.class";
     
     /**
      * The name for the checksum file.

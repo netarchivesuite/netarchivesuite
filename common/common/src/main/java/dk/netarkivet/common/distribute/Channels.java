@@ -280,8 +280,10 @@ public class Channels {
 	ChannelID res = getInstance().THE_BAMON;
 	
 	if(res == null) {
-	    throw new IllegalState("A bitarchive replica does not have the "
-		    + "channel for communicating with a checksum replica.");
+	    throw new IllegalState("The channel for the bitarchive monitor "
+		    + " cannot to be retrieved for replica '" 
+		    + Replica.getReplicaFromId(getInstance().allReplicaIds
+			    [getInstance().indexOfUseReplicaId]) + "'.");
 	}
 	
         return res;
