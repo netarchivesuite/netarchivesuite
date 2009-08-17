@@ -61,15 +61,12 @@ public abstract class NetarkivetMessage implements Serializable {
      * Creates a new NetarkivetMessage.
      * @param to the initial receiver of the message
      * @param replyTo the initial sender of the message
-     * @param id_prefix A string to be prepended to the message id for
-     * identification purposes
-     * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
+     * @throws ArgumentNotValid if to==replyTo, the replyTo parameter is a
+     * topic instead of a queue, or there is a null parameter.
      */
-    protected NetarkivetMessage(ChannelID to, ChannelID replyTo,
-                                String id_prefix) {
+    protected NetarkivetMessage(ChannelID to, ChannelID replyTo) {
         ArgumentNotValid.checkNotNull(to, "to");
         ArgumentNotValid.checkNotNull(replyTo, "replyTo");
-        ArgumentNotValid.checkNotNull(id_prefix, "id_prefix");
 
         if (to.getName().equals(replyTo.getName())) {
             throw new ArgumentNotValid("to and replyTo should not be equal.");
@@ -202,7 +199,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Invoke default method for deserializing object.
-     * @param s
+     * @param s The stream the object is read from.
      */
     private void readObject(ObjectInputStream s) {
         try {
@@ -214,7 +211,7 @@ public abstract class NetarkivetMessage implements Serializable {
 
     /**
      * Invoke default method for serializing object.
-     * @param s
+     * @param s The stream the object is written to.
      */
     private void writeObject(ObjectOutputStream s){
         try {

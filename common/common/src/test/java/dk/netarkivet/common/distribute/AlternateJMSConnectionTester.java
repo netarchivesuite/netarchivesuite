@@ -38,7 +38,7 @@ public class AlternateJMSConnectionTester extends TestCase {
     public void testErrorcodes() {
         Settings.set(JMSConnectionSunMQ.JMS_BROKER_PORT, "7677");
         JMSConnection con = JMSConnectionFactory.getInstance();
-        NetarkivetMessage msg = null;
+        NetarkivetMessage msg;
         int msgNr = 0;
         while (msgNr < 50) {
              msg = new TestMessage(Channels.getError(), Channels.getTheRepos(), "testID" + msgNr);
@@ -55,7 +55,7 @@ public class AlternateJMSConnectionTester extends TestCase {
         private String testID;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 

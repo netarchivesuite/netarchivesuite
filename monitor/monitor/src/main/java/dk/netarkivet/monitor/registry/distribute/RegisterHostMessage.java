@@ -31,9 +31,6 @@ import dk.netarkivet.monitor.distribute.MonitorMessageVisitor;
 /** This type of message is sent to the monitor registry server to
  * register the host for remote JMX monitoring.*/
 public class RegisterHostMessage extends MonitorMessage {
-    /** The JMX URL prefix. */
-    private static final String IDPREFIX = "REGISTER_HOST_MESSAGE";
-
     /** The HostEntry to register. */
     HostEntry hostEntry;
 
@@ -48,7 +45,7 @@ public class RegisterHostMessage extends MonitorMessage {
      * @throws ArgumentNotValid on null or empty hostname, or negative ports.
      */
     public RegisterHostMessage(String name, int jmxPort, int rmiPort) {
-        super(Channels.getTheMonitorServer(), Channels.getError(), IDPREFIX);
+        super(Channels.getTheMonitorServer(), Channels.getError());
         ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         ArgumentNotValid.checkNotNegative(jmxPort, "int jmxPort");
         ArgumentNotValid.checkNotNegative(rmiPort, "int rmiPort");

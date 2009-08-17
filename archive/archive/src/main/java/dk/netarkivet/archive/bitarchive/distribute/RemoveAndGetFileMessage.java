@@ -43,8 +43,6 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     private String arcfileName;
     /** The actual data. */
     private RemoteFile remoteFile;
-    /** prefix to identify this message type.*/
-    private static final String IDPREFIX = "RemoveAndGetFile";
     /** This replica id. */
     private String replicaId;
 
@@ -64,7 +62,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     public RemoveAndGetFileMessage(String arcfileName,
                                      String replicaId, String checksum,
                                      String credentials) {
-        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient());
         this.arcfileName = arcfileName;
         this.replicaId = replicaId;
         this.checksum = checksum;

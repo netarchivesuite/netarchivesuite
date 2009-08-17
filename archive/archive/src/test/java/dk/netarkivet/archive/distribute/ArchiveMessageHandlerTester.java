@@ -149,7 +149,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
         public int acceptCalled = 0;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 

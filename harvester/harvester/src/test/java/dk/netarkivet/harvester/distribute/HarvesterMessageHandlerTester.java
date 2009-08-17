@@ -125,7 +125,7 @@ public class HarvesterMessageHandlerTester extends TestCase {
         public int acceptCalled = 0;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 
@@ -143,11 +143,12 @@ public class HarvesterMessageHandlerTester extends TestCase {
         public int acceptCalled = 0;
 
         public IllegalTestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 
         public void accept(HarvesterMessageVisitor v) {
+            System.out.println("Spurious call with visitor " + v);
             acceptCalled++;
         }
 

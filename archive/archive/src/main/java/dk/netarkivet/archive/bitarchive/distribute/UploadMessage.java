@@ -34,9 +34,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  */
 public class UploadMessage extends ArchiveMessage {
-    /** prefix to identify this message type. */
-    private static final String UPLOAD_MESSAGE_PREFIX = "Upload";
-
     /** the name of the file to upload. */
     private String arcfileName;
 
@@ -51,7 +48,7 @@ public class UploadMessage extends ArchiveMessage {
      * @param rf The RemoteFile to upload
      */
     public UploadMessage(ChannelID to, ChannelID replyTo, RemoteFile rf) {
-        super(to, replyTo, UPLOAD_MESSAGE_PREFIX);
+        super(to, replyTo);
         ArgumentNotValid.checkNotNull(rf, "rf");
         arcfileName = rf.getName();
         theRemoteFile = rf;

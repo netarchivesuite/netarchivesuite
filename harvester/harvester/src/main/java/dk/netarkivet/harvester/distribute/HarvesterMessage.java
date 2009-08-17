@@ -23,11 +23,11 @@
 
 package dk.netarkivet.harvester.distribute;
 
+import java.io.Serializable;
+
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
-import java.io.Serializable;
 
 /**
  * Common base class for messages exchanged between a harvester server and
@@ -40,13 +40,10 @@ public abstract class HarvesterMessage extends NetarkivetMessage
      *
      * @param to        the initial receiver of the message
      * @param replyTo   the initial sender of the message
-     * @param id_prefix A string to be prepended to the message id for
-     *                  identification purposes
      * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
      */
-    protected HarvesterMessage(ChannelID to, ChannelID replyTo,
-                               String id_prefix) {
-        super(to, replyTo, id_prefix);
+    protected HarvesterMessage(ChannelID to, ChannelID replyTo) {
+        super(to, replyTo);
     }
 
     /**

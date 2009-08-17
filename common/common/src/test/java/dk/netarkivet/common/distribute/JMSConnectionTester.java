@@ -254,9 +254,10 @@ public class JMSConnectionTester extends TestCase {
 
     /** Tests that initconnection actually starts a topic connection and a
      * queue connection.
+     *
+     * @throws Exception On failures
      */
-    public void testInitConnection() throws JMSException, NoSuchFieldException,
-            IllegalAccessException {
+    public void testInitConnection() throws Exception {
         /*
          * Set up JMSConnection and dummy receive servers.
          */
@@ -375,9 +376,6 @@ public class JMSConnectionTester extends TestCase {
         assertEquals("Should still have listener for topic",
                 listener2, messageConsumer.getMessageListener());
         con.setListener(anyBa, listener1);
-        MessageConsumer messageConsumer1
-                = consumerMap.get(anyBa.getName()
-                + "##listener1");
         assertEquals("Should have two listeners now",
                 2, consumerMap.size());
     }
@@ -419,7 +417,7 @@ public class JMSConnectionTester extends TestCase {
         String sendName = Channels.getTheRepos().getName();
         JMSConnectionMockupMQ.TestMessageProducer queueSender =
                 (JMSConnectionMockupMQ.TestMessageProducer)sendersMap.get(sendName);
-        ObjectMessage sentSerialMsg = ((ObjectMessage) queueSender.messages.get(0));
+        ObjectMessage sentSerialMsg = (queueSender.messages.get(0));
         NetarkivetMessage sentMessage = (NetarkivetMessage)sentSerialMsg.getObject();
         sentMessage.setNotOk("Test error");
         con.reply(sentMessage);
@@ -430,7 +428,7 @@ public class JMSConnectionTester extends TestCase {
         assertNotNull("Should have a sender for " + replyName, queueSender);
 
         ObjectMessage receivedSerialMsg
-                = (ObjectMessage)queueSender.messages.get(0);
+                = queueSender.messages.get(0);
         NetarkivetMessage received
                 = (NetarkivetMessage)receivedSerialMsg.getObject();
         assertEquals("Should have sent a message on " + queueSender,
@@ -438,11 +436,11 @@ public class JMSConnectionTester extends TestCase {
         assertFalse("Message should now be notOk",
                 received.isOk());
 
-        msg = new TestMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), "testMSG");
 
-        // TODO: This seems to be an invalid assumption, at least for what we do 
+        // TODO: This seems to be an invalid assumption, at least for what we do
         // in unit tests
+        // msg = new TestMessage(Channels.getTheRepos(),
+        //         Channels.getTheBamon(), "testMSG");
         // try {
         //     con.reply(msg);
         //     fail("Shouldn't be able to reply to unsent message.");
@@ -748,7 +746,7 @@ public class JMSConnectionTester extends TestCase {
         private String testID;
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 

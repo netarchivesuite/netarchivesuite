@@ -44,8 +44,6 @@ public class GetFileMessage extends ArchiveMessage {
 
     /** The actual data.*/
     private RemoteFile remoteFile;
-    /** prefix to identify this message type. */
-    private static final String IDPREFIX = "GetFile";
     /** This replica id. */
     private String replicaId;
 
@@ -59,7 +57,7 @@ public class GetFileMessage extends ArchiveMessage {
      */
     public GetFileMessage(ChannelID to, ChannelID replyTo, String arcfileName,
                           String replicaId) {
-        super(to, replyTo, IDPREFIX);
+        super(to, replyTo);
         this.arcfileName = arcfileName;
         this.replicaId = replicaId;
     }

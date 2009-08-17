@@ -42,13 +42,10 @@ public abstract class MonitorMessage extends NetarkivetMessage
      *
      * @param to        the initial receiver of the message
      * @param replyTo   the initial sender of the message
-     * @param id_prefix A string to be prepended to the message id for
-     *                  identification purposes
      * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
      */
-    protected MonitorMessage(ChannelID to, ChannelID replyTo,
-                             String id_prefix) {
-        super(to, replyTo, id_prefix);
+    protected MonitorMessage(ChannelID to, ChannelID replyTo) {
+        super(to, replyTo);
     }
 
     /**

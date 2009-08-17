@@ -34,8 +34,6 @@ import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
  */
 public class AdminDataMessage extends ArchiveMessage {
 
-    /** prefix to identify this message type. */
-    private static final String IDPREFIX = "AdminData";
     /** The filename to be updated in AdminData. */
     private String fileName;
     /** The id of the bitarchive, where the file resides. */
@@ -60,7 +58,7 @@ public class AdminDataMessage extends ArchiveMessage {
      */
     public AdminDataMessage(String theFileName, String theBitarchiveId,
                             BitArchiveStoreState newval) {
-        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient());
         fileName = theFileName;
         bitarchiveId = theBitarchiveId;
         newvalue = newval;
@@ -73,7 +71,7 @@ public class AdminDataMessage extends ArchiveMessage {
      * @param theChecksum the new checksum for the filename
      */
     public AdminDataMessage(String theFileName, String theChecksum) {
-        super(Channels.getTheRepos(), Channels.getThisReposClient(), IDPREFIX);
+        super(Channels.getTheRepos(), Channels.getThisReposClient());
         fileName = theFileName;
         checksum = theChecksum;
         changechecksum = true;

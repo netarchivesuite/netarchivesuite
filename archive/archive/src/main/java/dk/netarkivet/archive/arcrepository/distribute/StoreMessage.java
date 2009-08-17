@@ -38,9 +38,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * and then responds to the sender.
  */
 public class StoreMessage extends ArchiveMessage {
-    /** prefix to identify this message type. */
-    private static final String STORE_MESSAGE_PREFIX = "Store";
-
     /** The actual data. */
     private RemoteFile theRemoteFile;
 
@@ -50,7 +47,7 @@ public class StoreMessage extends ArchiveMessage {
      * @param arcfile The file to store
      */
     public StoreMessage(ChannelID replyTo, File arcfile) {
-        super(Channels.getTheRepos(), replyTo, STORE_MESSAGE_PREFIX);
+        super(Channels.getTheRepos(), replyTo);
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
         theRemoteFile = RemoteFileFactory.getDistributefileInstance(arcfile);
     }

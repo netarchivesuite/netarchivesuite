@@ -310,8 +310,10 @@ public class SynchronizerTester extends TestCase {
 
     /**
      * Tests that a timed-out synchronizer returns null.
+     *
+     * @throws Exception On failures
      */
-    public void testTimeout() throws InterruptedException {
+    public void testTimeout() throws Exception {
         NetarkivetMessage msg = new TestMessage(toQ, replyToQ);
         Synchronizer sync = new Synchronizer();
         MessageListener listener = new DelayedReplier();
@@ -336,6 +338,7 @@ public class SynchronizerTester extends TestCase {
             try {
                 Thread.sleep(TestInfo.SHORT_TIME);
             } catch (InterruptedException e) {
+                //Ignore
             }
             loops++;
         }
@@ -406,11 +409,11 @@ public class SynchronizerTester extends TestCase {
      */
     private static class TestMessage extends NetarkivetMessage {
         public TestMessage(ChannelID to, ChannelID replyTo) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
         }
 
         public TestMessage(ChannelID to, ChannelID replyTo, String replyOfId) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.replyOfId = replyOfId;
         }
 

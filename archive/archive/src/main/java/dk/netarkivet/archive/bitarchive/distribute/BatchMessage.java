@@ -41,8 +41,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class BatchMessage extends ArchiveMessage {
 
-    /** prefix to identify this message type.*/
-    private static final String IDPREFIX = "Batch";
     /** The batch job, this message is sent to initiate. */
     private FileBatchJob job;
     /** The id of this replica. */
@@ -73,7 +71,7 @@ public class BatchMessage extends ArchiveMessage {
      */
     public BatchMessage(ChannelID to, ChannelID replyTo,
                         FileBatchJob job, String replicaId) {
-        super(to, replyTo, IDPREFIX);
+        super(to, replyTo);
         ArgumentNotValid.checkNotNull(job, "job");
         this.job = job;
         this.replicaId = replicaId;

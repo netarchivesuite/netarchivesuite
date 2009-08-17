@@ -44,8 +44,6 @@ public class BatchReplyMessage extends ArchiveMessage {
     private HashSet<File> filesFailed;
     /** The result of the BatchJob. */
     private RemoteFile resultFile;
-    /** prefix to identify this message type.*/
-    private static final String IDPREFIX = "BatchReply";
 
     /**
      * Message to signal from BitarchiveMonitorServer that the batch job
@@ -56,7 +54,7 @@ public class BatchReplyMessage extends ArchiveMessage {
      *
      * @param to The queue to which this message is to be sent. This will
      * normally be the ARCREPOS queue
-     * @param replyTo
+     * @param replyTo The queue that should receive replies.
      * @param originatingBatchMsgId The Id of the BathMessage which gave
      * rise to this reply
      * @param filesProcessed  the total number of file processed in this
@@ -77,7 +75,7 @@ public class BatchReplyMessage extends ArchiveMessage {
             throws ArgumentNotValid {
         // replyTo must be set here because it is used by AdminData to work
         // out which bitarchive the batch job operated on
-        super(to, replyTo, IDPREFIX);
+        super(to, replyTo);
         ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
                 "originatingBatchMsgId");
         ArgumentNotValid.checkTrue(filesProcessed >= 0,

@@ -64,7 +64,7 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testConstructorSameQueue() {
         try {
-            NetarkivetMessage m = new TestMessage(toQ, toQ);
+            new TestMessage(toQ, toQ);
             fail("NetarkivetMessage() should fail on equal queues.");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -76,7 +76,7 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testgetInstanceNull1() {
         try {
-            NetarkivetMessage m = new TestMessage(null, replyToQ);
+            new TestMessage(null, replyToQ);
             fail("NetarkivetMessage() should fail on null input");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -88,7 +88,7 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testgetInstanceNull2() {
         try {
-            NetarkivetMessage m = new TestMessage(toQ, null);
+            new TestMessage(toQ, null);
             fail("NetarkivetMessage() should fail on null input");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -200,7 +200,7 @@ public class NetarkivetMessageTester extends TestCase {
      */
     public void testNoTopicReply() {
         try {
-            NetarkivetMessage m = new TestMessage(toQ, aTopic);
+            new TestMessage(toQ, aTopic);
             fail("Reply channel must be a Queue but " + aTopic.toString()
                     + " is a Topic.");
         } catch (ArgumentNotValid e) {
@@ -210,6 +210,9 @@ public class NetarkivetMessageTester extends TestCase {
 
     /**
      * Verify that the class is Serializable.
+     *
+     * @throws IOException If I/O fails.
+     * @throws ClassNotFoundException If class loading fails.
      */
     public void testSerializability() throws IOException, ClassNotFoundException {
         //Take a message:
@@ -252,7 +255,7 @@ public class NetarkivetMessageTester extends TestCase {
      */
     private static class TestMessage extends NetarkivetMessage {
         public TestMessage(ChannelID to, ChannelID replyTo) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
         }
 
     }

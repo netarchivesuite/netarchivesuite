@@ -42,8 +42,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class BatchEndedMessage extends ArchiveMessage {
 
-    /** Prefix prepended to identifier for these messages. */
-    private static final String IDPREFIX = "BatchEnded";
     /** the identifier for BA application, that performed the batch-job. */
     private String BA_ApplicationId;
     /** The identifier for the message, that initiated the batch-job. */
@@ -78,7 +76,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      */
     public BatchEndedMessage(ChannelID to, String BA_ApplicationId,
                              String originatingBatchMsgId, RemoteFile rf) {
-        super(to, Channels.getError(), IDPREFIX);
+        super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(to, "to");
         ArgumentNotValid.checkNotNullOrEmpty(BA_ApplicationId,
                 "BA_ApplicationId");
@@ -106,7 +104,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      */
     public BatchEndedMessage(ChannelID to, String originatingBatchMsgId,
                              BatchStatus status) {
-        super(to, Channels.getError(), IDPREFIX);
+        super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(to, "to");
         ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
                 "String originatingBatchMsgId");

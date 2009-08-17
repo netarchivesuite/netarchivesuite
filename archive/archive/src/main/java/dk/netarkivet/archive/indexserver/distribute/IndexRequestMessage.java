@@ -87,8 +87,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @throws ArgumentNotValid if wither argument is null.
      */
     public IndexRequestMessage(RequestType requestType, Set<Long> jobSet) {
-        super(Channels.getTheIndexServer(), Channels.getThisIndexClient(),
-              "IndexRequest");
+        super(Channels.getTheIndexServer(), Channels.getThisIndexClient());
         ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
         //Note: Copy the set, since the received set may not be serializable.
@@ -244,7 +243,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * Invoke default method for deserializing object, and reinitialise the
      * logger.
      *
-     * @param s
+     * @param s The stream the object is read from.
      */
     private void readObject(ObjectInputStream s) {
         try {
@@ -258,7 +257,7 @@ public class IndexRequestMessage extends ArchiveMessage {
     /**
      * Invoke default method for serializing object.
      *
-     * @param s
+     * @param s The stream the object is written to.
      */
     private void writeObject(ObjectOutputStream s) {
         try {

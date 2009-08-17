@@ -22,14 +22,9 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.Connection;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +42,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -355,7 +349,8 @@ public class IntegrityTests extends TestCase {
 
     /**
      * Tests that no messages are generated twice.
-     * @throws Exception
+     *
+     * @throws Exception On failures
      */
     public void testMsgIds() throws Exception {
         //Just for emptying the queue
@@ -431,9 +426,10 @@ public class IntegrityTests extends TestCase {
 
     /**
      * Tries to generate the mysterious NullPointerException of bug 220.
-     * @throws java.io.IOException
+     *
+     * @throws Exception On failures
      */
-    public void testProvokeNullPointer() throws IOException {
+    public void testProvokeNullPointer() throws Exception {
         Settings.set(CommonSettings.REMOTE_FILE_CLASS, FTPRemoteFile.class.getName());
         File testFile1 = new File("tests/dk/netarkivet/common/distribute/data/originals/arc_record0.txt");
         File LOGFILE = new File("tests/testlogs/netarkivtest.log");
@@ -454,9 +450,10 @@ public class IntegrityTests extends TestCase {
      *  - Makes a TestMessageConsumer, that listens to the ArcRepository Queue.
      *  - Sends a message to that queue.
      *  - Verifies, that this message is sent and received un-modified.
-     * @throws InterruptedException
+     *
+     * @throws Exception On failures
      */
-    public void testQueueSendMessage() throws InterruptedException {
+    public void testQueueSendMessage() throws Exception {
         TestMessageConsumer mc = new TestMessageConsumer();
         conn.setListener(Channels.getTheRepos(), mc);
 
@@ -475,9 +472,10 @@ public class IntegrityTests extends TestCase {
      * Sets up 3 message consumers, all listening on the same channel.
      * Then sends a message on that channel.
      * Verify, that the message is received by all three consumers.
-     * @throws InterruptedException
+     *
+     * @throws Exception On failures
      */
-    public void testTopicSendMessage() throws InterruptedException {
+    public void testTopicSendMessage() throws Exception {
         TestMessageConsumer mc1 = new TestMessageConsumer();
         TestMessageConsumer mc2 = new TestMessageConsumer();
         TestMessageConsumer mc3 = new TestMessageConsumer();
@@ -508,34 +506,6 @@ public class IntegrityTests extends TestCase {
                 "Arcrepos queue MessageConsumer should have received message.",
                 nMsg.toString(), mc3.nMsg.toString());
     }
-
-     /**
-     * Tests that a JMSConnection will trigger System.exit() (by default) when
-     * a JMSException is thrown.
-     * FIXME: This is no longer true. The JMSConnection con is now its own exceptionhandler!
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
-     * @throws JMSException
-     */
-     public void testExitOnExceptionInTopic() 
-     throws NoSuchFieldException, IllegalAccessException, JMSException {
-         if (!TestUtils.runningAs("CSR")) {
-             return;
-         }
-         JMSConnection con = JMSConnectionFactory.getInstance();
-         Field connectionField = con.getClass().getSuperclass().getDeclaredField("connection");
-         connectionField.setAccessible(true);
-         Connection qc = (Connection) connectionField.get(con);
-         ExceptionListener qel = qc.getExceptionListener();
-         assertNotNull("There should be an exception listener on the queue", qel);
-         try {
-             qel.onException(new JMSException("A JMS Exception", 
-                     JMSConnectionSunMQ.SESSION_IS_CLOSED));
-             //fail("Should throw a security exception trying to exit on a unit test");
-         } catch (SecurityException e) {
-             //expected
-         }
-     }
 
     private class TestMessageListener implements MessageListener {
         private NetarkivetMessage expected;
@@ -571,11 +541,11 @@ public class IntegrityTests extends TestCase {
     private static class TestMessage extends NetarkivetMessage {
         String testID;
         public TestMessage(ChannelID sendQ, ChannelID recQ) {
-            super(sendQ, recQ, "IntegrityTests.TestMessage");
+            super(sendQ, recQ);
         }
 
         public TestMessage(ChannelID to, ChannelID replyTo, String testID) {
-            super(to, replyTo, "NetarkivetMessageTester.TestMessage");
+            super(to, replyTo);
             this.testID = testID;
         }
 

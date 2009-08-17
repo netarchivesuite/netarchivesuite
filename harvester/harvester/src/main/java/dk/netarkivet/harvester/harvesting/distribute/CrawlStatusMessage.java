@@ -42,11 +42,6 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 
 public class CrawlStatusMessage extends HarvesterMessage
         implements Serializable {
-
-    /**
-     * The prefix for this class of message.
-     */
-    public static final String IDPREFIX = "CRAWL_STATUS_MESSAGE";
     /** the id for the crawlJob, for which this message reports. */
     private long jobID;
     /** The current state of the crawl-job. */
@@ -77,7 +72,7 @@ public class CrawlStatusMessage extends HarvesterMessage
      */
     public CrawlStatusMessage(long jobID, JobStatus statusCode,
                               DomainHarvestReport domainHarvestReport) {
-        super(Channels.getTheSched(), Channels.getError(), IDPREFIX);
+        super(Channels.getTheSched(), Channels.getError());
         ArgumentNotValid.checkNotNegative(jobID, "jobID");
         ArgumentNotValid.checkNotNull(statusCode, "statusCode");
         this.jobID = jobID;
@@ -159,7 +154,7 @@ public class CrawlStatusMessage extends HarvesterMessage
 
     /**
      * Set-method for private field harvestErrors.
-     * @param harvestErrors
+     * @param harvestErrors The value for harvest errors.
      * @throws ArgumentNotValid if null argument
      */
     public void setHarvestErrors(String harvestErrors) {
@@ -178,7 +173,7 @@ public class CrawlStatusMessage extends HarvesterMessage
 
     /**
      * Set-method for private field harvestErrorDetails.
-     * @param harvestErrorDetails
+     * @param harvestErrorDetails The value for harvest error details.
      * @throws ArgumentNotValid if null argument
      */
     public void setHarvestErrorDetails(String harvestErrorDetails) {
@@ -197,7 +192,7 @@ public class CrawlStatusMessage extends HarvesterMessage
 
     /**
      * Set-method for private field uploadErrors.
-     * @param uploadErrors
+     * @param uploadErrors The value for upload errors.
      * @throws ArgumentNotValid if null argument
      */
     public void setUploadErrors(String uploadErrors) {
@@ -216,7 +211,7 @@ public class CrawlStatusMessage extends HarvesterMessage
 
     /**
      * Set-method for private field uploadErrorDetails.
-     * @param uploadErrorDetails
+     * @param uploadErrorDetails The value for upload error details.
      * @throws ArgumentNotValid if null argument
      */
     public void setUploadErrorDetails(String uploadErrorDetails) {

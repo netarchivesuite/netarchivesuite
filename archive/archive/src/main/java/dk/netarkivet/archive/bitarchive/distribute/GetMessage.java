@@ -39,12 +39,10 @@ public class GetMessage extends ArchiveMessage {
     private long index;
     /** the retrieved record. */
     BitarchiveRecord record;
-    /** prefix to identify this message type. */
-    private static final String IDPREFIX = "Get";
 
     public GetMessage(ChannelID to, ChannelID replyTo, String arcfile,
                       long index) {
-        super(to, replyTo, IDPREFIX);
+        super(to, replyTo);
         this.arcfile = arcfile;
         this.index = index;
     }

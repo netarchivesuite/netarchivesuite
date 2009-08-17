@@ -43,8 +43,6 @@ import dk.netarkivet.harvester.distribute.HarvesterMessageVisitor;
 public class DoOneCrawlMessage extends HarvesterMessage implements Serializable {
     /** the Job to crawl.    */
     private Job submittedJob;
-    /** prefix to identify this message type. */
-    private static final String IDPREFIX = "DoOneCrawl";
     /** Extra metadata associated with the crawl-job. */
     private List<MetadataEntry> metadata;
 
@@ -59,7 +57,7 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
     public DoOneCrawlMessage(Job submittedJob, ChannelID to,
                              List<MetadataEntry> metadata)
     throws ArgumentNotValid {
-        super(to, Channels.getError(), IDPREFIX);
+        super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(submittedJob, "sJob");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
         this.submittedJob = submittedJob;
@@ -103,22 +101,21 @@ public class DoOneCrawlMessage extends HarvesterMessage implements Serializable 
     /**
      * Method needed to de-serializable an object of this class.
      * @param s an ObjectInputStream
-     * @throws ClassNotFoundException
-     * @throws IOException
+     * @throws ClassNotFoundException In case the object read is of unknown
+     * class.
+     * @throws IOException On I/O trouble reading the object.
      */
     private void readObject(ObjectInputStream s)
-    throws ClassNotFoundException, IOException {
+            throws ClassNotFoundException, IOException {
         s.defaultReadObject();
     }
 
     /**
      * Method needed to serializable an object of this class.
      * @param s an ObjectOutputStream
-     * @throws ClassNotFoundException
-     * @throws IOException
+     * @throws IOException On I/O trouble writing the object.
      */
-    private void writeObject(ObjectOutputStream s)
-    throws ClassNotFoundException, IOException {
+    private void writeObject(ObjectOutputStream s) throws IOException {
         s.defaultWriteObject();
     }
 

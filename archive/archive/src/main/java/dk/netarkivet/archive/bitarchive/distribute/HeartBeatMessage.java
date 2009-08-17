@@ -39,7 +39,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class HeartBeatMessage extends ArchiveMessage {
 
-    private static final String IDPREFIX = "HeartBeat";
     /** time when heartbeat occurred. Note that timestamps cannot be compared
          between processes.
       */
@@ -55,7 +54,7 @@ public class HeartBeatMessage extends ArchiveMessage {
      * @param applicationId - id of the application that sent the heartbeat
      */
     public HeartBeatMessage(ChannelID in_receiver, String applicationId) {
-        super(in_receiver, Channels.getError(), IDPREFIX);
+        super(in_receiver, Channels.getError());
         ArgumentNotValid.checkNotNullOrEmpty(applicationId, "applicationId");
         timestamp = System.currentTimeMillis();
         this.applicationId = applicationId;
