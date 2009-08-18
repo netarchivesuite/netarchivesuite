@@ -22,28 +22,28 @@
 
 package dk.netarkivet.wayback;
 
-import org.archive.wayback.ResourceStore;
-import org.archive.wayback.resourcestore.resourcefile.ArcResource;
-import org.archive.wayback.exception.ResourceNotAvailableException;
-import org.archive.wayback.core.Resource;
-import org.archive.wayback.core.CaptureSearchResult;
-import org.archive.io.arc.ARCRecord;
-import org.archive.io.arc.ARCRecordMetaData;
-import org.archive.io.ArchiveRecordHeader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.archive.io.ArchiveRecordHeader;
+import org.archive.io.arc.ARCRecord;
+import org.archive.io.arc.ARCRecordMetaData;
+import org.archive.wayback.ResourceStore;
+import org.archive.wayback.core.CaptureSearchResult;
+import org.archive.wayback.core.Resource;
+import org.archive.wayback.exception.ResourceNotAvailableException;
+import org.archive.wayback.resourcestore.resourcefile.ArcResource;
+
+import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 
 /**
  * This is the prototype connector between netarchivesuite and wayback. It is not
@@ -74,39 +74,23 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
     }
 
     public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
-        String originalhost;
-        try {
-            originalhost = captureSearchResult.getOriginalHost();
-        } catch(NullPointerException e) {
-            originalhost = "ERROR";
-        }
-        String capture_result_string = "Retrieving \n" +
+
+        String capture_result_string = "Retrieving \n"+
         "Date = '" + captureSearchResult.getCaptureDate() + "'\n" +
         "Timstamp = '" + captureSearchResult.getCaptureTimestamp() + "'\n" +
         "File = '" + captureSearchResult.getFile() + "'\n" +
         "Http code = '" + captureSearchResult.getHttpCode() + "'\n" +
         "Mime Type = '" + captureSearchResult.getMimeType() + "'\n" +
         "Offset ='" + captureSearchResult.getOffset() + "'\n" +
-        "Original host = '" + originalhost + "'\n" +
+        "Original host = '" + captureSearchResult.getOriginalHost() + "'\n" +
         "Original url = '" + captureSearchResult.getOriginalUrl() + "'\n" +
         "Redirect url = '" + captureSearchResult.getRedirectUrl() + "'\n" +
-        "url key = '" + captureSearchResult.getUrlKey() + "'";
+        "url key = '" + captureSearchResult.getUrlKey();
         logger.info(capture_result_string);
 
         String arcfile = captureSearchResult.getFile();
         long offset = captureSearchResult.getOffset();
-        BitarchiveRecord bitarchive_record = client.get(arcfile, offset);
         Map metadata = new HashMap();
-        ARCRecord arc_record;
-        String responsecode = null;
-        String responsetext = null;
-        ArchiveRecordHeader header;
-        /*try {
-            metadata = ARCUtils.getHeadersFromARCFile(bitarchive_record.getData(), offset);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            logger.error("Malformed ARC file");
-        } */
         //final String statuscode = captureSearchResult.getHttpCode();
         //logger.info("Retrieving result with status code '" + statuscode + "'");
 
@@ -115,38 +99,34 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         for (String field:required_fields) {
             logger.info("Required field: '" + field + "'");
         }*/
-        
 
-        
+        BitarchiveRecord bitarchive_record = client.get(arcfile, offset);
         if (bitarchive_record == null) {
             //log here because we don't trust wayback not to swallow our log messages
             logger.info("Resource not in archive");
             throw new ResourceNotAvailableException("Resource not in archive");
         }
-
         //metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, statuscode);
         metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getUrlKey());
         metadata.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, captureSearchResult.getOriginalHost());
         metadata.put(ARCRecordMetaData.DATE_FIELD_KEY, captureSearchResult.getCaptureDate().toString());
         metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, captureSearchResult.getMimeType());
         metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, "HTTP/1.1");
-        metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, "0");
+        metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "0");
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, ""+bitarchive_record.getLength());
-        metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '" + offset + "'");
         InputStream is = bitarchive_record.getData();
-
-
+        ARCRecord arc_record;
+        String responsecode = null;
         try {
             for (String line = readLine(is); line != null && line.length()>0; line=readLine(is)  ) {
                 logger.info("Header line: '" + line + "'");
                 Matcher m = HTTP_HEADER_PATTERN.matcher(line);
                 if (m.matches()) {
                     responsecode = m.group(1);
-                    responsetext = m.group(2);
+                    String responsetext = m.group(2);
                     logger.info("Setting response code '" + responsecode + "'");
                     metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, responsecode);
-                    metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, m.group(0));
                 } {
                 // try to match header-lines containing colon,
                 // like "Content-Type: text/html"
@@ -170,9 +150,8 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
             logger.info("Error looking for empty line", e);
             throw new ResourceNotAvailableException(e.getMessage());
         }
-        logger.info("Setting response code '" + responsecode + "' - '" + responsetext + "'");
-        //final String statuscode = responsecode;
-
+        final String statuscode = responsecode;
+        ArchiveRecordHeader header;
         try {
             header = new ARCRecordMetaData(arcfile, metadata);
         } catch (IOException e) {
@@ -188,7 +167,7 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
             is = new ByteArrayInputStream("This record was redirected. Please try a later harvest result".getBytes()) ;
         }*/
         try {
-            arc_record = new ARCRecord(bitarchive_record.getData(),header,0,false,false,true);
+            arc_record = new ARCRecord(is,header,0,false,false,true);
             int code = arc_record.getStatusCode();
             logger.info("ARCRecord created with code '" + code + "'");
             arc_record.skipHttpHeader();
@@ -199,14 +178,13 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         }
 
         //TODO This the sleaziest thing in this prototype. Why does the ARCRecord give the wrong status code if we don't override this method?
-        Resource resource = new ArcResource(arc_record, null);/* {
+        Resource resource = new ArcResource(arc_record, null) {
             public int getStatusCode() {
                 return Integer.parseInt(statuscode);
             }
-        };                                                      */
+        };
         //ArcResource resource = new ArcResource(arc_record, null);
         logger.info("Returning resouce '" + resource + "'");
-        System.out.println(resource.getHttpHeaders());
         return resource;
     }
 
