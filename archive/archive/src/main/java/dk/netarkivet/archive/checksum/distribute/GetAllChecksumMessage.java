@@ -23,8 +23,6 @@ public class GetAllChecksumMessage extends ArchiveMessage {
     /** A random generated serial version UID.*/
     private static final long serialVersionUID = 5944687747568698584L;
 
-    /** The prefix for this message.*/
-    static final String GET_ALL_CHECKSUM_MESSAGE_PREFIX = "GetAllChecksum";
     /** The file containing the output.*/
     private RemoteFile remoteFile;
     /** The id for the replica where this message should be sent.*/
@@ -40,7 +38,7 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      */
     public GetAllChecksumMessage(ChannelID to, ChannelID replyTo, 
 	    String repId) {
-	super(to, replyTo, GET_ALL_CHECKSUM_MESSAGE_PREFIX);
+	super(to, replyTo);
 	this.replicaId = repId;
     }
     

@@ -66,6 +66,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -771,6 +772,22 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             }
             FileUtils.copyFile(new File(TestInfo.GOOD_ARCHIVE_FILE_DIR, fileName), output);
             return output;
+        }
+
+        public File getAllChecksums(String replicaId) {
+            //TODO: implement method
+            throw new NotImplementedException("Not implemented");
+        }
+
+        public File getAllFilenames(String replicaId) {
+            //TODO: implement method
+            throw new NotImplementedException("Not implemented");
+        }
+
+        public void correct(String replicaId, String checksum, File file,
+                            String credentials) {
+            //TODO: implement method
+            throw new NotImplementedException("Not implemented");
         }
     }
 

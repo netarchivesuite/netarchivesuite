@@ -41,8 +41,6 @@ public class GetChecksumMessage extends ArchiveMessage {
     /** A random generated serial version UID.*/
     private static final long serialVersionUID = 3562485628628056203L;
 
-    /** The prefix for this message.*/
-    static final String GET_CHECKSUM_MESSAGE_PREFIX = "GetChecksum";
     /** The name of the arc file to retrieve the checksum from.*/
     private String arcFilename;
     /** The resulting checksum for the arcFile.*/
@@ -57,7 +55,7 @@ public class GetChecksumMessage extends ArchiveMessage {
      */
     protected GetChecksumMessage(ChannelID to, ChannelID replyTo, 
 	    String filename) {
-        super(to, replyTo, GET_CHECKSUM_MESSAGE_PREFIX);
+        super(to, replyTo);
         // validate arguments
         ArgumentNotValid.checkNotNull(to, "ChannelID to");
         ArgumentNotValid.checkNotNull(replyTo, "ChannelID replyTo");

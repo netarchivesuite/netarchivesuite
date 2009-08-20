@@ -42,8 +42,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class GetAllFilenamesMessage extends ArchiveMessage {
     /** A random generated serial version UID.*/
     private static final long serialVersionUID = 2478562520343220305L;
-    /** prefix to identify this message type. */
-    private static final String IDPREFIX = "GetAllFilenames";
     /** 
      * The file with the current content, which will be retrieved from the 
      * sender of this message.
@@ -60,7 +58,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      */
     public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, 
 	    String repId) {
-        super(to, replyTo, IDPREFIX);
+        super(to, replyTo);
         
         this.replicaId = repId;
     }

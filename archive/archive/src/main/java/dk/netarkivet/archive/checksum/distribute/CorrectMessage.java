@@ -10,16 +10,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * The message to correct something!
  */
 public class CorrectMessage extends ArchiveMessage {
-    
-    static final String CORRECT_MESSAGE_PREFIX = "Correct";
-    
+
     private RemoteFile theRemoteFile;
     private String arcFilename;
     private String theChecksum;
 
     public CorrectMessage(ChannelID to, ChannelID replyTo, String checksum, 
 	    RemoteFile file) {
-        super(to, replyTo, CORRECT_MESSAGE_PREFIX);
+        super(to, replyTo);
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         this.theChecksum = checksum;

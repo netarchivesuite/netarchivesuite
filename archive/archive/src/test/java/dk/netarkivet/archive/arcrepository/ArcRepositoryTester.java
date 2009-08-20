@@ -36,7 +36,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
+import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
@@ -103,7 +103,7 @@ public class ArcRepositoryTester extends TestCase {
          * test with null parameter.
          */
         try {
-            a.getBitarchiveClientFromReplicaId(null);
+            a.getReplicaClientFromReplicaId(null);
             fail("ArgumentNotValid should have been thrown");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -113,7 +113,7 @@ public class ArcRepositoryTester extends TestCase {
          * Test with invalid parameter.
          */
         try {
-            a.getBitarchiveClientFromReplicaId("-1");
+            a.getReplicaClientFromReplicaId("-1");
             fail("ArgumentNotValid should have been thrown");
         } catch (ArgumentNotValid e) {
             // Expected
@@ -128,7 +128,7 @@ public class ArcRepositoryTester extends TestCase {
         String[] locations = Settings.getAll(
                 CommonSettings.REPLICA_IDS);
         for(int n = 0; n<locations.length; n++) {
-            BitarchiveClient bc = a.getBitarchiveClientFromReplicaId(
+            ReplicaClient bc = a.getReplicaClientFromReplicaId(
                     locations[n]);
             assertNotNull("Should return a valid BitarchiveClient", bc);
         }
