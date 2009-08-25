@@ -23,7 +23,7 @@
 
 package dk.netarkivet.harvester.harvesting;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -187,11 +187,12 @@ public class HarvestController {
             try {
                 aw = ARCUtils.createARCWriter(arcFile);
                 for (MetadataEntry m : metadata) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    baos.write(m.getData());
+                    ByteArrayInputStream bais = new ByteArrayInputStream(
+                            m.getData());
                     aw.write(m.getURL(), m.getMimeType(),
                              SystemUtils.getLocalIP(),
-                             System.currentTimeMillis(), baos.size(), baos);
+                             System.currentTimeMillis(), m.getData().length,
+                             bais);
                 }
             } finally {
                 try {
@@ -355,8 +356,7 @@ public class HarvestController {
                 String[] longs = s.split(",");
                 for (String stringLong : longs) {
                     try {
-                        result.add(
-                                Long.valueOf(Long.parseLong(stringLong)));
+                        result.add(Long.getLong(stringLong));
                     } catch (NumberFormatException e) {
                         log.warn("Unable to convert String '" + stringLong
                                  + "' in duplicate reduction jobid list"

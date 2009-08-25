@@ -24,6 +24,7 @@
 package dk.netarkivet.harvester.tools;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -207,14 +208,15 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
                         if (!parser.getFilename().equals(lastFilename)) {
                             // When we reach the end of a block of lines from
                             // one ARC file, we write those as a single entry.
-                            writeCDXEntry(writer, parser, baos);
+                            writeCDXEntry(writer, parser, baos.toByteArray());
+                            baos.reset();
                             lastFilename = parser.getFilename();
                         }
                         baos.write(line.getBytes());
                         baos.write("\n".getBytes());
                     }
                     if (parser != null) {
-                        writeCDXEntry(writer, parser, baos);
+                        writeCDXEntry(writer, parser, baos.toByteArray());
                     }
                 } finally {
                     writer.close();
@@ -259,28 +261,28 @@ public class CreateCDXMetadataFile extends ToolRunnerBase {
          * @param writer The writer we're currently writing to.
          * @param parser The filename of all the entries stored in baos.  This
          * is used to generate the URI for the entry.
-         * @param baos An outputstream containing the bytes of the CDX records
-         * to be written under this entry.  This outputstream is cleared after
-         * writing.
+         * @param bytes The bytes of the CDX records to be written under this
+         * entry.
          * @throws IOFailure if the write fails for any reason
          */
         private void writeCDXEntry(ARCWriter writer,
                                    FileUtils.FilenameParser parser,
-                                   ByteArrayOutputStream baos)
+                                   byte[] bytes)
                 throws IOFailure {
             try {
+                ByteArrayInputStream bais
+                        = new ByteArrayInputStream(bytes);
                 writer.write(HarvestDocumentation.getCDXURI(
                         parser.getHarvestID(), parser.getJobID(),
                         parser.getTimeStamp(), parser.getSerialNo()).toString(),
                         Constants.CDX_MIME_TYPE,
                         SystemUtils.getLocalIP(),
                         System.currentTimeMillis(),
-                        baos.size(), baos);
+                        bytes.length, bais);
             } catch (IOException e) {
                 throw new IOFailure("Failed to write ARC entry with CDX lines "
                         + "for " + parser.getFilename(), e);
             }
-            baos.reset();
         }
 
         /** Return a string describing the parameters accepted by the
