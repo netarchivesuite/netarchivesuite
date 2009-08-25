@@ -22,13 +22,13 @@
 */
 package dk.netarkivet.common.utils;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.testutils.StringAsserts;
+import java.util.Arrays;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import java.util.Arrays;
-import java.util.Collection;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.testutils.StringAsserts;
 
 /**
  * Unit tests for the class StringUtils.
@@ -113,5 +113,12 @@ public class StringUtilsTester extends TestCase {
             StringAsserts.assertStringContains("Should mention amount",
                     " -1", e.getMessage());
         }
+    }
+
+    public void testInsertSeperatorInLargeNumbers() {
+        assertEquals("1.000", StringUtils.insertSeperatorInLargeNumbers(1000L, '.'));
+        assertEquals("1.234.567.890", StringUtils.insertSeperatorInLargeNumbers(1234567890L, '.'));
+        assertEquals("-1.000", StringUtils.insertSeperatorInLargeNumbers(-1000L, '.'));
+        assertEquals("999", StringUtils.insertSeperatorInLargeNumbers(999L, '.'));
     }
 }

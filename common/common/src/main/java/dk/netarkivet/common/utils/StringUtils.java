@@ -186,4 +186,28 @@ public class StringUtils {
         }
         return resultString;
     }
+
+    /**
+     * Generate a String from the input value. This means inserting seperators
+     * into large numbers. Eg.
+     * 10000 -> 10.000 (10,000) or 1205032043 -> 1.205.032.043 (1,205,032,043).
+     * @param value input value.
+     * @param sep seperator acording to language settings.
+     * @return according to sep and value.
+     */
+    public static String insertSeperatorInLargeNumbers(long value, char sep) {
+        char[] str = Long.toString(value).toCharArray();
+        if(str.length < 3) {                            
+            Long.toString(value);
+        }
+        int j=0;
+        String returnStr = "";
+        for(int i=str.length-1; i>=0; i--, j++) {
+            if(j != 0 && (j%3) == 0) {
+                returnStr = sep + returnStr;
+            }
+            returnStr = str[i] + returnStr;
+        }
+        return returnStr;
+    }
 }
