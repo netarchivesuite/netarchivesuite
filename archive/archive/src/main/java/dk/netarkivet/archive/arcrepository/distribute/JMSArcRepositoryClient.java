@@ -24,14 +24,11 @@ package dk.netarkivet.archive.arcrepository.distribute;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -55,7 +52,6 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NetarkivetException;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -512,7 +508,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * be retrieved.
      * @return A list of ChecksumEntries which is the results of the 
      * GetAllChecksumMessage.
-     * @see dk.netarkivet.archive.checksum.GetAllChecksumMessage
+     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage
      */
     public File getAllChecksums(String replicaId) {
 	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
@@ -572,11 +568,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * should be retrieved.
      * @return A list of all the filenames within the archive of the given 
      * replica.
-     * @see dk.netarkivet.archive.checksum.GetAllFilenamesMessage
+     * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     public File getAllFilenames(String replicaId) {
 	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	log.debug("Sending GetAllChecksumMessage to replica '" + replicaId 
+	log.debug("Sending GetAllFilenamesMessage to replica '" + replicaId 
 		+ "'.");
 	// time this.
 	long start = System.currentTimeMillis();
