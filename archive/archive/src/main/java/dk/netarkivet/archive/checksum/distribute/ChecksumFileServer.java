@@ -165,6 +165,7 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(UploadMessage msg) {
+        log.debug("Receving upload message: " + msg.toString());
 	try {
 	    try {
 		// upload the file to the checksum instance.
@@ -199,6 +200,7 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(CorrectMessage msg) {
+        log.debug("Receving correct message: " + msg.toString());
 	try {
 	    // get the name of the file
 	    String filename = msg.getArcfileName();
@@ -233,6 +235,7 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(GetChecksumMessage msg) {
+        log.debug("Receving get checksum message: " + msg.toString());
 	try {
 	    // get the name of the arc file
 	    String filename = msg.getArcfileName();
@@ -263,6 +266,8 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(GetAllFilenamesMessage msg) {
+        log.debug("Receving get all filenames message: " + msg.toString());
+
 	try {
 	    // get all the file names
 	    msg.setFile(cs.getAllFilenames());
@@ -284,6 +289,8 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(GetAllChecksumMessage msg) {
+        log.debug("Receving get all checksum message: " + msg.toString());
+
 	try {
 	    msg.setFile(cs.getArchiveAsFile());
 	} catch (Throwable e) {

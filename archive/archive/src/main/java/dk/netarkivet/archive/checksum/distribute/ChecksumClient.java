@@ -180,6 +180,9 @@ public class ChecksumClient implements ReplicaClient {
 
     @Override
     public BatchMessage batch(ChannelID replyChannel, FileBatchJob job) {
+        log.error("Trying to execute the batchjob '" + job.getClass().getName()
+                + "' on a checksum replica with reply channel '"
+                + replyChannel + "'.");
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("Checksum replicas cannot handle "
 		+ "BatchJobs.");
@@ -187,6 +190,8 @@ public class ChecksumClient implements ReplicaClient {
 
     @Override
     public BatchMessage batch(BatchMessage msg) {
+        log.error("Trying to execute the batchjob '" + msg.toString() 
+                + "' on a checksum replica.");
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("Checksum replicas cannot handle "
 		+ "BatchJobs.");
@@ -194,6 +199,8 @@ public class ChecksumClient implements ReplicaClient {
 
     @Override
     public void get(GetMessage msg) {
+        log.error("The GetMessage '" + msg + "' cannot be sent to checksum"
+                + " replica.");
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("Checksum replicas cannot handle "
 		+ "GetMessage.");
@@ -201,6 +208,8 @@ public class ChecksumClient implements ReplicaClient {
 
     @Override
     public void getFile(GetFileMessage gfm) {
+        log.error("The GetFileMessage '" + gfm + "' cannot be sent to checksum"
+                + " replica.");
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("Cannot retrieve a file from a"
 			+ "checksum replica.");
@@ -208,6 +217,8 @@ public class ChecksumClient implements ReplicaClient {
 
     @Override
     public void removeAndGetFile(RemoveAndGetFileMessage msg) {
+        log.error("The RemoveAndGetFileMessage '" + msg + "' cannot be sent "
+                + "to checksum replica.");
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("Cannot retrieve a file from a"
 		+ "checksum replica.");
