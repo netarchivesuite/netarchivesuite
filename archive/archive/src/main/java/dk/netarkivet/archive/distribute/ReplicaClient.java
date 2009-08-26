@@ -85,12 +85,23 @@ public interface ReplicaClient {
    
     /**
      * Retrieves the checksum for a specific arc file.
-     * The method creates and sends the GetChecksumMessage to the archive.
+     * The GetChecksumMessage is sent along to the archive.
      * 
      * @param arcName The name of the arcfile.
      * @return The message for retrieving the arcfile.
      */
     public void getChecksum(GetChecksumMessage msg);
+    
+    /**
+     * Retrieves the checksum for a specific file.
+     * The method creates and sends the GetChecksumMessage to the archive.
+     * 
+     * @param replyChannel The channel where the reply should be sent.
+     * @param filename The name of the file to retrieve the checksum from.
+     * @return The message, after it has been sent.
+     */
+    public GetChecksumMessage getChecksum(ChannelID replyChannel, 
+            String filename);
     
     /**
      * Retrieves the names of all the arc file in the replica archive.

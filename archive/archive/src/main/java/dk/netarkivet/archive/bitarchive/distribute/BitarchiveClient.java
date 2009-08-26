@@ -244,6 +244,19 @@ public class BitarchiveClient implements ReplicaClient {
     }
 
     /**
+     * This should creates a batch job for retrieving the checksum of the 
+     * wanted files.
+     * 
+     * @param msg The message.
+     */
+    @Override
+    public GetChecksumMessage getChecksum(ChannelID replyChannel, 
+            String filename) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: implement me!");
+    }
+
+    /**
      * Method for retrieving the type of replica.
      * 
      * @return The type of this replica.

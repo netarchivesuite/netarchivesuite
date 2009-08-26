@@ -44,10 +44,12 @@ import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
@@ -331,7 +333,7 @@ public class ArcRepository implements CleanupIF {
         	    ad.setState(filename, replicaChannelId,
         		    BitArchiveStoreState.UPLOAD_STARTED);
         	}
-        	sendChecksumJob(filename, replicaClient);
+        	sendChecksumRequestForFile(filename, replicaClient);
         	break;
             case UPLOAD_COMPLETED:
         	break;
@@ -342,18 +344,39 @@ public class ArcRepository implements CleanupIF {
     }
 
     /**
-     * Send a checksumjob for a file to a bitarchive, and register the file in
-     * the map of outstanding checksum files.
+     * Method for retrieving the checksum of a specific file from the archive
+     * of a specific replica. 
+     * If the replica is a BitArchive, then a Batch message with the 
+     * ChecksumJob is sent. 
+     * If the replica is a ChecksumArchive, then a GetChecksumMessage is sent.
      *
      * @param filename The file to checksum.
-     * @param bitarchiveClient The client to send checksum job to.
+     * @param replicaClient The client to retrieve the checksum of the file 
+     * from.
      */
-    private void sendChecksumJob(String filename,
+    private void sendChecksumRequestForFile(String filename,
             ReplicaClient replicaClient) {
-        ChecksumJob checksumJob = new ChecksumJob();
-        checksumJob.processOnlyFileNamed(filename);
-        BatchMessage msg = replicaClient.batch(Channels.getTheRepos(),
-                checksumJob);
+        NetarkivetMessage msg;
+        
+        if(replicaClient.getType() == ReplicaType.BITARCHIVE) {
+            // Retrieve the checksum from the BitarchiveReplica
+            ChecksumJob checksumJob = new ChecksumJob();
+            checksumJob.processOnlyFileNamed(filename);
+            msg = replicaClient.batch(Channels.getTheRepos(), 
+                    checksumJob);
+        } else if (replicaClient.getType() == ReplicaType.CHECKSUM) {
+            // Retrieve the checskum from the ChecksumReplica
+            msg = replicaClient.getChecksum(Channels.getTheRepos(), filename);
+        } else {
+            // Unknown replica type
+            String errMsg = "Unknown replica type form replica client '"
+                + replicaClient + "'. Cannot retrieve checksum for file '"
+                + filename + "'.";
+            log.error(errMsg);
+            throw new IllegalState(errMsg);
+//            msg = null;
+        }
+
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job submitted for: '" + filename + "'");
     }
@@ -572,7 +595,7 @@ public class ArcRepository implements CleanupIF {
         // retrieve the replica
         Replica rep = Channels.retrieveReplicaFromIdentifierChannel(
         	replicaChannelName);
-        sendChecksumJob(arcfileName, connectedReplicas.get(rep));
+        sendChecksumRequestForFile(arcfileName, connectedReplicas.get(rep));
     }
 
     /**

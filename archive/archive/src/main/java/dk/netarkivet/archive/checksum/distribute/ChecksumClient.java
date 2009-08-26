@@ -157,6 +157,30 @@ public class ChecksumClient implements ReplicaClient {
     }
 
     /**
+     * Method for retrieving the checksum of a specific arcfile within the
+     * archive.
+     * 
+     * @param msg The GetChecksumMessage which will be sent to the checksum
+     * archive though the jms connection.
+     */
+    @Override
+    public GetChecksumMessage getChecksum(ChannelID replyChannel, 
+            String filename) {
+        // Validate arguments
+        ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+        GetChecksumMessage msg = new GetChecksumMessage(the_CR, replyChannel, 
+                filename);
+        jmsCon.send(msg);
+
+        // log what we are doing.
+        log.debug("\nSending GetChecksumMessage: \n" + msg.toString());
+        
+        return msg;
+    }
+
+    /**
      * Method for retrieving the type of replica.
      * 
      * @return The type of this replica.
