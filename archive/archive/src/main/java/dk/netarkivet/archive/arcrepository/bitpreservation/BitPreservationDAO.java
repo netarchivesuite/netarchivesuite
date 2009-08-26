@@ -28,7 +28,7 @@ import java.util.List;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.CleanupIF;
 
-interface BitPreservationDAO extends CleanupIF {
+public interface BitPreservationDAO extends CleanupIF {
     /** Given the output of a checksum job, add the results to the database.
      * NOTE: the Checksum version of Replica must be implemented with output
      *       in the same form as checksumJobOutput for implementation of
