@@ -79,6 +79,7 @@ public class ArcRepositoryTester extends TestCase {
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
     }
+    
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -138,9 +139,9 @@ public class ArcRepositoryTester extends TestCase {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
                 CommonSettings.REPLICA_IDS);
-        for(int n = 0; n<locations.length; n++) {
+        for (String location : locations) {
             ReplicaClient bc = a.getReplicaClientFromReplicaId(
-                    locations[n]);
+                    location);
             assertNotNull("Should return a valid BitarchiveClient", bc);
         }
     }
@@ -148,6 +149,7 @@ public class ArcRepositoryTester extends TestCase {
     /**
      * Test that the readChecksum() method works as 
      * required.
+     * @throws Throwable if something are thrown
      */
     public void testReadChecksum() throws Throwable {
         readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum",
@@ -234,7 +236,7 @@ public class ArcRepositoryTester extends TestCase {
      * @throws IOFailure when readChecksum does.
      */
     public String callReadChecksum(String input, String arcfilename)
-            throws Throwable, InvocationTargetException {
+            throws Throwable {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
         try {
             return (String) readChecksum.invoke(ArcRepository.getInstance(),
@@ -252,7 +254,7 @@ public class ArcRepositoryTester extends TestCase {
      *   but the channels are not used.
      * ad should contain some checksum for the arcfilename but no replyinfo
      *   -- we can check the effect by seeing warnings and state.
-     * @throws Exception
+     * @throws Exception if exception is thrown
      */
     public void testOnBatchReply() throws Exception {
         ArcRepository a = ArcRepository.getInstance();

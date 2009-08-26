@@ -226,7 +226,7 @@ public class Settings {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         return new File(get(key));
     }
-
+    
 
     /**
      * Gets a list of settings.

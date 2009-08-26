@@ -45,14 +45,14 @@ import dk.netarkivet.common.utils.SystemUtils;
 
 /**
  * Utility class that handles exposing the platform mbean server using rmi, and
- * using specified ports and password files.
+ * using specified ports and password files. <br/><br/>
  *
- * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html
+ * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html <br/><br/>
  *
- * TODO This implementation is not robust and could be improved.
- * TODO For instance: - Singleton behaviour
- * TODO                -Reuse of already created registry
- * TODO Usage of access rights (for read-only mbeans) (see reference above)
+ * TODO This implementation is not robust and could be improved. <br/>
+ * TODO For instance: - Singleton behaviour <br/>
+ * TODO                -Reuse of already created registry <br/>
+ * TODO Usage of access rights (for read-only mbeans) (see reference above) 
  *
  */
 

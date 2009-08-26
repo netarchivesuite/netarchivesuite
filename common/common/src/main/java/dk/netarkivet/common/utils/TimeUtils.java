@@ -47,7 +47,7 @@ public class TimeUtils {
      * The mode describes the unit of time as defined by @see java.util.Calendar
      * @param attempt The attempt number, which is the log2 of the number of
      * timeunits spent asleep.
-     * @param timeunit the specified timeunit
+     * @param timeunit the specified timeunit in miliseconds
      * @throws ArgumentNotValid if timeunit is unsupported.
      */
     public static void exponentialBackoffSleep(int attempt, int timeunit) {

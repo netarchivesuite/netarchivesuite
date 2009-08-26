@@ -303,7 +303,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                             + file.getPath() + "' on attempt number " + (i + 1)
                             + " of " + storeRetries;
                     log.warn(msg);
-                    messages.append(msg + "\n");
+                    messages.append(msg).append("\n");
                 } else {
                     String msg = "The returned message '" + replyMsg
                             + "' was not ok"
@@ -312,14 +312,14 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                             + " of " + storeRetries + ". Error message was '"
                             + replyMsg.getErrMsg() + "'";
                     log.warn(msg);
-                    messages.append(msg + "\n");
+                    messages.append(msg).append("\n");
                 }
             } catch (NetarkivetException e) {
                 String msg = "Client-side exception occurred while storing '"
                         + file.getPath() + "' on attempt number " + (i + 1)
                         + " of " + storeRetries + ".";
                 log.warn(msg, e);
-                messages.append(msg + "\n");
+                messages.append(msg).append("\n");
                 messages.append(ExceptionUtils.getStackTrace(e));
             } finally {
                 if (outMsg != null) {
@@ -340,11 +340,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param m the StoreMessage sent back as reply
      */
     private void cleanUpAfterStore(StoreMessage m) {
-        RemoteFile rf = null;
+        RemoteFile rf;
         try {
             rf = m.getRemoteFile();
         } catch (Exception e) {
             log.warn("Could not get remote file object from message " + m, e);
+            return;
         }
         try {
             rf.cleanup();
@@ -389,10 +390,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                 throw new IOFailure(msg);
             }
         }
-        BatchStatus lbs = new BatchStatus(brMsg.getFilesFailed(),
-                brMsg.getNoOfFilesProcessed(), brMsg.getResultFile(),
-                job.getExceptions());
-        return lbs;
+        return new BatchStatus(brMsg.getFilesFailed(),
+                               brMsg.getNoOfFilesProcessed(),
+                               brMsg.getResultFile(),
+                               job.getExceptions()
+                              );
     }
 
     /** Request update of admin data to specific state.

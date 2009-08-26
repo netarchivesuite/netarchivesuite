@@ -351,11 +351,13 @@ public class JMXUtils {
     /** Get a JMXConnector to a given host and port, using login and password.
      *
      * @param hostName The host to attempt to connect to.
-     * @param jmxPort The port on the host to connect to (a non-negative number)
+     * @param jmxPort The port on the host to connect to
+     * (a non-negative number).
      * @param login The login name to authenticate as (typically "controlRole"
      * or "monitorRole".
-     * @param password The password for JMX access
-     * @return A JMX connector to the given host and port, using default RMI
+     * @param password The password for JMX access.
+     * @return A JMX connector to the given host and port, using default RMI.
+     * @throws IOFailure if connecting to JMX fails.
      */
     public static JMXConnector getJMXConnector(String hostName,
                                                int jmxPort, final String login,
@@ -388,7 +390,7 @@ public class JMXUtils {
             }
         } while (retries++ < getMaxTries());
         throw new IOFailure("Failed to connect to URL " + rmiurl + " after "
-                            + retries + " of " + getMaxTries() 
+                            + retries + " of " + getMaxTries()
                             + " attempts.\nException type: "
                             + lastException.getCause().getClass().getName(),
                             lastException);
@@ -396,10 +398,10 @@ public class JMXUtils {
 
     /** Get a single CompositeData object out of a TabularData structure.
      *
-     * @param items TabularData structure as returned from JMX calls
+     * @param items TabularData structure as returned from JMX calls.
      * @return The one item in the items structure.
      * @throws ArgumentNotValid if there is not exactly one item in items,
-     * or items is null
+     * or items is null.
      */
     public static CompositeData getOneCompositeData(TabularData items) {
         ArgumentNotValid.checkNotNull(items, "TabularData items");
