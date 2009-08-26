@@ -61,6 +61,7 @@ public class DeployTester extends TestCase {
 
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        FileUtils.removeRecursively(TestInfo.TMPDIR);
         // reset Settings to before
         pse.tearDown();
         pss.tearDown();

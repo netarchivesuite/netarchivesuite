@@ -113,7 +113,7 @@ public class ArcRepositoryTesterGet extends TestCase {
         rs.setUp();
         ChannelsTester.resetChannels();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        ChannelsTester.resetChannels();
+//        ChannelsTester.resetChannels();
 
         rf.setUp();
 

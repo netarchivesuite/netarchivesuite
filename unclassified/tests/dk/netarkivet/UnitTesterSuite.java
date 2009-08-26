@@ -73,8 +73,12 @@ public class UnitTesterSuite {
         ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
         ArcRepositoryAdminTesterSuite.addToSuite(suite);
+        ArcRepositoryTesterSuite.addToSuite(suite);
+        /* 
+         * The arcrepositoryDistributeTesterSuite must be after the 
+         * ArcRepositoryTesterSuite, since it fails otherwise. 
+         */
         ArcrepositoryDistributeTesterSuite.addToSuite(suite);
-        //ArcRepositoryTesterSuite.addToSuite(suite);
         ArcUtilsTesterSuite.addToSuite(suite);
         BatchUtilsTesterSuite.addToSuite(suite);
         BitarchiveDistributeTesterSuite.addToSuite(suite);        

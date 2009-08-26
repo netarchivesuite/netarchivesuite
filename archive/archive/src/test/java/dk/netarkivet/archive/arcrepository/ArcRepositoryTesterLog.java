@@ -32,8 +32,12 @@ import java.util.logging.Logger;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
+import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
@@ -119,9 +123,22 @@ public class ArcRepositoryTesterLog extends TestCase {
      * Test logging of store command.
      */
     public void testLogStore() throws Exception {
-        String fileName = (String)FILES.get(0);
+        String fileName = FILES.get(0).toString();
         //store the file;
         File f = new File(ORIGINALS_DIR, fileName);
+        
+        UpdateableAdminData adminData = AdminData.getUpdateableInstance();
+        adminData.addEntry(f.getName(), new StoreMessage(
+                Channels.getThisReposClient(), f), MD5.generateMD5onFile(
+                        f));
+        adminData.setState(f.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
+        adminData.setState(f.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
+
+        
         StoreMessage msg = new StoreMessage(Channels.getError(), f);
         arcRepos.store(msg.getRemoteFile(), msg);
         UploadWaiting.waitForUpload(f, this);

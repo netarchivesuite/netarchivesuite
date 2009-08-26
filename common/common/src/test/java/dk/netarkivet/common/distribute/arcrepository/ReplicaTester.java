@@ -189,21 +189,28 @@ public class ReplicaTester extends TestCase {
     	};
     }
 
-    public void TestGetChannelID() {
-    	for (int i=0; i< knownTestIds.length; i++) {
-            assertTrue(
-                "Location ChanneId for name " + knownTestIds[i] + " is not the same in Replica.",
-                Channels.getBaMonForReplica(knownTestIds[i]).equals(Replica.getReplicaFromId(knownTestIds[i]).getChannelID())
-               );
-    	}
+    public void testGetChannelID() {
+	for(Replica rep : Replica.getKnown()) {
+	    if(rep.getType() == ReplicaType.CHECKSUM) {
+		assertEquals("The identification channel for '" + rep + "' a checksum channel.", 
+			Channels.getTheCrForReplica(rep.getId()), rep.getChannelID());
+	    } else {
+		assertEquals("If the replica type is not Checksum, then it must be Bitarchive", 
+			rep.getType(), ReplicaType.BITARCHIVE);
+		assertEquals("The identification channel for '" + rep + "' a bitarchive channel.", 
+			Channels.getBaMonForReplica(rep.getId()), rep.getChannelID());
+	    }
+	}
     }
 
-    public void TestToString() {
-    	for (int i=0; i< knownTestIds.length; i++) {
-            assertTrue(
-                "ToString for name " + knownTestIds[i] + " is not the same in Location.",
-                "Location " + knownTestIds[i] == Replica.getReplicaFromId(knownTestIds[i]).toString()
-               );
-    	}
+    public void testToString() {
+	for(Replica replica : Replica.getKnown()) {
+	    assertTrue("The replica.toString() must contain the replica type for replica: " + replica, 
+		    replica.toString().contains(replica.getType().name()));
+	    assertTrue("The replica.toString() must contain the replica name for replica: " + replica, 
+		    replica.toString().contains(replica.getId()));
+	    assertTrue("The replica.toString() must contain the replica id for replica: " + replica, 
+		    replica.toString().contains(replica.getName()));
+	}
     }
 }

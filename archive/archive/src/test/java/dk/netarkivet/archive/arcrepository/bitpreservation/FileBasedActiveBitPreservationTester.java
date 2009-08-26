@@ -94,6 +94,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     
     private static final Replica ONE = Replica.getReplicaFromId("ONE");
     private static final Replica TWO = Replica.getReplicaFromId("TWO");
+//    private static final Replica THREE = Replica.getReplicaFromId("THREE");
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -555,12 +556,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica One'", 
-                "while asking replica 'BITARCHIVEReplica (ONE) ReplicaOne'",
+                "while asking replica '" + ONE + "'",
                 TestInfo.LOG_FILE);
         FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica TWO'",
-                "while asking replica 'BITARCHIVEReplica (TWO) ReplicaTwo'",
+                "while asking replica '" + TWO + "'",
                 TestInfo.LOG_FILE);
 
         // Test extra checksums
@@ -577,12 +578,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica ONE'",
-                "while asking replica 'BITARCHIVEReplica (ONE) ReplicaOne'",
+                "while asking replica '" + ONE + "'",
                 TestInfo.LOG_FILE);
         FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica TWO'",
-                "while asking replica 'BITARCHIVEReplica (TWO) ReplicaTwo'",
+                "while asking replica '" + TWO + "'",
                 TestInfo.LOG_FILE);
 
         // TODO: More funny cases
@@ -774,21 +775,33 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             return output;
         }
 
-        public File getAllChecksums(String replicaId) {
-            //TODO: implement method
-            throw new NotImplementedException("Not implemented");
-        }
+	@Override
+	public File getAllChecksums(String replicaId) {
+	    // TODO Auto-generated method stub
+	    throw new NotImplementedException("TODO: Implement me!");
+	}
 
-        public File getAllFilenames(String replicaId) {
-            //TODO: implement method
-            throw new NotImplementedException("Not implemented");
-        }
+	@Override
+	public File getAllFilenames(String replicaId) {
+	    // TODO Auto-generated method stub
+	    throw new NotImplementedException("TODO: Implement me!");
+/*	    File[] files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
+	    
+	    List<String> filenames = new ArrayList<String>(files.length);
+	    for(File file : files) {
+		filenames.add(file.getName());
+	    }
+	    
+	    return filenames;
+*/
+	}
 
-        public void correct(String replicaId, String checksum, File file,
-                            String credentials) {
-            //TODO: implement method
-            throw new NotImplementedException("Not implemented");
-        }
+	@Override
+	public void correct(String replicaId, String checksum, 
+		File file, String credentials) {
+	    // TODO: something!
+	    
+	}
     }
 
 }

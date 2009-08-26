@@ -179,11 +179,19 @@ public class ChannelIDTester extends TestCase {
     public void testALL_ALL_BAs() {
       ChannelID[] ALL_BAs = Channels.getAllArchives_ALL_BAs();
       for (int i = 0; i < ALL_BAs.length; i++) {
+          // Ignore the channels for the checksum replicas.
+	  if(ALL_BAs[i] == null) {
+	      continue;
+	  }
           StringAsserts.assertStringContains(
                   "ChannelID.getAllArchives_ALL_BAs() returned a channel"
                           + " without ALL_BA in its name",
                   "ALL_BA", ALL_BAs[i].getName());
           for (int j = 0; j < ALL_BAs.length; j++) {
+              // Ignore the channels for the checksum replicas.
+              if(ALL_BAs[j] == null) {
+        	  continue;
+              }
               if (i != j) assertNotSame("Two ALL_BAs have the same name " +
                       ALL_BAs[i].getName(), ALL_BAs[i].getName(),
                       ALL_BAs[j].getName());
@@ -198,11 +206,19 @@ public class ChannelIDTester extends TestCase {
     public void testALL_ANY_BAs() {
       ChannelID[] ANY_BAs = Channels.getAllArchives_ANY_BAs();
       for (int i = 0; i < ANY_BAs.length; i++) {
+          // Ignore the channels for the checksum replicas.
+	  if(ANY_BAs[i] == null) {
+	      continue;
+	  }
           StringAsserts.assertStringContains(
                   "ChannelID.getAllArchives_ANY_BAs() returned a channel"
                           + " without ANY_BA in its name",
                   "ANY_BA", ANY_BAs[i].getName());
           for (int j = 0; j < ANY_BAs.length; j++) {
+              // Ignore the channels for the checksum replicas.
+              if(ANY_BAs[j] == null) {
+        	  continue;
+              }
               if (i != j) assertNotSame("Two ANY_BAs have the same name " +
                       ANY_BAs[i].getName(), ANY_BAs[i].getName(),
                       ANY_BAs[j].getName());
@@ -217,17 +233,51 @@ public class ChannelIDTester extends TestCase {
     public void testAllArchives_BAMONs() {
       ChannelID[] BAMONs = Channels.getAllArchives_BAMONs();
       for (int i = 0; i < BAMONs.length; i++) {
+          // Ignore the channels for the checksum replicas.
+	  if(BAMONs[i] == null) {
+	      continue;
+	  }
           assertTrue("ChannelID.getAllArchives_BAMONs() returned a channel without BAMON " +
                   "in its name: " + BAMONs[i].getName(),
           BAMONs[i].getName().indexOf("BAMON") != -1 );
           for (int j = 0; j < BAMONs.length; j++) {
+              // Ignore the channels for the checksum replicas.
+              if(BAMONs[j] == null) {
+        	  continue;
+              }
               if (i != j) assertNotSame("Two BAMONs have the same name " +
                       BAMONs[i].getName(), BAMONs[i].getName(),
                       BAMONs[j].getName());
           }
       }
     }
-
+    
+    /**
+     * Test that AllArchives_CRs returns as array of checksum replica channels 
+     * which are all distinct and all contain THE_CR in name.
+     */
+    public void testAllArchives_CRs() {
+      ChannelID[] CRs = Channels.getAllArchives_CRs();
+      for (int i = 0; i < CRs.length; i++) {
+          // Ignore the channels for the checksum replicas.
+	  if(CRs[i] == null) {
+	      continue;
+	  }
+          assertTrue("ChannelID.getAllArchives_BAMONs() returned a channel without BAMON " +
+                  "in its name: " + CRs[i].getName(),
+                  CRs[i].getName().indexOf("THE_CR") != -1 );
+          for (int j = 0; j < CRs.length; j++) {
+              // Ignore the channels for the checksum replicas.
+              if(CRs[j] == null) {
+        	  continue;
+              }
+              if (i != j) assertNotSame("Two BAMONs have the same name " +
+        	      CRs[i].getName(), CRs[i].getName(),
+        	      CRs[j].getName());
+          }
+      }
+    }
+    
     /**
      * Test that AllArchives_BAMONs returns as array of BAMON channels which are all
      * distinct and all contain BAMON in name.

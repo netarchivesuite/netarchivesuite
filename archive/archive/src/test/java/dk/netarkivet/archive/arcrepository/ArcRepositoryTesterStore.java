@@ -42,6 +42,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -49,6 +50,8 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
@@ -148,6 +151,31 @@ public class ArcRepositoryTesterStore extends TestCase {
         rf.tearDown();
         rs.tearDown();
     }
+    
+    /**
+     * Tests whether the replica client can be retrieved for every replica.
+     * And confirms that the correct error is send, if a wrong replica is 
+     * tried to be retrieved.
+     */
+    public void testReplicaClientRetrieval() {
+	for(Replica rep : Replica.getKnown()) {
+	    ReplicaClient repClient = arcRepos.getReplicaClientFromReplicaId(rep.getId());
+	    
+	    assertNotNull("The replica client must not be null.", repClient);
+	    assertEquals("The replica and the replica client must of the same type.", 
+		    rep.getType(), repClient.getType());
+	}
+	
+	String wrongReplicaId = "ERROR";
+	try {
+	    arcRepos.getReplicaClientFromReplicaId(wrongReplicaId);
+	    fail("There should be no replica with ID '" + wrongReplicaId + "'.");
+	} catch (UnknownID e) {
+	    assertTrue("The error message should have the right format.", 
+		    e.getMessage().contains("Can't find replica with id '" 
+			    + wrongReplicaId + "'"));
+	}
+    }
 
     /**
      * Tests the scenario where a file has been stored,
@@ -168,7 +196,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -177,8 +205,14 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
+        adminData.setState(STORABLE_FILE.getName(), 
+        	           Channels.retrieveReplicaChannelNameFromReplicaId("TWO"), 
+        	           BitArchiveStoreState.UPLOAD_COMPLETED);
+        adminData.setState(STORABLE_FILE.getName(),
+        	Channels.retrieveReplicaChannelNameFromReplicaId("THREE"),
+        	BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -194,7 +228,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("No messages should be received by any ba, but found "
                      + gmlAnyBa.messagesReceived, 0,
                      gmlAnyBa.messagesReceived.size());
-        assertEquals("No messages should be received by any ba, but found "
+        assertEquals("No messages should be received by all ba, but found "
                      + gmlAllBa.messagesReceived, 0,
                      gmlAllBa.messagesReceived.size());
 
@@ -238,7 +272,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -246,7 +280,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
         adminData.addEntry(STORABLE_FILE.getName(), null, "FFFFFFFFFFFFFFFF");
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
@@ -297,7 +331,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -321,8 +355,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("No messages should be received by any ba, but found "
                      + gmlAllBa.messagesReceived, 0,
                      gmlAllBa.messagesReceived.size());
-        assertEquals("No message should be replied", 0,
-                     gmlHaco.messagesReceived.size());
+        assertEquals("No message should be replied, but recieved: "
+        	+ gmlHaco.messagesReceived, 0, gmlHaco.messagesReceived.size());
 
         //Expected message
         NetarkivetMessage sentMsg = gmlAnyBa.messagesReceived.get(0);
@@ -340,8 +374,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected state",
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
-        assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+        assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, 
+        	entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -356,7 +390,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -365,8 +399,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.UPLOAD_FAILED);
+        adminData.setState(STORABLE_FILE.getName(),
+                Channels.retrieveReplicaChannelNameFromReplicaId("TWO"),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -385,8 +422,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("No messages should be received by any ba, but found "
                      + gmlAllBa.messagesReceived, 0,
                      gmlAllBa.messagesReceived.size());
-        assertEquals("No message should be replied", 0,
-                     gmlHaco.messagesReceived.size());
+        assertEquals("No message should be replied: " + gmlHaco.messagesReceived, 
+        	0, gmlHaco.messagesReceived.size());
 
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
@@ -409,18 +446,15 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
 
         //Check log for message
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have the log message",
-                                       "Retrying store of already known file '"
-                                       + STORABLE_FILE.getName()
-                                       + "',"
-                                       + " Already completed: "
-                                       + false,
-                                       LOG_FILE);
+        	"Retrying store of already known file '"
+        	+ STORABLE_FILE.getName() + "', Already completed: "+ false,
+        	LOG_FILE);
     }
 
     /**
@@ -435,7 +469,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -444,9 +478,9 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
-                           BitArchiveStoreState.DATA_UPLOADED);
-
+        	Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
+        	BitArchiveStoreState.DATA_UPLOADED);
+        
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
@@ -486,11 +520,12 @@ public class ArcRepositoryTesterStore extends TestCase {
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
                      BitArchiveStoreState.DATA_UPLOADED,
-                     entry.getGeneralStoreState().getState());
+                     adminData.getState(STORABLE_FILE.getName(), 
+                	     Replica.getReplicaFromId("ONE").getChannelID().getName()));
+//                     entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.DATA_UPLOADED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
-
-
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
+        
         //Check log for message
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have the log message",
@@ -514,7 +549,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -523,9 +558,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
-                           BitArchiveStoreState.UPLOAD_STARTED);
-
+        	Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
+        	BitArchiveStoreState.UPLOAD_STARTED);
+        adminData.setState(STORABLE_FILE.getName(),
+                Channels.retrieveReplicaChannelNameFromReplicaId("TWO"),
+                BitArchiveStoreState.UPLOAD_STARTED);
+        
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
                                             STORABLE_FILE);
@@ -566,8 +604,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected state",
                      BitArchiveStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
-        assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+        assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_STARTED, 
+        	entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
 
 
         //Check log for message
@@ -593,7 +631,9 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
+        GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("TWO"), gmlTwoBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -602,8 +642,8 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.addEntry(STORABLE_FILE.getName(), null, MD5.generateMD5onFile(
                 STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
-                           BitArchiveStoreState.UPLOAD_STARTED);
+        	Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
+        	BitArchiveStoreState.UPLOAD_STARTED);
 
         //Deliver message
         UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
@@ -615,17 +655,16 @@ public class ArcRepositoryTesterStore extends TestCase {
         con.waitForConcurrentTasksToFinish();
 
         //Check expected outcome: checksumjob
-        assertEquals("'Checksum message should be received by the bamon, but found "
-                     + gmlOneBaMon.messagesReceived, 1,
-                     gmlOneBaMon.messagesReceived.size());
+      assertEquals("Checksum message should be sent to replica 'ONE', but replica 'TWO' got: "
+	      + gmlTwoBaMon.messagesReceived, 0, gmlTwoBaMon.messagesReceived.size());
+        assertEquals("'1 checksum message should be received by bamon 'ONE', but found "
+        	+ gmlOneBaMon.messagesReceived, 1, gmlOneBaMon.messagesReceived.size());
         assertEquals("Upload message should be received by any ba, but found "
-                     + gmlAnyBa.messagesReceived, 0,
-                     gmlAnyBa.messagesReceived.size());
+                     + gmlAnyBa.messagesReceived, 0, gmlAnyBa.messagesReceived.size());
         assertEquals("No messages should be received by any ba, but found "
-                     + gmlAllBa.messagesReceived, 0,
-                     gmlAllBa.messagesReceived.size());
-        assertEquals("No message should be replied", 0,
-                     gmlHaco.messagesReceived.size());
+                     + gmlAllBa.messagesReceived, 0, gmlAllBa.messagesReceived.size());
+        assertEquals("No message should be sent to the HACO channel, but received: "
+        	+ gmlHaco.messagesReceived, 0, gmlHaco.messagesReceived.size());
 
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
@@ -647,9 +686,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected state",
                      BitArchiveStoreState.DATA_UPLOADED,
                      entry.getGeneralStoreState().getState());
-        assertEquals("Should have expected state", BitArchiveStoreState.DATA_UPLOADED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
-
+        assertEquals("Should have expected state", BitArchiveStoreState.DATA_UPLOADED, 
+        	entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
+        assertNull("Replica 'TWO' should not have any entries for the file '" + STORABLE_FILE.getName(), 
+        	entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("TWO")));
+        assertNull("Replica 'THREE' should not have any entries for the file '" + STORABLE_FILE.getName(), 
+        	entry.getStoreState(Channels.retrieveReplicaChannelNameFromReplicaId("THREE")));
     }
 
     /**
@@ -664,7 +706,9 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
+        GenericMessageListener gmlTwoBaMon = new GenericMessageListener();
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("TWO"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -674,8 +718,11 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.UPLOAD_STARTED);
+        adminData.setState(STORABLE_FILE.getName(),
+                Channels.retrieveReplicaChannelNameFromReplicaId("TWO"),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Deliver message
         UploadMessage msg = new UploadMessage(Channels.getAnyBa(), Channels.getTheRepos(),
@@ -717,7 +764,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -733,9 +780,9 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
-        GenericMessageListener gmlHaco = new GenericMessageListener();
-        con.setListener(Channels.getThisReposClient(), gmlHaco);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
+        GenericMessageListener gmlRepos = new GenericMessageListener();
+        con.setListener(Channels.getThisReposClient(), gmlRepos);
 
         //Set admin state
         UpdateableAdminData adminData = AdminData.getUpdateableInstance();
@@ -743,8 +790,14 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelFromReplicaId("ONE").getName(),
                            BitArchiveStoreState.DATA_UPLOADED);
+        adminData.setState(STORABLE_FILE.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
+        adminData.setState(STORABLE_FILE.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
 
         //Put outstanding checksum in
         Field f = ArcRepository.class.getDeclaredField(
@@ -756,8 +809,8 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
-                Collections.<File>emptyList(),
+                Channels.getTheRepos(), Channels.retrieveReplicaChannelFromReplicaId("ONE"), 
+                "Msg-id-0", 1, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT, true, false, true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
         arcRepos.onBatchReply(msg);
@@ -774,10 +827,10 @@ public class ArcRepositoryTesterStore extends TestCase {
                      + gmlAllBa.messagesReceived, 0,
                      gmlAllBa.messagesReceived.size());
         assertEquals("One message should be replied", 1,
-                     gmlHaco.messagesReceived.size());
+                     gmlRepos.messagesReceived.size());
 
         //Expected message
-        NetarkivetMessage sentMsg = gmlHaco.messagesReceived.get(0);
+        NetarkivetMessage sentMsg = gmlRepos.messagesReceived.get(0);
         assertTrue("The message should be a store message but was "
                    + sentMsg.getClass(), sentMsg instanceof StoreMessage);
         StoreMessage storeMsg = (StoreMessage) sentMsg;
@@ -793,7 +846,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_COMPLETED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_COMPLETED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -810,7 +863,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -820,7 +873,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
@@ -833,7 +886,7 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 1,
+                Channels.getTheRepos(), Channels.retrieveReplicaChannelFromReplicaId("ONE"), "Msg-id-0", 1,
                 Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_WRONG, true, false,
                                               true));
@@ -871,7 +924,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     /**
@@ -887,7 +940,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         GenericMessageListener gmlAllBa = new GenericMessageListener();
         con.setListener(Channels.getAllBa(), gmlAllBa);
         GenericMessageListener gmlOneBaMon = new GenericMessageListener();
-        con.setListener(Channels.getBaMonForReplica("ONE"), gmlOneBaMon);
+        con.setListener(Channels.retrieveReplicaChannelFromReplicaId("ONE"), gmlOneBaMon);
         GenericMessageListener gmlHaco = new GenericMessageListener();
         con.setListener(Channels.getThisReposClient(), gmlHaco);
 
@@ -897,7 +950,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                 Channels.getThisReposClient(), STORABLE_FILE), MD5.generateMD5onFile(
                         STORABLE_FILE));
         adminData.setState(STORABLE_FILE.getName(),
-                           Channels.getBaMonForReplica("ONE").getName(),
+                           Channels.retrieveReplicaChannelNameFromReplicaId("ONE"),
                            BitArchiveStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
@@ -910,8 +963,8 @@ public class ArcRepositoryTesterStore extends TestCase {
 
         //Deliver message
         BatchReplyMessage msg = new BatchReplyMessage(
-                Channels.getTheRepos(), Channels.getBaMonForReplica("ONE"), "Msg-id-0", 0,
-                Collections.<File>emptyList(),
+                Channels.getTheRepos(), Channels.retrieveReplicaChannelFromReplicaId("ONE"), 
+                "Msg-id-0", 0, Collections.<File>emptyList(),
                 RemoteFileFactory.getInstance(BATCH_RESULT_EMPTY, true, false,
                                               true));
         JMSConnectionMockupMQ.updateMsgID(msg, "Msg-id-1");
@@ -948,7 +1001,7 @@ public class ArcRepositoryTesterStore extends TestCase {
                      BitArchiveStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state", BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
-                Channels.getBaMonForReplica("ONE").getName()));
+                Channels.retrieveReplicaChannelNameFromReplicaId("ONE")));
     }
 
     //TODO: Check that tests are exhaustive, and check more than one BA

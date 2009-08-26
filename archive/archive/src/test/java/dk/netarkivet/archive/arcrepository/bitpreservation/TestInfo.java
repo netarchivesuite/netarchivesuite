@@ -60,6 +60,8 @@ public class TestInfo {
     public static final String REPLICA_ID_ONE = "ONE";
     /** The name of another replica. */
     public static final String REPLICA_ID_TWO = "TWO";
+    /** The name of the checksum replica. */
+    public static final String REPLICA_ID_THREE = "THREE";
 
     /** The name of the logfile used by tests. */
     public static final File LOG_FILE
@@ -71,6 +73,10 @@ public class TestInfo {
     /** An invalid admin.data file. */
     public static final File ADMIN_DATA
             = new File(WORKING_DIR, "admin.data");
+    
+    /** File for checksum replica.*/
+    public static final File CHECKSUM_FILE = new File(GOOD_ARCHIVE_DIR, 
+	    "cs.content");
 
     /** The filename of a file in the valid admin data. */
     public static final String FILE_IN_ADMIN_DATA = "foobar";

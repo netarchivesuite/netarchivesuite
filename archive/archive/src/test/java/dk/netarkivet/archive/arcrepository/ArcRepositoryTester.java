@@ -45,6 +45,7 @@ import dk.netarkivet.common.distribute.StringRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -59,8 +60,18 @@ public class ArcRepositoryTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
     Method readChecksum;
     ReloadSettings rs = new ReloadSettings();
+    static boolean first = true;
 
     public void setUp() throws Exception {
+	// reset the channels.
+	if(first) {
+	    Method m = Channels.class.getDeclaredMethod("reset");
+	    Class channels = Channels.class.getClass();
+	    m.setAccessible(true);
+	    m.invoke(channels);
+	    first = false;
+	}
+        
         super.setUp();
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
@@ -97,7 +108,7 @@ public class ArcRepositoryTester extends TestCase {
     /**
      * Test parameters.
      */
-    public void testGetBitarchiveClientFromLocationNameParameters() {
+    public void testGetReplicaClientFromReplicaNameParameters() {
         ArcRepository a = ArcRepository.getInstance();
         /**
          * test with null parameter.
@@ -115,7 +126,7 @@ public class ArcRepositoryTester extends TestCase {
         try {
             a.getReplicaClientFromReplicaId("-1");
             fail("ArgumentNotValid should have been thrown");
-        } catch (ArgumentNotValid e) {
+        } catch (UnknownID e) {
             // Expected
         }
     }
@@ -123,7 +134,7 @@ public class ArcRepositoryTester extends TestCase {
     /**
      * Test a valid BitarchiveClient is returned.
      */
-    public void testGetBitarchiveClientFromLocationName() {
+    public void testGetReplicaClientFromReplicaName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
                 CommonSettings.REPLICA_IDS);
@@ -157,9 +168,6 @@ public class ArcRepositoryTester extends TestCase {
         assertEquals("Should get empty output from empty file",
                 "", callReadChecksum("", "foobar"));
 
-        assertEquals("Should get empty output from non-matching file",
-                "", callReadChecksum("barf", "foobar"));
-
         assertEquals("Should get empty output from other-file file",
                 "", callReadChecksum("bazzoon##klaf", "foobar"));
 
@@ -173,21 +181,45 @@ public class ArcRepositoryTester extends TestCase {
                 "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have warning about unwanted line",
-                "had unexpected arcfile name in checksum result 'bar##baz", TestInfo.LOG_FILE);
+                "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')", 
+                TestInfo.LOG_FILE);
         FileAsserts.assertFileNotContains("Should have no warning about wanted line",
                 TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
-
+        
         assertEquals("Should get right checksum if not on last line",
-                "baz", callReadChecksum("bar##baz\nfoo##bonk\n", "bar"));
-
-        String result = callReadChecksum("bar##baz\nfoo##bonk\nfoo##qux", "foo");
-        assertTrue("Should get right checksum if not only line",
-                "bonk".equals(result) || "qux".equals(result));
+                "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
+        
+        assertEquals("Should get right checksum if empty lines",
+        	"bar", callReadChecksum("foo##bar\n\n", "foo"));
+        
+        // Check that the lines are validated correctly.
+        try {
+            callReadChecksum("barf", "foobar");
+            fail("A checksum output file only containing 'barf' should through IllegalState");
+        } catch (IllegalState e) {
+            assertEquals("Not expected error message!",
+        	    "Read checksum line had unexpected format 'barf'", 
+        	    e.getMessage());
+            // This is expected!
+        }
+        // Check that a entry may not have two different checksums.
+        try {
+            callReadChecksum("foo##bar\nfoo##notBar", "foo");
+            fail("A checksum output file containing two entries with for same "
+        	    + "name with different checksums should through IllegalState");
+        } catch (IllegalState e) {
+            assertEquals("Not expected error message!",
+        	    "The arc-file 'foo' was found with two different checksums: "
+        	    + "bar and notBar. Last line: 'foo##notBar'.", 
+        	    e.getMessage());
+            // This is expected!
+        }
+        
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have warning about two different checksums",
-                "Arcfile 'foo' found with two "
-                                + "different checksums in checksumjob: 'bonk' and 'qux'",
+                "The arc-file 'foo' was found with two different checksums: bar and notBar.",
                 TestInfo.LOG_FILE);
+
     }
 
 
@@ -232,11 +264,6 @@ public class ArcRepositoryTester extends TestCase {
         Field adm = ad.getClass().
             getSuperclass().getDeclaredField("storeEntries");
 
-//        Field[] fields = ad.getClass().getSuperclass().getDeclaredFields();
-//        for (int i = 0; i < fields.length; i++) {
-//            System.out.println("felt " + i + ": "
-//                    + fields[i]);
-//        }
         adm.setAccessible(true);
         Map<String, ArcRepositoryEntry> admindataentries =
                 (Map<String, ArcRepositoryEntry>)adm.get(ad);
@@ -297,8 +324,7 @@ public class ArcRepositoryTester extends TestCase {
         }
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have warning about error message",
-                "Reported error: 'Test another error'", TestInfo.LOG_FILE
-        );
+                "Reported error: 'Test another error'", TestInfo.LOG_FILE);
         assertFalse("Should not have info about non-yet-processed arcfile",
                 ad.hasEntry(arcname1));
         // Try one without matching arcfilename -- should give warning.
@@ -311,5 +337,14 @@ public class ArcRepositoryTester extends TestCase {
         assertFalse("Should not have info about non-yet-processed arcfile",
                 ad.hasEntry(arcname1));
 
+    }
+    
+    public void testChecksumCalls() throws Exception {
+	ArcRepository.getInstance().cleanup();
+	Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
+	
+//	testChecksumCalls();
+	testOnBatchReply();
+	
     }
 }

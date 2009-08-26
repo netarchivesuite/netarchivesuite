@@ -32,6 +32,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
@@ -102,7 +103,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
      * Tests if the store operation generates and stores a valid checksum
      * in the reference table (AdminData).
      */
-    public void testStoreCompletedChecksum() {
+    public void testStoreCompletedChecksum() throws IOException {
         File file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
         String orgCheckSum = null;
         try {
@@ -110,6 +111,17 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         } catch (IOException e) {
             throw new IOFailure("Unexpected IO Failure: ", e);
         }
+        
+        UpdateableAdminData adminData = AdminData.getUpdateableInstance();
+        adminData.addEntry(file.getName(), new StoreMessage(
+                Channels.getThisReposClient(), file), MD5.generateMD5onFile(
+                        file));
+        adminData.setState(file.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
+        adminData.setState(file.getName(),
+                Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                BitArchiveStoreState.UPLOAD_COMPLETED);
 
         StoreMessage msg = new StoreMessage(Channels.getError(), file);
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -150,6 +162,17 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
             file = new File(ORIGINALS_DIR, STORABLE_FILES[0]);
             try {
                 orgCheckSum = MD5.generateMD5onFile(file);
+                UpdateableAdminData adminData = AdminData.getUpdateableInstance();
+                adminData.addEntry(file.getName(), new StoreMessage(
+                        Channels.getThisReposClient(), file), MD5.generateMD5onFile(
+                                file));
+                adminData.setState(file.getName(),
+                        Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
+                        BitArchiveStoreState.UPLOAD_COMPLETED);
+                adminData.setState(file.getName(),
+                        Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
+                        BitArchiveStoreState.UPLOAD_COMPLETED);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 fail("Unexpected IOException thrown at generateMD5onFile()");
@@ -205,12 +228,13 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
 
         Method m = ArcRepository.class.getDeclaredMethod("processCheckSum",
-                new Class[] { String.class, String.class, String.class, String.class });
+                new Class[] { String.class, String.class, String.class, String.class, boolean.class });
         m.setAccessible(true);
         m.invoke(arcRepos, new Object[] { arcFileName,
                                           ba1Name,
                                           correctChecksum,
-                                          correctChecksum } );
+                                          correctChecksum,
+                                          true } );
         assertEquals("Should be in state STORE_COMPLETED after correct checksum",
                 BitArchiveStoreState.UPLOAD_COMPLETED,
                 ad.getState(arcFileName,  ba1Name));
@@ -223,7 +247,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         m.invoke(arcRepos, new Object[] { arcFileName,
                                           ba1Name,
                                           correctChecksum,
-                                          "wrong checksum" } );
+                                          "wrong checksum",
+                                          true } );
         assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile",
                 BitArchiveStoreState.UPLOAD_FAILED,
                 ad.getState(arcFileName, ba1Name));
@@ -237,7 +262,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         f.setAccessible(true);
         Map<String, RemoteFile> outstandingRemoteFiles =
                 (Map<String, RemoteFile>)f.get(arcRepos);
-        f = ArcRepository.class.getDeclaredField("connectedBitarchives");
+        f = ArcRepository.class.getDeclaredField("connectedReplicas");
         f.setAccessible(true);
         Map<String, BitarchiveClient> connectedBitarchives =
                 (Map<String, BitarchiveClient>)f.get(arcRepos);
@@ -251,7 +276,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         m.invoke(arcRepos, new Object[] { arcFileName,
                                           ba1Name,
                                           correctChecksum,
-                                          "wrong checksum" } );
+                                          "wrong checksum", 
+                                          true } );
         assertEquals("Wrong checksum should always result in upload failure",
                 BitArchiveStoreState.UPLOAD_FAILED,
                 ad.getState(STORABLE_FILES[1], ba1Name));

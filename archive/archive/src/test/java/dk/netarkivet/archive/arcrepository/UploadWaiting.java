@@ -28,6 +28,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -70,17 +71,18 @@ public class UploadWaiting {
 
     private static boolean hasAllCompleted(String arcFile) {
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
-        ChannelID[] bitarchiveIDs = Channels.getAllArchives_BAMONs();
-        for (int i = 0; i < bitarchiveIDs.length; i++) {
-            if (ad.hasReplyInfo(arcFile)) {
-                return false;
+
+        if (ad.hasReplyInfo(arcFile)) {
+            return false;
+        }
+        
+        for(Replica rep : Replica.getKnown()) {
+            if(!ad.hasState(arcFile, rep.getChannelID().getName())) {
+        	return false;
             }
-            if (!ad.hasState(arcFile, bitarchiveIDs[i].getName())) {
-                return false;
-            }
-            if (ad.getState(arcFile, bitarchiveIDs[i].getName())
-                != BitArchiveStoreState.UPLOAD_COMPLETED) {
-                return false;
+            if(ad.getState(arcFile, rep.getChannelID().getName()) 
+        	    != BitArchiveStoreState.UPLOAD_COMPLETED) {
+        	return false;
             }
         }
         return true;
