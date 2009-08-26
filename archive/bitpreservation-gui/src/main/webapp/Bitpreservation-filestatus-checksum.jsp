@@ -53,9 +53,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     Iterable<String> wrongFiles;
     try {
         ActiveBitPreservation bitPreservation
-                = FileBasedActiveBitPreservation.getInstance();
-        wrongFiles = bitPreservation.getChangedFiles(bitarchive
-        );
+                = ActiveBitPreservationFactory.getInstance();
+        wrongFiles = bitPreservation.getChangedFiles(bitarchive);
     } catch (IllegalState e) {
         HTMLUtils.forwardWithErrorMessage(pageContext,
                                           I18N,

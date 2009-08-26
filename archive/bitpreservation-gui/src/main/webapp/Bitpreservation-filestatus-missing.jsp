@@ -55,7 +55,7 @@ dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exce
     // Make a list of files to make state for:
     Iterable<String> missingFiles;
     ActiveBitPreservation activeBitPreservation
-            = FileBasedActiveBitPreservation.getInstance();
+            = ActiveBitPreservationFactory.getInstance();
     try {
         missingFiles = activeBitPreservation.getMissingFiles(bitarchive);
     } catch (IllegalState e) {
