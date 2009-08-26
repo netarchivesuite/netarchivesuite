@@ -52,6 +52,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -454,10 +455,15 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("harvestDefinition with ID=" + harvestID
                 + " does not exist, but should have",
                 HarvestDefinitionDAO.getInstance().exists(harvestID));
-        // Create 6 jobs - with start time minus 60*60*24*7 - 60 (one week minus one min) ago
+        // Create 6 jobs - with start time set to current time plus 60*1000 (1 minute) minus       
+        // Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)*1000
+        long timeout = Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) * 1000;
+        long oneMinuteInMillis = 60000;
         for (int i=0; i<6; i++) {
             Job newJob = Job.createJob(harvestID, cfg, 1);
-            newJob.setActualStart(new Date( (new Date()).getTime() - 604740) );
+            Date jobStartDate = new Date( (new Date()).getTime() - timeout 
+                    + oneMinuteInMillis);
+            newJob.setActualStart(jobStartDate);
             newJob.setStatus(JobStatus.STARTED);
             jdao.create(newJob);
         }
@@ -481,8 +487,8 @@ public class HarvestSchedulerTester extends TestCase {
             size++;
         }
         assertTrue("There should be 12 jobs with status STARTED, there are " + size, size == 12);
-        System.out.println("Sleeps for 100 seconds, be patiant");
-        Thread.sleep(10000);
+        System.out.println("Sleeps for 70 seconds, be patient");
+        Thread.sleep(70*1000);
         hsch.run();
 
         // check that we have 6 failed and 6 submitted job after we have stopped

@@ -509,7 +509,8 @@ public class HeritrixTests extends TestCase {
         }
 
         // we must harvest at max MAX_OBJECTS + 1 (the harvester some times stops at MAX_OBJECTS + 1)
-        assertTrue("Number of objects harvested", num_harvested < TestInfo.MAX_OBJECTS + 2);
+        assertTrue("Number of objects harvested is " + num_harvested 
+                + ".  Exceeds " + TestInfo.MAX_OBJECTS, num_harvested < TestInfo.MAX_OBJECTS + 2);
     }
 
     /**
