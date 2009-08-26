@@ -27,6 +27,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -89,14 +90,24 @@ public interface ReplicaClient {
      * @param arcName The name of the arcfile.
      * @return The message for retrieving the arcfile.
      */
-    public GetChecksumMessage getChecksum(String arcName);
+    public void getChecksum(GetChecksumMessage msg);
     
     /**
      * Retrieves the names of all the arc file in the replica archive.
      * 
      * @return The set of filenames for the files in the archive. 
      */
-    public GetAllFilenamesMessage getAllFilenames();
+    public void getAllFilenames(GetAllFilenamesMessage msg);
+    
+    /**
+     * Retrieves the checksum for all the arc files in the replica archive.
+     * This method is the ChecksumReplica equivalent to running a ChecksumJob.
+     * 
+     * The message is sent from this method.
+     * 
+     * @return The message for retrieving the checksums.
+     */
+    public void getAllChecksums(GetAllChecksumMessage msg);
     
     /**
      * For retrieving the type of archive.

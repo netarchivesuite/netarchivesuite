@@ -37,6 +37,8 @@ import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
@@ -221,6 +223,45 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             bc.getFile(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get file request", t);
+            msg.setNotOk(t);
+            JMSConnectionFactory.getInstance().reply(msg);
+        }
+    }
+    
+    /**
+     * For retrieving all the filenames from a replica.
+     * This only works for ChecksumReplicas.
+     * 
+     * @param msg The message to be processed.
+     * @throws ArgumentNotValid If the argument is null.
+     */
+    public void visit(GetAllFilenamesMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        
+        // retrieve the checksum client
+        ReplicaClient cc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
+        try {
+            cc.getAllFilenames(msg);
+        } catch (Throwable t) {
+            log.warn("Failed to handle GetAllFileMessage", t);
+            msg.setNotOk(t);
+            JMSConnectionFactory.getInstance().reply(msg);
+        }
+    }
+    
+    /**
+     * Method for retrieving all the checksums from a replica.
+     * Currently only checksum replicas.
+     */
+    public void visit(GetAllChecksumMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        
+        // retrieve the checksum client
+        ReplicaClient cc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
+        try {
+            cc.getAllChecksums(msg);
+        } catch (Throwable t) {
+            log.warn("Failed to handle GetAllFileMessage", t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }

@@ -176,7 +176,7 @@ public class ArcRepository implements CleanupIF {
             if(rep.getType() == ReplicaType.BITARCHIVE) {
         	connectedReplicas.put(rep, connectToBitarchive(
         		allBas[i], anyBas[i], theBamons[i]));
-            } else {
+            } else { // checksum replica
         	connectedReplicas.put(rep, connectToChecksum(theCrs[i]));
             }
         }

@@ -1,24 +1,21 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Date:        $Date$
- * Author:      $Author$
- *
+/*
+ * File: $Id$
+ * Revision: $Revision$
+ * Date: $Date$
+ * Author: $Author$
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -26,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
@@ -40,15 +38,14 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-
 /**
- * Proxy for remote bitarchive.
- * Establishes a JMS connection to the remote bitarchive
+ * Proxy for remote bitarchive. Establishes a JMS connection to the remote
+ * bitarchive
  */
 public class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
-    protected static final Log log
-            = LogFactory.getLog(BitarchiveClient.class.getName());
+    protected static final Log log = LogFactory.getLog(BitarchiveClient.class
+            .getName());
 
     // Connection to JMS provider
     private JMSConnection con;
@@ -61,14 +58,14 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Establish the connection to the server.
-     *
+     * 
      * @param all_ba_in topic to all bitarchives
      * @param any_ba_in queue to one of the bitarchives
      * @param the_bamon_in queue to the bitarchive monitor
      * @throws IOFailure If there is a problem making the connection.
      */
     private BitarchiveClient(ChannelID all_ba_in, ChannelID any_ba_in,
-                             ChannelID the_bamon_in) throws IOFailure {
+            ChannelID the_bamon_in) throws IOFailure {
         this.all_ba = all_ba_in;
         this.any_ba = any_ba_in;
         this.the_bamon = the_bamon_in;
@@ -77,7 +74,7 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Factory that establish the connection to the server.
-     *
+     * 
      * @param all_ba_in topic to all bitarchives
      * @param any_ba_in queue to one of the bitarchives
      * @param the_bamon_in queue to the bitarchive monitor
@@ -85,16 +82,15 @@ public class BitarchiveClient implements ReplicaClient {
      * @throws IOFailure If there is a problem making the connection.
      */
     public static BitarchiveClient getInstance(ChannelID all_ba_in,
-                                               ChannelID any_ba_in,
-                                               ChannelID the_bamon_in) throws IOFailure {
+            ChannelID any_ba_in, ChannelID the_bamon_in) throws IOFailure {
         return new BitarchiveClient(all_ba_in, any_ba_in, the_bamon_in);
     }
 
     /**
      * Submit a get request to the bitarchive.
-     *
+     * 
      * @param arcfile The file containing the requested record
-     * @param index   Offset of the ARC record in the file
+     * @param index Offset of the ARC record in the file
      * @return The submitted message or null if an error occured
      */
     public GetMessage get(String arcfile, long index) {
@@ -102,16 +98,16 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNegative(index, "index");
 
         // Create and send get message
-        GetMessage msg = new GetMessage(all_ba, clientId, arcfile,
-                index);
+        GetMessage msg = new GetMessage(all_ba, clientId, arcfile, index);
         con.send(msg);
 
         return msg;
     }
 
-    /** Submit an already constructed batch message to the archive.
-     * The reply goes directly back to whoever sent the message.
-     *
+    /**
+     * Submit an already constructed batch message to the archive. The reply
+     * goes directly back to whoever sent the message.
+     * 
      * @param msg the message to be processed by the get command.
      */
     public void get(GetMessage msg) {
@@ -135,8 +131,8 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Submit an already constructed getfile message to the archive.
-     *
-     * @param msg get file message to retrieve
+     * 
+     * @param msg get file message to retrieve.
      */
     public void getFile(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -146,7 +142,8 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Forward the message to ALL_BA.
-     * @param msg the message to forward
+     * 
+     * @param msg the message to forward.
      */
     public void removeAndGetFile(RemoveAndGetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
@@ -155,10 +152,10 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Submit an upload request to the bitarchive.
-     *
-     * @param rf The file to upload
-     * @throws IOFailure If access to file denied
-     * @throws ArgumentNotValid    if arcfile is null
+     * 
+     * @param rf The file to upload.
+     * @throws IOFailure If access to file denied.
+     * @throws ArgumentNotValid If arcfile is null.
      */
     public void upload(RemoteFile rf) {
         ArgumentNotValid.checkNotNull(rf, "rf");
@@ -168,44 +165,41 @@ public class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Submit an already constructed get message to the archive.
-     * This is used by the ArcRepository when forwarding
-     * batch jobs from its clients.
-     *
-     * @param bMsg a BatchMessage
-     * @return The submitted message
-     * @throws ArgumentNotValid if message is null.
+     * Submit an already constructed get message to the archive. This is used by
+     * the ArcRepository when forwarding batch jobs from its clients.
+     * 
+     * @param bMsg a BatchMessage.
+     * @return The submitted message.
+     * @throws ArgumentNotValid If message is null.
      */
     public BatchMessage batch(BatchMessage bMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
-        log.debug("Resending batch message '" + bMsg + "' to bitarchive" 
-                  + " monitor " + this.the_bamon);
+        log.debug("Resending batch message '" + bMsg + "' to bitarchive"
+                + " monitor " + this.the_bamon);
         con.resend(bMsg, this.the_bamon);
         return bMsg;
     }
 
     /**
-     * Submit a batch job to the archive.
-     * This is used by the ArcRepository when it needs to run batch jobs
-     * for its own reasons (i.e. when checksumming a file as part of
-     * the Store operation.
-     *
-     * @param replyChannel The channel that the reply of this job should
-     * be sent to.
-     * @param job The job that should be run on the bit archive
-     * handled by this client.
-     * @return The submitted message
-     * @throws ArgumentNotValid if any parameter was null.
-     * @throws IOFailure if sending the batch message did not succeed.
+     * Submit a batch job to the archive. This is used by the ArcRepository when
+     * it needs to run batch jobs for its own reasons (i.e. when checksumming a
+     * file as part of the Store operation.
+     * 
+     * @param replyChannel The channel that the reply of this job should be 
+     * sent to.
+     * @param job The job that should be run on the bit archive handled by this
+     * client.
+     * @return The submitted message.
+     * @throws ArgumentNotValid If any parameter was null.
+     * @throws IOFailure If sending the batch message did not succeed.
      */
-    public BatchMessage batch(ChannelID replyChannel,
-                              FileBatchJob job)
+    public BatchMessage batch(ChannelID replyChannel, FileBatchJob job)
             throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(replyChannel, "replyChannel");
         ArgumentNotValid.checkNotNull(job, "job");
         BatchMessage bMsg = new BatchMessage(this.the_bamon, replyChannel, job,
                 "No value should be needed; this message was sent "
-                + "directly to the bit archive.");
+                        + "directly to the bit archive.");
         con.send(bMsg);
         return bMsg;
     }
@@ -219,25 +213,34 @@ public class BitarchiveClient implements ReplicaClient {
 
     @Override
     public void correct(RemoteFile arcfile, String checksum) {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: implement me!");
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: implement me!");
     }
 
     @Override
-    public GetAllFilenamesMessage getAllFilenames() {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: implement me!");
+    public void getAllFilenames(GetAllFilenamesMessage msg) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: implement me!\n msg: '"
+                + msg.toString() + "'.");
+    }
+
+    @Override
+    public void getAllChecksums(GetAllChecksumMessage msg) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: implement me!\n msg: '"
+                + msg.toString() + "'.");
     }
 
     /**
-     * This creates a batch job for retrieving the checksums.
+     * This should creates a batch job for retrieving the checksum of the 
+     * wanted files.
      * 
-     * @param arcName The name of the arcfile to retrieve the checksum from.
+     * @param msg The message.
      */
     @Override
-    public GetChecksumMessage getChecksum(String arcName) {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: implement me!");
+    public void getChecksum(GetChecksumMessage msg) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: implement me!");
     }
 
     /**
@@ -247,7 +250,7 @@ public class BitarchiveClient implements ReplicaClient {
      */
     @Override
     public ReplicaType getType() {
-	// Returns the current replica type in the settings.
-	return ReplicaType.BITARCHIVE;
+        // Returns the current replica type in the settings.
+        return ReplicaType.BITARCHIVE;
     }
 }
