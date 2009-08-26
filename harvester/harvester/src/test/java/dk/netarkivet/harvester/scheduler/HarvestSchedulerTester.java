@@ -52,7 +52,6 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
@@ -72,6 +71,7 @@ import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -85,6 +85,7 @@ public class HarvestSchedulerTester extends TestCase {
     HarvestScheduler hsch;
 
     ReloadSettings rs = new ReloadSettings();
+    MockupJMS mj = new MockupJMS();
     
     
     public HarvestSchedulerTester(String sTestName) {
@@ -94,7 +95,7 @@ public class HarvestSchedulerTester extends TestCase {
     public void setUp() throws SQLException, IllegalAccessException,
             IOException, NoSuchFieldException, ClassNotFoundException {
         rs.setUp();
-        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        mj.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
@@ -126,6 +127,7 @@ public class HarvestSchedulerTester extends TestCase {
         DatabaseTestUtils.dropHDDB();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
+        mj.tearDown();
         rs.tearDown();
     }
 
@@ -455,15 +457,11 @@ public class HarvestSchedulerTester extends TestCase {
         assertTrue("harvestDefinition with ID=" + harvestID
                 + " does not exist, but should have",
                 HarvestDefinitionDAO.getInstance().exists(harvestID));
-        // Create 6 jobs - with start time set to current time plus 60*1000 (1 minute) minus       
-        // Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)*1000
-        long timeout = Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) * 1000;
-        long oneMinuteInMillis = 60000;
+        // Create 6 jobs - with start time minus 60*60*24*7 +1
+        // (one week plus one second)
         for (int i=0; i<6; i++) {
             Job newJob = Job.createJob(harvestID, cfg, 1);
-            Date jobStartDate = new Date( (new Date()).getTime() - timeout 
-                    + oneMinuteInMillis);
-            newJob.setActualStart(jobStartDate);
+            newJob.setActualStart(new Date( (new Date()).getTime() - (604801*1000) ));
             newJob.setStatus(JobStatus.STARTED);
             jdao.create(newJob);
         }
@@ -487,19 +485,10 @@ public class HarvestSchedulerTester extends TestCase {
             size++;
         }
         assertTrue("There should be 12 jobs with status STARTED, there are " + size, size == 12);
-        System.out.println("Sleeps for 70 seconds, be patient");
-        Thread.sleep(70*1000);
         hsch.run();
 
         // check that we have 6 failed and 6 submitted job after we have stopped
         // old jobs
-        ids = jdao.getAllJobIds(JobStatus.FAILED);
-        size = 0;
-        while(ids.hasNext()) {
-            ids.next();
-            size++;
-        }
-        assertTrue("There should be 6 jobs with status FAILED, there are " + size, size == 6);
         ids = jdao.getAllJobIds(JobStatus.STARTED);
         size = 0;
         while(ids.hasNext()) {
@@ -507,6 +496,14 @@ public class HarvestSchedulerTester extends TestCase {
             size++;
         }
         assertTrue("There should be 6 jobs with status STARTED, there are " + size, size == 6);
+        ids = jdao.getAllJobIds(JobStatus.FAILED);
+        size = 0;
+        while(ids.hasNext()) {
+            ids.next();
+            size++;
+        }
+        assertTrue("There should be 6 jobs with status FAILED, there are " + size, size == 6);
+        
     }
 
     /**
