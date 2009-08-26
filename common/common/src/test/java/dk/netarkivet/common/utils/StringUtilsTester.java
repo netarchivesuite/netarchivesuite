@@ -114,11 +114,4 @@ public class StringUtilsTester extends TestCase {
                     " -1", e.getMessage());
         }
     }
-
-    public void testInsertSeperatorInLargeNumbers() {
-        assertEquals("1.000", StringUtils.insertSeperatorInLargeNumbers(1000L, '.'));
-        assertEquals("1.234.567.890", StringUtils.insertSeperatorInLargeNumbers(1234567890L, '.'));
-        assertEquals("-1.000", StringUtils.insertSeperatorInLargeNumbers(-1000L, '.'));
-        assertEquals("999", StringUtils.insertSeperatorInLargeNumbers(999L, '.'));
-    }
 }

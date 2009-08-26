@@ -39,11 +39,11 @@ public class StringUtils {
     /**
      * Replace all occurrences of oldString with newString in a string.
      * @param sentence the string, where all occurrences of oldString are to be
-     *  replaced with newString
-     * @param oldString the oldString
-     * @param newString the newString
+     *  replaced with newString.
+     * @param oldString the oldString.
+     * @param newString the newString.
      * @return the resulting string, where all occurrences of oldString are
-     *  replaced with newString
+     *  replaced with newString.
      */
     public static final String replace(String sentence, String oldString,
                                        String newString) {
@@ -95,7 +95,7 @@ public class StringUtils {
      *  between each.
      *
      * @param sep A string to separate the list items.
-     * @param strings An array of strings to concatenate
+     * @param strings An array of strings to concatenate.
      * @return The concatenated string, or null if the list was null.
      */
     public static final String conjoin(String sep, String... strings) {
@@ -137,10 +137,10 @@ public class StringUtils {
 
     /** Repeat the string n times.
      *
-     * @param s A string to repeat
+     * @param s A string to repeat.
      * @param n How many times to repeat it.
-     * @return A repeated string
-     * @throws ArgumentNotValid if a negative amount is specified
+     * @return A repeated string.
+     * @throws ArgumentNotValid if a negative amount is specified.
      */
     public static final String repeat(String s, int n) {
         ArgumentNotValid.checkNotNegative(n, "int n");
@@ -153,7 +153,7 @@ public class StringUtils {
 
     /**
      * Change all Strings to Integers.
-     * @param stringArray the given array of Strings to convert
+     * @param stringArray the given array of Strings to convert.
      * @return a List of Integers.
      */
     public static List<Integer> parseIntList(String[] stringArray) {
@@ -173,9 +173,9 @@ public class StringUtils {
      * Generate a ellipsis of orgString. If orgString is longer than
      * maxLength, then we return a String containing the first maxLength
      * characters and then append  " ..".
-     * @param orgString the original string
-     * @param maxLength the maximum length of the string before ellipsing it
-     * @return an ellipsis of orgString
+     * @param orgString the original string.
+     * @param maxLength the maximum length of the string before ellipsing it.
+     * @return an ellipsis of orgString.
      */
     public static String makeEllipsis(String orgString, int maxLength)  {
     	ArgumentNotValid.checkNotNull(orgString, "String orgString");
@@ -185,29 +185,5 @@ public class StringUtils {
         		+ " ..";
         }
         return resultString;
-    }
-
-    /**
-     * Generate a String from the input value. This means inserting seperators
-     * into large numbers. Eg.
-     * 10000 -> 10.000 (10,000) or 1205032043 -> 1.205.032.043 (1,205,032,043).
-     * @param value input value.
-     * @param sep seperator acording to language settings.
-     * @return according to sep and value.
-     */
-    public static String insertSeperatorInLargeNumbers(long value, char sep) {
-        char[] str = Long.toString(value).toCharArray();
-        if(str.length < 3) {                            
-            Long.toString(value);
-        }
-        int j=0;
-        String returnStr = "";
-        for(int i=str.length-1; i>=0; i--, j++) {
-            if(j != 0 && (j%3) == 0) {
-                returnStr = sep + returnStr;
-            }
-            returnStr = str[i] + returnStr;
-        }
-        return returnStr;
     }
 }
