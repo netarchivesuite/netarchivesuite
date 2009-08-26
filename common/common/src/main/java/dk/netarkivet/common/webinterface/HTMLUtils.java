@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -757,12 +758,13 @@ public class HTMLUtils {
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNull(param, "param");
-        
+
+        Locale loc = HTMLUtils.getLocaleObject(context);
         forwardOnEmptyParameter(context, param);
         int value;
         String paramValue = context.getRequest().getParameter(param);
         try {
-            value = Integer.parseInt(paramValue);
+            value = NumberFormat.getInstance(loc).parse(paramValue).intValue();
             if (value < minValue || value > maxValue) {
                 forwardWithErrorMessage(context, I18N,
                         "errormsg;parameter.0.outside.range.1.to.2.3",
@@ -772,7 +774,7 @@ public class HTMLUtils {
                         + " but is " + paramValue);
             }
             return value;
-        } catch (NumberFormatException e) {
+        } catch (ParseException e) {
             forwardWithErrorMessage(context, I18N,
                     "errormsg;parameter.0.not.an.integer.1", param,
                     paramValue);
@@ -798,13 +800,14 @@ public class HTMLUtils {
         // as otherwise information could be lost.
         ArgumentNotValid.checkNotNull(context, "context");
         ArgumentNotValid.checkNotNullOrEmpty(param, "String param");
-        
+
+        Locale loc = HTMLUtils.getLocaleObject(context);
         String paramValue = context.getRequest().getParameter(param);
         if (paramValue != null && paramValue.trim().length() > 0) {
             paramValue = paramValue.trim();
             try {
-                return Long.parseLong(paramValue);
-            } catch (NumberFormatException e) {
+                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
+            } catch (ParseException e) {
                 forwardWithErrorMessage(context, I18N,
                         "errormsg;parameter.0.not.an.integer.1", param,
                         paramValue);

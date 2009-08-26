@@ -47,13 +47,13 @@ snapshot_byte_limit (Constants.DOMAIN_BYTELIMIT_PARAM):
      value is Constants.DEFAULT_MAX_BYTES
 harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
     (null or single) The name of the harvest to be created or modified
---%><%@ page import="dk.netarkivet.common.exceptions.ForwardedToErrorPage,
+--%><%@ page import="java.text.NumberFormat,
+                 java.util.Locale,
+                 dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.SparseFullHarvest,
-                 dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
+                 dk.netarkivet.harvester.datamodel.SparseFullHarvest, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -88,14 +88,16 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         }
     }
 
-    long objectLimit
-            = dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
+    long objectLimit =
+            dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
     Long oldHarvestOid = null;
     if (hd != null) {
         objectLimit = hd.getMaxCountObjects();
         oldHarvestOid = hd.getPreviousHarvestDefinitionOid();
     }
     HTMLUtils.generateHeader(pageContext);
+    NumberFormat nf =
+            NumberFormat.getInstance(HTMLUtils.getLocaleObject(pageContext));
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;snapshot.harvest"/></h3>
 
@@ -144,7 +146,9 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
         <tr>
             <td><fmt:message key="prompt;max.bytes.per.domain"/></td>
             <td><input name="<%= Constants.DOMAIN_BYTELIMIT_PARAM %>"
-                   size="20" value="<%= (hd != null?hd.getMaxBytes():"") %>"/></td>
+                   size="20" value="<%=
+                                (hd != null?nf.format(hd.getMaxBytes()):"")
+                                    %>"/></td>
         </tr>
     </table>
 

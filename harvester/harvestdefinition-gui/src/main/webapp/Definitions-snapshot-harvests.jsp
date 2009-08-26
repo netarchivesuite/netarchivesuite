@@ -32,7 +32,9 @@ flipactive=<harvestDefinition>:
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.SparseFullHarvest, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
+                 dk.netarkivet.harvester.datamodel.SparseFullHarvest,
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.SnapshotHarvestDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -102,7 +104,8 @@ if (!ihd.iterator().hasNext()) { %>
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(name)%></td>
-        <td width="15%"><%=hd.getMaxBytes()%></td>
+        <td width="15%"><fmt:formatNumber type="number"
+                              value="<%=hd.getMaxBytes()%>"/></td>
         <td width="15%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>
         <td width="15%"><form 
                            id="flipActiveForm<%=hd.getOid()%>" 

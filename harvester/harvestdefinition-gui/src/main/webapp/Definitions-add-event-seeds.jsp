@@ -39,7 +39,8 @@ This page has major side effects in that it will:
 2) Create for every seedlist a configuration and seedlist formed from the
 name of the harvest and the orderTemplate and add that configuration to the
 harvest.
---%><%@ page import="java.util.Iterator,
+--%><%@ page import="java.text.NumberFormat,
+                 java.util.Iterator,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -87,6 +88,8 @@ harvest.
         return;
     }
     HTMLUtils.generateHeader(pageContext);
+    NumberFormat nf =
+            NumberFormat.getInstance(HTMLUtils.getLocaleObject(pageContext));
 %>
 
 <h2><fmt:message key="prompt;event.harvest"/>
@@ -123,8 +126,8 @@ the user
         </tr>
         <tr>
         	<td><fmt:message key="prompt;max.bytes.per.domain"/></td>
-            <td><input type="text" name="<%= Constants.MAX_BYTES_PARAM %>" 
-                       value="<%= dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES %>"/> </td>
+            <td><input type="text" name="<%= Constants.MAX_BYTES_PARAM %>"
+                       value="<%= nf.format(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES) %>"/> </td>
         </tr>
         <tr>
             <td><fmt:message key="prompt;harvest.template"/></td>

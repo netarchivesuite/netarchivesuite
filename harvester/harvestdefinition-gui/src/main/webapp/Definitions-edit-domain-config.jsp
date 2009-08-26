@@ -1,4 +1,4 @@
-<%--
+for<%--
 File:       $Id$
 Revision:   $Revision$
 Author:     $Author$
@@ -54,8 +54,10 @@ passwordList:
     Currently ignored
 
 
---%><%@ page import="java.util.HashSet,
+--%><%@ page import="java.text.NumberFormat,
+                 java.util.HashSet,
                  java.util.Iterator,
+                 java.util.Locale,
                  java.util.Set,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
@@ -64,9 +66,7 @@ passwordList:
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO,
-                 dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
+                 dk.netarkivet.harvester.datamodel.TemplateDAO, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -108,8 +108,8 @@ passwordList:
         }
         dc = domain.getConfiguration(configName);
     }
-    HTMLUtils.generateHeader(
-            pageContext);
+    HTMLUtils.generateHeader(pageContext);
+    Locale loc = HTMLUtils.getLocaleObject(pageContext);
 %>
 
 <%--
@@ -143,11 +143,12 @@ Display all the form information for this domain
     String maxObjects = "";
     String maxBytes = "";
     if (dc != null) {
+        NumberFormat nf = NumberFormat.getInstance(loc);
         nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName)
                      + "\" readonly=\"readonly\"";
         load = "value=\"" + dc.getMaxRequestRate() + "\"";
-        maxObjects = "value=\"" + dc.getMaxObjects() + "\"";
-        maxBytes = "value=\"" + dc.getMaxBytes() + "\"";
+        maxObjects = "value=\"" + nf.format(dc.getMaxObjects()) + "\"";
+        maxBytes = "value=\"" + nf.format(dc.getMaxBytes()) + "\"";
         currentTemplate = dc.getOrderXmlName();
     }
 %>
