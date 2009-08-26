@@ -63,6 +63,7 @@ import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
 import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
 import dk.netarkivet.viewerproxy.ViewerProxyTesterSuite;
 import dk.netarkivet.viewerproxy.distribute.ViewerproxyDistributeTesterSuite;
+import dk.netarkivet.wayback.WaybackTesterSuite;
 
 /**
  * This class runs all the unit tests.
@@ -110,6 +111,7 @@ public class UnitTesterSuite {
         UtilsTesterSuite.addToSuite(suite);
         ViewerproxyDistributeTesterSuite.addToSuite(suite);
         ViewerProxyTesterSuite.addToSuite(suite);
+        WaybackTesterSuite.addToSuite(suite);
         WebinterfaceTesterSuite.addToSuite(suite);
         dk.netarkivet.viewerproxy.webinterface.WebinterfaceTesterSuite.addToSuite(suite);
     }

@@ -1,18 +1,17 @@
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
-
-import org.archive.io.arc.ARCRecord;
-import org.archive.net.UURI;
-import org.archive.net.UURIFactory;
-import org.apache.commons.httpclient.URIException;
-
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.wayback.MyUURIFactory;
 
 import gnu.inet.encoding.IDNA;
 import gnu.inet.encoding.IDNAException;
 import it.unimi.dsi.mg4j.util.MutableString;
+import org.apache.commons.httpclient.URIException;
+import org.archive.io.arc.ARCRecord;
+import org.archive.net.UURI;
+import org.archive.net.UURIFactory;
+
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.wayback.NetarchiveSuiteUURIFactory;
 
 /**
  * This class illustrates Bug 1719.
@@ -72,7 +71,7 @@ public class ClassLoadingBugBatchJob extends ARCBatchJob {
             throw new RuntimeException(e);
         }
         try {
-            uuri = MyUURIFactory.getInstance("http://foo.bar");
+            uuri = NetarchiveSuiteUURIFactory.getInstance("http://foo.bar");
         } catch (URIException e) {
             throw new RuntimeException(e);
         }

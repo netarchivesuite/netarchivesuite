@@ -107,7 +107,7 @@ public class UrlOperations {
 		for(final String scheme : ALL_SCHEMES) {
 			if(url.startsWith(scheme)) {
 				try {
-					return MyUURIFactory.getInstance(url).getEscapedURI();
+					return NetarchiveSuiteUURIFactory.getInstance(url).getEscapedURI();
 				} catch (URIException e) {
 					e.printStackTrace();
 					// can't let a space exist... send back close to whatever came
@@ -119,8 +119,8 @@ public class UrlOperations {
 		UURI absBaseURI;
 		UURI resolvedURI = null;
 		try {
-			absBaseURI = MyUURIFactory.getInstance(baseUrl);
-			resolvedURI = MyUURIFactory.getInstance(absBaseURI, url);
+			absBaseURI = NetarchiveSuiteUURIFactory.getInstance(baseUrl);
+			resolvedURI = NetarchiveSuiteUURIFactory.getInstance(absBaseURI, url);
 		} catch (URIException e) {
 			e.printStackTrace();
 			return url.replace(" ", "%20");

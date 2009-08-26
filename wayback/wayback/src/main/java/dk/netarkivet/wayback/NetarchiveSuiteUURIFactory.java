@@ -48,19 +48,19 @@ import org.archive.util.TextUtils;
  * @since Jul 9, 2009
  */
 
-public class MyUURIFactory extends UURI {
+public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
 
     /**
      * Logging instance.
      */
     private static Logger logger =
-        Logger.getLogger(MyUURIFactory.class.getName());
+        Logger.getLogger(NetarchiveSuiteUURIFactory.class.getName());
 
     /**
      * The single instance of this factory.
      */
-    private static final MyUURIFactory factory = new MyUURIFactory();
+    private static final NetarchiveSuiteUURIFactory factory = new NetarchiveSuiteUURIFactory();
 
     /**
      * RFC 2396-inspired regex.
@@ -236,7 +236,7 @@ public class MyUURIFactory extends UURI {
     /**
      * Protected constructor.
      */
-    private MyUURIFactory() {
+    private NetarchiveSuiteUURIFactory() {
         super();
        /* String s = System.getProperty(this.getClass().getName() + SCHEMES_KEY);
         if (s != null && s.length() > 0) {
@@ -256,7 +256,7 @@ public class MyUURIFactory extends UURI {
      * @throws URIException
      */
     public static UURI getInstance(String uri) throws URIException {
-        return MyUURIFactory.factory.create(uri);
+        return NetarchiveSuiteUURIFactory.factory.create(uri);
     }
 
     /**
@@ -267,7 +267,7 @@ public class MyUURIFactory extends UURI {
      */
     public static UURI getInstance(String uri, String charset)
     		throws URIException {
-        return MyUURIFactory.factory.create(uri, charset);
+        return NetarchiveSuiteUURIFactory.factory.create(uri, charset);
     }
 
     /**
@@ -278,7 +278,7 @@ public class MyUURIFactory extends UURI {
      */
     public static UURI getInstance(UURI base, String relative)
     		throws URIException {
-        return MyUURIFactory.factory.create(base, relative);
+        return NetarchiveSuiteUURIFactory.factory.create(base, relative);
     }
 
     /**
@@ -290,11 +290,11 @@ public class MyUURIFactory extends UURI {
      */
     public static boolean hasSupportedScheme(String possibleUrl) {
         boolean hasScheme = UURI.hasScheme(possibleUrl);
-        if (!hasScheme || MyUURIFactory.factory.schemes == null) {
+        if (!hasScheme || NetarchiveSuiteUURIFactory.factory.schemes == null) {
             return hasScheme;
         }
         String tmpStr = possibleUrl.substring(0, possibleUrl.indexOf(':'));
-        return Arrays.binarySearch(MyUURIFactory.factory.schemes, tmpStr) >= 0;
+        return Arrays.binarySearch(NetarchiveSuiteUURIFactory.factory.schemes, tmpStr) >= 0;
     }
 
     /**

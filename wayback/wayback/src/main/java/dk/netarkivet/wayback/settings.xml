@@ -1,0 +1,9 @@
+<settings>
+    <wayback>
+         <urlcanonicalizer>
+             <classname>
+                 dk.netarkivet.wayback.NetarchiveSuiteAggressiveUrlCanonicalizer
+             </classname>
+         </urlcanonicalizer>
+    </wayback>
+</settings>
