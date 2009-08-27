@@ -741,10 +741,25 @@ public class ArcRepository implements CleanupIF {
                             + "\nTrying to process anyway.");
         }        
         
-        String orgCheckSum = ad.getCheckSum(arcfileName);
-        String repChannel = resolveReplicaChannel(msg.getReplyTo().getName());
-        processCheckSum(arcfileName, repChannel, orgCheckSum,
-                msg.getChecksum(), msg.isOk());
+        String orgChecksum = ad.getCheckSum(arcfileName);
+        String repChannelName = resolveReplicaChannel(msg.getReplyTo().getName());
+        String reportedChecksum = msg.getChecksum();
+        
+        // Validate the checksum and set the upload state in admin.data. 
+        if (orgChecksum.equals(reportedChecksum) 
+             && !reportedChecksum.isEmpty() ) {
+            
+            // Checksum is valid and job matches expected results
+            ad.setState(arcfileName, repChannelName,
+                    BitArchiveStoreState.UPLOAD_COMPLETED);
+        }  else {
+            // Handle the case when the checksum is invalid.
+            log.warn("The arcfile '" + arcfileName + "' has a bad checksum. "
+                    + "Should have seen '" + orgChecksum + "', but saw '"
+                    + reportedChecksum + "'.");
+            ad.setState(arcfileName, repChannelName,
+                    BitArchiveStoreState.UPLOAD_FAILED);
+        }
         
         log.debug("Finished processing of GetChecksumMessage.");
     }
