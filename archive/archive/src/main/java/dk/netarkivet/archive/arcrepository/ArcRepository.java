@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,12 +39,12 @@ import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
-import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -702,9 +703,34 @@ public class ArcRepository implements CleanupIF {
 
         // Process result
         String orgCheckSum = ad.getCheckSum(arcfileName);
+        String repChannel = resolveReplicaChannel(msg.getReplyTo().getName());
+        processCheckSum(arcfileName, repChannel, orgCheckSum,
+                reportedChecksum, msg.isOk() && checksumReadOk);
+    }
+    
+    /**
+     * The message for handling the results of the GetChecksumMessage.
+     * 
+     * @param msg The message containing the checksum of a specific file.
+     */
+    public void onChecksumReply(GetChecksumMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        
+        // handle the case when unwanted reply.
+        if(!outstandingChecksumFiles.containsKey(msg.getID())) {
+            log.warn("Received GetChecksumMessage with unknown originating "
+            + "ID " + msg.getReplyOfId() + "\n" + msg.toString()
+            + "\n. Known IDs are: "
+            + outstandingChecksumFiles.keySet().toString());
+            return;
+        }
+        
+        String arcfileName = outstandingChecksumFiles.remove(
+                msg.getReplyOfId());
+        String orgCheckSum = ad.getCheckSum(arcfileName);
         String bitarchive = resolveReplicaChannel(msg.getReplyTo().getName());
         processCheckSum(arcfileName, bitarchive, orgCheckSum,
-                reportedChecksum, msg.isOk() && checksumReadOk);
+                msg.getChecksum(), msg.isOk());
     }
 
     /**

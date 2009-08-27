@@ -39,6 +39,7 @@ import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
@@ -264,6 +265,25 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             log.warn("Failed to handle GetAllFileMessage", t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
+        }
+    }
+    
+    /**
+     * Method for handling the results of a GetChecksumMessage.
+     * This should be handled similar to a ReplyBatchMessage, when a batchjob
+     * has run on a single file.
+     * 
+     * @param msg The GetChecksumMessage message.
+     */
+    @Override
+    public void visit(GetChecksumMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        
+        // TODO: Make sure, that the message is a reply!
+        try {
+            ar.onChecksumReply(msg);
+        } catch(Throwable t) {
+            log.warn("Failed to handle GetChecksumMessage", t);
         }
     }
 
