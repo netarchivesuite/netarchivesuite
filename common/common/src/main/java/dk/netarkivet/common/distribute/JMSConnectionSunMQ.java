@@ -71,8 +71,11 @@ public class JMSConnectionSunMQ extends JMSConnection {
             "C4000", //Packet acknowledgment failed
             "C4001", //Write packet failed
             "C4002", //Read packet failed
+            "C4003", //Connection timed out
+            "C4036", //Server error
             "C4056", //Received goodbye from broker
             "C4059", //Session is closed
+            "C4062", //Connection is closed
             "C4063"  //Consumer is closed
     };
 
