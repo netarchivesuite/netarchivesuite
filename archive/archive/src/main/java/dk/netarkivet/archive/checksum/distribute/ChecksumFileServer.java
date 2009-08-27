@@ -235,15 +235,12 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public void visit(GetChecksumMessage msg) {
-        log.debug("Receving get checksum message: " + msg.toString());
+        log.debug("Recieving get checksum message: " + msg.toString());
 	try {
 	    // get the name of the arc file
 	    String filename = msg.getArcfileName();
 	    // get the checksum of the arc file
-	    String checksum;
-	    
-	    // retrieve the checksum of the files individually 
-	    checksum = cs.getChecksum(filename);	
+	    String checksum = cs.getChecksum(filename);	
 
 	    // send the checksum of the arc file.
 	    msg.setChecksum(checksum);

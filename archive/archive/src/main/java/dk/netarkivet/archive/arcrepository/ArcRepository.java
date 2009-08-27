@@ -716,6 +716,9 @@ public class ArcRepository implements CleanupIF {
     public void onChecksumReply(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
+        log.debug("Received the GetChecksumMessage, which should be a reply: "
+                + msg.toString());
+        
         // handle the case when unwanted reply.
         if(!outstandingChecksumFiles.containsKey(msg.getID())) {
             log.warn("Received GetChecksumMessage with unknown originating "
@@ -727,10 +730,23 @@ public class ArcRepository implements CleanupIF {
         
         String arcfileName = outstandingChecksumFiles.remove(
                 msg.getReplyOfId());
+        
+        // Check incoming message
+        if (!msg.isOk()) {
+            //Checksum job has ended with errors, but can contain checksum 
+            //anyway, therefore it is logged - but we try to go on 
+            log.warn("Message '" + msg.getID()
+                            + "' is reported not okay"
+                            + "\nReported error: '" + msg.getErrMsg() + "'"
+                            + "\nTrying to process anyway.");
+        }        
+        
         String orgCheckSum = ad.getCheckSum(arcfileName);
-        String bitarchive = resolveReplicaChannel(msg.getReplyTo().getName());
-        processCheckSum(arcfileName, bitarchive, orgCheckSum,
+        String repChannel = resolveReplicaChannel(msg.getReplyTo().getName());
+        processCheckSum(arcfileName, repChannel, orgCheckSum,
                 msg.getChecksum(), msg.isOk());
+        
+        log.debug("Finished processing of GetChecksumMessage.");
     }
 
     /**
