@@ -201,6 +201,7 @@ public class ArcRepositoryServerTester extends TestCase {
         file = new File(new File(BITARCHIVE_DIR, "filedir"),
                         STORABLE_FILES.get(0).toString());
         StoreMessage msg = new StoreMessage(Channels.getError(), file);
+        JMSConnectionMockupMQ.updateMsgID(msg, "store1");
 
         dummyServer.reset();
 
@@ -223,6 +224,7 @@ public class ArcRepositoryServerTester extends TestCase {
                         STORABLE_FILES.get(0).toString());
         ArcRepository arc = ArcRepository.getInstance();
         StoreMessage msg = new StoreMessage(Channels.getError(), file);
+        JMSConnectionMockupMQ.updateMsgID(msg, "store1");
 
         new ArcRepositoryServer(arc).visit(msg);
         assertTrue("Message should have been tagged OK", msg.isOk());

@@ -33,7 +33,6 @@ import javax.jms.ObjectMessage;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.security.Permission;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -43,7 +42,10 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -55,33 +57,24 @@ public class JMSConnectionTester extends TestCase {
     private SecurityManager originalSecurityManager;
 
     ReloadSettings rs = new ReloadSettings();
+    PreventSystemExit pse = new PreventSystemExit();
+    MockupJMS mj = new MockupJMS();
 
     /**
      * setUp() method for this testsuite.
      */
     public void setUp() {
         rs.setUp();
-        originalSecurityManager = System.getSecurityManager();
-        SecurityManager manager = new SecurityManager() {
-            public void checkPermission(Permission perm) {
-                if(perm.getName().equals("exitVM")) {
-                    throw new SecurityException("Thou shalt not exit in a unit test");
-                }
-            }
-        };
-        System.setSecurityManager(manager);
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
+        pse.setUp();
+        mj.setUp();
     }
 
     /**
      * tearDown() method for this testsuite.
      */
     public void tearDown() {
-        Settings.set(CommonSettings.JMS_BROKER_CLASS,
-                     "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
-        JMSConnectionFactory.getInstance().cleanup();
-        System.setSecurityManager(originalSecurityManager);
+        mj.tearDown();
+        pse.tearDown();
         rs.tearDown();
     }
 
@@ -386,7 +379,6 @@ public class JMSConnectionTester extends TestCase {
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         MessageListener listener = new MessageListener() {
             public void onMessage(Message message) {
-                //TODO: implement method
                 throw new NotImplementedException("Not implemented");
             }
             public String toString() {
@@ -437,16 +429,14 @@ public class JMSConnectionTester extends TestCase {
                 received.isOk());
 
 
-        // TODO: This seems to be an invalid assumption, at least for what we do
-        // in unit tests
-        // msg = new TestMessage(Channels.getTheRepos(),
-        //         Channels.getTheBamon(), "testMSG");
-        // try {
-        //     con.reply(msg);
-        //     fail("Shouldn't be able to reply to unsent message.");
-        // } catch (PermissionDenied e) {
-        //     // expected - msg has not been sent.
-        // }
+        msg = new TestMessage(Channels.getTheRepos(),
+                Channels.getTheBamon(), "testMSG");
+        try {
+            con.reply(msg);
+            fail("Shouldn't be able to reply to unsent message.");
+        } catch (PermissionDenied e) {
+            // expected - msg has not been sent.
+        }
 
         try {
             con.reply(null);

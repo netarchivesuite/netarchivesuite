@@ -25,6 +25,7 @@ package dk.netarkivet.common.distribute;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import java.util.Arrays;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.Queue;
@@ -66,27 +67,14 @@ public class JMSConnectionSunMQ extends JMSConnection {
         );
     }
 
-    /** The errorcode for failure of the JMSbroker to acknowledge a message. */
-    static final String PACKET_ACK_FAILED = "C4000";
-
-    /** The errorcode for failure to write to a JMS connection. */
-    static final String WRITE_PACKET_FAILED = "C4001";
-
-    /** The errorcode for failure to fread from a JMS connection. */
-    static final String READ_PACKET_FAILED = "C4002";
-
-    /**
-     * The errorcode signifying that the current session to the JMSbroker has
-     * been closed by the jmsbroker. One of the reasons: that the JMSbroker has
-     * been shutdown previously.
-     */
-    static final String SESSION_IS_CLOSED = "C4059";
-
-    /**
-     * The errorcode signifying that the JMSbroker has been shutdown. This
-     * errorcode is issued by the JMS-client.
-     */
-    static final String RECEIVED_GOODBYE_FROM_BROKER = "C4056";
+    public static final String[] RECONNECT_ERRORCODES = {
+            "C4000", //Packet acknowledgment failed
+            "C4001", //Write packet failed
+            "C4002", //Read packet failed
+            "C4056", //Received goodbye from broker
+            "C4059", //Session is closed
+            "C4063"  //Consumer is closed
+    };
 
     // NOTE: The constants defining setting names below are left non-final on
     // purpose! Otherwise, the static initialiser that loads default values
@@ -191,11 +179,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Exceptionhandler for the JMSConnection. Only handles exceptions, if
-     * reconnectInProgress is false. Only handles exceptions with errorcodes
-     * PACKET_ACK_FAILED, READ_PACKET_FAILED, WRITE_PACKET_FAILED,
-     * SESSION_IS_CLOSED, and RECEIVED_GOODBYE_FROM_BROKER.
-     * In all these cases, the connection is attempted reestablished.
+     * Exceptionhandler for the JMSConnection. Will try to reconnect on errors
+     * with error codes defined in the constant RECONNECT_ERRORCODES.
      *
      * @param e an JMSException
      */
@@ -205,18 +190,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
         log.warn("JMSException with errorcode '"
                  + errorcode + "' encountered: " + e);
 
-        // Try to re-establish connections to the jmsbroker only when errorcode
-        // matches one of:
-        // - PACKET_ACK_FAILED
-        // - READ_PACKET_FAILED
-        // - WRITE_PACKET_FAILED
-        // - SESSION_IS_CLOSED
-        // - RECEIVED_GOODBYE_FROM_BROKER
-        if (errorcode.equals(PACKET_ACK_FAILED)
-            || errorcode.equals(SESSION_IS_CLOSED)
-            || errorcode.equals(READ_PACKET_FAILED)
-            || errorcode.equals(WRITE_PACKET_FAILED)
-            || errorcode.equals(RECEIVED_GOODBYE_FROM_BROKER)) {
+        if (Arrays.asList(RECONNECT_ERRORCODES).contains(errorcode)) {
             synchronized (JMSConnectionSunMQ.class) {
                 reconnect();
             }

@@ -192,6 +192,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoteFile rf = RemoteFileFactory.getInstance(
                 testFile, false, false, true);
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
+        JMSConnectionMockupMQ.updateMsgID(msg, "upload1");
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
@@ -240,6 +241,7 @@ public class BitarchiveServerTester extends TestCase {
         RemoteFile rf = TestRemoteFile.getInstance(
                 testFile, false, false, true);
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
+        JMSConnectionMockupMQ.updateMsgID(msg, "upload1");
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
@@ -289,6 +291,7 @@ public class BitarchiveServerTester extends TestCase {
                 testFile, false, false, true);
         ((TestRemoteFile) rf).failsOnCopy = true;
         UploadMessage msg = new UploadMessage(anyBa, arcReposQ, rf);
+        JMSConnectionMockupMQ.updateMsgID(msg, "upload1");
 
         bas.visit(msg);
         conn.waitForConcurrentTasksToFinish();
@@ -586,6 +589,7 @@ public class BitarchiveServerTester extends TestCase {
                         dummyReplicaId,
                         checksum + "-NOT",
                         credentials);
+        JMSConnectionMockupMQ.updateMsgID(m2, "correct1");
         bas.visit(m2);
         assertTrue("File should exist after remove attempt with wrong checksum",
                 baFile.exists());
@@ -604,6 +608,7 @@ public class BitarchiveServerTester extends TestCase {
                         dummyReplicaId,
                         checksum,
                         credentials + "-NOT");
+        JMSConnectionMockupMQ.updateMsgID(m3, "correct3");
         bas.visit(m3);
         assertTrue("File should exist after remove attempt with wrong creds",
                 baFile.exists());
@@ -623,6 +628,8 @@ public class BitarchiveServerTester extends TestCase {
                         checksum,
                         credentials);
         long len = baFile.length();
+        JMSConnectionMockupMQ.updateMsgID(m4, "correct4");
+
         bas.visit(m4);
 
         MessageAsserts.assertMessageOk("Message should say OK", m4);

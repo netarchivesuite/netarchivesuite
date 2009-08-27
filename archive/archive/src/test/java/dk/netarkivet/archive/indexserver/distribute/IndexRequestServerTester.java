@@ -118,6 +118,7 @@ public class IndexRequestServerTester extends TestCase {
 
         IndexRequestMessage irMsg = new IndexRequestMessage(
                 RequestType.CDX, JOB_SET);
+        JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg1");
         GenericMessageListener listener = new GenericMessageListener();
         JMSConnectionMockupMQ conn
                 = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
@@ -141,6 +142,7 @@ public class IndexRequestServerTester extends TestCase {
         assertFalse("Should not be OK", msg.isOk());
 
         irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg2");
 
         server.visit(irMsg);
         conn.waitForConcurrentTasksToFinish();
@@ -159,6 +161,7 @@ public class IndexRequestServerTester extends TestCase {
         assertFalse("Should not be OK", msg.isOk());
 
         irMsg = new IndexRequestMessage(RequestType.DEDUP_CRAWL_LOG, JOB_SET);
+        JMSConnectionMockupMQ.updateMsgID(irMsg, "irMsg3");
 
     }
 

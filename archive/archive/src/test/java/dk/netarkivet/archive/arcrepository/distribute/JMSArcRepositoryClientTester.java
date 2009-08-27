@@ -507,7 +507,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }.start();
 
         synchronized (this) {
-            wait(3000);
+            wait(3200);
         }
 
         assertTrue("Store should have timed out and ended!", ok[0]);
@@ -589,8 +589,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
         public void onMessage(Message msg) {
             try {
                 BatchMessage bMsg = (BatchMessage) JMSConnection.unpack(msg);
-                conn.reply(
-                        new BatchReplyMessage(bMsg.getTo(), bMsg.getReplyTo(),
+                conn.send(
+                        new BatchReplyMessage(bMsg.getReplyTo(), bMsg.getTo(),
                                               bMsg.getID(), 42,
                                               new ArrayList<File>(),
                                               new NullRemoteFile()));

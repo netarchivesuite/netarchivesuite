@@ -59,6 +59,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -71,11 +74,15 @@ import dk.netarkivet.common.utils.batch.TestJob;
  * for testing.
  */
 public class JMSConnectionMockupMQ extends JMSConnection {
+    private static final Log log
+            = LogFactory.getLog(JMSConnectionMockupMQ.class); 
+
     /**
      * A set of threads where onMessage has been called. This object is notified
      * when all threads have finished executing.
      */
-    protected Set<Thread> concurrentTasksToComplete;
+    protected final Set<Thread> concurrentTasksToComplete
+            = Collections.synchronizedSet(new HashSet<Thread>());
     /**
      * A map from channelnames to destinations.
      */
@@ -103,7 +110,6 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
     protected void initConnection() {
         super.initConnection();
-        concurrentTasksToComplete = new HashSet<Thread>();
         destinations = new HashMap<String, TestDestination>();
     }
 
@@ -142,7 +148,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     public void cleanup() {
         super.cleanup();
         instance = null;
-        concurrentTasksToComplete = null;
+        concurrentTasksToComplete.clear();
         destinations = null;
     }
 
@@ -197,7 +203,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     /**
      * Returns a list of all MessageListeners listening to a particular channel
      *
-     * @param channel
+     * @param channel The channel
      * @return list of listeners
      */
     public List<MessageListener> getListeners(ChannelID channel) {
@@ -305,7 +311,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     protected static class TestSession implements Session {
         public ObjectMessage createObjectMessage(Serializable serializable)
                 throws JMSException {
-            return new TestObjectMessage((NetarkivetMessage) serializable);
+            return new TestObjectMessage(serializable);
         }
 
         public BytesMessage createBytesMessage() throws JMSException {
@@ -868,7 +874,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
 
         public String toString() {
             return "TestObjectMessage: "
-                   + serializable == null ? "null" : serializable.toString();
+                   + (serializable == null ? "null" : serializable.toString());
         }
 
     } // end WrappedMessage

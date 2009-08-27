@@ -653,7 +653,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         bms.visit(bem2);
         con.waitForConcurrentTasksToFinish();
         synchronized (this) {
-            wait(100);
+            wait(200);
         }
         bms.close();
 

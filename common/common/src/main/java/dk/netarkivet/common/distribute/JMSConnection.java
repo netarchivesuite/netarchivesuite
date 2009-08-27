@@ -34,9 +34,10 @@ import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,8 +59,7 @@ import dk.netarkivet.common.utils.TimeUtils;
  */
 public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     /** The log. */
-    protected static final Log log = LogFactory.getLog(JMSConnection.class
-            .getName());
+    private static final Log log = LogFactory.getLog(JMSConnection.class);
 
     /**
      * Separator used in the consumer key. Separates the ChannelName from the
@@ -77,28 +77,34 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * The Session handling messages sent to / received from the NetarchiveSuite
      * queues.
      */
-    protected Session myQSess;
+    protected Session queueSession;
 
     /**
      * The Session handling messages sent to / received from the NetarchiveSuite
      * topics.
      */
-    protected Session myTSess;
+    protected Session topicSession;
 
     /** Map for caching message producers. */
-    protected Map<String, MessageProducer> producers
-            = new HashMap<String, MessageProducer>();
+    protected final Map<String, MessageProducer> producers
+            = Collections.synchronizedMap(
+            new HashMap<String, MessageProducer>());
 
     /**
      * Map for caching message consumers (topic-subscribers and
      * queue-receivers).
      */
-    protected Map<String, MessageConsumer> consumers
-            = new HashMap<String, MessageConsumer>();
+    protected final Map<String, MessageConsumer> consumers
+            = Collections.synchronizedMap(
+            new HashMap<String, MessageConsumer>());
 
-    /** Semaphore for whether or not a reconnect is in progress. */
-    protected static final AtomicBoolean reconnectInProgress
-            = new AtomicBoolean(false);
+    /**
+     * Lock for the connection. Locked for read on adding/removing listeners and
+     * sending messages. Locked for write when connection, releasing and
+     * reconnecting.
+     */
+    protected final ReentrantReadWriteLock connectionLock
+            = new ReentrantReadWriteLock();
 
     /** Shutdown hook that closes the JMS connection. */
     protected Thread closeHook;
@@ -154,34 +160,39 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     protected void initConnection() throws IOFailure {
         log.debug("Initializing a JMS connection " + getClass().getName());
 
-        int tries = 0;
-        JMSException lastException = null;
-        boolean operationSuccessful = false;
-        while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            tries++;
-            try {
-                establishConnectionAndSessions();
-                operationSuccessful = true;
-            } catch (JMSException e) {
-                cleanup();
-                log.debug("Connect failed (try " + tries + ")", e);
-                lastException = e;
-                if (tries < JMS_MAXTRIES) {
-                    log.debug("Will sleep a while before trying to"
-                              + " connect again");
-                    TimeUtils.exponentialBackoffSleep(tries,
-                                                      Calendar.MINUTE);
+        connectionLock.writeLock().lock();
+        try {
+            int tries = 0;
+            JMSException lastException = null;
+            boolean operationSuccessful = false;
+            while (!operationSuccessful && tries < JMS_MAXTRIES) {
+                tries++;
+                try {
+                    establishConnectionAndSessions();
+                    operationSuccessful = true;
+                } catch (JMSException e) {
+                    cleanup();
+                    log.debug("Connect failed (try " + tries + ")", e);
+                    lastException = e;
+                    if (tries < JMS_MAXTRIES) {
+                        log.debug("Will sleep a while before trying to"
+                                  + " connect again");
+                        TimeUtils.exponentialBackoffSleep(tries,
+                                                          Calendar.MINUTE);
+                    }
                 }
             }
+            if (!operationSuccessful) {
+                log.warn("Could not initialize JMS connection "
+                         + getClass(), lastException);
+                throw new IOFailure("Could not initialize JMS connection "
+                                    + getClass(), lastException);
+            }
+            closeHook = new CleanupHook(this);
+            Runtime.getRuntime().addShutdownHook(closeHook);
+        } finally {
+            connectionLock.writeLock().unlock();
         }
-        if (!operationSuccessful) {
-            log.warn("Could not initialize JMS connection "
-                     + getClass(), lastException);
-            throw new IOFailure("Could not initialize JMS connection "
-                                + getClass(), lastException);
-        }
-        closeHook = new CleanupHook(this);
-        Runtime.getRuntime().addShutdownHook(closeHook);
     }
 
     /**
@@ -210,8 +221,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     public final void resend(NetarkivetMessage msg, ChannelID to) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         ArgumentNotValid.checkNotNull(to, "to");
-        log.trace("Resending message (" + msg.toString() + ") to " 
-                + to.getName());
+        log.trace("Resending message (" + msg.toString() + ") to "
+                  + to.getName());
         sendMessage(msg, to);
     }
 
@@ -227,15 +238,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     public final void reply(NetarkivetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        log.trace("Reply on message (" + msg.toString() + ") to " 
-                + msg.getReplyTo().getName());
-        // TODO The below is probably a faulty check: It assumes that you
-        // only use reply on sent messages, but sometimes we reply by using a
-        // new message, and still use the reply function (at least in unit
-        // tests) Commented for now.
-        // if (!msg.hasBeenSent()) {
-        //     throw new PermissionDenied("Message has not been sent yet");
-        // }
+        log.trace("Reply on message (" + msg.toString() + ") to "
+                  + msg.getReplyTo().getName());
+        if (!msg.hasBeenSent()) {
+            throw new PermissionDenied("Message has not been sent yet");
+        }
         sendMessage(msg, msg.getReplyTo());
     }
 
@@ -268,45 +275,37 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         removeListener(ml, mq.getName());
     }
 
-    /**
-     * Clean up. FIXME This method sets the producers and consumers
-     * datastructures to null without initializing them again elsewhere. This is
-     * problematic when cleanup() is called as part of the reconnection
-     * procedure
-     */
-    public synchronized void cleanup() {
-        log.info("Starting cleanup");
+    /** Clean up. */
+    public void cleanup() {
+        connectionLock.writeLock().lock();
         try {
-            if (closeHook != null) {
-                Runtime.getRuntime().removeShutdownHook(closeHook);
+            log.info("Starting cleanup");
+            try {
+                if (closeHook != null) {
+                    Runtime.getRuntime().removeShutdownHook(closeHook);
+                }
+            } catch (IllegalStateException e) {
+                //Okay, it just means we are already shutting down.
             }
-        } catch (IllegalStateException e) {
-            //Okay, it just means we are already shutting down.
-        }
-        closeHook = null;
-        waitUntilReconnectIsDone();
-        try {
-            // Close terminates all pending message received on the connection's
-            // sessions' consumers.
-            if (connection != null) { // close connection
-                connection.close();
-            }
-            connection = null;
-            // reset this to make sure anything that keeps an instance of this
-            // now invalid object doesn't have any invalid references to work
-            // with, and for garbage collection.
-            if (consumers != null) {
+            closeHook = null;
+            try {
+                // Close terminates all pending message received on the
+                // connection's sessions' consumers.
+                if (connection != null) { // close connection
+                    connection.close();
+                }
+                connection = null;
+                queueSession = null;
+                topicSession = null;
                 consumers.clear();
-            }
-            consumers = null;
-            if (producers != null) {
                 producers.clear();
+            } catch (JMSException e) {
+                throw new IOFailure("Error closing JMS Connection.", e);
             }
-            producers = null;
-        } catch (JMSException e) {
-            throw new IOFailure("Error closing JMS Connection.", e);
+            log.info("Cleanup finished");
+        } finally {
+            connectionLock.writeLock().unlock();
         }
-        log.info("Cleanup finished");
     }
 
     /**
@@ -333,7 +332,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         }
 
         NetarkivetMessage netMsg;
-        String classname = ""; // for error reporting purposes
+        String classname = "Unknown class"; // for error reporting purposes
         try {
             classname = objMsg.getObject().getClass().getName();
             netMsg = (NetarkivetMessage) objMsg.getObject();
@@ -370,7 +369,6 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
-            waitUntilReconnectIsDone();
             try {
                 doSend(nMsg, to);
                 operationSuccessful = true;
@@ -378,9 +376,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 log.debug("Send failed (try " + tries + ")", e);
                 lastException = e;
                 if (tries < JMS_MAXTRIES) {
-                    log.debug("Will sleep a while before trying to"
-                              + " send again");
-                    //TODO Is it reasonable to reconnect here? 
+                    log.debug("Will sleep a while before trying to send again");
+                    onException(e);
                     TimeUtils.exponentialBackoffSleep(tries,
                                                       Calendar.MINUTE);
                 }
@@ -397,15 +394,18 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * the process of reconnecting.
      */
     protected void reconnect() {
+        if (!connectionLock.writeLock().tryLock()) {
+            log.debug("Reconnection already in progress. Do nothing");
+            return;
+        }
         try {
-            if (!reconnectInProgress.compareAndSet(false, true)) {
-                log.debug("Reconnection already in progress. Do nothing");
-                return;
-            }
             log.info("Trying to reconnect to jmsbroker");
 
-            Map<String, MessageConsumer> savedConsumers
-                    = new HashMap<String, MessageConsumer>(consumers);
+            Map<String, MessageConsumer> savedConsumers;
+            synchronized (consumers) {
+                savedConsumers = new HashMap<String, MessageConsumer>(
+                        consumers);
+            }
 
             boolean operationSuccessful = false;
             JMSException lastException = null;
@@ -433,7 +433,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             }
         } finally {
             // Tell everybody, that we are not trying to reconnect any longer
-            reconnectInProgress.compareAndSet(true, false);
+            connectionLock.writeLock().unlock();
         }
     }
 
@@ -448,12 +448,6 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws JMSException If a new producer cannot be created.
      */
     private MessageProducer getProducer(String queueName) throws JMSException {
-        // FIXME Added null check that may not be needed here. This prevents
-        // an NPE when accessing getProducer() after calling cleanup()
-        if (producers == null) {
-            producers = new HashMap<String, MessageProducer>();
-        }
-
         // Check if producer is in cache
         // If it is not, it is created and stored in cache:
         MessageProducer producer = producers.get(queueName);
@@ -470,7 +464,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * message listener.
      *
      * @param channelName The name of the channel
-     * @param ml The message listener to add as listener to the channel
+     * @param ml          The message listener to add as listener to the
+     *                    channel
      *
      * @return The producer for that channel. A new one is created, if none
      *         exists.
@@ -480,31 +475,24 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     private MessageConsumer getConsumer(String channelName, MessageListener ml)
             throws JMSException {
         String key = getConsumerKey(channelName, ml);
-        // FIXME Added null check that may not be needed.
-        // Currently avoid NPE that may occur if calling getConsumer() after 
-        // having called cleanup(). 
-        synchronized (consumers) {
-            if (consumers == null) {
-                consumers = new HashMap<String, MessageConsumer>();
-            }
-            MessageConsumer consumer = consumers.get(key);
-            if (consumer == null) {
-                consumer = getSessionForDestination(channelName)
-                        .createConsumer(getDestination(channelName));
-                consumers.put(key, consumer);
-            }
-            return consumer;
+        MessageConsumer consumer = consumers.get(key);
+        if (consumer == null) {
+            consumer = getSessionForDestination(channelName)
+                    .createConsumer(getDestination(channelName));
+            consumers.put(key, consumer);
         }
+        return consumer;
     }
-    
+
     /**
-     * Helper method that converts a NetarkivetMessage to an
-     * ObjectMessage for a specific channel.
-     * 
-     * @param channel the channel to be used for transmitting
-     * the message.
-     * @param nMsg a NetarkivetMessage
+     * Helper method that converts a NetarkivetMessage to an ObjectMessage for a
+     * specific channel.
+     *
+     * @param channel the channel to be used for transmitting the message.
+     * @param nMsg    a NetarkivetMessage
+     *
      * @return An ObjectMessage that includes a NetarkivetMessage
+     *
      * @throws JMSException If unable to create the needed ObjectMessage
      */
     private ObjectMessage getObjectMessage(ChannelID channel,
@@ -515,19 +503,20 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 channel.getName()).createObjectMessage(nMsg);
         return objectMessage;
     }
-    
+
     /**
-     * Helper method that returns the appropiate JMS Session
-     * for the specificed channel.
+     * Helper method that returns the appropiate JMS Session for the specificed
+     * channel.
+     *
      * @param channelName A name of the channel
-     * @return The appropiate JMS Session
-     * for the specificed channel.
+     *
+     * @return The appropiate JMS Session for the specificed channel.
      */
     private Session getSessionForDestination(String channelName) {
         if (Channels.isTopic(channelName)) {
-            return myTSess;
+            return topicSession;
         } else {
-            return myQSess;
+            return queueSession;
         }
     }
 
@@ -567,8 +556,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     private void establishConnectionAndSessions() throws JMSException {
         // Establish a queue connection and a session
         connection = getConnectionFactory().createConnection();
-        myQSess = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        myTSess = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        queueSession = connection.createSession(false,
+                                                Session.AUTO_ACKNOWLEDGE);
+        topicSession = connection.createSession(false,
+                                                Session.AUTO_ACKNOWLEDGE);
         connection.setExceptionListener(this);
         connection.start();
     }
@@ -584,12 +575,17 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     private void doSend(NetarkivetMessage msg, ChannelID to)
             throws JMSException {
-        ObjectMessage message = getObjectMessage(to, msg);
-        synchronized (msg) {
-            getProducer(to.getName()).send(message);
-            // Note: Id is only updated if the message does not already have an
-            // id. This ensures that resent messages keep the same ID
-            msg.updateId(message.getJMSMessageID());
+        connectionLock.readLock().lock();
+        try {
+            ObjectMessage message = getObjectMessage(to, msg);
+            synchronized (msg) {
+                getProducer(to.getName()).send(message);
+                // Note: Id is only updated if the message does not already have
+                // an id. This ensures that resent messages keep the same ID
+                msg.updateId(message.getJMSMessageID());
+            }
+        } finally {
+            connectionLock.readLock().unlock();
         }
         log.trace("Sent message '" + msg.toString() + "'");
     }
@@ -613,16 +609,21 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         JMSException lastException = null;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
-            waitUntilReconnectIsDone();
             try {
-                getConsumer(channelName, ml).setMessageListener(ml);
+                connectionLock.readLock().lock();
+                try {
+                    getConsumer(channelName, ml).setMessageListener(ml);
+                } finally {
+                    connectionLock.readLock().unlock();
+                }
                 operationSuccessful = true;
             } catch (JMSException e) {
                 lastException = e;
                 log.debug("Set listener failed (try " + tries + ")", e);
                 if (tries < JMS_MAXTRIES) {
-                    log.debug("Will sleep a while before trying to"
-                              + " set listener again");
+                    log.debug("Will sleep a while before trying to set listener"
+                              + " again");
+                    onException(e);
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
@@ -633,10 +634,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             throw new IOFailure(errMsg, lastException);
         }
     }
-    
+
     /**
-     * Remove a messagelistener from a channel (a queue or a topic).  
-     * @param ml A specific MessageListener
+     * Remove a messagelistener from a channel (a queue or a topic).
+     *
+     * @param ml          A specific MessageListener
      * @param channelName a channelname
      */
     private void removeListener(MessageListener ml, String channelName) {
@@ -648,34 +650,30 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
         log.info("Removing listener from channel '" + channelName + "'");
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
-            waitUntilReconnectIsDone();
             try {
                 tries++;
-                MessageConsumer messageConsumer = getConsumer(channelName, ml);
-                messageConsumer.close();
-                consumers.remove(getConsumerKey(channelName, ml));
+                connectionLock.readLock().lock();
+                try {
+                    MessageConsumer messageConsumer = getConsumer(channelName,
+                                                                  ml);
+                    messageConsumer.close();
+                    consumers.remove(getConsumerKey(channelName, ml));
+                } finally {
+                    connectionLock.readLock().unlock();
+                }
                 operationSuccessful = true;
             } catch (JMSException e) {
                 lastException = e;
-                log.warn(errMsg, e);
-                // Wait sometime before trying again
+                log.debug("Remove  listener failed (try " + tries + ")", e);
+                log.debug("Will and sleep a while before trying to remove"
+                          + " listener again");
+                onException(e);
                 TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
             }
         }
         if (!operationSuccessful) {
+            log.warn(errMsg, lastException);
             throw new IOFailure(errMsg, lastException);
-        }
-    }
-
-    /**
-     * Wait until the reconnection process is finished. Intervals of one minute
-     * are waited before checking the status of the reconnection.
-     */
-    private void waitUntilReconnectIsDone() {
-        while (reconnectInProgress.get()) {
-            // Wait one minute before checking if reconnection is finished
-            log.debug("Waiting one minute to let the reconnect process finish");
-            TimeUtils.exponentialBackoffSleep(1, Calendar.MINUTE);
         }
     }
 
@@ -683,7 +681,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Reconnect to JMSBroker and reestablish sessions. Resets senders and
      * publishers.
      *
-     * @param savedConsumers Listeners to readd after reestablishing connection.
+     * @param savedConsumers Listeners to readd after reestablishing
+     *                       connection.
      *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
      *                      reestablish sesssions

@@ -134,9 +134,10 @@ public class BatchReplyMessage extends ArchiveMessage {
      * @return a string
      */
     public String toString() {
-        return "\nBatchReplyMessage for batch job " + replyOfId
+        return "BatchReplyMessage for batch job " + replyOfId
                 + "\nFilesProcessed = " + noOfFilesProcessed
-                + "\nFilesFailed = " + filesFailed.size()
+                + "\nFilesFailed = "
+                + (filesFailed == null ? "null" : filesFailed.size())
                 + "\n" + super.toString();
     }
 
