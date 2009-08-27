@@ -200,7 +200,6 @@ public class HarvestScheduler implements CleanupIF {
                     Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME) * 1000;
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
-            
             if (new Date().after(endTime)) {
                 final String msg = " Job " + id
                          + " has exceeded its timeout of " +
