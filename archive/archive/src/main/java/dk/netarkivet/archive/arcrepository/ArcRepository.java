@@ -270,7 +270,6 @@ public class ArcRepository implements CleanupIF {
             log.info("File: '" + filename + "' was outstanding from the start.");
         }
         outstandingRemoteFiles.put(filename, rf);
-
         
         if (ad.hasEntry(filename)) {
             // Any valid entry (and all existing entries are now
@@ -760,6 +759,8 @@ public class ArcRepository implements CleanupIF {
             ad.setState(arcfileName, repChannelName,
                     BitArchiveStoreState.UPLOAD_FAILED);
         }
+        
+        considerReplyingOnStore(arcfileName);
         
         log.debug("Finished processing of GetChecksumMessage.");
     }
