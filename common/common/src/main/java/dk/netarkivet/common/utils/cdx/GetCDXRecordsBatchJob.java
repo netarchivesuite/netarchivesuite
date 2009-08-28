@@ -45,18 +45,27 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
     private final Pattern URLMatcher;
     private final Pattern mimeMatcher;
 
-
-
+    /**
+     * TODO: JavaDoc
+     */
     public GetCDXRecordsBatchJob() {
         URLMatcher = Pattern.compile(".*");
         mimeMatcher = Pattern.compile("application/x-cdx");
+        /**
+        * Two week in miliseconds.
+        */
+        long batchJobTimeout = 14*24*60*60*1000;        
     }
 
-
-
+    /**
+     * TODO: JavaDoc
+     */
     public void initialize(OutputStream os) {
     }
 
+    /**
+     * TODO: JavaDoc
+     */
     public void processRecord(ARCRecord sar, OutputStream os) {
         if (URLMatcher.matcher(sar.getMetaData().getUrl()).matches()
             && mimeMatcher.matcher(sar.getMetaData().getMimetype()).matches()) {
@@ -82,6 +91,9 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
         }
     }
 
+    /**
+     * TODO: JavaDoc
+     */
     public void finish(OutputStream os) {
     }
 }

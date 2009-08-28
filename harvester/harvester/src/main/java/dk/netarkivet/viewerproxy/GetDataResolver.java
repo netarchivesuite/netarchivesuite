@@ -266,6 +266,14 @@ public class GetDataResolver extends CommandResolver {
      */
     private static class GetFileBatchJob extends FileBatchJob
             implements Serializable {
+
+        public GetFileBatchJob() {
+            /**
+            * Ten minutes in miliseconds.
+            */
+            batchJobTimeout = 10*60*1000;
+        }
+        
         /** Does nothing. */
         public void initialize(OutputStream os) {
         }

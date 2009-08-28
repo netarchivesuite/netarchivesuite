@@ -57,6 +57,11 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      */
     public HarvestedUrlsForDomainBatchJob(String domain) {
         this.domain = domain;
+
+        /**
+        * Two week in miliseconds.
+        */
+        batchJobTimeout = 14*24*60*60*1000;
     }
 
     /**

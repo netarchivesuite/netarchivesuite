@@ -52,6 +52,16 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
     private ARCRecordToSearchResultAdapter aToSAdapter;
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
+    public ExtractWaybackCDXBatchJob() {
+        /**
+        * One day in miliseconds.
+        */
+        batchJobTimeout = 24*60*60*1000;
+    }
+
+    /**
+     * TODO: JavaDoc
+     */
     public void initialize(OutputStream os) {
         aToSAdapter = new ARCRecordToSearchResultAdapter();
         UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
@@ -59,6 +69,9 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
         srToCDXAdapter = new  SearchResultToCDXLineAdapter();
     }
 
+    /**
+     * TODO: JavaDoc
+     */
     public void processRecord(ARCRecord record, OutputStream os) {
        CaptureSearchResult csr = null;
         try {
@@ -79,6 +92,9 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
 
     }
 
+    /**
+     * TODO: JavaDoc
+     */
     public void finish(OutputStream os) {
         //No cleanup required
     }

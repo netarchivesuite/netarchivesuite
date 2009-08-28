@@ -48,12 +48,18 @@ public class FileListJob extends FileBatchJob {
      */
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
+
+    public FileListJob() {
+        /**
+        *  One hour in miliseconds.
+        */
+        batchJobTimeout = 60*60*1000;
+    }
     /**
      * Initializes fields in this class.
      * @param os the OutputStream to which data is to be written
      */
     public void initialize(OutputStream os) {
-
     }
 
     /**

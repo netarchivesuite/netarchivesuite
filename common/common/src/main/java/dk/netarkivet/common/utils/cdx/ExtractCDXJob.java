@@ -22,11 +22,6 @@
 */
 package dk.netarkivet.common.utils.cdx;
 
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.utils.batch.ARCBatchFilter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +31,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.io.arc.ARCRecord;
+
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.utils.batch.ARCBatchFilter;
 
 
 /** Batch job that extracts information to create a CDX file.
@@ -68,7 +68,12 @@ public class ExtractCDXJob extends ARCBatchJob {
      * Logger for this class.
      */
     private final Log log = LogFactory.getLog(getClass().getName());
-    
+
+    /**
+     * two weeks in miliseconds.
+     */
+    protected long batchJobTimeout = 14*24*60*60*1000;
+
     /**
      * Constructs a new job for extracting CDX indexes.
      * @param includeChecksum If true, an MD5 checksum is also
@@ -78,6 +83,10 @@ public class ExtractCDXJob extends ARCBatchJob {
         this.fields = includeChecksum ? STD_FIELDS_INCL_CHECKSUM
                                       : STD_FIELDS_EXCL_CHECKSUM;
         this.includeChecksum = includeChecksum;
+        /**
+        * One week in miliseconds.
+        */
+        batchJobTimeout = 7*24*60*60*1000;
     }
 
     /**

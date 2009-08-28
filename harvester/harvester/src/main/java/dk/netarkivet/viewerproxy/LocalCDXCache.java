@@ -197,9 +197,25 @@ public class LocalCDXCache implements JobIndexCache {
     /** A batch job that extracts exactly the index parts of metadata files.
      */
     private static class CDXCacheBatchJob extends ARCBatchJob {
+        /**
+         * Constructor for CDXCacheBatchJob
+         */
+        public CDXCacheBatchJob() {
+            /**
+            * One week in miliseconds.
+            */
+            batchJobTimeout = 7*24*60*60*1000;
+        }
+
+        /**
+        * TODO: JavaDoc
+        */
         public void initialize(OutputStream os) {
         }
 
+        /**
+        * TODO: JavaDoc
+        */
         public void processRecord(ARCRecord record,
                                   OutputStream os) {
             if (record.getMetaData().getMimetype()
@@ -216,6 +232,9 @@ public class LocalCDXCache implements JobIndexCache {
             }
         }
 
+        /**
+        * TODO: JavaDoc
+        */
         public void finish(OutputStream os) {
         }
     }

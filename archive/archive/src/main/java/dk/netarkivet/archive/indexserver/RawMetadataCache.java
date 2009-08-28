@@ -162,6 +162,10 @@ public class RawMetadataCache extends FileBasedCache<Long>
         public GetMetadataARCBatchJob(Pattern URLMatcher, Pattern mimeMatcher) {
             this.URLMatcher = URLMatcher;
             this.mimeMatcher = mimeMatcher;
+            /**
+            * one week in miliseconds.
+            */
+            batchJobTimeout = 7*24*60*60*1000;
         }
 
         /**
