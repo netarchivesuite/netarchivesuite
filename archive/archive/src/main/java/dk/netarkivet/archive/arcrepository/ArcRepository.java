@@ -717,8 +717,7 @@ public class ArcRepository implements CleanupIF {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
         log.debug("Received the reply to a GetChecksumMessage with ID: '" 
-                + msg.getID() + "'. The outstanding IDs are: "
-                + outstandingChecksumFiles.keySet().toString());
+                + msg.getID() + "'");
         
         // handle the case when unwanted reply.
         if(!outstandingChecksumFiles.containsKey(msg.getID())) {
@@ -736,10 +735,9 @@ public class ArcRepository implements CleanupIF {
         if (!msg.isOk()) {
             //Checksum job has ended with errors, but can contain checksum 
             //anyway, therefore it is logged - but we try to go on 
-            log.warn("Message '" + msg.getID()
-                            + "' is reported not okay"
-                            + "\nReported error: '" + msg.getErrMsg() + "'"
-                            + "\nTrying to process anyway.");
+            log.warn("Message '" + msg.getID() + "' is reported not okay"
+                    + "\nReported error: '" + msg.getErrMsg() + "'"
+                    + "\nTrying to process anyway.");
         }        
         
         String orgChecksum = ad.getCheckSum(arcfileName);
@@ -747,13 +745,13 @@ public class ArcRepository implements CleanupIF {
         String reportedChecksum = msg.getChecksum();
         
         // Validate the checksum and set the upload state in admin.data. 
-        if (orgChecksum.equals(reportedChecksum) 
-             && !reportedChecksum.isEmpty() ) {
+        if (reportedChecksum != null && !reportedChecksum.isEmpty()
+                && orgChecksum.equals(reportedChecksum)) {
             
             // Checksum is valid and job matches expected results
             ad.setState(arcfileName, repChannelName,
                     BitArchiveStoreState.UPLOAD_COMPLETED);
-        }  else {
+        } else {
             // Handle the case when the checksum is invalid.
             log.warn("The arcfile '" + arcfileName + "' has a bad checksum. "
                     + "Should have seen '" + orgChecksum + "', but saw '"
@@ -762,9 +760,8 @@ public class ArcRepository implements CleanupIF {
                     BitArchiveStoreState.UPLOAD_FAILED);
         }
         
+        // reply if upload is finished.
         considerReplyingOnStore(arcfileName);
-        
-        log.debug("Finished processing of GetChecksumMessage.");
     }
 
     /**
