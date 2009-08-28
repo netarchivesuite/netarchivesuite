@@ -24,21 +24,20 @@
 package dk.netarkivet.harvester.datamodel;
 
 /**
- * Number related utilities
+ * Number related utilities.
  *
  */
-
 public class NumberUtils {
     /**
      * Return the smallest value of two given positive longs, with the addition
-     * that -1 means infinity
+     * that -1 means infinity.
      * @param l1 The first value
      * @param l2 The second value
      * @return Smallest value
      */
     public static long minInf(long l1, long l2) {
-        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY &&
-            l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
+        if (l1 != Constants.HERITRIX_MAXBYTES_INFINITY 
+                && l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
             return Math.min(l1, l2);
         } else if (l2 != Constants.HERITRIX_MAXBYTES_INFINITY) {
             return l2;
@@ -48,8 +47,8 @@ public class NumberUtils {
     }
 
     /**
-     * compare two given positive longs, with the addition that
-     * -1 means infinity
+     * Compare two given positive longs, with the addition that
+     * -1 means infinity.
      * @param l1 The first value
      * @param l2 The second value
      * @return -1 if first value is smallest, 0 if equal, 1 if second value is
@@ -59,6 +58,6 @@ public class NumberUtils {
         if (l1 == l2) {
             return 0;
         }
-        return minInf(l1,l2) == l1 ? -1 : 1;
+        return minInf(l1, l2) == l1 ? -1 : 1;
     }
 }
