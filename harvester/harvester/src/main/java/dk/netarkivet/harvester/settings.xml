@@ -77,6 +77,9 @@
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
             </heritrixController>
+            <deduplication>
+                <enabled>true</enabled>
+            </deduplication>
         </harvesting>
     </harvester>
 </settings>

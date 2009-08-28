@@ -268,8 +268,8 @@ public class HarvesterSettings {
      * Additional JVM options for the Heritrix sub-process. 
      * By default there is no additional JVM option. 
      */
-    public static String HERITRIX_JVM_OPTS= 
-    	"settings.harvester.harvesting.heritrix.javaOpts";
+    public static String HERITRIX_JVM_OPTS = 
+        "settings.harvester.harvesting.heritrix.javaOpts";
 
     /**
      * <b>settings.harvester.harvesting.heritrixControllerClass</b>:<br/>
@@ -277,6 +277,14 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_CONTROLLER_CLASS =
             "settings.harvester.harvesting.heritrixController.class";
+ 
+    /**
+     * <b>settings.harvester.harvesting.deduplication.enabled</b>:<br/>
+     * This setting tells the system whether or not to use deduplication.
+     * This setting is true by default.
+     */
+    public static String DEDUPLICATION_ENABLED =
+        "settings.harvester.harvesting.deduplication.enabled";
 
 }
 

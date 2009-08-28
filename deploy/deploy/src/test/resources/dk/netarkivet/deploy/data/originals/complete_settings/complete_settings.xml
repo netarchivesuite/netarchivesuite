@@ -18,8 +18,16 @@
             <batchMessageTimeout>1209600000</batchMessageTimeout>
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
+        <checksum>
+            <filename>checksum.md5</filename>
+        </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
+            <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
+            <database>
+                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+                <url>jdbc:derby:bitpreservationdb</url>
+            </database>
         </bitpreservation>
     </archive>
 <common>
@@ -462,6 +470,9 @@
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
             </heritrixController>
+            <deduplication>
+                <enabled>true</enabled>
+            </deduplication>
         </harvesting>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
