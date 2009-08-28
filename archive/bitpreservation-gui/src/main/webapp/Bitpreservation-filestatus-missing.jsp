@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@ page import="
 dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
+dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory,
 dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
 dk.netarkivet.archive.webinterface.BitpreserveFileState,
