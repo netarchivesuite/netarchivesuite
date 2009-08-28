@@ -48,4 +48,5 @@ public class TestInfo {
     static String baAppId = "bitArchiveApp_1";
 
     static ChannelID QUEUE_1 = Channels.getAnyBa();
+    static final long BITARCHIVE_BATCH_JOB_TIMEOUT = 14*24*60*60*1000;
 }
