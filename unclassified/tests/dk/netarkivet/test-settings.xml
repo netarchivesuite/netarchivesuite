@@ -54,16 +54,21 @@
             <replica>
                 <replicaId>ONE</replicaId>
                 <replicaType>bitarchive</replicaType>
-                <replicaName>ReplicaOne</replicaName>                
+                <replicaName>BarOne</replicaName>                
             </replica>
             <replica>
                 <replicaId>TWO</replicaId>
                 <replicaType>bitarchive</replicaType>
-                <replicaName>ReplicaTwo</replicaName>                
+                <replicaName>BarTwo</replicaName>                
+            </replica>
+            <replica>
+                <replicaId>THREE</replicaId>
+                <replicaType>checksum</replicaType>
+                <replicaName>CsOne</replicaName>
             </replica>
         </replicas>
         <!-- Default bit archive to use for e.g. batch jobs (if none is specified) -->
-        <useReplicaId>TWO</useReplicaId>
+        <useReplicaId>ONE</useReplicaId>
         <!--  Remove the following setting when the code is updated to 
            use the setting common.replicas.useReplicaId instead of common.useReplicaId  
         -->
