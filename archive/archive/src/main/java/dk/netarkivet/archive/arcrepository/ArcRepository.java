@@ -378,7 +378,8 @@ public class ArcRepository implements CleanupIF {
         }
 
         outstandingChecksumFiles.put(msg.getID(), filename);
-        log.debug("Checksum job submitted for: '" + filename + "'");
+        log.debug("Checksum job submitted for: '" + filename 
+                + "', with message id: '" + msg.getID() + "'");
     }
 
     /**
@@ -715,8 +716,9 @@ public class ArcRepository implements CleanupIF {
     public void onChecksumReply(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        log.debug("Received the GetChecksumMessage, which should be a reply: "
-                + msg.toString());
+        log.debug("Received the reply to a GetChecksumMessage with ID: '" 
+                + msg.getID() + "'. The outstanding IDs are: "
+                + outstandingChecksumFiles.keySet().toString());
         
         // handle the case when unwanted reply.
         if(!outstandingChecksumFiles.containsKey(msg.getID())) {
@@ -741,7 +743,7 @@ public class ArcRepository implements CleanupIF {
         }        
         
         String orgChecksum = ad.getCheckSum(arcfileName);
-        String repChannelName = resolveReplicaChannel(msg.getReplyTo().getName());
+        String repChannelName = resolveReplicaChannel(msg.getTo().getName());
         String reportedChecksum = msg.getChecksum();
         
         // Validate the checksum and set the upload state in admin.data. 
