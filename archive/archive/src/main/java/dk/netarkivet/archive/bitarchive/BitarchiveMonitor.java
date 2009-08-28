@@ -77,15 +77,6 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      */
     private final long acceptableSignOfLifeDelay;
 
-    /**
-     * The timeout for batch jobs in milliseconds.
-     */
-    private final long batchTimeout;
-
-    /**
-     * The timer that handles timeout tasks for batch jobs.
-     */
-    private final Timer timer = new Timer(true);
 
     /**
      * Map from the ID of batch jobs sent to bitarchives, to tuple class of
@@ -108,12 +99,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     public BitarchiveMonitor() {
         acceptableSignOfLifeDelay = Settings.getLong(
                 ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
-        batchTimeout = Settings.getLong(
-                ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
         log.info("Bitarchive liveness times out after "
-                 + acceptableSignOfLifeDelay + " milliseconds."
-                 + "Batchjobs time out after " + batchTimeout
-                 + " milliseconds.");
+                 + acceptableSignOfLifeDelay + " milliseconds.");
+                 //+ "Batchjobs time out after " + defaultBatchTimeout
+                 //+ " milliseconds.");
     }
 
     /**
@@ -144,19 +133,22 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param requestReplyTo    The replyTo channel of the batch request.
      * @param bitarchiveBatchID The ID of the batch job sent on to the bit
      *                          archives.
+     * @param timeout           Timeout of specific batch job.
      * @throws ArgumentNotValid If any argument is null, or either string is
      *                          empty.
      */
     public void registerBatch(String requestID, ChannelID requestReplyTo,
-                      String bitarchiveBatchID) {
+                      String bitarchiveBatchID, long timeout) {
         ArgumentNotValid.checkNotNullOrEmpty(requestID, "String requestID");
         ArgumentNotValid.checkNotNull(requestReplyTo,
                                       "ChannelID requestReplyTo");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
                                              "String bitarchiveBatchID");
+        log.info("Registered Batch job from " + requestID + " with timeout "
+                 + timeout);
         BatchJobStatus bjs = new BatchJobStatus(
                 requestID, requestReplyTo, bitarchiveBatchID,
-                getRunningBitarchiveIDs()
+                getRunningBitarchiveIDs(), timeout
         );
         runningBatchJobs.put(bitarchiveBatchID, bjs);
     }
@@ -280,6 +272,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * the original requester of the batchjob.
      */
     public class BatchJobStatus {
+
         /**
          * The timer task that handles timeout of this batch job.
          */
@@ -330,6 +323,11 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public final List<FileBatchJob.ExceptionOccurrence> exceptions;
 
         /**
+         * The timeout for batch jobs in milliseconds.
+        */
+        private long batchTimeout;
+
+        /**
          * Initialise the status on a fresh batch request. Apart from the given
          * values, a file is created to store batch results in.
          *
@@ -340,18 +338,21 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * @param missingRespondents     List of all live bitarchives, used to
          *                               know which bitarchives to await reply
          *                               from.
+         * @param timeout                Timeout for Batch job
          * @throws IOFailure if a file for batch results cannot be made.
          */
         private BatchJobStatus(
                 String originalRequestID, ChannelID originalRequestReplyTo,
                 String bitarchiveBatchID,
-                Set<String> missingRespondents) {
+                Set<String> missingRespondents, long timeout) {
             this.originalRequestID = originalRequestID;
             this.originalRequestReplyTo = originalRequestReplyTo;
             this.bitarchiveBatchID = bitarchiveBatchID;
             this.missingRespondents = missingRespondents;
             batchTimeoutTask
                     = new BatchTimeoutTask(bitarchiveBatchID);
+            batchTimeout = timeout;
+            Timer timer = new Timer(true);
             timer.schedule(batchTimeoutTask, batchTimeout);
             this.noOfFilesProcessed = 0;
             try {

@@ -45,7 +45,7 @@ import dk.netarkivet.common.utils.StringUtils;
  * handled by finish().
  */
 public abstract class FileBatchJob implements Serializable {
-    
+
     /** The class log. */
     private static Log log = LogFactory.getLog(FileBatchJob.class.getName());
     
@@ -63,7 +63,13 @@ public abstract class FileBatchJob implements Serializable {
      * generated errors).
      */
     protected int noOfFilesProcessed = 0;
-    
+
+    /**
+     * If positiv it is the timeout of specific Batch Job in miliseconds. If
+     * numbers is negative we use standard timeout from settings. 
+     */
+    protected long batchJobTimeout = -1;
+
     /** A Set of files which generated errors. */
     protected Set<File> filesFailed = new HashSet<File>();
     
@@ -257,6 +263,14 @@ public abstract class FileBatchJob implements Serializable {
                     + "outputOffset = " + outputOffset + ", exception: ",
                     e);
         }
+    }
+
+    /**
+     * Getter for batchJobTimeout.
+     * @return timeout in miliseconds.
+     */
+    public long getBatchJobTimeout() {
+        return batchJobTimeout;
     }
 
     /** Returns true if we have already recorded the maximum number of

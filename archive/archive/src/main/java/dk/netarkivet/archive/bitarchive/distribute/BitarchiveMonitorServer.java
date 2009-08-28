@@ -28,6 +28,7 @@ import java.util.Observer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
@@ -125,8 +126,12 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                                      Settings.get(
                                              CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
+            long batchTimeout = inbMsg.getJob().getBatchJobTimeout();
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
-                        outbMsg.getID());
+                        outbMsg.getID(),
+                        batchTimeout > 0 ? batchTimeout : Settings.getLong(
+                ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT)
+            );
         } catch (Exception e) {
             log.warn("Trouble while handling batch request '" + inbMsg + "'",
                      e);
