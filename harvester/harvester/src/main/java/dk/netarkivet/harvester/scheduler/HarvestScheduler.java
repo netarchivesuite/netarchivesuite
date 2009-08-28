@@ -213,7 +213,7 @@ public class HarvestScheduler implements CleanupIF {
                 stoppedJobs++;
             }
         }
-        if(stoppedJobs > 0 ) {
+        if(stoppedJobs > 0) {
             log.warn("Changed " + stoppedJobs + " jobs from STARTED to FAILED");
         }
     }
@@ -227,7 +227,7 @@ public class HarvestScheduler implements CleanupIF {
                 log.debug("Previous scheduleJobs not finished, "
                                + "skipping new one.");
                 return;
-            }                                                                                                                
+            }
             running = true;
         }
 
