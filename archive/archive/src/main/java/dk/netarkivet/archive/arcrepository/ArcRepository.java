@@ -728,7 +728,7 @@ public class ArcRepository implements CleanupIF {
         }
         
         String arcfileName = outstandingChecksumFiles.remove(
-                msg.getReplyOfId());
+                msg.getID());
         
         // Check incoming message
         if (!msg.isOk()) {
