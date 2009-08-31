@@ -49,22 +49,15 @@ import dk.netarkivet.common.utils.SystemUtils;
  * generated with the domain given in constructor, and fields from the Hashtable
  * nameProperties. It is prefilled with values common for all MBeans, but it is
  * expected to be extended after the object is created with additional info.
- *
  */
 
 public class SingleMBeanObject<I> {
-    /**
-     * Properties for the ObjectName name.
-     */
+    /** Properties for the ObjectName name. */
     private Hashtable<String, String> nameProperties
             = new Hashtable<String, String>();
-    /**
-     * The domain for this SingleMBeanObject.
-     */
+    /** The domain for this SingleMBeanObject. */
     private String domain;
-    /**
-     * The object to expose as an MBean.
-     */
+    /** The object to expose as an MBean. */
     private I exposedObject;
     /**
      * The interface, this SingleMBeanObject should expose on the given
@@ -76,12 +69,10 @@ public class SingleMBeanObject<I> {
      * MBeanServer.
      */
     private ObjectName name;
-    /**
-     * MBeanServer to register mbeans in.
-     */
+    /** MBeanServer to register mbeans in. */
     private final MBeanServer mBeanServer;
 
-    /** Initialise the log for this class.*/
+    /** Initialise the log for this class. */
     private static Log log = LogFactory.getLog(SingleMBeanObject.class
             .getName());
 
@@ -99,9 +90,10 @@ public class SingleMBeanObject<I> {
      * however, register the MBean.
      *
      * @param domain      The domain of the MBean.
-     * @param object           The object to expose as an MBean.
+     * @param object      The object to expose as an MBean.
      * @param asInterface The interface this MBean is exposed as.
      * @param mBeanServer The server to register the mbean in.
+     *
      * @throws ArgumentNotValid If domain is null or empty, or any other
      *                          argument is null.
      */
@@ -114,18 +106,19 @@ public class SingleMBeanObject<I> {
         this.domain = domain;
         this.asInterface = asInterface;
         this.exposedObject = object;
-        
+
         nameProperties.put(Constants.PRIORITY_KEY_LOCATION,
                            Settings.get(
-                               CommonSettings.THIS_PHYSICAL_LOCATION));
-        nameProperties.put(Constants.PRIORITY_KEY_MACHINE, 
-        	SystemUtils.getLocalHostName());
+                                   CommonSettings.THIS_PHYSICAL_LOCATION));
+        nameProperties.put(Constants.PRIORITY_KEY_MACHINE,
+                           SystemUtils.getLocalHostName());
         nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONNAME,
                            Settings.get(CommonSettings.APPLICATION_NAME));
         nameProperties.put(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID,
-                Settings.get(CommonSettings.APPLICATION_INSTANCE_ID));
+                           Settings.get(
+                                   CommonSettings.APPLICATION_INSTANCE_ID));
         nameProperties.put(Constants.PRIORITY_KEY_HTTP_PORT,
-                Settings.get(CommonSettings.HTTP_PORT_NUMBER));
+                           Settings.get(CommonSettings.HTTP_PORT_NUMBER));
         try {
             String val;
             val = Settings.get(HARVESTER_HARVEST_CONTROLLER_PRIORITY);
@@ -136,10 +129,10 @@ public class SingleMBeanObject<I> {
         }
         try {
             String val = Replica.getReplicaFromId(Settings.get(
-        	    CommonSettings.USE_REPLICA_ID)).getName();
-            nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME,  val);
+                    CommonSettings.USE_REPLICA_ID)).getName();
+            nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, val);
         } catch (UnknownID e) {
-            nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME,  "");
+            nameProperties.put(Constants.PRIORITY_KEY_REPLICANAME, "");
             log.trace("PRIORITY_KEY_REPLICANAME set to empty string");
         }
 
@@ -158,20 +151,22 @@ public class SingleMBeanObject<I> {
      * @param o           The object to register.
      * @param asInterface The interface o should implement.
      * @param mBeanServer The mbean server to register o in.
+     *
      * @throws ArgumentNotValid on any null parameter.
      */
     public SingleMBeanObject(ObjectName name, I o, Class<I> asInterface,
                              MBeanServer mBeanServer) {
         this(name.getDomain(), o, asInterface, mBeanServer);
         nameProperties.clear();
-        nameProperties.putAll(
-                (Hashtable<String, String>) name.getKeyPropertyList());
+        nameProperties.putAll(name.getKeyPropertyList());
     }
 
     /**
      * Properties for the ObjectName name. Update these before registering. On
-     * construction, initialised with location, hostname, httpport, priority, replica
-     * applicationname, applicationinstid.
+     * construction, initialised with location, hostname, httpport, priority,
+     * replica, applicationname, applicationinstid.
+     *
+     * @return Hashtable of the object name properties.
      */
     public Hashtable<String, String> getNameProperties() {
         return nameProperties;
@@ -182,7 +177,7 @@ public class SingleMBeanObject<I> {
      * domain given in constructor and the nameProperties hashTable.
      *
      * @throws IllegalState if bean is already registered.
-     * @throws IOFailure on trouble registering.
+     * @throws IOFailure    on trouble registering.
      */
     public void register() {
         try {
@@ -221,9 +216,7 @@ public class SingleMBeanObject<I> {
         }
     }
 
-    /**
-     * @return the name
-     */
+    /** @return the name */
     public ObjectName getName() {
         return name;
     }
