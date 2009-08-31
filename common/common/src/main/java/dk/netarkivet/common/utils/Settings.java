@@ -226,7 +226,23 @@ public class Settings {
         ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
         return new File(get(key));
     }
-    
+
+    /**
+     * Gets a setting as a boolean.
+     * This method calls get(key) and then parses the value as a boolean.
+     *
+     * @param key name of the setting to retrieve
+     * @return the retrieved boolean
+     *
+     * @throws ArgumentNotValid if key is null or the empty string
+     * @throws UnknownID        if no setting loaded matches key
+     */
+    public static boolean getBoolean(String key)
+            throws UnknownID, ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(key, "String key");
+        String value = get(key);
+        return Boolean.parseBoolean(value);
+    }
 
     /**
      * Gets a list of settings.

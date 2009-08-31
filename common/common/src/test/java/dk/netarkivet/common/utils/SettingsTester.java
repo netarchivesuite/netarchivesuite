@@ -25,12 +25,10 @@ package dk.netarkivet.common.utils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -183,7 +181,26 @@ public class SettingsTester extends TestCase  {
             //expected
         }
     }
-
+    
+    /**
+     * Test that getBoolean returns true, when it can be parsed as 
+     * some upper/lowercase combination of the string "true"
+     */
+    public void testGetBoolean() {
+        String key = "settings.for.test.purposes5";
+        String trueAsString = "True";
+        Settings.set(key, new String[]{trueAsString});
+        try {
+            boolean b = Settings.getBoolean(key);
+            if (!b) {
+                fail("Should have been parsed as true, but was parsed as false");
+            }
+        } catch (ArgumentNotValid e) {
+            fail("Should not throw ArgumentNotValid on valid boolean string"
+                    + e);
+        }
+    }
+    /*
     public void testValidateWithXSD() throws Exception {
         String settingsFileProperty = Settings.SETTINGS_FILE_PROPERTY;
         System.setProperty(settingsFileProperty,
@@ -254,6 +271,9 @@ public class SettingsTester extends TestCase  {
                                  Arrays.asList(
             "DEFAULT_SETTINGS_CLASSPATH"));
     }
+    
+    */
+    
     /**
      * Validate that the strings defined in the given class are present in
      * the settings xml file.
@@ -297,7 +317,7 @@ public class SettingsTester extends TestCase  {
         }
     }
 
-    
+
     
     
 }

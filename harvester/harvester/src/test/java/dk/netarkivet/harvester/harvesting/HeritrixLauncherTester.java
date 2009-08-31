@@ -112,7 +112,7 @@ public class HeritrixLauncherTester extends TestCase {
         // If deduplicationMode != NO_DEDUPLICATION
         // write the zipped index to the indexdir inside the crawldir
         if (orderXml.exists() && orderXml.length() > 0 &&    
-            HeritrixLauncher.isDeduplicationEnabled(XmlUtils.getXmlDoc(orderXml))) {
+            HeritrixLauncher.isDeduplicationEnabledInTemplate(XmlUtils.getXmlDoc(orderXml))) {
             assertNotNull("Must have a non-null index when deduplication is enabled",
                           indexDir);
             files.setIndexDir(indexDir);
@@ -381,7 +381,7 @@ public class HeritrixLauncherTester extends TestCase {
         Document doc = XmlUtils.getXmlDoc(orderFile);
         /* check, that deduplicator is not enabled in the order */
         assertFalse("Should not have deduplication enabled",
-                    HeritrixLauncher.isDeduplicationEnabled(doc));
+                    HeritrixLauncher.isDeduplicationEnabledInTemplate(doc));
 
         /**
          * Check the DeduplicationType.DEDUPLICATION_USING_THE_DEDUPLICATOR
@@ -395,7 +395,7 @@ public class HeritrixLauncherTester extends TestCase {
         // check, that the deduplicator is present in the order
         doc = XmlUtils.getXmlDoc(orderFile);
         assertTrue("Should have deduplication enabled",
-                   HeritrixLauncher.isDeduplicationEnabled(doc));
+                   HeritrixLauncher.isDeduplicationEnabledInTemplate(doc));
         XmlAsserts.assertNodeWithXpath(
                 doc, HeritrixLauncher.DEDUPLICATOR_XPATH);
         XmlAsserts.assertNodeWithXpath(

@@ -31,10 +31,10 @@ import junit.textui.TestRunner;
  * Sweet suite of utility tests.
  *
  */
-public class UtilsTesterSuite {
+public class CommonUtilsTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(UtilsTesterSuite.class.getName());
+        suite = new TestSuite(CommonUtilsTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
@@ -47,9 +47,9 @@ public class UtilsTesterSuite {
         suite.addTestSuite(JMXUtilsTester.class);
         suite.addTestSuite(KeyValuePairTester.class);
         suite.addTestSuite(LargeFileGZIPInputStreamTester.class);
-        
         suite.addTestSuite(MD5Tester.class);
         suite.addTestSuite(ProcessUtilsTester.class);
+        suite.addTestSuite(SettingsTester.class);
         suite.addTestSuite(SettingsFactoryTester.class);
         suite.addTestSuite(SimpleXmlTester.class);
         suite.addTestSuite(SparseBitSetTester.class);
@@ -63,7 +63,7 @@ public class UtilsTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", UtilsTesterSuite.class.getName()};
+        String[] args2 = {"-noloading", CommonUtilsTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

@@ -44,7 +44,7 @@ import dk.netarkivet.common.distribute.indexserver.DistributeIndexserverTesterSu
 import dk.netarkivet.common.exceptions.ExceptionsTesterSuite;
 import dk.netarkivet.common.management.ManagementTesterSuite;
 import dk.netarkivet.common.tools.ToolsTesterSuite;
-import dk.netarkivet.common.utils.UtilsTesterSuite;
+import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
 import dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite;
 import dk.netarkivet.common.utils.batch.BatchUtilsTesterSuite;
 import dk.netarkivet.common.utils.cdx.CdxUtilsTesterSuite;
@@ -88,6 +88,7 @@ public class UnitTesterSuite {
         BitPreservationTesterSuite.addToSuite(suite);
         CdxUtilsTesterSuite.addToSuite(suite);
         CommonsTesterSuite.addToSuite(suite);
+        CommonUtilsTesterSuite.addToSuite(suite);
         DataModelTesterSuite.addToSuite(suite);
         DeployTesterSuite.addToSuite(suite);
         DistributeArcrepositoryTesterSuite.addToSuite(suite);
@@ -108,7 +109,6 @@ public class UnitTesterSuite {
         SchedulerTesterSuite.addToSuite(suite);
         ToolsTesterSuite.addToSuite(suite);
         HarvesterToolsTesterSuite.addToSuite(suite);
-        UtilsTesterSuite.addToSuite(suite);
         ViewerproxyDistributeTesterSuite.addToSuite(suite);
         ViewerProxyTesterSuite.addToSuite(suite);
         WaybackTesterSuite.addToSuite(suite);
