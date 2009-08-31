@@ -149,8 +149,11 @@ public class HarvestController {
 
         files.writeSeedsTxt(job.getSeedListAsString());
         files.writeOrderXml(job.getOrderXMLdoc());
-
-        files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
+        // Only retrieve index if deduplication is not disabled in the template.
+        if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+                job.getOrderXMLdoc())) {
+            files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
+        }
         
         // Create Heritrix arcs directory before starting Heritrix to ensure
         // the arcs directory exists in advance.
@@ -218,6 +221,7 @@ public class HarvestController {
      * @param files Description of files involved in running Heritrix.
      */
     public void runHarvest(HeritrixFiles files) {
+        ArgumentNotValid.checkNotNull(files, "files");
         HeritrixLauncher hl = HeritrixLauncher.getInstance(files);
         hl.doCrawl();
     }
@@ -242,7 +246,8 @@ public class HarvestController {
             HeritrixFiles files, StringBuilder errorMessage,
             List<File> failedFiles) {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        ArgumentNotValid.checkNotNull(errorMessage, "StringBuilder errorMessage");
+        ArgumentNotValid.checkNotNull(errorMessage, 
+                "StringBuilder errorMessage");
         ArgumentNotValid.checkNotNull(failedFiles, "List<File> failedFiles");
         long jobID = files.getJobID();
         long harvestID = files.getHarvestID();
@@ -404,7 +409,7 @@ public class HarvestController {
     }
 
     /**
-     * Get whether we stopped normally in progress statistics log
+     * Find out whether we stopped normally in progress statistics log.
      * @param logFile A progress-statistics.log file
      * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
      * CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file does

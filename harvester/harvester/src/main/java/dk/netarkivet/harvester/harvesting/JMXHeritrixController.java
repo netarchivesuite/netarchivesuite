@@ -748,10 +748,14 @@ public class
      * @return String containing various information grabbed from HeritrixFiles.
      */
     private String getJobDescription() {
+        String dedupPart = (files.getIndexDir() != null)? 
+                "with the deduplication index stored in '" 
+                + files.getIndexDir().getAbsolutePath() + "'"
+                : "with deduplication disabled";
         return "Job " + files.getJobID()
                + " for harvest " + files.getHarvestID()
                + " performed in " + files.getCrawlDir()
-               + " with index in " + files.getIndexDir()
+               +  dedupPart
                + " and " + FileUtils.countLines(files.getSeedsTxtFile())
                + " seeds";
     }
