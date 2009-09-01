@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-package dk.netarkivet.wayback;
+package dk.netarkivet.wayback.batch;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,10 +31,10 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
-import org.archive.wayback.resourcestore.indexer.ARCRecordToSearchResultAdapter;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
  * Returns a cdx file using the appropriate format for wayback, including
@@ -49,29 +49,17 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
      * Logger for this class.
      */
     private final Log log = LogFactory.getLog(getClass().getName());
-    private ARCRecordToSearchResultAdapter aToSAdapter;
+    private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
     private SearchResultToCDXLineAdapter srToCDXAdapter;
 
-    public ExtractWaybackCDXBatchJob() {
-        /**
-        * One day in miliseconds.
-        */
-        batchJobTimeout = 24*60*60*1000;
-    }
-
-    /**
-     * TODO: JavaDoc
-     */
     public void initialize(OutputStream os) {
-        aToSAdapter = new ARCRecordToSearchResultAdapter();
+        log.info("Starting CDX Extraction Batch Job");
+        aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
         UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new  SearchResultToCDXLineAdapter();
     }
 
-    /**
-     * TODO: JavaDoc
-     */
     public void processRecord(ARCRecord record, OutputStream os) {
        CaptureSearchResult csr = null;
         try {
@@ -92,10 +80,8 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
 
     }
 
-    /**
-     * TODO: JavaDoc
-     */
     public void finish(OutputStream os) {
+        log.info("Finishing CDX Extraction Batch Job");
         //No cleanup required
     }
 
