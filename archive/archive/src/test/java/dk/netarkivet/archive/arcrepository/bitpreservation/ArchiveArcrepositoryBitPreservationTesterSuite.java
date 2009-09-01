@@ -20,36 +20,42 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.arc;
+
+package dk.netarkivet.archive.arcrepository.bitpreservation;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Suite of unittests for the classes in the 
- * dk.netarkivet.commons.utils.arc package.
+ * Unit testersuite for the bitpreservation package.
+ *
  */
-public class ArcUtilsTesterSuite {
+public class ArchiveArcrepositoryBitPreservationTesterSuite {
+    /**
+     * Create a test suite just for these tests.
+     */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite("ArcUtilsTesterSuite");
-
+        suite = new TestSuite(
+                ArchiveArcrepositoryBitPreservationTesterSuite.class.getName());
         addToSuite(suite);
-
         return suite;
     }
 
+    /**
+     * Add the tests here.
+     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ARCBatchJobTester.class);
-        suite.addTestSuite(ARCKeyTester.class);
-        suite.addTestSuite(ARCReaderTester.class);
-        suite.addTestSuite(ARCUtilsTester.class);
+        suite.addTestSuite(ChecksumJobTester.class);
+        suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
+        suite.addTestSuite(FileListJobTester.class);
+        suite.addTestSuite(WorkFilesTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = { "-noloading",
-                "dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite" };
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading",
+                ArchiveArcrepositoryBitPreservationTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

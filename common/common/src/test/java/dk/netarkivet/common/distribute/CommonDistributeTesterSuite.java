@@ -20,27 +20,42 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.harvester.scheduler;
+
+package dk.netarkivet.common.distribute;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-public class SchedulerTesterSuite {
+import dk.netarkivet.common.utils.SettingsFactoryTester;
+
+/**
+ *  Collection of unittests of classes in the
+ *  dk.netarkivet.common.distribute package.
+ */
+public class CommonDistributeTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(SchedulerTesterSuite.class.getName());
+        suite = new TestSuite(CommonDistributeTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(HarvestSchedulerMonitorServerTester.class);
-        suite.addTestSuite(HarvestSchedulerTester.class);
+        suite.addTestSuite(ChannelIDTester.class);
+        suite.addTestSuite(ChannelsTester.class);
+        suite.addTestSuite(FTPRemoteFileTester.class);
+        suite.addTestSuite(HTTPRemoteFileTester.class);
+        suite.addTestSuite(HTTPSRemoteFileTester.class);
+        suite.addTestSuite(JMSConnectionTester.class);
+        suite.addTestSuite(NetarkivetMessageTester.class);
+        suite.addTestSuite(NullRemoteFileTester.class);
+        suite.addTestSuite(SettingsFactoryTester.class);
+        suite.addTestSuite(SynchronizerTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", SchedulerTesterSuite.class.getName()};
+        String args2[] = {"-noloading", CommonDistributeTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

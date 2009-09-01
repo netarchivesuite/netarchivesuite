@@ -20,39 +20,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-package dk.netarkivet.viewerproxy.webinterface;
+package dk.netarkivet.archive.arcrepositoryadmin;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-
 /**
- * Unit test-suite covering all the classes in the
- * dk.netarkivet.viewerproxy package.
- *
+ *  Testsuite for the classes in the dk.netarkivet.archive.arcrepositoryadmin
+ *  package.
  */
-public class WebinterfaceTesterSuite {
-    /**
-     * Create a test suite just for these tests.
-     */
-    public static Test suite() {
+public class ArchiveArcRepositoryAdminTesterSuite
+{
+    public static Test suite()
+    {
         TestSuite suite;
-        suite = new TestSuite(WebinterfaceTesterSuite.class.getName());
+        suite = new TestSuite(ArchiveArcRepositoryAdminTesterSuite.class.getName());
+
         addToSuite(suite);
+
         return suite;
     }
 
-    /**
-     * Add the tests here.
-     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ReportingTester.class);
+        suite.addTestSuite(AdminDataTester.class);
+        suite.addTestSuite(ReadOnlyAdminDataTester.class);
     }
 
-    public static void main(String[] args) {
-        String[] args2 = {"-noloading", WebinterfaceTesterSuite.class.getName()};
+    public static void main(String args[])
+    {
+        String args2[] = {"-noloading", ArchiveArcRepositoryAdminTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

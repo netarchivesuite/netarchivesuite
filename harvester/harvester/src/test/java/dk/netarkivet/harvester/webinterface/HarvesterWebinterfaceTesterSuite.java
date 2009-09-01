@@ -31,14 +31,12 @@ import dk.netarkivet.common.webinterface.HTMLUtilsTester;
 import dk.netarkivet.common.webinterface.SiteSectionTester;
 
 /**
- * A suite of webinterface tests.
- *
+ * A suite of harvester webinterface tests.
  */
-
-public class WebinterfaceTesterSuite {
+public class HarvesterWebinterfaceTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(WebinterfaceTesterSuite.class.getName());
+        suite = new TestSuite(HarvesterWebinterfaceTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
@@ -59,7 +57,7 @@ public class WebinterfaceTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", WebinterfaceTesterSuite.class.getName()};
+        String args2[] = {"-noloading", HarvesterWebinterfaceTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

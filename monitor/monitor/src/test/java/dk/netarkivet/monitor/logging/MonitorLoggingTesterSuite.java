@@ -1,7 +1,7 @@
-/* File:    $Id$
- * Version: $Revision$
- * Date:    $Date$
- * Author:  $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,39 +20,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.archive.bitarchive;
+
+package dk.netarkivet.monitor.logging;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+/**
+ * Testsuite for the package dk.netarkivet.common.logging.
+ *
+ */
 
-public class BitarchiveTesterSuite {
+public class MonitorLoggingTesterSuite {
+    /**
+     * Create a test suite just for these tests.
+     * @return this testsuite
+     */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(BitarchiveTesterSuite.class.getName());
-
-        addToSuite(suite);
-
+        suite = new TestSuite(MonitorLoggingTesterSuite.class.getName());
+        MonitorLoggingTesterSuite.addToSuite(suite);
         return suite;
     }
 
+    /**
+     * Add the tests here.
+     * @param suite The testsuite to be added
+     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(BatchMessageTester.class);
-        suite.addTestSuite(BitarchiveAdminTester.class);
-        suite.addTestSuite(BitarchiveARCFileTester.class);
-        suite.addTestSuite(BitarchiveTesterAdmin.class);
-        suite.addTestSuite(BitarchiveTesterBatch.class);
-        suite.addTestSuite(BitarchiveTesterCTOR.class);
-        suite.addTestSuite(BitarchiveTesterGet.class);
-        suite.addTestSuite(BitarchiveTesterLog.class);
-        suite.addTestSuite(BitarchiveTesterUpload.class);
+        suite.addTestSuite(CachingLogHandlerTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", BitarchiveTesterSuite.class.getName()};
-
+        String args2[] = {"-noloading", MonitorLoggingTesterSuite.class.getName()};
         TestRunner.main(args2);
-        //junit.swingui.TestRunner.main(args2);
     }
 }

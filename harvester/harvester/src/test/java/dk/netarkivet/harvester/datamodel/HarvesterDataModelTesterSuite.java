@@ -34,10 +34,10 @@ import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
  * Unit-tester suite for the package dk.netarkivet.harvester.datamodel.
  * 
  */
-public class DataModelTesterSuite {
+public class HarvesterDataModelTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(DataModelTesterSuite.class.getName());
+        suite = new TestSuite(HarvesterDataModelTesterSuite.class.getName());
 
         addToSuite(suite);
 
@@ -90,7 +90,7 @@ public class DataModelTesterSuite {
     }
 
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", DataModelTesterSuite.class.getName()};
+        String[] args2 = {"-noloading", HarvesterDataModelTesterSuite.class.getName()};
 
         TestRunner.main(args2);
         //junit.swingui.TestRunner.main(args2);

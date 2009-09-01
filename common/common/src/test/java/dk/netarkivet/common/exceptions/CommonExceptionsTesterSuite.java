@@ -20,37 +20,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.common.utils.cdx;
+
+package dk.netarkivet.common.exceptions;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+/**
+ * Testsuite for the package dk.netarkivet.common.exceptions.
+ *
+ */
 
-
-public class CdxUtilsTesterSuite
-{
-    public static Test suite()
-    {
+public class CommonExceptionsTesterSuite {
+    /**
+     * Create a test suite just for these tests.
+     * @return this testsuite
+     */
+    public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite("CdxUtilsTesterSuite");
-
+        suite = new TestSuite(CommonExceptionsTesterSuite.class.getName());
         addToSuite(suite);
-
         return suite;
     }
 
+    /**
+     * Add the tests here.
+     * @param suite The testsuite to be added
+     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ARCFilenameCDXRecordFilterTester.class);
-        suite.addTestSuite(CDXReaderTester.class);
-        suite.addTestSuite(ExtractCDXJobTester.class);
-        suite.addTestSuite(BinSearchTester.class);
-        suite.addTestSuite(CDXRecordTester.class);
+        suite.addTestSuite(ExceptionsTester.class);
     }
 
-    public static void main(String args[])
-    {
-        String args2[] = {"-noloading", "dk.netarkivet.common.utils.cdx.CdxUtilsTesterSuite"};
+    public static void main(String args[]) {
+        String args2[] = {"-noloading", CommonExceptionsTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

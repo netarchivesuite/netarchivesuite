@@ -21,39 +21,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.monitor.logging;
+package dk.netarkivet.common.distribute.arcrepository;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Testsuite for the package dk.netarkivet.common.logging.
- *
+ * Unit-tester suite for the classes inside
+ * package dk.netarkivet.common.distribute.arcrepository.
  */
-
-public class LoggingTesterSuite {
+public class CommonDistributeArcrepositoryTesterSuite {
+    
     /**
      * Create a test suite just for these tests.
-     * @return this testsuite
+     * @return the created test.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(LoggingTesterSuite.class.getName());
-        LoggingTesterSuite.addToSuite(suite);
+        suite = new TestSuite(
+                CommonDistributeArcrepositoryTesterSuite.class.getName());
+        CommonDistributeArcrepositoryTesterSuite.addToSuite(suite);
         return suite;
     }
 
     /**
      * Add the tests here.
-     * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(CachingLogHandlerTester.class);
+        // Sorted in alphabetical order
+        suite.addTestSuite(ARCLookupTester.class);
+        suite.addTestSuite(BatchStatusTester.class);
+        suite.addTestSuite(BitarchiveRecordTester.class);
+        suite.addTestSuite(LocalArcRepositoryClientTester.class);
+        suite.addTestSuite(ReplicaTester.class);
+        suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", LoggingTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", 
+                CommonDistributeArcrepositoryTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

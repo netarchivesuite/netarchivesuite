@@ -26,10 +26,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-public class ToolsTesterSuite {
+public class CommonToolsTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ToolsTesterSuite.class.getName());
+        suite = new TestSuite(CommonToolsTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
@@ -43,7 +43,7 @@ public class ToolsTesterSuite {
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", ToolsTesterSuite.class.getName()};
+        String args2[] = {"-noloading", CommonToolsTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

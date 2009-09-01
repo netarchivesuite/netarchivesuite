@@ -20,43 +20,44 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+package dk.netarkivet.common.utils.batch;
 
-package dk.netarkivet.archive.bitarchive.distribute;
-
+import dk.netarkivet.common.utils.batch.BatchFilterTester;
+import dk.netarkivet.common.utils.batch.BatchLocalFilesTester;
+import dk.netarkivet.common.utils.batch.ByteClassLoaderTester;
+import dk.netarkivet.common.utils.batch.FileBatchJobTester;
+import dk.netarkivet.common.utils.batch.LoadableFileBatchJobTester;
+import dk.netarkivet.common.utils.batch.LoadableJarBatchJobTester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * 
- * Unit tests for the package dk.netarkivet.archive.bitarchive.distribute.
+ * Suite of unittests for the classes in the 
+ * dk.netarkivet.commons.utils.batch package.
  */
-public class BitarchiveDistributeTesterSuite {
-    /**
-     * Create a test suite just for these tests.
-     */
+public class CommonUtilsBatchTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(BitarchiveDistributeTesterSuite.class.getName());
+        suite = new TestSuite(CommonUtilsBatchTesterSuite.class.getName());
+
         addToSuite(suite);
+
         return suite;
     }
 
-    /**
-     * Add the tests here
-     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(BatchEndedMessageTester.class);
-        suite.addTestSuite(BitarchiveClientTester.class);
-        suite.addTestSuite(BitarchiveMonitorServerTester.class);
-        suite.addTestSuite(BitarchiveServerTester.class);
-        suite.addTestSuite(HeartBeatMessageTester.class);
-        suite.addTestSuite(UploadMessageTester.class);
-        suite.addTestSuite(GetFileMessageTester.class);
+        suite.addTestSuite(BatchFilterTester.class);
+        suite.addTestSuite(BatchLocalFilesTester.class);
+        suite.addTestSuite(ByteClassLoaderTester.class);
+        suite.addTestSuite(FileBatchJobTester.class);
+        suite.addTestSuite(LoadableFileBatchJobTester.class);
+        suite.addTestSuite(LoadableJarBatchJobTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", BitarchiveDistributeTesterSuite.class.getName()};
+        String args2[] = { "-noloading",
+                CommonUtilsBatchTesterSuite.class.getName() };
         TestRunner.main(args2);
     }
 }

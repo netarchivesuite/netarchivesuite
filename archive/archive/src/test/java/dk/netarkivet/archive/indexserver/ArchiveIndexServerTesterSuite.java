@@ -1,7 +1,7 @@
-/* $Id$
- * $Revision$
- * $Date$
- * $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,19 +20,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.archive.indexserver.distribute;
+
+package dk.netarkivet.archive.indexserver;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-public class IndexserverDistributeTesterSuite {
+/**
+ * Sweet!  The suite for running indexservertests is auto-setup!
+ *
+ */
+
+public class ArchiveIndexServerTesterSuite {
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(IndexserverDistributeTesterSuite.class.getName());
+        suite = new TestSuite(ArchiveIndexServerTesterSuite.class.getSimpleName());
         addToSuite(suite);
         return suite;
     }
@@ -41,14 +47,17 @@ public class IndexserverDistributeTesterSuite {
      * Add the tests here
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(IndexRequestClientTester.class);
-        suite.addTestSuite(IndexRequestServerTester.class);
-        suite.addTestSuite(IndexRequestMessageTester.class);
+        suite.addTestSuite(CDXIndexCacheTester.class);
+        suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
+        suite.addTestSuite(CombiningMultiFileBasedCacheTester.class);
+        suite.addTestSuite(CrawlLogIndexCacheTester.class);
+        suite.addTestSuite(DedupCrawlLogIndexCacheTester.class);
+        suite.addTestSuite(MultiFileBasedCacheTester.class);
+        suite.addTestSuite(RawMetadataCacheTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", IndexserverDistributeTesterSuite.class.getName()};
+        String args2[] = {"-noloading", ArchiveIndexServerTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
-
 }

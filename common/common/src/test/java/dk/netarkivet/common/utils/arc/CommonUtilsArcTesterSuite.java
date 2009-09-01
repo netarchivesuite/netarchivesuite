@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,47 +20,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-package dk.netarkivet.common.distribute.arcrepository;
+package dk.netarkivet.common.utils.arc;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Unit-tester suite for the classes inside
- * package dk.netarkivet.common.distribute.arcrepository.
+ * Suite of unittests for the classes in the 
+ * dk.netarkivet.commons.utils.arc package.
  */
-public class DistributeArcrepositoryTesterSuite {
-    
-    /**
-     * Create a test suite just for these tests.
-     * @return the created test.
-     */
+public class CommonUtilsArcTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(
-                DistributeArcrepositoryTesterSuite.class.getName());
-        DistributeArcrepositoryTesterSuite.addToSuite(suite);
+        suite = new TestSuite(CommonUtilsArcTesterSuite.class.getName());
+
+        addToSuite(suite);
+
         return suite;
     }
 
-    /**
-     * Add the tests here.
-     */
     public static void addToSuite(TestSuite suite) {
-        // Sorted in alphabetical order
-        suite.addTestSuite(ARCLookupTester.class);
-        suite.addTestSuite(BatchStatusTester.class);
-        suite.addTestSuite(BitarchiveRecordTester.class);
-        suite.addTestSuite(LocalArcRepositoryClientTester.class);
-        suite.addTestSuite(ReplicaTester.class);
-        suite.addTestSuite(TrivialArcRepositoryClientTester.class);    
+        suite.addTestSuite(ARCBatchJobTester.class);
+        suite.addTestSuite(ARCKeyTester.class);
+        suite.addTestSuite(ARCReaderTester.class);
+        suite.addTestSuite(ARCUtilsTester.class);
     }
 
-    public static void main(String[] args) {
-        String[] args2 = {"-noloading", 
-                DistributeArcrepositoryTesterSuite.class.getName()};
+    public static void main(String args[]) {
+        String args2[] = { "-noloading",
+                CommonUtilsArcTesterSuite.class.getName() };
         TestRunner.main(args2);
     }
 }

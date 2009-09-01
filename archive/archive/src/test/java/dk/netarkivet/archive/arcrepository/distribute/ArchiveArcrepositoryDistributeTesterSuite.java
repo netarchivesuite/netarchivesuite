@@ -21,23 +21,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.archive.arcrepository.distribute;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Unit testersuite for the bitpreservation package.
+ * TesterSuite for the classes in package 
+ * dk.netarkivet.archive.arcrepository.distribute.
  *
  */
-public class BitPreservationTesterSuite {
+public class ArchiveArcrepositoryDistributeTesterSuite {
+    
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(BitPreservationTesterSuite.class.getName());
+        suite = new TestSuite(
+                ArchiveArcrepositoryDistributeTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
@@ -46,14 +49,14 @@ public class BitPreservationTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ChecksumJobTester.class);
-        suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
-        suite.addTestSuite(FileListJobTester.class);
-        suite.addTestSuite(WorkFilesTester.class);
+        suite.addTestSuite(JMSArcRepositoryClientTester.class);
+        suite.addTestSuite(ArcRepositoryServerTester.class);
+        suite.addTestSuite(StoreMessageTester.class);
     }
 
     public static void main(String[] args) {
-        String[] args2 = {"-noloading", BitPreservationTesterSuite.class.getName()};
+        String[] args2 = {"-noloading",
+                ArchiveArcrepositoryDistributeTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

@@ -21,39 +21,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.management;
+package dk.netarkivet.common.distribute.indexserver;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * Testsuite for the package dk.netarkivet.common.management.
- *
+ * Collection of unittests of classes in the
+ *  dk.netarkivet.common.distribute.indexserver package.
  */
-
-public class ManagementTesterSuite {
+public class CommonDistributeIndexserverTesterSuite {
     /**
      * Create a test suite just for these tests.
-     * @return this testsuite
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ManagementTesterSuite.class.getName());
-        ManagementTesterSuite.addToSuite(suite);
+        suite = new TestSuite(
+                CommonDistributeIndexserverTesterSuite.class.getName());
+        addToSuite(suite);
         return suite;
     }
 
     /**
-     * Add the tests here.
-     * @param suite The testsuite to be added
+     * Add the tests here
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(SingleMBeanObjectTester.class);
+        suite.addTestSuite(TrivialJobIndexCacheTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", ManagementTesterSuite.class.getName()};
+        String args2[] = {"-noloading",
+                CommonDistributeIndexserverTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

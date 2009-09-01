@@ -365,7 +365,7 @@ public class CachingLogHandlerTester extends TestCase {
                               + SystemUtils.getLocalHostName() + ","
                               + Constants.PRIORITY_KEY_HTTP_PORT + "="
                               + Settings.get(CommonSettings.HTTP_PORT_NUMBER)
-                              + "," + Constants.PRIORITY_KEY_REPLICANAME + "=ReplicaOne,"
+                              + "," + Constants.PRIORITY_KEY_REPLICANAME + "=BarOne,"
                               + Constants.PRIORITY_KEY_PRIORITY + "=HIGHPRIORITY"
                               + "," + Constants.PRIORITY_KEY_APPLICATIONNAME + "="
                               + Settings.get(CommonSettings.APPLICATION_NAME)

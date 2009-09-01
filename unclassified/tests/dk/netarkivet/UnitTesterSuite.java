@@ -27,42 +27,43 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.archive.arcrepository.ArcRepositoryTesterSuite;
-import dk.netarkivet.archive.arcrepository.bitpreservation.BitPreservationTesterSuite;
-import dk.netarkivet.archive.arcrepository.distribute.ArcrepositoryDistributeTesterSuite;
-import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryAdminTesterSuite;
-import dk.netarkivet.archive.bitarchive.BitarchiveTesterSuite;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveDistributeTesterSuite;
+import dk.netarkivet.archive.arcrepository.ArchiveArcRepositoryTesterSuite;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ArchiveArcrepositoryBitPreservationTesterSuite;
+import dk.netarkivet.archive.arcrepository.distribute.ArchiveArcrepositoryDistributeTesterSuite;
+import dk.netarkivet.archive.arcrepositoryadmin.ArchiveArcRepositoryAdminTesterSuite;
+import dk.netarkivet.archive.bitarchive.ArchiveBitarchiveTesterSuite;
+import dk.netarkivet.archive.bitarchive.distribute.ArchiveBitarchiveDistributeTesterSuite;
 import dk.netarkivet.archive.distribute.ArchiveDistributeTesterSuite;
-import dk.netarkivet.archive.indexserver.IndexServerTesterSuite;
-import dk.netarkivet.archive.indexserver.distribute.IndexserverDistributeTesterSuite;
+import dk.netarkivet.archive.indexserver.ArchiveIndexServerTesterSuite;
+import dk.netarkivet.archive.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 import dk.netarkivet.archive.tools.ArchiveToolsTesterSuite;
 import dk.netarkivet.common.CommonsTesterSuite;
-import dk.netarkivet.common.distribute.DistributeTesterSuite;
-import dk.netarkivet.common.distribute.arcrepository.DistributeArcrepositoryTesterSuite;
-import dk.netarkivet.common.distribute.indexserver.DistributeIndexserverTesterSuite;
-import dk.netarkivet.common.exceptions.ExceptionsTesterSuite;
-import dk.netarkivet.common.management.ManagementTesterSuite;
-import dk.netarkivet.common.tools.ToolsTesterSuite;
+import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
+import dk.netarkivet.common.distribute.arcrepository.CommonDistributeArcrepositoryTesterSuite;
+import dk.netarkivet.common.distribute.indexserver.CommonDistributeIndexserverTesterSuite;
+import dk.netarkivet.common.exceptions.CommonExceptionsTesterSuite;
+import dk.netarkivet.common.management.CommonManagementTesterSuite;
+import dk.netarkivet.common.tools.CommonToolsTesterSuite;
 import dk.netarkivet.common.utils.CommonUtilsTesterSuite;
-import dk.netarkivet.common.utils.arc.ArcUtilsTesterSuite;
-import dk.netarkivet.common.utils.batch.BatchUtilsTesterSuite;
-import dk.netarkivet.common.utils.cdx.CdxUtilsTesterSuite;
+import dk.netarkivet.common.utils.arc.CommonUtilsArcTesterSuite;
+import dk.netarkivet.common.utils.batch.CommonUtilsBatchTesterSuite;
+import dk.netarkivet.common.utils.cdx.CommonUtilsCdxTesterSuite;
 import dk.netarkivet.deploy.DeployTesterSuite;
-import dk.netarkivet.harvester.datamodel.DataModelTesterSuite;
+import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestingDistributeTesterSuite;
-import dk.netarkivet.harvester.scheduler.SchedulerTesterSuite;
+import dk.netarkivet.harvester.scheduler.HarvesterSchedulerTesterSuite;
 import dk.netarkivet.harvester.tools.HarvesterToolsTesterSuite;
-import dk.netarkivet.harvester.webinterface.WebinterfaceTesterSuite;
+import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTesterSuite;
 import dk.netarkivet.monitor.MonitorTesterSuite;
 import dk.netarkivet.monitor.jmx.MonitorJMXTesterSuite;
-import dk.netarkivet.monitor.logging.LoggingTesterSuite;
+import dk.netarkivet.monitor.logging.MonitorLoggingTesterSuite;
 import dk.netarkivet.monitor.registry.MonitorRegistryTesterSuite;
 import dk.netarkivet.monitor.webinterface.MonitorWebinterfaceTesterSuite;
 import dk.netarkivet.viewerproxy.ViewerProxyTesterSuite;
 import dk.netarkivet.viewerproxy.distribute.ViewerproxyDistributeTesterSuite;
+import dk.netarkivet.viewerproxy.webinterface.ViewerproxyWebinterfaceTesterSuite;
 import dk.netarkivet.wayback.WaybackTesterSuite;
 
 /**
@@ -70,50 +71,75 @@ import dk.netarkivet.wayback.WaybackTesterSuite;
  */
 public class UnitTesterSuite {
     public static void addToSuite(TestSuite suite) {
-        // Please keep sorted.
+        // Please keep sorted after module
+        
+        /* 
+         * Testersuites for the archive module 
+         */        
         ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
-        ArcRepositoryAdminTesterSuite.addToSuite(suite);
-        ArcRepositoryTesterSuite.addToSuite(suite);
+        ArchiveArcRepositoryAdminTesterSuite.addToSuite(suite);
+        ArchiveArcRepositoryTesterSuite.addToSuite(suite);
         /* 
-         * The arcrepositoryDistributeTesterSuite must be after the 
-         * ArcRepositoryTesterSuite, since it fails otherwise. 
+         * The ArchiveArcrepositoryDistributeTesterSuite must be after the 
+         * ArchiveArcRepositoryTesterSuite, since it fails otherwise. 
          */
-        ArcrepositoryDistributeTesterSuite.addToSuite(suite);
-        ArcUtilsTesterSuite.addToSuite(suite);
-        BatchUtilsTesterSuite.addToSuite(suite);
-        BitarchiveDistributeTesterSuite.addToSuite(suite);        
+        ArchiveArcrepositoryDistributeTesterSuite.addToSuite(suite);
+        ArchiveBitarchiveTesterSuite.addToSuite(suite);
+        ArchiveBitarchiveDistributeTesterSuite.addToSuite(suite);
+        ArchiveArcrepositoryBitPreservationTesterSuite.addToSuite(suite);
+        ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
+        ArchiveIndexServerTesterSuite.addToSuite(suite);
         
-        BitarchiveTesterSuite.addToSuite(suite);
-        BitPreservationTesterSuite.addToSuite(suite);
-        CdxUtilsTesterSuite.addToSuite(suite);
+        /* 
+         * Testersuites for the common module 
+         */
+        CommonUtilsArcTesterSuite.addToSuite(suite);
+        CommonUtilsBatchTesterSuite.addToSuite(suite);
+        CommonUtilsCdxTesterSuite.addToSuite(suite);
         CommonsTesterSuite.addToSuite(suite);
         CommonUtilsTesterSuite.addToSuite(suite);
-        DataModelTesterSuite.addToSuite(suite);
+        CommonDistributeArcrepositoryTesterSuite.addToSuite(suite);
+        CommonDistributeIndexserverTesterSuite.addToSuite(suite);
+        CommonDistributeTesterSuite.addToSuite(suite);
+        CommonExceptionsTesterSuite.addToSuite(suite);
+        CommonManagementTesterSuite.addToSuite(suite);
+        CommonToolsTesterSuite.addToSuite(suite);
+        
+        /* 
+         * Testersuites for the viewerproxy module 
+         */
         DeployTesterSuite.addToSuite(suite);
-        DistributeArcrepositoryTesterSuite.addToSuite(suite);
-        DistributeIndexserverTesterSuite.addToSuite(suite);
-        DistributeTesterSuite.addToSuite(suite);
-        ExceptionsTesterSuite.addToSuite(suite);
+        
+        /* 
+         * Testersuites for the harvester module 
+         */
+        HarvestingTesterSuite.addToSuite(suite);
+        HarvesterDataModelTesterSuite.addToSuite(suite);
         HarvesterDistributeTesterSuite.addToSuite(suite);
         HarvestingDistributeTesterSuite.addToSuite(suite);
-        HarvestingTesterSuite.addToSuite(suite);
-        IndexserverDistributeTesterSuite.addToSuite(suite);
-        IndexServerTesterSuite.addToSuite(suite);
-        LoggingTesterSuite.addToSuite(suite);
-        ManagementTesterSuite.addToSuite(suite);
+        HarvesterSchedulerTesterSuite.addToSuite(suite);
+        HarvesterToolsTesterSuite.addToSuite(suite);
+        HarvesterWebinterfaceTesterSuite.addToSuite(suite);
+        
+        /* Testersuites for the monitor module */
         MonitorTesterSuite.addToSuite(suite);
+        MonitorLoggingTesterSuite.addToSuite(suite);
         MonitorJMXTesterSuite.addToSuite(suite);
         MonitorRegistryTesterSuite.addToSuite(suite);
         MonitorWebinterfaceTesterSuite.addToSuite(suite);
-        SchedulerTesterSuite.addToSuite(suite);
-        ToolsTesterSuite.addToSuite(suite);
-        HarvesterToolsTesterSuite.addToSuite(suite);
+        
+        /* 
+         * Testersuites for the viewerproxy module 
+         */
         ViewerproxyDistributeTesterSuite.addToSuite(suite);
-        ViewerProxyTesterSuite.addToSuite(suite);
+        ViewerProxyTesterSuite.addToSuite(suite);        
+        ViewerproxyWebinterfaceTesterSuite.addToSuite(suite);
+        
+        /* 
+         * Testersuites for the wayback module 
+         */
         WaybackTesterSuite.addToSuite(suite);
-        WebinterfaceTesterSuite.addToSuite(suite);
-        dk.netarkivet.viewerproxy.webinterface.WebinterfaceTesterSuite.addToSuite(suite);
     }
 
     public static Test suite() {

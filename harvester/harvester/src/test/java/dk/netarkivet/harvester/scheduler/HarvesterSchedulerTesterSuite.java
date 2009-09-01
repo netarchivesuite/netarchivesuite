@@ -20,40 +20,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-package dk.netarkivet.archive.arcrepository;
+package dk.netarkivet.harvester.scheduler;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-/**
- * Test suite for the classes in 
- * dk.netarkivet.archive.arcrepository.
- */
-public class ArcRepositoryTesterSuite {
+public class HarvesterSchedulerTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ArcRepositoryTesterSuite.class.getName());
-
+        suite = new TestSuite(HarvesterSchedulerTesterSuite.class.getName());
         addToSuite(suite);
-
         return suite;
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ArcRepositoryTester.class);
-        suite.addTestSuite(ArcRepositoryTesterStore.class);
-        suite.addTestSuite(ArcRepositoryTesterStoreChecksum.class);
-        suite.addTestSuite(ArcRepositoryTesterGet.class);
-        suite.addTestSuite(ArcRepositoryTesterLog.class);
-        suite.addTestSuite(ArcRepositoryTesterBatch.class);
+        suite.addTestSuite(HarvestSchedulerMonitorServerTester.class);
+        suite.addTestSuite(HarvestSchedulerTester.class);
     }
 
-    public static void main(String[] args) {
-        String[] args2 = {"-noloading",
-                ArcRepositoryTesterSuite.class.getName()};
+    public static void main(String args[]) {
+        String args2[] = {"-noloading", HarvesterSchedulerTesterSuite.class.getName()};
+
         TestRunner.main(args2);
     }
-
 }

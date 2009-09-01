@@ -21,43 +21,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.common.distribute;
+package dk.netarkivet.archive.arcrepository;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.common.utils.SettingsFactoryTester;
-
 /**
- * lc forgot to comment this!
- *
+ * Test suite for the classes in 
+ * dk.netarkivet.archive.arcrepository.
  */
-
-public class DistributeTesterSuite {
+public class ArchiveArcRepositoryTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(DistributeTesterSuite.class.getName());
+        suite = new TestSuite(ArchiveArcRepositoryTesterSuite.class.getName());
+
         addToSuite(suite);
+
         return suite;
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(ChannelIDTester.class);
-        suite.addTestSuite(ChannelsTester.class);
-        suite.addTestSuite(FTPRemoteFileTester.class);
-        suite.addTestSuite(HTTPRemoteFileTester.class);
-        suite.addTestSuite(HTTPSRemoteFileTester.class);
-        suite.addTestSuite(JMSConnectionTester.class);
-        suite.addTestSuite(NetarkivetMessageTester.class);
-        suite.addTestSuite(NullRemoteFileTester.class);
-        suite.addTestSuite(SettingsFactoryTester.class);
-        suite.addTestSuite(SynchronizerTester.class);
+        suite.addTestSuite(ArcRepositoryTester.class);
+        suite.addTestSuite(ArcRepositoryTesterStore.class);
+        suite.addTestSuite(ArcRepositoryTesterStoreChecksum.class);
+        suite.addTestSuite(ArcRepositoryTesterGet.class);
+        suite.addTestSuite(ArcRepositoryTesterLog.class);
+        suite.addTestSuite(ArcRepositoryTesterBatch.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", DistributeTesterSuite.class.getName()};
-
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading",
+                ArchiveArcRepositoryTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
+
 }

@@ -1,7 +1,7 @@
-/* File:    $Id$
- * Version: $Revision$
- * Date:    $Date$
- * Author:  $Author$
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,43 +20,37 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-package dk.netarkivet.archive.arcrepository.distribute;
+package dk.netarkivet.archive.indexserver.distribute;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-/**
- * TesterSuite for the classes in package 
- * dk.netarkivet.archive.arcrepository.distribute.
- *
- */
-public class ArcrepositoryDistributeTesterSuite {
-    
+public class ArchiveIndexserverDistributeTesterSuite {
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
         suite = new TestSuite(
-                ArcrepositoryDistributeTesterSuite.class.getName());
+                ArchiveIndexserverDistributeTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
 
     /**
-     * Add the tests here.
+     * Add the tests here
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(JMSArcRepositoryClientTester.class);
-        suite.addTestSuite(ArcRepositoryServerTester.class);
-        suite.addTestSuite(StoreMessageTester.class);
+        suite.addTestSuite(IndexRequestClientTester.class);
+        suite.addTestSuite(IndexRequestServerTester.class);
+        suite.addTestSuite(IndexRequestMessageTester.class);
     }
 
-    public static void main(String[] args) {
-        String[] args2 = {"-noloading",
-                ArcrepositoryDistributeTesterSuite.class.getName()};
+    public static void main(String args[]) {
+        String args2[] = {"-noloading", 
+                ArchiveIndexserverDistributeTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
+
 }

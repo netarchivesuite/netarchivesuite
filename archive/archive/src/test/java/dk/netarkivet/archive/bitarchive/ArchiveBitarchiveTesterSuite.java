@@ -20,22 +20,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.archive.arcrepositoryadmin;
+package dk.netarkivet.archive.bitarchive;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-/**
- *  testsuite for AdminEntry class and its subclasses
- *  WebarchiveStoreEntry, BitarchiveStoreEntry
- */
-public class ArcRepositoryAdminTesterSuite
-{
-    public static Test suite()
-    {
+
+public class ArchiveBitarchiveTesterSuite {
+    public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(ArcRepositoryAdminTesterSuite.class.getName());
+        suite = new TestSuite(ArchiveBitarchiveTesterSuite.class.getName());
 
         addToSuite(suite);
 
@@ -43,13 +38,21 @@ public class ArcRepositoryAdminTesterSuite
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(AdminDataTester.class);
-        suite.addTestSuite(ReadOnlyAdminDataTester.class);
+        suite.addTestSuite(BatchMessageTester.class);
+        suite.addTestSuite(BitarchiveAdminTester.class);
+        suite.addTestSuite(BitarchiveARCFileTester.class);
+        suite.addTestSuite(BitarchiveTesterAdmin.class);
+        suite.addTestSuite(BitarchiveTesterBatch.class);
+        suite.addTestSuite(BitarchiveTesterCTOR.class);
+        suite.addTestSuite(BitarchiveTesterGet.class);
+        suite.addTestSuite(BitarchiveTesterLog.class);
+        suite.addTestSuite(BitarchiveTesterUpload.class);
     }
 
-    public static void main(String args[])
-    {
-        String args2[] = {"-noloading", ArcRepositoryAdminTesterSuite.class.getName()};
+    public static void main(String args[]) {
+        String args2[] = {"-noloading", ArchiveBitarchiveTesterSuite.class.getName()};
+
         TestRunner.main(args2);
+        //junit.swingui.TestRunner.main(args2);
     }
 }

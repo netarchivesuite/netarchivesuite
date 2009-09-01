@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -21,43 +21,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.archive.indexserver;
+package dk.netarkivet.viewerproxy.webinterface;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
+
 /**
- * Sweet!  The suite for running indexservertests is auto-setup!
+ * Unit test-suite covering all the classes in the
+ * dk.netarkivet.viewerproxy.webinterface package.
  *
  */
-
-public class IndexServerTesterSuite {
+public class ViewerproxyWebinterfaceTesterSuite {
     /**
      * Create a test suite just for these tests.
      */
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(IndexServerTesterSuite.class.getSimpleName());
+        suite = new TestSuite(ViewerproxyWebinterfaceTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(CDXIndexCacheTester.class);
-        suite.addTestSuite(CDXOriginCrawlLogIteratorTester.class);
-        suite.addTestSuite(CombiningMultiFileBasedCacheTester.class);
-        suite.addTestSuite(CrawlLogIndexCacheTester.class);
-        suite.addTestSuite(DedupCrawlLogIndexCacheTester.class);
-        suite.addTestSuite(MultiFileBasedCacheTester.class);
-        suite.addTestSuite(RawMetadataCacheTester.class);
+        suite.addTestSuite(ReportingTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading", IndexServerTesterSuite.class.getName()};
+    public static void main(String[] args) {
+        String[] args2 = {"-noloading", ViewerproxyWebinterfaceTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }

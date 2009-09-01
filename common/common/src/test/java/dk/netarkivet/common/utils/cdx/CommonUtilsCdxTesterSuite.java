@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -20,39 +20,41 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-package dk.netarkivet.common.distribute.indexserver;
+package dk.netarkivet.common.utils.cdx;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-/**
- * lc forgot to comment this!
+
+/** 
+ * Unit-tester suite for the package 
+ * dk.netarkivet.common.utils.cdx .
  *
  */
-public class DistributeIndexserverTesterSuite {
-    /**
-     * Create a test suite just for these tests.
-     */
-    public static Test suite() {
+public class CommonUtilsCdxTesterSuite {
+
+    public static Test suite()
+    {
         TestSuite suite;
-        suite = new TestSuite(
-                DistributeIndexserverTesterSuite.class.getSimpleName());
+        suite = new TestSuite(CommonUtilsCdxTesterSuite.class.getName());
+
         addToSuite(suite);
+
         return suite;
     }
 
-    /**
-     * Add the tests here
-     */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(TrivialJobIndexCacheTester.class);
+        suite.addTestSuite(ARCFilenameCDXRecordFilterTester.class);
+        suite.addTestSuite(CDXReaderTester.class);
+        suite.addTestSuite(ExtractCDXJobTester.class);
+        suite.addTestSuite(BinSearchTester.class);
+        suite.addTestSuite(CDXRecordTester.class);
     }
 
-    public static void main(String args[]) {
-        String args2[] = {"-noloading",
-                DistributeIndexserverTesterSuite.class.getName()};
+    public static void main(String args[])
+    {
+        String args2[] = {"-noloading", CommonUtilsCdxTesterSuite.class.getName()};
         TestRunner.main(args2);
     }
 }
