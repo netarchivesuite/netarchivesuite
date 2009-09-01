@@ -1,3 +1,25 @@
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
@@ -36,10 +58,9 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @param repId The replica where the job involved in this message is
      * to be performed.
      */
-    public GetAllChecksumMessage(ChannelID to, ChannelID replyTo, 
-	    String repId) {
-	super(to, replyTo);
-	this.replicaId = repId;
+    public GetAllChecksumMessage(ChannelID to, ChannelID replyTo, String repId) {
+        super(to, replyTo);
+        this.replicaId = repId;
     }
     
     /**
@@ -50,9 +71,9 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @param file The file with the checksum message.
      */
     public void setFile(File file) {
-	ArgumentNotValid.checkNotNull(file, "File file");
-	
-	remoteFile = RemoteFileFactory.getMovefileInstance(file);
+        ArgumentNotValid.checkNotNull(file, "File file");
+
+        remoteFile = RemoteFileFactory.getMovefileInstance(file);
     }
     
     /**
@@ -61,16 +82,16 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @param toFile The file for the remotely retrieved content.
      */
     public void getData(File toFile) {
-	ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (remoteFile == null) {
             throw new IOFailure("The remote file is not valid. "
-        	    + "Data cannot be retrieved.");
+                    + "Data cannot be retrieved.");
         }
         remoteFile.copyTo(toFile);
         try {
             remoteFile.cleanup();
         } catch (IOFailure e) {
-            //Just log errors on deleting. They are fairly harmless.
+            // Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
             LogFactory.getLog(getClass().getName()).warn(
                     "Could not delete remote file " + remoteFile.getName());
@@ -85,7 +106,7 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @return The id for the replica.
      */
     public String getReplicaId() {
-	return replicaId;
+        return replicaId;
     }
 
     /**
@@ -94,7 +115,7 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @return String representation of this object
      */
     public String toString() {
-	return super.toString();
+        return super.toString();
     }
 
     public void accept(ArchiveMessageVisitor v) {

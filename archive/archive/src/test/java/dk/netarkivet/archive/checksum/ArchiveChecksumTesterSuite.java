@@ -22,17 +22,34 @@
  */
 package dk.netarkivet.archive.checksum;
 
-import dk.netarkivet.archive.checksum.distribute.ChecksumFileServer;
-import dk.netarkivet.common.utils.ApplicationUtils;
+import dk.netarkivet.archive.checksum.distribute.FileChecksumServerTester;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
-public class ChecksumFileApplication {
-    /**
-     * Runs the Checksum File Application.
-     * 
-     * @param args No arguments required - thus an empty array.
-     * @see ChecksumFileServer
-     */
-    public static void main(String[] args) {
-        ApplicationUtils.startApp(ChecksumFileServer.class, args);
+/**
+ * Suite of unittests for the classes in the
+ * dk.netarkivet.archive.checksum and dk.netarkivet.archive.checksum.distribute
+ * package.
+ */
+public class ArchiveChecksumTesterSuite {
+    public static Test suite() {
+        TestSuite suite;
+        suite = new TestSuite(ArchiveChecksumTesterSuite.class.getName());
+
+        addToSuite(suite);
+
+        return suite;
+    }
+
+    public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(FileChecksumArchiveTester.class);
+        suite.addTestSuite(FileChecksumServerTester.class);
+    }
+
+    public static void main(String args[]) {
+        String args2[] = { "-noloading",
+                ArchiveChecksumTesterSuite.class.getName() };
+        TestRunner.main(args2);
     }
 }
