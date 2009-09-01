@@ -2,7 +2,7 @@
     <wayback>
          <urlcanonicalizer>
              <classname>
-                 dk.netarkivet.wayback.NetarchiveSuiteAggressiveUrlCanonicalizer
+                 dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
              </classname>
          </urlcanonicalizer>
     </wayback>

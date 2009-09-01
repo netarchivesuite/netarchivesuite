@@ -3,7 +3,7 @@ package dk.netarkivet.wayback;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -14,6 +14,8 @@ import org.archive.wayback.resourceindex.cdx.CDXLineToSearchResultAdapter;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
+import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapterInterface;
 
 /**
  * Created by IntelliJ IDEA. User: csr Date: Aug 26, 2009 Time: 10:40:23 AM To
@@ -21,7 +23,7 @@ import dk.netarkivet.testutils.TestUtils;
  */
 public class DeduplicateToCDXAdapterTester extends TestCase {
 
-    public static final String DEDUP_CRAWL_LOG = "dedup_crawk_log.txt";
+    public static final String DEDUP_CRAWL_LOG = "dedup_crawl_log.txt";
     public static final String DEDUP_CRAWL_STRING ="2009-05-25T13:00:00.992Z   200       9717 https://wiki.statsbiblioteket.dk/wiki/summa/img/draft.png LLEE https://wiki.statsbiblioteket.dk/wiki/summa/css/screen.css image/png #016 20090525130000915+76 sha1:AXH2IFNXC4MUT26SRHRJZHGR3FDAJDNR - duplicate:\"1-1-20090513141823-00008-sb-test-har-001.statsbiblioteket.dk.arc,22962264\",content-size:9969";
 
       public void setUp() {
@@ -37,16 +39,11 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
     }
 
     public void testCtor() {
-                if (!TestUtils.runningAs("CSR")) {
-            return;
-        }
+
        DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter(); 
     }
 
-    public void testAdaptLine() {
-                if (!TestUtils.runningAs("CSR")) {
-            return;
-        }
+    public void testAdaptLine() {            
         DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
         String cdx_line = adapter.adaptLine(DEDUP_CRAWL_STRING);
         CDXLineToSearchResultAdapter adapter2 = new CDXLineToSearchResultAdapter();
@@ -55,7 +52,7 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         assertEquals("Should get the right http code out of the cdx line","200",result.getHttpCode());
     }
 
-    public void testAdaptStream() throws FileNotFoundException {
+    public void testAdaptStream() throws IOException {
                 if (!TestUtils.runningAs("CSR")) {
             return;
         }
@@ -63,8 +60,14 @@ public class DeduplicateToCDXAdapterTester extends TestCase {
         OutputStream os = new ByteArrayOutputStream();
         DeduplicateToCDXAdapterInterface adapter = new DeduplicateToCDXAdapter();
         adapter.adaptStream(is, os);
+        os.close();
         String output = os.toString();
         String[] lines = output.split("\n");
+        CDXLineToSearchResultAdapter adapter2 = new CDXLineToSearchResultAdapter();
+        for (String line: lines) {
+            CaptureSearchResult csr = adapter2.adapt(line);
+            assertNotNull("Should have a valid mime type for every line, inclding '" + line + "'", csr.getMimeType());
+        }
         assertTrue("expect at least 3 lines of output, got " + lines.length, lines.length > 2);
     }
 

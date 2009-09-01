@@ -88,7 +88,7 @@ public class NetarchiveResourceStore implements ResourceStore {
             logger.info("Error looking for non existing resource", e);
             throw new ResourceNotAvailableException("NullPointerException");
         }
-
+        logger.info("Received request for resource from file '" + arcfile + "' at offset '" + offset + "'");
         BitarchiveRecord bitarchive_record = client.get(arcfile, offset);
         if (bitarchive_record == null) {
             throw new ResourceNotAvailableException("Resource not in archive");

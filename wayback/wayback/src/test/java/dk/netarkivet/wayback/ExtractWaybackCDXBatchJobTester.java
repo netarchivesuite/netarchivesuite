@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.wayback.batch.ExtractWaybackCDXBatchJob;
 
 /**
  * csr forgot to comment this!
