@@ -139,10 +139,9 @@ public abstract class FileBasedCache<I> {
                 FileOutputStream lockFile = new FileOutputStream(
                         fileBehindLockFile);
                 FileLock lock = null;
-                try {
-                    // Make sure no other thread tries to create this
-                    synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
-                	
+                // Make sure no other thread tries to create this
+                synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
+                    try {
                         // Make sure no other process tries to create this
                         log.debug("locking filechannel for file '"
                         	+ fileBehindLockFile.getAbsolutePath()
@@ -160,16 +159,15 @@ public abstract class FileBasedCache<I> {
                         if (cachedFile.exists()) {
                             return id;
                         }
-                        
                         return cacheData(id);
+                    } finally {
+                        if (lock != null) {
+                            log.debug("release lock on filechannel "
+                                      +  lockFile.getChannel());
+                            lock.release();
+                        }
+                        lockFile.close();
                     }
-                } finally {
-                    if (lock != null) {
-                        log.debug("release lock on filechannel "
-                                +  lockFile.getChannel());
-                        lock.release();
-                    }
-                    lockFile.close();
                 }
             } catch (IOException e) {
                 String errMsg = "Error obtaining lock for file '"
