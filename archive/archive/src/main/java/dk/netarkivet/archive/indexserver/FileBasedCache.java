@@ -124,57 +124,50 @@ public abstract class FileBasedCache<I> {
      * @return The id given if it was successfully fetched, otherwise null
      * if the type parameter I does not allow subsets, or a subset of id
      * if it does.  This subset should be immediately cacheable.
-     * 
-     * FIXME added method synchronization. Try to fix bug 1547
      */
     public I cache(I id) {
         ArgumentNotValid.checkNotNull(id, "id");
         File cachedFile = getCacheFile(id);
-        if (cachedFile.exists()) {
-            return id;
-        } else {
-            try {
-        	File fileBehindLockFile 
-        		= new File(cachedFile.getAbsolutePath() + ".working");
-                FileOutputStream lockFile = new FileOutputStream(
-                        fileBehindLockFile);
-                FileLock lock = null;
-                // Make sure no other thread tries to create this
-                synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
+        try {
+            File fileBehindLockFile
+                    = new File(cachedFile.getAbsolutePath() + ".working");
+            FileOutputStream lockFile = new FileOutputStream(
+                    fileBehindLockFile);
+            FileLock lock = null;
+            // Make sure no other thread tries to create this
+            synchronized (fileBehindLockFile.getAbsolutePath().intern()) {
+                try {
+                    // Make sure no other process tries to create this.
+                    log.debug("locking filechannel for file '"
+                              + fileBehindLockFile.getAbsolutePath()
+                              + "' (thread = "
+                              + Thread.currentThread().getName() + ")");
                     try {
-                        // Make sure no other process tries to create this
-                        log.debug("locking filechannel for file '"
-                        	+ fileBehindLockFile.getAbsolutePath()
-                        	+ "' (thread = "
-                        	+ Thread.currentThread().getName() + ")");
-                        try {
-                            lock = lockFile.getChannel().lock();
-                        } catch (OverlappingFileLockException e) {
-                            log.warn(e);
-                            throw new IOException(e);
-                        }
-                        // Now we know nobody else touches the file
-                        // Just in case, check that the file wasn't created
-                        // in the interim.  If it was, we can return it.
-                        if (cachedFile.exists()) {
-                            return id;
-                        }
-                        return cacheData(id);
-                    } finally {
-                        if (lock != null) {
-                            log.debug("release lock on filechannel "
-                                      +  lockFile.getChannel());
-                            lock.release();
-                        }
-                        lockFile.close();
+                        lock = lockFile.getChannel().lock();
+                    } catch (OverlappingFileLockException e) {
+                        // Exception is logged below
+                        throw new IOException(e.getMessage(), e);
                     }
+                    // Now we know nobody else touches the file
+                    // If the file already exists, just return it.
+                    if (cachedFile.exists()) {
+                        return id;
+                    }
+                    return cacheData(id);
+                } finally {
+                    if (lock != null) {
+                        log.debug("release lock on filechannel "
+                                  + lockFile.getChannel());
+                        lock.release();
+                    }
+                    lockFile.close();
                 }
-            } catch (IOException e) {
-                String errMsg = "Error obtaining lock for file '"
-                    + cachedFile.getAbsolutePath() + "'.";
-                log.warn(errMsg, e);
-                throw new IOFailure(errMsg, e);
             }
+        } catch (IOException e) {
+            String errMsg = "Error obtaining lock for file '"
+                            + cachedFile.getAbsolutePath() + "'.";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 
