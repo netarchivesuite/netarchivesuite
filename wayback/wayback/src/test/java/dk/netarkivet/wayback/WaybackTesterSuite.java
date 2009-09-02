@@ -27,8 +27,10 @@ public class WaybackTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ExtractWaybackCDXBatchJobTester.class);
         //suite.addTestSuite(NetarchiveResourceStoreTester.class);
-        suite.addTestSuite(UrlCanonicalizerFactoryTester.class);
+        //suite.addTestSuite(UrlCanonicalizerFactoryTester.class);
         suite.addTestSuite(DeduplicateToCDXAdapterTester.class);
+        suite.addTestSuite(ExtractDeduplicateCDXBatchJobTester.class);
+        suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
     }
 
     public static void main(String args[]) {
