@@ -147,8 +147,9 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
             <td><fmt:message key="prompt;max.bytes.per.domain"/></td>
             <td><input name="<%= Constants.DOMAIN_BYTELIMIT_PARAM %>"
                    size="20" value="<%=
-                                (hd != null?nf.format(hd.getMaxBytes()):"")
-                                    %>"/></td>
+                   (hd != null?
+                       HTMLUtils.localiseLong(hd.getMaxBytes(), pageContext):"")
+                   %>"/></td>
         </tr>
     </table>
 

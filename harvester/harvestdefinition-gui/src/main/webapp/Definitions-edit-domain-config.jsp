@@ -66,7 +66,9 @@ passwordList:
                  dk.netarkivet.harvester.datamodel.DomainConfiguration,
                  dk.netarkivet.harvester.datamodel.DomainDAO,
                  dk.netarkivet.harvester.datamodel.SeedList,
-                 dk.netarkivet.harvester.datamodel.TemplateDAO, dk.netarkivet.harvester.webinterface.Constants, dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
+                 dk.netarkivet.harvester.datamodel.TemplateDAO,
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.DomainConfigurationDefinition"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -109,7 +111,6 @@ passwordList:
         dc = domain.getConfiguration(configName);
     }
     HTMLUtils.generateHeader(pageContext);
-    Locale loc = HTMLUtils.getLocaleObject(pageContext);
 %>
 
 <%--
@@ -133,7 +134,9 @@ Display all the form information for this domain
 <%-- table for selecting/editing configurations --%>
 <div class="edit_box">
 <table cellspacing="2" class="selection_table">
-<th colspan="2"><fmt:message key="harvestdefinition.config.edit.editConfig"/></th>
+<th colspan="2">
+    <fmt:message key="harvestdefinition.config.edit.editConfig"/>
+</th>
 <%
     // Prefill values for editing an existing configuration. Cannot
     // change the name of an existing configuration
@@ -143,12 +146,15 @@ Display all the form information for this domain
     String maxObjects = "";
     String maxBytes = "";
     if (dc != null) {
-        NumberFormat nf = NumberFormat.getInstance(loc);
         nameString = "value=\"" + HTMLUtils.escapeHtmlValues(configName)
                      + "\" readonly=\"readonly\"";
         load = "value=\"" + dc.getMaxRequestRate() + "\"";
-        maxObjects = "value=\"" + nf.format(dc.getMaxObjects()) + "\"";
-        maxBytes = "value=\"" + nf.format(dc.getMaxBytes()) + "\"";
+        maxObjects = "value=\"" +
+                     HTMLUtils.localiseLong(dc.getMaxObjects(), pageContext)
+                     + "\"";
+        maxBytes = "value=\""
+                   + HTMLUtils.localiseLong(dc.getMaxBytes(), pageContext) 
+                   + "\"";
         currentTemplate = dc.getOrderXmlName();
     }
 %>
@@ -158,14 +164,18 @@ Display all the form information for this domain
         <table>
             <tr>
                 <td><fmt:message key="prompt;name"/></td>
-                <td><span id="focusElement"><input name="<%=Constants.CONFIG_NAME_PARAM%>" size="50"
-                        <%=nameString%>/></span></td>
+                <td><span id="focusElement">
+                        <input name="<%=Constants.CONFIG_NAME_PARAM%>" size="50"
+                            <%=nameString%>/>
+                    </span>
+                </td>
             </tr>
             <tr>
                 <td><fmt:message key="prompt;harvest.template"/></td>
                 <td><select name="<%=Constants.ORDER_XML_NAME_PARAM%>">
                     <%
-                        Iterator<String> templates = TemplateDAO.getInstance().getAll();
+                        Iterator<String> templates =
+                                TemplateDAO.getInstance().getAll();
                         while (templates.hasNext()) {
                             String selected = "";
                             String template = templates.next();
@@ -186,7 +196,9 @@ Display all the form information for this domain
             <input name="<%=Constants.MAX_OBJECTS_PARAM%>" type="hidden" <%=maxObjects%> />
             <tr>
                 <td><fmt:message key="maximum.number.of.bytes"/></td>
-                <td><input name="<%=Constants.MAX_BYTES_PARAM%>" size="20" <%=maxBytes%> /></td>
+                <td>
+                    <input name="<%=Constants.MAX_BYTES_PARAM%>" size="20" <%=maxBytes%> />
+                </td>
             </tr>
             <tr>
                 <td colspan="2"><fmt:message key="prompt;comments"/></td>

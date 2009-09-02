@@ -388,15 +388,15 @@ public class BitpreserveFileState {
                 locale,
                 "number.of.files")
                     + "&nbsp;"
-                    + activeBitPreservation.getNumberOfFiles(
-                replica));
+                    + HTMLUtils.localiseLong(
+                      activeBitPreservation.getNumberOfFiles(replica), locale));
         out.println("<br/>");
         out.println(I18N.getString(
                 locale,
                 "missing.files")
                     + "&nbsp;"
-                    + activeBitPreservation.getNumberOfMissingFiles(
-                replica));
+                    + HTMLUtils.localiseLong(
+               activeBitPreservation.getNumberOfMissingFiles(replica), locale));
 
         if (activeBitPreservation.getNumberOfMissingFiles(replica) > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
@@ -453,7 +453,8 @@ public class BitpreserveFileState {
         //Number of changed files
         out.println(I18N.getString(locale, "number.of.files.with.error")
                     + "&nbsp;"
-                    + bitPreservation.getNumberOfChangedFiles(replica));
+                    + HTMLUtils.localiseLong(
+                     bitPreservation.getNumberOfChangedFiles(replica), locale));
 
         //Link to fix-page
         if (bitPreservation.getNumberOfChangedFiles(replica) > 0) {

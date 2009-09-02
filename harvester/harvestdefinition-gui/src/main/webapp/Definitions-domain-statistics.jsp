@@ -63,13 +63,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             if (tld.isIP()) {
                 domain = HTMLUtils.escapeHtmlValues(I18N.getString(response.getLocale(),
                         "ip.addresses"));
-                count = Integer.toString(tld.getCount());
+                count = HTMLUtils.localiseLong(tld.getCount(), pageContext);
             } else {
                 domain = HTMLUtils.escapeHtmlValues(tld.getName());
                 count = "<a href=\"/HarvestDefinition/Definitions-find-domains.jsp?"
                         + dk.netarkivet.harvester.webinterface.Constants.DOMAIN_PARAM
                         + "=*."
-                        + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(tld.getName())) + "\">" + tld.getCount() + "</a>";
+                        + HTMLUtils.escapeHtmlValues(HTMLUtils.encode(tld.getName()))
+                        + "\">" + HTMLUtils.localiseLong(tld.getCount(), pageContext)
+                        + "</a>";
             }
         %>
         <tr class="<%= rowClass %>"><td><%= domain %></td><td><%= count %></td></tr>

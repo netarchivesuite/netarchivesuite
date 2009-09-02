@@ -853,4 +853,15 @@ public class HTMLUtils {
             return defaultValue;
         }
     }
+
+    public static String localiseLong(long i, PageContext context) {
+        NumberFormat nf = NumberFormat.getInstance(
+                HTMLUtils.getLocaleObject(context));
+        return nf.format(i);
+    }
+
+    public static String localiseLong(long i, Locale locale) {
+        NumberFormat nf = NumberFormat.getInstance(locale);
+        return nf.format(i);
+    }
 }

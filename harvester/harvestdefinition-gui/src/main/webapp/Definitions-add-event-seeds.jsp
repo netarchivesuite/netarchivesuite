@@ -88,8 +88,6 @@ harvest.
         return;
     }
     HTMLUtils.generateHeader(pageContext);
-    NumberFormat nf =
-            NumberFormat.getInstance(HTMLUtils.getLocaleObject(pageContext));
 %>
 
 <h2><fmt:message key="prompt;event.harvest"/>
@@ -127,7 +125,8 @@ the user
         <tr>
         	<td><fmt:message key="prompt;max.bytes.per.domain"/></td>
             <td><input type="text" name="<%= Constants.MAX_BYTES_PARAM %>"
-                       value="<%= nf.format(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES) %>"/> </td>
+                       value="<%= HTMLUtils.localiseLong(dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES, pageContext) %>"/>
+            </td>
         </tr>
         <tr>
             <td><fmt:message key="prompt;harvest.template"/></td>
