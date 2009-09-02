@@ -29,7 +29,7 @@ import org.apache.commons.httpclient.URIException;
 /**
  * This class overrides the standard wayback canonicalizer in order to use our
  * version of UURIFactory (see Bug 1719). Everything in this class is cut and pasted
- * from waybacks AggressiveUrlCanonicalizer, with substitution of
+ * from wayback's AggressiveUrlCanonicalizer, with substitution of
  * NetarchiveSuiteUURIFactory for UURIFactory.
  */
 public class NetarchiveSuiteAggressiveUrlCanonicalizer extends

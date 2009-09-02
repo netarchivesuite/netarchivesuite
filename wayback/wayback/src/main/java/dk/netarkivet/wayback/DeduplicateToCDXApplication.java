@@ -58,7 +58,8 @@ public class DeduplicateToCDXApplication {
 
     /**
      * An application to generate unsorted cdx files from duplicate records
-     * present in a crawl.low file. The only parameters are a list of file-paths.
+     * present in a crawl.low file. The only parameters are a list of file-
+     * paths.
      * Output is written to standard out.
      * @param args the file names (relative or absolute paths)
      * @throws FileNotFoundException if one or more of the files does not exist
@@ -66,9 +67,11 @@ public class DeduplicateToCDXApplication {
     public static void main(String[] args) throws FileNotFoundException {
           if (args.length == 0) {
               System.err.println("No files specified on command line");
-              System.err.println("Usage: java dk.netarkivet.wyaback.DeduplicateToCDXApplication <files>");
+              System.err.println("Usage: java dk.netarkivet.wyaback."
+                                 + "DeduplicateToCDXApplication <files>");
           } else {
-              DeduplicateToCDXApplication app = new DeduplicateToCDXApplication();
+              DeduplicateToCDXApplication app =
+                      new DeduplicateToCDXApplication();
               app.generateCDX(args);
           }
 

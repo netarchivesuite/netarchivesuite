@@ -41,7 +41,8 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
 
     //private static final long serialVersionUID = 6791474836852341241L;
     private DeduplicateToCDXAdapter adapter;
-    private static final String CRAWL_LOG_URL_PATTERN_STRING = "metadata://(.*)crawl[.]log(.*)";
+    private static final String CRAWL_LOG_URL_PATTERN_STRING =
+            "metadata://(.*)crawl[.]log(.*)";
     private Pattern crawl_log_url_pattern;
 
     public void initialize(OutputStream os) {
@@ -50,7 +51,8 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
     }
 
     public void processRecord(ARCRecord record, OutputStream os) {
-        if (crawl_log_url_pattern.matcher(record.getMetaData().getUrl()).matches()) {            
+        if (crawl_log_url_pattern
+                .matcher(record.getMetaData().getUrl()).matches()) {            
             adapter.adaptStream(record, os);
         } else {
            return;

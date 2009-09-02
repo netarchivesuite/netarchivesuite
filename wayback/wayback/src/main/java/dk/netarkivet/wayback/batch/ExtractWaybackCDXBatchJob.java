@@ -55,7 +55,8 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
     public void initialize(OutputStream os) {
         log.info("Starting CDX Extraction Batch Job");
         aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
-        UrlCanonicalizer uc = UrlCanonicalizerFactory.getDefaultUrlCanonicalizer();
+        UrlCanonicalizer uc = UrlCanonicalizerFactory
+                .getDefaultUrlCanonicalizer();
         aToSAdapter.setCanonicalizer(uc);
         srToCDXAdapter = new  SearchResultToCDXLineAdapter();
     }

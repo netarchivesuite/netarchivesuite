@@ -6,7 +6,8 @@ import dk.netarkivet.common.utils.Settings;
  * Settings specific to the wayback module of NetarchiveSuite.
  */
 public class WaybackSettings {
-      /** The default place in classpath where the settings file can be found. */
+      /** The default place in classpath where the settings
+       * file can be found. */
     private static final String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/wayback/settings.xml";
 

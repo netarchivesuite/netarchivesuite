@@ -28,16 +28,22 @@ import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 /**
- * Created by IntelliJ IDEA. User: csr Date: Aug 26, 2009 Time: 10:15:15 AM To
- * change this template use File | Settings | File Templates.
+ * A factory for returning a UrlCanonicalizer
  */
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
-    //TODO the correct thing to do here is to load the class specified in
-    //WaybackSettings. However this requires changing our security policy to allow
-    //batch jobs to read system Properties, so for the time being we always
-    //return a NetarchiveSuiteAggressiveUrlCanonicalizer
+
+    /**
+     * The intended behaviour of this method is to return an UrlCanonicalizer
+     * instance of the class specified in the wayback package settings.xml
+     * file. However this requires changing our security policy to allow
+     * batch jobs to read system Properties, so for the time being we always
+     * return a NetarchiveSuiteAggressiveUrlCanonicalizer
+     * @return a UrlCanonicalizer instance
+     */
     public static UrlCanonicalizer getDefaultUrlCanonicalizer() {
+        //TODO restore the following line once we have changed the necessary
+        //settings
         //return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
         return new NetarchiveSuiteAggressiveUrlCanonicalizer();
     }

@@ -26,7 +26,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- *
+ * Interface describing a class which can be used to convert duplicate records
+ * in a crwal log to wayback-compatible cdx records
  */
 public interface DeduplicateToCDXAdapterInterface {
 

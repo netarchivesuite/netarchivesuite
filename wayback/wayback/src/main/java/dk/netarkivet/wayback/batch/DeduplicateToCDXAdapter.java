@@ -41,10 +41,12 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * Created by IntelliJ IDEA. User: csr Date: Aug 26, 2009 Time: 9:52:19 AM To
  * change this template use File | Settings | File Templates.
  */
-public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface {
+public class DeduplicateToCDXAdapter implements
+                                     DeduplicateToCDXAdapterInterface {
 
     private final Log log = LogFactory.getLog(DeduplicateToCDXAdapter.class);
-    private static final String crawl_date_formatS = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String crawl_date_formatS =
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final String cdx_date_formatS = "yyyyMMddHHmmss";
     private static final SimpleDateFormat crawl_date_format
             = new SimpleDateFormat(crawl_date_formatS);
@@ -67,10 +69,13 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 String[] crawl_elements = line.split("\\s+");
                 StringBuffer result = new StringBuffer();
                 String original_url = crawl_elements[3];
-                String canonical_url = canonicalizer.urlStringToKey(original_url);
+                String canonical_url =
+                        canonicalizer.urlStringToKey(original_url);
                 result.append(canonical_url).append(' ');
-                String cdx_date = cdx_date_format.format(crawl_date_format.parse(crawl_elements[0]));
-                result.append(cdx_date).append(' ').append(original_url).append(' ');
+                String cdx_date = cdx_date_format.format(crawl_date_format
+                        .parse(crawl_elements[0]));
+                result.append(cdx_date).append(' ').append(original_url)
+                        .append(' ');
                 String mimetype = crawl_elements[6];
                 result.append(mimetype).append(' ');
                 String http_code = crawl_elements[1];
@@ -91,7 +96,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
                 }
                 return result.toString();
             } catch (Exception e) {
-                log.warn("Could not adapt deduplicate record to CDX line: '" + line + "'", e);
+                log.warn("Could not adapt deduplicate record to CDX line: '"
+                         + line + "'", e);
                 return null;
             }
         } else {
@@ -101,7 +107,8 @@ public class DeduplicateToCDXAdapter implements DeduplicateToCDXAdapterInterface
 
     public void adaptStream(InputStream is, OutputStream os) {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = reader.readLine()) != null) {
                 String cdx_line = adaptLine(line);
