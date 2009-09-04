@@ -34,6 +34,7 @@ import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
+import dk.netarkivet.common.Constants;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
@@ -51,6 +52,21 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
     private final Log log = LogFactory.getLog(getClass().getName());
     private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
     private SearchResultToCDXLineAdapter srToCDXAdapter;
+
+    /**
+     * Constructor which set timeout to one day.
+     */
+    public ExtractWaybackCDXBatchJob() {
+        batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
+    }
+
+    /**
+     * Constructor
+     * @param timeout specific timout period
+     */
+    public ExtractWaybackCDXBatchJob(long timeout) {
+        batchJobTimeout = timeout;
+    }
 
     public void initialize(OutputStream os) {
         log.info("Starting CDX Extraction Batch Job");

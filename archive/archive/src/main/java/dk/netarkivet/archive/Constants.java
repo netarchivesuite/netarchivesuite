@@ -47,5 +47,4 @@ public class Constants {
      * Directory where "deleted" files are placed".
      */
     public static final String ATTIC_DIRECTORY_NAME = "atticdir";
-
 }

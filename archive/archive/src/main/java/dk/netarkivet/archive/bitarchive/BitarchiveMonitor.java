@@ -101,8 +101,6 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
         log.info("Bitarchive liveness times out after "
                  + acceptableSignOfLifeDelay + " milliseconds.");
-                 //+ "Batchjobs time out after " + defaultBatchTimeout
-                 //+ " milliseconds.");
     }
 
     /**
@@ -134,7 +132,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param bitarchiveBatchID The ID of the batch job sent on to the bit
      *                          archives.
      * @param timeout           Timeout of specific batch job.
-     * @throws ArgumentNotValid If any argument is null, or either string is
+     * @throws ArgumentNotValid If any argument is null, or either string is                                                       q`
      *                          empty.
      */
     public void registerBatch(String requestID, ChannelID requestReplyTo,
@@ -176,8 +174,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                          + (now - baID.getValue())
                          + " milliseconds");
                 // Remove the bitarchive to ensure this warning is not logged
-                // more than once,
-                // and a new message is logged when it returns.
+                // more than once, and a new message is logged when it returns.
                 bitarchiveSignsOfLife.remove(baID.getKey());
             }
         }
@@ -330,6 +327,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         /**
          * Initialise the status on a fresh batch request. Apart from the given
          * values, a file is created to store batch results in.
+         * <b>Sideeffect</b>: BatchTimeout is started here
          *
          * @param originalRequestID      The ID of the originating request.
          * @param originalRequestReplyTo The reply channel for the originating

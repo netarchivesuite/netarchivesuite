@@ -94,6 +94,9 @@ public class CommonSettings {
     public static String ARC_REPOSITORY_CLIENT
             = "settings.common.arcrepositoryClient.class";
 
+    public static String MAX_NUM_BATCH_EXCEPTIONS
+            = "settings.common.batch.maxExceptions";
+
     /** 
      * <b>settings.common.monitorregistryClient.class</b>: <br>
      * Which class to use for monitor registry. Must implement the interface

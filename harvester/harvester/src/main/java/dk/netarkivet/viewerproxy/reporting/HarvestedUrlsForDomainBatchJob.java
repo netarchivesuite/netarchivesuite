@@ -29,6 +29,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.archive.io.arc.ARCRecord;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -36,6 +38,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.FixedUURI;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.common.utils.batch.ARCBatchFilter;
+import dk.netarkivet.common.Constants;
 
 /**
  * Batchjob that extracts lines referring to a specific domain from a crawl log.
@@ -43,6 +46,10 @@ import dk.netarkivet.common.utils.batch.ARCBatchFilter;
  * job only, using the {@link #processOnlyFilesMatching(String)} construct.
  */
 public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
+
+    // logger
+    private final Log log = LogFactory.getLog(getClass().getName());
+    
     /** Metadata URL for crawl logs. */
     private static final String SETUP_URL_FORMAT
             = "metadata://netarkivet.dk/crawl/logs/crawl.log";
@@ -56,12 +63,13 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
      * @param domain The domain to get crawl.log lines for.
      */
     public HarvestedUrlsForDomainBatchJob(String domain) {
+        ArgumentNotValid.checkNotNullOrEmpty(domain, "domain");
         this.domain = domain;
 
         /**
         * Two week in miliseconds.
         */
-        batchJobTimeout = 14*24*60*60*1000;
+        batchJobTimeout = 7* Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**
@@ -131,6 +139,12 @@ public class HarvestedUrlsForDomainBatchJob extends ARCBatchJob {
             }
         } catch (IOException e) {
             throw new IOFailure("Unable to process arc record", e);
+        } finally {
+            try {
+                arcreader.close(); 
+            } catch (IOException e) {
+                log.warn("unable to close arcreader probably", e);
+            }
         }
     }
 

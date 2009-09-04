@@ -31,4 +31,4 @@ public class Constants {
      */
     public static final String TRANSLATIONS_BUNDLE =
             "dk.netarkivet.viewerproxy.Translations";
-}
+    }

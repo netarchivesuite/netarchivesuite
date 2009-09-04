@@ -86,6 +86,8 @@ public class LocalCDXCache implements JobIndexCache {
     private static final long SLEEP_INTERVAL = 100;
 
     /** Construct a new CDXCache object.
+     *
+     * @param arcRepos Viewer ArcRepositoryClient
      */
     public LocalCDXCache(ViewerArcRepositoryClient arcRepos) {
         this.arcRepos = arcRepos;
@@ -198,23 +200,25 @@ public class LocalCDXCache implements JobIndexCache {
      */
     private static class CDXCacheBatchJob extends ARCBatchJob {
         /**
-         * Constructor for CDXCacheBatchJob
+         * Constructor for CDXCacheBatchJob/
          */
         public CDXCacheBatchJob() {
-            /**
-            * One week in miliseconds.
-            */
-            batchJobTimeout = 7*24*60*60*1000;
+            batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
         }
 
         /**
-        * TODO: JavaDoc
+        * Initialize the batch job/
+         *
+         * @param os output stream where output from batch job is returned.
         */
         public void initialize(OutputStream os) {
         }
 
         /**
-        * TODO: JavaDoc
+         * Routine for a single ARC Record.
+         *
+         * @param os output stream for output of batch job.
+         * @param record the ARC record to work on.
         */
         public void processRecord(ARCRecord record,
                                   OutputStream os) {
@@ -233,7 +237,9 @@ public class LocalCDXCache implements JobIndexCache {
         }
 
         /**
-        * TODO: JavaDoc
+         * Is called when batch job is finished. Nothing to do.
+         *
+         * @param os ouput stream for returning output from batchjob. 
         */
         public void finish(OutputStream os) {
         }

@@ -50,10 +50,7 @@ public class FileListJob extends FileBatchJob {
 
 
     public FileListJob() {
-        /**
-        *  One hour in miliseconds.
-        */
-        batchJobTimeout = 60*60*1000;
+        batchJobTimeout = Constants.ONE_HOUR_IN_MILLIES;
     }
     /**
      * Initializes fields in this class.

@@ -48,10 +48,8 @@ public class ChecksumJob extends FileBatchJob {
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
     public ChecksumJob() {
-        /**
-         * One hour in miliseconds.
-         */
-        batchJobTimeout = 60*60*1000;
+
+        batchJobTimeout = 15*Constants.ONE_MIN_IN_MILLIES;
     }
 
     /**

@@ -36,7 +36,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.CommonSettings;
 
 /**
  * Interface defining a batch job to run on a set of files.
@@ -283,7 +285,16 @@ public abstract class FileBatchJob implements Serializable {
     protected boolean maxExceptionsReached() {
         return exceptions.size() >= ExceptionOccurrence.MAX_EXCEPTIONS;
     }
-    
+
+    /**
+     * Override predefined timeout period for batchjob
+     *
+     * @param batchJobTimeout timout period
+     */
+    public void setBatchJobTimeout(long batchJobTimeout) {
+        this.batchJobTimeout = batchJobTimeout;
+    }
+
     /** This class holds the information about exceptions that occurred in
      * a batchjob.
      */
@@ -291,9 +302,9 @@ public abstract class FileBatchJob implements Serializable {
 
         /** The maximum number of exceptions we will accumulate before
          * aborting processing. 
-         * TODO MAX_EXCEPTIONS should be added to our settings
          */
-        private static final int MAX_EXCEPTIONS = 100;
+        private static final int MAX_EXCEPTIONS = Settings.getInt(
+                CommonSettings.MAX_NUM_BATCH_EXCEPTIONS);
 
         /** Marker for the case when we couldn't find an offset for the
          * outputstream.

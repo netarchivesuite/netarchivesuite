@@ -49,12 +49,9 @@ public class GetCDXRecordsBatchJob extends ARCBatchJob {
      * TODO: JavaDoc
      */
     public GetCDXRecordsBatchJob() {
-        URLMatcher = Pattern.compile(".*");
-        mimeMatcher = Pattern.compile("application/x-cdx");
-        /**
-        * Two week in miliseconds.
-        */
-        long batchJobTimeout = 14*24*60*60*1000;        
+        URLMatcher = Pattern.compile(Constants.ALL_PATTERN);
+        mimeMatcher = Pattern.compile(Constants.CDX_MIME_PATTERN);
+        batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
     }
 
     /**

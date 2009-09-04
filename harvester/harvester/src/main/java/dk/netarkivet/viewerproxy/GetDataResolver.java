@@ -268,10 +268,7 @@ public class GetDataResolver extends CommandResolver {
             implements Serializable {
 
         public GetFileBatchJob() {
-            /**
-            * Ten minutes in miliseconds.
-            */
-            batchJobTimeout = 10*60*1000;
+            batchJobTimeout = 10*Constants.ONE_MIN_IN_MILLIES;
         }
         
         /** Does nothing. */

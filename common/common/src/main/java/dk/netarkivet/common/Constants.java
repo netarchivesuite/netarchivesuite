@@ -135,4 +135,24 @@ public class Constants {
     public static SimpleDateFormat getIsoDateFormatter() {
         return new SimpleDateFormat(ISO_DATE_FORMAT);
     }
+
+    /**
+     * One minute in milliseconds.
+     */
+    public static final long ONE_MIN_IN_MILLIES = 60*1000;
+
+    /**
+     * One day in milli seconds.
+     */
+    public static final long ONE_DAY_IN_MILLIES = 24*60*ONE_MIN_IN_MILLIES;
+
+    /**
+     * Pattern that matches our our CDX mime type.
+     */
+    public static String CDX_MIME_PATTERN = "application/x-cdx";
+
+    /**
+     * Pattern that matches everything.
+     */
+    public static String ALL_PATTERN = ".*"; 
 }

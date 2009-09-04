@@ -165,7 +165,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
             /**
             * one week in miliseconds.
             */
-            batchJobTimeout = 7*24*60*60*1000;
+            batchJobTimeout = Constants.ONE_DAY_IN_MILLIES;
         }
 
         /**
