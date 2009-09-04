@@ -407,6 +407,9 @@
             <!-- Currently set to 10 MB -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
+        <batch>
+            <maxExceptions>100</maxExceptions>
+        </batch>
         <replicas> <!-- The entire settings for replicas. -->
             <replica>
                 <replicaId>ONE</replicaId>
