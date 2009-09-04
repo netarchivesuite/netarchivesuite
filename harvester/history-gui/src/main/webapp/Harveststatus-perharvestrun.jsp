@@ -61,7 +61,6 @@ This page displays harvest details for one harvest definition run
 
     // After a resubmit, forward to this page.
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
-        // TODO insert all jobstatusname
         String jobsStatusCodes = "&";
         for (JobStatus st : JobStatus.values()) {
             if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
@@ -76,8 +75,6 @@ This page displays harvest details for one harvest definition run
                               + request.getParameter(Constants.HARVEST_NUM_PARAM)
                               + "&" + Constants.JOBIDORDER_PARAM + "="
                               + request.getParameter(Constants.JOBIDORDER_PARAM)
-                              + "&" + Constants.JOBSTATUS_PARAM + "="
-                              + request.getParameter(Constants.JOBSTATUS_PARAM)
                               + jobsStatusCodes
                                 );
         return;
@@ -225,12 +222,11 @@ This page displays harvest details for one harvest definition run
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
                        HTMLUtils.nullToHyphen(js.getHarvestErrors()))%>
-                    <%/*if (js.getStatus().equals(JobStatus.FAILED)
+                    <% if (js.getStatus().equals(JobStatus.FAILED)
                           && js.getHarvestErrors() != null
                           && js.getHarvestErrors().length() > 0
                           && SiteSection.isDeployed(
-                            Constants.DEFINITIONS_SITESECTION_DIRNAME)) {*/
-                        //TODO uncomment
+                            Constants.DEFINITIONS_SITESECTION_DIRNAME)) {
                         // Note: The form is only displayed if Definitions
                         // sitesection is deployed. Thus you cannot change any
                         // state using the history sitesection only.
@@ -262,7 +258,7 @@ This page displays harvest details for one harvest definition run
                                        value="<fmt:message key="button;restart"/>"/>
                             </form>
                     <%
-                    //}
+                    }
                     %>
                 </td>
                 <td><%=HTMLUtils.escapeHtmlValues(
@@ -296,7 +292,7 @@ This page displays harvest details for one harvest definition run
                     <fmt:param value="<%=harvestNum%>"/>
                 </fmt:message>">
                 <p><a href="/<%=Constants.QA_SITESECTION_DIRNAME%>/QA-changeIndex.jsp"
-                      onclick="document.getElementById('QAform').submit();return false">
+                      onclick="document.getElementById('QAform').submit();return false;">
                     <fmt:message key="select.jobs.for.qa.with.viewerproxy"/>
                 </a></p>
             </form>
