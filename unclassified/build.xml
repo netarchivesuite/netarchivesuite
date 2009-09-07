@@ -121,6 +121,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <include name="mockobjects-jdk1.4-j2ee1.3-0.09.jar"/>
             <include name="jakarta-oro-2.0.8.jar"/>
         </fileset>
+    	<fileset dir="lib/heritrix/lib">
+    	 	<include name="commons-collections-3.1.jar"/>
+    	</fileset>
     </path>
 
     <target name="cleanwars"
