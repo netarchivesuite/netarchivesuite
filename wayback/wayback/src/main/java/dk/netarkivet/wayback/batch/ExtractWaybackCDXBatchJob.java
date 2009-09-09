@@ -31,18 +31,15 @@ import org.archive.io.arc.ARCRecord;
 import org.archive.wayback.UrlCanonicalizer;
 import org.archive.wayback.core.CaptureSearchResult;
 import org.archive.wayback.resourceindex.cdx.SearchResultToCDXLineAdapter;
-
+import dk.netarkivet.common.Constants;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
-import dk.netarkivet.common.Constants;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteARCRecordToSearchResultAdapter;
 
 /**
  * Returns a cdx file using the appropriate format for wayback, including
  * canonicalisation of urls. The returned files are unsorted.
  *
- * @author csr
- * @since Jul 1, 2009
  */
 
 public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
@@ -50,10 +47,20 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
      * Logger for this class.
      */
     private final Log log = LogFactory.getLog(getClass().getName());
-    private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
-    private SearchResultToCDXLineAdapter srToCDXAdapter;
 
     /**
+     * Utility for converting an ArcRecord to a CaptureSearchResult
+     * (wayback's representation of a CDX record)
+     */
+    private NetarchiveSuiteARCRecordToSearchResultAdapter aToSAdapter;
+
+    /**
+     * Utility for converting a wayback CaptureSearchResult to a String
+     * representing a line in a CDX file
+     */
+    private SearchResultToCDXLineAdapter srToCDXAdapter;
+
+     /**
      * Constructor which set timeout to one day.
      */
     public ExtractWaybackCDXBatchJob() {
@@ -68,6 +75,14 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
         batchJobTimeout = timeout;
     }
 
+
+    /**
+     *  Initializes the private fields of this class. Some of these are
+     *  relatively heavy objects, so it is important that they are only
+     *  initialised once.
+     * @param os unused argument
+     */
+    @Override
     public void initialize(OutputStream os) {
         log.info("Starting CDX Extraction Batch Job");
         aToSAdapter = new NetarchiveSuiteARCRecordToSearchResultAdapter();
@@ -77,6 +92,14 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
         srToCDXAdapter = new  SearchResultToCDXLineAdapter();
     }
 
+    /**
+     * For each ARCRecord writes one CDX line (including newline) to the output.
+     * If an arcrecord cannot be converted to a CDX record for any reason then
+     * any resulting exception is caught and logged.
+     * @param record the ARCRecord to be indexed.
+     * @param os the OutputStream to which output is written.
+     */
+    @Override
     public void processRecord(ARCRecord record, OutputStream os) {
        CaptureSearchResult csr = null;
         try {
@@ -97,6 +120,10 @@ public class ExtractWaybackCDXBatchJob extends ARCBatchJob {
 
     }
 
+    /**
+     * Does nothing except log the end of the job.
+     * @param os unused argument.
+     */
     public void finish(OutputStream os) {
         log.info("Finishing CDX Extraction Batch Job");
         //No cleanup required

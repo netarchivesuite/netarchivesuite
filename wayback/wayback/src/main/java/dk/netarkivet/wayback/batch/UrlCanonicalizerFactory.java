@@ -25,6 +25,7 @@ package dk.netarkivet.wayback.batch;
 import org.archive.wayback.UrlCanonicalizer;
 
 import dk.netarkivet.common.utils.SettingsFactory;
+import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer;
 
 /**
@@ -32,20 +33,21 @@ import dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonica
  */
 public class UrlCanonicalizerFactory extends SettingsFactory<UrlCanonicalizer> {
 
-
     /**
-     * The intended behaviour of this method is to return an UrlCanonicalizer
-     * instance of the class specified in the wayback package settings.xml
-     * file. However this requires changing our security policy to allow
-     * batch jobs to read system Properties, so for the time being we always
-     * return a NetarchiveSuiteAggressiveUrlCanonicalizer
-     * @return a UrlCanonicalizer instance
+     * This method returns an instance of the UrlCanonicalizer class specified
+     * in the settings.xml for the dk.netarkivet.wayback module. In the event
+     * that reading this file generates a SecurityException, as may occur in
+     * batch operation if security does not allow System properties to be read,
+     * the method will fall back on returning an instance of the class
+     * dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
+     * @return a canonicalizer for urls
      */
-    public static UrlCanonicalizer getDefaultUrlCanonicalizer() {
-        //TODO restore the following line once we have changed the necessary
-        //settings
-        //return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
-        return new NetarchiveSuiteAggressiveUrlCanonicalizer();
+    public static UrlCanonicalizer getDefaultUrlCanonicalizer()  {
+        try {
+            return SettingsFactory.getInstance(WaybackSettings.URL_CANONICALIZER_CLASSNAME);
+        } catch (SecurityException e) {
+            return new NetarchiveSuiteAggressiveUrlCanonicalizer();
+        }
     }
 
 }

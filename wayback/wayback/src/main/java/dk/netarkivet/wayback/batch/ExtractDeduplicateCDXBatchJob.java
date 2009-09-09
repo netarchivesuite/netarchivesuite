@@ -24,9 +24,7 @@ package dk.netarkivet.wayback.batch;
 
 import java.io.OutputStream;
 import java.util.regex.Pattern;
-
 import org.archive.io.arc.ARCRecord;
-
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 /**
@@ -39,20 +37,46 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
 
 public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
 
-    //private static final long serialVersionUID = 6791474836852341241L;
+    /**
+     * A utility which has methods for converting a deduplicate crawl-log
+     * entry to a CDX entry.
+     */
     private DeduplicateToCDXAdapter adapter;
+
+    /**
+     * A regular expression representing the url in a metadata arcfile of a
+     * crawl log entry
+     */
     private static final String CRAWL_LOG_URL_PATTERN_STRING =
             "metadata://(.*)crawl[.]log(.*)";
+
+    /**
+     * A Patteren representing a compiled expression representing the url in
+     * a metadata arcfile of a crawl log entry
+     */
     private Pattern crawl_log_url_pattern;
 
+    /**
+     * Initializes various fields of this class
+     * @param os unused parameter
+     */
+    @Override
     public void initialize(OutputStream os) {
         adapter = new DeduplicateToCDXAdapter();
         crawl_log_url_pattern = Pattern.compile(CRAWL_LOG_URL_PATTERN_STRING);
     }
 
+    /**
+     * If the ARCRecord is a crawl-log entry then any duplicate entries in the
+     * crawl log are converted to CDX entries and written to the output.
+     * Otherwise this method returns without doing anything.
+     * @param record The ARCRecord to be processed
+     * @param os the stream to which output is written
+     */
+    @Override
     public void processRecord(ARCRecord record, OutputStream os) {
         if (crawl_log_url_pattern
-                .matcher(record.getMetaData().getUrl()).matches()) {            
+                .matcher(record.getMetaData().getUrl()).matches()) {
             adapter.adaptStream(record, os);
         } else {
            return;
@@ -60,6 +84,11 @@ public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {
 
     }
 
+    /**
+     * Does nothing
+     * @param os
+     */
+    @Override
     public void finish(OutputStream os) {
         //Nothing to finalise
     }
