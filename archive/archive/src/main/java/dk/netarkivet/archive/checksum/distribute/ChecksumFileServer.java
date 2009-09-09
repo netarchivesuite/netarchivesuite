@@ -62,61 +62,61 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * @return This instance.
      */
     public static ChecksumFileServer getInstance() {
-	if(instance == null) {
-		instance = new ChecksumFileServer();	    
-	}
-	return instance;
+        if (instance == null) {
+            instance = new ChecksumFileServer();
+        }
+        return instance;
     }
     
     /**
      * Constructor.
      */
     private ChecksumFileServer() {
-	// log that this instance is been invoked.
-	log.info("Initialising the ChecksumFileServer.");
-	
-	// initialise the JMSConnection.
-	jmsCon = JMSConnectionFactory.getInstance();
-	
-	// initialise the channels.
-	// TODO: decide whether to use specific channels for the Checksum.
-	theCR = Channels.getTheCR(); 
-	
-	// Start listening to the channels.
-	jmsCon.setListener(theCR, this);
-	
-	// TODO: Heartbeat? If so, then here.
-	
-	// create the application identifier
-	checksumAppId = createAppId();
+        // log that this instance is been invoked.
+        log.info("Initialising the ChecksumFileServer.");
 
-	// get the instance of the checksum.
-	cs = FileChecksumArchive.getInstance();	
-	
-	// log that this instance has successfully been invoked.
-	log.info("ChecksumFileServer '" + checksumAppId + "' initialised.");
+        // initialise the JMSConnection.
+        jmsCon = JMSConnectionFactory.getInstance();
+
+        // initialise the channels.
+        // TODO decide whether to use specific channels for the Checksum.
+        theCR = Channels.getTheCR();
+
+        // Start listening to the channels.
+        jmsCon.setListener(theCR, this);
+
+        // TODO Heartbeat? If so, then here.
+
+        // create the application identifier
+        checksumAppId = createAppId();
+
+        // get the instance of the checksum.
+        cs = FileChecksumArchive.getInstance();
+
+        // log that this instance has successfully been invoked.
+        log.info("ChecksumFileServer '" + checksumAppId + "' initialised.");
     }
     
     /**
      * Method for closing the instance.
      */
     public void close() {
-	log.info("ChecksumFileServer '" + checksumAppId + "' closing down.");
-	cleanup();
-	if(jmsCon != null) {
-	    jmsCon.removeListener(theCR, this);
-	    jmsCon = null;
-	}
-	log.info("ChecksumFileServer '" + checksumAppId + "' closed down.");
+        log.info("ChecksumFileServer '" + checksumAppId + "' closing down.");
+        cleanup();
+        if (jmsCon != null) {
+            jmsCon.removeListener(theCR, this);
+            jmsCon = null;
+        }
+        log.info("ChecksumFileServer '" + checksumAppId + "' closed down.");
     }
     
     /**
      * Method for cleaning up, when closing this instance down.
      */
     public void cleanup() {
-	// ??
-	instance = null;
-	cs.cleanup();
+        // ??
+        instance = null;
+        cs.cleanup();
     }
 
     /**
@@ -126,7 +126,7 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     public String getAppId() {
-	return checksumAppId;
+        return checksumAppId;
     }
 
     /**
@@ -136,26 +136,26 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      */
     @Override
     protected String createAppId() {
-	String id;
-	// Create an id with the IP address of this current host
-	id = SystemUtils.getLocalIP();
+        String id;
+        // Create an id with the IP address of this current host
+        id = SystemUtils.getLocalIP();
 
-	// Append an underscore and APPLICATION_INSTANCE_ID from settings
-	// to the id, if specified in settings.
-	// If no APPLICATION_INSTANCE_ID is found do nothing.
-	try {
-	    String applicationInstanceId = Settings.get(
-		    CommonSettings.APPLICATION_INSTANCE_ID);
-	    if (!applicationInstanceId.isEmpty()) {
-		id += "_" + applicationInstanceId;
-	    }
-	} catch (UnknownID e) {
-	    // Ignore the fact, that there is no APPLICATION_INSTANCE_ID in
-	    // settings
-	    log.warn("No setting APPLICATION_INSTANCE_ID found in settings: "
-		    + e);
-	}
-	return id;
+        // Append an underscore and APPLICATION_INSTANCE_ID from settings
+        // to the id, if specified in settings.
+        // If no APPLICATION_INSTANCE_ID is found do nothing.
+        try {
+            String applicationInstanceId = Settings
+                    .get(CommonSettings.APPLICATION_INSTANCE_ID);
+            if (!applicationInstanceId.isEmpty()) {
+                id += "_" + applicationInstanceId;
+            }
+        } catch (UnknownID e) {
+            // Ignore the fact, that there is no APPLICATION_INSTANCE_ID in
+            // settings
+            log.warn("No setting APPLICATION_INSTANCE_ID found in settings: "
+                    + e);
+        }
+        return id;
     }    
 
     /**
@@ -166,28 +166,28 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     @Override
     public void visit(UploadMessage msg) {
         log.debug("Receving upload message: " + msg.toString());
-	try {
-	    try {
-		// upload the file to the checksum instance.
-		cs.upload(msg.getRemoteFile(), msg.getArcfileName());
-	    } catch (Throwable e) {
-		log.warn("Cannot process upload message '" + msg + "'", e);
-		msg.setNotOk(e);
-	    }
-	    // check if enough space and thus whether to remove listener.
-	    finally {
-		if (!cs.hasEnoughSpace()) {
-		    log.warn("Not enough space any more.");
-		    jmsCon.removeListener(theCR, this);
-		}
-	    }
-	} catch (Throwable e) {
-	    log.warn("Cannnot remove listener after upload message '" + msg 
-		    + "'", e);
-	} finally {
-	    log.info(msg.toString());
-	    jmsCon.reply(msg);
-	}
+        try {
+            try {
+                // upload the file to the checksum instance.
+                cs.upload(msg.getRemoteFile(), msg.getArcfileName());
+            } catch (Throwable e) {
+                log.warn("Cannot process upload message '" + msg + "'", e);
+                msg.setNotOk(e);
+            }
+            // check if enough space and thus whether to remove listener.
+            finally {
+                if (!cs.hasEnoughSpace()) {
+                    log.warn("Not enough space any more.");
+                    jmsCon.removeListener(theCR, this);
+                }
+            }
+        } catch (Throwable e) {
+            log.warn("Cannnot remove listener after upload message '" + msg
+                    + "'", e);
+        } finally {
+            log.info(msg.toString());
+            jmsCon.reply(msg);
+        }
     }
 
     /**
@@ -201,30 +201,30 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     @Override
     public void visit(CorrectMessage msg) {
         log.debug("Receving correct message: " + msg.toString());
-	try {
-	    // get the name of the file
-	    String filename = msg.getArcfileName();
-	    
-	    // try to remove the record.
-	    boolean success = cs.removeRecord(filename, msg.getChecksum());
-	    
-	    // if the record is successfully removed, then upload the corrected
-	    // file. Else throw an error.
-	    if(success) {
-		cs.upload(msg.getRemoteFile(), filename);		
-	    } else {
-		throw new IllegalState("Cannot remove the record: '"
-			+ filename + "'");
-	    }
-	} catch (Throwable e) {
-	    // Handle errors.
-	    log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);
-	    msg.setNotOk(e);
-	} finally {
-	    // log and reply at the end.
-	    log.info(msg.toString());
-	    jmsCon.reply(msg);
-	}
+        try {
+            // get the name of the file
+            String filename = msg.getArcfileName();
+
+            // try to remove the record.
+            boolean success = cs.removeRecord(filename, msg.getChecksum());
+
+            // if the record is successfully removed, then upload the corrected
+            // file. Else throw an error.
+            if (success) {
+                cs.upload(msg.getRemoteFile(), filename);
+            } else {
+                throw new IllegalState("Cannot remove the record: '" + filename
+                        + "'");
+            }
+        } catch (Throwable e) {
+            // Handle errors.
+            log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);
+            msg.setNotOk(e);
+        } finally {
+            // log and reply at the end.
+            log.info(msg.toString());
+            jmsCon.reply(msg);
+        }
     }
 
     /**
@@ -236,24 +236,24 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     @Override
     public void visit(GetChecksumMessage msg) {
         log.debug("Recieving get checksum message: " + msg.toString());
-	try {
-	    // get the name of the arc file
-	    String filename = msg.getArcfileName();
-	    // get the checksum of the arc file
-	    String checksum = cs.getChecksum(filename);	
+        try {
+            // get the name of the arc file
+            String filename = msg.getArcfileName();
+            // get the checksum of the arc file
+            String checksum = cs.getChecksum(filename);
 
-	    // send the checksum of the arc file.
-	    msg.setChecksum(checksum);
+            // send the checksum of the arc file.
+            msg.setChecksum(checksum);
 
-	} catch (Throwable e) {
-	    // Handle errors (if the file cannot be found).
-	    log.warn("Cannot find arc file.", e);
-	    msg.setNotOk(e);
-	} finally {
-	    // log the message and reply.
-	    log.info(msg.toString());
-	    jmsCon.reply(msg);
-	}
+        } catch (Throwable e) {
+            // Handle errors (if the file cannot be found).
+            log.warn("Cannot find arc file.", e);
+            msg.setNotOk(e);
+        } finally {
+            // log the message and reply.
+            log.info(msg.toString());
+            jmsCon.reply(msg);
+        }
     }
     
     /**
@@ -265,22 +265,22 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     public void visit(GetAllFilenamesMessage msg) {
         log.debug("Receving get all filenames message: " + msg.toString());
 
-	try {
-	    // get all the file names
-	    msg.setFile(cs.getAllFilenames());
-	} catch (Throwable e) {
-	    log.warn("Cannot retrieve the filenames.", e);
-	    msg.setNotOk(e);
-	} finally {
-	    // log the message and reply.
-	    log.info(msg.toString());
-	    jmsCon.reply(msg);
-	}
+        try {
+            // get all the file names
+            msg.setFile(cs.getAllFilenames());
+        } catch (Throwable e) {
+            log.warn("Cannot retrieve the filenames.", e);
+            msg.setNotOk(e);
+        } finally {
+            // log the message and reply.
+            log.info(msg.toString());
+            jmsCon.reply(msg);
+        }
     }
     
     /**
      * Method for retrieving a map containing all the checksums and their 
-     * corresponding filenames within the archive
+     * corresponding filenames within the archive.
      * 
      * @param msg The GetAllChecksumMessage.
      */
@@ -288,15 +288,15 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     public void visit(GetAllChecksumMessage msg) {
         log.debug("Receving get all checksum message: " + msg.toString());
 
-	try {
-	    msg.setFile(cs.getArchiveAsFile());
-	} catch (Throwable e) {
-	    log.warn("Cannot retrieve all the checksums.", e);
-	    msg.setNotOk(e);
-	} finally {
-	    // log the message and reply
-	    log.info(msg.toString());
-	    jmsCon.reply(msg);
-	}
+        try {
+            msg.setFile(cs.getArchiveAsFile());
+        } catch (Throwable e) {
+            log.warn("Cannot retrieve all the checksums.", e);
+            msg.setNotOk(e);
+        } finally {
+            // log the message and reply
+            log.info(msg.toString());
+            jmsCon.reply(msg);
+        }
     }
 }

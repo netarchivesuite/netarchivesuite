@@ -35,7 +35,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * This is checksum replica alternative to sending a ChecksumBatchJob, with
  * a filename limitation.
  * 
- *  TODO: decide whether to sent this to a specific replica
+ *  TODO decide whether to sent this to a specific replica
  */
 public class GetChecksumMessage extends ArchiveMessage {
     /** A random generated serial version UID.*/
@@ -54,7 +54,7 @@ public class GetChecksumMessage extends ArchiveMessage {
      * @param filename The name of the file.
      */
     protected GetChecksumMessage(ChannelID to, ChannelID replyTo, 
-	    String filename) {
+            String filename) {
         super(to, replyTo);
         // validate arguments
         ArgumentNotValid.checkNotNull(to, "ChannelID to");
@@ -77,11 +77,11 @@ public class GetChecksumMessage extends ArchiveMessage {
        * @return
        */
       public String getChecksum() {
-	  if(checksum == null) {
-	      // TODO: handle the case when the checksum has not been set.
-//	      throw new IllegalState("The checksum has not been calculated.");
-	  }
-	  return checksum;
+        if (checksum == null) {
+            // TODO handle the case when the checksum has not been set.
+            // throw new IllegalState("The checksum has not been calculated.");
+        }
+        return checksum;
       }
       
       /**
@@ -90,7 +90,7 @@ public class GetChecksumMessage extends ArchiveMessage {
        * @param cs The checksum.
        */
       public void setChecksum(String cs) {
-	  checksum = cs;
+        checksum = cs;
       }
 
       /**

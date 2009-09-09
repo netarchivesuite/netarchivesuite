@@ -50,8 +50,8 @@ public class ChecksumEntry extends Object{
      * @param checksum The checksum of the file.
      */
     public ChecksumEntry(String filename, String checksum) {
-	this.filename = filename;
-	this.checksum = checksum;
+        this.filename = filename;
+        this.checksum = checksum;
     }
     
     /**
@@ -60,7 +60,7 @@ public class ChecksumEntry extends Object{
      * @return The filename.
      */
     public String getFilename() {
-	return filename;
+        return filename;
     }
     
     /**
@@ -74,22 +74,22 @@ public class ChecksumEntry extends Object{
      * it has either different filename or different checksum.
      */
     public boolean equals(Object o) {
-	ChecksumEntry ce;
-	try {
-	    ce = (ChecksumEntry) o;
-	} catch (Throwable e) {
-	    return false;
-	}
-	 
-	if(!ce.getFilename().equals(filename)) {
-	    return false;
-	}
-	
-	if(!ce.getChecksum().equals(checksum)) {
-	    return false;
-	}
+        ChecksumEntry ce;
+        try {
+            ce = (ChecksumEntry) o;
+        } catch (Throwable e) {
+            return false;
+        }
 
-	return true;
+        if (!ce.getFilename().equals(filename)) {
+            return false;
+        }
+
+        if (!ce.getChecksum().equals(checksum)) {
+            return false;
+        }
+
+        return true;
     }
     
     /**
@@ -98,7 +98,7 @@ public class ChecksumEntry extends Object{
      * @return The checksum.
      */
     public String getChecksum() {
-	return checksum;
+        return checksum;
     }
     
     /**
@@ -107,7 +107,7 @@ public class ChecksumEntry extends Object{
      * @return This instance as a human readable string.
      */
     public String toString() {
-	return filename + "##" + checksum;
+        return filename + "##" + checksum;
     }
     
     /**
@@ -118,19 +118,19 @@ public class ChecksumEntry extends Object{
      * @return The list of the checksum entries.
      */
     public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) {
-	// make the result list.
-	List<ChecksumEntry> res = new ArrayList<ChecksumEntry>();
-	
-	// go through all entries in the file
-	List<String> lines = FileUtils.readListFromFile(checksumjobOutput);
-	
-	for(String line : lines) {
-	    // parse the input.
-	    KeyValuePair<String, String> kvp = ChecksumJob.parseLine(line);
-	    // put it into the resulting list.
-	    res.add(new ChecksumEntry(kvp.getKey(), kvp.getValue()));
-	}
-	
-	return res;
+        // make the result list.
+        List<ChecksumEntry> res = new ArrayList<ChecksumEntry>();
+
+        // go through all entries in the file
+        List<String> lines = FileUtils.readListFromFile(checksumjobOutput);
+
+        for (String line : lines) {
+            // parse the input.
+            KeyValuePair<String, String> kvp = ChecksumJob.parseLine(line);
+            // put it into the resulting list.
+            res.add(new ChecksumEntry(kvp.getKey(), kvp.getValue()));
+        }
+
+        return res;
     }
 }

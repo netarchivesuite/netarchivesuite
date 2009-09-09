@@ -97,7 +97,7 @@ public class Channels {
      * An example valus is {"bitarchive", "bitarchive", "checksum"}.  
      */
     private final String[] allReplicaTypes = Settings.getAll(
-	    CommonSettings.REPLICA_TYPES);
+            CommonSettings.REPLICA_TYPES);
 
     /**
      * useReplicaId is the id of the replica, used for applications
@@ -125,52 +125,52 @@ public class Channels {
         
         // Initialising the 'ALL_BA' channels. Null for checksum replicas
         for (int i = 0; i < allReplicaIds.length; i++) {
-            if(allReplicaTypes[i].equals(ReplicaType
-        	    .BITARCHIVE_REPLICATYPE_AS_STRING)) {
-        	ALL_BA_ARRAY[i] = new ChannelID(ALLBA_CHANNEL_PREFIX,
-        		allReplicaIds[i], ChannelID.NO_IP,
-        		ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
+            if (allReplicaTypes[i]
+                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
+                ALL_BA_ARRAY[i] = new ChannelID(ALLBA_CHANNEL_PREFIX,
+                        allReplicaIds[i], ChannelID.NO_IP,
+                        ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
             } else {
-        	ALL_BA_ARRAY[i] = null;
+                ALL_BA_ARRAY[i] = null;
             }
         }
         ALL_BA = ALL_BA_ARRAY[indexOfUseReplicaId];
         
         // Initialising the 'ANY_BA' channels. Null for checksum replicas
         for (int i = 0; i < allReplicaIds.length; i++) {
-            if(allReplicaTypes[i].equals(ReplicaType
-        	    .BITARCHIVE_REPLICATYPE_AS_STRING)) {
-        	ANY_BA_ARRAY[i] = new ChannelID(ANYBA_CHANNEL_PREFIX,
-        		allReplicaIds[i], ChannelID.NO_IP,
-        		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            if (allReplicaTypes[i]
+                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
+                ANY_BA_ARRAY[i] = new ChannelID(ANYBA_CHANNEL_PREFIX,
+                        allReplicaIds[i], ChannelID.NO_IP,
+                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
             } else {
-        	ANY_BA_ARRAY[i] = null;
+                ANY_BA_ARRAY[i] = null;
             }
         }
         ANY_BA = ANY_BA_ARRAY[indexOfUseReplicaId];
         
         // Initialising the 'THE_BAMON' channels. Null for checksum replicas
         for (int i = 0; i < allReplicaIds.length; i++) {
-            if(allReplicaTypes[i].equals(ReplicaType
-        	    .BITARCHIVE_REPLICATYPE_AS_STRING)) {
-        	THE_BAMON_ARRAY[i] = new ChannelID(THEBAMON_CHANNEL_PREFIX,
-        		allReplicaIds[i], ChannelID.NO_IP,
-        		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            if (allReplicaTypes[i]
+                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
+                THE_BAMON_ARRAY[i] = new ChannelID(THEBAMON_CHANNEL_PREFIX,
+                        allReplicaIds[i], ChannelID.NO_IP,
+                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
             } else {
-        	THE_BAMON_ARRAY[i] = null;
+                THE_BAMON_ARRAY[i] = null;
             }
         }
         THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplicaId];
         
         // Initialising the 'THE_CR' channels. Null for bitarchive replicas
-        for(int i = 0; i < allReplicaIds.length; i++) {
-            if(allReplicaTypes[i].equals(ReplicaType
-        	    .CHECKSUM_REPLICATYPE_AS_STRING)) {
-        	THE_CR_ARRAY[i] = new ChannelID(THECR_CHANNEL_PREFIX, 
-        		allReplicaIds[i], ChannelID.NO_IP, 
-        		ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+        for (int i = 0; i < allReplicaIds.length; i++) {
+            if (allReplicaTypes[i]
+                    .equals(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING)) {
+                THE_CR_ARRAY[i] = new ChannelID(THECR_CHANNEL_PREFIX,
+                        allReplicaIds[i], ChannelID.NO_IP,
+                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
             } else {
-        	THE_CR_ARRAY[i] = null;
+                THE_CR_ARRAY[i] = null;
             }
         }
         THE_CR = THE_CR_ARRAY[indexOfUseReplicaId];
@@ -277,15 +277,17 @@ public class Channels {
      * @throws IllegalState If the current replica is not a checksum replica.
      */
     public static ChannelID getTheBamon() throws IllegalState {
-	ChannelID res = getInstance().THE_BAMON;
-	
-	if(res == null) {
-	    throw new IllegalState("The channel for the bitarchive monitor "
-		    + " cannot to be retrieved for replica '" 
-		    + Replica.getReplicaFromId(getInstance().allReplicaIds
-			    [getInstance().indexOfUseReplicaId]) + "'.");
-	}
-	
+        ChannelID res = getInstance().THE_BAMON;
+
+        if (res == null) {
+            throw new IllegalState(
+                    "The channel for the bitarchive monitor "
+                            + " cannot to be retrieved for replica '"
+                            + Replica.getReplicaFromId(
+                                    getInstance().allReplicaIds[getInstance().indexOfUseReplicaId])
+                            + "'.");
+        }
+
         return res;
     }
 
@@ -302,12 +304,12 @@ public class Channels {
      * the checksum replicas have values (the others are null). 
      */
     public static final ChannelID[] getAllArchives_CRs() {
-	return getInstance().THE_CR_ARRAY;
+        return getInstance().THE_CR_ARRAY;
     }
     
     /** The array containing the 'THE_CR' channels.*/
-    private final ChannelID[] THE_CR_ARRAY = 
-	new ChannelID[allReplicaIds.length];
+    private final ChannelID[] THE_CR_ARRAY
+        = new ChannelID[allReplicaIds.length];
    
     /** 
      * Method for retrieving the 'THE_CR' channel for this replica.
@@ -317,14 +319,14 @@ public class Channels {
      * @throws IllegalState If the current replica is not a checksum replica.
      */
     public static ChannelID getTheCR() throws IllegalState {
-	ChannelID res = getInstance().THE_CR; 
-	
-	if(res == null) {
-	    throw new IllegalState("A bitarchive replica does not have the "
-		    + "channel for communicating with a checksum replica.");
-	}
-	
-	return res;
+        ChannelID res = getInstance().THE_CR;
+
+        if (res == null) {
+            throw new IllegalState("A bitarchive replica does not have the "
+                    + "channel for communicating with a checksum replica.");
+        }
+
+        return res;
     }
     
     /** The 'THE_CR' channel for this replica. This has the value 'null' if 
@@ -356,13 +358,13 @@ public class Channels {
      * @throws IllegalState If the current replica is not a bitarchive replica.
      */
     public static ChannelID getAllBa() throws IllegalState {
-	ChannelID res = getInstance().ALL_BA;
-	
-	if(res == null) {
-	    throw new IllegalState("A checksum replica does not have the "
-		    + "channels for communicating with a bitarchive replica.");
-	}
-	
+        ChannelID res = getInstance().ALL_BA;
+
+        if (res == null) {
+            throw new IllegalState("A checksum replica does not have the "
+                    + "channels for communicating with a bitarchive replica.");
+        }
+
         return res;
     }
 
@@ -397,13 +399,13 @@ public class Channels {
      * @throws IllegalState If the current replica is not a bitarchive replica.
      */
     public static ChannelID getAnyBa() throws IllegalState {
-	ChannelID res = getInstance().ANY_BA;
-	
-	if(res == null) {
-	    throw new IllegalState("A checksum replica does not have the "
-		    + "channels for communicating with a bitarchive replica.");	    
-	}
-	
+        ChannelID res = getInstance().ANY_BA;
+
+        if (res == null) {
+            throw new IllegalState("A checksum replica does not have the "
+                    + "channels for communicating with a bitarchive replica.");
+        }
+
         return res;
     }
 
@@ -453,18 +455,20 @@ public class Channels {
     }
     
     public static ChannelID getTheCrForReplica(String replicaId) {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	ChannelID[] crs = getAllArchives_CRs();
-	for(ChannelID cr : crs) {
-	    if(cr != null && cr.getName().equals(Settings.get(
-		    CommonSettings.ENVIRONMENT_NAME) + CHANNEL_PART_SEPARATOR
-		    + replicaId + CHANNEL_PART_SEPARATOR 
-		    + THECR_CHANNEL_PREFIX)) {
-		return cr;
-	    }
-	}
-	throw new ArgumentNotValid("Did not find a checksum queue for '"
-		+ replicaId + "'"); 
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        ChannelID[] crs = getAllArchives_CRs();
+        for (ChannelID cr : crs) {
+            if (cr != null
+                    && cr.getName().equals(
+                            Settings.get(CommonSettings.ENVIRONMENT_NAME)
+                                    + CHANNEL_PART_SEPARATOR + replicaId
+                                    + CHANNEL_PART_SEPARATOR
+                                    + THECR_CHANNEL_PREFIX)) {
+                return cr;
+            }
+        }
+        throw new ArgumentNotValid("Did not find a checksum queue for '"
+                + replicaId + "'");
     }
 // */
     
@@ -478,19 +482,19 @@ public class Channels {
      * @throws UnknownID If the replicaId does not point to a know replica.
      */
     public static Replica retrieveReplicaFromIdentifierChannel(
-	    String channelName) throws UnknownID {
-	if(channelName.contains(THECR_CHANNEL_PREFIX)) {
-	    // environmentName ## replicaId ## THE_CR
-	    String[] parts = channelName.split(CHANNEL_PART_SEPARATOR);
-	    return Replica.getReplicaFromId(parts[1]);
-	} else if(channelName.contains(THEBAMON_CHANNEL_PREFIX)) {
-	    // environmentName ## replicaId ## THE_BAMON
-	    String[] parts = channelName.split(CHANNEL_PART_SEPARATOR);
-	    return Replica.getReplicaFromId(parts[1]);
-	} 
-	
-	throw new UnknownID("Cannot find the replicaId in the channelname: '"
-		+ channelName + "'.");
+            String channelName) throws UnknownID {
+        if (channelName.contains(THECR_CHANNEL_PREFIX)) {
+            // environmentName ## replicaId ## THE_CR
+            String[] parts = channelName.split(CHANNEL_PART_SEPARATOR);
+            return Replica.getReplicaFromId(parts[1]);
+        } else if (channelName.contains(THEBAMON_CHANNEL_PREFIX)) {
+            // environmentName ## replicaId ## THE_BAMON
+            String[] parts = channelName.split(CHANNEL_PART_SEPARATOR);
+            return Replica.getReplicaFromId(parts[1]);
+        }
+
+        throw new UnknownID("Cannot find the replicaId in the channelname: '"
+                + channelName + "'.");
     }
     
     /**
@@ -503,10 +507,10 @@ public class Channels {
      * @throws UnknownID If no replica with the given replica id is known.
      * @throws ArgumentNotValid If the replicaId is null or empty.
      */
-    public static String retrieveReplicaChannelNameFromReplicaId(String 
-	    replicaId) throws UnknownID, ArgumentNotValid {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	return Replica.getReplicaFromId(replicaId).getChannelID().getName();
+    public static String retrieveReplicaChannelNameFromReplicaId(
+            String replicaId) throws UnknownID, ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        return Replica.getReplicaFromId(replicaId).getChannelID().getName();
     }
     
     /**
@@ -519,10 +523,10 @@ public class Channels {
      * @throws UnknownID If no replica with the given replica id is known.
      * @throws ArgumentNotValid If the replicaId is null or empty.
      */
-    public static ChannelID retrieveReplicaChannelFromReplicaId(String 
-	    replicaId) throws UnknownID, ArgumentNotValid {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	return Replica.getReplicaFromId(replicaId).getChannelID();	
+    public static ChannelID retrieveReplicaChannelFromReplicaId(String replicaId)
+            throws UnknownID, ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        return Replica.getReplicaFromId(replicaId).getChannelID();
     }
 
     /**

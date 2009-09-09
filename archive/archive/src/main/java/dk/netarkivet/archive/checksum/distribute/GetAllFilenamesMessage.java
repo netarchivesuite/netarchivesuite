@@ -36,8 +36,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The GetAllFilenamesMessage is sent to retrieve all the filenames of a 
- * specific 
+ * The GetAllFilenamesMessage is sent to retrieve all the filenames in a 
+ * specific replica.
  */
 public class GetAllFilenamesMessage extends ArchiveMessage {
     /** A random generated serial version UID.*/
@@ -56,10 +56,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * @param to The channel the message is sent to.
      * @param replyTo The channel the reply is sent to.
      */
-    public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, 
-	    String repId) {
+    public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, String repId) {
         super(to, replyTo);
-        
+
         this.replicaId = repId;
     }
     
@@ -70,9 +69,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * @param file The file with the checksum message.
      */
     public void setFile(File file) {
-	ArgumentNotValid.checkNotNull(file, "File file");
-	
-	remoteFile = RemoteFileFactory.getMovefileInstance(file);
+        ArgumentNotValid.checkNotNull(file, "File file");
+
+        remoteFile = RemoteFileFactory.getMovefileInstance(file);
     }
     
     /**
@@ -81,7 +80,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * @param toFile The file for the remotely retrieved content.
      */
     public void getData(File toFile) {
-	ArgumentNotValid.checkNotNull(toFile, "File toFile");
+        ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (remoteFile == null) {
             throw new IOFailure("");
         }
@@ -104,7 +103,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * @return The id for the replica.
      */
     public String getReplicaId() {
-	return replicaId;
+        return replicaId;
     }
     
     /**

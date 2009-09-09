@@ -26,16 +26,15 @@ import java.io.File;
 
 /**
  * Represents a location key in the ARC format.
- * User: lc
- * Date: Nov 4, 2004
- * Time: 2:36:13 PM
  */
 public class ARCKey {
-    /** The ARC file that we will be reading from */
+    /** The ARC file that we will be reading from. */
     private File arcFile;
-    /** The offset that the entry starts at in the file */
+    /** The offset that the entry starts at in the file. */
     private long offset;
+    /** Extension used by gzipped arc-files. */
     private static final String GZIPPED_ARC_FILE_EXTENSION = ".arc.gz";
+    /** Extension used Alexa dat files. */
     private static final String ALEXA_DAT_FILE_EXTENSION = ".dat";
 
     /** Constructor for ARCKey.
@@ -51,7 +50,8 @@ public class ARCKey {
         String arcgz;
         if (archiveFileName.toLowerCase().endsWith(ALEXA_DAT_FILE_EXTENSION)) {
             arcgz = archiveFileName.substring(0,
-                    archiveFileName.length() - 4) + GZIPPED_ARC_FILE_EXTENSION;
+                    archiveFileName.length() - ALEXA_DAT_FILE_EXTENSION.length()
+                    ) + GZIPPED_ARC_FILE_EXTENSION;
         } else {
             arcgz = archiveFileName;
         }

@@ -68,17 +68,17 @@ public class ChecksumMonitorServer extends ArchiveMessageHandler
      * @return The current running instance.
      */
     public ChecksumMonitorServer getInstance() {
-	if(instance == null) {
-	    instance = new ChecksumMonitorServer();
-	}
-	return instance;
+        if (instance == null) {
+            instance = new ChecksumMonitorServer();
+        }
+        return instance;
     }
 
     @Override
     public void update(Observable o, Object arg) {
-	// TODO What should this instance do?
-	log.warn("The Observable '" + o + "' and the object '" + arg 
-		+ "' was given as input. ");
+        // TODO What should this instance do?
+        log.warn("The Observable '" + o + "' and the object '" + arg
+                + "' was given as input. ");
     }
 
     /**

@@ -511,51 +511,49 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage
      */
     public File getAllChecksums(String replicaId) {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	log.debug("Sending GetAllChecksumMessage to replica '" + replicaId 
-		+ "'.");
-	// time this.
-	long start = System.currentTimeMillis();
-	// make and send the message to the replica.
-	GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(
-		Channels.getTheRepos(), replyQ, replicaId);
-	NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg, 
-		getTimeout);
-	
-	// calculate and log the time spent on handling the message.
-	long timePassed = System.currentTimeMillis() - start;
-	log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
-	// check whether the output was valid.
-	if (replyNetMsg == null) {
-	    log.info("Request for all checksum timed out after "
-	    + (getTimeout / 1000)
-	    + " seconds. Returning empty list.");
-	    // return an empty list
-	    return null;
-	}
-	// convert to the correct type of message.
-	GetAllChecksumMessage replyCSMsg;
-	try {
-	    replyCSMsg = (GetAllChecksumMessage) replyNetMsg;
-	} catch (ClassCastException e) {
-	    String errorMsg = "Received invalid reply message: '"
-		+ replyNetMsg;
-	    log.warn(errorMsg, e);
-	    throw new IOFailure(errorMsg, e);
-	}
-	
-	try {
-	    // retrieve the data from this message.
-	    File result = File.createTempFile("tmp", "tmp");
-	    replyCSMsg.getData(result);
-	    
-	    return result;
-	} catch (IOException e) {
-	    String errMsg = "Cannot create a temporary file for retrieving "
-		+ " the data remote from checksum message: " + replyCSMsg;
-	    log.warn(errMsg);
-	    throw new IOFailure(errMsg, e);
-	}
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        log.debug("Sending GetAllChecksumMessage to replica '" + replicaId
+                + "'.");
+        // time this.
+        long start = System.currentTimeMillis();
+        // make and send the message to the replica.
+        GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(Channels
+                .getTheRepos(), replyQ, replicaId);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg,
+                getTimeout);
+
+        // calculate and log the time spent on handling the message.
+        long timePassed = System.currentTimeMillis() - start;
+        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        // check whether the output was valid.
+        if (replyNetMsg == null) {
+            log.info("Request for all checksum timed out after "
+                    + (getTimeout / 1000) + " seconds. Returning empty list.");
+            // return an empty list
+            return null;
+        }
+        // convert to the correct type of message.
+        GetAllChecksumMessage replyCSMsg;
+        try {
+            replyCSMsg = (GetAllChecksumMessage) replyNetMsg;
+        } catch (ClassCastException e) {
+            String errorMsg = "Received invalid reply message: '" + replyNetMsg;
+            log.warn(errorMsg, e);
+            throw new IOFailure(errorMsg, e);
+        }
+
+        try {
+            // retrieve the data from this message.
+            File result = File.createTempFile("tmp", "tmp");
+            replyCSMsg.getData(result);
+
+            return result;
+        } catch (IOException e) {
+            String errMsg = "Cannot create a temporary file for retrieving "
+                    + " the data remote from checksum message: " + replyCSMsg;
+            log.warn(errMsg);
+            throw new IOFailure(errMsg, e);
+        }
     }
 
     /**
@@ -571,77 +569,75 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     public File getAllFilenames(String replicaId) {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	log.debug("Sending GetAllFilenamesMessage to replica '" + replicaId 
-		+ "'.");
-	// time this.
-	long start = System.currentTimeMillis();
-	// make and send the message to the replica.
-	GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(
-		Channels.getTheRepos(), replyQ, replicaId);
-	NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg, 
-		getTimeout);
-	
-	// calculate and log the time spent on handling the message.
-	long timePassed = System.currentTimeMillis() - start;
-	log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
-	// check whether the output was valid.
-	if (replyNetMsg == null) {
-	    log.info("Request for all filenames timed out after "
-	    + (getTimeout / 1000)
-	    + " seconds. Returning empty list.");
-	    // return an empty list
-	    return null;
-	}
-	// convert to the correct type of message.
-	GetAllFilenamesMessage replyCSMsg;
-	try {
-	    replyCSMsg = (GetAllFilenamesMessage) replyNetMsg;
-	} catch (ClassCastException e) {
-	    String errorMsg = "Received invalid reply message: '"
-		+ replyNetMsg;
-	    log.warn(errorMsg, e);
-	    throw new IOFailure(errorMsg, e);
-	}
-	
-	try {
-	    // retrieve the data from this message.
-	    File result = File.createTempFile("tmp", "tmp");
-	    replyCSMsg.getData(result);
-	    
-	    return result;
-	} catch (IOException e) {
-	    String errMsg = "Cannot create a temporary file for retrieving "
-		+ " the data remote from checksum message: " + replyCSMsg;
-	    log.warn(errMsg);
-	    throw new IOFailure(errMsg, e);
-	}
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        log.debug("Sending GetAllFilenamesMessage to replica '" + replicaId
+                + "'.");
+        // time this.
+        long start = System.currentTimeMillis();
+        // make and send the message to the replica.
+        GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(Channels
+                .getTheRepos(), replyQ, replicaId);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
+                getTimeout);
+
+        // calculate and log the time spent on handling the message.
+        long timePassed = System.currentTimeMillis() - start;
+        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        // check whether the output was valid.
+        if (replyNetMsg == null) {
+            log.info("Request for all filenames timed out after "
+                    + (getTimeout / 1000) + " seconds. Returning empty list.");
+            // return an empty list
+            return null;
+        }
+        // convert to the correct type of message.
+        GetAllFilenamesMessage replyCSMsg;
+        try {
+            replyCSMsg = (GetAllFilenamesMessage) replyNetMsg;
+        } catch (ClassCastException e) {
+            String errorMsg = "Received invalid reply message: '" + replyNetMsg;
+            log.warn(errorMsg, e);
+            throw new IOFailure(errorMsg, e);
+        }
+
+        try {
+            // retrieve the data from this message.
+            File result = File.createTempFile("tmp", "tmp");
+            replyCSMsg.getData(result);
+
+            return result;
+        } catch (IOException e) {
+            String errMsg = "Cannot create a temporary file for retrieving "
+                    + " the data remote from checksum message: " + replyCSMsg;
+            log.warn(errMsg);
+            throw new IOFailure(errMsg, e);
+        }
     }
 
     @Override
-    public void correct(String replicaId, String checksum, File file, 
-	    String credentials) {
-	ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-	ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
-	ArgumentNotValid.checkNotNull(file, "File file");
-	ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
+    public void correct(String replicaId, String checksum, File file,
+            String credentials) {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
 
-	RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
-	CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
-		replyQ, checksum, rm);
-	CorrectMessage responseMessage = (CorrectMessage) 
-	        sendAndWaitForOneReply(correctMsg, 0);
+        RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
+        CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
+                replyQ, checksum, rm);
+        CorrectMessage responseMessage
+            = (CorrectMessage) sendAndWaitForOneReply(correctMsg, 0);
 
-	if (responseMessage == null) {
-	    String msg = "Correct Message timed out before returning."
-		+ "File not found?";
-	    log.debug(msg);
-	    throw new IOFailure(msg);
-	} else if (!responseMessage.isOk()) {
-	    String msg = "CorrectMessage failed: " 
-		+ responseMessage.getErrMsg();
-	    log.warn(msg);
-	    throw new IOFailure(msg);
-	} 
+        if (responseMessage == null) {
+            String msg = "Correct Message timed out before returning."
+                    + "File not found?";
+            log.debug(msg);
+            throw new IOFailure(msg);
+        } else if (!responseMessage.isOk()) {
+            String msg = "CorrectMessage failed: "
+                    + responseMessage.getErrMsg();
+            log.warn(msg);
+            throw new IOFailure(msg);
+        }
     }
 }

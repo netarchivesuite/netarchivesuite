@@ -78,8 +78,9 @@ public class LocalCDXCache implements JobIndexCache {
      * yet.
      */
     private static final File CACHE_DIR
-            = new File(new File(Settings.get(ViewerProxySettings.VIEWERPROXY_DIR)),
-            "viewerproxy/cdxcache");
+            = new File(new File(Settings.get(
+                    ViewerProxySettings.VIEWERPROXY_DIR)),
+                    "viewerproxy/cdxcache");
     /** How long we sleep between each check for another process having
      * finished creating an index file.
      */
@@ -108,10 +109,10 @@ public class LocalCDXCache implements JobIndexCache {
         List<Long> jobIDList = new ArrayList<Long>(jobIDs);
         Collections.sort(jobIDList);
 
-        String allIDsString = StringUtils.conjoin("-",jobIDList );
+        String allIDsString = StringUtils.conjoin("-", jobIDList);
         if (jobIDList.size() > MAX_JOB_IDS_IN_FILENAME) {
-            String firstNIDs = StringUtils.conjoin("-",jobIDList.subList(0,
-                    MAX_JOB_IDS_IN_FILENAME) );
+            String firstNIDs = StringUtils.conjoin("-", jobIDList.subList(0,
+                    MAX_JOB_IDS_IN_FILENAME));
             return new File(CACHE_DIR, PREFIX + firstNIDs + "-"
                     + MD5.generateMD5(allIDsString.getBytes()) + SUFFIX);
         } else {
@@ -145,7 +146,7 @@ public class LocalCDXCache implements JobIndexCache {
                 OutputStream tmpOutput = new FileOutputStream(workFile);
                 retrieveIndex(jobIDs, tmpOutput);
                 tmpOutput.close();
-                ProcessUtils.runProcess(new String[] { "LANG=C"} ,
+                ProcessUtils.runProcess(new String[] {"LANG=C"} ,
                         "sort", workFile.getAbsolutePath(),
                         "-o", indexFile.getAbsolutePath());
             } else {
@@ -184,9 +185,8 @@ public class LocalCDXCache implements JobIndexCache {
         }
         ARCBatchJob job = new CDXCacheBatchJob();
         job.processOnlyFilesMatching(metadataFiles);
-        BatchStatus status = arcRepos.batch(job,
-                                            Settings.get(
-                                                    CommonSettings.USE_REPLICA_ID));
+        BatchStatus status 
+            = arcRepos.batch(job, Settings.get(CommonSettings.USE_REPLICA_ID));
         if (status.hasResultFile()) {
             status.appendResults(out);
         }
@@ -200,14 +200,14 @@ public class LocalCDXCache implements JobIndexCache {
      */
     private static class CDXCacheBatchJob extends ARCBatchJob {
         /**
-         * Constructor for CDXCacheBatchJob/
+         * Constructor for CDXCacheBatchJob.
          */
         public CDXCacheBatchJob() {
             batchJobTimeout = 7*Constants.ONE_DAY_IN_MILLIES;
         }
 
         /**
-        * Initialize the batch job/
+        * Initialize the batch job.
          *
          * @param os output stream where output from batch job is returned.
         */
@@ -231,7 +231,8 @@ public class LocalCDXCache implements JobIndexCache {
                         os.write(buffer, 0, bytesRead);
                     }
                 } catch (IOException e) {
-                    throw new IOFailure("Error transferring data from CDX record", e);
+                    throw new IOFailure(
+                            "Error transferring data from CDX record", e);
                 }
             }
         }

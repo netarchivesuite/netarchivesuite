@@ -47,10 +47,10 @@ import dk.netarkivet.common.utils.arc.ARCUtils;
 public class IngestableFiles {
     private final Log log = LogFactory.getLog(getClass());
 
-    /** Subdir with final metadata file in it */
+    /** Subdir with final metadata file in it. */
     private static final String METADATA_SUB_DIR = "metadata";
 
-    /** Subdir with temporary metadata file in it */
+    /** Subdir with temporary metadata file in it. */
     private static final String TMP_SUB_DIR = "tmp-meta";
 
     /** jobId for present harvestjob. */
@@ -64,7 +64,7 @@ public class IngestableFiles {
      */
     private ARCWriter writer = null;
 
-    /** Whether we've had an error in metadata generation */
+    /** Whether we've had an error in metadata generation. */
     private boolean error = false;
 
     /**
@@ -193,7 +193,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Constructs the metadata subdir from the crawlDir
+     * Constructs the metadata subdir from the crawlDir.
      * @return The metadata subdir as a File
      */
     private File getMetadataDir() {
@@ -201,7 +201,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Constructs the single metadata arc file from the crawlDir and the jobID
+     * Constructs the single metadata arc file from the crawlDir and the jobID.
      * @return metadata arc file as a File
      */
     private File getMetadataFile(){
@@ -212,7 +212,7 @@ public class IngestableFiles {
     }
 
     /**
-     * Constructs the TEMPORARY metadata subdir from the crawlDir
+     * Constructs the TEMPORARY metadata subdir from the crawlDir.
      * @return The tmp-metadata subdir as a File
      */
     private File getTmpMetadataDir() {
@@ -220,7 +220,8 @@ public class IngestableFiles {
     }
 
     /**
-     * Constructs the TEMPORARY metadata arc file from the crawlDir and the jobID
+     * Constructs the TEMPORARY metadata arc file from the crawlDir and
+     * the jobID.
      * @return tmp-metadata arc file as a File
      */
     private File getTmpMetadataFile(){
