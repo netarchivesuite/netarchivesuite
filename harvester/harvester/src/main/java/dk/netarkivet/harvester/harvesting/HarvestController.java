@@ -152,7 +152,10 @@ public class HarvestController {
         // Only retrieve index if deduplication is not disabled in the template.
         if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
                 job.getOrderXMLdoc())) {
+            log.debug("Deduplication enabled. Fetching deduplication index..");
             files.setIndexDir(fetchDeduplicateIndex(metadataEntries));
+        } else {
+            log.debug("Deduplication disabled.");
         }
         
         // Create Heritrix arcs directory before starting Heritrix to ensure
@@ -361,7 +364,7 @@ public class HarvestController {
                 String[] longs = s.split(",");
                 for (String stringLong : longs) {
                     try {
-                        result.add(Long.getLong(stringLong));
+                        result.add(Long.parseLong(stringLong));
                     } catch (NumberFormatException e) {
                         log.warn("Unable to convert String '" + stringLong
                                  + "' in duplicate reduction jobid list"
