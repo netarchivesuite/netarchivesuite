@@ -24,9 +24,9 @@ package dk.netarkivet.wayback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.FileNotFoundException;
 
 import junit.framework.TestCase;
 
@@ -66,7 +66,7 @@ public class DeduplicateToCDXApplicationTester extends TestCase {
         System.setOut(orig_std_err);
     }
 
-    public void testGenerateCDX() throws FileNotFoundException {
+    public void testGenerateCDX() throws IOException {
         File file1 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log.txt");
         File file2 = new File(TestInfo.WORKING_DIR, "dedup_crawl_log2.txt");
         String[] files = new String[] {file1.getAbsolutePath(), file2.getAbsolutePath()};

@@ -37,10 +37,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
- * lc forgot to comment this!
- *
+ * Version of TestCase that is used to test the cache system.
  */
-
 public class CacheTestCase extends TestCase {
     private UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
