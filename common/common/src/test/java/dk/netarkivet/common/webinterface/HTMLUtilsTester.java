@@ -296,8 +296,9 @@ public class HTMLUtilsTester extends TestCase {
 
         try {
             parameterMap.put("noLong", new String[] { " 2.5" });
-            HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
-            fail("Should have died on float format");
+            Long noLong = HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
+            fail("Should have died on float format, but was interpreted as the long value : "
+                    +  noLong);
         } catch (ForwardedToErrorPage e) {
             // expected
         }
