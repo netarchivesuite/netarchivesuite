@@ -81,7 +81,13 @@ public class HarvesterSettings {
      * Default byte limit for domain configuration. */
     public static String DOMAIN_CONFIG_MAXBYTES
             = "settings.harvester.datamodel.domain.defaultMaxbytes";
-
+    
+    /** 
+     * <b>settings.harvester.datamodel.domain.defaultMaxobjects</b>: <br>
+     * Default object limit for domain configuration. */
+    public static String DOMAIN_CONFIG_MAXOBJECTS
+            = "settings.harvester.datamodel.domain.defaultMaxobjects";
+    
     /**
      * <b>settings.harvester.scheduler.errorFactorPrevResult</b>: <br>
      * Used when calculating expected size of a harvest of some configuration
@@ -148,6 +154,16 @@ public class HarvesterSettings {
      * value as Long.MAX_VALUE. */
     public static String MAX_CONFIGS_PER_JOB_CREATION
             = "settings.harvester.scheduler.configChunkSize";
+    
+    /**
+     * <b>settings.harvester.scheduler.splitByObjectLimit</b>: <br>
+     * By default the byte limit is used as base criterion to 
+     * know how many domain configurations we will process in one go before
+     * making jobs out of them. However if this parameter is set to "true",
+     * then the object limit is used instead.
+     */
+    public static String SPLIT_BY_OBJECTLIMIT = 
+        "settings.harvester.scheduler.splitByObjectLimit";
 
     /** <b>settings.harvester.scheduler.jobtimeouttime</b>:<br />
      *  Time before a STARTED job times out and change status to FAILED.

@@ -96,6 +96,7 @@
                 <maxTotalSize>1000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
             <dbDriverClass>org.apache.derby.jdbc.EmbeddedDriver</dbDriverClass>
             <dbname>fullhddb</dbname>
             <dbBackupInitHour>3</dbBackupInitHour>

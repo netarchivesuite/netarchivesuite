@@ -111,9 +111,7 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
            value="<%= hd.getEdition() %>"/>
   <% } %>
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
-    <input type="hidden" name="<%= Constants.DOMAIN_LIMIT_PARAM %>"
-           value="<%= objectLimit %>"/>
-
+    
     <table>
         <tr>
             <td><fmt:message key="prompt;harvest.name"/></td>
@@ -130,26 +128,37 @@ harvestName (Constants.HARVEST_SNAPSHOT_PARAM):
           <% } %>
             </td>
         </tr>
-<%
-    // The objectLimit isn't taken correctly into account at the moment and
-    // should be at the default.
-    if (objectLimit
-        != dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS) {
-        %>
+
         <tr>
+            <%
+            long dftMaxObjects =
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_OBJECTS;
+            %>
             <td><fmt:message key="prompt;max.objects.per.domain"/></td>
-            <td><%= objectLimit %></td>
+            <td><input 
+                name="<%= Constants.DOMAIN_OBJECTLIMIT_PARAM %>"
+                size="20" 
+                value="<%= HTMLUtils.localiseLong(
+                    (hd != null ? hd.getMaxCountObjects() : dftMaxObjects), 
+                    pageContext)                
+                   %>"/>
+             </td>
         </tr>
-        <%
-    }
-%>
+        
         <tr>
+            <%
+            long dftMaxBytes =
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES;
+            %>
             <td><fmt:message key="prompt;max.bytes.per.domain"/></td>
-            <td><input name="<%= Constants.DOMAIN_BYTELIMIT_PARAM %>"
-                   size="20" value="<%=
-                   (hd != null?
-                       HTMLUtils.localiseLong(hd.getMaxBytes(), pageContext):"")
-                   %>"/></td>
+            <td><input 
+                name="<%= Constants.DOMAIN_BYTELIMIT_PARAM %>"
+                size="20" 
+                value="<%= HTMLUtils.localiseLong(
+                    (hd != null ? hd.getMaxBytes() : dftMaxBytes), 
+                    pageContext)                
+                   %>"/>
+             </td>
         </tr>
     </table>
 

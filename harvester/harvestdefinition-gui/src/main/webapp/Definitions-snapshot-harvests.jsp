@@ -66,6 +66,7 @@ if (!ihd.iterator().hasNext()) { %>
 <table class="selection_table">
     <tr>
         <th><fmt:message key="harvestdefinition.snapshot.header.harvestdefinition"/></th>
+        <th><fmt:message key="harvestdefinition.snapshot.header.maxobjects"/></th>
         <th><fmt:message key="harvestdefinition.snapshot.header.maxbytes"/></th>
         <th><fmt:message key="harvestdefinition.snapshot.header.status"/></th>
         <th colspan="3"><fmt:message key="harvestdefinition.snapshot.header.commands"/></th>
@@ -104,6 +105,8 @@ if (!ihd.iterator().hasNext()) { %>
     %>
     <tr class="<%=HTMLUtils.getRowClass(rowCount++)%>">
         <td><%=HTMLUtils.escapeHtmlValues(name)%></td>
+        <td width="15%"><fmt:formatNumber type="number"
+                              value="<%=hd.getMaxCountObjects()%>"/></td>
         <td width="15%"><fmt:formatNumber type="number"
                               value="<%=hd.getMaxBytes()%>"/></td>
         <td width="15%"><%=HTMLUtils.escapeHtmlValues(isActive)%></td>

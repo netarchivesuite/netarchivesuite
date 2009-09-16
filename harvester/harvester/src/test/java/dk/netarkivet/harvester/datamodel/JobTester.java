@@ -76,7 +76,10 @@ public class JobTester extends DataModelTestCase {
         super.setUp();
         LogManager.getLogManager().readConfiguration();
         LogUtils.flushLogs(Job.class.getName());
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(
+                CommonSettings.NOTIFICATIONS_CLASS, 
+                RememberNotifications.class.getName());
+        Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
     }
 
     public void tearDown() throws Exception {
@@ -245,7 +248,8 @@ public class JobTester extends DataModelTestCase {
      * Test if a configuration is checked with respect to expected number of objects,
      * and that the domain the domain in this configuration is not already in job.
      */
-    public void testCanAccept() {
+    public void testCanAcceptByteLimit() {
+        
         Domain defaultDomain = TestInfo.getDefaultDomain();
         DomainConfiguration dc = TestInfo.getDefaultConfig(defaultDomain);
         Job job = Job.createJob(TestInfo.HARVESTID, dc, 0);
@@ -506,14 +510,22 @@ public class JobTester extends DataModelTestCase {
             // expected
         }
 
-        Job job = Job.createSnapShotJob(TestInfo.HARVESTID, defaultConfig,
+        // Try to set an object limit higher than the configuration
+        // Should fail (capped to domain config limit)
+        
+        Job job1 = Job.createSnapShotJob(TestInfo.HARVESTID, defaultConfig,
                 TestInfo.MAX_OBJECTS_PER_DOMAIN, -1, 0);
+        assertEquals("forceMaxObjectsPerDomain higher than config limit",
+                defaultConfig.getMaxObjects(),
+                job1.getForceMaxObjectsPerDomain());
 
-        // check if forceMaxObjectsPerDomain has been set
-        // (is only set in Job.setForceMaxObjectsPerDomain() )
-
+        // Try to set a limit lower than domain config limit, should work
+        long jobLimit = defaultConfig.getMaxObjects() - 1;
+        Job job2 = Job.createSnapShotJob(TestInfo.HARVESTID, defaultConfig,
+                jobLimit, -1, 0);
         assertEquals("Failed to set forceMaxObjectsPerDomain",
-                TestInfo.MAX_OBJECTS_PER_DOMAIN, job.getForceMaxObjectsPerDomain());
+                jobLimit, 
+                job2.getForceMaxObjectsPerDomain());
 
     }
 
@@ -543,30 +555,34 @@ public class JobTester extends DataModelTestCase {
             // expected
         }
 
-        // test default value of forceMaxObjectsPerDomain:
+        // test capping of forceMaxObjectsPerDomain: 
         Job job = Job.createJob(TestInfo.HARVESTID, defaultConfig, 0);
-        assertEquals("Default value of forceMaxObjectsPerDomain expected",
-               -1, job.getForceMaxObjectsPerDomain());
+        assertEquals("forceMaxObjectsPerDomain not capped to domain config",
+               defaultConfig.getMaxObjects(), 
+               job.getForceMaxObjectsPerDomain());
 
 
         job = Job.createSnapShotJob(TestInfo.HARVESTID, defaultConfig, TestInfo.MAX_OBJECTS_PER_DOMAIN, -1, 0);
 
         // test getForceMaxObjectsPerDomain():
-        assertEquals("Value set in setForceMaxObjectsPerDomain expected",
-                TestInfo.MAX_OBJECTS_PER_DOMAIN, job.getForceMaxObjectsPerDomain());
+        assertEquals("Value set in setForceMaxObjectsPerDomain not capped",
+                defaultConfig.getMaxObjects(), 
+                job.getForceMaxObjectsPerDomain());
 
 
         // check if updated in the Document object that the Job object holds:
         // xpath-expression that selects the appropiate node in order.xml:
-        String xpath =
-                "/crawl-order/controller/newObject[@name='frontier']/long[@name='queue-total-budget']";
+        final String xpath  =
+            "/crawl-order/controller/map[@name='pre-fetch-processors']"
+            + "/newObject[@name='QuotaEnforcer']"
+            + "/long[@name='group-max-fetch-successes']";
 
         Document orderXML = job.getOrderXMLdoc();
-        Node queueTotalBudgetNode = orderXML.selectSingleNode(xpath);
+        Node groupMaxFetchSuccessNode = orderXML.selectSingleNode(xpath);
 
-        long maxObjectsXML = Long.parseLong(queueTotalBudgetNode.getText());
+        long maxObjectsXML = Long.parseLong(groupMaxFetchSuccessNode.getText());
         assertEquals("The order.xml Document should have been updated",
-                TestInfo.MAX_OBJECTS_PER_DOMAIN, maxObjectsXML);
+                defaultConfig.getMaxObjects(), maxObjectsXML);
 
 
     }
@@ -718,8 +734,9 @@ public class JobTester extends DataModelTestCase {
                      j.getOrigHarvestDefinitionID());
         assertEquals("Job should have right prio", JobPriority.HIGHPRIORITY,
                      j.getPriority());
-        assertEquals("Job should have no object limit", -1,
-                     j.getMaxObjectsPerDomain());
+        assertEquals("Job should have configuration object limit", 
+                dc.getMaxObjects(),
+                j.getMaxObjectsPerDomain());
         assertEquals(
                 "Job should have no byte limit (neither config nor hd sets it)",
                 -1, j.getMaxBytesPerDomain());

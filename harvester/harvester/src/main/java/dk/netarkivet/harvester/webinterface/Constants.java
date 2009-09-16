@@ -53,7 +53,7 @@ public class Constants {
     public static final String HARVEST_PARAM = "harvestname";
     public static final String DOMAINLIST_PARAM = "domainlist";
     public static final String OLDSNAPSHOT_PARAM = "old_snapshot_name";
-    public static final String DOMAIN_LIMIT_PARAM = "snapshot_object_limit";
+    public static final String DOMAIN_OBJECTLIMIT_PARAM = "snapshot_object_limit";
     public static final String DOMAIN_BYTELIMIT_PARAM = "snapshot_byte_limit";
     public static final String CREATENEW_PARAM = "createnew";
     public static final String UPDATE_PARAM = "update";

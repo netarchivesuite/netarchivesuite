@@ -270,6 +270,14 @@ public class HarvestSchedulerMonitorServer extends HarvesterMessageHandler
                        <= 0) {
                     stopReason = StopReason.CONFIG_SIZE_LIMIT;
                 }
+            } else if (stopReason == StopReason.OBJECT_LIMIT) {
+                long maxObjectsPerDomain = job.getMaxObjectsPerDomain();
+                long configMaxObjects = domain.getConfiguration(
+                        configurationMap.get(domainName)).getMaxObjects();
+                if (NumberUtils.compareInf(configMaxObjects, maxObjectsPerDomain)
+                    <= 0) {
+                    stopReason = StopReason.CONFIG_OBJECT_LIMIT;
+                }
             }
             // Create the HarvestInfo object
             HarvestInfo hi = new HarvestInfo(

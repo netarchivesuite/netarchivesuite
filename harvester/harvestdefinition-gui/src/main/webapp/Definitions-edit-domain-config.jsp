@@ -193,7 +193,10 @@ Display all the form information for this domain
                 </td>
             </tr>
             <input name="<%=Constants.MAX_RATE_PARAM%>" type="hidden" <%=load%> />
-            <input name="<%=Constants.MAX_OBJECTS_PARAM%>" type="hidden" <%=maxObjects%> />
+            <tr>
+                <td><fmt:message key="maximum.number.of.objects"/></td>
+                <td><input name="<%=Constants.MAX_OBJECTS_PARAM%>" size="20" <%=maxObjects%> /></td>
+            </tr>
             <tr>
                 <td><fmt:message key="maximum.number.of.bytes"/></td>
                 <td>

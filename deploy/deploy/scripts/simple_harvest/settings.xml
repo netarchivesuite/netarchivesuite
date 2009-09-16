@@ -137,6 +137,7 @@
 	            <defaultOrderxml>default_orderxml</defaultOrderxml>
 	            <defaultMaxrate>100</defaultMaxrate>
 	            <defaultMaxbytes>10000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
             </domain>
         </datamodel>
         <scheduler>
@@ -150,6 +151,7 @@
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
         </scheduler>
         <harvesting>
             <serverDir>server</serverDir>

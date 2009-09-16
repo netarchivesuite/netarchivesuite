@@ -70,13 +70,13 @@ public class SnapshotHarvestDefinition {
 
         HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);
         HTMLUtils.forwardOnMissingParameter(context,
-                Constants.DOMAIN_LIMIT_PARAM, Constants.DOMAIN_BYTELIMIT_PARAM);
+                Constants.DOMAIN_OBJECTLIMIT_PARAM, Constants.DOMAIN_BYTELIMIT_PARAM);
 
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
 
         long objectLimit = HTMLUtils.parseOptionalLong(context,
-                Constants.DOMAIN_LIMIT_PARAM, dk.netarkivet.harvester
+                Constants.DOMAIN_OBJECTLIMIT_PARAM, dk.netarkivet.harvester
                 .datamodel.Constants.DEFAULT_MAX_OBJECTS);
         long byteLimit = HTMLUtils.parseOptionalLong(context,
                 Constants.DOMAIN_BYTELIMIT_PARAM,

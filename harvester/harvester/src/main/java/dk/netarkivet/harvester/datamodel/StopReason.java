@@ -60,13 +60,18 @@ public enum StopReason {
      */
     OBJECT_LIMIT,
     /**
+     * Stop reason is configuration object limit reached, when the domain 
+     * reached the maximum number of objects allowed by the configuration. 
+     */
+    CONFIG_OBJECT_LIMIT,
+    /**
      * Stop reason is size limit reached, when the domain reached the maximum 
      * number of bytes allowed by the harvest.
      */
     SIZE_LIMIT,
     /**
      * Stop reason is configuration size limit reached, when the domain 
-     * reached the maxumum number of bytes allowed by the configuration. 
+     * reached the maximum number of bytes allowed by the configuration. 
      */
     CONFIG_SIZE_LIMIT,
     /** 
@@ -114,6 +119,8 @@ public enum StopReason {
                return I18N.getString(l, "stopreason.complete");
            case OBJECT_LIMIT :
                return I18N.getString(l, "stopreason.max.objects.limit.reached");
+           case CONFIG_OBJECT_LIMIT :
+               return I18N.getString(l, "stopreason.max.domainobjects.limit.reached");
            case SIZE_LIMIT :
                return I18N.getString(l, "stopreason.max.bytes.limit.reached");
            case CONFIG_SIZE_LIMIT :

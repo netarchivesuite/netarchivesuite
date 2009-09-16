@@ -355,9 +355,11 @@ public class DomainConfiguration implements Named {
         if (best != null) {
             minimum = best.getCountObjectRetrieved();
         } else {
-            minimum = Constants.HERITRIX_MAXOBJECTS_INFINITY;
+            minimum = NumberUtils.minInf(
+                    Constants.HERITRIX_MAXOBJECTS_INFINITY,
+                    maxObjects);
         }
-        // Calculate the expectated number of objects we will harvest.
+        // Calculate the expected number of objects we will harvest.
         long expectation;
         if (best != null) {
             if(best.getStopReason() == StopReason.DOWNLOAD_COMPLETE
@@ -373,9 +375,11 @@ public class DomainConfiguration implements Named {
                 expectation = minimum + ((maximum - minimum) / 2); 
             }
         } else {
-            // old calculation
-            //expectation = minimum + ((maximum - minimum) / bestguessfactor);
-            expectation = Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE);
+            // Best guess: minimum of default max domain size and domain object 
+            // limit
+            expectation = NumberUtils.minInf(
+                    Settings.getLong(HarvesterSettings.MAX_DOMAIN_SIZE),
+                    maxObjects);
         }
         // Always limit to domain specifics if set to do so. We always expect
         // to actually hit this limit

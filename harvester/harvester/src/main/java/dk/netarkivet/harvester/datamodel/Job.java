@@ -165,12 +165,20 @@ public class Job implements Serializable {
     //Intermediate fields, non-persistent and only used while building objects
 
     /**
+     * Whether the maxObjects field was defined by the harvest definition or the
+     * configuration limit. This is deciding for whether we accept smaller
+     * configurations or not when building jobs. True means the limit is defined
+     * by the configuration, false means by the harvest definition.
+     */
+    private boolean configurationSetsObjectLimit;
+    
+    /**
      * Whether the maxBytes field was defined by the harvest definition or the
      * configuration limit. This is deciding for whether we accept smaller
      * configurations or not when building jobs. True means the limit is defined
      * by the configuration, false means by the harvest definition.
      */
-    private boolean configurationSetsLimit;
+    private boolean configurationSetsByteLimit;
 
     /**
      * The lowest number of objects expected by a configuration.
@@ -272,12 +280,15 @@ public class Job implements Serializable {
 
         this.priority = priority;
 
-        setForceMaxObjectsPerDomain(forceMaxObjectsPerDomain);
+        long maxObjects = NumberUtils.minInf(
+                forceMaxObjectsPerDomain, cfg.getMaxObjects());        
+        setForceMaxObjectsPerDomain(maxObjects);
+        configurationSetsObjectLimit = (maxObjects != forceMaxObjectsPerDomain);
 
         long maxBytes = NumberUtils.minInf(
-                forceMaxBytesPerDomain, cfg.getMaxBytes());
-        configurationSetsLimit = (maxBytes != forceMaxBytesPerDomain);
+                forceMaxBytesPerDomain, cfg.getMaxBytes());        
         setMaxBytesPerDomain(maxBytes);
+        configurationSetsByteLimit = (maxBytes != forceMaxBytesPerDomain);
 
         long expectation = cfg.getExpectedNumberOfObjects(
                         forceMaxObjectsPerDomain, forceMaxBytesPerDomain);
@@ -579,21 +590,38 @@ public class Job implements Serializable {
             return false;
         }
 
-        if (NumberUtils.compareInf(
-                cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
-            || (configurationSetsLimit
-                    && NumberUtils.compareInf(
-                            cfg.getMaxBytes(), forceMaxBytesPerDomain) != 0)) {
-            return false;
-        }
+        // By default byte limit is used as base criterion for splitting a 
+        // harvest in config chunks, however the configuration can override this 
+        // and instead use object limit.
+        boolean splitByObjectLimit = Settings.getBoolean(
+                HarvesterSettings.SPLIT_BY_OBJECTLIMIT);
+        if (splitByObjectLimit) {
+            if (NumberUtils.compareInf(
+                    cfg.getMaxObjects(), forceMaxObjectsPerDomain) < 0
+                || (configurationSetsObjectLimit
+                        && NumberUtils.compareInf(
+                                cfg.getMaxObjects(), 
+                                forceMaxObjectsPerDomain) != 0)) {
+                return false;
+            }
+        } else {
+            if (NumberUtils.compareInf(
+                    cfg.getMaxBytes(), forceMaxBytesPerDomain) < 0
+                    || (configurationSetsByteLimit
+                            && NumberUtils.compareInf(
+                                    cfg.getMaxBytes(), 
+                                    forceMaxBytesPerDomain) != 0)) {
+                return false;
+            }
+        } 
 
         assert (maxCountObjects >= minCountObjects) : "basic invariant";
 
         // The expected number of objects retrieved by this job from
         // the configuration based on historical harvest results.
-        long expectation
-                = cfg.getExpectedNumberOfObjects(forceMaxObjectsPerDomain,
-                        forceMaxBytesPerDomain);
+        long expectation = cfg.getExpectedNumberOfObjects(
+                forceMaxObjectsPerDomain,
+                forceMaxBytesPerDomain);
 
         // Check if total count is exceeded
         if ((totalCountObjects > 0)
@@ -1025,7 +1053,8 @@ public class Job implements Serializable {
      * Auxiliary method to modify the orderXMLdoc Document
      * with respect to setting the maximum number of objects to be retrieved
      * per domain.
-     * This method updates 'queue-total-budget' element of the frontier node
+     * This method updates 'group-max-fetch-success' element of the QuotaEnforcer
+     * pre-fetch processor snode
      * (org.archive.crawler.frontier.BdbFrontier)
      * with the value of the argument forceMaxObjectsPerDomain
      *
@@ -1036,20 +1065,23 @@ public class Job implements Serializable {
      *           If unable to replace the frontier node of
      *           the orderXMLdoc Document
      * @throws IOFailure
-     *           If the queue-total-budget element is not found in the orderXml.
-     * TODO The queue-total-budget check should also be performed in
+     *           If the group-max-fetch-success element is not found in the orderXml.
+     * TODO The group-max-fetch-success check should also be performed in
      * TemplateDAO.create, TemplateDAO.update
      */
     private void editOrderXML_maxObjectsPerDomain(
             long forceMaxObjectsPerDomain) {
-        String xpath = HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH;
-        Node queueTotalBudgetNode = orderXMLdoc.selectSingleNode(xpath);
-        if (queueTotalBudgetNode != null) {
-            queueTotalBudgetNode.setText(
-                    String.valueOf(forceMaxObjectsPerDomain));
+              
+        String xpath = HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH;
+        Node groupMaxFectResponsesNode = orderXMLdoc.selectSingleNode(xpath);
+        if (groupMaxFectResponsesNode != null) {
+            groupMaxFectResponsesNode.setText(
+                    String.valueOf(forceMaxObjectsPerDomain));            
         } else {
             throw new IOFailure(
-                    "Unable to locate queue-total-budget element in order.xml: "
+                    "Unable to locate " 
+                    +  HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH
+                    + " element in order.xml: "
                     + orderXMLdoc.asXML());
         }
     }

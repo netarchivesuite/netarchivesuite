@@ -84,27 +84,27 @@ public class HeritrixTemplateTester extends TestCase {
 
         // Test failing cases
         doc = XmlUtils.getXmlDoc(f);
-        List<Node> nodes =
-                doc.selectNodes(HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH);
+        List<Node> nodes = 
+                doc.selectNodes(HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH);
         for (Node n : nodes) {
             n.detach();
             doc.remove(n);
         }
         try {
             new HeritrixTemplate(doc, true);
-            fail("Should have checked QueueTotalBudgetXpath");
+            fail("Should have checked GroupMaxFetchSuccessXpath");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
-        // Check validation of QueueTotalBudgetXpath
+        // Check validation of GroupMaxFetchSuccessXpath
         doc = XmlUtils.getXmlDoc(f);
 
-        checkLegalValues("The value should be legal for QueueTotalBudgetXpath",
-                         doc, HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH,
+        checkLegalValues("The value should be legal for GroupMaxFetchSuccessXpath",
+                         doc, HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH,
                          "10", "-1", "  30\n ", "1234567890");
-        checkIllegalValues("The value should be illegal for QueueTotalBudgetXpath",
-                           doc, HeritrixTemplate.QUEUE_TOTAL_BUDGET_XPATH,
+        checkIllegalValues("The value should be illegal for GroupMaxFetchSuccessXpath",
+                           doc, HeritrixTemplate.GROUP_MAX_FETCH_SUCCESS_XPATH,
                            "1+1", "  ", "+1", "abc", "0x40");
 
         // Check validation of GroupMaxAllKbXpath

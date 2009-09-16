@@ -140,6 +140,7 @@
       </jobs>
       <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
       <configChunkSize>10000</configChunkSize>
+      <splitByObjectLimit>false</splitByObjectLimit>
       <errorFactorBestGuess>20</errorFactorBestGuess>
       <errorFactorPrevResult>10</errorFactorPrevResult>
     </scheduler>

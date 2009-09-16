@@ -83,7 +83,8 @@ public class Constants {
      * although this is a long it is sometimes used as an int, so don't set
      * this value too high. Default max objects should now be infinity, since
      * we use the byte limit. */
-    public static final long DEFAULT_MAX_OBJECTS = HERITRIX_MAXOBJECTS_INFINITY;
+    public static final long DEFAULT_MAX_OBJECTS 
+        = Settings.getLong(HarvesterSettings.DOMAIN_CONFIG_MAXOBJECTS);
     /**
      * Default value for alias timeout, 1 year.
      * TODO make this into a setting in HarvesterSettings

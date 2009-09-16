@@ -97,6 +97,7 @@
                 <maxTotalSize>1000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
         </harvestdefinition>
 
         <crawler>

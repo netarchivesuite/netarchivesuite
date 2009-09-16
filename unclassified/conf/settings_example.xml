@@ -550,6 +550,8 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <!-- Default byte limit for domain configuration. -->
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <!-- Default object limit for domain configuration. -->
+                <defaultMaxobjects>10000</defaultMaxobjects>
             </domain>
         </datamodel>
         <scheduler>
@@ -589,6 +591,7 @@
                  in memory at the same time.  Set to MAX_LONG for no job
                  splitting. -->
             <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
         </scheduler>
         <harvesting>
             <!-- Each job gets a subdir of this dir. Job data is written and

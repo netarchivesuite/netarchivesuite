@@ -60,6 +60,7 @@ public class HarvestDefinitionTester extends DataModelTestCase {
     public void setUp() throws Exception {
         super.setUp();
         schedule = TestInfo.getDefaultSchedule();
+        Settings.set(HarvesterSettings.SPLIT_BY_OBJECTLIMIT, "false");
     }
 
     public void tearDown() throws Exception {
@@ -835,9 +836,9 @@ public class HarvestDefinitionTester extends DataModelTestCase {
                          hd.getOid(), job.getOrigHarvestDefinitionID());
             // verify that the jobs created are set to max. harvest 124 objects
             // per domain
-            assertEquals("Harvestdefinition settings should override"
-                    + "config settings",
-                    124, job.getMaxObjectsPerDomain());
+            assertEquals("Config settings should override "
+                    + "Harvestdefinition settings",
+                    0, job.getMaxObjectsPerDomain());
         }
     }
 

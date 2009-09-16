@@ -423,6 +423,7 @@
                 <defaultOrderxml>default_orderxml</defaultOrderxml>
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
             </domain>
         </datamodel>
         <scheduler>
@@ -436,6 +437,7 @@
                 <maxTotalSize>2000000</maxTotalSize>
             </jobs>
             <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
             <!-- one week in seconds  - time before jobs terminate -->
             <jobtimeouttime>604800</jobtimeouttime>
         </scheduler>

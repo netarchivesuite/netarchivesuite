@@ -257,20 +257,23 @@ public class JobDAOTester extends DataModelTestCase {
         JobDAO dao2 = JobDAO.getInstance();
         Job jobUpdated = dao2.read(job.getJobID());
 
-        assertTrue("The retrieved job should have max object per domain = " +
-                   TestInfo.MAX_OBJECTS_PER_DOMAIN + ", but it is equal to "
+        long expectedCappedMaxObjects = dc.getMaxObjects();
+        assertEquals("The retrieved job should have max object per domain = " +
+                   expectedCappedMaxObjects + ", but it is equal to "
                    + jobUpdated.getForceMaxObjectsPerDomain(),
-                   jobUpdated.getForceMaxObjectsPerDomain() == TestInfo.MAX_OBJECTS_PER_DOMAIN);
+                   expectedCappedMaxObjects,
+                   jobUpdated.getForceMaxObjectsPerDomain());
 
         // check that the job-specific order.xml is modified accordingly:
 
         final Document orderXMLdoc = jobUpdated.getOrderXMLdoc();
         String xpath =
-                "/crawl-order/controller"
-                + "/newObject[@name='frontier']/long[@name='queue-total-budget']";
+            "/crawl-order/controller/map[@name='pre-fetch-processors']"
+            + "/newObject[@name='QuotaEnforcer']"
+            + "/long[@name='group-max-fetch-successes']";
         Node queueTotalBudgetNode = orderXMLdoc.selectSingleNode(xpath);
         assertEquals("OrderXML value should equals set value",
-                     TestInfo.MAX_OBJECTS_PER_DOMAIN,
+                     expectedCappedMaxObjects,
                      Integer.parseInt(queueTotalBudgetNode.getText()));
 
     }

@@ -67,13 +67,13 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
         assertNull("Should not have fnord before creation",
                 dao.getHarvestDefinition(newHDname));
         request.addParameter(Constants.CREATENEW_PARAM, "yes");
-        request.addParameter(Constants.DOMAIN_LIMIT_PARAM, "-1");
+        request.addParameter(Constants.DOMAIN_OBJECTLIMIT_PARAM, "-1");
         request.addParameter(Constants.DOMAIN_BYTELIMIT_PARAM, "117");
         request.addParameter(Constants.HARVEST_PARAM, newHDname);
         assertCallChecksArgument(request, newHDname,
                 Constants.HARVEST_PARAM);
         assertCallChecksArgument(request, newHDname,
-                Constants.DOMAIN_LIMIT_PARAM);
+                Constants.DOMAIN_OBJECTLIMIT_PARAM);
         assertCallChecksArgument(request, newHDname,
                 Constants.DOMAIN_BYTELIMIT_PARAM);
 
