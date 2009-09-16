@@ -88,6 +88,8 @@ public enum StopReason {
      * Get the StopReason corresponding to the given positive integer.
      * @param stopreasonNum a given positive integer
      * @return the StopReason corresponding to the given positive integer
+     * 
+     * @see StopReason#ordinal()
      */
     static StopReason getStopReason(final int stopreasonNum) {
         switch (stopreasonNum) {
@@ -95,12 +97,14 @@ public enum StopReason {
                 return DOWNLOAD_COMPLETE;
             case 1:
                 return OBJECT_LIMIT;
-            case 2:
-                return SIZE_LIMIT;
+            case 2: 
+                return CONFIG_OBJECT_LIMIT;
             case 3:
-                return CONFIG_SIZE_LIMIT;
+                return SIZE_LIMIT;
             case 4:
-                return DOWNLOAD_UNFINISHED;
+                return CONFIG_SIZE_LIMIT;
+            case 5:
+                return DOWNLOAD_UNFINISHED;            
             default:
                 throw new UnknownID("No stop reason assigned to "
                                     + stopreasonNum);
