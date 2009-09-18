@@ -34,6 +34,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * A HeritrixLauncher object wraps around an instance of the web crawler
@@ -67,24 +68,17 @@ public class HeritrixLauncher {
     //Attributes regarding deduplication.
 
     /**
-     * Xpath for the deduplicator node in order.xml documents.
-     */
-    static final String DEDUPLICATOR_XPATH =
-            "/crawl-order/controller/map[@name='write-processors']"
-            + "/newObject[@name='DeDuplicator']";
-
-    /**
      * Xpath for the deduplicator index directory node in order.xml documents.
      */
     static final String DEDUPLICATOR_INDEX_LOCATION_XPATH
-            = DEDUPLICATOR_XPATH + "/string[@name='index-location']";
+            = HeritrixTemplate.DEDUPLICATOR_XPATH + "/string[@name='index-location']";
 
     /**
      * Xpath for the boolean telling if the deduplicator is enabled in
      * order.xml documents.
      */
-    static final String DEDUPLICATOR_ENABLED = DEDUPLICATOR_XPATH
-                                               + "/boolean[@name='enabled']";
+    static final String DEDUPLICATOR_ENABLED 
+        = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
 
     /**
      * The class logger.
@@ -356,12 +350,8 @@ public class HeritrixLauncher {
      *</ol>
      * 2. saves the orderfile back to disk</p>
      *
-     * 3. if deduplication is enabled by the 
-     * {@link HarvesterSettings#DEDUPLICATION_ENABLED} setting, and also
-     * enabled in order.xmll, it writes the absolute path of the lucene index
-     * used by the deduplication processor. If deduplication is disabled by the
-     * above setting, and enabled in the order.xml, it will be disabled in the
-     * order.xml as well.
+     * 3. if deduplication is enabled in the order.xml, it writes the absolute
+     * path of the lucene index used by the deduplication processor.
      * 
      * @throws IOFailure - When the orderfile could not be saved to disk When a
      *                   specific node is not found in the XML-document When the
@@ -378,23 +368,11 @@ public class HeritrixLauncher {
                          files.getSeedsTxtFile().getAbsolutePath());
         XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
         
-        boolean isDeduplicationEnabled = Settings.getBoolean(
-                HarvesterSettings.DEDUPLICATION_ENABLED);
-        
-        if (isDeduplicationEnabled && isDeduplicationEnabledInTemplate(doc)) {
+        if (isDeduplicationEnabledInTemplate(doc)) {
             XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());
         }
         
-        if (!isDeduplicationEnabled) {
-            // turn off deduplication by disabling the deduplication
-            // in the template
-            Node xpathNode = doc.selectSingleNode(DEDUPLICATOR_ENABLED);
-            if (xpathNode != null) {
-                XmlUtils.setNode(doc, DEDUPLICATOR_ENABLED, "false");
-            }
-        }
-
         files.writeOrderXml(doc);
     }
 

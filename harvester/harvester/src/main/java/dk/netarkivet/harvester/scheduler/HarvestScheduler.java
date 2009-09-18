@@ -47,6 +47,7 @@ import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
+import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerClient;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 
@@ -201,11 +202,13 @@ public class HarvestScheduler implements CleanupIF {
             Date endTime = new Date();
             endTime.setTime(job.getActualStart().getTime() + timeDiff);
             if (new Date().after(endTime)) {
-                final String msg = " Job " + id
-                         + " has exceeded its timeout of " +
-                         (Settings.getLong(HarvesterSettings.JOB_TIMEOUT_TIME)
-                         / 60) + " minutes. Its status has now been changed to "
-                         + "FAILED.";
+                final String msg = " Job "
+                        + id
+                        + " has exceeded its timeout of "
+                        + (Settings.getLong(
+                                HarvesterSettings.JOB_TIMEOUT_TIME) / 60)
+                        + " minutes. Its status has now been changed to "
+                        + "FAILED.";
                 log.warn(msg);
                 job.setStatus(JobStatus.FAILED);
                 job.appendHarvestErrors(msg);
@@ -242,9 +245,9 @@ public class HarvestScheduler implements CleanupIF {
                 DBSpecifics.getInstance().backupDatabase(backupDir);
                 lastBackupDate = new Date();
             } catch (SQLException e) {
-                String errMsg = "Unable to backup database to dir: " 
-                    + backupDir +
-                             "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+                String errMsg = "Unable to backup database to dir: "
+                        + backupDir + "\n"
+                        + ExceptionUtils.getSQLExceptionCause(e);
                 log.warn(errMsg, e);
                 NotificationsFactory.getInstance().errorEvent(
                         errMsg, e); 
@@ -339,9 +342,12 @@ public class HarvestScheduler implements CleanupIF {
                 if (aliasMetadataEntry != null) {
                     metadata.add(aliasMetadataEntry);
                 }
-                //Add jobid metadata
-
-                MetadataEntry duplicateReductionMetadataEntry
+                
+                //Add duplicationReduction MetadataEntry, if Deduplication 
+                //is enabled.
+                if (HeritrixLauncher.isDeduplicationEnabledInTemplate(
+                        jobToSubmit.getOrderXMLdoc())) {
+                    MetadataEntry duplicateReductionMetadataEntry
                         = MetadataEntry.makeDuplicateReductionMetadataEntry(
                                 dao.getJobIDsForDuplicateReduction(jobID),
                                 jobToSubmit.getOrigHarvestDefinitionID(),
@@ -349,9 +355,11 @@ public class HarvestScheduler implements CleanupIF {
                                 jobToSubmit.getJobID()
                           );
 
-                if (duplicateReductionMetadataEntry != null) {
-                    metadata.add(duplicateReductionMetadataEntry);
+                    if (duplicateReductionMetadataEntry != null) {
+                        metadata.add(duplicateReductionMetadataEntry);
+                    }
                 }
+                
                 hcc.doOneCrawl(jobToSubmit, metadata);
                 log.trace("Job " + jobToSubmit + " sent to harvest queue.");
             } catch (Throwable e) {

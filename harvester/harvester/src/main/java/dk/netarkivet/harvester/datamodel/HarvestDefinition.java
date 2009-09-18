@@ -32,10 +32,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 
 /**
  * This abstract class models the general properties of a harvest definition,
@@ -81,6 +84,10 @@ public abstract class HarvestDefinition implements Named {
     private final long MAX_CONFIGS_PER_JOB_CREATION =
             Settings.getLong(HarvesterSettings.MAX_CONFIGS_PER_JOB_CREATION);
 
+    /** Is deduplication enabled or disabled. **/
+    private final boolean DEDUPLICATION_ENABLED =
+        Settings.getBoolean(HarvesterSettings.DEDUPLICATION_ENABLED);
+    
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass());
 
@@ -343,6 +350,26 @@ public abstract class HarvestDefinition implements Named {
         }
         if (job != null) {
             jobsMade++;
+            Document doc = job.getOrderXMLdoc();
+            if (DEDUPLICATION_ENABLED) {
+               // Check that the Deduplicator element is present in the 
+               //OrderXMl and enabled. If missing or disabled log a warning
+                if (!HeritrixLauncher.isDeduplicationEnabledInTemplate(doc)) {
+                    log.warn("Unable to perform deduplication for this job" 
+                            + " as the required DeDuplicator element is "
+                            + "disabled or missing from template");
+                }
+            } else {
+                // Remove deduplicator Element from OrderXML if present
+                Node xpathNode = doc.selectSingleNode(
+                        HeritrixTemplate.DEDUPLICATOR_XPATH);
+                if (xpathNode != null) {
+                    xpathNode.detach();
+                    job.setOrderXMLDoc(doc);
+                    log.info("Removed DeDuplicator element because " 
+                            + "Deduplication is disabled");
+                } 
+            }
             dao.create(job);
             log.debug("Generated job: '" + job.toString() + "'");
             if (log.isDebugEnabled()) {

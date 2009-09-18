@@ -34,6 +34,7 @@ import org.dom4j.Node;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.XmlUtils;
+//import dk.netarkivet.testutils.TestFileUtils;
 
 /** Testclass for class HeritrixTemplate. */
 public class HeritrixTemplateTester extends TestCase {
@@ -222,4 +223,16 @@ public class HeritrixTemplateTester extends TestCase {
         HeritrixTemplate ht = new HeritrixTemplate(doc);
         assertTrue("Order not verified", ht.isVerified());
     }
+    
+//    public void testRemovalOfDeduplicator() {
+//        File f = new File(TestInfo.TOPDATADIR, "default_orderxml.xml");
+//        Document a = XmlUtils.getXmlDoc(f);
+//        String before = a.asXML();
+//        Node xpathNode = a.selectSingleNode(
+//                HeritrixTemplate.DEDUPLICATOR_XPATH);
+//        assertTrue("Deduplicator should be there", xpathNode != null);
+//        xpathNode.detach();
+//        String after = a.asXML();
+//        System.out.println(TestFileUtils.getDifferences(before, after));
+//    }
 }

@@ -795,6 +795,12 @@ public class Job implements Serializable {
         this.actualStop = (Date) actualStop.clone();
     }
 
+    public void setOrderXMLDoc(Document doc) {
+        ArgumentNotValid.checkNotNull(doc, "doc");
+        this.orderXMLdoc = doc;
+    }
+    
+    
     /**
      * Gets a document representation of the order.xml associated with this Job.
      *

@@ -57,6 +57,7 @@ import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
@@ -397,7 +398,7 @@ public class HeritrixLauncherTester extends TestCase {
         assertTrue("Should have deduplication enabled",
                    HeritrixLauncher.isDeduplicationEnabledInTemplate(doc));
         XmlAsserts.assertNodeWithXpath(
-                doc, HeritrixLauncher.DEDUPLICATOR_XPATH);
+                doc, HeritrixTemplate.DEDUPLICATOR_XPATH);
         XmlAsserts.assertNodeWithXpath(
                 doc, HeritrixLauncher.DEDUPLICATOR_INDEX_LOCATION_XPATH);
         XmlAsserts.assertNodeTextInXpath(

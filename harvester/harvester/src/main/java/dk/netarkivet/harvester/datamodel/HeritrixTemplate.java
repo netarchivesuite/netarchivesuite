@@ -79,6 +79,15 @@ public class HeritrixTemplate {
             "/crawl-order/controller/newObject[@name='scope']"
             + "[@class='" + DecidingScope.class.getName()
             + "']";
+    /**
+     * Xpath for the deduplicator node in order.xml documents.
+     */
+    public static final String DEDUPLICATOR_XPATH =
+            "/crawl-order/controller/map[@name='write-processors']"
+            + "/newObject[@name='DeDuplicator']";
+
+    
+    
     
     /** Xpath to check, that all templates use the same archiver path,
      * {@link dk.netarkivet.common.Constants#ARCDIRECTORY_NAME}.
