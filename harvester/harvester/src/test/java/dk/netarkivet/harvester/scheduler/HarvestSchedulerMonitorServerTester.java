@@ -638,8 +638,8 @@ public class HarvestSchedulerMonitorServerTester extends TestCase {
                 0, dh.getCountObjectRetrieved());
         assertEquals("Should have expected total size of harvest",
                 0, dh.getSizeDataRetrieved());
-        assertEquals("Should be marked as stopped due to object limit",
-                StopReason.OBJECT_LIMIT, dh.getStopReason());
+        assertEquals("Should be marked as stopped due to config object limit",
+                StopReason.CONFIG_OBJECT_LIMIT, dh.getStopReason());
 
         //Check correct historyinfo for dr.dk: size limit - config limit
         // is lowest, so this should be a size_limit

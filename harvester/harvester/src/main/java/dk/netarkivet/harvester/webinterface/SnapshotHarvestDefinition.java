@@ -68,9 +68,7 @@ public class SnapshotHarvestDefinition {
             return;
         }
 
-        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);
-        HTMLUtils.forwardOnMissingParameter(context,
-                Constants.DOMAIN_OBJECTLIMIT_PARAM, Constants.DOMAIN_BYTELIMIT_PARAM);
+        HTMLUtils.forwardOnEmptyParameter(context, Constants.HARVEST_PARAM);        
 
         String name = request.getParameter(Constants.HARVEST_PARAM);
         String comments = request.getParameter(Constants.COMMENTS_PARAM);
@@ -80,7 +78,7 @@ public class SnapshotHarvestDefinition {
                 .datamodel.Constants.DEFAULT_MAX_OBJECTS);
         long byteLimit = HTMLUtils.parseOptionalLong(context,
                 Constants.DOMAIN_BYTELIMIT_PARAM,
-            dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
+                dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES);
 
         Long oldHarvestId = HTMLUtils.parseOptionalLong(context,
                 Constants.OLDSNAPSHOT_PARAM, null);

@@ -157,10 +157,10 @@ public class HarvesterSettings {
     
     /**
      * <b>settings.harvester.scheduler.splitByObjectLimit</b>: <br>
-     * By default the byte limit is used as base criterion to 
-     * know how many domain configurations we will process in one go before
-     * making jobs out of them. However if this parameter is set to "true",
-     * then the object limit is used instead.
+     * By default the byte limit is used as the base criterion for how many 
+     * domain configurations are put into one harvest job. However if this 
+     * parameter is set to "true", then the object limit is used instead 
+     * as the base criterion. 
      */
     public static String SPLIT_BY_OBJECTLIMIT = 
         "settings.harvester.scheduler.splitByObjectLimit";

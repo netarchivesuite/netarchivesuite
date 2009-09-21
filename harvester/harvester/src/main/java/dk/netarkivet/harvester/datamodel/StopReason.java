@@ -60,11 +60,6 @@ public enum StopReason {
      */
     OBJECT_LIMIT,
     /**
-     * Stop reason is configuration object limit reached, when the domain 
-     * reached the maximum number of objects allowed by the configuration. 
-     */
-    CONFIG_OBJECT_LIMIT,
-    /**
      * Stop reason is size limit reached, when the domain reached the maximum 
      * number of bytes allowed by the harvest.
      */
@@ -79,7 +74,12 @@ public enum StopReason {
      * the harvesting is completed, because the crawler did not finish in an 
      * orderly way.
      */
-    DOWNLOAD_UNFINISHED;
+    DOWNLOAD_UNFINISHED,
+    /**
+     * Stop reason is configuration object limit reached, when the domain 
+     * reached the maximum number of objects allowed by the configuration. 
+     */
+    CONFIG_OBJECT_LIMIT;
 
     /** Internationalisation object. */
     private static final I18n I18N
@@ -96,15 +96,15 @@ public enum StopReason {
             case 0:
                 return DOWNLOAD_COMPLETE;
             case 1:
-                return OBJECT_LIMIT;
-            case 2: 
-                return CONFIG_OBJECT_LIMIT;
-            case 3:
+                return OBJECT_LIMIT;            
+            case 2:
                 return SIZE_LIMIT;
-            case 4:
+            case 3:
                 return CONFIG_SIZE_LIMIT;
-            case 5:
-                return DOWNLOAD_UNFINISHED;            
+            case 4:
+                return DOWNLOAD_UNFINISHED;
+            case 5: 
+                return CONFIG_OBJECT_LIMIT;
             default:
                 throw new UnknownID("No stop reason assigned to "
                                     + stopreasonNum);

@@ -18,8 +18,16 @@
             <batchMessageTimeout>1209600000</batchMessageTimeout>
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
+        <checksum>
+            <filename>checksum.md5</filename>
+        </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
+            <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
+            <database>
+                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+                <url>jdbc:derby:bitpreservationdb</url>
+            </database>
         </bitpreservation>
     </archive>
 <common>
@@ -399,6 +407,9 @@
             <!-- Currently set to 10 MB -->
             <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
         </repository>
+        <batch>
+            <maxExceptions>100</maxExceptions>
+        </batch>
         <replicas> <!-- The entire settings for replicas. -->
             <replica>
                 <replicaId>ONE</replicaId>
@@ -459,11 +470,19 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts/>
+                <javaOpts/>                
             </heritrix>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
             </heritrixController>
+            <deduplication>
+                <enabled>true</enabled>
+            </deduplication>
+            <metadata>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <reportFilePattern>.*-report.txt</reportFilePattern>
+                <logFilePattern>.*(\.log|\.out)</logFilePattern>
+            </metadata>
         </harvesting>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>

@@ -168,7 +168,8 @@ public class Job implements Serializable {
      * Whether the maxObjects field was defined by the harvest definition or the
      * configuration limit. This is deciding for whether we accept smaller
      * configurations or not when building jobs. True means the limit is defined
-     * by the configuration, false means by the harvest definition.
+     * by the configuration, false means that it is defined by the 
+     * harvest definition.
      */
     private boolean configurationSetsObjectLimit;
     

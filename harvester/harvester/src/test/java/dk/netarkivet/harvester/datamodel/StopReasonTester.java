@@ -78,10 +78,15 @@ public class StopReasonTester extends TestCase {
         assertEquals("getStopReason(4) should return StopReason.DOWNLOAD_UNFINISHED",
                      StopReason.DOWNLOAD_UNFINISHED,
                      StopReason.getStopReason(4));
+        
+        //Test that stopreasonNum=5 returns StopReason.CONFIG_OBJECT_LIMIT
+        assertEquals("getStopReason(5) should return StopReason.CONFIG_OBJECT_LIMIT",
+                     StopReason.CONFIG_OBJECT_LIMIT,
+                     StopReason.getStopReason(5));
 
-        // Test that stopreasonNum less than 0 and greater than 4 results in IOFailure
+        // Test that stopreasonNum less than 0 and greater than 5 results in IOFailure
         try {
-            StopReason.getStopReason(5);
+            StopReason.getStopReason(6);
             fail ("UnknownID expected");
         } catch (UnknownID e){
             // UnknownID expected

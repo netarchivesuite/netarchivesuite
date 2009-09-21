@@ -434,6 +434,7 @@
                 <defaultOrderxml>default_orderxml</defaultOrderxml>
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
             </domain>
         </datamodel>
         <scheduler>
@@ -469,7 +470,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts/>
+                <javaOpts/>                
             </heritrix>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
@@ -477,6 +478,11 @@
             <deduplication>
                 <enabled>true</enabled>
             </deduplication>
+            <metadata>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <reportFilePattern>.*-report.txt</reportFilePattern>
+                <logFilePattern>.*(\.log|\.out)</logFilePattern>
+            </metadata>
         </harvesting>
     </harvester><monitor>
         <jmxUsername>monitorRole</jmxUsername>
