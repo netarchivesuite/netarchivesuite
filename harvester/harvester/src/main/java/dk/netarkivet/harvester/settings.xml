@@ -74,7 +74,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts></javaOpts>
+                <javaOpts></javaOpts>                
             </heritrix>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
@@ -82,6 +82,11 @@
             <deduplication>
                 <enabled>true</enabled>
             </deduplication>
+            <metadata>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <reportFilePattern>.*-report.txt</reportFilePattern>
+                <logFilePattern>.*(\.log|\.out)</logFilePattern>
+            </metadata>
         </harvesting>
     </harvester>
 </settings>

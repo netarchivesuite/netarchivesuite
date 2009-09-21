@@ -22,6 +22,8 @@
  */
 package dk.netarkivet.harvester;
 
+import java.util.regex.Pattern;
+
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -301,6 +303,36 @@ public class HarvesterSettings {
      */
     public static String DEDUPLICATION_ENABLED =
         "settings.harvester.harvesting.deduplication.enabled";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.heritrixFilePattern</b>
+     * This setting allows to filter which Heritrix files should be stored in 
+     * the metadata ARC.
+     * 
+     * @see Pattern
+     */
+    public static final String METADATA_HERITRIX_FILE_PATTERN =
+        "settings.harvester.harvesting.metadata.heritrixFilePattern";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.reportFilePattern</b>
+     * This setting allows to filter which Heritrix files that should be stored in 
+     * the metadata ARC are to be classified as a report.
+     * 
+     * @see Pattern
+     */
+    public static final String METADATA_REPORT_FILE_PATTERN =
+        "settings.harvester.harvesting.metadata.reportFilePattern";
+    
+    /**
+     * <b>settings.harvester.harvesting.metadata.logFilePattern</b>
+     * This setting allows to filter which Heritrix log files should be stored in 
+     * the metadata ARC.
+     * 
+     * @see Pattern
+     */
+    public static final String METADATA_LOG_FILE_PATTERN =
+        "settings.harvester.harvesting.metadata.logFilePattern";
 
 }
 

@@ -51,8 +51,10 @@ import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvestDocumentationTester extends TestCase {
+    
     public void setUp() {
         FileUtils.createDir(TestInfo.WORKING_DIR);
     }
@@ -84,10 +86,10 @@ public class HarvestDocumentationTester extends TestCase {
         HarvestDocumentation.documentHarvest(TestInfo.WORKING_DIR,
                 TestInfo.JOB_ID,
                 TestInfo.HARVEST_ID
-                );
+        );
         //Verify that the new file exists.
         HarvestDocumentation.getMetadataARCFileName(
-                        TestInfo.ARC_JOB_ID);
+                TestInfo.ARC_JOB_ID);
         IngestableFiles inf = new IngestableFiles(TestInfo.WORKING_DIR,
                 Long.parseLong(TestInfo.ARC_JOB_ID));
         List<File> fs = inf.getMetadataArcFiles();
@@ -116,7 +118,7 @@ public class HarvestDocumentationTester extends TestCase {
             ARCRecordMetaData meta = record.getMetaData();
             if (meta.getMimetype().equals("application/x-cdx")) {
                 assertTrue("Bad URI in metadata: " + meta.getUrl(),
-                           cdxURISet.contains(meta.getUrl()));
+                        cdxURISet.contains(meta.getUrl()));
                 cdxURISet.remove(meta.getUrl());
             }
             if (meta.getUrl().startsWith("metadata://netarkivet.dk/crawl/setup/aliases")) {
@@ -124,7 +126,7 @@ public class HarvestDocumentationTester extends TestCase {
             }
         }
         assertTrue("Metadata should contain CDX records: " + cdxURISet,
-                   cdxURISet.isEmpty());
+                cdxURISet.isEmpty());
         assertNotNull("Should have found some alias information", aliasFound);
         assertEquals("Should have found the right alias metadata",
                 "tv2.dk is an alias of statsbiblioteket.dk\n", aliasFound);
@@ -171,7 +173,7 @@ public class HarvestDocumentationTester extends TestCase {
         File metadataDir = new File(TestInfo.WORKING_DIR, "metadata");
         File target1 = new File(
                 metadataDir, HarvestDocumentation.getMetadataARCFileName(
-                Long.toString(TestInfo.JOB_ID)));
+                        Long.toString(TestInfo.JOB_ID)));
         assertEquals("Should generate exactly one metadata file",
                 1, metadataFiles.size());
         assertTrue("Should generate file " + target1
@@ -195,14 +197,14 @@ public class HarvestDocumentationTester extends TestCase {
         }
         String fn = HarvestDocumentation.getMetadataARCFileName(job);
         assertTrue("File name should end on '-1.arc' - was " + fn,
-                   fn.endsWith("-1.arc")
-                );
+                fn.endsWith("-1.arc")
+        );
         assertTrue("File name should contain jobID - was " + fn,
-                   fn.contains(job)
-                );
+                fn.contains(job)
+        );
         assertTrue("File name should contain the string 'metadata' - was " + fn,
                 fn.contains("metadata")
-             );
+        );
     }
 
     /**
@@ -214,17 +216,17 @@ public class HarvestDocumentationTester extends TestCase {
         long jobId = 7;
         String fn = HarvestDocumentation.getPreharvestMetadataARCFileName(jobId);
         assertTrue("File name should end on '-1.arc' - was " + fn,
-                   fn.endsWith("-1.arc")
-                );
+                fn.endsWith("-1.arc")
+        );
         assertTrue("File name should contain jobID - was " + fn,
-                   fn.contains(Long.toString(jobId))
-                );
+                fn.contains(Long.toString(jobId))
+        );
         assertTrue("File name should contain the string 'metadata' - was " + fn,
                 fn.contains("metadata")
-             );
+        );
         assertTrue("File name should contain the string 'preharvest' - was " + fn,
                 fn.contains("preharvest")
-             );
+        );
     }
 
     /**
@@ -263,23 +265,23 @@ public class HarvestDocumentationTester extends TestCase {
             //Expected
         }
         String uri = HarvestDocumentation
-          .getCDXURI(harv,job,time,serial).toString();
+        .getCDXURI(harv,job,time,serial).toString();
         String prefix = "metadata://netarkivet.dk/crawl/index/cdx?";
         assertTrue("Should name the CDX URI following the official pattern - was "
-                   + uri,
-                   uri.startsWith(prefix));
+                + uri,
+                uri.startsWith(prefix));
         assertTrue("CDX URI should contain harvestID - was "
-                   + uri,
-                   uri.contains(harv));
+                + uri,
+                uri.contains(harv));
         assertTrue("CDX URI should contain jobID - was "
-                   + uri,
-                   uri.contains(job));
+                + uri,
+                uri.contains(job));
         assertTrue("CDX URI should contain timestamp - was "
-                   + uri,
-                   uri.contains(time));
+                + uri,
+                uri.contains(time));
         assertTrue("CDX URI should contain serial no - was "
-                   + uri,
-                   uri.contains(serial));
+                + uri,
+                uri.contains(serial));
     }
 
     /** Unit test method for generating a CDX index of an Arc file.
@@ -290,25 +292,25 @@ public class HarvestDocumentationTester extends TestCase {
         cdxstream.write("BEFORE\n".getBytes());
         CDXUtils.writeCDXInfo(TestInfo.ARC_FILE_1, cdxstream);
         assertEquals("Stream should have expected content",
-                     "BEFORE\n" + FileUtils.readFile(TestInfo.CDX_FILE),
-                     cdxstream.toString());
-        
+                "BEFORE\n" + FileUtils.readFile(TestInfo.CDX_FILE),
+                cdxstream.toString());
+
 
         //Testing on a non-arc file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Start\n".getBytes());
         CDXUtils.writeCDXInfo(TestInfo.SEEDS_FILE, cdxstream);
         assertEquals("Stream should have no new content",
-                     "Start\n",
-                     cdxstream.toString());
+                "Start\n",
+                cdxstream.toString());
 
         //Testing on a gzipped file to see results
         cdxstream = new ByteArrayOutputStream();
         cdxstream.write("Begin\n".getBytes());
         CDXUtils.writeCDXInfo(TestInfo.ARC_FILE2, cdxstream);
         assertEquals("Stream should have expected new content",
-                     "Begin\n" + FileUtils.readFile(TestInfo.CDX_FILE2),
-                     cdxstream.toString());
+                "Begin\n" + FileUtils.readFile(TestInfo.CDX_FILE2),
+                cdxstream.toString());
     }
 
     /** Unit test for generating CDX indexes on all arc files.
@@ -361,22 +363,22 @@ public class HarvestDocumentationTester extends TestCase {
         TestInfo.CDX_WORKING_DIR.mkdirs();
         CDXUtils.generateCDX(TestInfo.ARC_REAL_DIR, TestInfo.CDX_WORKING_DIR);
         File [] originalFiles
-                = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
+        = TestInfo.ARC_REAL_DIR.listFiles(FileUtils.ARCS_FILTER);
         File [] generatedFiles = TestInfo.CDX_WORKING_DIR.listFiles();
         assertEquals("Should have generated the right number of files, but "
-                     + "found " + Arrays.asList(generatedFiles),
-                     originalFiles.length, generatedFiles.length);
+                + "found " + Arrays.asList(generatedFiles),
+                originalFiles.length, generatedFiles.length);
         for (File original : originalFiles) {
             File cdxfile = new File(TestInfo.CDX_WORKING_DIR,
                     original.getName().replaceFirst("\\.arc(\\.gz)?$",
-                                                            ".cdx"));
+                    ".cdx"));
             assertTrue("Should be a cdx file with correct name for '"
-                       + original + "'", cdxfile.isFile());
+                    + original + "'", cdxfile.isFile());
             OutputStream content = new ByteArrayOutputStream();
             CDXUtils.writeCDXInfo(original, content);
             assertEquals("File '" + cdxfile.getAbsolutePath()
-                         + "' should contain expected content",
-                         content.toString(), FileUtils.readFile(cdxfile));
+                    + "' should contain expected content",
+                    content.toString(), FileUtils.readFile(cdxfile));
         }
 
     }
@@ -392,8 +394,8 @@ public class HarvestDocumentationTester extends TestCase {
                 TestInfo.METADATA_TEST_DIR_INCONSISTENT,
                 arcsDir);
         FileUtils.copyFile(new File(TestInfo.METADATA_TEST_DIR,
-                "arcs/not-an-arc-file.txt"),
-                new File(arcsDir, "43-metadata-1.arc"));
+        "arcs/not-an-arc-file.txt"),
+        new File(arcsDir, "43-metadata-1.arc"));
         m.invoke(null, arcsDir, 42);
         // Check that one file got moved.
         LogUtils.flushLogs(HarvestDocumentation.class.getName());
@@ -415,7 +417,7 @@ public class HarvestDocumentationTester extends TestCase {
         assertTrue("Good file " + keptFile + " should not have moved",
                 keptFile.exists());
         File badMetadataFile = new File(TestInfo.WORKING_DIR, Constants.ARCDIRECTORY_NAME +
-                "/43-metadata-1.arc");
+        "/43-metadata-1.arc");
         assertFalse("Metadata file " + badMetadataFile + " should have moved",
                 badMetadataFile.exists());
         File movedMetadataFile = new File(oldJobsDir43, badMetadataFile.getName());
@@ -491,7 +493,7 @@ public class HarvestDocumentationTester extends TestCase {
         File ORIGINAL_CRAWLDIR = TestInfo.CRAWLDIR_ORIGINALS_DIR;
         File metadataArcFile = iF.getMetadataArcFiles().get(0);
         String URL = "metadata://netarkivet.dk/crawl/setup/order.xml?heritrixVersion=" + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID
-            + "&jobid=" + TestInfo.JOB_ID;
+        + "&jobid=" + TestInfo.JOB_ID;
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(TestInfo.WORKING_DIR, "order.xml"));
 
@@ -520,7 +522,7 @@ public class HarvestDocumentationTester extends TestCase {
         findAndVerifyMetadata(metadataArcFile, URL);
         checkThatNoLongerExist(new File(TestInfo.WORKING_DIR, "seeds-report.txt"));
 
-        URL = "metadata://netarkivet.dk/crawl/logs/crawl.log?heritrixVersion=" + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID
+        URL = "metadata://netarkivet.dk/crawl/crawl.log?heritrixVersion=" + Constants.getHeritrixVersionString() + "&harvestid=" + TestInfo.HARVEST_ID
         + "&jobid=" + TestInfo.JOB_ID;
         File logDir = new File(ORIGINAL_CRAWLDIR, "logs");
         findAndVerifyMetadata(metadataArcFile, URL);
@@ -529,22 +531,102 @@ public class HarvestDocumentationTester extends TestCase {
         // .equals() is called.
         checkThatStillExist(new File(logDir,
                 new String("crawl.log".toCharArray())));
-        }
+    }
 
-  private void checkThatStillExist(File fileThatStillShouldExist) {
-      if (!fileThatStillShouldExist.exists()) {
-          fail("This file should still exist: "
-                  + fileThatStillShouldExist.getAbsolutePath());
-      }
+    public void testMetadataFilters() {
+        
+        ReloadSettings rs = new ReloadSettings(
+                new File(TestInfo.ORIGINALS_DIR, "metadata_settings.xml"));
+        rs.setUp();
+        
+        String heritrixFilePattern = 
+            Settings.get(HarvesterSettings.METADATA_HERITRIX_FILE_PATTERN);
+        
+        String[] heritrixFiles = {
+                "order.xml",
+                "harvestInfo.xml",
+                "seeds.txt",
+                "crawl-report.txt",
+                "frontier-report.txt",
+                "hosts-report.txt",
+                "mimetype-report.txt",
+                "processors-report.txt",
+                "responsecode-report.txt," +
+                "seeds-report.txt",
+                "crawl.log",
+                "local-errors.log",
+                "progress-statistics.log",
+                "runtime-errors.log",
+                "uri-errors.log",
+                "heritrix.out"
+        };
+                        
+        for (String f : heritrixFiles) {
+            assertTrue(
+                    f + " does not match " + heritrixFilePattern, 
+                    f.matches(heritrixFilePattern));
+        }
+        
+        String reportFilePattern = 
+            Settings.get(HarvesterSettings.METADATA_REPORT_FILE_PATTERN);
+        
+        String[] reportFiles = {
+                "crawl-report.txt",
+                "frontier-report.txt",
+                "hosts-report.txt",
+                "mimetype-report.txt",
+                "processors-report.txt",
+                "responsecode-report.txt," +
+                "seeds-report.txt"
+        };
+                        
+        for (String f : reportFiles) {
+            assertTrue(
+                    f + " does not match " + heritrixFilePattern, 
+                    f.matches(heritrixFilePattern));
+            assertTrue(
+                    f + " does not match " + reportFilePattern, 
+                    f.matches(reportFilePattern));
+        }
+        
+        String logFilePattern = 
+            Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
+        
+        String[] logFiles = {
+                "crawl.log",
+                "local-errors.log",
+                "progress-statistics.log",
+                "runtime-errors.log",
+                "uri-errors.log",
+                "heritrix.out"
+        };
+                        
+        for (String f : logFiles) {
+            assertTrue(
+                    f + " does not match " + heritrixFilePattern, 
+                    f.matches(heritrixFilePattern));
+            assertTrue(
+                    f + " does not match " + logFilePattern, 
+                    f.matches(logFilePattern));
+        }
+        
+        rs.tearDown();
+    }
+
+    private void checkThatStillExist(File fileThatStillShouldExist) {
+        if (!fileThatStillShouldExist.exists()) {
+            fail("This file should still exist: "
+                    + fileThatStillShouldExist.getAbsolutePath());
+        }
 
     }
 
-private void checkThatNoLongerExist(File fileThatNoLongerShouldExist) {
-      if (fileThatNoLongerShouldExist.exists()) {
-          fail("This file should no longer exist: "
-                  + fileThatNoLongerShouldExist.getAbsolutePath());
-      }
-  }
+    private void checkThatNoLongerExist(File fileThatNoLongerShouldExist) {
+        if (fileThatNoLongerShouldExist.exists()) {
+            fail("This file should no longer exist: "
+                    + fileThatNoLongerShouldExist.getAbsolutePath());
+        }
+    }
 
 
 

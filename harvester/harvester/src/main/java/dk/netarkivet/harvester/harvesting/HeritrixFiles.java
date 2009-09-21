@@ -24,9 +24,6 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,22 +56,6 @@ public class HeritrixFiles {
     private final File jmxPasswordFile;
     /** The JMX access file to be used by Heritrix. */
     private final File jmxAccessFile;
-    
-    /** Types of Heritrix reports we want to preserve.
-     * All these reportnames assume "-report.txt" as a suffix
-     */
-    private static final String[] HERITRIX_REPORTS = {
-            "crawl", "frontier", "hosts", "mimetype",
-            "processors", "responsecode", "seeds"
-    };
-
-    /** Types of Heritrix logs we want to preserve.
-     * All these lognames assume ".log" as a suffix.
-     */
-    private static final String[] HERITRIX_LOGS = {
-            "crawl", "local-errors", "progress-statistics",
-            "runtime-errors", "uri-errors"
-    };
 
     /** The name of the order.xml file. */
     private static final String ORDER_XML_FILENAME = "order.xml";
@@ -198,31 +179,6 @@ public class HeritrixFiles {
         log.debug("Writing order-file to disk as file: "
                 + getOrderXmlFile().getAbsolutePath());
         XmlUtils.writeXmlToFile(doc, getOrderXmlFile());
-    }
-
-    /**
-     * Get a list of Heritrix reports we want to archive.
-     * @return a list of Heritrix reports we want to archive
-     */
-    public List<File> getHeritrixReports() {
-        List<File> listOfFiles = new ArrayList<File>();
-        for (String report : HERITRIX_REPORTS) {
-            listOfFiles.add(new File(crawlDir, report + "-report.txt"));
-        }
-        return Collections.unmodifiableList(listOfFiles);
-    }
-
-    /**
-     * Get a list of Heritrix logs we want to archive.
-     * @return a list of Heritrix logs we want to archive
-     */
-    public List<File> getHeritrixLogs() {
-        File logDir = new File(crawlDir, "logs");
-        List<File> listOfFiles = new ArrayList<File>();
-        for (String hlog : HERITRIX_LOGS) {
-            listOfFiles.add(new File(logDir, hlog + ".log"));
-        }
-        return Collections.unmodifiableList(listOfFiles);
     }
 
     /** Get the file that contains output from Heritrix on stdout/stderr.

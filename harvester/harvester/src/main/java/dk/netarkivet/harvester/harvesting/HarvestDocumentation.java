@@ -24,11 +24,15 @@
 package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,9 +48,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.XmlUtils;
+import dk.netarkivet.common.utils.FileUtils.FilenameParser;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -61,6 +65,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * metadata-ARC file has been written.
  */
 public class HarvestDocumentation {
+    
     private static Log log
             = LogFactory.getLog(HarvestDocumentation.class);
 
@@ -403,104 +408,77 @@ public class HarvestDocumentation {
         List<File> filesAdded = new ArrayList<File>();
         HeritrixFiles harvestFiles =
             new HeritrixFiles(crawlDir, jobID, harvestID);
-        String urlformatSuffix = "?heritrixVersion=%s&harvestid=%s&jobid=%s";
-        String setupUrlFormat = "metadata://netarkivet.dk/crawl/setup/%s"
-            + urlformatSuffix;
-        String reportUrlFormat = "metadata://netarkivet.dk/crawl/reports/%s"
-            + urlformatSuffix;
-        String logUrlFormat = "metadata://netarkivet.dk/crawl/logs/%s"
-            + urlformatSuffix;
-
-        // Store order.xml, if it exists.
-        File orderXML = new File(crawlDir, "order.xml");
-        if (writeToArc(writer, orderXML,
-                makeMetadataURL(setupUrlFormat, "order.xml",
-                        harvestID, jobID, heritrixVersion),
-                "text/xml")) {
-            filesAdded.add(orderXML);
+        // We will sort the files by URL
+        TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
+        
+        // List heritrix files in the crawl directory
+        File[] heritrixFiles = crawlDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return (f.isFile() && f.getName().matches(
+                        MetadataFile.HERITRIX_FILE_PATTERN));
+            }            
+        });
+        
+        // Add files in the crawl directory
+        for (File hf : heritrixFiles) {
+            files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
-
-        /* Check if exists any settings directory
-           if yes, store any settings.xml hiding in this directory.
-           TODO: Delete any settings-files found in the settings directory */
-        File settingsDir = new File(crawlDir, "settings");
-        if (settingsDir.isDirectory()) {
-            storeSettingsXml(settingsDir,
-                    makeMetadataURL(setupUrlFormat, "settings.xml",
-                                harvestID, jobID, heritrixVersion),
-                    writer);
-        } else {
-            log.debug("No settings directory found in crawldir: "
-                      + crawlDir.getAbsolutePath());
-        }
-
-        // Store harvestInfo.xml, if it exists
-        File harvestInfoFile = new File(crawlDir, "harvestInfo.xml");
-        if (writeToArc(writer, harvestInfoFile,
-                makeMetadataURL(setupUrlFormat, "harvestInfo.xml",
-                harvestID, jobID, heritrixVersion),
-                "text/xml")) {
-            filesAdded.add(harvestInfoFile);
-        }
-
-        // Store seeds.txt, if it exists
-        File seedsTxtFile = new File(crawlDir, "seeds.txt");
-        if (writeToArc(writer, seedsTxtFile,
-                makeMetadataURL(setupUrlFormat, "seeds.txt",
-                        harvestID, jobID, heritrixVersion),
-                "text/plain")) {
-            filesAdded.add(seedsTxtFile);
-        }
-
-        // Store all available Heritrix Reports
-
-        for (File reportFile : harvestFiles.getHeritrixReports()) {
-            if (writeToArc(writer, reportFile,
-                    makeMetadataURL(reportUrlFormat, reportFile.getName(),
-                               harvestID, jobID, heritrixVersion),
-                    "text/plain")) {
-                filesAdded.add(reportFile);
-            }
-        }
-
-        // Store all available Heritrix logs
+        
+        // Add log files
         File logDir = new File(crawlDir, "logs");
         if (logDir.exists()) {
-            for (File logFile : harvestFiles.getHeritrixLogs()) {
-
-                if (writeToArc(writer, logFile,
-                        makeMetadataURL(
-                                logUrlFormat, logFile.getName(),
-                                harvestID, jobID, heritrixVersion),
-                        "text/plain")) {
-                    filesAdded.add(logFile);
-                }
+            File[] heritrixLogFiles = logDir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return (f.isFile() && f.getName().matches(
+                            MetadataFile.LOG_FILE_PATTERN));
+                }            
+            });
+            for (File logFile : heritrixLogFiles) {
+                files.add(
+                        new MetadataFile(
+                                logFile, harvestID, jobID, heritrixVersion));
             }
         } else {
             log.debug("No logs dir found in crawldir: "
                       + crawlDir.getAbsolutePath());
         }
-
-        File outFile = new File(crawlDir, "heritrix.out");
-        if (writeToArc(writer, outFile,
-                       makeMetadataURL(
-                               logUrlFormat, outFile.getName(),
-                               harvestID, jobID, heritrixVersion),
-                       "text/plain")) {
-            filesAdded.add(outFile);
+        
+        // Check if exists any settings directory (domain-specific settings)
+        // if yes, add any settings.xml hiding in this directory.
+        // TODO: Delete any settings-files found in the settings directory */
+        File settingsDir = new File(crawlDir, "settings");
+        if (settingsDir.isDirectory()) {
+            Map<File, String> domainSettingsFiles = 
+                findDomainSpecificSettings(settingsDir);
+            for (File dsf : domainSettingsFiles.keySet()) {
+                String domain = domainSettingsFiles.get(dsf);
+                files.add(
+                        new MetadataFile(
+                                dsf, 
+                                harvestID, jobID, heritrixVersion, 
+                                domain));
+            }
+        } else {
+            log.debug("No settings directory found in crawldir: "
+                    + crawlDir.getAbsolutePath());
         }
+        
+        // Write files in order to ARC        
+        for (MetadataFile mdf : files) {
+            
+            File heritrixFile = mdf.getHeritrixFile();            
+            String heritrixFileName = heritrixFile.getName();
+            String mimeType = 
+                (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
+            
+            if (writeToArc(writer, heritrixFile, mdf.getUrl(), mimeType)) {
+                filesAdded.add(heritrixFile);
+            }
+        }
+        
         return filesAdded;
-    }
-
-    private static String makeMetadataURL(String urlFormat,
-            String name, long harvestID, long jobID, String heritrixVersion) {
-        return
-            String.format(
-                urlFormat,
-                    name, heritrixVersion,
-                    Long.toString(harvestID),
-                    Long.toString(jobID)
-        );
     }
 
     /** Writes a File to an ARCWriter, if available,
@@ -533,20 +511,18 @@ public class HarvestDocumentation {
         }
     }
 
-    /** Store domain-specific configurations in ARC.
+    /** Finds domain-specific configurations in the settings subdirectory of the
+     * crawl directory.
      * @param settingsDir the given settings directory
-     * @param urlPrefix
-     * @param writer The ARCWriter responsible for the writing.
-     * @return list of files added to the ARCfile represented by
-     *      the ARCWriter.
+     * @return the settings file paired with their domain..
      */
-    private static List<File> storeSettingsXml(File settingsDir, String urlPrefix,
-            ARCWriter writer) {
+    private static Map<File, String> findDomainSpecificSettings(File settingsDir) {
 
         // find any domain specific configurations (settings.xml)
         List<String> reversedDomainsWithSettings =
             findAllDomainsWithSettings(settingsDir, "");
-        List<File> filesAdded = new ArrayList<File>();
+        
+        Map<File, String> settingsFileToDomain = new HashMap<File, String>();        
         if (reversedDomainsWithSettings.isEmpty()) {
             log.debug("No settings/<domain> directories exists: "
                     + "no domain-specific configurations available");
@@ -560,15 +536,11 @@ public class HarvestDocumentation {
                     log.debug("Directory settings/"
                               + domain + "/settings.xml does not exist.");
                 } else  {
-                    if (writeToArc(writer, settingsXmlFile,
-                            urlPrefix + "&domain=" + domain,
-                    "text/xml")) {
-                        filesAdded.add(settingsXmlFile);
-                    }
+                    settingsFileToDomain.put(settingsXmlFile, domain);
                 }
             }
         }
-        return filesAdded;
+        return settingsFileToDomain;
     }
 
     /**
@@ -676,4 +648,5 @@ public class HarvestDocumentation {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         return jobID + "-metadata-" + 1 + ".arc";
     }
+    
 }
