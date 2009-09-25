@@ -33,6 +33,7 @@
     <monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+        <jmxProxyTimeout>500</jmxProxyTimeout>
         <logging>
             <historySize>100</historySize>
         </logging>

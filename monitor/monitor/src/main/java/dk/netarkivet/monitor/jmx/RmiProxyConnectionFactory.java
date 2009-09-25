@@ -37,6 +37,8 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.JMXUtils;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.monitor.MonitorSettings;
 
 
 /** Creates RMI-based JMX connections to remote servers. */
@@ -97,9 +99,9 @@ public class RmiProxyConnectionFactory implements
         /** The class logger. */
         private static Log log
                 = LogFactory.getLog(MBeanServerProxyConnection.class);
-        //TODO: Make this into a setting
         /** How long to wait for the proxied JMX connection in milliseconds. */
-        private static final long JMX_TIMEOUT = 500;
+        private static final long JMX_TIMEOUT
+                = Settings.getLong(MonitorSettings.JMX_PROXY_TIMEOUT);
 
         /**
          * Proxies an MBean connection with the given parameters.
@@ -129,7 +131,8 @@ public class RmiProxyConnectionFactory implements
         /**
          * Initialise a thread to connect to the remote server. This method does
          * not wait for the connection to finish, so there is no guarantee that
-         * the connection is initialised at the end of this method.
+         * the connection is initialised at the end of this method. Ensures that
+         * we only do one connect() operation at a time.
          */
         private void connect() {
             new Thread() {
@@ -160,6 +163,7 @@ public class RmiProxyConnectionFactory implements
             }.start();
         }
 
+        /** Sleep until the timeout has occured, or connection is succesful. */
         private void waitForConnection() {
             long timeouttime = System.currentTimeMillis() + JMX_TIMEOUT;
             while (connecting.get()

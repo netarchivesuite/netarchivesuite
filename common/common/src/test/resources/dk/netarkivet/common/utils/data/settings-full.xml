@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://www.netarkivet.dk/schemas/settings" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<settings xmlns="http://www.netarkivet.dk/schemas/settings"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <common>
-     	<!-- The name of the environment in which this code is running, e.g.
+        <!-- The name of the environment in which this code is running, e.g.
                  PROD, RELEASETEST, NHC,... Common prefix to all JMS channels
         -->
-            <environmentName>DEV</environmentName>
+        <environmentName>DEV</environmentName>
         <!-- Common temporary directory for all applications. Some subdirs of
              this directory  must be set to have AllPermision in the
              conf/security.conf file, or the web pages won't work. -->
@@ -44,7 +45,9 @@
         <arcrepositoryClient xsi:type="jmsarcrepositoryclient">
             <!-- The class that implements the ArcRepositoryClient.  This class
                  will be instantiated by the ArcRepositoryClientFactory -->
-            <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
+            <class>
+                dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient
+            </class>
             <!-- How many milliseconds we will wait before giving up on a
                  lookup request to the Arcrepository. Set to 1 minute to
                  make it possible to retrieve large records using FTP -->
@@ -58,12 +61,15 @@
         </arcrepositoryClient>
         <monitorregistryClient xsi:type="jmsmonitorregistryclient">
             <!-- The class instantiated to register JMX urls at a registry. -->
-            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient
+            </class>
         </monitorregistryClient>
         <indexClient xsi:type="indexrequestclient">
             <!-- The class instantiated to give access to indices.  Will be
                  created by IndexClientFactory -->
-            <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
+            <class>
+                dk.netarkivet.archive.indexserver.distribute.IndexRequestClient
+            </class>
             <!-- The amount of time, in milliseconds, we should wait for replies
                  when issuing a call to generate an index over som jobs.
              -->
@@ -123,7 +129,9 @@
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
-                <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
+                <class>
+                    dk.netarkivet.harvester.webinterface.DefinitionsSiteSection
+                </class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/HarvestDefinition</webapplication>
@@ -131,7 +139,8 @@
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
-                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
+                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection
+                </class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/History</webapplication>
@@ -139,7 +148,9 @@
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
-                <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
+                <class>
+                    dk.netarkivet.archive.webinterface.BitPreservationSiteSection
+                </class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/BitPreservation</webapplication>
@@ -147,7 +158,8 @@
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
+                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection
+                </class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/QA</webapplication>
@@ -155,11 +167,12 @@
             <siteSection>
                 <!-- A subclass of SiteSection that defines this part of the
                      web interface. -->
-                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
+                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection
+                </class>
                 <!-- The directory or war-file containing the web application
                      for this site section.-->
                 <webapplication>webpages/Status</webapplication>
-             </siteSection>
+            </siteSection>
         </webinterface>
         <topLevelDomains>
             <!-- This setting describes valid TLDs to define domains. -->
@@ -456,7 +469,8 @@
                  baseDir and class.-->
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <!-- The class that handles DB-specific methods -->
-            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics
+            </class>
             <!-- The earliest time of day backup will be initiated, 0..24
                  hours.  At a time shortly after this, a consistent backup
                  copy of the database will be created -->
@@ -466,7 +480,8 @@
             <!-- When the length record exceeds this number, the contents of the record
                  will be transferred using a RemoteFile. Currently set to 10 MB
               -->
-            <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+            <limitForRecordDatatransferInFile>10485760
+            </limitForRecordDatatransferInFile>
         </repository>
         <locations>
             <!-- The names of all bit archive locations in the
@@ -652,8 +667,9 @@
         <baseDir>viewerproxy</baseDir>
     </viewerproxy>
     <monitor>
-    	<jmxUsername>monitorRole</jmxUsername>
-    	<jmxPassword>test</jmxPassword>
+        <jmxUsername>monitorRole</jmxUsername>
+        <jmxPassword>test</jmxPassword>
+        <jmxProxyTimeout>500</jmxProxyTimeout>
         <logging>
             <historySize>100</historySize>
         </logging>
