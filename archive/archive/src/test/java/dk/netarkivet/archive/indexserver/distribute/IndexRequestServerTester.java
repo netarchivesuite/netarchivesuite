@@ -89,9 +89,8 @@ public class IndexRequestServerTester extends TestCase {
     }
 
     /**
-     * Verify that factory method
-     *  - does not throw exception
-     *  - returns non-null value.
+     * Verify that factory method - does not throw exception - returns non-null
+     * value.
      */
     public void testGetInstance() {
         assertNotNull("Factory method should return non-null object",
@@ -100,10 +99,9 @@ public class IndexRequestServerTester extends TestCase {
     }
 
     /**
-     * Verify that visit()
-     * - throws exception on null message or message that is not ok
-     * - returns a non-ok message if handler fails with exception
-     *   or no handler registered
+     * Verify that visit() - throws exception on null message or message that is
+     * not ok - returns a non-ok message if handler fails with exception or no
+     * handler registered
      */
     public void testVisitFailures() throws InterruptedException {
         server = IndexRequestServer.getInstance();
@@ -166,11 +164,9 @@ public class IndexRequestServerTester extends TestCase {
     }
 
     /**
-     * Verify that visit()
-     *  - extracts correct info from message
-     *  - calls the appropriate handler
-     *  - encodes the return value appropriately
-     *  - sends message back as reply
+     * Verify that visit() - extracts correct info from message - calls the
+     * appropriate handler - encodes the return value appropriately - sends
+     * message back as reply
      */
     public void testVisitNormal() throws IOException, InterruptedException {
         for (RequestType t : RequestType.values()) {
@@ -179,7 +175,7 @@ public class IndexRequestServerTester extends TestCase {
     }
 
     private void subtestVisitNormal(RequestType t) throws IOException,
-                                                       InterruptedException {
+                                                          InterruptedException {
         //Start server and set a handler
         mmfbc.tearDown();
         mmfbc.setUp();
@@ -189,6 +185,7 @@ public class IndexRequestServerTester extends TestCase {
 
         //A message to visit with
         IndexRequestMessage irm = new IndexRequestMessage(t, JOB_SET);
+        JMSConnectionMockupMQ.updateMsgID(irm, "irm-1");
 
         //Listen for replies
         GenericMessageListener listener = new GenericMessageListener();
@@ -219,36 +216,38 @@ public class IndexRequestServerTester extends TestCase {
         assertTrue("Should be OK", msg.isOk());
 
         //Check contents of file replied
-        File extractFile = File.createTempFile("extr", "act", TestInfo.WORKING_DIR);
+        File extractFile = File.createTempFile("extr", "act",
+                                               TestInfo.WORKING_DIR);
         assertFalse("Message should not indicate directory",
-                msg.isIndexIsStoredInDirectory());
+                    msg.isIndexIsStoredInDirectory());
         RemoteFile resultFile = msg.getResultFile();
         resultFile.copyTo(extractFile);
-        
+
         // Order in the JOB_SET and the extract file can't be guaranteed
         // So we are comparing between the contents of the two sets, not 
         // the order, which is dubious in relation to sets anyway.
-        
+
         Set<Long> longFromExtractFile = new HashSet<Long>();
         FileInputStream fis = new FileInputStream(extractFile);
         for (int i = 0; i < JOB_SET.size(); i++) {
             longFromExtractFile.add(new Long(fis.read()));
         }
         assertEquals("End of file expected after this",
-                -1, fis.read());
-        
-        assertTrue("JOBSET, and the contents of extractfile should be identical",
+                     -1, fis.read());
+
+        assertTrue(
+                "JOBSET, and the contents of extractfile should be identical",
                 longFromExtractFile.containsAll(JOB_SET));
-        
+
         FileUtils.remove(mmfbc.getCacheFile(JOB_SET));
 
         conn.removeListener(channelID, listener);
     }
 
     /**
-     * Verify that a message sent to the index server queue
-     * is dispatched to the appropriate handler if non-null and ok.
-     * Verify that no call is made if message is null or not ok.
+     * Verify that a message sent to the index server queue is dispatched to the
+     * appropriate handler if non-null and ok. Verify that no call is made if
+     * message is null or not ok.
      */
     public void testIndexServerListener() throws InterruptedException {
         //Start server and set a handler
@@ -285,9 +284,8 @@ public class IndexRequestServerTester extends TestCase {
     }
 
     /**
-     * Verify that
-     *  - setHandler() throws exception on null values
-     *  - calling setHandler twice on same type replaces first handler
+     * Verify that - setHandler() throws exception on null values - calling
+     * setHandler twice on same type replaces first handler
      */
     public void testSetHandler() throws InterruptedException {
         server = IndexRequestServer.getInstance();
@@ -381,7 +379,8 @@ public class IndexRequestServerTester extends TestCase {
     }
 
 
-    private void assertHandlerCalledWithParameter(MockupMultiFileBasedCache mjic) {
+    private void assertHandlerCalledWithParameter(
+            MockupMultiFileBasedCache mjic) {
         //Check the handler is called
         assertEquals("Handler should be called", 1, mjic.cacheCalled);
         assertEquals("Handler should be called with right parameter",

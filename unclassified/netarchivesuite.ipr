@@ -9,6 +9,7 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/wayback.build.xml">
@@ -16,6 +17,7 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="32" />
       <properties />
     </buildFile>
   </component>
@@ -95,15 +97,6 @@
         <option name="HTML_KEEP_LINE_BREAKS_IN_TEXT" value="false" />
         <option name="JSP_PREFER_COMMA_SEPARATED_IMPORT_LIST" value="true" />
         <option name="ENUM_CONSTANTS_WRAP" value="1" />
-        <ADDITIONAL_INDENT_OPTIONS fileType="">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="java">
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -124,6 +117,15 @@
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
           <option name="INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="sql">
+          <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
           <option name="USE_TAB_CHARACTER" value="false" />
@@ -398,11 +400,11 @@
       <module fileurl="file://$PROJECT_DIR$/netarchivesuite.iml" filepath="$PROJECT_DIR$/netarchivesuite.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
+    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -432,7 +434,7 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
+    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -456,7 +458,7 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
+    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" runner="emma">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -514,6 +516,7 @@
       </map>
     </option>
     <option name="myVersion" value="123" />
+    <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />

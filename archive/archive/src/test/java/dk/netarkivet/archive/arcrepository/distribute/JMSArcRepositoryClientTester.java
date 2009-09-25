@@ -108,9 +108,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         utrf.setUp();
-        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
+                     RememberNotifications.class.getName());
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
-        arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
+        arc
+                = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
 
     }
 
@@ -120,7 +122,11 @@ public class JMSArcRepositoryClientTester extends TestCase {
                 arc.close();
             } catch (ArgumentNotValid e) {
                 // Just ignore, happens because we fiddle with internal state in 
-                // a few tests
+                // a few tests. Make sure we invalidate the instance, at least.
+                Field field = ReflectUtils.getPrivateField(
+                        JMSArcRepositoryClient.class, "instance");
+                field.set(null, null);
+
             }
         }
         if (arcrepos != null) {
@@ -132,9 +138,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         rs.tearDown();
     }
 
-    /**
-     * Verify that the JMSArcRepositoryClient class has no public constructor.
-     */
+    /** Verify that the JMSArcRepositoryClient class has no public constructor. */
     public void testNoPublicConstructor() {
         Constructor[] ctors = JMSArcRepositoryClient.class.getConstructors();
         assertEquals("Found public constructors for JMSArcRepositoryClient.", 0,
@@ -153,9 +157,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
                    arcrep instanceof PreservationArcRepositoryClient);
     }
 
-    /**
-     * Tests the correct object is returned when getViewerInstance is called.
-     */
+    /** Tests the correct object is returned when getViewerInstance is called. */
     public void testGetViewerInstance() {
         assertTrue("Must return an instance of ViewerArcRepositoryClient",
                    (arcrepos
@@ -163,18 +165,14 @@ public class JMSArcRepositoryClientTester extends TestCase {
                            ViewerArcRepositoryClient);
     }
 
-    /**
-     * Tests the correct object is returned when getHacoInstance is called.
-     */
+    /** Tests the correct object is returned when getHacoInstance is called. */
     public void testGetHacoInstance() {
         assertTrue("Must return an instance of HarvesterArcRepositoryClient",
                    ArcRepositoryClientFactory.getHarvesterInstance() instanceof
                            HarvesterArcRepositoryClient);
     }
 
-    /**
-     * Test get() methods arguments.
-     */
+    /** Test get() methods arguments. */
     public void testGetArgumentsNotNull() {
         /**
          * Test if ArgumentNotValid is thrown if null
@@ -236,7 +234,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         Replica replica =
                 Replica.getReplicaFromId(Settings.get(
                         CommonSettings.USE_REPLICA_ID));
-        arc.getFile(filename, replica, toFile); 
+        arc.getFile(filename, replica, toFile);
         assertTrue("Result file should exist", toFile.exists());
         assertEquals("Result file should contain right text",
                      FileUtils.readFile(new File(ARCDIR, filename)),
@@ -284,9 +282,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         replyServer.close();
     }
 
-    /**
-     * This tests the get()-method when it times out waiting for a reply.
-     */
+    /** This tests the get()-method when it times out waiting for a reply. */
     public void testGetTimeout() {
 
         DummyGetMessageReplyServer replyServer
@@ -312,7 +308,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         PreservationArcRepositoryClient arc
                 = ArcRepositoryClientFactory.getPreservationInstance();
         File f = new File(WORKING, "notok.arc");
-        if(f.createNewFile()) {
+        if (f.createNewFile()) {
             try {
                 arc.store(f);
                 fail("Exception expected when submitting notok.arc file");
@@ -385,9 +381,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
     }
 
-    /**
-     * Test batch() methods arguments.
-     */
+    /** Test batch() methods arguments. */
     public void testBatchArgumentsNotNull() {
         FileBatchJob batchJob = new FileBatchJob() {
             public void finish(OutputStream os) {
@@ -427,9 +421,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
     }
 
 
-    /**
-     * Test JMSArcRepositoryClient.batch is distributed.
-     */
+    /** Test JMSArcRepositoryClient.batch is distributed. */
     public void testBatch() {
         new DummyBatchMessageReplyServer();
 
@@ -452,6 +444,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
     /**
      * Tests StoreRetreies
+     *
      * @throws IOException if creation of files fails
      */
     public void testStoreRetries() throws IOException {
@@ -460,7 +453,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
         File fail1 = new File(WORKING, "fail1");
         File fail2 = new File(WORKING, "fail2");
         File fail3 = new File(WORKING, "fail3");
-        if(!fail1.createNewFile() || !fail2.createNewFile() || !fail3.createNewFile()) {
+        if (!fail1.createNewFile() || !fail2.createNewFile()
+            || !fail3.createNewFile()) {
             fail("Can't create files");
         }
         arc.store(fail1);
@@ -489,7 +483,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
 
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_TIMEOUT, "1");
         arc.close();
-        arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getHarvesterInstance();
+        arc
+                = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getHarvesterInstance();
         final boolean[] ok = new boolean[]{false};
         new Thread() {
             public void run() {
@@ -520,7 +515,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
      * Tests that locally generated exceptions in the JMSArcRepositoryClient
      * gives a message.  See bug #867
      *
-     * @throws NoSuchFieldException if field doens't exists
+     * @throws NoSuchFieldException   if field doens't exists
      * @throws IllegalAccessException if access denied
      */
     public void testStoreException()
@@ -552,15 +547,18 @@ public class JMSArcRepositoryClientTester extends TestCase {
         }
     }
 
-    /** Test that remote files are cleaned up after exceptions. Bug #1080
+    /**
+     * Test that remote files are cleaned up after exceptions. Bug #1080
+     *
      * @throws IllegalAccessException if field doens't exists
-     * @throws NoSuchFieldException if access denied
-     **/
+     * @throws NoSuchFieldException   if access denied
+     */
     public void testStoreFailed()
             throws NoSuchFieldException, IllegalAccessException {
         // Set Synchronizers request field to null to get an appropriately
         // late exception.
-        Field requests = ReflectUtils.getPrivateField(Synchronizer.class, "requests");
+        Field requests = ReflectUtils.getPrivateField(Synchronizer.class,
+                                                      "requests");
         requests.set(arc, null);
         try {
             arc.store(ARCFILE);
@@ -669,7 +667,8 @@ public class JMSArcRepositoryClientTester extends TestCase {
                     String field = (String) aREQUIRED_VERSION_1_HEADER_FIELDS;
                     metadata.put(field, "");
                 }
-                metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY, 0L); // Offset not stored as String but as Long
+                metadata.put(ARCConstants.ABSOLUTE_OFFSET_KEY,
+                             0L); // Offset not stored as String but as Long
                 byte[] encodedKey = encode(netMsg.getArcFile(),
                                            netMsg.getIndex());
                 try {

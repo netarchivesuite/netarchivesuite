@@ -151,8 +151,8 @@ public class JMSConnectionSunMQ extends JMSConnection {
     }
 
     /**
-     * Returns an Queue or a Topic. This is an SunMQ implementation of Queue
-     * and Topic. The method depends on the JMS provider being configured to
+     * Returns an Queue or a Topic. This is an SunMQ implementation of Queue and
+     * Topic. The method depends on the JMS provider being configured to
      * autocreate queues and topics.
      *
      * @param channelName the name of the queue or topic.
@@ -171,9 +171,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
         }
     }
 
-    /**
-     * Reset the singleton and close the connection by calling super().
-     */
+    /** Reset the singleton and close the connection by calling super(). */
     public void cleanup() {
         synchronized (JMSConnectionSunMQ.class) {
             instance = null;
@@ -194,9 +192,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
                  + errorcode + "' encountered: " + e);
 
         if (Arrays.asList(RECONNECT_ERRORCODES).contains(errorcode)) {
-            synchronized (JMSConnectionSunMQ.class) {
-                reconnect();
-            }
+            reconnect();
         } else {
             log.warn("Exception not handled. "
                      + "Don't know how to handle exceptions with errorcode "

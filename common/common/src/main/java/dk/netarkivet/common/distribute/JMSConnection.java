@@ -75,15 +75,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
     /**
      * The Session handling messages sent to / received from the NetarchiveSuite
-     * queues.
+     * queues and topics.
      */
-    protected Session queueSession;
-
-    /**
-     * The Session handling messages sent to / received from the NetarchiveSuite
-     * topics.
-     */
-    protected Session topicSession;
+    protected Session session;
 
     /** Map for caching message producers. */
     protected final Map<String, MessageProducer> producers
@@ -152,8 +146,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
     /**
      * Initializes the JMS connection. Creates and starts connection and
-     * sessions for queues and topics. Adds a shutdown hook that closes down
-     * JMSConnection. Adds this object as ExceptionListener for the connection.
+     * session. Adds a shutdown hook that closes down JMSConnection. Adds this
+     * object as ExceptionListener for the connection.
      *
      * @throws IOFailure if initialization fails.
      */
@@ -290,13 +284,12 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             closeHook = null;
             try {
                 // Close terminates all pending message received on the
-                // connection's sessions' consumers.
+                // connection's session's consumers.
                 if (connection != null) { // close connection
                     connection.close();
                 }
                 connection = null;
-                queueSession = null;
-                topicSession = null;
+                session = null;
                 consumers.clear();
                 producers.clear();
             } catch (JMSException e) {
@@ -376,8 +369,8 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 log.debug("Send failed (try " + tries + ")", e);
                 lastException = e;
                 if (tries < JMS_MAXTRIES) {
-                    log.debug("Will sleep a while before trying to send again");
                     onException(e);
+                    log.debug("Will sleep a while before trying to send again");
                     TimeUtils.exponentialBackoffSleep(tries,
                                                       Calendar.MINUTE);
                 }
@@ -452,8 +445,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         // If it is not, it is created and stored in cache:
         MessageProducer producer = producers.get(queueName);
         if (producer == null) {
-            producer = getSessionForDestination(queueName).createProducer(
-                    getDestination(queueName));
+            producer = session.createProducer(getDestination(queueName));
             producers.put(queueName, producer);
         }
         return producer;
@@ -477,47 +469,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         String key = getConsumerKey(channelName, ml);
         MessageConsumer consumer = consumers.get(key);
         if (consumer == null) {
-            consumer = getSessionForDestination(channelName)
-                    .createConsumer(getDestination(channelName));
+            consumer = session.createConsumer(getDestination(channelName));
             consumers.put(key, consumer);
         }
         return consumer;
-    }
-
-    /**
-     * Helper method that converts a NetarkivetMessage to an ObjectMessage for a
-     * specific channel.
-     *
-     * @param channel the channel to be used for transmitting the message.
-     * @param nMsg    a NetarkivetMessage
-     *
-     * @return An ObjectMessage that includes a NetarkivetMessage
-     *
-     * @throws JMSException If unable to create the needed ObjectMessage
-     */
-    private ObjectMessage getObjectMessage(ChannelID channel,
-                                           NetarkivetMessage nMsg)
-            throws JMSException {
-        ObjectMessage objectMessage;
-        objectMessage = getSessionForDestination(
-                channel.getName()).createObjectMessage(nMsg);
-        return objectMessage;
-    }
-
-    /**
-     * Helper method that returns the appropiate JMS Session for the specificed
-     * channel.
-     *
-     * @param channelName A name of the channel
-     *
-     * @return The appropiate JMS Session for the specificed channel.
-     */
-    private Session getSessionForDestination(String channelName) {
-        if (Channels.isTopic(channelName)) {
-            return topicSession;
-        } else {
-            return queueSession;
-        }
     }
 
     /**
@@ -547,19 +502,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /**
-     * Helper method to establish one QueueConnection and associated Session,
-     * and one TopicConnection and associated Session.
+     * Helper method to establish one Connection and associated Session,
      *
      * @throws JMSException If some JMS error occurred during the creation of
-     *                      the required JMS connections and sessions
+     *                      the required JMS connection and session
      */
     private void establishConnectionAndSessions() throws JMSException {
         // Establish a queue connection and a session
         connection = getConnectionFactory().createConnection();
-        queueSession = connection.createSession(false,
-                                                Session.AUTO_ACKNOWLEDGE);
-        topicSession = connection.createSession(false,
-                                                Session.AUTO_ACKNOWLEDGE);
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         connection.setExceptionListener(this);
         connection.start();
     }
@@ -577,7 +528,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             throws JMSException {
         connectionLock.readLock().lock();
         try {
-            ObjectMessage message = getObjectMessage(to, msg);
+            ObjectMessage message = session.createObjectMessage(msg);
             synchronized (msg) {
                 getProducer(to.getName()).send(message);
                 // Note: Id is only updated if the message does not already have
@@ -621,9 +572,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 lastException = e;
                 log.debug("Set listener failed (try " + tries + ")", e);
                 if (tries < JMS_MAXTRIES) {
+                    onException(e);
                     log.debug("Will sleep a while before trying to set listener"
                               + " again");
-                    onException(e);
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
                 }
             }
@@ -665,9 +616,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             } catch (JMSException e) {
                 lastException = e;
                 log.debug("Remove  listener failed (try " + tries + ")", e);
+                onException(e);
                 log.debug("Will and sleep a while before trying to remove"
                           + " listener again");
-                onException(e);
                 TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
             }
         }
@@ -678,7 +629,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
     }
 
     /**
-     * Reconnect to JMSBroker and reestablish sessions. Resets senders and
+     * Reconnect to JMSBroker and reestablish session. Resets senders and
      * publishers.
      *
      * @param savedConsumers Listeners to readd after reestablishing

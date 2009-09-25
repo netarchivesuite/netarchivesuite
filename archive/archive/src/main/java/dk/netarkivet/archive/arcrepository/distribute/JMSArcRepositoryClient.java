@@ -51,7 +51,6 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -59,23 +58,22 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
- * Client side usage of an arc repository.
- * All requests are forwarded to the ArcRepositoryServer over the network.
- * get and store messages are retried a number of time before giving up, and
- * will timeout after a specified time.
+ * Client side usage of an arc repository. All requests are forwarded to the
+ * ArcRepositoryServer over the network. get and store messages are retried a
+ * number of time before giving up, and will timeout after a specified time.
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
-        ArcRepositoryClient {
-    
+                                                         ArcRepositoryClient {
+
     /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/archive/arcrepository/distribute/JMSArcRepositoryClientSettings.xml";
-    
+
     /*
-     * The static initialiser is called when the class is loaded.
-     * It will add default values for all settings defined in this class, by
-     * loading them from a settings.xml file in classpath.
-     */
+    * The static initialiser is called when the class is loaded.
+    * It will add default values for all settings defined in this class, by
+    * loading them from a settings.xml file in classpath.
+    */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
@@ -83,9 +81,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     /** the one and only JMSArcRepositoryClient instance. */
     private static JMSArcRepositoryClient instance;
 
-    /**
-     * Logging output place.
-     */
+    /** Logging output place. */
     protected final Log log = LogFactory.getLog(getClass());
 
     /** Listens on this queue for replies. */
@@ -105,53 +101,51 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     // will not run.
 
     /**
-     * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br>
-     * The setting for how many milliseconds we will wait before giving up
-     * on a lookup request to the Arcrepository.
+     * <b>settings.common.arcrepositoryClient.getTimeout</b>: <br> The setting
+     * for how many milliseconds we will wait before giving up on a lookup
+     * request to the Arcrepository.
      */
     public static final String ARCREPOSITORY_GET_TIMEOUT
             = "settings.common.arcrepositoryClient.getTimeout";
 
     /**
-     * <b>settings.common.arcrepositoryClient.storeRetries</b>: <br>
-     * The setting for the number of times to try sending a store message
-     * before failing, including the first attempt.
+     * <b>settings.common.arcrepositoryClient.storeRetries</b>: <br> The setting
+     * for the number of times to try sending a store message before failing,
+     * including the first attempt.
      */
     public static String ARCREPOSITORY_STORE_RETRIES
             = "settings.common.arcrepositoryClient.storeRetries";
 
     /**
-     * <b>settings.common.arcrepositoryClient.storeTimeout</b>: <br>
-     * the setting for the timeout in milliseconds before retrying when calling
-     * {@link ArcRepositoryClient#store(File)}.
+     * <b>settings.common.arcrepositoryClient.storeTimeout</b>: <br> the setting
+     * for the timeout in milliseconds before retrying when calling {@link
+     * ArcRepositoryClient#store(File)}.
      */
     public static final String ARCREPOSITORY_STORE_TIMEOUT
             = "settings.common.arcrepositoryClient.storeTimeout";
 
-    /**
-     * Adds this Synchronizer as listener on a jms connection.
-     */
+    /** Adds this Synchronizer as listener on a jms connection. */
     protected JMSArcRepositoryClient() {
         storeRetries = Settings.getLong(
                 ARCREPOSITORY_STORE_RETRIES);
         storeTimeout = Settings.getLong(
                 ARCREPOSITORY_STORE_TIMEOUT);
         getTimeout = Settings.getLong(ARCREPOSITORY_GET_TIMEOUT);
-        
+
         log.info("JMSArcRepositoryClient will retry a store " + storeRetries
-                   + " times and timeout on each try after " + storeTimeout
-                   + " milliseconds, and timeout on each getrequest after "
-                   + getTimeout + " milliseconds.");
+                 + " times and timeout on each try after " + storeTimeout
+                 + " milliseconds, and timeout on each getrequest after "
+                 + getTimeout + " milliseconds.");
         replyQ = Channels.getThisReposClient();
-        ArgumentNotValid.checkNotNull(replyQ, "ReplyQ");
         JMSConnectionFactory.getInstance().setListener(replyQ, this);
         log.info("JMSArcRepository listens for replies on channel '"
                  + replyQ + "'");
     }
-    
+
     /**
-     * Get an JMSArcRepositoryClient instance.
-     * This is guaranteed to be a singleton. 
+     * Get an JMSArcRepositoryClient instance. This is guaranteed to be a
+     * singleton.
+     *
      * @return an JMSArcRepositoryClient instance.
      */
     public static synchronized JMSArcRepositoryClient getInstance() {
@@ -161,45 +155,47 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         return instance;
     }
 
-    /**
-     * Removes this object as a JMS listener.
-     */
+    /** Removes this object as a JMS listener. */
     public void close() {
-        synchronized (this.getClass()) {
+        synchronized (JMSArcRepositoryClient.class) {
             JMSConnectionFactory.getInstance().removeListener(replyQ, this);
             instance = null;
         }
     }
 
     /**
-     * Sends a GetMessage on the "TheArcrepos" queue and waits for a reply.
-     * This is a blocking call. Returns null if no message is returned
-     * within Settings.ARCREPOSITORY_GET_TIMEOUT
+     * Sends a GetMessage on the "TheArcrepos" queue and waits for a reply. This
+     * is a blocking call. Returns null if no message is returned within
+     * Settings.ARCREPOSITORY_GET_TIMEOUT
+     *
      * @param arcfile The name of a file.
      * @param index   The offset of the wanted record in the file
+     *
      * @return a BitarchiveRecord-object or null if request times out or object
-     * is not found.
-     * @throws ArgumentNotValid If the given arcfile is null or empty, 
-     * or the given index is negative.
-     * @throws IOFailure If a wrong message is returned or the
-     * get operation failed.
+     *         is not found.
+     *
+     * @throws ArgumentNotValid If the given arcfile is null or empty, or the
+     *                          given index is negative.
+     * @throws IOFailure        If a wrong message is returned or the get
+     *                          operation failed.
      */
-    public BitarchiveRecord get(String arcfile, long index) throws ArgumentNotValid {
+    public BitarchiveRecord get(String arcfile, long index)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfile, "arcfile");
         ArgumentNotValid.checkNotNegative(index, "index");
         log.debug("Requesting get of record '" + arcfile + ":" + index + "'");
         long start = System.currentTimeMillis();
         GetMessage requestGetMsg = new GetMessage(Channels.getTheRepos(),
-                replyQ, arcfile, index);
+                                                  replyQ, arcfile, index);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg,
-                getTimeout);
+                                                               getTimeout);
         long timePassed = System.currentTimeMillis() - start;
         log.debug("Reply received after " + (timePassed / 1000) + " seconds");
         if (replyNetMsg == null) {
             log.info("Request for record(" + arcfile + ":" + index
-                    + ") timed out after "
-                    + (getTimeout / 1000)
-                    + " seconds. Returning null BitarchiveRecord");
+                     + ") timed out after "
+                     + (getTimeout / 1000)
+                     + " seconds. Returning null BitarchiveRecord");
             return null;
         }
         GetMessage replyGetMsg;
@@ -213,7 +209,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         }
         if (!replyGetMsg.isOk()) {
             final String errMsg = "GetMessage failed: '"
-                + replyGetMsg.getErrMsg() + "'"; 
+                                  + replyGetMsg.getErrMsg() + "'";
             log.warn(errMsg);
             throw new ArgumentNotValid(errMsg);
         }
@@ -221,27 +217,29 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     }
 
     /**
-     * Synchronously retrieves a file from a bitarchive and places it in a
-     * local file.
-     * This is the interface for sending GetFileMessage on the "TheArcrepos"
-     * queue.
-     * This is a blocking call.
-     * @param arcfilename    Name of the arcfile to retrieve.
-     * @param replica   The bitarchive to retrieve the data from.
-     * @param toFile Filename of a place where the file fetched can be put.
-     * @throws IOFailure if there are problems getting a reply or the file
-     * could not be found.
+     * Synchronously retrieves a file from a bitarchive and places it in a local
+     * file. This is the interface for sending GetFileMessage on the
+     * "TheArcrepos" queue. This is a blocking call.
+     *
+     * @param arcfilename Name of the arcfile to retrieve.
+     * @param replica     The bitarchive to retrieve the data from.
+     * @param toFile      Filename of a place where the file fetched can be
+     *                    put.
+     *
+     * @throws IOFailure if there are problems getting a reply or the file could
+     *                   not be found.
      */
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
         ArgumentNotValid.checkNotNull(replica, "replica");
         ArgumentNotValid.checkNotNull(toFile, "toFile");
-        
+
         log.debug("Requesting get of file '" + arcfilename + "' from '"
                   + replica + "'");
         //ArgumentNotValid.checkNotNull(replyQ, "replyQ must not be null");
         GetFileMessage gfMsg = new GetFileMessage(Channels.getTheRepos(),
-                replyQ, arcfilename, replica.getId());
+                                                  replyQ, arcfilename,
+                                                  replica.getId());
         GetFileMessage getFileMessage
                 = (GetFileMessage) sendAndWaitForOneReply(gfMsg, 0);
         if (getFileMessage == null) {
@@ -260,27 +258,29 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /**
      * Sends a StoreMessage via the synchronized JMS connection method
-     * sendAndWaitForOneReply(). After a successful storage operation,
-     * both the local copy of the file and the copy on the ftp server are
-     * deleted.
+     * sendAndWaitForOneReply(). After a successful storage operation, both the
+     * local copy of the file and the copy on the ftp server are deleted.
+     *
      * @param file A file to be stored. Must exist.
-     * @throws IOFailure thrown if store is unsuccessful, or failed to clean
-     * up files locally or on the ftp server after the store operation.
+     *
+     * @throws IOFailure        thrown if store is unsuccessful, or failed to
+     *                          clean up files locally or on the ftp server
+     *                          after the store operation.
      * @throws ArgumentNotValid if file parameter is null or file is not an
      *                          existing file.
      */
     public void store(File file) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "file");
         ArgumentNotValid.checkTrue(file.isFile(),
-                "The file '" + file.getPath() + "' is "
-                + "not an existing file.");
+                                   "The file '" + file.getPath() + "' is "
+                                   + "not an existing file.");
 
         StringBuilder messages = new StringBuilder();
         for (long i = 0; i < storeRetries; i++) {
             StoreMessage outMsg = null;
             try {
                 log.debug("Sending a StoreMessage with file '" + file.getPath()
-                        + "'");
+                          + "'");
                 outMsg = new StoreMessage(replyQ, file);
                 NetarkivetMessage replyMsg
                         = sendAndWaitForOneReply(outMsg, storeTimeout);
@@ -289,31 +289,34 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                         FileUtils.removeRecursively(file);
                     } catch (IOFailure e) {
                         log.warn("Failed to clean up '"
-                                + file.getAbsolutePath() + "'", e);
+                                 + file.getAbsolutePath() + "'", e);
                         // Not fatal
                     }
                     return;
                 } else if (replyMsg == null) {
                     String msg = "Timed out"
-                            + " while waiting for reply on store of file '"
-                            + file.getPath() + "' on attempt number " + (i + 1)
-                            + " of " + storeRetries;
+                                 + " while waiting for reply on store of file '"
+                                 + file.getPath() + "' on attempt number "
+                                 + (i + 1)
+                                 + " of " + storeRetries;
                     log.warn(msg);
                     messages.append(msg).append("\n");
                 } else {
                     String msg = "The returned message '" + replyMsg
-                            + "' was not ok"
-                            + " while waiting for reply on store of file '"
-                            + file.getPath() + "' on attempt number " + (i + 1)
-                            + " of " + storeRetries + ". Error message was '"
-                            + replyMsg.getErrMsg() + "'";
+                                 + "' was not ok"
+                                 + " while waiting for reply on store of file '"
+                                 + file.getPath() + "' on attempt number "
+                                 + (i + 1)
+                                 + " of " + storeRetries
+                                 + ". Error message was '"
+                                 + replyMsg.getErrMsg() + "'";
                     log.warn(msg);
                     messages.append(msg).append("\n");
                 }
-            } catch (NetarkivetException e) {
+            } catch (Exception e) {
                 String msg = "Client-side exception occurred while storing '"
-                        + file.getPath() + "' on attempt number " + (i + 1)
-                        + " of " + storeRetries + ".";
+                             + file.getPath() + "' on attempt number " + (i + 1)
+                             + " of " + storeRetries + ".";
                 log.warn(msg, e);
                 messages.append(msg).append("\n");
                 messages.append(ExceptionUtils.getStackTrace(e));
@@ -333,6 +336,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     /**
      * Tries to clean up a file on the FTP server after a store operation. Will
      * not throw exception on error, merely log exception.
+     *
      * @param m the StoreMessage sent back as reply
      */
     private void cleanUpAfterStore(StoreMessage m) {
@@ -354,14 +358,14 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * Sends a BatchMessage to the Arcrepos queue and waits for the
      * BatchReplyMessage reply before returning.
      *
-     * @param job        An object that implements the FileBatchJob interface.
-     *                   The initialize() method will be called before
-     *                   processing and the finish()
-     *                   method will be called afterwards.  The process() method
-     *                   will be called
-     *                   with each File entry.
+     * @param job       An object that implements the FileBatchJob interface.
+     *                  The initialize() method will be called before processing
+     *                  and the finish() method will be called afterwards.  The
+     *                  process() method will be called with each File entry.
      * @param replicaId The id of the archive to execute the job on
-     * @return           A local batch status
+     *
+     * @return A local batch status
+     *
      * @throws IOFailure if no results can be read at all
      */
     public BatchStatus batch(FileBatchJob job, String replicaId) {
@@ -369,13 +373,13 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
 
         log.debug("Starting batchjob '" + job + "' running on replica '"
-                + replicaId +"'");
+                  + replicaId + "'");
         BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ,
-                job, replicaId);
+                                             job, replicaId);
         log.debug("Sending batchmessage to queue '" + Channels.getTheRepos()
-                + "' with replyqueue set to '" + replyQ + "'");
+                  + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =
-            (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);
+                (BatchReplyMessage) sendAndWaitForOneReply(bMsg, 0);
         if (!brMsg.isOk()) {
             String msg = "The batch job '" + bMsg
                          + "' resulted in the following "
@@ -390,46 +394,50 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                                brMsg.getNoOfFilesProcessed(),
                                brMsg.getResultFile(),
                                job.getExceptions()
-                              );
+        );
     }
 
-    /** Request update of admin data to specific state.
+    /**
+     * Request update of admin data to specific state.
      *
-     * @param fileName The file for which admin data should be updated.
+     * @param fileName       The file for which admin data should be updated.
      * @param bitarchiveName The bitarchive for which admin data should be
-     * updated.
-     * @param newval The new value in admin data.
+     *                       updated.
+     * @param newval         The new value in admin data.
+     *
      * @throws IOFailure If the reply to the request update timed out.
-     * */
+     */
     public void updateAdminData(String fileName, String bitarchiveName,
-            BitArchiveStoreState newval) {
+                                BitArchiveStoreState newval) {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
         ArgumentNotValid.checkNotNull(newval, "newval");
-        
+
         String msg = "Requesting update of admin data for file '" + fileName
                      + "' bitarchive '" + bitarchiveName + "' to state "
                      + newval;
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         AdminDataMessage aMsg =
-            new AdminDataMessage(fileName, bitarchiveName, newval);
+                new AdminDataMessage(fileName, bitarchiveName, newval);
         // We only need to know that a reply to our message has arrived. 
         // The replyMessage is thrown away, because it does not contain 
         // any more useful knowledge.
         sendAndWaitForOneReply(aMsg, 0);
     }
 
-    /** Request update of admin data to specific checksum.
+    /**
+     * Request update of admin data to specific checksum.
      *
      * @param filename The file for which admin data should be updated.
      * @param checksum The new checksum for the file
+     *
      * @throws IOFailure If the reply to the request update timed out.
      */
     public void updateAdminChecksum(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
-        
+
         String msg = "Requesting update of admin data for file '" + filename
                      + "' to checksum '" + checksum;
         log.warn(msg);
@@ -445,17 +453,19 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * Removes a file from the bitarchives, if given credentials and checksum
      * are correct.
      *
-     * @param fileName The name of the file to delete
+     * @param fileName     The name of the file to delete
      * @param bitarchiveId The id of the bitarchive to delete the file in
-     * @param checksum The checksum of the deleted file
-     * @param credentials The credentials used to delete the file
-     * @throws ArgumentNotValid if arguments are null or
-     *  equal to the empty string
-     * @throws IOFailure if we could not delete the remote file, ors
-     * there was no response to our RemoveAndGetFileMessage within the allotted
-     * time defined by the setting 
-     * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
+     * @param checksum     The checksum of the deleted file
+     * @param credentials  The credentials used to delete the file
+     *
      * @return The file that was removed
+     *
+     * @throws ArgumentNotValid if arguments are null or equal to the empty
+     *                          string
+     * @throws IOFailure        if we could not delete the remote file, ors
+     *                          there was no response to our RemoveAndGetFileMessage
+     *                          within the allotted time defined by the setting
+     *                          {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveId,
                                  String checksum, String credentials) {
@@ -463,25 +473,25 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveId, "bitarchiveName");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "credentials");
-        
+
         String msg = "Requesting remove of file '" + fileName
                      + "' with checksum '"
                      + checksum + "' from bitarchive '" + bitarchiveId + "'";
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         RemoveAndGetFileMessage aMsg =
-            new RemoveAndGetFileMessage(fileName, bitarchiveId,
-                                        checksum, credentials);
+                new RemoveAndGetFileMessage(fileName, bitarchiveId,
+                                            checksum, credentials);
         RemoveAndGetFileMessage replyMsg =
-            (RemoveAndGetFileMessage)
-            sendAndWaitForOneReply(aMsg, storeTimeout);
+                (RemoveAndGetFileMessage)
+                        sendAndWaitForOneReply(aMsg, storeTimeout);
 
         // The removed file is returned, move to temp location
         if (replyMsg != null) {
             if (replyMsg.isOk()) {
                 File removedFile = replyMsg.getData();
                 log.debug("Stored copy of removed file: " + fileName + "   as: "
-                         + removedFile.getAbsolutePath());
+                          + removedFile.getAbsolutePath());
                 return removedFile;
             } else {
                 String message = "Could not delete remote file: "
@@ -499,28 +509,30 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     }
 
     /**
-     * Retrieves all the checksum from the replica through a 
+     * Retrieves all the checksum from the replica through a
      * GetAllChecksumMessage.
-     * 
-     * This is the checksum archive alternative to running a ChecksumBatchJob. 
-     * 
-     * @param replicaId The id of the replica from which the checksums should 
-     * be retrieved.
-     * @return A list of ChecksumEntries which is the results of the 
-     * GetAllChecksumMessage.
+     *
+     * This is the checksum archive alternative to running a ChecksumBatchJob.
+     *
+     * @param replicaId The id of the replica from which the checksums should be
+     *                  retrieved.
+     *
+     * @return A list of ChecksumEntries which is the results of the
+     *         GetAllChecksumMessage.
+     *
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage
      */
     public File getAllChecksums(String replicaId) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         log.debug("Sending GetAllChecksumMessage to replica '" + replicaId
-                + "'.");
+                  + "'.");
         // time this.
         long start = System.currentTimeMillis();
         // make and send the message to the replica.
         GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg,
-                getTimeout);
+                                                               getTimeout);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -528,7 +540,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // check whether the output was valid.
         if (replyNetMsg == null) {
             log.info("Request for all checksum timed out after "
-                    + (getTimeout / 1000) + " seconds. Returning empty list.");
+                     + (getTimeout / 1000) + " seconds. Returning empty list.");
             // return an empty list
             return null;
         }
@@ -550,35 +562,38 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             return result;
         } catch (IOException e) {
             String errMsg = "Cannot create a temporary file for retrieving "
-                    + " the data remote from checksum message: " + replyCSMsg;
+                            + " the data remote from checksum message: "
+                            + replyCSMsg;
             log.warn(errMsg);
             throw new IOFailure(errMsg, e);
         }
     }
 
     /**
-     * Retrieves the names of all the files in the replica through a 
+     * Retrieves the names of all the files in the replica through a
      * GetAllFilenamesMessage.
-     * 
-     * This is the checksum archive alternative to running a FilelistBatchJob. 
-     * 
+     *
+     * This is the checksum archive alternative to running a FilelistBatchJob.
+     *
      * @param replicaId The id of the replica from which the list of filenames
-     * should be retrieved.
-     * @return A list of all the filenames within the archive of the given 
-     * replica.
+     *                  should be retrieved.
+     *
+     * @return A list of all the filenames within the archive of the given
+     *         replica.
+     *
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     public File getAllFilenames(String replicaId) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         log.debug("Sending GetAllFilenamesMessage to replica '" + replicaId
-                + "'.");
+                  + "'.");
         // time this.
         long start = System.currentTimeMillis();
         // make and send the message to the replica.
         GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
-                getTimeout);
+                                                               getTimeout);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -586,7 +601,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // check whether the output was valid.
         if (replyNetMsg == null) {
             log.info("Request for all filenames timed out after "
-                    + (getTimeout / 1000) + " seconds. Returning empty list.");
+                     + (getTimeout / 1000) + " seconds. Returning empty list.");
             // return an empty list
             return null;
         }
@@ -608,15 +623,15 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             return result;
         } catch (IOException e) {
             String errMsg = "Cannot create a temporary file for retrieving "
-                    + " the data remote from checksum message: " + replyCSMsg;
+                            + " the data remote from checksum message: "
+                            + replyCSMsg;
             log.warn(errMsg);
             throw new IOFailure(errMsg, e);
         }
     }
 
-    @Override
     public void correct(String replicaId, String checksum, File file,
-            String credentials) {
+                        String credentials) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");
@@ -624,18 +639,18 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
         CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
-                replyQ, checksum, rm);
+                                                       replyQ, checksum, rm);
         CorrectMessage responseMessage
-            = (CorrectMessage) sendAndWaitForOneReply(correctMsg, 0);
+                = (CorrectMessage) sendAndWaitForOneReply(correctMsg, 0);
 
         if (responseMessage == null) {
             String msg = "Correct Message timed out before returning."
-                    + "File not found?";
+                         + "File not found?";
             log.debug(msg);
             throw new IOFailure(msg);
         } else if (!responseMessage.isOk()) {
             String msg = "CorrectMessage failed: "
-                    + responseMessage.getErrMsg();
+                         + responseMessage.getErrMsg();
             log.warn(msg);
             throw new IOFailure(msg);
         }
