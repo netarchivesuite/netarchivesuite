@@ -786,13 +786,13 @@ public class HTMLUtils {
     /** Parse an optionally present long-value from a request parameter.
      *
      * @param context The context of the web request.
-     * @param param The name of the parameter to parse
+     * @param param The name of the parameter to parse.
      * @param defaultValue A value to return if the parameter is not present
      * (may be null).
      * @return Parsed value or default value if the parameter is missing
      * or empty. Null will only be returned if passed as the default value.
      * @throws ForwardedToErrorPage if the parameter is present but not
-     * parseable as a long value
+     * parseable as a long value.
      */
     public static Long parseOptionalLong(PageContext context,
                                          String param, Long defaultValue) {
