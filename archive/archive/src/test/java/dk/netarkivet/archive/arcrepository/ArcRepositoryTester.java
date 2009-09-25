@@ -39,6 +39,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.StringRemoteFile;
@@ -63,23 +64,20 @@ public class ArcRepositoryTester extends TestCase {
     static boolean first = true;
 
     public void setUp() throws Exception {
-	// reset the channels.
-	if(first) {
-	    Method m = Channels.class.getDeclaredMethod("reset");
-	    Class channels = Channels.class.getClass();
-	    m.setAccessible(true);
-	    m.invoke(channels);
-	    first = false;
-	}
-        
+        // reset the channels.
+        if (first) {
+            ChannelsTester.resetChannels();
+        }
+
         super.setUp();
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
+                     TestInfo.WORKING_DIR.getAbsolutePath());
     }
-    
+
     public void tearDown() throws Exception {
         ArcRepository.getInstance().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -89,26 +87,19 @@ public class ArcRepositoryTester extends TestCase {
         super.tearDown();
     }
 
-    /**
-     * Test that BitarchiveMonitorServer is a singleton.
-     */
+    /** Test that BitarchiveMonitorServer is a singleton. */
     public void testIsSingleton() {
         ClassAsserts.assertSingleton(ArcRepository.class);
         ArcRepository.getInstance();
     }
 
 
-    /**
-     * Verify that calling the protected no-arg constructor does not fail.
-     *
-     */
+    /** Verify that calling the protected no-arg constructor does not fail. */
     public void testConstructor() {
         ArcRepository.getInstance().close();
     }
 
-    /**
-     * Test parameters.
-     */
+    /** Test parameters. */
     public void testGetReplicaClientFromReplicaNameParameters() {
         ArcRepository a = ArcRepository.getInstance();
         /**
@@ -132,9 +123,7 @@ public class ArcRepositoryTester extends TestCase {
         }
     }
 
-    /**
-     * Test a valid BitarchiveClient is returned.
-     */
+    /** Test a valid BitarchiveClient is returned. */
     public void testGetReplicaClientFromReplicaName() {
         ArcRepository a = ArcRepository.getInstance();
         String[] locations = Settings.getAll(
@@ -147,13 +136,15 @@ public class ArcRepositoryTester extends TestCase {
     }
 
     /**
-     * Test that the readChecksum() method works as 
-     * required.
+     * Test that the readChecksum() method works as required.
+     *
      * @throws Throwable if something are thrown
      */
     public void testReadChecksum() throws Throwable {
         readChecksum = ArcRepository.class.getDeclaredMethod("readChecksum",
-                new Class[] {File.class, String.class });
+                                                             new Class[]{
+                                                                     File.class,
+                                                                     String.class});
         readChecksum.setAccessible(true);
 
         try {
@@ -164,75 +155,81 @@ public class ArcRepositoryTester extends TestCase {
             fail("Should get failure on missing file, not " + result);
         } catch (InvocationTargetException e) {
             assertEquals("Should throw IOFailure",
-                    IOFailure.class, e.getCause().getClass());
+                         IOFailure.class, e.getCause().getClass());
         }
 
         assertEquals("Should get empty output from empty file",
-                "", callReadChecksum("", "foobar"));
+                     "", callReadChecksum("", "foobar"));
 
         assertEquals("Should get empty output from other-file file",
-                "", callReadChecksum("bazzoon##klaf", "foobar"));
+                     "", callReadChecksum("bazzoon##klaf", "foobar"));
 
         assertEquals("Should not match checksum with filename",
-                "", callReadChecksum("bar##foo", "foo"));
+                     "", callReadChecksum("bar##foo", "foo"));
 
         assertEquals("Should get right checksum when matching",
-                "foo", callReadChecksum("bar##foo", "bar"));
+                     "foo", callReadChecksum("bar##foo", "bar"));
 
         assertEquals("Should get right checksum if not on first line",
-                "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
+                     "bonk", callReadChecksum("bar##baz\nfoo##bonk", "foo"));
         LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have warning about unwanted line",
-                "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')", 
+        FileAsserts.assertFileContains(
+                "Should have warning about unwanted line",
+                "There were an unexpected arc-file name in checksum result for arc-file 'foo'(line: 'bar##baz')",
                 TestInfo.LOG_FILE);
-        FileAsserts.assertFileNotContains("Should have no warning about wanted line",
+        FileAsserts.assertFileNotContains(
+                "Should have no warning about wanted line",
                 TestInfo.LOG_FILE, "Read unexpected line 'foo##bonk");
-        
+
         assertEquals("Should get right checksum if not on last line",
-                "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
-        
+                     "baz", callReadChecksum("bar##baz\nfoo##bonk", "bar"));
+
         assertEquals("Should get right checksum if empty lines",
-        	"bar", callReadChecksum("foo##bar\n\n", "foo"));
-        
+                     "bar", callReadChecksum("foo##bar\n\n", "foo"));
+
         // Check that the lines are validated correctly.
         try {
             callReadChecksum("barf", "foobar");
             fail("A checksum output file only containing 'barf' should through IllegalState");
         } catch (IllegalState e) {
             assertEquals("Not expected error message!",
-        	    "Read checksum line had unexpected format 'barf'", 
-        	    e.getMessage());
+                         "Read checksum line had unexpected format 'barf'",
+                         e.getMessage());
             // This is expected!
         }
         // Check that a entry may not have two different checksums.
         try {
             callReadChecksum("foo##bar\nfoo##notBar", "foo");
             fail("A checksum output file containing two entries with for same "
-        	    + "name with different checksums should through IllegalState");
+                 + "name with different checksums should through IllegalState");
         } catch (IllegalState e) {
             assertEquals("Not expected error message!",
-        	    "The arc-file 'foo' was found with two different checksums: "
-        	    + "bar and notBar. Last line: 'foo##notBar'.", 
-        	    e.getMessage());
+                         "The arc-file 'foo' was found with two different checksums: "
+                         + "bar and notBar. Last line: 'foo##notBar'.",
+                         e.getMessage());
             // This is expected!
         }
-        
+
         LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have warning about two different checksums",
+        FileAsserts.assertFileContains(
+                "Should have warning about two different checksums",
                 "The arc-file 'foo' was found with two different checksums: bar and notBar.",
                 TestInfo.LOG_FILE);
 
     }
 
 
-    /** Call the readChecksum method with some input and a file to look for.
+    /**
+     * Call the readChecksum method with some input and a file to look for.
      *
-     * @param input Will be written to a file that readChecksum reads.
-     *  Valid input is of the form <arcfilename>##<checksum>, but invalid
-     *  input is part of the test.
+     * @param input       Will be written to a file that readChecksum reads.
+     *                    Valid input is of the form <arcfilename>##<checksum>,
+     *                    but invalid input is part of the test.
      * @param arcfilename The name of the arcfile that readChecksum should look
-     *  for.
+     *                    for.
+     *
      * @return The string found for the given filename.
+     *
      * @throws IOFailure when readChecksum does.
      */
     public String callReadChecksum(String input, String arcfilename)
@@ -240,20 +237,22 @@ public class ArcRepositoryTester extends TestCase {
         FileUtils.writeBinaryFile(TestInfo.TMP_FILE, input.getBytes());
         try {
             return (String) readChecksum.invoke(ArcRepository.getInstance(),
-                    TestInfo.TMP_FILE, arcfilename);
+                                                TestInfo.TMP_FILE, arcfilename);
         } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }
 
-    /** Test that the OnBatchReply method updates state and responds correctly.
+    /**
+     * Test that the OnBatchReply method updates state and responds correctly.
      * This is a rather complex test, but should not attempt to test
      * processCheckSum().  It has to set up the following:
      * outstandingChecksumFiles should contain an entry replyOfId->arcfilename
      * msg should contain id, errmsg, resultfile, filesprocessed, filesfailed,
-     *   but the channels are not used.
-     * ad should contain some checksum for the arcfilename but no replyinfo
-     *   -- we can check the effect by seeing warnings and state.
+     * but the channels are not used. ad should contain some checksum for the
+     * arcfilename but no replyinfo -- we can check the effect by seeing
+     * warnings and state.
+     *
      * @throws Exception if exception is thrown
      */
     public void testOnBatchReply() throws Exception {
@@ -261,14 +260,14 @@ public class ArcRepositoryTester extends TestCase {
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
         Field ocf = a.getClass().getDeclaredField("outstandingChecksumFiles");
         ocf.setAccessible(true);
-        Map<String,String> outstanding = (Map<String,String>)ocf.get(a);
+        Map<String, String> outstanding = (Map<String, String>) ocf.get(a);
         //Field adm = ad.getClass().getDeclaredField("storeEntries");
         Field adm = ad.getClass().
-            getSuperclass().getDeclaredField("storeEntries");
+                getSuperclass().getDeclaredField("storeEntries");
 
         adm.setAccessible(true);
         Map<String, ArcRepositoryEntry> admindataentries =
-                (Map<String, ArcRepositoryEntry>)adm.get(ad);
+                (Map<String, ArcRepositoryEntry>) adm.get(ad);
 
         String id1 = "id1";
         String arcname1 = "arc1";
@@ -278,75 +277,92 @@ public class ArcRepositoryTester extends TestCase {
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg0 = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), id1, 0, new ArrayList<File>(0),
-                new StringRemoteFile(arcname1
-                + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR + "f00\n"));
+                                                         Channels.getTheBamon(),
+                                                         id1, 0,
+                                                         new ArrayList<File>(0),
+                                                         new StringRemoteFile(
+                                                                 arcname1
+                                                                 + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR
+                                                                 + "f00\n"));
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);
         LogUtils.flushLogs(ArcRepository.class.getName());
         //System.out.println(FileUtils.readFile(TestInfo.LOG_FILE));
         FileAsserts.assertFileNotContains("Should have no warnings",
-                TestInfo.LOG_FILE,
-                "WARNING: Read unex");
+                                          TestInfo.LOG_FILE,
+                                          "WARNING: Read unex");
         assertEquals("Should have updated the store state",
-                BitArchiveStoreState.UPLOAD_COMPLETED,
-                ad.getState(arcname1, Channels.getTheBamon().getName()));
+                     BitArchiveStoreState.UPLOAD_COMPLETED,
+                     ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Test what happens when a known arcfile gets an error message.
         outstanding.put(id1, arcname1);
         ad.addEntry(arcname1, null, "f00");
         BatchReplyMessage bamsg2 = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
+                                                         Channels.getTheBamon(),
+                                                         id1, 0,
+                                                         new ArrayList<File>(0),
+                                                         new NullRemoteFile());
         JMSConnectionMockupMQ.updateMsgID(bamsg2, id1);
         bamsg2.setNotOk("Test an error");
         a.onBatchReply(bamsg2);
         LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have warning about error message",
+        FileAsserts.assertFileContains(
+                "Should have warning about error message",
                 "Reported error: 'Test an error'", TestInfo.LOG_FILE
         );
         assertEquals("Bad message should set entry to failed",
-                BitArchiveStoreState.UPLOAD_FAILED,
-                ad.getState(arcname1, Channels.getTheBamon().getName()));
+                     BitArchiveStoreState.UPLOAD_FAILED,
+                     ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Check what happens if not in AdminData
         // Related bug: 574 -- processing of errors is strange
         admindataentries.remove(arcname1);
         outstanding.put(id1, arcname1);
         BatchReplyMessage bamsg3 = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
+                                                         Channels.getTheBamon(),
+                                                         id1, 0,
+                                                         new ArrayList<File>(0),
+                                                         new NullRemoteFile());
         JMSConnectionMockupMQ.updateMsgID(bamsg3, id1);
         bamsg3.setNotOk("Test another error");
         try {
             a.onBatchReply(bamsg3);
             fail("Should have thrown UnknownID when presented with an unknown"
-                    + " arc file " + arcname1);
+                 + " arc file " + arcname1);
         } catch (UnknownID e) {
             StringAsserts.assertStringContains("Should have mention of file "
-                    + "in error message", arcname1, e.getMessage());
+                                               + "in error message", arcname1,
+                                               e.getMessage());
         }
         LogUtils.flushLogs(ArcRepository.class.getName());
-        FileAsserts.assertFileContains("Should have warning about error message",
+        FileAsserts.assertFileContains(
+                "Should have warning about error message",
                 "Reported error: 'Test another error'", TestInfo.LOG_FILE);
         assertFalse("Should not have info about non-yet-processed arcfile",
-                ad.hasEntry(arcname1));
+                    ad.hasEntry(arcname1));
         // Try one without matching arcfilename -- should give warning.
         BatchReplyMessage bamsg1 = new BatchReplyMessage(Channels.getTheRepos(),
-                Channels.getTheBamon(), id1, 0, new ArrayList<File>(0), new NullRemoteFile());
+                                                         Channels.getTheBamon(),
+                                                         id1, 0,
+                                                         new ArrayList<File>(0),
+                                                         new NullRemoteFile());
         a.onBatchReply(bamsg1);
         LogUtils.flushLogs(ArcRepository.class.getName());
         FileAsserts.assertFileContains("Should have warning about unknown id",
-                "unknown originating ID " + id1, TestInfo.LOG_FILE);
+                                       "unknown originating ID " + id1,
+                                       TestInfo.LOG_FILE);
         assertFalse("Should not have info about non-yet-processed arcfile",
-                ad.hasEntry(arcname1));
+                    ad.hasEntry(arcname1));
 
     }
-    
+
     public void testChecksumCalls() throws Exception {
-	ArcRepository.getInstance().cleanup();
-	Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
-	
+        ArcRepository.getInstance().cleanup();
+        Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
+
 //	testChecksumCalls();
-	testOnBatchReply();
-	
+        testOnBatchReply();
+
     }
 }

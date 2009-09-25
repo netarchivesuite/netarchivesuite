@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -51,18 +52,22 @@ import dk.netarkivet.testutils.TestFileUtils;
  * implementation HeritrixDomainHarvestReport.
  */
 public class HeritrixDomainHarvestReportTester extends TestCase {
-
     public HeritrixDomainHarvestReportTester(String s) {
         super(s);
     }
 
-    public void setUp() {
+    public void setUp() throws Exception {
         TestRemoteFile.removeRemainingFiles();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                                TestInfo.WORKING_DIR);
+                                          TestInfo.WORKING_DIR);
+        FileInputStream fis = new FileInputStream(
+                "tests/dk/netarkivet/testlog.prop");
+        LogManager.getLogManager().reset();
+        FileUtils.removeRecursively(TestInfo.LOG_FILE);
+        LogManager.getLogManager().readConfiguration(fis);
     }
 
 
@@ -87,25 +92,32 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
         new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
         LogUtils.flushLogs(HeritrixDomainHarvestReport.class.getName());
         FileAsserts.assertFileContains("Should have log about invalid line",
-                                       "FINE: Invalid line in", TestInfo.LOG_FILE);
+                                       "FINE: Invalid line in",
+                                       TestInfo.LOG_FILE);
 
         //Test success
         testFile = TestInfo.REPORT_FILE;
-        DomainHarvestReport hostReport = new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
+        DomainHarvestReport hostReport = new HeritrixDomainHarvestReport(
+                testFile, TestInfo.DEFAULT_STOPREASON);
 
-        assertNotNull("A DomainHarvestReport should have a non-null set of domain names",
-                      hostReport.getDomainNames());
-        assertNotNull("A DomainHarvestReport should have a non-null number of object counts",
-                      hostReport.getObjectCount("netarkivet.dk"));
-        assertNotNull("A DomainHarvestReport should have a non-null number of bytes retrieved",
-                      hostReport.getByteCount("netarkivet.dk"));
+        assertNotNull(
+                "A DomainHarvestReport should have a non-null set of domain names",
+                hostReport.getDomainNames());
+        assertNotNull(
+                "A DomainHarvestReport should have a non-null number of object counts",
+                hostReport.getObjectCount("netarkivet.dk"));
+        assertNotNull(
+                "A DomainHarvestReport should have a non-null number of bytes retrieved",
+                hostReport.getByteCount("netarkivet.dk"));
     }
 
     public void testGetDomainNames() throws IOException, FileNotFoundException {
         File testFile = TestInfo.REPORT_FILE;
-        DomainHarvestReport hostReport = new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
+        DomainHarvestReport hostReport = new HeritrixDomainHarvestReport(
+                testFile, TestInfo.DEFAULT_STOPREASON);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(testFile)));
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(testFile)));
         int lineCnt = 0;
         while (reader.readLine() != null) {
             ++lineCnt;
@@ -113,98 +125,114 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
         reader.close();
 
         if (lineCnt > 1) {
-            assertTrue("Number of domain names in DomainHarvestReport should be > 0, assuming "
-                       + "that the number of lines in the host-reports.txt file is > 1",
-                       hostReport.getDomainNames().size() > 0);
+            assertTrue(
+                    "Number of domain names in DomainHarvestReport should be > 0, assuming "
+                    + "that the number of lines in the host-reports.txt file is > 1",
+                    hostReport.getDomainNames().size() > 0);
         }
 
         // Number of domain names in DomainHarvestReport should be less than or equal to
         // the number of lines in the host-reports.txt file (minus 1 , due to header):
-        Assert.assertEquals("Number of domain names in DomainHarvestReport should equal testnumber "
-                            + TestInfo.NO_OF_TEST_DOMAINS,
-                            TestInfo.NO_OF_TEST_DOMAINS, //Expected value
-                            hostReport.getDomainNames().size() );
+        Assert.assertEquals(
+                "Number of domain names in DomainHarvestReport should equal testnumber "
+                + TestInfo.NO_OF_TEST_DOMAINS,
+                TestInfo.NO_OF_TEST_DOMAINS, //Expected value
+                hostReport.getDomainNames().size());
 
         // Check if set of domain names contains normalized domain name TestInfo.TEST_DOMAIN:
-        assertTrue("hostReport.getDomainNames() should contain domain name " 
-                + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
-                   hostReport.getDomainNames().contains(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+        assertTrue("hostReport.getDomainNames() should contain domain name "
+                   + dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN,
+                   hostReport.getDomainNames().contains(
+                           dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
     }
 
 
     public void testGetObjectCount() {
         DomainHarvestReport hostReport = createValidHeritrixHostsReport();
 
-        assertEquals("DomainHarvestReport.getObjectCount(TestInfo.TEST_DOMAIN)) should expected to return "
-                     + TestInfo.NO_OF_OBJECTS_TEST,
-                     TestInfo.NO_OF_OBJECTS_TEST, //Expected value
-                     (long) hostReport.getObjectCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
-        assertNull("DomainHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null",
+        assertEquals(
+                "DomainHarvestReport.getObjectCount(TestInfo.TEST_DOMAIN)) should expected to return "
+                + TestInfo.NO_OF_OBJECTS_TEST,
+                TestInfo.NO_OF_OBJECTS_TEST, //Expected value
+                (long) hostReport.getObjectCount(
+                        dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+        assertNull(
+                "DomainHarvestReport.getObjectCount('bibliotek.dk')) expected to return Null",
                 hostReport.getObjectCount("bibliotek.dk"));
-        
+
     }
 
 
     public void testGetByteCount() {
         DomainHarvestReport hostReport = createValidHeritrixHostsReport();
 
-        assertEquals("DomainHarvestReport.getByteCount(TestInfo.TEST_DOMAIN)) expected to return "
-                     + TestInfo.NO_OF_BYTES_TEST,
-                     TestInfo.NO_OF_BYTES_TEST, //Expected value
-                     (long) hostReport.getByteCount(dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
-        assertNull("DomainHarvestReport.getByteCount('bibliotek.dk')) expected to return Null",
+        assertEquals(
+                "DomainHarvestReport.getByteCount(TestInfo.TEST_DOMAIN)) expected to return "
+                + TestInfo.NO_OF_BYTES_TEST,
+                TestInfo.NO_OF_BYTES_TEST, //Expected value
+                (long) hostReport.getByteCount(
+                        dk.netarkivet.harvester.harvesting.TestInfo.TEST_DOMAIN));
+        assertNull(
+                "DomainHarvestReport.getByteCount('bibliotek.dk')) expected to return Null",
                 hostReport.getByteCount("bibliotek.dk"));
     }
 
-    /**
-     * Test solution to bugs 391 - hosts report with long values.
-     */
+    /** Test solution to bugs 391 - hosts report with long values. */
     public void testLongValues() {
         File testFile = TestInfo.LONG_REPORT_FILE;
-        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,TestInfo.DEFAULT_STOPREASON);
+        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,
+                                                                 TestInfo.DEFAULT_STOPREASON);
         Long expectedObjectCount = new Long(2L);
         Long expectedByteCount = new Long(5500000001L);
-        assertEquals("Counts should equal input data", expectedObjectCount, hr.getObjectCount("dom.dk"));
-        assertEquals("Counts should equal input data", expectedByteCount, hr.getByteCount("dom.dk"));
+        assertEquals("Counts should equal input data", expectedObjectCount,
+                     hr.getObjectCount("dom.dk"));
+        assertEquals("Counts should equal input data", expectedByteCount,
+                     hr.getByteCount("dom.dk"));
 
     }
 
     /**
-     * Test solution to bugs 392 - hosts report with byte counts which add to a long value.
+     * Test solution to bugs 392 - hosts report with byte counts which add to a
+     * long value.
      */
     public void testAddLongValues() {
         File testFile = TestInfo.ADD_LONG_REPORT_FILE;
-        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
-        assertEquals("Counts should equal input data", new Long(2500000000l), hr.getByteCount("nosuchdomain.dk"));
+        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,
+                                                                 TestInfo.DEFAULT_STOPREASON);
+        assertEquals("Counts should equal input data", new Long(2500000000l),
+                     hr.getByteCount("nosuchdomain.dk"));
+    }
+
+    /** Test stop reason. */
+    public void testStopReason() {
+        File testFile = TestInfo.STOP_REASON_REPORT_FILE;
+        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,
+                                                                 TestInfo.DEFAULT_STOPREASON);
+        assertEquals("kb.dk is unfinished",
+                     StopReason.DOWNLOAD_COMPLETE,
+                     hr.getStopReason("kb.dk"));
+        assertEquals("netarkivet.dk reached byte limit",
+                     StopReason.SIZE_LIMIT,
+                     hr.getStopReason("netarkivet.dk"));
+        assertEquals("statsbiblioteket.dk reached object limit",
+                     StopReason.OBJECT_LIMIT,
+                     hr.getStopReason("statsbiblioteket.dk"));
+        assertEquals("no information about bibliotek.dk",
+                     null,
+                     hr.getStopReason("bibliotek.dk"));
     }
 
     /**
-     * Test stop reason.
-     */
-    public void testStopReason() {
-        File testFile = TestInfo.STOP_REASON_REPORT_FILE;
-        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
-        assertEquals("kb.dk is unfinished",
-                StopReason.DOWNLOAD_COMPLETE,
-                hr.getStopReason("kb.dk"));
-        assertEquals("netarkivet.dk reached byte limit",
-                StopReason.SIZE_LIMIT,
-                hr.getStopReason("netarkivet.dk"));
-        assertEquals("statsbiblioteket.dk reached object limit",
-                StopReason.OBJECT_LIMIT,
-                hr.getStopReason("statsbiblioteket.dk"));
-        assertEquals("no information about bibliotek.dk",
-                null,
-                hr.getStopReason("bibliotek.dk"));
-    }
-
-    /** Tests object can be serialized and deserialized preserving state.
+     * Tests object can be serialized and deserialized preserving state.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void testSerializability() throws IOException, ClassNotFoundException {
+    public void testSerializability()
+            throws IOException, ClassNotFoundException {
         File testFile = TestInfo.REPORT_FILE;
-        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
+        DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,
+                                                                 TestInfo.DEFAULT_STOPREASON);
         DomainHarvestReport hr2 = Serial.serial(hr);
         assertEquals("Relevant state should be preserved",
                      relevantState(hr), relevantState(hr2));
@@ -215,7 +243,7 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
         List<String> list = new ArrayList<String>(hhr.getDomainNames());
         Collections.sort(list);
         for (String x : list) {
-            s += x +  "##" + hhr.getByteCount(x) + "##"
+            s += x + "##" + hhr.getByteCount(x) + "##"
                  + hhr.getObjectCount(x) + "\n";
         }
         return s;
@@ -223,7 +251,8 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
 
     private DomainHarvestReport createValidHeritrixHostsReport() {
         File testFile = TestInfo.REPORT_FILE;
-        return new HeritrixDomainHarvestReport(testFile, TestInfo.DEFAULT_STOPREASON);
+        return new HeritrixDomainHarvestReport(testFile,
+                                               TestInfo.DEFAULT_STOPREASON);
     }
 
 }
