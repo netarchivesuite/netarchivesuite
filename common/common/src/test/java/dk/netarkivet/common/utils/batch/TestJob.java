@@ -33,4 +33,8 @@ public class TestJob extends ChecksumJob {
     public String getTestId() {
         return testId;
     }
+
+    public void setBatchTimeout(long timeout) {
+        batchJobTimeout = timeout;
+    }
 }

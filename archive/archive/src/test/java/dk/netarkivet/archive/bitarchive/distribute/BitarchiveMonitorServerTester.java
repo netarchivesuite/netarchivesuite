@@ -278,6 +278,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         String ba_App_Id = "BA_App_1";
         TestJob job = new TestJob("testBatchReceive_ID");
+        job.setBatchJobTimeout(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT);
 
         // register a listener that simulates the arc repository
         TestListener arcrepos = new TestListener();
@@ -306,10 +307,12 @@ public class BitarchiveMonitorServerTester extends TestCase {
                     .JUST_A_BIT_LONGER);
         }
         catch (InterruptedException e) {
-            fail("Unexpected interruption whilst sleeping before sending a late BatchEndedMessage");
+            fail("Unexpected interruption whilst sleeping before sending a "
+                 + "late BatchEndedMessage");
         }
 
-        // simulate a bitarchive that replies too late: send a late batch ended message
+        // simulate a bitarchive that replies too late: send a
+        // late batch ended message
         NetarkivetMessage bem = new BatchEndedMessage(THE_BAMON, ba_App_Id,
                                                       bitarchive.getLastMessage().getID(),
                                                       null);
@@ -323,7 +326,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
             fail("BA Monitor reports no error for timed out batch message.");
         } else {
             StringAsserts.assertStringContains(
-                    "BA Monitor reports error but doesn't indicate that it is a time-out error.",
+                    "BA Monitor reports error but doesn't indicate that it is"
+                    + " a time-out error.",
                     "timeout", arcrepos.getLastBatchReplyMessage().getErrMsg());
         }
     }
@@ -431,8 +435,8 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
     /**
      * Verify that we can process a BatchEndedMessage from a BA application i.e.
-     * update the internal state of the BA monitor correctly. TODO Update to
-     * reflect new API for batch output
+     * update the internal state of the BA monitor correctly.
+     * TODO Update to reflect new API for batch output
      */
     public void testProcessBatchEndedMessage() {
         bam_server = new TestBitarchiveMonitorServer();
