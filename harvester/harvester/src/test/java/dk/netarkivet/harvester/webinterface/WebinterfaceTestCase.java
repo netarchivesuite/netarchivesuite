@@ -66,10 +66,9 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 /**
  * A TestCase subclass specifically tailored to test webinterface classes,
  * primarily the classes in dk.netarkivet.harvester.webinterface:
- *   HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
- *   ScheduleDefinitionTester, SnapshotHarvestDefinitionTester
- * but also
- *  dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
+ * HarvestStatusTester, EventHarvestTester, DomainDefinitionTester,
+ * ScheduleDefinitionTester, SnapshotHarvestDefinitionTester but also
+ * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 public class WebinterfaceTestCase extends TestCase {
     static final File HARVEST_DEFINITION_BASEDIR
@@ -84,11 +83,13 @@ public class WebinterfaceTestCase extends TestCase {
         super.setUp();
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                TestInfo.WORKING_DIR);
+                                          TestInfo.WORKING_DIR);
         TestUtils.resetDAOs();
         Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
-                + HARVEST_DEFINITION_BASEDIR.getCanonicalPath() + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",HARVEST_DEFINITION_BASEDIR);
+                                            + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
+                                            + "/fullhddb");
+        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
+                                  HARVEST_DEFINITION_BASEDIR);
     }
 
     public void tearDown() throws Exception {
@@ -266,18 +267,21 @@ public class WebinterfaceTestCase extends TestCase {
 
         public TestPageContext(ServletRequest request) {
             this.request = request;
-            this.locale  = new Locale("en");
+            this.locale = new Locale("en");
         }
+
         public TestPageContext(ServletRequest request, JspWriter out,
                                Locale locale) {
             this.request = request;
             this.out = out;
             this.locale = locale;
         }
+
         public void initialize(Servlet servlet, ServletRequest servletRequest,
                                ServletResponse servletResponse, String string,
                                boolean b, int i, boolean b1) throws IOException,
-                IllegalStateException, IllegalArgumentException {
+                                                                    IllegalStateException,
+                                                                    IllegalArgumentException {
             //To change body of implemented methods use File | Settings | File Templates.
         }
 
@@ -412,7 +416,6 @@ public class WebinterfaceTestCase extends TestCase {
                         public void forward(ServletRequest servletRequest,
                                             ServletResponse servletResponse)
                                 throws ServletException, IOException {
-                            System.out.println("Forwarding...");
                         }
 
                         public void include(ServletRequest servletRequest,
@@ -491,7 +494,7 @@ public class WebinterfaceTestCase extends TestCase {
         }
 
         public void forward(String string) throws ServletException,
-                IOException {
+                                                  IOException {
             //To change body of implemented methods use File | Settings | File Templates.
         }
 
@@ -567,169 +570,170 @@ public class WebinterfaceTestCase extends TestCase {
             return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
-    
+
     public PageContext getDummyPageContext(final Locale l,
-    		final ServletRequest request) {
-    	return new PageContext() {
-    		public void initialize(Servlet servlet, ServletRequest servletRequest,
-    				ServletResponse servletResponse,
-    				String string,
-    				boolean b, int i, boolean b1)
-    		throws IOException,
-    		IllegalStateException, IllegalArgumentException {
-    		}
+                                           final ServletRequest request) {
+        return new PageContext() {
+            public void initialize(Servlet servlet,
+                                   ServletRequest servletRequest,
+                                   ServletResponse servletResponse,
+                                   String string,
+                                   boolean b, int i, boolean b1)
+                    throws IOException,
+                           IllegalStateException, IllegalArgumentException {
+            }
 
-    		public void release() {
-    		}
+            public void release() {
+            }
 
-    		public HttpSession getSession() {
-    			return null;
-    		}
+            public HttpSession getSession() {
+                return null;
+            }
 
-    		public Object getPage() {
-    			return null;
-    		}
+            public Object getPage() {
+                return null;
+            }
 
-    		public ServletRequest getRequest() {
-    			return request;
-    		}
+            public ServletRequest getRequest() {
+                return request;
+            }
 
-    		public ServletResponse getResponse() {
-    			return new ServletResponse() {
-    				public String getCharacterEncoding() {
-    					return null;
-    				}
+            public ServletResponse getResponse() {
+                return new ServletResponse() {
+                    public String getCharacterEncoding() {
+                        return null;
+                    }
 
-    				public String getContentType() {
-    					return null;
-    				}
+                    public String getContentType() {
+                        return null;
+                    }
 
-    				public ServletOutputStream getOutputStream()
-    				throws IOException {
-    					return null;
-    				}
+                    public ServletOutputStream getOutputStream()
+                            throws IOException {
+                        return null;
+                    }
 
-    				public PrintWriter getWriter() throws IOException {
-    					return null;
-    				}
+                    public PrintWriter getWriter() throws IOException {
+                        return null;
+                    }
 
-    				public void setCharacterEncoding(String string) {
-    				}
+                    public void setCharacterEncoding(String string) {
+                    }
 
-    				public void setContentLength(int i) {
-    				}
+                    public void setContentLength(int i) {
+                    }
 
-    				public void setContentType(String string) {
-    				}
+                    public void setContentType(String string) {
+                    }
 
-    				public void setBufferSize(int i) {
-    				}
+                    public void setBufferSize(int i) {
+                    }
 
-    				public int getBufferSize() {
-    					return 0;
-    				}
+                    public int getBufferSize() {
+                        return 0;
+                    }
 
-    				public void flushBuffer() throws IOException {
-    				}
+                    public void flushBuffer() throws IOException {
+                    }
 
-    				public void resetBuffer() {
-    				}
+                    public void resetBuffer() {
+                    }
 
-    				public boolean isCommitted() {
-    					return false;
-    				}
+                    public boolean isCommitted() {
+                        return false;
+                    }
 
-    				public void reset() {
-    				}
+                    public void reset() {
+                    }
 
-    				public void setLocale(Locale locale) {
-    				}
+                    public void setLocale(Locale locale) {
+                    }
 
-    				public Locale getLocale() {
-    					return l;
-    				}
-    			};
-    		}
+                    public Locale getLocale() {
+                        return l;
+                    }
+                };
+            }
 
-    		public Exception getException() {
-    			return null;
-    		}
+            public Exception getException() {
+                return null;
+            }
 
-    		public ServletConfig getServletConfig() {
-    			return null;
-    		}
+            public ServletConfig getServletConfig() {
+                return null;
+            }
 
-    		public ServletContext getServletContext() {
-    			return null;
-    		}
+            public ServletContext getServletContext() {
+                return null;
+            }
 
-    		public void forward(String string)
-    		throws ServletException, IOException {
-    		}
+            public void forward(String string)
+                    throws ServletException, IOException {
+            }
 
-    		public void include(String string)
-    		throws ServletException, IOException {
-    		}
+            public void include(String string)
+                    throws ServletException, IOException {
+            }
 
-    		public void include(String string, boolean b)
-    		throws ServletException, IOException {
-    		}
+            public void include(String string, boolean b)
+                    throws ServletException, IOException {
+            }
 
-    		public void handlePageException(Exception exception)
-    		throws ServletException, IOException {
-    		}
+            public void handlePageException(Exception exception)
+                    throws ServletException, IOException {
+            }
 
-    		public void handlePageException(Throwable throwable)
-    		throws ServletException, IOException {
-    		}
+            public void handlePageException(Throwable throwable)
+                    throws ServletException, IOException {
+            }
 
-    		public void setAttribute(String string, Object object) {
-    		}
+            public void setAttribute(String string, Object object) {
+            }
 
-    		public void setAttribute(String string, Object object, int i) {
-    		}
+            public void setAttribute(String string, Object object, int i) {
+            }
 
-    		public Object getAttribute(String string) {
-    			return null;
-    		}
+            public Object getAttribute(String string) {
+                return null;
+            }
 
-    		public Object getAttribute(String string, int i) {
-    			return null;
-    		}
+            public Object getAttribute(String string, int i) {
+                return null;
+            }
 
-    		public Object findAttribute(String string) {
-    			return null;
-    		}
+            public Object findAttribute(String string) {
+                return null;
+            }
 
-    		public void removeAttribute(String string) {
-    		}
+            public void removeAttribute(String string) {
+            }
 
-    		public void removeAttribute(String string, int i) {
-    		}
+            public void removeAttribute(String string, int i) {
+            }
 
-    		public int getAttributesScope(String string) {
-    			return 0;
-    		}
+            public int getAttributesScope(String string) {
+                return 0;
+            }
 
-    		public Enumeration<String> getAttributeNamesInScope(int i) {
-    			return null;
-    		}
+            public Enumeration<String> getAttributeNamesInScope(int i) {
+                return null;
+            }
 
-    		public JspWriter getOut() {
-    			return null;
-    		}
+            public JspWriter getOut() {
+                return null;
+            }
 
-    		public ExpressionEvaluator getExpressionEvaluator() {
-    			return null;
-    		}
+            public ExpressionEvaluator getExpressionEvaluator() {
+                return null;
+            }
 
-    		public VariableResolver getVariableResolver() {
-    			return null;
-    		}
+            public VariableResolver getVariableResolver() {
+                return null;
+            }
 
-    		public ELContext getELContext() {
-    			return null;
-    		}
-    	};
+            public ELContext getELContext() {
+                return null;
+            }
+        };
     }
 }

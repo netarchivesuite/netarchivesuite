@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import org.archive.io.ArchiveRecord;
 import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
@@ -58,19 +57,25 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 public class CreateLogsMetadataFileTester extends TestCase {
     private PreventSystemExit pse = new PreventSystemExit();
     private PreserveStdStreams pss = new PreserveStdStreams();
-    private File JOBID_HARVESTID_MAPPING_FILE =  new File(TestInfo.WORKING_DIR, "jobid-harvestid.txt");
-    private File TestOldjobs9999 = new File(TestInfo.WORKING_DIR, "9999_1140687204304");
+    private File JOBID_HARVESTID_MAPPING_FILE = new File(TestInfo.WORKING_DIR,
+                                                         "jobid-harvestid.txt");
+    private File TestOldjobs9999 = new File(TestInfo.WORKING_DIR,
+                                            "9999_1140687204304");
     //private File TestOldjobs5 = new File(TestInfo.WORKING_DIR, "5_1140687204304");
-    private File TestOldjobs4 = new File(TestInfo.WORKING_DIR, "4_1140687099617");
+    private File TestOldjobs4 = new File(TestInfo.WORKING_DIR,
+                                         "4_1140687099617");
     //private File TestOldjobs11 = new File(TestInfo.WORKING_DIR, "11_1140688359422");
 
     public void setUp() throws Exception {
         FileUtils.createDir(TestInfo.WORKING_DIR);
         // Create dummy jobsdir certain not to be found in jobid-harvestid.txt
-        FileUtils.createDir(new File(TestInfo.WORKING_DIR, "9999_1140687204304"));
-        FileUtils.copyFile(TestInfo.JOBID_HARVESTID_MAPPING_FILE, JOBID_HARVESTID_MAPPING_FILE);
+        FileUtils.createDir(
+                new File(TestInfo.WORKING_DIR, "9999_1140687204304"));
+        FileUtils.copyFile(TestInfo.JOBID_HARVESTID_MAPPING_FILE,
+                           JOBID_HARVESTID_MAPPING_FILE);
 
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.OLDJOBS_DIR, TestInfo.WORKING_DIR);
+        TestFileUtils.copyDirectoryNonCVS(TestInfo.OLDJOBS_DIR,
+                                          TestInfo.WORKING_DIR);
 
         pse.setUp();
         pss.setUp();
@@ -91,10 +96,12 @@ public class CreateLogsMetadataFileTester extends TestCase {
 
     /**
      * Test dk.netarkivet.harvester.tools.CreateLogsMetadataFile.main.
+     *
      * @throws IOException
      * @throws URISyntaxException
      */
-    public void testCreateLogsMetadataFile() throws IOException, URISyntaxException {
+    public void testCreateLogsMetadataFile()
+            throws IOException, URISyntaxException {
         ByteArrayOutputStream baosOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baosOut));
         ByteArrayOutputStream baosErr = new ByteArrayOutputStream();
@@ -106,34 +113,36 @@ public class CreateLogsMetadataFileTester extends TestCase {
             System.err.flush();
 
             StringAsserts.assertStringMatches("Should have usage in stderr",
-                    "Too few arguments", baosErr.toString());
+                                              "Too few arguments",
+                                              baosErr.toString());
 
             System.out.flush();
             assertEquals("Should not output anything to stdout",
-                    "",
-                    baosOut.toString());
+                         "",
+                         baosOut.toString());
             baosOut.reset();
             baosErr.reset();
         }
 
-        assertFalse("The file 4-metadata-2.arc should not exist now", new File("4-metadata-2.arc").exists());
+        assertFalse("The file 4-metadata-2.arc should not exist now",
+                    new File("4-metadata-2.arc").exists());
         // test output, if failure to find harvestInfo.xml in jobsdir
         try {
             CreateLogsMetadataFile.main(new String[]{
                     JOBID_HARVESTID_MAPPING_FILE.getAbsolutePath(),
-                    TestOldjobs9999.getAbsolutePath()   });
+                    TestOldjobs9999.getAbsolutePath()});
             fail("Should System.exit(1) on bad args");
         } catch (SecurityException e) {
             System.err.flush();
             StringAsserts.assertStringMatches("Should have usage in stderr",
-                    "The second argument is not a valid jobsdir. "
-                       + "It does not contain a harvestInfo.xml file",
-                    baosErr.toString());
+                                              "The second argument is not a valid jobsdir. "
+                                              + "It does not contain a harvestInfo.xml file",
+                                              baosErr.toString());
 
             System.out.flush();
             assertEquals("Should not output anything to stdout",
-                    "",
-                    baosOut.toString());
+                         "",
+                         baosOut.toString());
             baosOut.reset();
             baosErr.reset();
         }
@@ -142,27 +151,27 @@ public class CreateLogsMetadataFileTester extends TestCase {
         // test output, if oldjobsdir for job id x can't be looked up in jobid-harvestid.txt
         try {
             FileUtils.copyFile(new File(TestOldjobs4, "harvestInfo.xml"),
-                    new File(TestOldjobs9999, "harvestInfo.xml"));
+                               new File(TestOldjobs9999, "harvestInfo.xml"));
             CreateLogsMetadataFile.main(new String[]{
                     JOBID_HARVESTID_MAPPING_FILE.getAbsolutePath(),
                     TestOldjobs9999.getAbsolutePath()
-                    });
+            });
             fail("Should System.exit(1) on bad args");
         } catch (SecurityException e) {
             System.err.flush();
 
             StringAsserts.assertStringMatches("Should have usage in stderr",
-                    "Unable to lookup Jobid 9999 in jobid-harvestid.txt",
-                    baosErr.toString());
+                                              "Unable to lookup Jobid 9999 in jobid-harvestid.txt",
+                                              baosErr.toString());
 
             System.out.flush();
-            StringAsserts.assertStringMatches("Should not really output anything significant to stdout",
+            StringAsserts.assertStringMatches(
+                    "Should not really output anything significant to stdout",
                     "5781 jobid-harvestid mappings found",
                     baosOut.toString());
             baosOut.reset();
             baosErr.reset();
         }
-
 
 
         // Test, if CreateLogsMetadataFile.main creates
@@ -175,14 +184,15 @@ public class CreateLogsMetadataFileTester extends TestCase {
                     });
             fail("SecurityException expected on valid arguments");
         } catch (SecurityException e) {
-            assertEquals("Should return succes",0, pse.getExitValue());
+            assertEquals("Should return succes", 0, pse.getExitValue());
         }
 
         File metadataArcFile = new File("4-metadata-2.arc");
         File cdxFile = new File("4-metadata-2.cdx");
         File cdxFileSorted = new File("4-metadata-2.cdx.sorted");
 
-        assertTrue("The file 4-metadata-2.arc should exist now", metadataArcFile.exists());
+        assertTrue("The file 4-metadata-2.arc should exist now",
+                   metadataArcFile.exists());
         System.err.flush();
         System.out.flush();
         baosOut.reset();
@@ -191,26 +201,37 @@ public class CreateLogsMetadataFileTester extends TestCase {
 
         // test the contents of the 4-metadata-2.arc file
         CDXUtils.writeCDXInfo(metadataArcFile, new FileOutputStream(cdxFile));
-        assertTrue("The file 4-metadata-2.cdx should exist now", cdxFile.exists());
-        assertEquals("Number of CDXlines should be 15", FileUtils.countLines(cdxFile), 15L);
+        assertTrue("The file 4-metadata-2.cdx should exist now",
+                   cdxFile.exists());
+        assertEquals("Number of CDXlines should be 16", 16L,
+                     FileUtils.countLines(cdxFile));
         FileUtils.makeSortedFile(cdxFile, cdxFileSorted);
         //System.out.println(FileUtils.readFile(cdxFileSorted));
         CDXReader cdxReader = new CDXReader();
         cdxReader.addCDXFile(cdxFileSorted);
         String actualHeritrixVersion = "1.5.0-200506132127";
-        String prefix =  "metadata://netarkivet.dk/crawl/";
-        String suffix =  "?heritrixVersion=" + actualHeritrixVersion
-            + "&harvestid=5&jobid=4";
-        String[] infixes = new String[] { "setup/order.xml",
-                "setup/harvestInfo.xml", "setup/seeds.txt",
-                "reports/crawl-report.txt", "reports/responsecode-report.txt",
-                "reports/frontier-report.txt",  "reports/hosts-report.txt",
-                "reports/mimetype-report.txt", "reports/processors-report.txt",
-                "reports/seeds-report.txt", "logs/crawl.log", "logs/local-errors.log",
-                "logs/progress-statistics.log", "logs/runtime-errors.log",
-                "logs/uri-errors.log" };
+        String prefix = "metadata://netarkivet.dk/crawl/";
+        String suffix = "?heritrixVersion=" + actualHeritrixVersion
+                        + "&harvestid=5&jobid=4";
+        String[] infixes = new String[]{"setup/order.xml",
+                                        "setup/harvestInfo.xml",
+                                        "setup/seeds.txt",
+                                        "setup/crawl-manifest.txt",
+                                        "reports/crawl-report.txt",
+                                        "reports/responsecode-report.txt",
+                                        "reports/frontier-report.txt",
+                                        "reports/hosts-report.txt",
+                                        "reports/mimetype-report.txt",
+                                        "reports/processors-report.txt",
+                                        "reports/seeds-report.txt",
+                                        "logs/crawl.log",
+                                        "logs/local-errors.log",
+                                        "logs/progress-statistics.log",
+                                        "logs/runtime-errors.log",
+                                        "logs/uri-errors.log"};
 
-        Map<String, String> infixMap = new HashMap<String, String>(infixes.length);
+        Map<String, String> infixMap = new HashMap<String, String>(
+                infixes.length);
         for (String s : infixes) {
             infixMap.put(prefix + s + suffix, s);
         }
@@ -223,56 +244,57 @@ public class CreateLogsMetadataFileTester extends TestCase {
                 continue; // Added at start of arc file
             }
             assertTrue("URI " + url + " must exist in infixmap",
-                    infixMap.containsKey(url));
+                       infixMap.containsKey(url));
             String infix = infixMap.get(url);
             String tmpString = infix.replaceFirst("setup/", "");
             tmpString = tmpString.replace("reports/", "");
             String oldFileAsString =
                     FileUtils.readFile(new File(TestInfo.OLDJOBS_DIR
-                            + "/4_1140687099617/" + tmpString));
+                                                + "/4_1140687099617/"
+                                                + tmpString));
             String recString = ARCTestUtils.readARCRecord(rec);
             assertEquals("Should have same contents in file and arc record",
-                    oldFileAsString, recString);
+                         oldFileAsString, recString);
             infixMap.remove(url);
         }
         assertEquals("Should have empty infix set after all are removed",
-                Collections.emptyMap(), infixMap);
+                     Collections.emptyMap(), infixMap);
     }
 
 
     /**
-    * Copies the content of an InputStream to an OutputStream.
-    * This method constructs an efficient buffer and pipes bytes from stream
-    * to stream through that buffer.
-    * The OutputStream is flushed after all bytes have been copied.
-    *
-    * @param content Source of the copy operation.
-    * @param out Destination of the copy operation.
-    */
-    private static void copy(InputStream content, OutputStream out) {
-     BufferedInputStream page = new BufferedInputStream(content);
-     BufferedOutputStream responseOut = new BufferedOutputStream(out);
-     try {
-         byte[] buffer = new byte[4096];
-         int bytesRead;
-         while ((bytesRead = page.read(buffer)) != -1) {
-             responseOut.write(buffer, 0, bytesRead);
-         }
-         responseOut.flush();
-     } catch (IOException e) {
-          throw new IOFailure("Could not read or write data", e);
-     }
-    }
-
-
-    /**
-     * Creates a file with the given file name.
-     * Copy a record from content to a file with the given name.
+     * Copies the content of an InputStream to an OutputStream. This method
+     * constructs an efficient buffer and pipes bytes from stream to stream
+     * through that buffer. The OutputStream is flushed after all bytes have
+     * been copied.
      *
-     * @param content The InputStream containing the record.
+     * @param content Source of the copy operation.
+     * @param out     Destination of the copy operation.
+     */
+    private static void copy(InputStream content, OutputStream out) {
+        BufferedInputStream page = new BufferedInputStream(content);
+        BufferedOutputStream responseOut = new BufferedOutputStream(out);
+        try {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = page.read(buffer)) != -1) {
+                responseOut.write(buffer, 0, bytesRead);
+            }
+            responseOut.flush();
+        } catch (IOException e) {
+            throw new IOFailure("Could not read or write data", e);
+        }
+    }
+
+
+    /**
+     * Creates a file with the given file name. Copy a record from content to a
+     * file with the given name.
+     *
+     * @param content  The InputStream containing the record.
      * @param fileName The name of the file to create for the record.
      */
-    private static void processRecord(InputStream content,String fileName) {
+    private static void processRecord(InputStream content, String fileName) {
         try {
             File destination = new File(TestInfo.WORKING_DIR, fileName);
             if (!destination.getParentFile().exists()) {
@@ -280,12 +302,14 @@ public class CreateLogsMetadataFileTester extends TestCase {
             }
             //System.out.println("destination: " + destination.getAbsolutePath());
             OutputStream out = new FileOutputStream(destination);
-            copy(content,out);
+            copy(content, out);
             out.close();
         } catch (FileNotFoundException e) {
-            throw new IOFailure("Exception caught. Does the output file already exist? " + e,e);
+            throw new IOFailure(
+                    "Exception caught. Does the output file already exist? "
+                    + e, e);
         } catch (IOException e) {
-            throw new IOFailure("Exception caught." + e,e);
+            throw new IOFailure("Exception caught." + e, e);
         }
     }
 

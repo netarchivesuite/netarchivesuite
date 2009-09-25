@@ -29,38 +29,36 @@ import java.lang.management.ManagementFactory;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/**
- * This class tests the class dk.netarkivet.common.management.SingleMBeanObject.
- */
+/** This class tests the class dk.netarkivet.common.management.SingleMBeanObject. */
 public class SingleMBeanObjectTester extends TestCase {
     private ObjectName name;
     private MBeanServer platformMBeanServer;
     ReloadSettings rs = new ReloadSettings();
 
-    {        
+    {
         try {
             name = new ObjectName(
-                    "Test:" + Constants.PRIORITY_KEY_LOCATION + "=NO," 
+                    "Test:" + Constants.PRIORITY_KEY_LOCATION + "=NO,"
                     + Constants.PRIORITY_KEY_MACHINE + "="
                     + SystemUtils.getLocalHostName() + ","
                     + Constants.PRIORITY_KEY_HTTP_PORT + "=1234,"
                     + Constants.PRIORITY_KEY_APPLICATIONNAME + "=TestApp1,"
-                    + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "=XX," 
+                    + Constants.PRIORITY_KEY_APPLICATIONINSTANCEID + "=XX,"
                     + Constants.PRIORITY_KEY_PRIORITY + "=high,"
-                    + Constants.PRIORITY_KEY_REPLICANAME + "=ReplicaOne");
+                    + Constants.PRIORITY_KEY_REPLICANAME + "=" + "BarOne");
         } catch (MalformedObjectNameException e) {
             System.out.println(e);
         }
     }
-        
+
     public SingleMBeanObjectTester(String s) {
         super(s);
     }
@@ -95,22 +93,28 @@ public class SingleMBeanObjectTester extends TestCase {
                                         MyTestInterface.class,
                                         ManagementFactory.getPlatformMBeanServer());
         assertEquals("Should have location in nameProperties",
-                     "NO", test.getNameProperties().get(Constants.PRIORITY_KEY_LOCATION));
+                     "NO", test.getNameProperties().get(
+                        Constants.PRIORITY_KEY_LOCATION));
         assertEquals("Should have machine in nameProperties",
                      SystemUtils.getLocalHostName(),
-                     test.getNameProperties().get(Constants.PRIORITY_KEY_MACHINE));
+                     test.getNameProperties().get(
+                             Constants.PRIORITY_KEY_MACHINE));
         assertEquals("Should have httpport in nameProperties",
-                     "1234", test.getNameProperties().get(Constants.PRIORITY_KEY_HTTP_PORT));
+                     "1234", test.getNameProperties().get(
+                        Constants.PRIORITY_KEY_HTTP_PORT));
         assertEquals("Should have applicationname in nameProperties",
                      "TestApp1",
-                     test.getNameProperties().get(Constants.PRIORITY_KEY_APPLICATIONNAME));
+                     test.getNameProperties().get(
+                             Constants.PRIORITY_KEY_APPLICATIONNAME));
         assertEquals("Should have applicationinstanceid in nameProperties",
                      "XX",
-                      test.getNameProperties().get(Constants.PRIORITY_KEY_APPLICATIONINSTANCEID));
+                     test.getNameProperties().get(
+                             Constants.PRIORITY_KEY_APPLICATIONINSTANCEID));
 
         try {
             new SingleMBeanObject((String) null, new MyTestInterfaceObject(),
-                                  MyTestInterface.class, ManagementFactory.getPlatformMBeanServer());
+                                  MyTestInterface.class,
+                                  ManagementFactory.getPlatformMBeanServer());
             fail("Should throw argument not valid on null argument");
         } catch (ArgumentNotValid e) {
             assertTrue("Should complain about the right parameter 'domain'",
@@ -147,11 +151,13 @@ public class SingleMBeanObjectTester extends TestCase {
                 = new SingleMBeanObject("Test", new MyTestInterfaceObject(),
                                         MyTestInterface.class,
                                         ManagementFactory.getPlatformMBeanServer());
-        assertFalse("Nothing should be registered under the name '" + name + "'",
-                    platformMBeanServer.isRegistered(name));
+        assertFalse(
+                "Nothing should be registered under the name '" + name + "'",
+                platformMBeanServer.isRegistered(name));
         test.register();
-        assertTrue("Something should be registered under the name '" + name + "'",
-                   platformMBeanServer.isRegistered(name));
+        assertTrue(
+                "Something should be registered under the name '" + name + "'",
+                platformMBeanServer.isRegistered(name));
         Object attribute = platformMBeanServer.getAttribute(name, "TestString");
         assertEquals("Should get the right attribute", "Hello World",
                      attribute.toString());
@@ -175,10 +181,10 @@ public class SingleMBeanObjectTester extends TestCase {
                 = new SingleMBeanObject("Test", new MyTestInterfaceObject(),
                                         MyTestInterface.class,
                                         ManagementFactory.getPlatformMBeanServer());
-        
+
         test.register();
         System.out.println("name of test:" + test.getName());
-        System.out.println("name:" + name); 
+        System.out.println("name:" + name);
         assertTrue("Something should be registered under the name " + name,
                    platformMBeanServer.isRegistered(name));
         test.unregister();

@@ -30,9 +30,7 @@ import dk.netarkivet.harvester.datamodel.FullHarvest;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.testutils.StringAsserts;
 
-/**
- * Unit-test for the SnapshotHarvestDefinition class.
- */
+/** Unit-test for the SnapshotHarvestDefinition class. */
 public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
     public SnapshotHarvestDefinitionTester(String s) {
         super(s);
@@ -48,6 +46,7 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
 
     /**
      * Tests the SnapshotHarvestDefinition.processRequest() method.
+     *
      * @throws Exception
      */
     public void testProcessRequest() throws Exception {
@@ -56,77 +55,81 @@ public class SnapshotHarvestDefinitionTester extends WebinterfaceTestCase {
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         String newHDname = "fnord";
         assertNull("Should not have fnord before creation",
-                dao.getHarvestDefinition(newHDname));
-        I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
+                   dao.getHarvestDefinition(newHDname));
+        I18n I18N = new I18n(
+                dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+                request);
         SnapshotHarvestDefinition.processRequest(pageContext, I18N);
 
         request.addParameter(Constants.UPDATE_PARAM, "yes");
         request.addParameter(Constants.DOMAIN_PARAM, newHDname);
 
         assertNull("Should not have fnord before creation",
-                dao.getHarvestDefinition(newHDname));
+                   dao.getHarvestDefinition(newHDname));
         request.addParameter(Constants.CREATENEW_PARAM, "yes");
         request.addParameter(Constants.DOMAIN_OBJECTLIMIT_PARAM, "-1");
         request.addParameter(Constants.DOMAIN_BYTELIMIT_PARAM, "117");
         request.addParameter(Constants.HARVEST_PARAM, newHDname);
-        assertCallChecksArgument(request, newHDname,
-                Constants.HARVEST_PARAM);
-        assertCallChecksArgument(request, newHDname,
-                Constants.DOMAIN_OBJECTLIMIT_PARAM);
-        assertCallChecksArgument(request, newHDname,
-                Constants.DOMAIN_BYTELIMIT_PARAM);
-
         request.addParameter(Constants.COMMENTS_PARAM, "You did not see this");
+        assertCallChecksArgument(request, newHDname,
+                                 Constants.HARVEST_PARAM);
         SnapshotHarvestDefinition.processRequest(pageContext, I18N);
 
-        FullHarvest newHD = (FullHarvest)dao.getHarvestDefinition(newHDname);
+        FullHarvest newHD = (FullHarvest) dao.getHarvestDefinition(newHDname);
         assertNotNull("Should have fnord after creation", newHD);
         assertEquals("Should have right name", newHDname, newHD.getName());
         assertEquals("Should have right bytelimit", 117, newHD.getMaxBytes());
         assertEquals("Should have right comments", "You did not see this",
-                newHD.getComments());
+                     newHD.getComments());
         assertNull("Old harvest id should be null",
-                newHD.getPreviousHarvestDefinition());
+                   newHD.getPreviousHarvestDefinition());
         assertFalse("Should be inactive", newHD.getActive());
 
         assertCallIsForbidden(request, newHDname, "already exists");
     }
 
     private void assertCallChecksArgument(MockupServletRequest request,
-                                              String newHDName,
-                                              String toFind) {
+                                          String newHDName,
+                                          String toFind) {
         String removedParameter = request.getParameter(toFind);
         try {
-            I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+            I18n I18N = new I18n(
+                    dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
             request.removeParameter(toFind);
-            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
+            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+                    request);
             SnapshotHarvestDefinition.processRequest(pageContext, I18N);
             fail("Should complain about missing " + toFind);
         } catch (ForwardedToErrorPage e) {
-            StringAsserts.assertStringContains("Should mention " + toFind + " in msg",
+            StringAsserts.assertStringContains(
+                    "Should mention " + toFind + " in msg",
                     toFind, e.getMessage());
         }
         request.addParameter(toFind, removedParameter);
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         assertNull("Should not have fnord before creation",
-                dao.getHarvestDefinition(newHDName));
+                   dao.getHarvestDefinition(newHDName));
     }
+
     private void assertCallIsForbidden(MockupServletRequest request,
                                        String newHDName,
                                        String toFind) {
         try {
-            I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
+            I18n I18N = new I18n(
+                    dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+            PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+                    request);
             SnapshotHarvestDefinition.processRequest(pageContext, I18N);
             fail("Should complain about missing " + toFind);
         } catch (ForwardedToErrorPage e) {
-            StringAsserts.assertStringContains("Should mention " + toFind + " in msg",
+            StringAsserts.assertStringContains(
+                    "Should mention " + toFind + " in msg",
                     toFind, e.getMessage());
         }
         HarvestDefinitionDAO dao = HarvestDefinitionDAO.getInstance();
         assertNotNull("Should have fnord after creation",
-                dao.getHarvestDefinition(newHDName));
+                      dao.getHarvestDefinition(newHDName));
     }
 
 }
