@@ -87,7 +87,7 @@ public final class DeployApplication {
             if(!ap.parseParameters(args)) {
                 System.err.print(Constants.MSG_ERROR_PARSE_ARGUMENTS);
                 System.out.println(ap.listArguments());
-                System.exit(0);
+                System.exit(1);
             }
 
             // Check arguments
@@ -101,7 +101,7 @@ public final class DeployApplication {
                 System.out.println(
                         "outputdir defaults to "
                         + "./environmentName (set in config file)");
-                System.exit(0);
+                System.exit(1);
             }
             // test if more arguments than options is given 
             if (args.length > ap.getOptions().getOptions().size()) {
@@ -111,7 +111,7 @@ public final class DeployApplication {
                 System.out.println("Maximum " 
                         + ap.getOptions().getOptions().size() 
                         + "arguments.");
-                System.exit(0);
+                System.exit(1);
             }
 
             // Retrieving the configuration filename
@@ -180,9 +180,11 @@ public final class DeployApplication {
             deployConfig.write();
         } catch (SecurityException e) {
             // This problem should only occur in tests -> thus not err message. 
-            System.out.println("SECURITY ERROR: " + e);
-        } catch (Exception e) {
-            System.err.println("DEPLOY APPLICATION ERROR: " + e);
+            System.out.println("SECURITY ERROR: ");
+            e.printStackTrace();
+        } catch (Throwable e) {
+            System.err.println("DEPLOY APPLICATION ERROR: ");
+            e.printStackTrace();
         }
     }
     
@@ -197,14 +199,14 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_CONFIG_FILE_ARG);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // check whether deploy-config file has correct extensions
         if(!deployConfigFileName.endsWith(Constants.EXTENSION_XML_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_CONFIG_EXTENSION);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // get the file
         deployConfigFile = new File(deployConfigFileName);
@@ -213,7 +215,7 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
     }
 
@@ -229,14 +231,14 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // check whether the NetarchiveSuite file has correct extensions
         if(!netarchiveSuiteFileName.endsWith(Constants.EXTENSION_ZIP_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // get the file
         netarchiveSuiteFile = new File(netarchiveSuiteFileName);
@@ -247,7 +249,7 @@ public final class DeployApplication {
             System.out.println();
             System.out.println("Couldn't find file: " 
                     + netarchiveSuiteFile.getAbsolutePath());
-            System.exit(0);
+            System.exit(1);
         }
     }
     
@@ -262,14 +264,14 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_SECURITY_FILE_ARG);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // check whether security policy file has correct extensions
         if(!secPolicyFileName.endsWith(Constants.EXTENSION_POLICY_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_SECURITY_EXTENSION);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // get the file
         secPolicyFile = new File(secPolicyFileName);
@@ -280,7 +282,7 @@ public final class DeployApplication {
             System.out.println();
             System.out.println("Couldn't find file: " 
                     + secPolicyFile.getAbsolutePath());
-            System.exit(0);
+            System.exit(1);
         }
     }
     
@@ -295,14 +297,14 @@ public final class DeployApplication {
             System.err.print(
                     Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // check whether the log property file has correct extensions
         if(!logPropFileName.endsWith(Constants.EXTENSION_LOG_PROPERTY_FILES)) {
             System.err.print(
                     Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // get the file
         logPropFile = new File(logPropFileName);
@@ -313,7 +315,7 @@ public final class DeployApplication {
             System.out.println();
             System.out.println("Couldn't find file: " 
                     + logPropFile.getAbsolutePath());
-            System.exit(0);
+            System.exit(1);
         }
     }
     
@@ -332,7 +334,7 @@ public final class DeployApplication {
                 System.err.print(
                         Constants.MSG_ERROR_DATABASE_EXTENSION);
                 System.out.println();
-                System.exit(0);
+                System.exit(1);
             }
             
             // get the file
@@ -344,7 +346,7 @@ public final class DeployApplication {
                 System.out.println();
                 System.out.println("Couldn't find file: " 
                         + dbFile.getAbsolutePath());
-                System.exit(0);
+                System.exit(1);
             }
         }
     }
@@ -428,7 +430,7 @@ public final class DeployApplication {
             System.out.println(changes.length + " arguments was given and "
                     + Constants.TEST_ARGUMENTS_REQUIRED + " was expected.");
             System.out.println("Received: " + testArguments);
-            System.exit(0);
+            System.exit(1);
         }
 
         try {
@@ -458,7 +460,7 @@ public final class DeployApplication {
             deployConfigFile = new File(nameOfNewConfig);
         } catch (IOException e) {
             System.out.println("Error in test arguments: " + e);
-            System.exit(0);
+            System.exit(1);
         }
     }
     

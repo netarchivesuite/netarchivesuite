@@ -103,7 +103,7 @@ public class CreateTestInstance {
                 || offsetInt < 0) {
             System.err.print(Constants.MSG_ERROR_TEST_OFFSET);
             System.out.println();
-            System.exit(0);
+            System.exit(1);
         }
         // change integer to string (easiest way to change integer to String)
         offsetVal = new String(new Integer(offsetInt).toString());

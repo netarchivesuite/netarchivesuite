@@ -92,6 +92,7 @@ public class DeployTester extends TestCase {
                     TestInfo.ARGUMENT_EVALUATE + "yes"
                     };
         DeployApplication.main(args);
+        
         // compare the resulting output files with the target files
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.TARGETDIR,
@@ -219,9 +220,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_PARSE_ARGUMENTS, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+	assertTrue("The error message should start with: " 
+	        + Constants.MSG_ERROR_PARSE_ARGUMENTS, 
+		pssMsg.startsWith(Constants.MSG_ERROR_PARSE_ARGUMENTS));
     }
 
     /**
@@ -246,9 +248,10 @@ public class DeployTester extends TestCase {
 	String pssMsg = pss.getErr();
 	int pseVal = pse.getExitValue();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_TOO_MANY_ARGUMENTS, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_TOO_MANY_ARGUMENTS, 
+                pssMsg.startsWith(Constants.MSG_ERROR_TOO_MANY_ARGUMENTS));
     }
 
     /**
@@ -264,9 +267,10 @@ public class DeployTester extends TestCase {
 	String pssMsg = pss.getErr();
 	int pseVal = pse.getExitValue();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NOT_ENOUGH_ARGUMENTS));
     }
 
     /**
@@ -287,9 +291,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_CONFIG_EXTENSION, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_CONFIG_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_CONFIG_EXTENSION));
     }
 
     /**
@@ -310,9 +315,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NETARCHIVESUITE_EXTENSION));
     }
 
     /**
@@ -333,9 +339,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_SECURITY_EXTENSION, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_SECURITY_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_SECURITY_EXTENSION));
     }
 
     /**
@@ -356,9 +363,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_LOG_PROPERTY_EXTENSION));
     }
     
     /**
@@ -379,9 +387,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_DATABASE_EXTENSION, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_DATABASE_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_DATABASE_EXTENSION));
     }
     
     /**
@@ -403,9 +412,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_CONFIG_FILE_ARG, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_CONFIG_FILE_ARG, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_ARG));
     }
 
     /**
@@ -427,9 +437,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_ARG));
     }
 
     /**
@@ -451,9 +462,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_SECURITY_FILE_ARG, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_SECURITY_FILE_ARG, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_ARG));
     }
 
     /**
@@ -475,9 +487,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_ARG));
     }
 
     /**
@@ -498,9 +511,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_CONFIG_FILE_FOUND));
     }
 
     /**
@@ -521,9 +535,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND));
     }
 
     /**
@@ -544,9 +559,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_SECURITY_FILE_FOUND));
     }
 
     /**
@@ -567,9 +583,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_LOG_PROPERTY_FILE_FOUND));
     }
 
     /**
@@ -590,9 +607,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND));
     }
 
     /**
@@ -614,9 +632,10 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_TEST_ARGUMENTS, pssMsg);
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_TEST_ARGUMENTS, 
+                pssMsg.startsWith(Constants.MSG_ERROR_TEST_ARGUMENTS));
     }
 
     /**
@@ -639,43 +658,9 @@ public class DeployTester extends TestCase {
 	int pseVal = pse.getExitValue();
 	String pssMsg = pss.getErr();
 
-	assertEquals("Exit value asserted 0.", 0, pseVal);
-	assertEquals("Correct error message expected.", 
-		Constants.MSG_ERROR_TEST_OFFSET, pssMsg);
-    }
-    
-    /**
-     * Tests if the complete settings file is correctly created.
-     * If this test fails, it is most likely because the file tests/dk/netarkivet/deploy/
-     * data/originals/complete_settings/complete_settings.xml is obsolete.
-     * You probably need to rebuild the file src/dk/netarkivet/deploy/complete_settings.xml
-     * using the program dk.netarkivet.deploy.BuildCompleteSettings and replace the version
-     * in ../originals/complete_settings/complete_settings.xml with the new version.
-     */
-    public void testCompleteSettings() {
-        try {
-            // the output directory is not automatically created,
-            // hence create it before running.
-            FileUtils.createDir(TestInfo.TMPDIR);
-
-            String[] args = { TestInfo.FILE_COMPLETE_SETTINGS.getAbsolutePath() };
-            BuildCompleteSettings.main(args);
-
-            String differences = TestFileUtils.compareDirsText(
-                    TestInfo.COMPLETE_SETTINGS_DIR, TestInfo.TMPDIR);
-            /**/
-            if (differences.length() > 0) {
-                pss.tearDown();
-                System.out.println("testDeployTest");
-                System.out.println(differences);
-                pss.setUp();
-            }
-            /**/
-
-            assertEquals("No differences expected", 0, differences.length());
-        } catch (Exception e) {
-            // give error if exception caught.
-            assertEquals(e.getMessage(), -1, 0);
-        }
+	assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_TEST_OFFSET, 
+                pssMsg.startsWith(Constants.MSG_ERROR_TEST_OFFSET));
     }
 }
