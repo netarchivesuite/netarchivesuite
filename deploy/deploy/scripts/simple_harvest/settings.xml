@@ -90,8 +90,8 @@
                 <name>Deutsch</name>
             </language>
             <language>
-            	<locale>it</locale>
-                	<name>Italiano</name>
+                <locale>it</locale>
+                <name>Italiano</name>
             </language>
             <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
