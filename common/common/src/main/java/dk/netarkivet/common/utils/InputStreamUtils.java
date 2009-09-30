@@ -9,7 +9,7 @@ import java.io.InputStream;
 * $ Date: Jun 15, 2009 2:53:35 PM $ 
 * $ @auther hbk $
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public

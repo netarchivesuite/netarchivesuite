@@ -5,7 +5,7 @@ Author:     $Author: svc $
 Date:       $Date: 2007-09-28 13:29:23 +0200 (fr, 28 sep 2007) $
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

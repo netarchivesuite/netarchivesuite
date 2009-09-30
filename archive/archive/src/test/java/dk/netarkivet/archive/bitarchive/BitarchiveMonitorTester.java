@@ -3,7 +3,7 @@ package dk.netarkivet.archive.bitarchive;/* $ ID: ${NAME}.java Aug 27, 2009 3:10
 * $ Date: Aug 27, 2009 3:10:52 PM $ 
 * $ @auther hbk $
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
