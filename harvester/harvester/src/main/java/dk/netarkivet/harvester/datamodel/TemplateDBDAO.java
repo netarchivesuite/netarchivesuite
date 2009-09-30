@@ -59,7 +59,7 @@ public class TemplateDBDAO extends TemplateDAO {
      * Only used by TemplateDAO,getInstance().
      */
     TemplateDBDAO() {
-        DBUtils.checkTableVersion("ordertemplates", 1);
+        DBUtils.checkTableVersion(DBConnect.getDBConnection(), "ordertemplates", 1);
     }
 
     /**
@@ -108,14 +108,10 @@ public class TemplateDBDAO extends TemplateDAO {
      * @return Iterator<String> with all names of templates (without .xml).
      */
     public synchronized Iterator<String> getAll() {
-        try {
-            List<String> names = DBUtils.selectStringlist(
-                    "SELECT name FROM ordertemplates ORDER BY name");
-            return names.iterator();
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error finding order.xml names" 
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        }
+        List<String> names = DBUtils.selectStringList(
+                DBConnect.getDBConnection(),
+                "SELECT name FROM ordertemplates ORDER BY name");
+        return names.iterator();
     }
 
     /** Return true if the database contains a template with the given name.
@@ -129,6 +125,7 @@ public class TemplateDBDAO extends TemplateDAO {
                 orderXmlName, "String orderXmlName");
 
         int count = DBUtils.selectIntValue(
+                DBConnect.getDBConnection(),
                 "SELECT COUNT(*) FROM ordertemplates WHERE name = ?",
                 orderXmlName);
         return count == 1;
@@ -180,7 +177,8 @@ public class TemplateDBDAO extends TemplateDAO {
         ArgumentNotValid.checkNotNullOrEmpty(
                 orderXmlName, "String orderXmlName");
         
-        return DBUtils.getUsages("SELECT DISTINCT domains.name "
+        return DBUtils.getUsages(DBConnect.getDBConnection(),
+                                 "SELECT DISTINCT domains.name "
                 + "  FROM domains, configurations, ordertemplates"
                 + " WHERE ordertemplates.name = ?"
                 + "   AND configurations.template_id "

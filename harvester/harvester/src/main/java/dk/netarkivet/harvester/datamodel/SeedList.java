@@ -35,6 +35,7 @@ import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.utils.Named;
 
 
 /**
@@ -68,7 +69,7 @@ public class SeedList implements Serializable, Named {
         BufferedReader urlreader = new BufferedReader(
                 new StringReader(seedsAsString));
         seeds = new LinkedList<String>();
-        String url = null;
+        String url;
         try {
             while ((url = urlreader.readLine()) != null) {
                 if (isAcceptableURL(url)) {

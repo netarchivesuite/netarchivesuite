@@ -382,8 +382,10 @@ public class DomainDBDAOTester extends DataModelTestCase {
                 64L,
                 StopReason.OBJECT_LIMIT);
         long domainId = DBUtils.selectLongValue(
+                DBConnect.getDBConnection(),
                 "SELECT domain_id FROM domains WHERE name=?", theDomainName);
         long configId = DBUtils.selectLongValue(
+                DBConnect.getDBConnection(),
                 "SELECT config_id FROM configurations WHERE name = ? AND domain_id=?",
                 configName, domainId);
         

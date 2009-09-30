@@ -49,9 +49,9 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A database-based implementation of the JobDAO class.
@@ -76,8 +76,9 @@ public class JobDBDAO extends JobDAO {
      * make the necessary updates.
      */
     protected JobDBDAO() {
-        
-        int jobVersion = DBUtils.getTableVersion("jobs");
+        Connection connection = DBConnect.getDBConnection();
+        int jobVersion = DBUtils.getTableVersion(connection,
+                                                 "jobs");
         
         // Try to upgrade the jobs table to version JOBS_VERSION_NEEDED
         if (jobVersion < JOBS_VERSION_NEEDED) {
@@ -86,8 +87,10 @@ public class JobDBDAO extends JobDAO {
             DBSpecifics.getInstance().updateTable("jobs", JOBS_VERSION_NEEDED);
         }
         
-        DBUtils.checkTableVersion("jobs", JOBS_VERSION_NEEDED);        
-        DBUtils.checkTableVersion("job_configs", JOB_CONFIGS_VERSION_NEEDED);
+        DBUtils.checkTableVersion(connection, "jobs", JOBS_VERSION_NEEDED);
+        DBUtils.checkTableVersion(connection,
+                                  "job_configs", JOB_CONFIGS_VERSION_NEEDED
+        );
     }
 
     /**
@@ -250,6 +253,7 @@ public class JobDBDAO extends JobDAO {
     public synchronized boolean exists(Long jobID) {
         ArgumentNotValid.checkNotNull(jobID, "Long jobID");
         return 1 == DBUtils.selectLongValue(
+                DBConnect.getDBConnection(),
                 "SELECT COUNT(*) FROM jobs WHERE job_id = ?", jobID);
     }
     
@@ -257,7 +261,9 @@ public class JobDBDAO extends JobDAO {
      * @see JobDAO#generateNextID()
      */
     synchronized Long generateNextID() {
-        Long maxVal = DBUtils.selectLongValue("SELECT MAX(job_id) FROM jobs");
+        Long maxVal = DBUtils.selectLongValue(DBConnect.getDBConnection(),
+                                              "SELECT MAX(job_id) FROM jobs"
+        );
         if (maxVal == null) {
             maxVal = 0L;
         }
@@ -497,21 +503,15 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Job> getAll(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
-        try {
-            List<Long> idList = DBUtils.selectLongList(
-                    "SELECT job_id FROM jobs WHERE status = ? "
-                    + "ORDER BY job_id", status.ordinal());
-            return new FilterIterator<Long, Job>(idList.iterator()) {
-                public Job filter(Long aLong) {
-                    return read(aLong);
-                }
-            };
-        } catch (SQLException e) {
-            String message = "SQL error asking for job list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        }
+        List<Long> idList = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT job_id FROM jobs WHERE status = ? "
+                + "ORDER BY job_id", status.ordinal());
+        return new FilterIterator<Long, Job>(idList.iterator()) {
+            public Job filter(Long aLong) {
+                return read(aLong);
+            }
+        };
     }
 
     /**
@@ -524,17 +524,11 @@ public class JobDBDAO extends JobDAO {
      */
     public synchronized Iterator<Long> getAllJobIds(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "JobStatus status");
-        try {
-            List<Long> idList = DBUtils.selectLongList(
-                    "SELECT job_id FROM jobs WHERE status = ? "
-                    + "ORDER BY job_id", status.ordinal());
-            return idList.iterator();
-        } catch (SQLException e) {
-            String message = "SQL error asking for job list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        }
+        List<Long> idList = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT job_id FROM jobs WHERE status = ? "
+                + "ORDER BY job_id", status.ordinal());
+        return idList.iterator();
     }
 
     /**
@@ -543,20 +537,14 @@ public class JobDBDAO extends JobDAO {
      * @return A list of all jobs
      */
     public synchronized Iterator<Job> getAll() {
-        try {
-            List<Long> idList = DBUtils.selectLongList(
-                    "SELECT job_id FROM jobs ORDER BY job_id");
-            return new FilterIterator<Long, Job>(idList.iterator()) {
-                public Job filter(Long aLong) {
-                    return read(aLong);
-                }
-            };
-        } catch (SQLException e) {
-            String message = "SQL error asking for job list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        }
+        List<Long> idList = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT job_id FROM jobs ORDER BY job_id");
+        return new FilterIterator<Long, Job>(idList.iterator()) {
+            public Job filter(Long aLong) {
+                return read(aLong);
+            }
+        };
     }
 
     /**
@@ -565,16 +553,10 @@ public class JobDBDAO extends JobDAO {
      * @return A list of all job_ids
      */
     public synchronized Iterator<Long> getAllJobIds(){
-        try {
-            List<Long> idList = DBUtils.selectLongList(
-                    "SELECT job_id FROM jobs ORDER BY job_id");
-            return idList.iterator();
-        } catch (SQLException e) {
-            String message = "SQL error asking for job list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
-        }
+        List<Long> idList = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT job_id FROM jobs ORDER BY job_id");
+        return idList.iterator();
     }
 
     /**
@@ -794,28 +776,24 @@ public class JobDBDAO extends JobDAO {
         }
 
         List<Long> jobs;
-        try {
-            //Select the previous harvest from the same harvestdefinition
-            jobs = DBUtils.selectLongList(
-                    "SELECT jobs.job_id FROM jobs, jobs AS original_jobs"
-                    + " WHERE original_jobs.job_id=?"
-                    + " AND jobs.harvest_id=original_jobs.harvest_id"
-                    + " AND jobs.harvest_num=original_jobs.harvest_num-1",
-                    jobID);
-            List<Long> harvestDefinitions = getPreviousFullHarvests(jobID);
-            if (!harvestDefinitions.isEmpty()) {
-                //Select all jobs from a given list of harvest definitions
-                jobs.addAll(DBUtils.selectLongList(
-                        "SELECT jobs.job_id FROM jobs"
-                        + " WHERE jobs.harvest_id IN ("
-                        + StringUtils.conjoin(",", harvestDefinitions)
-                        + ")"));
-            }
-        } catch (SQLException e) {
-            String message = "SQL error asking for job list in database"
-                + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
+        //Select the previous harvest from the same harvestdefinition
+        Connection connection = DBConnect.getDBConnection();
+        jobs = DBUtils.selectLongList(
+                connection,
+                "SELECT jobs.job_id FROM jobs, jobs AS original_jobs"
+                + " WHERE original_jobs.job_id=?"
+                + " AND jobs.harvest_id=original_jobs.harvest_id"
+                + " AND jobs.harvest_num=original_jobs.harvest_num-1",
+                jobID);
+        List<Long> harvestDefinitions = getPreviousFullHarvests(jobID);
+        if (!harvestDefinitions.isEmpty()) {
+            //Select all jobs from a given list of harvest definitions
+            jobs.addAll(DBUtils.selectLongList(
+                    connection,
+                    "SELECT jobs.job_id FROM jobs"
+                    + " WHERE jobs.harvest_id IN ("
+                    + StringUtils.conjoin(",", harvestDefinitions)
+                    + ")"));
         }
         return jobs;
     }
@@ -830,10 +808,13 @@ public class JobDBDAO extends JobDAO {
     private List<Long> getPreviousFullHarvests(long jobID) {
         List<Long> results = new ArrayList<Long>();
         //Find the jobs' fullharvest id
+        Connection connection = DBConnect.getDBConnection();
         Long thisHarvest = DBUtils.selectFirstLongValueIfAny(
+                connection,
                 "SELECT jobs.harvest_id FROM jobs, fullharvests"
                 + " WHERE jobs.harvest_id=fullharvests.harvest_id"
-                + " AND jobs.job_id=?", jobID);
+                + " AND jobs.job_id=?",
+                jobID);
 
         if (thisHarvest == null) {
             //Not a full harvest
@@ -844,6 +825,7 @@ public class JobDBDAO extends JobDAO {
         for (Long originatingHarvest = thisHarvest;
              originatingHarvest != null;
              originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                     connection,
                      "SELECT previoushd FROM fullharvests"
                      + " WHERE fullharvests.harvest_id=?",
                      originatingHarvest)) {
@@ -860,7 +842,7 @@ public class JobDBDAO extends JobDAO {
 
         //Find the last harvest in the chain before
         Long olderHarvest = DBUtils.selectFirstLongValueIfAny(
-                "SELECT fullharvests.harvest_id"
+                connection, "SELECT fullharvests.harvest_id"
                 + " FROM fullharvests, harvestdefinitions,"
                 + "  harvestdefinitions AS currenthd"
                 + " WHERE currenthd.harvest_id=?"
@@ -872,6 +854,7 @@ public class JobDBDAO extends JobDAO {
         for (Long originatingHarvest = olderHarvest;
              originatingHarvest != null;
              originatingHarvest = DBUtils.selectFirstLongValueIfAny(
+                     connection,
                      "SELECT previoushd FROM fullharvests"
                      + " WHERE fullharvests.harvest_id=?",
                      originatingHarvest)) {
@@ -886,7 +869,8 @@ public class JobDBDAO extends JobDAO {
      * @return Number of jobs in 'jobs' table
      */
     public synchronized int getCountJobs() {
-        return DBUtils.selectIntValue("SELECT COUNT(*) FROM jobs");
+        return DBUtils.selectIntValue(DBConnect.getDBConnection(),
+                                      "SELECT COUNT(*) FROM jobs");
     }
     
     /**

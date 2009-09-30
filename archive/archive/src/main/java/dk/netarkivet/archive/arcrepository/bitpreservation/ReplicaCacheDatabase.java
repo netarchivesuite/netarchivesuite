@@ -38,21 +38,17 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.BitPreservationDAO;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.Settings;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -75,9 +71,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private ReplicaCacheDatabase() {
         // Initialise the database
-        dbConnection = DBConnect
-                .getDBConnection(Settings.get(
-                        ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE));
+        dbConnection = DBConnect.getDBConnection();
 
         // initialise the database.
         initialiseDB();
@@ -290,7 +284,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT replica_id FROM replica";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringlist(dbConnection, sql);
+        return DBUtils.selectStringList(dbConnection, sql);
     }
     
     /**
@@ -304,7 +298,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT file_id FROM file";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringlist(dbConnection, sql);
+        return DBUtils.selectStringList(dbConnection, sql);
     }
     
     /**
@@ -319,7 +313,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringlist(dbConnection, sql);
+        return DBUtils.selectStringList(dbConnection, sql);
     }
 
     /**
@@ -446,7 +440,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         // replicafileinfo table for the given fileId and checksum_status = OK
         String sql = "SELECT replica_id FROM replicafileinfo WHERE "
                 + "file_id = ? AND checksum_status = ?";
-        return DBUtils.selectStringlist(dbConnection, sql, fileId,
+        return DBUtils.selectStringList(dbConnection, sql, fileId,
                 ChecksumStatus.OK.ordinal());
     }
     
@@ -1334,7 +1328,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
                 + "file ON replicafileinfo.file_id = file.file_id WHERE replica_id"
                 + " = ? AND filelist_status = ?";
-        return DBUtils.selectStringlist(dbConnection, sql, replica.getId(),
+        return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
                 FileListStatus.MISSING.ordinal());
     }
 
@@ -1375,7 +1369,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
                 + "file ON replicafileinfo.file_id = file.file_id WHERE replica_id"
                 + " = ? AND checksum_status = ?";
-        return DBUtils.selectStringlist(dbConnection, sql, replica.getId(),
+        return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
                 ChecksumStatus.CORRUPT.ordinal());
     }
 

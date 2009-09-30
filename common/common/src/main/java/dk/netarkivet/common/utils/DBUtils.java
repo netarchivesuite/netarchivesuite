@@ -44,8 +44,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.harvester.datamodel.DBConnect;
-import dk.netarkivet.harvester.datamodel.Named;
 
 /**
  * Various database related utilities.
@@ -87,21 +85,22 @@ public class DBUtils {
     /** Execute an SQL statement and return the single int in the result set.
      * This variant takes a query string and a single string arg and combines
      * them to form a normal query. 
-     * This method is only usable for the harvester database.
      *
+     * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null or
      * empty string)
      * @param args parameters of type string, int, long or boolean
      * @return The integer result
      * @throws IOFailure if the statement didn't result in exactly one integer
      */
-    public static Integer selectIntValue(String query, Object... args) {
+    public static Integer selectIntValue(Connection connection, String query,
+                                         Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = DBUtils.prepareStatement(c, query, args);
+            s = DBUtils.prepareStatement(connection, query, args);
             // We do not test for 0-values here, already tested in
             // selectIntValue(s)
             return selectIntValue(s);
@@ -114,39 +113,6 @@ public class DBUtils {
         }
     }
     
-    /** 
-     * Execute an SQL statement and return the single int in the result set.
-     * This variant takes a query string and a single string arg and combines
-     * them to form a normal query. 
-     * This method can use any database.
-     *
-     * @param c The connection to the specific database.
-     * @param query a query with ? for parameters (must not be null or
-     * empty string)
-     * @param args parameters of type string, int, long or boolean
-     * @return The integer result
-     * @throws IOFailure if the statement didn't result in exactly one integer
-     */
-    public static Integer selectIntValue(Connection c, String query, 
-	    Object... args) {
-	ArgumentNotValid.checkNotNull(c, "Connection c");
-        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
-        ArgumentNotValid.checkNotNull(args, "Object... args");
-        PreparedStatement s = null;
-        try {
-            s = DBUtils.prepareStatement(c, query, args);
-            // We do not test for 0-values here, already tested in
-            // selectIntValue(s)
-            return selectIntValue(s);
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error preparing statement "
-                    + query + " args " + Arrays.toString(args) + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-
     /** Execute an SQL statement and return the single long in the result set.
      *
      * @param s A prepared statement
@@ -180,6 +146,7 @@ public class DBUtils {
      * This variant takes a query string and a single string arg and combines
      * them to form a normal query.
      *
+     * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null or
      * empty string)
      * @param args parameters of type string, int, long or boolean
@@ -187,14 +154,14 @@ public class DBUtils {
      * @throws IOFailure if the statement didn't result in exactly one long
      * value
      */
-    public static Long selectLongValue(String query,
+    public static Long selectLongValue(Connection connection, String query,
                                        Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = DBUtils.prepareStatement(c, query, args);
+            s = DBUtils.prepareStatement(connection, query, args);
             // We do not test for 0-values here, already tested in
             // selectLongValue(s)
             return selectLongValue(s);
@@ -206,39 +173,11 @@ public class DBUtils {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    
-    /** Execute an SQL statement and return the single long in the result set.
-     * This variant takes a query string and a single string arg and combines
-     * them to form a normal query.
-     *
-     * @param query a query with ? for parameters (must not be null or
-     * empty string)
-     * @param args parameters of type string, int, long or boolean
-     * @return The long result
-     * @throws IOFailure if the statement didn't result in exactly one long
-     * value
-     */
-    public static Long selectLongValue(Connection c, String query,
-                                       Object... args) {
-        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
-        ArgumentNotValid.checkNotNull(args, "Object... args");
-        PreparedStatement s = null;
-        try {
-            s = DBUtils.prepareStatement(c, query, args);
-            // We do not test for 0-values here, already tested in
-            // selectLongValue(s)
-            return selectLongValue(s);
-        } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args) 
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
+
     /** Execute an SQL statement and return the first long in the result set,
      * or null if resultset is empty.
      *
+     * @param connection connection to database.
      * @param query a query with ? for parameters (must not be null
      * or empty string)
      * @param args parameters of type string, int, long or boolean
@@ -246,13 +185,15 @@ public class DBUtils {
      * cases: There is no results, or the first result is a null-value.
      * @throws IOFailure on SQL errors.
      */
-    public static Long selectFirstLongValueIfAny(String query, Object... args) {
+    public static Long selectFirstLongValueIfAny(Connection connection,
+                                                 String query,
+                                                 Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = DBUtils.prepareStatement(c, query, args);
+            s = DBUtils.prepareStatement(connection, query, args);
             ResultSet rs = s.executeQuery();
             if (rs.next()) {
                 return DBUtils.getLongMaybeNull(rs, 1);
@@ -312,54 +253,21 @@ public class DBUtils {
     /** Execute an SQL statement and return the list of strings
      * in its result set. This uses specifically the harvester database.
      * 
-     *  @param query the given sql-query (must not be null or empty)
-     *  @param args The arguments to insert into this query (must not be null)
-     *  @throws SQLException If this query fails
-     *  @return the list of strings in its result set
+     * @param connection connection to the database.
+     * @param query the given sql-query (must not be null or empty)
+     * @param args The arguments to insert into this query (must not be null)
+     * @throws IOFailure If this query fails
+     * @return the list of strings in its result set
      */
-    public static List<String> selectStringlist(String query,
-            Object... args) throws SQLException {
-        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
-        ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(c, query, args);
-            ResultSet result = s.executeQuery();
-            List<String> results = new ArrayList<String>();
-            while (result.next()) {
-                if (result.getString(1) == null){
-                    String warning =
-                        "NULL pointer found in resultSet from query: " + query;
-                    log.warn(warning);
-                    throw new IOFailure(warning);
-                }
-                results.add(result.getString(1));
-            }
-            return results;
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-    
-    /**
-     * Execute an SQL statement and return the list of strings
-     * in its result set. This is usable for any database.
-     * 
-     * @param c The connection to the database where the SQL statement should be
-     * executed. 
-     * @param query The SQL query to execute.
-     * @param args The argument to the query.
-     * @return The resulting list of strings from the database.
-     */
-    public static List<String> selectStringlist(Connection c, String query,
-            Object... args) {
-	ArgumentNotValid.checkNotNull(c, "Connection c");
+    public static List<String> selectStringList(Connection connection,
+                                                String query,
+                                                Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, query, args);
+            s = prepareStatement(connection, query, args);
             ResultSet result = s.executeQuery();
             List<String> results = new ArrayList<String>();
             while (result.next()) {
@@ -373,31 +281,32 @@ public class DBUtils {
             }
             return results;
         } catch (SQLException e) {
-            String msg = "SQL error during executing of '" + query + "'\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
+            throw new IOFailure("Error preparing SQL statement "
+                    + query + " args " + Arrays.toString(args)
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-
+    
     /** Execute an SQL statement and return the list of strings -> id mappings
      * in its result set.
+     * @param connection connection to the database.
      * @param query the given sql-query (must not be null or empty string)
      * @param args The arguments to insert into this query
      * @throws SQLException If this query fails
      * @return the list of strings -> id mappings
      */
-    public static Map<String, Long> selectStringLongMap(String query,
-                                                       Object... args)
+    public static Map<String, Long> selectStringLongMap(Connection connection,
+                                                        String query,
+                                                        Object... args)
             throws SQLException {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, query, args);
+            s = prepareStatement(connection, query, args);
             ResultSet result = s.executeQuery();
             Map<String, Long> results = new HashMap<String, Long>();
             while (result.next()) {
@@ -419,53 +328,22 @@ public class DBUtils {
         }
     }
 
-    /** Execute an SQL statement and return the list of Long-objects
+    /**
+     * Execute an SQL statement and return the list of Long-objects
      * in its result set.
-     *  @param query the given sql-query (must not be null or empty string)
-     *  @param args The arguments to insert into this query
-     *  @return the list of Long-objects in its resultset
-     *  @throws SQLException If this query fails
+     * @param connection connection to the database.
+     * @param query the given sql-query (must not be null or empty string)
+     * @param args The arguments to insert into this query
+     * @return the list of Long-objects in its resultset
      */
-    public static List<Long> selectLongList(
-            String query,
-            Object... args) throws SQLException {
-        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
-        ArgumentNotValid.checkNotNull(args, "Object... args");
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(c, query, args);
-            ResultSet result = s.executeQuery();
-            List<Long> results = new ArrayList<Long>();
-            while (result.next()) {
-                if (result.getLong(1) == 0L && result.wasNull()){
-                    String warning = "NULL value encountered in query: "
-                                     + query;
-                    log.warn(warning);
-                    //throw new IOFailure(warning);
-                }
-                results.add(result.getLong(1));
-            }
-            return results;
-        } finally {
-            DBUtils.closeStatementIfOpen(s);
-        }
-    }
-    
-    /** Execute an SQL statement and return the list of Long-objects
-     * in its result set.
-     *  @param query the given sql-query (must not be null or empty string)
-     *  @param args The arguments to insert into this query
-     *  @return the list of Long-objects in its resultset
-     *  @throws SQLException If this query fails
-     */
-    public static List<Long> selectLongList(Connection c, String query, 
+    public static List<Long> selectLongList(Connection connection, String query,
 	    Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, query, args);
+            s = prepareStatement(connection, query, args);
             ResultSet result = s.executeQuery();
             List<Long> results = new ArrayList<Long>();
             while (result.next()) {
@@ -480,7 +358,7 @@ public class DBUtils {
             return results;
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement "
-                    + query + " args " + Arrays.toString(args) 
+                    + query + " args " + Arrays.toString(args)
                     + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         } finally {
             DBUtils.closeStatementIfOpen(s);
@@ -509,17 +387,19 @@ public class DBUtils {
      * for the initial, unnumbered version.
      *
      *
+     * @param connection connection to the database.
      * @param tablename The name of a table in the database.
      * @return Version of the given table.
      * @throws IOFailure if DB table schemaversions does not exist
      */
-    public static int getTableVersion(String tablename) throws IOFailure {
+    public static int getTableVersion(Connection connection, String tablename)
+            throws IOFailure {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablenname");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         int version = 0;
         try {
-            s = c.prepareStatement("SELECT version FROM schemaversions"
+            s = connection.prepareStatement("SELECT version FROM schemaversions"
                     + " WHERE tablename = ?");
             s.setString(1, tablename);
             ResultSet res = s.executeQuery();
@@ -838,6 +718,7 @@ public class DBUtils {
 
     /** Check whether an object is used elsewhere in the database.
      *
+     * @param connection connection to the database.
      * @param select A select statement finding the names of other uses.  The
      * statement should result in exactly one column of string values.
      * @param victim The object being used.
@@ -845,17 +726,18 @@ public class DBUtils {
      * @throws PermissionDenied if the object has usages.
      */
     public static void checkForUses(
-            String select, Object victim, Object... args) {
-        String usages = DBUtils.getUsages(select, victim, args);
+            Connection connection, String select, Object victim,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
+        String usages = DBUtils.getUsages(connection, select, victim, args);
         if (usages != null) {
             String message = "Cannot delete " + victim
                 + " as it is used in " + usages;
             throw new PermissionDenied(message);
         }
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, select, args);
+            s = prepareStatement(connection, select, args);
             ResultSet res = s.executeQuery();
             if (res.next()) {
                 List<String> usedIn = new ArrayList<String>();
@@ -877,6 +759,7 @@ public class DBUtils {
     /** Return a description of where an object is used elsewhere in the
      * database, or null.
      *
+     * @param connection connection to the database.
      * @param select A select statement finding the names of other uses.  The
      * statement should result in exactly one column of string values.
      * @param victim The object being used.
@@ -884,11 +767,12 @@ public class DBUtils {
      * @return A string describing the usages, or null if no usages were found.
      */
     public static String getUsages(
-            String select, Object victim, Object ... args) {
-        Connection c = DBConnect.getDBConnection();
+            Connection connection, String select, Object victim,
+            Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, select, args);
+            s = prepareStatement(connection, select, args);
             ResultSet res = s.executeQuery();
             if (res.next()) {
                 List<String> usedIn = new ArrayList<String>();
@@ -911,14 +795,17 @@ public class DBUtils {
 
     /** Check that a database table is of the expected version.
      *
+     * @param connection connection to the database.
      * @param tablename The table to check.
      * @param desiredVersion The version it should be.
      * @throws IllegalState if the version isn't as expected.
      */
-    public static void checkTableVersion(String tablename, int desiredVersion) {
+    public static void checkTableVersion(Connection connection,
+                                         String tablename, int desiredVersion) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(tablename, "String tablename");
         ArgumentNotValid.checkPositive(desiredVersion, "int desiredVersion");
-        int actualVersion = getTableVersion(tablename);
+        int actualVersion = getTableVersion(connection, tablename);
         if (actualVersion != desiredVersion) {
             String message = "Wrong table version for '" + tablename
                     + "': Should be " + desiredVersion
@@ -934,6 +821,7 @@ public class DBUtils {
      * 
      * This assumes the connection is to the harvester database.
      *
+     * @param connection connection to the database.
      * @param query a query with ? for parameters (must not be null or
      * an empty string)
      * @param args parameters of type string, int, long or boolean
@@ -941,60 +829,26 @@ public class DBUtils {
      * @throws IOFailure if the statement didn't result in exactly one string
      * value
      */
-    public static String selectStringValue(String query, Object... args) {
+    public static String selectStringValue(Connection connection, String query,
+                                           Object... args) {
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        
-        Connection c = DBConnect.getDBConnection();
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(c, query, args);
-            // We do not test for null-values here, already tested in
-            // selectStringValue(s)
-            return DBUtils.selectStringValue(s);
-        } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + Arrays.toString(args) + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            closeStatementIfOpen(s);
-        }
-    }
-    
-    /** Execute an SQL statement and return the single string in the result set.
-     * This variant takes a query string and a single string arg and combines
-     * them to form a normal query. 
-     * 
-     * This works with any connection.
-     *
-     * @param c The connection to the database.
-     * @param query a query with ? for parameters (must not be null or
-     * an empty string)
-     * @param args parameters of type string, int, long or boolean
-     * @return The string result
-     * @throws IOFailure if the statement didn't result in exactly one string
-     * value
-     */
-    public static String selectStringValue(Connection c, String query, 
-	    Object... args) {
-        ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
-        ArgumentNotValid.checkNotNull(args, "Object... args");
-        
-        PreparedStatement s = null;
-        try {
-            s = prepareStatement(c, query, args);
-            // We do not test for null-values here, already tested in
-            // selectStringValue(s)
-            return DBUtils.selectStringValue(s);
-        } catch (SQLException e) {
-            throw new IOFailure("Error preparing SQL statement " + query
-                    + " args " + Arrays.toString(args) + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        } finally {
-            closeStatementIfOpen(s);
-        }
-    }
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
 
+        PreparedStatement s = null;
+        try {
+            s = prepareStatement(connection, query, args);
+            // We do not test for null-values here, already tested in
+            // selectStringValue(s)
+            return DBUtils.selectStringValue(s);
+        } catch (SQLException e) {
+            throw new IOFailure("Error preparing SQL statement " + query
+                    + " args " + Arrays.toString(args) + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e), e);
+        } finally {
+            closeStatementIfOpen(s);
+        }
+    }
 
     /** Execute an SQL statement and return the single string in the result set.
      *
@@ -1027,20 +881,22 @@ public class DBUtils {
 
     /** Execute an SQL query and return whether the result contains any rows.
      *
-     * @param query a query with ? for parameters (must not be null or 
+     * @param connection connection to the database.
+     * @param query a query with ? for parameters (must not be null or
      * an empty String)
      * @param args parameters of type string, int, long or boolean
      * @return True if executing the query resulted in at least one row.
      * @throws IOFailure if there were problems with the SQL query
      */
-    public static boolean selectAny(String query, Object... args) {
+    public static boolean selectAny(Connection connection, String query,
+                                    Object... args) {
+        ArgumentNotValid.checkNotNull(connection, "Connection connection");
         ArgumentNotValid.checkNotNullOrEmpty(query, "String query");
         ArgumentNotValid.checkNotNull(args, "Object... args");
-        
-        Connection c = DBConnect.getDBConnection();
+
         PreparedStatement s = null;
         try {
-            s = prepareStatement(c, query, args);
+            s = prepareStatement(connection, query, args);
             return s.executeQuery().next();
         } catch (SQLException e) {
             throw new IOFailure("Error preparing SQL statement " + query
@@ -1067,26 +923,27 @@ public class DBUtils {
      *  It must only be used in connection with temporary tables e.g. used
      *  for backup.
      *
+     * @param connection connection to the database.
      * @param updates The SQL statements that makes the necessary
      * updates.
      * @throws IOFailure in case of problems in interacting with the database
      */
-    public static void executeSQL(final String... updates) {
+    public static void executeSQL(Connection connection,
+                                  final String... updates) {
         ArgumentNotValid.checkNotNull(updates, "String... updates");
-        Connection c = DBConnect.getDBConnection();
         PreparedStatement st = null;
         String s = "";
         
         try {
-            c.setAutoCommit(false);
+            connection.setAutoCommit(false);
             for (String update : updates) {
                 s = update;
                 log.debug("Executing SQL-statement: " + update);
-                st = prepareStatement(c, update);
+                st = prepareStatement(connection, update);
                 st.executeUpdate();
                 st.close();
             }
-            c.setAutoCommit(true);
+            connection.setAutoCommit(true);
             log.debug("Updated database using updates '" 
                     + StringUtils.conjoin(";", updates) + "'.");
         } catch (SQLException e) {
@@ -1095,7 +952,7 @@ public class DBUtils {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } finally {
-            rollbackIfNeeded(c, "updating table with SQL: ",
+            rollbackIfNeeded(connection, "updating table with SQL: ",
                     StringUtils.conjoin(";", updates) + "'.");
             closeStatementIfOpen(st);
         }

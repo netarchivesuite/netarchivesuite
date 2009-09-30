@@ -24,7 +24,7 @@
 package dk.netarkivet.harvester.datamodel;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-
+import dk.netarkivet.common.utils.Named;
 
 
 /**

@@ -43,6 +43,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DomainUtils;
+import dk.netarkivet.common.utils.Named;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
@@ -234,7 +235,7 @@ public class Domain implements Named {
      * Set a configuration in the domain. This checks that the seedlists and
      * passwords are legal.
      *
-     * @param cfg
+     * @param cfg The configuration to add.
      */
     private void putConfiguration(DomainConfiguration cfg) {
         checkListContainsNamed(cfg, cfg.getSeedLists(), "seedlist", seedlists);

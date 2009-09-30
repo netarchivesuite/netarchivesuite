@@ -33,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -119,9 +119,11 @@ public abstract class DerbySpecifics extends DBSpecifics {
 
         // Check that temporary table from earlier tries does not exist
 
+        Connection connection = DBConnect.getDBConnection();
         try {
             countOfBackuptable = DBUtils
-            .selectIntValue("select count(*) from " + tmptable);
+            .selectIntValue(connection,
+                            "select count(*) from " + tmptable);
         } catch (IOFailure e) {
             // expected, otherwise the backupJobs3to4 table exists
             countOfBackuptable = -1;
@@ -129,6 +131,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         if (countOfBackuptable >= 0) {
             try {
                 countOfJobsTable = DBUtils.selectIntValue(
+                        connection,
                         "select count(*) from " + table);
             } catch (IOFailure e) {
                 // close to worst case, but data can still be found in back-up
@@ -163,7 +166,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
             } else {
                 // backup table exists already. Delete it. 
                 sql = "DROP TABLE " + tmptable;
-                DBUtils.executeSQL(sql);
+                DBUtils.executeSQL(connection, sql);
             }
         }
         
@@ -191,7 +194,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
         + " ("
         +    partialJobsDefinition
         + ")";
-        DBUtils.executeSQL(sql);
+        DBUtils.executeSQL(connection, sql);
 
         // copy contents of jobs table into backup table
         
@@ -205,13 +208,13 @@ public abstract class DerbySpecifics extends DBSpecifics {
             + " ( " + listOfFieldsInJobsTable + ") "
             + "SELECT " + listOfFieldsInJobsTable
             + "FROM " + table;
-        DBUtils.executeSQL(sql);
+        DBUtils.executeSQL(connection, sql);
 
         // check everything looks okay
         countOfJobsTable = DBUtils.selectIntValue(
-                "select count(*) from " + table);
+                connection, "select count(*) from " + table);
         countOfBackuptable = DBUtils.selectIntValue(
-                "select count(*) from " + tmptable);
+                connection, "select count(*) from " + tmptable);
         if (countOfBackuptable != countOfJobsTable) {
             throw new IOFailure("Unexpected inconsistency: the number of "
                     + "backed up entries from " + table
@@ -240,9 +243,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
 
         //check everything looks okay
         countOfJobsTable = DBUtils.selectIntValue(
-                "select count(*) from " + table);
+                connection, "select count(*) from " + table);
         countOfBackuptable = DBUtils.selectIntValue(
-                "select count(*) from " + tmptable);
+                connection, "select count(*) from " + tmptable);
         if (countOfBackuptable != countOfJobsTable) {
             throw new IOFailure("Unexpected inconsistency: the number of "
                     + "backed up entries from " + table
@@ -252,7 +255,7 @@ public abstract class DerbySpecifics extends DBSpecifics {
 
         //drop backup table
         sql = "DROP TABLE backupJobs3to4";
-        DBUtils.executeSQL(sql);  
+        DBUtils.executeSQL(connection, sql);
     }
     
     /** Migrates the 'jobs' table from version 4 to version 5

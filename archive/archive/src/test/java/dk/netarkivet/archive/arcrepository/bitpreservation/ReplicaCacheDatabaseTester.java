@@ -11,14 +11,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import junit.framework.TestCase;
 import org.apache.commons.collections.IteratorUtils;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import junit.framework.TestCase;
 
 public class ReplicaCacheDatabaseTester extends TestCase {
 
@@ -30,9 +28,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 	try {
 	    ReplicaCacheDatabase.getInstance().cleanup();
 	    // retrieve the connection to the database
-	    dbCon = DBConnect.getDBConnection(Settings.get(
-		    ArchiveSettings
-		    .URL_ARCREPOSITORY_BITPRESERVATION_DATABASE));
+	    dbCon = DBConnect.getDBConnection();
 
 	    // Only clear the database once during setUp.
 	    if(clear) {

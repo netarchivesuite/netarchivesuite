@@ -35,8 +35,8 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.Settings;
 
 
 /**
@@ -118,12 +118,10 @@ public class DBConnect {
         String[] sqlStatements = new String[updates.length + 1];
         final String updateSchemaversionSql = 
             "UPDATE schemaversions SET version = "
-            + newVersion + " WHERE tablename = '" + table + "'"; 
-        for (int i = 0; i < updates.length; i++) {
-            sqlStatements[i] = updates[i];
-        }
+            + newVersion + " WHERE tablename = '" + table + "'";
+        System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
         sqlStatements[updates.length] = updateSchemaversionSql;
 
-        DBUtils.executeSQL(sqlStatements);
+        DBUtils.executeSQL(getDBConnection(), sqlStatements);
     }
 }

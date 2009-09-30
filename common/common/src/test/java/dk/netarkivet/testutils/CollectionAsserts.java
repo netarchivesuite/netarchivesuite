@@ -30,7 +30,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.harvester.datamodel.Named;
+import dk.netarkivet.common.utils.Named;
 
 
 /** 

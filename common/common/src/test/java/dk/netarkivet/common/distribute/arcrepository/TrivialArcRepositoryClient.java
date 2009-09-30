@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -37,7 +36,6 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -245,22 +243,19 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         return copiedTo;
     }
 
-    @Override
     public File getAllChecksums(String replicaId) {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: Implement me!");
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: Implement me!");
     }
 
-    @Override
     public File getAllFilenames(String replicaId) {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: Implement me!");
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: Implement me!");
     }
 
-    @Override
-    public void correct(String replicaId, String checksum, File file, 
-	    String credentials) {
-	// TODO Auto-generated method stub
-	throw new NotImplementedException("TODO: Implement me!");
+    public void correct(String replicaId, String checksum, File file,
+                        String credentials) {
+        // TODO Auto-generated method stub
+        throw new NotImplementedException("TODO: Implement me!");
     }
 }

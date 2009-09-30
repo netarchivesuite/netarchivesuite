@@ -47,8 +47,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.FilterIterator;
 
 /**
  * A database-oriented implementation of the HarvestDefinitionDAO.
@@ -67,8 +67,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     /** Create a new HarvestDefinitionDAO using database.
      */
     HarvestDefinitionDBDAO() {
-        
-        int fullharvestsVersion = DBUtils.getTableVersion("fullharvests");
+
+        Connection connection = DBConnect.getDBConnection();
+        int fullharvestsVersion = DBUtils.getTableVersion(connection,
+                                                          "fullharvests"
+        );
         
         if (fullharvestsVersion < FULLHARVESTS_VERSION_NEEDED) {
             log.info("Migrate table" + " 'fullharvests' to version "
@@ -77,10 +80,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                     FULLHARVESTS_VERSION_NEEDED);
         }
         
-        DBUtils.checkTableVersion("harvestdefinitions", 2);
-        DBUtils.checkTableVersion("fullharvests", 3);
-        DBUtils.checkTableVersion("partialharvests", 1);
-        DBUtils.checkTableVersion("harvest_configs", 1);
+        DBUtils.checkTableVersion(connection,
+                                  "harvestdefinitions", 2);
+        DBUtils.checkTableVersion(connection, "fullharvests", 3);
+        DBUtils.checkTableVersion(connection, "partialharvests", 1);
+        DBUtils.checkTableVersion(connection, "harvest_configs", 1);
     }
 
     /**
@@ -99,11 +103,11 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             id = generateNextID();
         }
 
-        Connection c = DBConnect.getDBConnection();
+        Connection connection = DBConnect.getDBConnection();
         PreparedStatement s = null;
         try {
-            c.setAutoCommit(false);
-            s = c.prepareStatement("INSERT INTO harvestdefinitions "
+            connection.setAutoCommit(false);
+            s = connection.prepareStatement("INSERT INTO harvestdefinitions "
                     + "( harvest_id, name, comments, numevents, submitted,"
                     + "  isactive, edition ) "
                     + "VALUES ( ?, ?, ?, ?, ?, ?, ? )");
@@ -122,7 +126,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             s.close();
             if (harvestDefinition instanceof FullHarvest) {
                 FullHarvest fh = (FullHarvest) harvestDefinition;
-                s = c.prepareStatement("INSERT INTO fullharvests "
+                s = connection.prepareStatement("INSERT INTO fullharvests "
                         + "( harvest_id, maxobjects, maxbytes, previoushd )"
                         + "VALUES ( ?, ?, ?, ? )");
                 s.setLong(1, id);
@@ -138,16 +142,17 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 PartialHarvest ph = (PartialHarvest) harvestDefinition;
                 // Get schedule id
                 long scheduleId = DBUtils.selectLongValue(
+                        connection,
                         "SELECT schedule_id FROM schedules WHERE name = ?",
                         ph.getSchedule().getName());
-                s = c.prepareStatement("INSERT INTO partialharvests "
+                s = connection.prepareStatement("INSERT INTO partialharvests "
                         + "( harvest_id, schedule_id, nextdate ) "
                         + "VALUES ( ?, ?, ? )");
                 s.setLong(1, id);
                 s.setLong(2, scheduleId);
                 DBUtils.setDateMaybeNull(s, 3, ph.getNextDate());
                 s.executeUpdate();
-                createHarvestConfigsEntries(c, ph, id);
+                createHarvestConfigsEntries(connection, ph, id);
             } else {
                 String message = "Harvest definition " + harvestDefinition
                         + " is of unknown class "
@@ -155,7 +160,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
                 log.warn(message);
                 throw new ArgumentNotValid(message);
             }
-            c.commit();
+            connection.commit();
             // Now that we have committed, set new data on object.
             harvestDefinition.setSubmissionDate(submissiondate);
             harvestDefinition.setEdition(edition);
@@ -168,7 +173,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
-            DBUtils.rollbackIfNeeded(c, "creating", harvestDefinition);
+            DBUtils.rollbackIfNeeded(connection, "creating", harvestDefinition);
             DBUtils.closeStatementIfOpen(s);
         }
     }
@@ -219,6 +224,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     protected Long generateNextID() {
         Long maxVal = DBUtils.selectLongValue(
+                DBConnect.getDBConnection(),
                 "SELECT max(harvest_id) FROM harvestdefinitions");
         if (maxVal == null) {
             maxVal = 0L;
@@ -380,32 +386,26 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @see HarvestDefinitionDAO#describeUsages(Long)
      */
     public String describeUsages(Long oid) {
-        try {
-            List<Long> usages = DBUtils.selectLongList("SELECT job_id FROM jobs"
-                    + " WHERE jobs.harvest_id = ? ", oid);
-            if (usages.size() != 0) {
-                return "Harvested by jobs " + usages;
+        Connection connection = DBConnect.getDBConnection();
+        List<Long> usages = DBUtils.selectLongList(connection,
+                                                   "SELECT job_id FROM jobs"
+                + " WHERE jobs.harvest_id = ? ", oid);
+        if (usages.size() != 0) {
+            return "Harvested by jobs " + usages;
+        } else {
+            List<String> dependencies = DBUtils.selectStringList(
+                    connection,
+                    "SELECT name FROM harvestdefinitions, fullharvests"
+                    + " WHERE fullharvests.harvest_id "
+                                + "= harvestdefinitions.harvest_id"
+                    + "   AND fullharvests.previoushd = ?",
+                    oid);
+            if (dependencies.size() != 0) {
+                return "Is the basis of snapshot harvests " + dependencies;
             } else {
-                List<String> dependencies = DBUtils.selectStringlist(
-                        "SELECT name FROM harvestdefinitions, fullharvests"
-                        + " WHERE fullharvests.harvest_id " 
-                                    + "= harvestdefinitions.harvest_id"
-                        + "   AND fullharvests.previoushd = ?",
-                        oid);
-                if (dependencies.size() != 0) {
-                    return "Is the basis of snapshot harvests " + dependencies;
-                } else {
-                    return null;
-                }
+                return null;
             }
-        } catch (SQLException e) {
-            String message = "SQL exception while checking for usages of "
-                    + "harvest definition #" + oid + "\n" +
-                    ExceptionUtils.getSQLExceptionCause(e);
-            log.warn(message, e);
-            throw new IOFailure(message, e);
         }
-
     }
 
     /**
@@ -545,7 +545,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @see HarvestDefinitionDAO#exists(Long)
      */
     public synchronized boolean exists(Long oid) {
-        return 1 == DBUtils.selectIntValue("SELECT COUNT(harvest_id) "
+        return 1 == DBUtils.selectIntValue(DBConnect.getDBConnection(),
+                                           "SELECT COUNT(harvest_id) "
                 + "FROM harvestdefinitions WHERE harvest_id = ?", oid);
     }
 
@@ -555,21 +556,15 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @return An iterator that give the existing harvest definitions in turn
      */
     public synchronized Iterator<HarvestDefinition> getAllHarvestDefinitions() {
-        try {
-            List<Long> hds = DBUtils.selectLongList(
-                    "SELECT harvest_id FROM harvestdefinitions "
-                    + "ORDER BY name");
-            return new FilterIterator<Long, HarvestDefinition>(hds.iterator()) {
-                public HarvestDefinition filter(Long id) {
-                    return read(id);
-                }
-            };
-        } catch (SQLException e) {
-            throw new IOFailure(
-                    "SQL Error while asking for all harvest definitions"
-                    + "\n" + ExceptionUtils.getSQLExceptionCause(e),
-                    e);
-        }
+        List<Long> hds = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT harvest_id FROM harvestdefinitions "
+                + "ORDER BY name");
+        return new FilterIterator<Long, HarvestDefinition>(hds.iterator()) {
+            public HarvestDefinition filter(Long id) {
+                return read(id);
+            }
+        };
     }
 
     /**
@@ -604,26 +599,24 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     public Iterable<Long> getReadyHarvestDefinitions(Date now) {
         ArgumentNotValid.checkNotNull(now, "Date now");
-        try {
-            List<Long> ids = DBUtils.selectLongList(
-                    "SELECT fullharvests.harvest_id"
-                    + " FROM fullharvests, harvestdefinitions"
-                    + " WHERE harvestdefinitions.harvest_id "
-                            + "= fullharvests.harvest_id"
-                    + "   AND isactive = ? AND numevents < 1", true);
-            ids.addAll(DBUtils.selectLongList(
-                    "SELECT partialharvests.harvest_id"
-                    + " FROM partialharvests, harvestdefinitions"
-                    + " WHERE harvestdefinitions.harvest_id "
-                            + "= partialharvests.harvest_id"
-                    + "   AND isactive = ?"
-                    + "   AND nextdate IS NOT NULL"
-                    + "   AND nextdate < ?", true, now));
-            return ids;
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error while getting ready harvests" + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        }
+        Connection connection = DBConnect.getDBConnection();
+        List<Long> ids = DBUtils.selectLongList(
+                connection,
+                "SELECT fullharvests.harvest_id"
+                + " FROM fullharvests, harvestdefinitions"
+                + " WHERE harvestdefinitions.harvest_id "
+                        + "= fullharvests.harvest_id"
+                + "   AND isactive = ? AND numevents < 1", true);
+        ids.addAll(DBUtils.selectLongList(
+                connection,
+                "SELECT partialharvests.harvest_id"
+                + " FROM partialharvests, harvestdefinitions"
+                + " WHERE harvestdefinitions.harvest_id "
+                        + "= partialharvests.harvest_id"
+                + "   AND isactive = ?"
+                + "   AND nextdate IS NOT NULL"
+                + "   AND nextdate < ?", true, now));
+        return ids;
     }
 
     /**
@@ -663,23 +656,18 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      * @see HarvestDefinitionDAO#getAllFullHarvestDefinitions()
      */
     public synchronized Iterator<FullHarvest> getAllFullHarvestDefinitions() {
-        try {
-            List<Long> hds = DBUtils.selectLongList(
-                    "SELECT fullharvests.harvest_id "
-                    + "FROM fullharvests, harvestdefinitions "
-                    + "WHERE fullharvests.harvest_id "
-                            + "= harvestdefinitions.harvest_id "
-                    + "ORDER BY harvestdefinitions.name");
-            return new FilterIterator<Long, FullHarvest>(hds.iterator()) {
-                public FullHarvest filter(Long id) {
-                    return (FullHarvest) read(id);
-                }
-            };
-        } catch (SQLException e) {
-            throw new IOFailure(
-                    "SQL Error while asking for all full harvest definitions"
-                            + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        }
+        List<Long> hds = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT fullharvests.harvest_id "
+                + "FROM fullharvests, harvestdefinitions "
+                + "WHERE fullharvests.harvest_id "
+                        + "= harvestdefinitions.harvest_id "
+                + "ORDER BY harvestdefinitions.name");
+        return new FilterIterator<Long, FullHarvest>(hds.iterator()) {
+            public FullHarvest filter(Long id) {
+                return (FullHarvest) read(id);
+            }
+        };
     }
 
 
@@ -692,23 +680,18 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
      */
     public synchronized Iterator<PartialHarvest>
     getAllPartialHarvestDefinitions() {
-        try {
-            List<Long> hds = DBUtils.selectLongList(
-                    "SELECT partialharvests.harvest_id "
-                    + "FROM partialharvests, harvestdefinitions "
-                    + "WHERE partialharvests.harvest_id "
-                        + "= harvestdefinitions.harvest_id "
-                    + "ORDER BY harvestdefinitions.name");
-            return new FilterIterator<Long, PartialHarvest>(hds.iterator()) {
-                public PartialHarvest filter(Long id) {
-                    return (PartialHarvest) read(id);
-                }
-            };
-        } catch (SQLException e) {
-            throw new IOFailure(
-                    "SQL Error while asking for all partial harvest definitions"
-                            + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
-        }
+        List<Long> hds = DBUtils.selectLongList(
+                DBConnect.getDBConnection(),
+                "SELECT partialharvests.harvest_id "
+                + "FROM partialharvests, harvestdefinitions "
+                + "WHERE partialharvests.harvest_id "
+                    + "= harvestdefinitions.harvest_id "
+                + "ORDER BY harvestdefinitions.name");
+        return new FilterIterator<Long, PartialHarvest>(hds.iterator()) {
+            public PartialHarvest filter(Long id) {
+                return (PartialHarvest) read(id);
+            }
+        };
     }
     /**
      * @see HarvestDefinitionDAO#getHarvestRunInfo(long)
@@ -823,12 +806,14 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     public boolean mayDelete(HarvestDefinition hd) {
         ArgumentNotValid.checkNotNull(hd, "HarvestDefinition hd");
         // May not delete if harvested
-        if (DBUtils.selectAny("SELECT job_id "
+        Connection connection = DBConnect.getDBConnection();
+        if (DBUtils.selectAny(connection, "SELECT job_id "
                 + " FROM jobs WHERE harvest_id = ?",
-                hd.getOid())) {
+                              hd.getOid())) {
             return false;
         }
-        if (DBUtils.selectAny("SELECT harvest_id FROM fullharvests"
+        if (DBUtils.selectAny(connection,
+                              "SELECT harvest_id FROM fullharvests"
                 + " WHERE previoushd = ?", hd.getOid())) {
             return false;
         }
@@ -1074,13 +1059,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     public boolean isSnapshot(Long harvestDefinitionID) {
         ArgumentNotValid.checkNotNull(harvestDefinitionID,
                                       "harvestDefinitionID");
+        Connection connection = DBConnect.getDBConnection();
         boolean isSnapshot = DBUtils.selectAny(
+                connection,
                 "SELECT harvest_id FROM fullharvests WHERE harvest_id = ?",
                 harvestDefinitionID);
         if (isSnapshot) {
             return true;
         }
         boolean isSelective = DBUtils.selectAny(
+                connection,
                 "SELECT harvest_id FROM partialharvests WHERE harvest_id = ?",
                 harvestDefinitionID);
         if (isSelective) {

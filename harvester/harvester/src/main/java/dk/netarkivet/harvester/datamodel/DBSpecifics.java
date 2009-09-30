@@ -100,7 +100,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * by the DB_BACKUP_INIT_HOUR settings.
      *
      * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException
+     * @throws SQLException On SQL trouble backing up database
      * @throws PermissionDenied if the directory cannot be created.
      */
     public abstract void backupDatabase(File backupDir) throws SQLException;
@@ -129,7 +129,8 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
 
-        int currentVersion = DBUtils.getTableVersion(tableName);
+        int currentVersion = DBUtils.getTableVersion(
+                DBConnect.getDBConnection(), tableName);
         log.info("Trying to migrate table '" + tableName + "' from version '"
                 + currentVersion + "' to version '" + toVersion + "'.");
         if (currentVersion == toVersion) {

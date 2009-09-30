@@ -101,7 +101,9 @@ public class DBConnectTester extends DataModelTestCase {
                     Connection c = DBConnect.getDBConnection();
                     c.setAutoCommit(false);
                     c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-                    DBUtils.selectLongList("SELECT domain_id FROM domains");
+                    DBUtils.selectLongList(DBConnect.getDBConnection(),
+                                           "SELECT domain_id FROM domains"
+                    );
                     state[0] = 1;
                     waitForState(2, state);
                 } catch (Throwable e) {
@@ -293,11 +295,15 @@ public class DBConnectTester extends DataModelTestCase {
     
     private String retrieveStoredString(int id) {
 		return 
-			DBUtils.selectStringValue("SELECT orderxml from DBConnectTester where id=?", id);
+			DBUtils.selectStringValue(DBConnect.getDBConnection(),
+                                      "SELECT orderxml from DBConnectTester where id=?",
+                                      id);
 	}
     
     private String retrieveStoredClob(int id) {
 		return 
-			DBUtils.selectStringValue("SELECT orderxmldoc from DBConnectTester where id=?", id);
+			DBUtils.selectStringValue(DBConnect.getDBConnection(),
+                                      "SELECT orderxmldoc from DBConnectTester where id=?",
+                                      id);
 	}
 }

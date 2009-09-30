@@ -23,9 +23,7 @@
 package dk.netarkivet.common.distribute.arcrepository;
 
 import java.io.File;
-import java.util.List;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.batch.FileBatchJob;

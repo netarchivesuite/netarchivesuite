@@ -41,8 +41,8 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.ExceptionUtils;
+import dk.netarkivet.common.utils.FilterIterator;
 
 
 /**
@@ -59,7 +59,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * schedules table has the expected version (1).
      */
     protected ScheduleDBDAO() {
-        DBUtils.checkTableVersion("schedules", 1);
+        DBUtils.checkTableVersion(DBConnect.getDBConnection(), "schedules", 1);
     }
 
     /**
@@ -145,6 +145,7 @@ public class ScheduleDBDAO extends ScheduleDAO {
         ArgumentNotValid.checkNotNullOrEmpty(
                 scheduleName, "String scheduleName");
         final int count = DBUtils.selectIntValue(
+                DBConnect.getDBConnection(),
                 "SELECT COUNT(*) FROM schedules WHERE name = ?", scheduleName);
         return (1 == count);
     }
@@ -227,7 +228,8 @@ public class ScheduleDBDAO extends ScheduleDAO {
     public String describeUsages(String scheduleName) {
         ArgumentNotValid.checkNotNullOrEmpty(
                 scheduleName, "String scheduleName");
-        return DBUtils.getUsages("SELECT harvestdefinitions.name "
+        return DBUtils.getUsages(DBConnect.getDBConnection(),
+                                 "SELECT harvestdefinitions.name "
                 + "FROM schedules, partialharvests, harvestdefinitions "
                 + "WHERE schedules.name = ?"
                 + "  AND schedules.schedule_id = partialharvests.schedule_id"
@@ -335,25 +337,21 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @return iterator to all available schedules
      */
     public synchronized Iterator<Schedule> getAllSchedules() {
-        try {
-        List<String> names = DBUtils.selectStringlist(
+        List<String> names = DBUtils.selectStringList(
+                DBConnect.getDBConnection(),
                 "SELECT name FROM schedules ORDER BY name");
-            return new FilterIterator<String, Schedule>(names.iterator()) {
-                /**
-                 * Returns the object corresponding to the given object,
-                 *  or null if that object is to be skipped.
-                 *
-                 * @param s An object in the source iterator domain
-                 * @return An object in this iterators domain, or null
-                 */
-                public Schedule filter(String s) {
-                    return read(s);
-                }
-            };
-        } catch (SQLException e) {
-            throw new IOFailure("SQL error getting all schedules" + "\n"
-                    + ExceptionUtils.getSQLExceptionCause(e), e);
-        }
+        return new FilterIterator<String, Schedule>(names.iterator()) {
+            /**
+             * Returns the object corresponding to the given object,
+             *  or null if that object is to be skipped.
+             *
+             * @param s An object in the source iterator domain
+             * @return An object in this iterators domain, or null
+             */
+            public Schedule filter(String s) {
+                return read(s);
+            }
+        };
     }
 
 
@@ -361,7 +359,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
      * @see ScheduleDAO#getCountSchedules() 
      */
     public synchronized int getCountSchedules() {
-        return DBUtils.selectIntValue("SELECT COUNT(*) FROM schedules");
+        return DBUtils.selectIntValue(DBConnect.getDBConnection(),
+                                      "SELECT COUNT(*) FROM schedules"
+        );
     }
 
     /**
@@ -369,8 +369,9 @@ public class ScheduleDBDAO extends ScheduleDAO {
      */
     public boolean mayDelete(Schedule schedule) {
         ArgumentNotValid.checkNotNull(schedule, "schedule");
-        return !DBUtils.selectAny("SELECT harvest_id"
+        return !DBUtils.selectAny(DBConnect.getDBConnection(),
+                                  "SELECT harvest_id"
                 + " FROM partialharvests WHERE schedule_id = ?",
-                schedule.getID());
+                                  schedule.getID());
     }
 }

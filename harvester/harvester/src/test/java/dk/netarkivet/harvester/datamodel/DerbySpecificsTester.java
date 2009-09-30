@@ -52,7 +52,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
         super.tearDown();
     }
     public void testGetTemporaryTable() {
-        Connection c = DBConnect.getDBConnection();
+        Connection connection = DBConnect.getDBConnection();
+        Connection c = connection;
         String statement = "SELECT config_name, domain_name "
                 + "FROM session.jobconfignames";
         PreparedStatement s = null;
@@ -83,6 +84,7 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.close();
             String domain =
                     DBUtils.selectStringValue(
+                            connection,
                             "SELECT domain_name FROM " + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);
@@ -99,7 +101,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s = c.prepareStatement(statement);
             s.execute();
             String domain =
-                    DBUtils.selectStringValue("SELECT domain_name "
+                    DBUtils.selectStringValue(connection,
+                                              "SELECT domain_name "
                             + "FROM session.jobconfignames "
                             + "WHERE config_name = 'foo'");
             fail("Should have failed query after table is dead, "
@@ -127,7 +130,8 @@ public class DerbySpecificsTester extends DataModelTestCase {
             s.executeUpdate();
             s.close();
             String domain =
-                    DBUtils.selectStringValue("SELECT domain_name FROM " 
+                    DBUtils.selectStringValue(connection,
+                                              "SELECT domain_name FROM "
                             + tmpTable
                             + " WHERE config_name = ?", "bar");
             assertEquals("Should get expected domain name", "foo", domain);

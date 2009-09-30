@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Named;
 
 
 /**
