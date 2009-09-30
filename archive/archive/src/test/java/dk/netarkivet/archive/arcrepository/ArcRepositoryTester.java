@@ -43,7 +43,7 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.StringRemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -292,7 +292,7 @@ public class ArcRepositoryTester extends TestCase {
                                           TestInfo.LOG_FILE,
                                           "WARNING: Read unex");
         assertEquals("Should have updated the store state",
-                     BitArchiveStoreState.UPLOAD_COMPLETED,
+                     ReplicaStoreState.UPLOAD_COMPLETED,
                      ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Test what happens when a known arcfile gets an error message.
@@ -312,7 +312,7 @@ public class ArcRepositoryTester extends TestCase {
                 "Reported error: 'Test an error'", TestInfo.LOG_FILE
         );
         assertEquals("Bad message should set entry to failed",
-                     BitArchiveStoreState.UPLOAD_FAILED,
+                     ReplicaStoreState.UPLOAD_FAILED,
                      ad.getState(arcname1, Channels.getTheBamon().getName()));
 
         // Check what happens if not in AdminData

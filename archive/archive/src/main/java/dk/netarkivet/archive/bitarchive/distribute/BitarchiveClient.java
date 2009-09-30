@@ -1,29 +1,31 @@
-/*
- * File: $Id$
- * Revision: $Revision$
- * Date: $Date$
- * Author: $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Date:        $Date$
+ * Author:      $Author$
+ *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
@@ -40,12 +42,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Proxy for remote bitarchive. Establishes a JMS connection to the remote
- * bitarchive
+ * bitarchive.
  */
 public class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
-    protected static final Log log = LogFactory.getLog(BitarchiveClient.class
-            .getName());
+    protected static final Log log = LogFactory.getLog(BitarchiveClient.class);
 
     // Connection to JMS provider
     private JMSConnection con;
@@ -182,7 +183,7 @@ public class BitarchiveClient implements ReplicaClient {
 
     /**
      * Submit a batch job to the archive. This is used by the ArcRepository when
-     * it needs to run batch jobs for its own reasons (i.e. when checksumming a
+     * it needs to run batch jobs for its own reasons, i.e. when checksumming a
      * file as part of the Store operation.
      * 
      * @param replyChannel The channel that the reply of this job should be 
@@ -225,7 +226,7 @@ public class BitarchiveClient implements ReplicaClient {
     }
 
     @Override
-    public void getAllChecksums(GetAllChecksumMessage msg) {
+    public void getAllChecksums(GetAllChecksumsMessage msg) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: implement me!\n msg: '"
                 + msg.toString() + "'.");
@@ -257,7 +258,7 @@ public class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * Method for retrieving the type of replica.
+     * Retrieves the type of replica.
      * 
      * @return The type of this replica.
      */

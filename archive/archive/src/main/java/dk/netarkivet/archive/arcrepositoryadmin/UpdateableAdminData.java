@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
@@ -176,7 +176,7 @@ public class UpdateableAdminData extends AdminData {
      * @throws ArgumentNotValid If the arguments are null or empty
      */
     public void setState(String arcfileName, String bitarchiveID,
-                         BitArchiveStoreState state)
+                         ReplicaStoreState state)
             throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID, "bitarchiveID");

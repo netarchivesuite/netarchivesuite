@@ -34,7 +34,7 @@ import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
@@ -129,7 +129,7 @@ public interface ArchiveMessageVisitor {
      * 
      * @param msg A received message.
      */
-    void visit(GetAllChecksumMessage msg);
+    void visit(GetAllChecksumsMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      * 

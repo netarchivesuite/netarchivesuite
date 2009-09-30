@@ -35,7 +35,7 @@ import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.testutils.FileAsserts;
@@ -133,10 +133,10 @@ public class ArcRepositoryTesterLog extends TestCase {
                         f));
         adminData.setState(f.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
-                BitArchiveStoreState.UPLOAD_COMPLETED);
+                ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(f.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
-                BitArchiveStoreState.UPLOAD_COMPLETED);
+                ReplicaStoreState.UPLOAD_COMPLETED);
 
         
         StoreMessage msg = new StoreMessage(Channels.getError(), f);

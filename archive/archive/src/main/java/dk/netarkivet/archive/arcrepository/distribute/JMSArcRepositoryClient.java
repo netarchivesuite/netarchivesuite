@@ -35,7 +35,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -46,7 +46,7 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -408,7 +408,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @throws IOFailure If the reply to the request update timed out.
      */
     public void updateAdminData(String fileName, String bitarchiveName,
-                                BitArchiveStoreState newval) {
+                                ReplicaStoreState newval) {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
         ArgumentNotValid.checkNotNull(newval, "newval");
@@ -517,10 +517,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param replicaId The id of the replica from which the checksums should be
      *                  retrieved.
      *
-     * @return A list of ChecksumEntries which is the results of the
-     *         GetAllChecksumMessage.
+     * @return A file containing filename and checksum of all the files in an 
+     * archive in the same format as a ChecksumJob. 
+     * Or null if the message had a timeout.
      *
-     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage
+     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
     public File getAllChecksums(String replicaId) {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
@@ -529,7 +530,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // time this.
         long start = System.currentTimeMillis();
         // make and send the message to the replica.
-        GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(Channels
+        GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg,
                                                                getTimeout);
@@ -541,13 +542,13 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         if (replyNetMsg == null) {
             log.info("Request for all checksum timed out after "
                      + (getTimeout / 1000) + " seconds. Returning empty list.");
-            // return an empty list
+            // return null indication timeout.
             return null;
         }
         // convert to the correct type of message.
-        GetAllChecksumMessage replyCSMsg;
+        GetAllChecksumsMessage replyCSMsg;
         try {
-            replyCSMsg = (GetAllChecksumMessage) replyNetMsg;
+            replyCSMsg = (GetAllChecksumsMessage) replyNetMsg;
         } catch (ClassCastException e) {
             String errorMsg = "Received invalid reply message: '" + replyNetMsg;
             log.warn(errorMsg, e);
@@ -555,14 +556,15 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         }
 
         try {
-            // retrieve the data from this message.
-            File result = File.createTempFile("tmp", "tmp");
+            // retrieve the data from this message and place it in tempDir.
+            File result = File.createTempFile("tmp", "tmp", 
+                    FileUtils.getTempDir());
             replyCSMsg.getData(result);
 
             return result;
         } catch (IOException e) {
             String errMsg = "Cannot create a temporary file for retrieving "
-                            + " the data remote from checksum message: "
+                            + "the data remote from checksum message: "
                             + replyCSMsg;
             log.warn(errMsg);
             throw new IOFailure(errMsg, e);
@@ -617,7 +619,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         try {
             // retrieve the data from this message.
-            File result = File.createTempFile("tmp", "tmp");
+            File result = File.createTempFile("tmp", "tmp", 
+                    FileUtils.getTempDir());
             replyCSMsg.getData(result);
 
             return result;
@@ -630,8 +633,22 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         }
     }
 
+    /**
+     * Method for correcting an entry in a replica.
+     * This is done by sending a correct message to the replica. 
+     * 
+     * @param replicaId The id of the replica to send the message.
+     * @param checksum The checksum of the wrong entry in the archive. It is 
+     * important to validate that the checksum actually is wrong before 
+     * correcting the entry.
+     * @param file The file to correct the entry in the archive of the replica.
+     * @param credentials A string with the password for allowing changes inside
+     * an archive. If it does not correspond to the credentials of the archive, 
+     * the correction will not be allowed.
+     * @throws IOFailure If the message is not handled properly.
+     */
     public void correct(String replicaId, String checksum, File file,
-                        String credentials) {
+                        String credentials) throws IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");

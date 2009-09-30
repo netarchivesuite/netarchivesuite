@@ -40,7 +40,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.TestRemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.MD5;
@@ -118,10 +118,10 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                         file));
         adminData.setState(file.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
-                BitArchiveStoreState.UPLOAD_COMPLETED);
+                ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(file.getName(),
                 Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
-                BitArchiveStoreState.UPLOAD_COMPLETED);
+                ReplicaStoreState.UPLOAD_COMPLETED);
 
         StoreMessage msg = new StoreMessage(Channels.getError(), file);
         arcRepos.store(msg.getRemoteFile(), msg);
@@ -168,10 +168,10 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                                 file));
                 adminData.setState(file.getName(),
                         Channels.retrieveReplicaChannelFromReplicaId("TWO").getName(),
-                        BitArchiveStoreState.UPLOAD_COMPLETED);
+                        ReplicaStoreState.UPLOAD_COMPLETED);
                 adminData.setState(file.getName(),
                         Channels.retrieveReplicaChannelFromReplicaId("THREE").getName(),
-                        BitArchiveStoreState.UPLOAD_COMPLETED);
+                        ReplicaStoreState.UPLOAD_COMPLETED);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -224,8 +224,8 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
         //ArchiveStoreState generalState 
         //	= new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(arcFileName, null, correctChecksum);
-        ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
-        ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
+        ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
+        ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
 
         Method m = ArcRepository.class.getDeclaredMethod("processCheckSum",
                 new Class[] { String.class, String.class, String.class, String.class, boolean.class });
@@ -236,28 +236,28 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                                           correctChecksum,
                                           true } );
         assertEquals("Should be in state STORE_COMPLETED after correct checksum",
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(arcFileName,  ba1Name));
 
         arcFileName = "store1b.ARC";
 
         ad.addEntry(arcFileName, null, correctChecksum);
-        ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
-        ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
+        ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
+        ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
         m.invoke(arcRepos, new Object[] { arcFileName,
                                           ba1Name,
                                           correctChecksum,
                                           "wrong checksum",
                                           true } );
         assertEquals("Should go into UPLOAD_FAILED without outstanding remotefile",
-                BitArchiveStoreState.UPLOAD_FAILED,
+                ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(arcFileName, ba1Name));
 
 
         arcFileName = "NetarchiveSuite-store2.arc";
         ad.addEntry(arcFileName, null, correctChecksum);
-        ad.setState(arcFileName, ba1Name, BitArchiveStoreState.UPLOAD_STARTED);
-        ad.setState(arcFileName, ba2Name, BitArchiveStoreState.DATA_UPLOADED);
+        ad.setState(arcFileName, ba1Name, ReplicaStoreState.UPLOAD_STARTED);
+        ad.setState(arcFileName, ba2Name, ReplicaStoreState.DATA_UPLOADED);
         Field f = ArcRepository.class.getDeclaredField("outstandingRemoteFiles");
         f.setAccessible(true);
         Map<String, RemoteFile> outstandingRemoteFiles =
@@ -279,7 +279,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
                                           "wrong checksum", 
                                           true } );
         assertEquals("Wrong checksum should always result in upload failure",
-                BitArchiveStoreState.UPLOAD_FAILED,
+                ReplicaStoreState.UPLOAD_FAILED,
                 ad.getState(STORABLE_FILES[1], ba1Name));
     }
 }

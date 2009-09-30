@@ -22,7 +22,7 @@
 */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 import java.util.Date;
@@ -33,7 +33,7 @@ import java.util.Date;
 public class ArchiveStoreState {
 
     /** The state for a specific archive, or overall state. */
-    private BitArchiveStoreState storestate;
+    private ReplicaStoreState storestate;
 
     /** Time of last state change. */
     private Date lastchanged;
@@ -43,7 +43,7 @@ public class ArchiveStoreState {
      * This sets the lastchanged value to Now.
      * @param storestate A BitArchiveStoreState
      */
-    public ArchiveStoreState(BitArchiveStoreState storestate) {
+    public ArchiveStoreState(ReplicaStoreState storestate) {
         setState(storestate);
     }
 
@@ -52,7 +52,7 @@ public class ArchiveStoreState {
      * @param storestate A BitArchiveStoreState
      * @param lastchanged Time for when this state was set
      */
-    public ArchiveStoreState(BitArchiveStoreState storestate,
+    public ArchiveStoreState(ReplicaStoreState storestate,
             Date lastchanged) {
         setState(storestate, lastchanged);
     }
@@ -61,7 +61,7 @@ public class ArchiveStoreState {
      * Return the current BitArchiveStoreState.
      * @return the current BitArchiveStoreState
      */
-    public BitArchiveStoreState getState(){
+    public ReplicaStoreState getState(){
         return storestate;
     }
 
@@ -70,7 +70,7 @@ public class ArchiveStoreState {
      * @param storestate the BitarchiveStoreState
      * @param lastchanged the lastchanged
      */
-    public void setState(BitArchiveStoreState storestate, Date lastchanged) {
+    public void setState(ReplicaStoreState storestate, Date lastchanged) {
         ArgumentNotValid.checkNotNull(storestate, 
             "BitArchiveStoreState storestate");
         ArgumentNotValid.checkNotNull(lastchanged, 
@@ -85,7 +85,7 @@ public class ArchiveStoreState {
      * As a sideeffect lastchanged is set to NOW.
      * @param storestate the BitarchiveStoreState
      */
-    public void setState(BitArchiveStoreState storestate) {
+    public void setState(ReplicaStoreState storestate) {
         ArgumentNotValid.checkNotNull(storestate, 
                 "BitArchiveStoreState storestate");
         this.storestate = storestate;

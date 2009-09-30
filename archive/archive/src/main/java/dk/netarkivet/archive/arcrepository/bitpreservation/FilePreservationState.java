@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -109,7 +109,7 @@ public class FilePreservationState {
      */
     public String getAdminBitarchiveState(Replica bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
-        BitArchiveStoreState state = getAdminBitarchiveStoreState(bitarchive);
+        ReplicaStoreState state = getAdminBitarchiveStoreState(bitarchive);
         if (state != null) {
             return state.toString();
         } else {
@@ -122,10 +122,10 @@ public class FilePreservationState {
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
-    public BitArchiveStoreState getAdminBitarchiveStoreState(
+    public ReplicaStoreState getAdminBitarchiveStoreState(
             Replica bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
-        String bamonname = bitarchive.getChannelID().getName();
+        String bamonname = bitarchive.getIdentificationChannel().getName();
         return adminStatus.getStoreState(bamonname);
     }
 
@@ -152,17 +152,17 @@ public class FilePreservationState {
     public boolean isAdminDataOk() {
         // Check the bitarchive states against the admin information
         for (Replica r : Replica.getKnown()) {
-            BitArchiveStoreState adminstate = getAdminBitarchiveStoreState(r);
+            ReplicaStoreState adminstate = getAdminBitarchiveStoreState(r);
             List<String> checksum = getBitarchiveChecksum(r);
 
             // If we find an error, return false, otherwise go on to the rest.
             if (checksum.size() == 0) {
-                if (adminstate != BitArchiveStoreState.UPLOAD_STARTED
-                    && adminstate != BitArchiveStoreState.UPLOAD_FAILED) {
+                if (adminstate != ReplicaStoreState.UPLOAD_STARTED
+                    && adminstate != ReplicaStoreState.UPLOAD_FAILED) {
                     return false;
                 }
             } else {
-                if (adminstate != BitArchiveStoreState.UPLOAD_COMPLETED) {
+                if (adminstate != ReplicaStoreState.UPLOAD_COMPLETED) {
                     return false;
                 }
                 if (getAdminChecksum().length() == 0) {

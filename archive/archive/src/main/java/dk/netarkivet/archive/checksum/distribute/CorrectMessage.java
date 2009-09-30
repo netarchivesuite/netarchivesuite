@@ -1,26 +1,69 @@
+/* File:       $Id$
+ * Revision:   $Revision$
+ * Author:     $Author$
+ * Date:       $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 package dk.netarkivet.archive.checksum.distribute;
+
+import java.io.File;
+
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
- * The message to correct something!
+ * The message to correct a bad entry in an archive.
+ * <li>In a bitarchive it should replace a corrupted file. </li>
+ * <li>In a checksum archive it should replace checksum entry of the file.</li>
+ * <br>
+ * The message contains the checksum of the 'bad' entry in the archive, which is
+ * only corrected if it actually has this 'bad checksum'.
  */
 public class CorrectMessage extends ArchiveMessage {
-
+    /** The file to replace the current bad entry. */
     private RemoteFile theRemoteFile;
+    /** The name of the arc-file. */
     private String arcFilename;
+    /** The 'bad' checksum. */
     private String theChecksum;
 
-    public CorrectMessage(ChannelID to, ChannelID replyTo, String checksum, 
-	    RemoteFile file) {
+    /**
+     * Constructor.
+     * Initializes the variables.
+     * 
+     * @param to Where the message should be sent.
+     * @param replyTo Who is sending this message.
+     * @param badChecksum The checksum of the 'bad' entry.
+     * @param file The file to replace the 'bad' entry.
+     */
+    public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, 
+            RemoteFile file) {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
-        ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
-        this.theChecksum = checksum;
+        ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String checksum");
+        this.theChecksum = badChecksum;
         this.theRemoteFile = file;
         this.arcFilename = file.getName();
     }
@@ -29,43 +72,60 @@ public class CorrectMessage extends ArchiveMessage {
      * Retrieve name of the uploaded file.
      * @return current value of arcfileName
      */
-      public String getArcfileName() {
+    public String getArcfileName() {
         return arcFilename;
-      }
+    }
+    
+    /**
+     * Writes the the content of the retrieved file into a local file.
+     * Note: This is transferred through a remote file handle, and then the
+     * handle is invalidated. This method may only be called once.
+     * @param toFile where to write the content
+     * @throws IOFailure on error reading the remote file
+     * or writing the local file
+     */
+    public void getData(File toFile) {
+        ArgumentNotValid.checkNotNull(toFile, "toFile");
+        if (theRemoteFile == null) {
+            throw new IOFailure("No file present in message to get file '"
+                    + arcFilename + "'");
+        }
+        theRemoteFile.copyTo(toFile);
+        try {
+            theRemoteFile.cleanup();
+        } catch (IOFailure e) {
+            //Just log errors on deleting. They are fairly harmless.
+            // Can't make Logger a field, as this class is Serializable
+            LogFactory.getLog(getClass()).warn(
+                    "Could not delete remote file " + theRemoteFile.getName());
+        }
+        theRemoteFile = null;
+    }
 
     /**
-     * Get method for retrieving the remote file.
+     * Method for retrieving the 'bad' checksum which should correspond to
+     * the checksum of the current entry on this file in the archive.
      * 
-     * @return The remote file.
+     * @return The checksum for the archive entry.
      */
-      public RemoteFile getRemoteFile() {
-          return theRemoteFile;
-      }
-      
-      /**
-       * Method for retrieving the checksum for the archive entry.
-       * 
-       * @return The checksum for the archive entry.
-       */
-      public String getChecksum() {
-	  return theChecksum;
-      }
+    public String getChecksum() {
+        return theChecksum;
+    }
 
-      /**
-       * Should be implemented as a part of the visitor pattern. fx.: public void
-       * accept(ArchiveMessageVisitor v) { v.visit(this); }
-       *
-       * @param v A message visitor
-       */
-      public void accept(ArchiveMessageVisitor v) {
-          v.visit(this);
-      }
+    /**
+     * Accept this message.
+     *
+     * @param v The message visitor accepting this message.
+     */
+    public void accept(ArchiveMessageVisitor v) {
+        v.visit(this);
+    }
 
-      /**
-       * Generate String representation of this object.
-       * @return String representation of this object
-       */
-      public String toString() {
-          return super.toString() + " Arcfile: " + arcFilename;
-      }
+    /**
+     * Generate String representation of this object.
+     * @return String representation of this object
+     */
+    public String toString() {
+        return super.toString() + " Arcfile: " + arcFilename;
+    }
 }

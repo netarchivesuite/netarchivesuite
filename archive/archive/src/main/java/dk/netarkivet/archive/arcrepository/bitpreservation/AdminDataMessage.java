@@ -25,7 +25,7 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
 import dk.netarkivet.common.distribute.Channels;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 
 /**
  * Class encapsulating a request to update AdminData.
@@ -36,11 +36,11 @@ public class AdminDataMessage extends ArchiveMessage {
 
     /** The filename to be updated in AdminData. */
     private String fileName;
-    /** The id of the bitarchive, where the file resides. */
-    private String bitarchiveId;
+    /** The id of the replica, where the file resides. */
+    private String replicaId;
     /** the new storestate for the filename.
      * Used only when changestorestate is true. */
-    private BitArchiveStoreState newvalue;
+    private ReplicaStoreState newvalue;
     /** the new checksum for the filename.
      * Used only when changechecksum is true. */
     private String checksum;
@@ -53,16 +53,16 @@ public class AdminDataMessage extends ArchiveMessage {
      * Constructor used when you change the BitarchiveStoreState.
      * @param theFileName The filename you want to give a new
      * BitarchiveStoreState.
-     * @param theBitarchiveId The ID for the bitarchive where the file resides
+     * @param theReplicaId The ID for the bitarchive where the file resides
      * @param newval The new BitarchiveStoreState
      */
-    public AdminDataMessage(String theFileName, String theBitarchiveId,
-                            BitArchiveStoreState newval) {
+    public AdminDataMessage(String theFileName, String theReplicaId,
+                            ReplicaStoreState newval) {
         super(Channels.getTheRepos(), Channels.getThisReposClient());
-        fileName = theFileName;
-        bitarchiveId = theBitarchiveId;
-        newvalue = newval;
-        changestorestate = true;
+        this.fileName = theFileName;
+        this.replicaId = theReplicaId;
+        this.newvalue = newval;
+        this.changestorestate = true;
     }
     /**
      * Constructor used when you want to change the checksum for
@@ -88,10 +88,10 @@ public class AdminDataMessage extends ArchiveMessage {
     }
 
     /**
-     * @return Returns the bitarchiveId.
+     * @return Returns the replicaId.
      */
-    public String getBitarchiveId() {
-        return bitarchiveId;
+    public String getReplicaId() {
+        return replicaId;
     }
 
     /**
@@ -127,8 +127,7 @@ public class AdminDataMessage extends ArchiveMessage {
     /**
      * @return Returns the newvalue.
      */
-    public BitArchiveStoreState getNewvalue() {
+    public ReplicaStoreState getNewvalue() {
         return newvalue;
     }
-
 }

@@ -27,7 +27,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -46,10 +46,18 @@ public interface ReplicaClient {
      * This is only used by the bitarchive replicas.
      * 
      * @param msg The batch message to sent to the replica.
-     * @return The answer from the batch message.
+     * @return The batch message which has been sent.
      */
     public BatchMessage batch(BatchMessage msg);
     
+    /**
+     * Method for sending batch message and retrieving the results.
+     * This will only work for Bitarchive replicas.
+     * 
+     * @param replyChannel The channel where the reply should be sent.
+     * @param job The batchjob to execute on the replica.
+     * @return The message which has been sent.
+     */
     public BatchMessage batch(ChannelID replyChannel, FileBatchJob job);
     
     /**
@@ -118,7 +126,7 @@ public interface ReplicaClient {
      * 
      * @return The message for retrieving the checksums.
      */
-    public void getAllChecksums(GetAllChecksumMessage msg);
+    public void getAllChecksums(GetAllChecksumsMessage msg);
     
     /**
      * For retrieving the type of archive.
@@ -137,5 +145,8 @@ public interface ReplicaClient {
      */
     public void correct(RemoteFile arcfile, String checksum);
     
+    /**
+     * Close the replica client.
+     */
     public void close();
 }

@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -126,7 +126,7 @@ public class ArcRepositoryEntry {
         Set<String> bitarchives = storeStates.keySet();
         // Check whether scenario 1.
         if (bitarchives.size() == 0) {
-            return new ArchiveStoreState(BitArchiveStoreState.UPLOAD_FAILED);
+            return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED);
         }
 
         String[] bitarchiveNames = bitarchives.toArray(
@@ -142,8 +142,8 @@ public class ArcRepositoryEntry {
         ArchiveStoreState ass = storeStates.get(bitarchiveNames[0]);
         Date lastChanged = ass.getLastChanged();
         boolean failState = false;
-        BitArchiveStoreState lowestStoreState = ass.getState();
-        if (ass.getState().equals(BitArchiveStoreState.UPLOAD_FAILED)) {
+        ReplicaStoreState lowestStoreState = ass.getState();
+        if (ass.getState().equals(ReplicaStoreState.UPLOAD_FAILED)) {
             failState = true;
         }
         for (int i = 1; i < bitarchiveNames.length; i++) {
@@ -151,7 +151,7 @@ public class ArcRepositoryEntry {
             if (tmpAss.getState().ordinal() < lowestStoreState.ordinal()) {
                 lowestStoreState = tmpAss.getState();
             }
-            if (tmpAss.getState().equals(BitArchiveStoreState.UPLOAD_FAILED)) {
+            if (tmpAss.getState().equals(ReplicaStoreState.UPLOAD_FAILED)) {
                 failState = true;
             }
             if (tmpAss.getLastChanged().after(lastChanged)) {
@@ -162,7 +162,7 @@ public class ArcRepositoryEntry {
         // Scenario 3A: if the state of one of the bitarchives equals
         // UPLOAD_FAILED.
         if (failState) {
-            return new ArchiveStoreState(BitArchiveStoreState.UPLOAD_FAILED,
+            return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED,
                     lastChanged);
         }
         // Scenario 3B:
@@ -179,7 +179,7 @@ public class ArcRepositoryEntry {
      * @param ba a bitarchive
      * @param state the new StoreState for this bitarchive.
      */
-    void setStoreState(String ba, BitArchiveStoreState state) {
+    void setStoreState(String ba, ReplicaStoreState state) {
         ArchiveStoreState ass = new ArchiveStoreState(state);
         storeStates.put(ba, ass);
     }
@@ -191,7 +191,7 @@ public class ArcRepositoryEntry {
      * @param state the new StoreState for this bitarchive.
      * @param lastchanged the time for when the state was changed
      */
-    void setStoreState(String baId, BitArchiveStoreState state,
+    void setStoreState(String baId, ReplicaStoreState state,
             Date lastchanged) {
         ArchiveStoreState ass = new ArchiveStoreState(state, lastchanged);
         storeStates.put(baId, ass);
@@ -203,7 +203,7 @@ public class ArcRepositoryEntry {
      * @param baId a bitarchive id
      * @return the StoreState for a given bitarchive.
      */
-    public BitArchiveStoreState getStoreState(String baId) {
+    public ReplicaStoreState getStoreState(String baId) {
         ArgumentNotValid.checkNotNullOrEmpty(baId, "String baId");
         ArchiveStoreState ass = storeStates.get(baId);
         if (ass == null) {

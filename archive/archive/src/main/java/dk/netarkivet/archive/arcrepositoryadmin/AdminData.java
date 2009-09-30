@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -204,7 +204,7 @@ public abstract class AdminData {
      * @return The storage state.
      * @throws UnknownID When no record exists.
      */
-    public BitArchiveStoreState getState(String arcfileName, 
+    public ReplicaStoreState getState(String arcfileName, 
 	    String replicaChannelName) throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
@@ -353,7 +353,7 @@ public abstract class AdminData {
                     for (int i = 2; i < parts.length; i += 2) {
                         try {
                             entry.setStoreState(parts[i],
-                                    BitArchiveStoreState.valueOf(parts[i + 1]));
+                                    ReplicaStoreState.valueOf(parts[i + 1]));
                         } catch (IllegalArgumentException e) {
                             log.warn(
                                     "Corrupt admin data entry. ", e);
@@ -449,8 +449,8 @@ public abstract class AdminData {
                         + filename + "," + checksumString + " , "
                         + stateString + " , " + timestampString);
 
-                BitArchiveStoreState state =
-                    BitArchiveStoreState.valueOf(stateString);
+                ReplicaStoreState state =
+                    ReplicaStoreState.valueOf(stateString);
                 Long tempLong = Long.parseLong(timestampString);
                 Date timestampAsDate = new Date(tempLong);
                 
@@ -494,7 +494,7 @@ public abstract class AdminData {
                         String bitarchiveString = bitparts[0];
                         String storestatusString = bitparts[1];
                         timestampString = bitparts[2];
-                        state = BitArchiveStoreState.valueOf(storestatusString);
+                        state = ReplicaStoreState.valueOf(storestatusString);
                         tempLong = Long.parseLong(timestampString);
                         timestampAsDate = new Date(tempLong);
                         entry.setStoreState(bitarchiveString, state,
@@ -534,10 +534,10 @@ public abstract class AdminData {
      * @return the set of files in the repository with the given state
      */
     public Set<String> getAllFileNames(Replica replica,
-                                       BitArchiveStoreState state) {
+                                       ReplicaStoreState state) {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(state, "BitArchiveStoreState state");
-        String replicaKey = replica.getChannelID().getName();
+        String replicaKey = replica.getIdentificationChannel().getName();
         Set<String> completedFiles = new HashSet<String>();
         for (Map.Entry<String,ArcRepositoryEntry> entry
                 : storeEntries.entrySet()) {

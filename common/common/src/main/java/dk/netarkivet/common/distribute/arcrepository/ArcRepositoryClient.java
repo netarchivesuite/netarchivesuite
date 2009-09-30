@@ -101,7 +101,7 @@ public interface ArcRepositoryClient extends
      * @param newval What the administrative data will be updated to.
      */
     void updateAdminData(String fileName, String bitarchiveId,
-                         BitArchiveStoreState newval);
+                         ReplicaStoreState newval);
 
     /** Updates the checksum kept in the ArcRepository for a given
      * file.  It is the responsibility of the ArcRepository implementation to

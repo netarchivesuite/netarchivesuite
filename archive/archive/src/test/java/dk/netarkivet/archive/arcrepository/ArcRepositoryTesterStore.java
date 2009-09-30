@@ -49,7 +49,7 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
@@ -202,15 +202,15 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "TWO"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "THREE"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -281,7 +281,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -375,10 +375,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED,
+                     ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED,
+                     ReplicaStoreState.UPLOAD_STARTED,
                      entry.getStoreState(
                              Channels.retrieveReplicaChannelNameFromReplicaId(
                                      "ONE")));
@@ -408,11 +408,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_FAILED);
+                           ReplicaStoreState.UPLOAD_FAILED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "TWO"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -453,10 +453,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED,
+                     ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED, entry.getStoreState(
+                     ReplicaStoreState.UPLOAD_STARTED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
 
@@ -494,7 +494,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.DATA_UPLOADED);
+                           ReplicaStoreState.DATA_UPLOADED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -534,13 +534,13 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.DATA_UPLOADED,
+                     ReplicaStoreState.DATA_UPLOADED,
                      adminData.getState(STORABLE_FILE.getName(),
                                         Replica.getReplicaFromId(
-                                                "ONE").getChannelID().getName()));
+                                                "ONE").getIdentificationChannel().getName()));
 //                     entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.DATA_UPLOADED, entry.getStoreState(
+                     ReplicaStoreState.DATA_UPLOADED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
 
@@ -579,11 +579,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_STARTED);
+                           ReplicaStoreState.UPLOAD_STARTED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "TWO"),
-                           BitArchiveStoreState.UPLOAD_STARTED);
+                           ReplicaStoreState.UPLOAD_STARTED);
 
         //Store
         StoreMessage msg = new StoreMessage(Channels.getThisReposClient(),
@@ -623,10 +623,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED,
+                     ReplicaStoreState.UPLOAD_STARTED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_STARTED,
+                     ReplicaStoreState.UPLOAD_STARTED,
                      entry.getStoreState(
                              Channels.retrieveReplicaChannelNameFromReplicaId(
                                      "ONE")));
@@ -670,7 +670,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_STARTED);
+                           ReplicaStoreState.UPLOAD_STARTED);
 
         //Deliver message
         UploadMessage msg = new UploadMessage(Channels.getAnyBa(),
@@ -720,10 +720,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.DATA_UPLOADED,
+                     ReplicaStoreState.DATA_UPLOADED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.DATA_UPLOADED,
+                     ReplicaStoreState.DATA_UPLOADED,
                      entry.getStoreState(
                              Channels.retrieveReplicaChannelNameFromReplicaId(
                                      "ONE")));
@@ -771,11 +771,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.UPLOAD_STARTED);
+                           ReplicaStoreState.UPLOAD_STARTED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "TWO"),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
 
         //Deliver message
         UploadMessage msg = new UploadMessage(Channels.getAnyBa(),
@@ -817,10 +817,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED,
+                     ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
+                     ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
     }
@@ -854,15 +854,15 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelFromReplicaId(
                                    "ONE").getName(),
-                           BitArchiveStoreState.DATA_UPLOADED);
+                           ReplicaStoreState.DATA_UPLOADED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelFromReplicaId(
                                    "TWO").getName(),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelFromReplicaId(
                                    "THREE").getName(),
-                           BitArchiveStoreState.UPLOAD_COMPLETED);
+                           ReplicaStoreState.UPLOAD_COMPLETED);
 
         //Put outstanding checksum in
         Field f = ArcRepository.class.getDeclaredField(
@@ -911,10 +911,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_COMPLETED,
+                     ReplicaStoreState.UPLOAD_COMPLETED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_COMPLETED, entry.getStoreState(
+                     ReplicaStoreState.UPLOAD_COMPLETED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
     }
@@ -950,7 +950,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.DATA_UPLOADED);
+                           ReplicaStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
         Field f = ArcRepository.class.getDeclaredField(
@@ -1001,10 +1001,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED,
+                     ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
+                     ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
     }
@@ -1040,7 +1040,7 @@ public class ArcRepositoryTesterStore extends TestCase {
         adminData.setState(STORABLE_FILE.getName(),
                            Channels.retrieveReplicaChannelNameFromReplicaId(
                                    "ONE"),
-                           BitArchiveStoreState.DATA_UPLOADED);
+                           ReplicaStoreState.DATA_UPLOADED);
 
         //Put outstanding checksum in
         Field f = ArcRepository.class.getDeclaredField(
@@ -1090,10 +1090,10 @@ public class ArcRepositoryTesterStore extends TestCase {
         assertEquals("Should have expected checksum",
                      MD5.generateMD5onFile(STORABLE_FILE), entry.getChecksum());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED,
+                     ReplicaStoreState.UPLOAD_FAILED,
                      entry.getGeneralStoreState().getState());
         assertEquals("Should have expected state",
-                     BitArchiveStoreState.UPLOAD_FAILED, entry.getStoreState(
+                     ReplicaStoreState.UPLOAD_FAILED, entry.getStoreState(
                         Channels.retrieveReplicaChannelNameFromReplicaId(
                                 "ONE")));
     }

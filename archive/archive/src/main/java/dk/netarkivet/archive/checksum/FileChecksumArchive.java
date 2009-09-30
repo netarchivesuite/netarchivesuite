@@ -38,6 +38,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.Settings;
@@ -51,7 +52,7 @@ import dk.netarkivet.common.utils.Settings;
  * <b>'filename' + ## + 'checksum'</b> <br>
  * The lines are not sorted.
  */
-public final class FileChecksumArchive extends ChecksumArchiveAPI {
+public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The character sequence for separating the filename from the checksum.
      */
@@ -61,8 +62,7 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
     /**
      * The logger used by this class.
      */
-    private static final Log log = LogFactory.getLog(
-            FileChecksumArchive.class.getName());
+    private static final Log log = LogFactory.getLog(FileChecksumArchive.class);
     
     /**
      * The current instance of this class.
@@ -88,7 +88,7 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
 
     
     /**
-     * Method for obtaining the current instance of this class.
+     * Method for obtaining the current singleton instance of this class.
      * If the instance of this class has not yet been constructed, then
      * it will be initialised.
      *  
@@ -103,8 +103,14 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
     
     /**
      * Constructor.
+     * Retrieves the minimum space left variable, and ensures the existence of
+     * the archive file. If the file does not exist, then it is created.
+     * 
+     * @throws ArgumentNotValid If the variable minimum space left is smaller
+     * than zero. 
+     * @throws IOFailure If the checksum file cannot be created.
      */
-    private FileChecksumArchive() {
+    private FileChecksumArchive() throws IOFailure, ArgumentNotValid {
         super();
         
         // TODO create new setting: CHECKSUM_MIN_SPACE_LEFT ?
@@ -171,15 +177,9 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
      */
     private boolean checkArchiveFile(File file) {
         // The file must exist.
-        if (!file.exists()) {
-            log.warn("The file '" + file.getAbsolutePath() 
-                    + "' does not exist");
-            return false;
-        }
-        // It may not be a directory.
-        if (file.isDirectory()) {
+        if (!file.isFile()) {
             log.warn("The file '" + file.getAbsolutePath()
-                    + "' is a directory after all");
+                    + "' is not a valid file.");
             return false;
         }
         // It must be writable.
@@ -202,6 +202,14 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
         // thus the split gives the array: [filename, checksum]
         // and the first element in the array is thus the filename.
         String[] split = record.split(CHECKSUM_SEPARATOR);
+        // handle the case when a entry has the wrong format. 
+        if(split.length < 2) {
+            String errMsg = "The record [" + record + "] cannot be parsed into"
+                    + " a filename part and a checksum part.";
+            log.warn(errMsg);
+            throw new IllegalState(errMsg);
+        }
+        
         return split[0];
     }
     
@@ -210,12 +218,21 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
      * 
      * @param record The record from which the checksum should be extracted.
      * @return The checksum of a record.
+     * @throws IllegalState If the record cannot be parsed.
      */
-    private String extractChecksum(String record) {
+    private String extractChecksum(String record) throws IllegalState {
         // A record is : filename##checksum,
         // thus the split gives the array: [filename, checksum]
-        // and the seconf element in the array is thus the checksum.
+        // and the second element in the array is thus the checksum.
         String[] split = record.split(CHECKSUM_SEPARATOR);
+        // handle the case when a entry has the wrong format. 
+        if(split.length < 2) {
+            String errMsg = "The record [" + record + "] cannot be parsed into"
+                    + " a filename part and a checksum part.";
+            log.warn(errMsg);
+            throw new IllegalState(errMsg);
+        }
+        
         return split[1];
     }
     
@@ -226,7 +243,7 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
      *     be found.
      * @return The record of the file, or null if it was not within the archive.
      * The record is in the format: filename##checksum.
-     * @throws IOFailure If the record cannot be found.
+     * @throws IOFailure If problems with reading the checksum file.
      */
     private String getRecord(String filename) throws IOFailure {
         try {
@@ -297,14 +314,16 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
         if(hasFile(filename)) {
             log.warn("Cannot upload arcfile '" + filename + "', "
                     + "it is already archived");
-            // TODO check if the files has the same checksum.
+            // It is a success that it already is within the archive, thus do
+            // not throw an exception. 
             return;
         }
         
         //append the file.
         try {
             // get file writer, and append the writing. 
-            FileWriter fwrite = new FileWriter(checksumFile, true);
+            boolean appendToFile = true;
+            FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
             
             // initialise the record.
             StringBuilder record = new StringBuilder();
@@ -313,17 +332,13 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
             record.append(filename);
             record.append(CHECKSUM_SEPARATOR);
             record.append(calculateChecksum(arcfile.getInputStream()));
-            
-            // If first entry, do not write record on next line.
-            if(checksumFile.length() > 0) {
-                fwrite.append("\n");
-            }
+            record.append("\n");            
             
             // Write the record to the archive file.
             fwrite.append(record.toString());
             
             // close fileWriter.
-             fwrite.flush();
+            fwrite.flush();
             fwrite.close();
         } catch (IOException e) {
             // Handle exceptions involving writing the record.
@@ -483,13 +498,15 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
      */
     public File getArchiveAsFile() throws IOFailure {
         try {
-            File tempFile = File.createTempFile("tmp", "tmp");
+            File tempFile = File.createTempFile("tmp", "tmp", 
+                    FileUtils.getTempDir());
         
             FileUtils.copyFile(checksumFile, tempFile);
             
             return tempFile;
         } catch (IOException e) {
-            String msg = "";
+            String msg = "Cannot create the output file containing all the "
+                + "entries of this archive.";
             log.warn(msg);
             throw new IOFailure(msg);
         }
@@ -505,7 +522,8 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
      */
     public File getAllFilenames() throws IOFailure {
         try {
-            File tempFile = File.createTempFile("tmp", "tmp");
+            File tempFile = File.createTempFile("tmp", "tmp", 
+                    FileUtils.getTempDir());
             FileWriter fw = new FileWriter(tempFile);
             
             // Retrieve the list of content
@@ -522,7 +540,8 @@ public final class FileChecksumArchive extends ChecksumArchiveAPI {
             fw.close();
             return tempFile;
         } catch (IOException e) {
-            String msg = "";
+            String msg = "Cannot create the output file containing the "
+                + "filenames of all the entries of this archive.";
             log.warn(msg);
             throw new IOFailure(msg);
         }

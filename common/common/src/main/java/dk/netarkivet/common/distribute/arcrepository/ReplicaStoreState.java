@@ -24,20 +24,20 @@ package dk.netarkivet.common.distribute.arcrepository;
 
 /**
  * This class encapsulates the different upload states, while storing a file
- * in the bitarchive.
+ * in the archive of a replica .
  * Used by the classes ArcRepository, AdminData, and ArcRepositoryEntry.
  * @see dk.netarkivet.archive.arcrepository.ArcRepository
  * @see dk.netarkivet.archive.arcrepositoryadmin.AdminData
  * @see dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry
  */
-public enum BitArchiveStoreState {
-    /** Upload to a bitarchive has started. */
+public enum ReplicaStoreState {
+    /** Upload to a replica archive has started. */
     UPLOAD_STARTED, 
-    /** Data has been successfully uploaded to a bitarchive. */
+    /** Data has been successfully uploaded to a replica archive. */
     DATA_UPLOADED, 
-    /** Upload to bitarchive completed, which means that it has been verified
-     * by a checksumJob. */
+    /** Upload to replica archive completed, which means that it has been 
+     * verified by a checksumJob. */
     UPLOAD_COMPLETED, 
-    /** Upload to bitarchive has failed. */
+    /** Upload to the replica archive has failed. */
     UPLOAD_FAILED;
 }

@@ -34,17 +34,14 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * 
  * This is checksum replica alternative to sending a ChecksumBatchJob, with
  * a filename limitation.
- * 
- *  TODO decide whether to sent this to a specific replica
  */
 public class GetChecksumMessage extends ArchiveMessage {
-    /** A random generated serial version UID.*/
-    private static final long serialVersionUID = 3562485628628056203L;
-
     /** The name of the arc file to retrieve the checksum from.*/
     private String arcFilename;
     /** The resulting checksum for the arcFile.*/
     private String checksum;
+    /** The id of the replica where the checksum should be retrieved.*/
+    private String replicaId;
 
     /**
      * Constructor.
@@ -52,62 +49,78 @@ public class GetChecksumMessage extends ArchiveMessage {
      * @param to Where this message should be sent.
      * @param replyTo Where the reply for this message should be sent.
      * @param filename The name of the file.
+     * @param repId The id of the replica where the message is to be sent.
      */
     protected GetChecksumMessage(ChannelID to, ChannelID replyTo, 
-            String filename) {
+            String filename, String repId) {
         super(to, replyTo);
         // validate arguments
         ArgumentNotValid.checkNotNull(to, "ChannelID to");
         ArgumentNotValid.checkNotNull(replyTo, "ChannelID replyTo");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        
-        arcFilename = filename;
+
+        this.arcFilename = filename;
+        this.replicaId = repId;
     }
-    
+
     /**
      * Retrieve name of the uploaded file.
+     * 
      * @return current value of arcfileName
      */
-      public String getArcfileName() {
+    public String getArcfileName() {
         return arcFilename;
-      }
-      
-      /**
-       * 
-       * @return
-       */
-      public String getChecksum() {
-        if (checksum == null) {
-            // TODO handle the case when the checksum has not been set.
-            // throw new IllegalState("The checksum has not been calculated.");
-        }
+    }
+
+    /**
+     * Retrieves the replica id.
+     * 
+     * @return The replica id.
+     */
+    public String getReplicaId() {
+        return replicaId;
+    }
+
+    /**
+     * Retrieves the checksum. This method is intended for the reply.
+     * If this checksum has not been sent, then the value is null.
+     * 
+     * @return The retrieved checksum, or null if the entry was not found in 
+     * the archive. 
+     */
+    public String getChecksum() {
         return checksum;
-      }
-      
-      /**
-       * Method for returning the result of the checksum.
-       * 
-       * @param cs The checksum.
-       */
-      public void setChecksum(String cs) {
+    }
+
+    /**
+     * Method for returning the result of the checksum.
+     * 
+     * @param cs The checksum.
+     * @throws ArgumentNotValid If the checksum which is attempted to be set
+     * is either null or an empty string.
+     */
+    public void setChecksum(String cs) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(cs, "String cs");
+
         checksum = cs;
-      }
+    }
 
-      /**
-       * Should be implemented as a part of the visitor pattern. fx.: public void
-       * accept(ArchiveMessageVisitor v) { v.visit(this); }
-       *
-       * @param v A message visitor
-       */
-      public void accept(ArchiveMessageVisitor v) {
-          v.visit(this);
-      }
+    /**
+     * Accept this message.
+     *
+     * @param v The message visitor accepting this message.
+     */
+    public void accept(ArchiveMessageVisitor v) {
+        v.visit(this);
+    }
 
-      /**
-       * Generate String representation of this object.
-       * @return String representation of this object
-       */
-      public String toString() {
-          return super.toString() + " Arcfiles: " + arcFilename;
-      }
+    /**
+     * Generate String representation of this object.
+     * 
+     * @return String representation of this object
+     */
+    public String toString() {
+        return super.toString() + " Arcfiles: " + arcFilename 
+        + ", ReplicaId: " + replicaId + ", Checksum: " + checksum;
+    }
 }

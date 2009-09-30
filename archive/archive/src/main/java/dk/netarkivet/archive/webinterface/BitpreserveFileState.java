@@ -38,7 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -92,7 +92,7 @@ public class BitpreserveFileState {
         String checksum = request.getParameter(Constants.CHECKSUM_PARAM);
 
         ActiveBitPreservation preserve
-                = FileBasedActiveBitPreservation.getInstance();
+                = ActiveBitPreservationFactory.getInstance();
         if (findmissingfiles != null) {
             preserve.findMissingFiles(bitarchive);
         }
@@ -139,7 +139,7 @@ public class BitpreserveFileState {
             );
         }
         ActiveBitPreservation preserve
-                = FileBasedActiveBitPreservation.getInstance();
+                = ActiveBitPreservationFactory.getInstance();
         Locale l = context.getResponse().getLocale();
         if (params.containsKey(Constants.ADD_COMMAND)) {
             String[] adds = params.get(Constants.ADD_COMMAND);
@@ -277,7 +277,7 @@ public class BitpreserveFileState {
         //At this point we know that the parameter filename is given.
         //Now we check for actions.
         ActiveBitPreservation preserve
-                = FileBasedActiveBitPreservation.getInstance();
+                = ActiveBitPreservationFactory.getInstance();
         if (fixadminchecksum != null) {
             // Action to fix admin.data checksum.
             preserve.changeStateForAdminData(filename);
@@ -375,7 +375,7 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation activeBitPreservation
-                = FileBasedActiveBitPreservation.getInstance();
+                = ActiveBitPreservationFactory.getInstance();
 
         //Header
         out.println(I18N.getString(
@@ -442,7 +442,7 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");
         ActiveBitPreservation bitPreservation
-                = FileBasedActiveBitPreservation.getInstance();
+                = ActiveBitPreservationFactory.getInstance();
 
         //Header
         out.println(I18N.getString(locale, "checksum.status.for")

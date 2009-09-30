@@ -32,12 +32,11 @@ import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
@@ -173,9 +172,9 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         try {
-            ReplicaClient bc = ar.getReplicaClientFromReplicaId(
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
-            bc.batch(msg);
+            rc.batch(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
             BatchReplyMessage replyMessage = new BatchReplyMessage(
@@ -196,10 +195,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        ReplicaClient bc = ar.getReplicaClientFromReplicaId(
-                Settings.get(CommonSettings.USE_REPLICA_ID));
         try {
-            bc.get(msg);
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
+                Settings.get(CommonSettings.USE_REPLICA_ID));
+            rc.get(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get request", t);
             msg.setNotOk(t);
@@ -218,10 +217,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
-        ReplicaClient bc =
-            ar.getReplicaClientFromReplicaId(msg.getReplicaId());
         try {
-            bc.getFile(msg);
+            ReplicaClient rc =
+                ar.getReplicaClientFromReplicaId(msg.getReplicaId());
+            rc.getFile(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get file request", t);
             msg.setNotOk(t);
@@ -239,12 +238,13 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetAllFilenamesMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        // retrieve the checksum client
-        ReplicaClient cc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
         try {
-            cc.getAllFilenames(msg);
+            // retrieve the checksum client
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
+                    msg.getReplicaId());
+            rc.getAllFilenames(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllFileMessage", t);
+            log.warn("Failed to handle GetAllFileMessage: " + msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
@@ -254,15 +254,16 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Method for retrieving all the checksums from a replica.
      * Currently only checksum replicas.
      */
-    public void visit(GetAllChecksumMessage msg) {
+    public void visit(GetAllChecksumsMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        // retrieve the checksum client
-        ReplicaClient cc = ar.getReplicaClientFromReplicaId(msg.getReplicaId());
         try {
-            cc.getAllChecksums(msg);
+            // retrieve the checksum client
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
+                    msg.getReplicaId());
+            rc.getAllChecksums(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllFileMessage", t);
+            log.warn("Failed to handle GetAllFileMessage: " + msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
@@ -275,7 +276,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * 
      * @param msg The GetChecksumMessage message.
      */
-    @Override
     public void visit(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         

@@ -42,7 +42,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.BitPreservationDAO;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -811,7 +811,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
                 retrieveFileIDFromReplicaFileInfo(replicafileinfoGuid));
 
         // retrieve the upload status from the admin data.
-        BitArchiveStoreState uploadStatus;
+        ReplicaStoreState uploadStatus;
         try {
             uploadStatus = admin.getState(fileName, repId);
         } catch (UnknownID e) {

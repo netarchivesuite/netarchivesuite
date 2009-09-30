@@ -94,7 +94,7 @@ public interface PreservationArcRepositoryClient  {
      * @param newval What the administrative data will be updated to.
      */
     void updateAdminData(String fileName, String replicaId,
-                         BitArchiveStoreState newval);
+                         ReplicaStoreState newval);
 
     /** Updates the checksum kept in the ArcRepository for a given
      * file. It is the responsibility of the ArcRepository implementation to
@@ -129,7 +129,7 @@ public interface PreservationArcRepositoryClient  {
      * be retrieved.
      * @return A list of ChecksumEntries which is the results of the 
      * GetAllChecksumMessage.
-     * @see dk.netarkivet.archive.checksum.GetAllChecksumMessage
+     * @see dk.netarkivet.archive.checksum.GetAllChecksumsMessage
      */
     File getAllChecksums(String replicaId);
     

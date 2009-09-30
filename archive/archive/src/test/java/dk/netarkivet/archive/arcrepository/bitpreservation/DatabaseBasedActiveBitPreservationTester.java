@@ -52,7 +52,7 @@ import dk.netarkivet.common.distribute.StringRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -408,7 +408,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         }
 
         public void updateAdminData(String fileName, String bitarchiveId,
-                                    BitArchiveStoreState newval) {
+                                    ReplicaStoreState newval) {
             UpdateableAdminData adminData
                     = AdminData.getUpdateableInstance();
             if (!adminData.hasEntry(fileName)) {

@@ -142,7 +142,7 @@ public class FileChecksumServerTester extends TestCase {
                 listener.messagesReceived.size() >= 1);
 
         // Retrieve the map of the checksums.
-        GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(theCs, 
+        GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(theCs, 
         	arcReposQ, Replica.getReplicaFromId("ONE").getId());
         cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
@@ -171,7 +171,7 @@ public class FileChecksumServerTester extends TestCase {
         // Retrieve and verify checksum of all records in archive. 
         // (one file at the time)
         for(String name : names) {
-            csMsg = new GetChecksumMessage(theCs, arcReposQ, name);
+            csMsg = new GetChecksumMessage(theCs, arcReposQ, name, "THREE");
             cfs.visit(csMsg);
             conn.waitForConcurrentTasksToFinish();
             
@@ -193,7 +193,7 @@ public class FileChecksumServerTester extends TestCase {
         
         // Retrieve the checksum for the uploaded file from the checksum 
         // archive.
-        csMsg = new GetChecksumMessage(theCs, arcReposQ, testFile.getName());
+        csMsg = new GetChecksumMessage(theCs, arcReposQ, testFile.getName(), "THREE");
         cfs.visit(csMsg);
         conn.waitForConcurrentTasksToFinish();
         
@@ -209,7 +209,7 @@ public class FileChecksumServerTester extends TestCase {
         conn.waitForConcurrentTasksToFinish();
         
         // make sure, that the checksum of the file has changed.
-        csMsg = new GetChecksumMessage(theCs, arcReposQ, TestInfo.CORRECTMESSAGE_TESTFILE.getName());
+        csMsg = new GetChecksumMessage(theCs, arcReposQ, TestInfo.CORRECTMESSAGE_TESTFILE.getName(), "THREE");
         cfs.visit(csMsg);
         conn.waitForConcurrentTasksToFinish();
 
@@ -234,7 +234,7 @@ public class FileChecksumServerTester extends TestCase {
 	// set the listener.
         conn.setListener(arcReposQ, listener);
 
-	GetAllChecksumMessage gacMsg = new GetAllChecksumMessage(theCs, 
+	GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(theCs, 
 		arcReposQ, Replica.getReplicaFromId("ONE").getId());
 	cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();

@@ -39,7 +39,6 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -260,7 +259,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @param newval What the administrative data will be updated to.
      */
     public void updateAdminData(String fileName, String bitarchiveId,
-                                BitArchiveStoreState newval) {
+                                ReplicaStoreState newval) {
     }
 
     /** Updates the checksum kept in the ArcRepository for a given

@@ -241,12 +241,13 @@ public class Replica {
         return name;
     }
 
-    /** Get the BaMon channel id that corresponds to this replica.
+    /** 
+     * Get the identification channel that corresponds to this replica.
+     * Please do not parse its name!
      *
      * @return The BaMon ChannelID of this replica.
-     * Please do not parse its name!
      */
-    public ChannelID getChannelID() {
+    public ChannelID getIdentificationChannel() {
         // This is the channel used by the connected replicas in the
         // ArcRepository.
         if (type == ReplicaType.BITARCHIVE) {

@@ -140,12 +140,27 @@ public class ArchiveSettings {
     public static String DIR_ARCREPOSITORY_BITPRESERVATION
             = "settings.archive.bitpreservation.baseDir";
     
+    /**
+     * <b>settings.archive.bitpreservation.database.url</b>: <br>
+     * Setting for giving the URL to the database used by the 
+     * DatabaseBasedActiveBitPreservation class.
+     */
     public static String URL_ARCREPOSITORY_BITPRESERVATION_DATABASE
             = "settings.archive.bitpreservation.database.url";
     
+    /**
+     * <b>settings.archive.bitpreservation.database.class</b>: <br>
+     * Setting for which class is used for handling the database for the
+     * DatabaseBasedActiveBitPreservation class.
+     */
     public static String CLASS_ARCREPOSITORY_BITPRESERVATION_DATABASE
             = "settings.archive.bitpreservation.database.class";
     
+    /**
+     * <b>settings.archive.bitpreservation.class</b>: <br>
+     * Setting for which instance of ActiveBitPreservation that should be used
+     * for preservation.
+     */
     public static String CLASS_ARCREPOSITORY_BITPRESERVATION
             = "settings.archive.bitpreservation.class";
     

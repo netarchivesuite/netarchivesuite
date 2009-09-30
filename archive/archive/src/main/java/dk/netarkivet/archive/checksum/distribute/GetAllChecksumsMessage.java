@@ -36,15 +36,12 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * The GetChecksumMessage has the purpose to retrieve the checksum of all 
- * the file. The output is in the form of a map, where the keys are the 
- * filenames and the values are checksums.
+ * the files. The output is in the form of a file corresponding to the reply 
+ * file of a ChecksumJob.
  * 
  * This is checksum replica alternative to sending a ChecksumBatchJob.
  */
-public class GetAllChecksumMessage extends ArchiveMessage {
-    /** A random generated serial version UID.*/
-    private static final long serialVersionUID = 5944687747568698584L;
-
+public class GetAllChecksumsMessage extends ArchiveMessage {
     /** The file containing the output.*/
     private RemoteFile remoteFile;
     /** The id for the replica where this message should be sent.*/
@@ -58,7 +55,7 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @param repId The replica where the job involved in this message is
      * to be performed.
      */
-    public GetAllChecksumMessage(ChannelID to, ChannelID replyTo, String repId) {
+    public GetAllChecksumsMessage(ChannelID to, ChannelID replyTo, String repId) {
         super(to, replyTo);
         this.replicaId = repId;
     }
@@ -115,9 +112,14 @@ public class GetAllChecksumMessage extends ArchiveMessage {
      * @return String representation of this object
      */
     public String toString() {
-        return super.toString();
+        return super.toString() + " replicaid: " + replicaId;
     }
 
+    /**
+     * Accept visitation. 
+     * 
+     * @param The ArchiveMessageVisitor which accepts this message.
+     */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
     }

@@ -61,7 +61,7 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -163,14 +163,14 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                     "4236be8e67e0c10da2902764ff4b954a");
         Replica replicaTwo = Replica.getReplicaFromId("TWO");
         ad.setState("integrity1.ARC",
-                replicaTwo.getChannelID().getName(),
-                    BitArchiveStoreState.UPLOAD_FAILED);
+                replicaTwo.getIdentificationChannel().getName(),
+                    ReplicaStoreState.UPLOAD_FAILED);
         ad.setState("integrity7.ARC",
-                replicaTwo.getChannelID().getName(),
-                    BitArchiveStoreState.UPLOAD_COMPLETED);
+                replicaTwo.getIdentificationChannel().getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
         ad.setState("integrity12.ARC",
-                replicaTwo.getChannelID().getName(),
-                    BitArchiveStoreState.UPLOAD_COMPLETED);
+                replicaTwo.getIdentificationChannel().getName(),
+                    ReplicaStoreState.UPLOAD_COMPLETED);
 
         abp = FileBasedActiveBitPreservation.getInstance();
         abp = FileBasedActiveBitPreservation.getInstance();
@@ -742,7 +742,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         }
 
         public void updateAdminData(String fileName, String bitarchiveId,
-                                    BitArchiveStoreState newval) {
+                                    ReplicaStoreState newval) {
             UpdateableAdminData adminData
                     = AdminData.getUpdateableInstance();
             if (!adminData.hasEntry(fileName)) {

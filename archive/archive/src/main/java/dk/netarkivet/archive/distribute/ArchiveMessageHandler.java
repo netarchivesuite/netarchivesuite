@@ -39,7 +39,7 @@ import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
-import dk.netarkivet.archive.checksum.distribute.GetAllChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.indexserver.distribute.IndexRequestMessage;
@@ -247,7 +247,7 @@ public abstract class ArchiveMessageHandler
      * @param msg the GetAllChecksumMessage
      * @throws PermissionDenied when invoked
      */
-    public void visit(GetAllChecksumMessage msg) throws PermissionDenied {
+    public void visit(GetAllChecksumsMessage msg) throws PermissionDenied {
 	ArgumentNotValid.checkNotNull(msg, "msg");
 	deny(msg);
     }

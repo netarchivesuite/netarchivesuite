@@ -42,7 +42,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.TestRemoteFile;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
@@ -174,10 +174,10 @@ public class AdminDataTester extends TestCase {
         //ArchiveStoreState dummyGeneralState = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
         ad.addEntry(myFile, null, "checksum");
         assertFalse("No state set for " + myFile + " " + myBA, ad.hasState(myFile, myBA));
-        ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_STARTED);
-        assertEquals("Wrong store state returned", BitArchiveStoreState.UPLOAD_STARTED, ad.getState(myFile, myBA));
-        ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_FAILED);
-        assertEquals("Wrong store state returned", BitArchiveStoreState.UPLOAD_FAILED, ad.getState(myFile, myBA));
+        ad.setState(myFile, myBA, ReplicaStoreState.UPLOAD_STARTED);
+        assertEquals("Wrong store state returned", ReplicaStoreState.UPLOAD_STARTED, ad.getState(myFile, myBA));
+        ad.setState(myFile, myBA, ReplicaStoreState.UPLOAD_FAILED);
+        assertEquals("Wrong store state returned", ReplicaStoreState.UPLOAD_FAILED, ad.getState(myFile, myBA));
         assertTrue("State has been set for " + myFile + " " + myBA, ad.hasState(myFile, myBA));
         try {
             ad.getState("some other file", myBA);
@@ -203,7 +203,7 @@ public class AdminDataTester extends TestCase {
         String myChecksum = "Dummychecksum";
         ad.addEntry(myFile, myReplyInfo, myChecksum);
         String myBA = "TestIDofbitarchive";
-        ad.setState(myFile, myBA, BitArchiveStoreState.UPLOAD_STARTED);
+        ad.setState(myFile, myBA, ReplicaStoreState.UPLOAD_STARTED);
         ad.close();
         ad = UpdateableAdminData.getUpdateableInstance();
         assertFalse("replyInfos should not be persistent",
@@ -218,7 +218,7 @@ public class AdminDataTester extends TestCase {
         assertEquals("Checksum should be persistent",
                 myChecksum, ad.getCheckSum(myFile));
         assertEquals("Store state should be persistent",
-                BitArchiveStoreState.UPLOAD_STARTED, ad.getState(myFile, myBA));
+                ReplicaStoreState.UPLOAD_STARTED, ad.getState(myFile, myBA));
     }
 
     /**
@@ -259,24 +259,24 @@ public class AdminDataTester extends TestCase {
             // expected
         }
 
-        ad.setState(filename, bitArchiveID, BitArchiveStoreState.UPLOAD_STARTED);
+        ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_STARTED);
         assertEquals("BitArchiveStoreState set - expected ",
-                BitArchiveStoreState.UPLOAD_STARTED,
+                ReplicaStoreState.UPLOAD_STARTED,
                 ad.getState(filename, bitArchiveID));
 
-        ad.setState(filename, bitArchiveID, BitArchiveStoreState.DATA_UPLOADED);
+        ad.setState(filename, bitArchiveID, ReplicaStoreState.DATA_UPLOADED);
         assertEquals("BitArchiveStoreState set - expected ",
-                BitArchiveStoreState.DATA_UPLOADED,
+                ReplicaStoreState.DATA_UPLOADED,
                 ad.getState(filename, bitArchiveID));
 
-        ad.setState(filename, bitArchiveID, BitArchiveStoreState.UPLOAD_COMPLETED);
+        ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_COMPLETED);
         assertEquals("BitArchiveStoreState set - expected ",
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(filename, bitArchiveID));
 
-        ad.setState(filename, bitArchiveID, BitArchiveStoreState.UPLOAD_FAILED);
+        ad.setState(filename, bitArchiveID, ReplicaStoreState.UPLOAD_FAILED);
         assertEquals("BitArchiveStoreState set - expected ",
-                BitArchiveStoreState.UPLOAD_FAILED, ad.getState(filename, bitArchiveID));
+                ReplicaStoreState.UPLOAD_FAILED, ad.getState(filename, bitArchiveID));
     }
 
     /**
@@ -326,10 +326,10 @@ public class AdminDataTester extends TestCase {
         ad.addEntry(filename, null, "foobar");
         FileAsserts.assertFileContains("File " + filename
                 + " should be in admin data after adding", filename, datafile);
-        ad.setState(filename, "DummyBA1", BitArchiveStoreState.UPLOAD_COMPLETED);
+        ad.setState(filename, "DummyBA1", ReplicaStoreState.UPLOAD_COMPLETED);
         FileAsserts.assertFileNumberOfLines("AdminData should have an extra "
                 + "line after changing state", datafile, 3);
-        ad.setState(filename, "DummyBA1", BitArchiveStoreState.UPLOAD_FAILED);
+        ad.setState(filename, "DummyBA1", ReplicaStoreState.UPLOAD_FAILED);
         FileAsserts.assertFileNumberOfLines("AdminData should have an extra "
                 + "line after changing state", datafile, 4);
         ad.setCheckSum(filename, "otherChecksum");
@@ -337,7 +337,7 @@ public class AdminDataTester extends TestCase {
                 + "changing checksum", datafile, 2);
         FileAsserts.assertFileContains("Should have new checksum only after changing",
                 "otherChecksum", datafile);
-        ad.setState(filename, "DummyBA2", BitArchiveStoreState.UPLOAD_COMPLETED);
+        ad.setState(filename, "DummyBA2", ReplicaStoreState.UPLOAD_COMPLETED);
         FileAsserts.assertFileNumberOfLines("AdminData should have an extra "
                 + "line after changing state", datafile, 3);
         //System.out.println("datafile before closing " + FileUtils.readFile(datafile));
@@ -352,9 +352,9 @@ public class AdminDataTester extends TestCase {
                 "DummyBA2 UPLOAD_COMPLETED", datafile);
         String filename2 = TestInfo.files[1];
         ad.addEntry(filename2, null, "aChecksum");
-        ad.setState(filename2, "DummyBA1", BitArchiveStoreState.UPLOAD_STARTED);
-        ad.setState(filename, "DummyBA1", BitArchiveStoreState.UPLOAD_COMPLETED);
-        ad.setState(filename2, "DummyBA2", BitArchiveStoreState.DATA_UPLOADED);
+        ad.setState(filename2, "DummyBA1", ReplicaStoreState.UPLOAD_STARTED);
+        ad.setState(filename, "DummyBA1", ReplicaStoreState.UPLOAD_COMPLETED);
+        ad.setState(filename2, "DummyBA2", ReplicaStoreState.DATA_UPLOADED);
         FileAsserts.assertFileNumberOfLines("Must have 6 lines when having two"
                 + " files and 3 changes", datafile, 6);
         //close to force new instance
@@ -392,7 +392,7 @@ public class AdminDataTester extends TestCase {
         final String filename1 = "foobar";
         String checksum1 = "xxx";
         ArchiveStoreState dummyStoreState
-            = new ArchiveStoreState(BitArchiveStoreState.UPLOAD_STARTED);
+            = new ArchiveStoreState(ReplicaStoreState.UPLOAD_STARTED);
         addLineToFile(datafile, filename1 + " " + checksum1
                 + " " + dummyStoreState.toString());
         //System.out.println(datafile.getAbsolutePath() + ":" +
@@ -412,10 +412,10 @@ public class AdminDataTester extends TestCase {
         //close to force new instance
         ad.close();
         ArchiveStoreState dummyGeneralStoreState = new ArchiveStoreState(
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 new Date(1126627010110L));
         ArchiveStoreState dummyBitarchiveStoreState = new ArchiveStoreState(
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 new Date(1126627010132L));
 
         addLineToFile(datafile,
@@ -430,7 +430,7 @@ public class AdminDataTester extends TestCase {
         ad.close();
         assertTrue("Changed entry should turn up", ad.hasEntry(filename1));
         assertEquals("Changed entry should have right state",
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(filename1, ba1));
         LogUtils.flushLogs(UpdateableAdminData.class.getName());
         FileAsserts.assertFileNotContains("Should have no warning in log",
@@ -447,7 +447,7 @@ public class AdminDataTester extends TestCase {
         ad = UpdateableAdminData.getUpdateableInstance();
         assertTrue("Old entry should turn up", ad.hasEntry(filename1));
         assertEquals("Old entry should have right state",
-                BitArchiveStoreState.UPLOAD_COMPLETED,
+                ReplicaStoreState.UPLOAD_COMPLETED,
                 ad.getState(filename1, ba1));
 
         /*

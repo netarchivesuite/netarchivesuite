@@ -25,6 +25,8 @@ package dk.netarkivet.common.distribute;
 
 import java.util.Arrays;
 
+import org.mortbay.log.Log;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
@@ -470,7 +472,6 @@ public class Channels {
         throw new ArgumentNotValid("Did not find a checksum queue for '"
                 + replicaId + "'");
     }
-// */
     
     /**
      * Method for extracting the replica from the name of the identifier 
@@ -480,9 +481,11 @@ public class Channels {
      * replica.
      * @return Replica who the identification channel belong to.
      * @throws UnknownID If the replicaId does not point to a know replica.
+     * @throws ArgumentNotValid If the channelName is either null or empty.
      */
     public static Replica retrieveReplicaFromIdentifierChannel(
-            String channelName) throws UnknownID {
+            String channelName) throws UnknownID, ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(channelName, "String channelName");
         if (channelName.contains(THECR_CHANNEL_PREFIX)) {
             // environmentName ## replicaId ## THE_CR
             String[] parts = channelName.split(CHANNEL_PART_SEPARATOR);
@@ -493,8 +496,10 @@ public class Channels {
             return Replica.getReplicaFromId(parts[1]);
         }
 
-        throw new UnknownID("Cannot find the replicaId in the channelname: '"
-                + channelName + "'.");
+        String errMsg = "The current channel name, '" + channelName 
+                + "' does not refer to an identification channel";
+        Log.warn(errMsg);
+        throw new UnknownID(errMsg);
     }
     
     /**
@@ -510,7 +515,7 @@ public class Channels {
     public static String retrieveReplicaChannelNameFromReplicaId(
             String replicaId) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        return Replica.getReplicaFromId(replicaId).getChannelID().getName();
+        return Replica.getReplicaFromId(replicaId).getIdentificationChannel().getName();
     }
     
     /**
@@ -526,7 +531,7 @@ public class Channels {
     public static ChannelID retrieveReplicaChannelFromReplicaId(String replicaId)
             throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        return Replica.getReplicaFromId(replicaId).getChannelID();
+        return Replica.getReplicaFromId(replicaId).getIdentificationChannel();
     }
 
     /**

@@ -37,13 +37,12 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
-import dk.netarkivet.common.distribute.arcrepository.BitArchiveStoreState;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
@@ -291,17 +290,18 @@ public class FileBasedActiveBitPreservation
      *
      * Note that this method runs a batch job on the bitarchives, and therefore
      * may take a long time, depending on network delays.
+     * 
+     * TODO: remodel the retrieval of checksums by using GetAllChecksumsMessage.
      *
-     * @param ba    The bitarchive to ask for checksums
-     * @param filenames The names of the files to ask for checksums for
-     *
+     * @param rep The replica to ask for checksums.
+     * @param filenames The names of the files to ask for checksums for.
      * @return The MD5 checksums of the files, or the empty string if the file
      *         was not in the bitarchive.
      *
      * @see ChecksumJob#parseLine(String)
      */
     private Map<String, List<String>> getChecksums(
-            Replica ba, Set<String> filenames) {
+            Replica rep, Set<String> filenames) {
         
         // Configure the Checksum batchjob.
         ChecksumJob checksumJob = new ChecksumJob();
@@ -314,7 +314,7 @@ public class FileBasedActiveBitPreservation
         try {
             PreservationArcRepositoryClient arcrep =
                     ArcRepositoryClientFactory.getPreservationInstance();
-            BatchStatus batchStatus = arcrep.batch(checksumJob, ba.getId());
+            BatchStatus batchStatus = arcrep.batch(checksumJob, rep.getId());
             if (batchStatus.hasResultFile()) {
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 batchStatus.appendResults(buf);
@@ -330,7 +330,7 @@ public class FileBasedActiveBitPreservation
             }
         } catch (NetarkivetException e) {
             // Send notification, and return an empty map
-            String errMsg = "Error asking replica '" + ba + "' for checksums";
+            String errMsg = "Error asking replica '" + rep + "' for checksums";
             NotificationsFactory.getInstance().errorEvent(errMsg, e);
             log.warn(errMsg, e);
             return Collections.emptyMap();
@@ -343,37 +343,37 @@ public class FileBasedActiveBitPreservation
         // parse the batchResult
         if (batchResult.length() > 0) {
             String[] lines = batchResult.split("\n");
-                for (String s : lines) {
-                    try {
-                        KeyValuePair<String, String> fileChecksum
-                                = ChecksumJob.parseLine(s);
-                        final String filename = fileChecksum.getKey();
-                        final String checksum = fileChecksum.getValue();
-                        if (!filenames.contains(filename)) {
-                            log.debug(
-                                    "Got checksum for unexpected file '"
-                                    + filename + " while asking "
-                                    + "replica '" + ba
-                                    + "' for checksum of the following files: '"
-                                    + filenames + "'");
+            for (String s : lines) {
+                try {
+                    KeyValuePair<String, String> fileChecksum
+                            = ChecksumJob.parseLine(s);
+                    final String filename = fileChecksum.getKey();
+                    final String checksum = fileChecksum.getValue();
+                    if (!filenames.contains(filename)) {
+                        log.debug(
+                                "Got checksum for unexpected file '"
+                                + filename + " while asking "
+                                + "replica '" + rep
+                                + "' for checksum of the following files: '"
+                                + filenames + "'");
+                    } else {
+                        // Add checksum to list associated with filename
+                        List<String> checksums;
+                        if (filesAndChecksums.containsKey(filename)) {
+                            checksums = filesAndChecksums.get(filename); 
                         } else {
-                            // Add checksum to list associated with filename
-                            List<String> checksums;
-                             if (filesAndChecksums.containsKey(filename)) {
-                                 checksums = filesAndChecksums.get(filename); 
-                             } else {
-                                 checksums = new ArrayList<String>();
-                                 filesAndChecksums.put(filename, checksums);
-                             }
-                             checksums.add(checksum);
+                            checksums = new ArrayList<String>();
+                            filesAndChecksums.put(filename, checksums);
                         }
-                    } catch (ArgumentNotValid e) {
-                        log.warn("Got malformed checksum '" + s
-                                 + "' while asking replica '" + ba
-                                 + "' for checksum of the following files: '"
-                                 + filenames + "'");
+                        checksums.add(checksum);
                     }
+                } catch (ArgumentNotValid e) {
+                    log.warn("Got malformed checksum '" + s
+                            + "' while asking replica '" + rep
+                            + "' for checksum of the following files: '"
+                            + filenames + "'");
                 }
+            }
         } else {
             log.debug("Empty result returned from ChecksumJob " + checksumJob);
         }
@@ -383,17 +383,17 @@ public class FileBasedActiveBitPreservation
     
     
     /**
-     * Get a list of missing files in a given bitarchive.
+     * Get a list of missing files in a given replica.
      *
-     * @param bitarchive a given bitarchive
+     * @param replica A given replica.
      *
-     * @return a list of missing files in a given bitarchive.
+     * @return A list of missing files in a given replica.
      *
      * @throws IllegalState if the file with the list cannot be found.
      */
-    public Iterable<String> getMissingFiles(Replica bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
-        File missingOutput = WorkFiles.getFile(bitarchive,
+    public Iterable<String> getMissingFiles(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica bitarchive");
+        File missingOutput = WorkFiles.getFile(replica,
                                                WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
             throw new IllegalState("Could not find the file: "
@@ -551,7 +551,7 @@ public class FileBasedActiveBitPreservation
         admin.synchronize();
 
         // Create set of checksums from bitarchive data
-        Set<String> bitarchiveChecksumSet = new HashSet<String>(
+        Set<String> replicaChecksumSet = new HashSet<String>(
                 WorkFiles.getLines(replica, WorkFiles.CHECKSUMS_ON_BA));
 
         // Get set of files in arcrepository
@@ -568,17 +568,17 @@ public class FileBasedActiveBitPreservation
         Set<String> arcrepCompletedChecksumSet = new HashSet<String>();
         for (String fileName : admin.getAllFileNames(
                 replica,
-                BitArchiveStoreState.UPLOAD_COMPLETED)) {
+                ReplicaStoreState.UPLOAD_COMPLETED)) {
             arcrepCompletedChecksumSet.add(ChecksumJob.makeLine(
                     fileName, admin.getCheckSum(fileName)));
         }
 
         // Find files where checksums differ
-        Set<String> wrongChecksums = new HashSet<String>(bitarchiveChecksumSet);
+        Set<String> wrongChecksums = new HashSet<String>(replicaChecksumSet);
         wrongChecksums.removeAll(arcrepChecksumSet);
 
         // Find files where state is wrong
-        Set<String> wrongStates = new HashSet<String>(bitarchiveChecksumSet);
+        Set<String> wrongStates = new HashSet<String>(replicaChecksumSet);
         wrongStates.removeAll(wrongChecksums);
         wrongStates.removeAll(arcrepCompletedChecksumSet);
 
@@ -811,23 +811,24 @@ public class FileBasedActiveBitPreservation
      * 4) admin data and the reference archive agree on the
      * checksum of the file.
      *
-     * @param fileName          name of the file to reestablish
-     * @param damagedBitarchive Name of the bitarchive missing the file
-     * @param fps               The FilePreservationStatus of the file to fix.
-     * @throws IOFailure        On trouble updating the file.
+     * @param fileName Name of the file to reestablish
+     * @param damagedReplica Name of the replica missing the file
+     * @param fps The FilePreservationStatus of the file to fix.
+     * @throws IOFailure On trouble updating the file.
      */
     private void reestablishMissingFile(
             String fileName,
-            Replica damagedBitarchive, FilePreservationState fps) {
+            Replica damagedReplica, FilePreservationState fps) {
         log.debug("Reestablishing missing file '" + fileName
-                  + "' in bitarchive '" + damagedBitarchive + "'.");
-        if (!satisfiesMissingFileConditions(fps, damagedBitarchive,
+                  + "' in bitarchive '" + damagedReplica + "'.");
+        if (!satisfiesMissingFileConditions(fps, damagedReplica,
                                             fileName)) {
             throw new IOFailure(
                     "Unable to reestablish missing file. '" + fileName + "'. "
                     + "It is not in the right state.");
         }
         // Retrieve the file from the reference archive
+        // TODO: ensure that referenceArchive is a bitarchive.
         Replica referenceArchive = fps.getReferenceBitarchive();
         try {
             PreservationArcRepositoryClient arcrep =
@@ -840,20 +841,20 @@ public class FileBasedActiveBitPreservation
             tmpDir.delete();
         } catch (IOFailure e) {
             String errmsg = "Failed to reestablish '" + fileName
-                            + "' in '" + damagedBitarchive.getName()
+                            + "' in '" + damagedReplica.getName()
                             + "' with copy from '" + referenceArchive + "'";
             log.warn(errmsg, e);
             throw new IOFailure(errmsg,
                                 e);
         }
         log.info("Reestablished " + fileName
-                 + " in " + damagedBitarchive.getName()
+                 + " in " + damagedReplica.getName()
                  + " with copy from " + referenceArchive.getName());
         FileUtils.removeLineFromFile(fileName,
                                      WorkFiles.getFile(
-                                             damagedBitarchive,
+                                             damagedReplica,
                                              WorkFiles.MISSING_FILES_BA));
-        FileUtils.appendToFile(WorkFiles.getFile(damagedBitarchive,
+        FileUtils.appendToFile(WorkFiles.getFile(damagedReplica,
                                                  WorkFiles.FILES_ON_BA),
                                fileName);
     }
@@ -871,14 +872,14 @@ public class FileBasedActiveBitPreservation
      * checksum
      *
      * @param state            the status for one file in the bitarchives
-     * @param damagedBitarchive the replica where the file is corrupt or
+     * @param damagedReplica the replica where the file is corrupt or
      *                          missing
      * @param fileName          the name of the file being considered
      * @return true if all conditions are true, false otherwise.
      */
     private boolean satisfiesMissingFileConditions(
             FilePreservationState state,
-            Replica damagedBitarchive,
+            Replica damagedReplica,
             String fileName) {
         // condition 1
         if (!state.isAdminDataOk()) {
@@ -887,10 +888,10 @@ public class FileBasedActiveBitPreservation
             return false;
         }
         // condition 2
-        if (!state.fileIsMissing(damagedBitarchive)) {
+        if (!state.fileIsMissing(damagedReplica)) {
             log.warn("File '" + fileName
                      + "' is not missing in bitarchive on replica '"
-                     + damagedBitarchive.getName() + "'.");
+                     + damagedReplica.getName() + "'.");
             return false;
         }
         // conditions 3 and 4
@@ -909,14 +910,14 @@ public class FileBasedActiveBitPreservation
      * sent.
      *
      * @param filename The file to change state for
-     * @param ba       The bitarchive to change state for the file for.
+     * @param rep       The replica to change state for the file for.
      *
      * @throws ArgumentNotValid if arguments are null or empty strings
      */
-    private void setAdminDataFailed(String filename, Replica ba) {
+    private void setAdminDataFailed(String filename, Replica rep) {
         ArcRepositoryClientFactory.getPreservationInstance()
-                .updateAdminData(filename, ba.getId(),
-                                 BitArchiveStoreState.UPLOAD_FAILED);
+                .updateAdminData(filename, rep.getId(),
+                                 ReplicaStoreState.UPLOAD_FAILED);
     }
 
     /**
@@ -954,20 +955,21 @@ public class FileBasedActiveBitPreservation
      * and its location can be found in the log.
      *
      * @param filename    The file to remove.
-     * @param bitarchive  The bitarchive to remove the file from.
+     * @param rep  The replica to remove the file from. rep must be a 
+     * bitarchive replica.
      * @param checksum    The checksum of the file.
      * @param credentials Credentials required to run this operation.
      */
-    private void removeAndGetFile(String filename, Replica bitarchive,
+    private void removeAndGetFile(String filename, Replica rep,
                                   String checksum, String credentials) {
         ArcRepositoryClientFactory.getPreservationInstance()
-                .removeAndGetFile(filename, bitarchive.getId(), checksum,
+                .removeAndGetFile(filename, rep.getId(), checksum,
                                   credentials);
-        FileUtils.appendToFile(WorkFiles.getFile(bitarchive,
+        FileUtils.appendToFile(WorkFiles.getFile(rep,
                                                  WorkFiles.MISSING_FILES_BA),
                                filename);
         FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
-                bitarchive,
+                rep,
                 WorkFiles.FILES_ON_BA));
     }
 
@@ -1020,7 +1022,7 @@ public class FileBasedActiveBitPreservation
         FilePreservationState fps 
             = getFilePreservationState(filename);
         String checksum = fps.getReferenceCheckSum();
-        if (checksum == null || checksum.equals("")) {
+        if (checksum == null || checksum.isEmpty()) {
             throw new PermissionDenied("No correct checksum for '"
                                        + filename + "'");
         }
@@ -1028,13 +1030,12 @@ public class FileBasedActiveBitPreservation
             ArcRepositoryClientFactory.getPreservationInstance()
                     .updateAdminChecksum(filename, checksum);
         }
-        for (Replica l : Replica.getKnown()) {
-            if (fps.getUniqueChecksum(l).equals(
+        for (Replica rep : Replica.getKnown()) {
+            if (fps.getUniqueChecksum(rep).equals(
                     admin.getCheckSum(filename))) {
                 FileUtils.removeLineFromFile(
                         filename,
-                        WorkFiles.getFile(l,
-                                          WorkFiles.WRONG_FILES));
+                        WorkFiles.getFile(rep, WorkFiles.WRONG_FILES));
             }
         }
         //TODO Also update store states if wrong.

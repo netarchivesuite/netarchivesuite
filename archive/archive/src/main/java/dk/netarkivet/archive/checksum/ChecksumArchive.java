@@ -35,14 +35,16 @@ import dk.netarkivet.common.distribute.RemoteFile;
  * <br>
  * <b><i>TODO</i></b><br>
  * - <b>DatabaseChecksumArchive</b> where the archive is placed in a 
- * datbase. <br>
+ * database. <br>
+ * 
+ * @see dk.netarkivet.archive.checksum.FileChecksumArchive
  */
-public abstract class ChecksumArchiveAPI {
+public abstract class ChecksumArchive {
     
     /**
      * Constructor.
      */
-    protected ChecksumArchiveAPI() { }
+    protected ChecksumArchive() { }
     
     /**
      * Method for checking whether there is enough space left on the hard drive.
@@ -52,14 +54,15 @@ public abstract class ChecksumArchiveAPI {
     public abstract boolean hasEnoughSpace();
     
     /**
-     * Method for removing a record from the archive.
-     * This finds the record and removes it if the checksum is not correct.
+     * Method for removing a bad entry from the archive.
+     * This finds the record and removes it if it has the incorrect checksum.
      * 
      * @param filename The name of the file whose record should be removed.
-     * @param checksum The checksum which the file should have.
+     * @param incorrectChecksum The checksum of the bad entry.
      * @return Whether the record was successfully removed.
      */
-    public abstract boolean removeRecord(String filename, String checksum);
+    public abstract boolean removeRecord(String filename, 
+            String incorrectChecksum);
     
     /**
      * Method for retrieving the checksum of a specific entry in the archive.

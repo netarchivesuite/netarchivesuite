@@ -37,11 +37,9 @@ import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
  * The GetAllFilenamesMessage is sent to retrieve all the filenames in a 
- * specific replica.
+ * specific replica. The result is a file in the same format as a FilelistJob.
  */
 public class GetAllFilenamesMessage extends ArchiveMessage {
-    /** A random generated serial version UID.*/
-    private static final long serialVersionUID = 2478562520343220305L;
     /** 
      * The file with the current content, which will be retrieved from the 
      * sender of this message.
@@ -56,7 +54,8 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * @param to The channel the message is sent to.
      * @param replyTo The channel the reply is sent to.
      */
-    public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, String repId) {
+    public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, 
+            String repId) {
         super(to, replyTo);
 
         this.replicaId = repId;
@@ -82,7 +81,8 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     public void getData(File toFile) {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
         if (remoteFile == null) {
-            throw new IOFailure("");
+            throw new IOFailure("No remote file has been retrieved. This "
+                    + "message is either NotOK or has never been sent.");
         }
         remoteFile.copyTo(toFile);
         try {
@@ -107,10 +107,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     }
     
     /**
-     * Should be implemented as a part of the visitor pattern. fx.: public void
-     * accept(ArchiveMessageVisitor v) { v.visit(this); }
+     * Accept this message.
      *
-     * @param v A message visitor
+     * @param v The message visitor accepting this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

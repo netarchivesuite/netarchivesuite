@@ -202,7 +202,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
      * @param newval What the administrative data will be updated to.
      */
     public void updateAdminData(String fileName, String bitarchiveId,
-                                BitArchiveStoreState newval) {
+                                ReplicaStoreState newval) {
         throw new NotImplementedException("Function has not been implemented");
     }
 

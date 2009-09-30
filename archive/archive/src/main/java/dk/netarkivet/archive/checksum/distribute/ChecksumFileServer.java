@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.ChecksumArchive;
 import dk.netarkivet.archive.checksum.FileChecksumArchive;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -36,19 +37,28 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 
-public class ChecksumFileServer extends ChecksumServerAPI {
+/**
+ * The server for the ChecksumFileApplication. 
+ * Used for communication between the ArcRepository and the checksum archive.
+ */
+public class ChecksumFileServer extends ChecksumArchiveServer {
     
     /**
      * The logger used by this class.
      */
     private static final Log log 
-            = LogFactory.getLog(ChecksumFileServer.class.getName());
+            = LogFactory.getLog(ChecksumFileServer.class);
     
     /**
      * The instance of this server.
      */
     protected static ChecksumFileServer instance;
     
+    /**
+     * The archive which contain the actual data.
+     */
+    protected ChecksumArchive cs;
+        
     /**
      * Returns the unique instance of this class.
      * 
@@ -78,14 +88,11 @@ public class ChecksumFileServer extends ChecksumServerAPI {
         // initialise the JMSConnection.
         jmsCon = JMSConnectionFactory.getInstance();
 
-        // initialise the channels.
-        // TODO decide whether to use specific channels for the Checksum.
+        // initialise the channel.
         theCR = Channels.getTheCR();
 
         // Start listening to the channels.
         jmsCon.setListener(theCR, this);
-
-        // TODO Heartbeat? If so, then here.
 
         // create the application identifier
         checksumAppId = createAppId();
@@ -114,7 +121,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * Method for cleaning up, when closing this instance down.
      */
     public void cleanup() {
-        // ??
         instance = null;
         cs.cleanup();
     }
@@ -124,7 +130,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * 
      * @return The id of this application.
      */
-    @Override
     public String getAppId() {
         return checksumAppId;
     }
@@ -134,7 +139,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * 
      * @return The id of this application.
      */
-    @Override
     protected String createAppId() {
         String id;
         // Create an id with the IP address of this current host
@@ -163,7 +167,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * 
      * @param msg The upload message, containing the file to upload.
      */
-    @Override
     public void visit(UploadMessage msg) {
         log.debug("Receving upload message: " + msg.toString());
         try {
@@ -191,14 +194,13 @@ public class ChecksumFileServer extends ChecksumServerAPI {
     }
 
     /**
-     * Method for correcting a record.
+     * Method for correcting an entry in the archive.
      * This method starts by removing the record, and then uploading it again 
      * to the checksum archive.
      * 
      * @param msg The message containing the correct instance of the file to 
      * correct. 
      */
-    @Override
     public void visit(CorrectMessage msg) {
         log.debug("Receving correct message: " + msg.toString());
         try {
@@ -211,7 +213,8 @@ public class ChecksumFileServer extends ChecksumServerAPI {
             // if the record is successfully removed, then upload the corrected
             // file. Else throw an error.
             if (success) {
-                cs.upload(msg.getRemoteFile(), filename);
+                // TODO: handle this!
+//                cs.upload(msg.getRemoteFile(), filename);
             } else {
                 throw new IllegalState("Cannot remove the record: '" + filename
                         + "'");
@@ -233,7 +236,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * @param msg The GetChecksumMessage which contains the name of the record
      * to have its checksum retrieved.
      */
-    @Override
     public void visit(GetChecksumMessage msg) {
         log.debug("Recieving get checksum message: " + msg.toString());
         try {
@@ -244,10 +246,10 @@ public class ChecksumFileServer extends ChecksumServerAPI {
 
             // send the checksum of the arc file.
             msg.setChecksum(checksum);
-
         } catch (Throwable e) {
             // Handle errors (if the file cannot be found).
-            log.warn("Cannot find arc file.", e);
+            log.warn("Cannot handle '" + msg.getClass().getName() 
+                    + "' containing the message: " + msg, e);
             msg.setNotOk(e);
         } finally {
             // log the message and reply.
@@ -261,7 +263,6 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * 
      * @param msg The GetAllFilenamesMessage.
      */
-    @Override
     public void visit(GetAllFilenamesMessage msg) {
         log.debug("Receving get all filenames message: " + msg.toString());
 
@@ -269,7 +270,8 @@ public class ChecksumFileServer extends ChecksumServerAPI {
             // get all the file names
             msg.setFile(cs.getAllFilenames());
         } catch (Throwable e) {
-            log.warn("Cannot retrieve the filenames.", e);
+            log.warn("Cannot retrieve the filenames to reply on the " 
+                    + msg.getClass().getName() + " : " + msg, e);
             msg.setNotOk(e);
         } finally {
             // log the message and reply.
@@ -284,9 +286,8 @@ public class ChecksumFileServer extends ChecksumServerAPI {
      * 
      * @param msg The GetAllChecksumMessage.
      */
-    @Override
-    public void visit(GetAllChecksumMessage msg) {
-        log.debug("Receving get all checksum message: " + msg.toString());
+    public void visit(GetAllChecksumsMessage msg) {
+        log.debug("Receiving get all checksum message: " + msg.toString());
 
         try {
             msg.setFile(cs.getArchiveAsFile());

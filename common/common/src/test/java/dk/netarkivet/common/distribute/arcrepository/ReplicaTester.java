@@ -193,12 +193,12 @@ public class ReplicaTester extends TestCase {
 	for(Replica rep : Replica.getKnown()) {
 	    if(rep.getType() == ReplicaType.CHECKSUM) {
 		assertEquals("The identification channel for '" + rep + "' a checksum channel.", 
-			Channels.getTheCrForReplica(rep.getId()), rep.getChannelID());
+			Channels.getTheCrForReplica(rep.getId()), rep.getIdentificationChannel());
 	    } else {
 		assertEquals("If the replica type is not Checksum, then it must be Bitarchive", 
 			rep.getType(), ReplicaType.BITARCHIVE);
 		assertEquals("The identification channel for '" + rep + "' a bitarchive channel.", 
-			Channels.getBaMonForReplica(rep.getId()), rep.getChannelID());
+			Channels.getBaMonForReplica(rep.getId()), rep.getIdentificationChannel());
 	    }
 	}
     }
