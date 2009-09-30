@@ -326,7 +326,7 @@ public class HarvesterSettings {
      *
      * @see Pattern
      */
-    public static String METADATA_HERITRIX_FILE_PATTERN =
+    public static final String METADATA_HERITRIX_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.heritrixFilePattern";
 
     /**
@@ -336,7 +336,7 @@ public class HarvesterSettings {
      *
      * @see Pattern
      */
-    public static String METADATA_REPORT_FILE_PATTERN =
+    public static final String METADATA_REPORT_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.reportFilePattern";
 
     /**
@@ -346,7 +346,7 @@ public class HarvesterSettings {
      *
      * @see Pattern
      */
-    public static String METADATA_LOG_FILE_PATTERN =
+    public static final String METADATA_LOG_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.logFilePattern";
 
 }

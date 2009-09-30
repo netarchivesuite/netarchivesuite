@@ -25,6 +25,8 @@ package dk.netarkivet.archive.indexserver;
 
 import java.util.regex.Pattern;
 
+import dk.netarkivet.harvester.harvesting.MetadataFile;
+
 /**
  * This class implements the low-level cache for crawl log Lucene indexing.
  * It will get the crawl logs for individual jobs as files.
@@ -40,7 +42,7 @@ public class CrawlLogDataCache extends RawMetadataCache {
      */
     public CrawlLogDataCache() {
         super("crawllog",
-                Pattern.compile("metadata://[^/]*/crawl/logs/crawl\\.log.*"),
+                Pattern.compile(MetadataFile.CRAWL_LOG_PATTERN),
                 Pattern.compile("text/plain"));
     }
 }

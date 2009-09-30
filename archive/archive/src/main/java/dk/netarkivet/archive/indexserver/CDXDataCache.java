@@ -25,6 +25,8 @@ package dk.netarkivet.archive.indexserver;
 
 import java.util.regex.Pattern;
 
+import dk.netarkivet.harvester.harvesting.MetadataFile;
+
 /**
  * A RawDataCache that serves files with CDX data.
  *
@@ -37,7 +39,7 @@ public class CDXDataCache extends RawMetadataCache {
      */
     public CDXDataCache() {
         super("cdxdata",
-                Pattern.compile("metadata://[^/]*/crawl/index/cdx.*"),
+                Pattern.compile(MetadataFile.CDX_PATTERN),
                 Pattern.compile("application/x-cdx"));
     }
 }

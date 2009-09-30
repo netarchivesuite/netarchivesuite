@@ -439,6 +439,7 @@ public class HarvestDocumentation {
                 files.add(
                         new MetadataFile(
                                 logFile, harvestID, jobID, heritrixVersion));
+                log.info("Found Heritrix log file " + logFile.getName());
             }
         } else {
             log.debug("No logs dir found in crawldir: "

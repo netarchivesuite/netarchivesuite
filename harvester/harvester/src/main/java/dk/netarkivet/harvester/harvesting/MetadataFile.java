@@ -24,6 +24,8 @@ package dk.netarkivet.harvester.harvesting;
 
 import java.io.File;
 
+import dk.netarkivet.archive.indexserver.CDXDataCache;
+import dk.netarkivet.archive.indexserver.CrawlLogDataCache;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 
@@ -32,10 +34,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * ARC.
  *
  * Defines a natural order to sort them.
- *
- * @author ngiraud
  */
-class MetadataFile implements Comparable<MetadataFile> {
+public class MetadataFile implements Comparable<MetadataFile> {
 
     /**
      * The available type of metadata records.
@@ -45,7 +45,8 @@ class MetadataFile implements Comparable<MetadataFile> {
     private enum MetadataType {
         setup,
         reports,
-        logs
+        logs,
+        index
     }
 
     /**
@@ -57,6 +58,22 @@ class MetadataFile implements Comparable<MetadataFile> {
     private static final String URL_FORMAT =
             "metadata://netarkivet.dk/crawl/%s/%s"
             + "?heritrixVersion=%s&harvestid=%s&jobid=%s";
+    
+    /**
+     * A pattern identifying a CDX metadata entry.
+     * 
+     * @see CDXDataCache#CDXDataCache()
+     */
+    public static final String CDX_PATTERN =
+    	"metadata://[^/]*/crawl/index/cdx.*";
+    
+    /**
+     * A pattern identifying the crawl log metadata entry.
+     * 
+     * @see CrawlLogDataCache#CrawlLogDataCache()
+     */
+    public static final String CRAWL_LOG_PATTERN =
+    	"metadata://[^/]*/crawl/logs/crawl\\.log.*";
 
     /**
      * The pattern controlling which files in the crawl directory root should be
@@ -83,6 +100,12 @@ class MetadataFile implements Comparable<MetadataFile> {
     private File heritrixFile;
     private MetadataType type;
 
+    /**
+     * Creates a metadata file and finds which metadata type it belongs to.
+     * First the name of a heritrixfile is tested against the reportfile 
+     * pattern, then again the logfile pattern. If the name matches neither of 
+     * these, it is considered a setup file.
+     */
     MetadataFile(
             File heritrixFile,
             Long harvestId,
@@ -113,6 +136,9 @@ class MetadataFile implements Comparable<MetadataFile> {
         }
     }
 
+    /**
+     * Creates a metadata file for a domain-specific override file.
+     */
     MetadataFile(
             File heritrixFile,
             Long harvestId,
@@ -123,15 +149,23 @@ class MetadataFile implements Comparable<MetadataFile> {
         this.url += "&domain=" + domain;
     }
 
+    /**
+     * Returns the metadata URL associated to this file.
+     * @return the metadata URL associated to this file.
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * Returns the actual file.
+     * @return the actual file.
+     */
     public File getHeritrixFile() {
         return heritrixFile;
     }
 
-    /** First we compare the type ordinals, then the URLS. */
+    /** First we compare the type ordinals, then the URLs. */
     public int compareTo(MetadataFile other) {
         Integer thisOrdinal = this.type.ordinal();
         Integer otherOrdinal = other.type.ordinal();
@@ -143,6 +177,11 @@ class MetadataFile implements Comparable<MetadataFile> {
         return this.url.compareTo(other.url);
     }
 
+    /**
+     * Creates a metadata URL for this file. Metadata URLs are used to retrieve
+     * records in the metadata ARC file.
+     * @return the metadata URL for this file
+     */
     private String makeMetadataURL(
             MetadataType type,
             String name,
