@@ -93,6 +93,14 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             new HashMap<String, MessageConsumer>());
 
     /**
+     * Map for caching message listeners (topic-subscribers and
+     * queue-receivers).
+     */
+    protected final Map<String, MessageListener> listeners
+            = Collections.synchronizedMap(
+            new HashMap<String, MessageListener>());
+
+    /**
      * Lock for the connection. Locked for read on adding/removing listeners and
      * sending messages. Locked for write when connection, releasing and
      * reconnecting.
@@ -290,6 +298,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 }
                 connection = null;
                 session = null;
+                listeners.clear();
                 consumers.clear();
                 producers.clear();
             } catch (JMSException e) {
@@ -394,21 +403,21 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         try {
             log.info("Trying to reconnect to jmsbroker");
 
-            Map<String, MessageConsumer> savedConsumers;
-            synchronized (consumers) {
-                savedConsumers = new HashMap<String, MessageConsumer>(
-                        consumers);
+            Map<String, MessageListener> savedListeners;
+            synchronized (listeners) {
+                savedListeners = new HashMap<String, MessageListener>(
+                        listeners);
             }
 
             boolean operationSuccessful = false;
-            JMSException lastException = null;
+            Exception lastException = null;
             int tries = 0;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
                 tries++;
                 try {
-                    doReconnect(savedConsumers);
+                    doReconnect(savedListeners);
                     operationSuccessful = true;
-                } catch (JMSException e) {
+                } catch (Exception e) {
                     lastException = e;
                     log.debug("Reconnect failed (try " + tries + ")", e);
                     if (tries < JMS_MAXTRIES) {
@@ -445,10 +454,28 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         // If it is not, it is created and stored in cache:
         MessageProducer producer = producers.get(queueName);
         if (producer == null) {
-            producer = session.createProducer(getDestination(queueName));
+            producer = getSession().createProducer(getDestination(queueName));
             producers.put(queueName, producer);
         }
         return producer;
+    }
+
+    /**
+     * Get the session. Will try reconnecting if session is null.
+     *
+     * @return The session.
+     *
+     * @throws IOFailure if no session is available, and reconnect does not
+     *                   help.
+     */
+    private Session getSession() {
+        if (session == null) {
+            reconnect();
+        }
+        if (session == null) {
+            throw new IOFailure("Session not available");
+        }
+        return session;
     }
 
     /**
@@ -469,8 +496,9 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         String key = getConsumerKey(channelName, ml);
         MessageConsumer consumer = consumers.get(key);
         if (consumer == null) {
-            consumer = session.createConsumer(getDestination(channelName));
+            consumer = getSession().createConsumer(getDestination(channelName));
             consumers.put(key, consumer);
+            listeners.put(key, ml);
         }
         return consumer;
     }
@@ -528,7 +556,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             throws JMSException {
         connectionLock.readLock().lock();
         try {
-            ObjectMessage message = session.createObjectMessage(msg);
+            ObjectMessage message = getSession().createObjectMessage(msg);
             synchronized (msg) {
                 getProducer(to.getName()).send(message);
                 // Note: Id is only updated if the message does not already have
@@ -609,6 +637,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                                                                   ml);
                     messageConsumer.close();
                     consumers.remove(getConsumerKey(channelName, ml));
+                    listeners.remove(getConsumerKey(channelName, ml));
                 } finally {
                     connectionLock.readLock().unlock();
                 }
@@ -632,13 +661,13 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Reconnect to JMSBroker and reestablish session. Resets senders and
      * publishers.
      *
-     * @param savedConsumers Listeners to readd after reestablishing
+     * @param savedListeners Listeners to readd after reestablishing
      *                       connection.
      *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
      *                      reestablish sesssions
      */
-    private void doReconnect(Map<String, MessageConsumer> savedConsumers)
+    private void doReconnect(Map<String, MessageListener> savedListeners)
             throws JMSException {
         try {
             cleanup();
@@ -649,11 +678,11 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         establishConnectionAndSessions();
         // Add listeners already stored in the consumers map
         log.debug("Re-add listeners");
-        for (Map.Entry<String, MessageConsumer> consumer
-                : savedConsumers.entrySet()) {
+        for (Map.Entry<String, MessageListener> listener
+                : savedListeners.entrySet()) {
             try {
-                setListener(getChannelName(consumer.getKey()),
-                            consumer.getValue().getMessageListener());
+                setListener(getChannelName(listener.getKey()),
+                            listener.getValue());
             } catch (IOFailure e) {
                 // We cannot do anything more at this point
                 log.warn("Exception thrown while adding listeners", e);
