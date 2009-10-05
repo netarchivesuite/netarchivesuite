@@ -170,10 +170,10 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
                 tries++;
                 try {
-                    establishConnectionAndSessions();
+                    establishConnectionAndSession();
                     operationSuccessful = true;
                 } catch (JMSException e) {
-                    cleanup();
+                    closeConnection();
                     log.debug("Connect failed (try " + tries + ")", e);
                     lastException = e;
                     if (tries < JMS_MAXTRIES) {
@@ -187,6 +187,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             if (!operationSuccessful) {
                 log.warn("Could not initialize JMS connection "
                          + getClass(), lastException);
+                cleanup();
                 throw new IOFailure("Could not initialize JMS connection "
                                     + getClass(), lastException);
             }
@@ -277,10 +278,14 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         removeListener(ml, mq.getName());
     }
 
-    /** Clean up. */
+    /**
+     * Clean up. Remove close connection, remove shutdown hook and null the
+     * instance.
+     */
     public void cleanup() {
         connectionLock.writeLock().lock();
         try {
+            //Remove shutdown hook
             log.info("Starting cleanup");
             try {
                 if (closeHook != null) {
@@ -290,24 +295,36 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 //Okay, it just means we are already shutting down.
             }
             closeHook = null;
-            try {
-                // Close terminates all pending message received on the
-                // connection's session's consumers.
-                if (connection != null) { // close connection
-                    connection.close();
-                }
-                connection = null;
-                session = null;
-                listeners.clear();
-                consumers.clear();
-                producers.clear();
-            } catch (JMSException e) {
-                throw new IOFailure("Error closing JMS Connection.", e);
-            }
+            //Close session
+            closeConnection();
+            //Clear list of listeners
+            listeners.clear();
+            instance = null;
             log.info("Cleanup finished");
         } finally {
             connectionLock.writeLock().unlock();
         }
+    }
+
+    /**
+     * Close connection, session and listeners. Will ignore trouble, and simply
+     * log it.
+     */
+    private void closeConnection() {
+        // Close terminates all pending message received on the
+        // connection's session's consumers.
+        if (connection != null) { // close connection
+            try {
+                connection.close();
+            } catch (JMSException e) {
+                // Just ignore it
+                log.warn("Error closing JMS Connection.", e);
+            }
+        }
+        connection = null;
+        session = null;
+        consumers.clear();
+        producers.clear();
     }
 
     /**
@@ -365,7 +382,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      */
     protected void sendMessage(NetarkivetMessage nMsg, ChannelID to)
             throws IOFailure {
-        JMSException lastException = null;
+        Exception lastException = null;
         boolean operationSuccessful = false;
         int tries = 0;
 
@@ -379,6 +396,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 lastException = e;
                 if (tries < JMS_MAXTRIES) {
                     onException(e);
+                    log.debug("Will sleep a while before trying to send again");
+                    TimeUtils.exponentialBackoffSleep(tries,
+                                                      Calendar.MINUTE);
+                }
+            } catch (Exception e) {
+                log.debug("Send failed (try " + tries + ")", e);
+                lastException = e;
+                if (tries < JMS_MAXTRIES) {
+                    reconnect();
                     log.debug("Will sleep a while before trying to send again");
                     TimeUtils.exponentialBackoffSleep(tries,
                                                       Calendar.MINUTE);
@@ -403,19 +429,13 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         try {
             log.info("Trying to reconnect to jmsbroker");
 
-            Map<String, MessageListener> savedListeners;
-            synchronized (listeners) {
-                savedListeners = new HashMap<String, MessageListener>(
-                        listeners);
-            }
-
             boolean operationSuccessful = false;
             Exception lastException = null;
             int tries = 0;
             while (!operationSuccessful && tries < JMS_MAXTRIES) {
                 tries++;
                 try {
-                    doReconnect(savedListeners);
+                    doReconnect();
                     operationSuccessful = true;
                 } catch (Exception e) {
                     lastException = e;
@@ -431,7 +451,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
             if (!operationSuccessful) {
                 log.warn("Reconnect to JMS broker failed",
                          lastException);
-                cleanup();
+                closeConnection();
             }
         } finally {
             // Tell everybody, that we are not trying to reconnect any longer
@@ -535,7 +555,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * @throws JMSException If some JMS error occurred during the creation of
      *                      the required JMS connection and session
      */
-    private void establishConnectionAndSessions() throws JMSException {
+    private void establishConnectionAndSession() throws JMSException {
         // Establish a queue connection and a session
         connection = getConnectionFactory().createConnection();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -585,7 +605,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
 
         int tries = 0;
         boolean operationSuccessful = false;
-        JMSException lastException = null;
+        Exception lastException = null;
         while (!operationSuccessful && tries < JMS_MAXTRIES) {
             tries++;
             try {
@@ -601,6 +621,15 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 log.debug("Set listener failed (try " + tries + ")", e);
                 if (tries < JMS_MAXTRIES) {
                     onException(e);
+                    log.debug("Will sleep a while before trying to set listener"
+                              + " again");
+                    TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
+                }
+            } catch (Exception e) {
+                lastException = e;
+                log.debug("Set listener failed (try " + tries + ")", e);
+                if (tries < JMS_MAXTRIES) {
+                    reconnect();
                     log.debug("Will sleep a while before trying to set listener"
                               + " again");
                     TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
@@ -624,7 +653,7 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
         String errMsg = "JMS-error - could not remove Listener from "
                         + "queue/topic: " + channelName;
         int tries = 0;
-        JMSException lastException = null;
+        Exception lastException = null;
         boolean operationSuccessful = false;
 
         log.info("Removing listener from channel '" + channelName + "'");
@@ -649,6 +678,13 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
                 log.debug("Will and sleep a while before trying to remove"
                           + " listener again");
                 TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
+            } catch (Exception e) {
+                lastException = e;
+                log.debug("Remove  listener failed (try " + tries + ")", e);
+                reconnect();
+                log.debug("Will and sleep a while before trying to remove"
+                          + " listener again");
+                TimeUtils.exponentialBackoffSleep(tries, Calendar.MINUTE);
             }
         }
         if (!operationSuccessful) {
@@ -661,32 +697,19 @@ public abstract class JMSConnection implements ExceptionListener, CleanupIF {
      * Reconnect to JMSBroker and reestablish session. Resets senders and
      * publishers.
      *
-     * @param savedListeners Listeners to readd after reestablishing
-     *                       connection.
-     *
      * @throws JMSException If unable to reconnect to JMSBroker and/or
      *                      reestablish sesssions
      */
-    private void doReconnect(Map<String, MessageListener> savedListeners)
+    private void doReconnect()
             throws JMSException {
-        try {
-            cleanup();
-        } catch (IOFailure e) {
-            log.debug("Trouble cleaning up JMSConnection", e);
-            //Harmless, just try to reconnect.
-        }
-        establishConnectionAndSessions();
+        closeConnection();
+        establishConnectionAndSession();
         // Add listeners already stored in the consumers map
         log.debug("Re-add listeners");
         for (Map.Entry<String, MessageListener> listener
-                : savedListeners.entrySet()) {
-            try {
-                setListener(getChannelName(listener.getKey()),
-                            listener.getValue());
-            } catch (IOFailure e) {
-                // We cannot do anything more at this point
-                log.warn("Exception thrown while adding listeners", e);
-            }
+                : listeners.entrySet()) {
+            setListener(getChannelName(listener.getKey()),
+                        listener.getValue());
         }
         log.info("Reconnect successful");
     }
