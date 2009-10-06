@@ -169,10 +169,10 @@ public final class ScriptConstants {
     static final String MD = "md";
     /** mkdir. (linux for makedir).*/
     static final String MKDIR = "mkdir";
-    /** mv. (linux for moving file).*/
-    static final String MV = "mv";
-    /** move. (windows for moving file).*/
-    static final String MOVE = "move";
+    /** mv -f. (Linux force move of file).*/
+    static final String LINUX_FORCE_MOVE = "mv -f";
+    /** move /Y. (force move on windows).*/
+    static final String WINDOWS_FORCE_MOVE = "move /Y";
     /** classpath.*/
     static final String CLASSPATH = "classpath";
     /** $CLASSPATH.*/

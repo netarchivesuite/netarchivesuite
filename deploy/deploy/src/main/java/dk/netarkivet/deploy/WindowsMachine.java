@@ -80,15 +80,28 @@ public class WindowsMachine extends Machine {
      * - $'create directories'.
      * - echo preparing for copying of settings and scripts
      * - if [ $( ssh 'login'@'machine' cmd /c if exist 
-     * 'environmentName'\\conf\\security.policy echo 1 ) ]; then echo Y | ssh 
-     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\security.policy
+     * 'environmentName'\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh 
+     * 'login'@'machine' cmd /c cacls 
+     * 'environmentName'\\conf\\jmxremote.password
+     * /P BITARKIV\\'login':F; fi
+     * - if [ $( ssh 'login'@'machine' cmd /c if exist 
+     * 'environmentName'\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh 
+     * 'login'@'machine' cmd /c cacls 'environmentName'\\conf\\jmxremote.access
      * /P BITARKIV\\'login':F; fi
      * - echo copying settings and scripts
      * - scp -r 'machine'/* 'login'@'machine':'environmentName'\\conf\\
      * - $'apply database script'
      * - echo make password files readonly
+     * * if 'jmxremote-password-path' != 'jmxremote-password-defaultpath'
+     * - ssh 'login'@'machine' move /Y 'jmxremote-password-defaultpath' 
+     * 'jmxremote-password-path'
+     * * if 'jmxremote-access-path' != 'jmxremote-access-defaultpath'
+     * - ssh 'login'@'machine' move /Y 'jmxremote-access-defaultpath' 
+     * 'jmxremote-access-path'
      * - echo Y | ssh 'login'@'machine' cmd /c cacls 
-     * 'environmentName'\\conf\\jmxremote.password /P BITARKIV\\'login':R
+     * 'environmentName'\\'jmxremote-password-path' /P BITARKIV\\'login':R
+     * - echo Y | ssh 'login'@'machine' cmd /c cacls 
+     * 'environmentName'\\'jmxremote-access-path' /P BITARKIV\\'login':R
      * 
      * variables:
      * 'NetarchiveSuite.zip' = The NetarchiveSuitePackage with '.zip' extension.
@@ -142,9 +155,42 @@ public class WindowsMachine extends Machine {
         res.append(ScriptConstants.ECHO_PREPARING_FOR_COPY);
         res.append(Constants.NEWLINE);
         // - if [ $( ssh 'login'@'machine' cmd /c if exist 
-        // 'environmentName'\\conf\\security.policy echo 1 ) ]; then echo Y 
+        // 'environmentName'\\'jmxremote.password' echo 1 ) ]; then echo Y 
         // | ssh 'login'@'machine' cmd /c cacls 
-        // 'environmentName'\\conf\\security.policy /P BITARKIV\\'login':F; fi
+        // 'environmentName'\\'jmxremote.password' /P BITARKIV\\'login':F; fi
+        res.append(ScriptConstants.IF + Constants.SPACE 
+                + Constants.SQUARE_BRACKET_BEGIN + Constants.SPACE
+                + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN 
+                + ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
+                + ScriptConstants.EXIST + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.JMX_PASSWORD_FILE_NAME);
+        res.append(Constants.SPACE + ScriptConstants.ECHO_ONE);
+        res.append(Constants.SPACE + Constants.BRACKET_END 
+                + Constants.SPACE + Constants.SQUARE_BRACKET_END
+                + Constants.SEMICOLON + Constants.SPACE
+                + ScriptConstants.THEN + Constants.SPACE);
+        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
+                + Constants.SEPARATOR + Constants.SPACE
+                + ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
+                + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
+        res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
+        res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SPACE 
+                + ScriptConstants.SLASH_P + Constants.SPACE 
+                + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
+        res.append(machineParameters.getMachineUserName().getText());
+        res.append(ScriptConstants.COLON_F + Constants.SEMICOLON
+                + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON);
+        res.append(Constants.NEWLINE);
+        // - if [ $( ssh 'login'@'machine' cmd /c if exist 
+        // 'environmentName'\\'jmxremote.access' echo 1 ) ]; then echo Y 
+        // | ssh 'login'@'machine' cmd /c cacls 
+        // 'environmentName'\\'jmxremote.access' /P BITARKIV\\'login':F; fi
         res.append(ScriptConstants.IF + Constants.SPACE 
                 + Constants.SQUARE_BRACKET_BEGIN + Constants.SPACE
                 + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN 
@@ -1064,6 +1110,7 @@ public class WindowsMachine extends Machine {
      * Retrieves the path to the jmxremote.access and jmxremote.password files.
      * 
      * Moves these files, if they are different from standard.
+     * This has to be a force move (command 'move /Y').
      * 
      * Makes the jmxremote.access and jmxremote.password files readonly.
      *  
@@ -1127,7 +1174,7 @@ public class WindowsMachine extends Machine {
             res.append(machineUserLogin());
             res.append(Constants.SPACE + Constants.QUOTE_MARK);
             res.append(ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE);
-            res.append(ScriptConstants.MOVE);
+            res.append(ScriptConstants.WINDOWS_FORCE_MOVE);
             res.append(Constants.SPACE);
             res.append(ScriptConstants.doubleBackslashes(
                     getLocalInstallDirPath()));
@@ -1149,7 +1196,7 @@ public class WindowsMachine extends Machine {
             res.append(machineUserLogin());
             res.append(Constants.SPACE + Constants.QUOTE_MARK);
             res.append(ScriptConstants.WINDOWS_COMMAND_RUN + Constants.SPACE);
-            res.append(ScriptConstants.MOVE);
+            res.append(ScriptConstants.WINDOWS_FORCE_MOVE);
             res.append(Constants.SPACE);
             res.append(ScriptConstants.doubleBackslashes(
                     getLocalInstallDirPath()));

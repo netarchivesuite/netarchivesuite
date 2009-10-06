@@ -135,6 +135,25 @@ public class LinuxMachine extends Machine {
                 + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON
                 + Constants.SPACE + Constants.QUOTE_MARK);
         res.append(Constants.NEWLINE);
+        // For overriding jmxremote.access give user all rights.
+        // ssh machine: "if [ -e conf/jmxremote.access ]; 
+        // then chmod u+rwx conf/jmxremote.access; fi; "
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.SPACE
+                + ScriptConstants.LINUX_HOME_DIR + Constants.SEMICOLON 
+                + Constants.SPACE + ScriptConstants.LINUX_IF_EXIST
+                + Constants.SPACE);
+        res.append(getConfDirPath());
+        res.append(Constants.JMX_ACCESS_FILE_NAME);
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE + ScriptConstants.LINUX_USER_ONLY 
+                + Constants.SPACE);
+        res.append(getConfDirPath());
+        res.append(Constants.JMX_ACCESS_FILE_NAME + Constants.SEMICOLON 
+                + Constants.SPACE + ScriptConstants.FI + Constants.SEMICOLON
+                + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
         // echo copying settings and scripts
         res.append(ScriptConstants.ECHO_COPY_SETTINGS_AND_SCRIPTS);
         res.append(Constants.NEWLINE);
@@ -968,12 +987,12 @@ public class LinuxMachine extends Machine {
 
         // IF NOT DEFAULT PATHS, THEN MAKE SCRIPT TO MOVE THE FILES.
         if(!accessFilePath.equals(Constants.JMX_ACCESS_FILE_PATH_DEFAULT)) {
-            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // ssh dev@kb-test-adm-001.kb.dk "mv -f
             // installpath/conf/jmxremote.access installpath/accessFilePath"
             res.append(ScriptConstants.SSH + Constants.SPACE);
             res.append(machineUserLogin());
             res.append(Constants.SPACE + Constants.QUOTE_MARK);
-            res.append(ScriptConstants.MV);
+            res.append(ScriptConstants.LINUX_FORCE_MOVE);
             res.append(Constants.SPACE);
             res.append(getInstallDirPath());
             res.append(Constants.SLASH);
@@ -987,12 +1006,12 @@ public class LinuxMachine extends Machine {
         }
 
         if(!passwordFilePath.equals(Constants.JMX_PASSWORD_FILE_PATH_DEFAULT)) {
-            // ssh dev@kb-test-adm-001.kb.dk "mv 
+            // ssh dev@kb-test-adm-001.kb.dk "mv -f
             // installpath/conf/jmxremote.access installpath/accessFilePath"
             res.append(ScriptConstants.SSH + Constants.SPACE);
             res.append(machineUserLogin());
             res.append(Constants.SPACE + Constants.QUOTE_MARK);
-            res.append(ScriptConstants.MV);
+            res.append(ScriptConstants.LINUX_FORCE_MOVE);
             res.append(Constants.SPACE);
             res.append(getInstallDirPath());
             res.append(Constants.SLASH);
