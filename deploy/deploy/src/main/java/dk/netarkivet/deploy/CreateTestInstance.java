@@ -108,6 +108,14 @@ public class CreateTestInstance {
         // change integer to string (easiest way to change integer to String)
         offsetVal = new String(new Integer(offsetInt).toString());
 
+        // vaildate the environment name.
+        if(!Constants.validEnvironmentName(environmentName)) {
+            System.err.print(Constants.MSG_ERROR_INVALID_ENVIRONMENT_NAME
+                    + environmentName);
+            System.out.println();
+            System.exit(1);
+        }
+        
         // Get values
         httpPortVal = httpPort;
         environmentNameVal = environmentName;

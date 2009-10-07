@@ -100,15 +100,24 @@ public class DeployConfiguration {
         settings = new XmlStructure(
                 config.getChild(Constants.COMPLETE_SETTINGS_BRANCH));
         machineParam = new Parameters(config);
+        
+        String environmentName = config.getSubChildValue(
+                Constants.COMPLETE_ENVIRONMENT_NAME_LEAF);
+
+        // vaildate the environment name.
+        if(!Constants.validEnvironmentName(environmentName)) {
+            System.err.print(Constants.MSG_ERROR_INVALID_ENVIRONMENT_NAME
+                    + environmentName);
+            System.out.println();
+            System.exit(1);
+        }
 
         // if a outputDir has not been given as argument, 
         // it is the output directory
         if(outputDirName == null) {
             // Load output directory from config file
             outputDirName = Constants.DOT + Constants.SLASH 
-                + config.getSubChildValue(
-                        Constants.COMPLETE_ENVIRONMENT_NAME_LEAF)
-                        + Constants.SLASH;
+                + environmentName + Constants.SLASH;
         }
         outputDir = new File(outputDirName);
         // make sure that directory outputDir exists

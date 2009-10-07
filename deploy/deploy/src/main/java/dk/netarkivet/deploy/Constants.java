@@ -23,6 +23,8 @@
  */
 package dk.netarkivet.deploy;
 
+import java.util.regex.Pattern;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.EMailNotifications;
@@ -398,6 +400,9 @@ public final class Constants {
     /** Argument.*/
     public static final String INIT_ARGUMENTS_LIST = "Arguments:";
     
+    /** The regular expression for validating the environment name.*/
+    public static final String VALID_REGEX_ENVIRONMENT_NAME = "[a-zA-Z0-9]*";
+    
     // messages
     /** The error message for error in parsing the arguments.*/
     public static final String MSG_ERROR_PARSE_ARGUMENTS = 
@@ -465,6 +470,16 @@ public final class Constants {
     /** The error message when IOException during cannocial path of zip file.*/
     public static final String MSG_ERROR_ZIP_CANNONICAL_PATH = 
         "The cannonical path of the NetarchiveSuite zip file is invalid.";
+    /** The error message when the environment name for the test instance 
+     * is invalid.*/
+    public static final String MSG_ERROR_INVALID_TEST_ENVIRONMENT_NAME = 
+        "The environment name for the test instance was not valid to the "
+        + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. "
+        + "But was given: ";
+    /** .*/
+    public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME = 
+        "The environment name must be valid to the regular expression: '"
+        + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
@@ -494,5 +509,17 @@ public final class Constants {
      */
     public static String changeToXMLEndScope(String scope) {
         return LESS_THAN + SLASH + scope + GREATER_THAN;
+    }
+    
+    /**
+     * Checks whether a string is valid for environment name.
+     * The string is checked against a regular expression.
+     * 
+     * @param name The environment name to validate.
+     * @return Whether the environment name is valid.
+     * @see VALID_REGEX_ENVIRONMENT_NAME
+     */
+    public static boolean validEnvironmentName(String name) {
+        return Pattern.matches(VALID_REGEX_ENVIRONMENT_NAME, name);
     }
 }
