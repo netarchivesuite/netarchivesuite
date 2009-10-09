@@ -363,7 +363,7 @@ public class WindowsMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = Constants.SCRIPT_LOCAL_KILL_ALL
+                    String appScript = Constants.SCRIPT_NAME_LOCAL_KILL
                             + app.getIdentification() + scriptExtension;
                     killPrinter.print(ScriptConstants
                             .OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
@@ -413,7 +413,7 @@ public class WindowsMachine extends Machine {
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
-                    String appScript = Constants.SCRIPT_LOCAL_START_ALL
+                    String appScript = Constants.SCRIPT_NAME_LOCAL_START
                             + app.getIdentification() + scriptExtension;
                     startPrinter.print(ScriptConstants
                             .OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE);
@@ -494,7 +494,7 @@ public class WindowsMachine extends Machine {
                 String killPsName = Constants.SCRIPT_KILL_PS + id 
                         + scriptExtension;
                 File appKillScript = new File(directory, 
-                        Constants.SCRIPT_LOCAL_KILL_ALL + id + scriptExtension);
+                        Constants.SCRIPT_NAME_LOCAL_KILL + id + scriptExtension);
                 File appKillPsScript = new File(directory, killPsName);
                 try {
                     // make print writer for writing to file
@@ -660,7 +660,7 @@ public class WindowsMachine extends Machine {
      */
     protected void windowsStartBatScript(Application app, File directory) {
         File appStartScript = new File(directory, 
-                Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                 + scriptExtension);
         try {
             // make print writer for writing to file
@@ -692,7 +692,7 @@ public class WindowsMachine extends Machine {
                 // cscript .\conf\start_app.vbs
                 appPrint.println(ScriptConstants.CSCRIPT + Constants.SPACE
                         + Constants.DOT + Constants.CONF_DIR_WINDOWS
-                        + Constants.SCRIPT_LOCAL_START_ALL + id 
+                        + Constants.SCRIPT_NAME_LOCAL_START + id 
                         + Constants.EXTENSION_VBS_FILES);
                 // GOTO DONE
                 appPrint.println(ScriptConstants.GOTO + Constants.SPACE
@@ -744,7 +744,7 @@ public class WindowsMachine extends Machine {
      */
     protected void windowsStartVbsScript(Application app, File directory) {
         File appStartSupportScript = new File(directory,
-                Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                 + Constants.EXTENSION_VBS_FILES);
         try {
             // make print writer for writing to file
@@ -1036,58 +1036,58 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected void createInstallDirScript(File directory) {
-           File dirScript = new File(directory, 
-                   getMakeDirectoryName());
-                try {
-                    // make print writer for writing to file
-                    PrintWriter dirPrint = new PrintWriter(dirScript);
-                    try {
-                        // go to correct directory
-                        dirPrint.print(ScriptConstants.CD + Constants.SPACE);
-                        dirPrint.print(getInstallDirPath());
-                        dirPrint.print(Constants.NEWLINE);
+        File dirScript = new File(directory, 
+                getMakeDirectoryName());
+        try {
+            // make print writer for writing to file
+            PrintWriter dirPrint = new PrintWriter(dirScript);
+            try {
+                // go to correct directory
+                dirPrint.print(ScriptConstants.CD + Constants.SPACE);
+                dirPrint.print(getInstallDirPath());
+                dirPrint.print(Constants.NEWLINE);
 
-                        // go through all directories.
-                        String dir;
+                // go through all directories.
+                String dir;
 
-                        // get archive.bitpresevation.baseDir directory.
-                        dir = settings.getLeafValue(
-                                Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
-                        if(dir != null && !dir.isEmpty() 
-                                && !dir.equalsIgnoreCase(Constants.DOT)) {
-                            dirPrint.print(createPathToDir(dir));
-                            dirPrint.print(scriptCreateDir(dir, false));
-                        }
-
-                        // get archive.arcrepository.baseDir directory.
-                        dir = settings.getLeafValue(
-                                Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
-                        if(dir != null && !dir.isEmpty()
-                                && !dir.equalsIgnoreCase(Constants.DOT)) {
-                            dirPrint.print(createPathToDir(dir));
-                            dirPrint.print(scriptCreateDir(dir, false));
-                        }
-
-                        dirPrint.print(getAppDirectories());
-
-                        // get tempDir directory.
-                        dir = settings.getLeafValue(
-                                Constants.SETTINGS_TEMPDIR_LEAF);
-                        if(dir != null && !dir.isEmpty()
-                                && !dir.equalsIgnoreCase(Constants.DOT)) {
-                            dirPrint.print(createPathToDir(dir));
-                            dirPrint.print(scriptCreateDir(dir, resetTempDir));
-                        }
-                    } finally {
-                        // close file
-                        dirPrint.close();
-                    }
-                } catch (IOException e) {
-                    String msg = "Problems creating local start all script: "
-                        + e;
-                    log.trace(msg);
-                    throw new IOFailure(msg);
+                // get archive.bitpresevation.baseDir directory.
+                dir = settings.getLeafValue(
+                        Constants.SETTINGS_ARCHIVE_BP_BASEDIR_LEAF);
+                if(dir != null && !dir.isEmpty() 
+                        && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    dirPrint.print(createPathToDir(dir));
+                    dirPrint.print(scriptCreateDir(dir, false));
                 }
+
+                // get archive.arcrepository.baseDir directory.
+                dir = settings.getLeafValue(
+                        Constants.SETTINGS_ARCHIVE_ARC_BASEDIR_LEAF);
+                if(dir != null && !dir.isEmpty()
+                        && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    dirPrint.print(createPathToDir(dir));
+                    dirPrint.print(scriptCreateDir(dir, false));
+                }
+
+                dirPrint.print(getAppDirectories());
+
+                // get tempDir directory.
+                dir = settings.getLeafValue(
+                        Constants.SETTINGS_TEMPDIR_LEAF);
+                if(dir != null && !dir.isEmpty()
+                        && !dir.equalsIgnoreCase(Constants.DOT)) {
+                    dirPrint.print(createPathToDir(dir));
+                    dirPrint.print(scriptCreateDir(dir, resetTempDir));
+                }
+            } finally {
+                // close file
+                dirPrint.close();
+            }
+        } catch (IOException e) {
+            String msg = "Problems creating local start all script: "
+                + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
+        }
     }
 
     /**
@@ -1249,5 +1249,100 @@ public class WindowsMachine extends Machine {
         res.append(Constants.NEWLINE);
 
         return res.toString();
+    }
+
+    /**
+     * Creates scripts for restarting all the applications on a machine.
+     * This script should start by killing all the existing processes, and then
+     * starting them again.
+     * 
+     * First the killall scripts is called, then wait for 5 seconds for the 
+     * applications to be fully terminated, and finally call the startall 
+     * script.
+     * 
+     * The createWaitScript is called through this script to create the wait 
+     * script which is used by the restart script.
+     * 
+     * @param dir The directory where the script file will be placed.
+     */
+    @Override
+    protected void createRestartScript(File dir) {
+        // Start by creating the wait script.
+        createWaitScript(dir);
+        
+        try {
+            // initialise the script file.
+            File restartScript = new File(dir, 
+                    Constants.SCRIPT_NAME_RESTART + scriptExtension);
+            
+            // make print writer for writing to file
+            PrintWriter restartPrint = new PrintWriter(restartScript);
+            try {
+                restartPrint.println(ScriptConstants.CD + Constants.SPACE
+                        + Constants.QUOTE_MARK + getConfDirPath()
+                        + Constants.QUOTE_MARK);
+
+                // call killall script.
+                restartPrint.print(ScriptConstants.WINDOWS_COMMAND_RUN);
+                restartPrint.print(Constants.SPACE);
+                restartPrint.print(Constants.SCRIPT_NAME_KILL_ALL 
+                        + scriptExtension);
+                restartPrint.print(Constants.NEWLINE);
+                
+                // call wait script.
+                restartPrint.print(ScriptConstants.CSCRIPT);
+                restartPrint.print(Constants.SPACE);
+                restartPrint.print(Constants.SCRIPT_NAME_WAIT 
+                        + Constants.EXTENSION_VBS_FILES);
+                restartPrint.print(Constants.NEWLINE);
+                
+                // call startall script.
+                restartPrint.print(ScriptConstants.WINDOWS_COMMAND_RUN);
+                restartPrint.print(Constants.SPACE);
+                restartPrint.print(Constants.SCRIPT_NAME_START_ALL 
+                        + scriptExtension);
+                restartPrint.print(Constants.NEWLINE);
+            } finally {
+                // close file
+                restartPrint.close();
+            }
+        } catch (IOException e) {
+            String msg = "Problems creating local restart script: "
+                + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
+        }
+    }
+    
+    /**
+     * Createst the script for waiting during restart.
+     * 
+     * @param dir The directory where the script should be placed.
+     */
+    protected void createWaitScript(File dir) {
+        try {
+            // initialise the script file.
+            File waitScript = new File(dir, 
+                    Constants.SCRIPT_NAME_WAIT + Constants.EXTENSION_VBS_FILES);
+            
+            // make print writer for writing to file
+            PrintWriter waitPrint = new PrintWriter(waitScript);
+            try {
+                // Create the wait script.
+                waitPrint.print(ScriptConstants.VB_WRITE_WAIT
+                        + Constants.SPACE
+                        + (Constants.WAIT_TIME_DURING_RESTART 
+                                * Constants.TIME_SECOND_IN_MILLISECONDS));
+                waitPrint.print(Constants.NEWLINE);
+            } finally {
+                // close file
+                waitPrint.close();
+            }
+        } catch (IOException e) {
+            String msg = "Problems creating local wait script: "
+                + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
+        }
     }
 }

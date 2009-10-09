@@ -226,6 +226,40 @@ public final class Constants {
         CommonSettings.JMX_PASSWORD_FILE
         .replace(COMPLETE_SETTINGS_BRANCH + ".", "").split("[.]");
 
+    // other constants
+    /** The amount of seconds to wait for the restart script.*/
+    public static final int WAIT_TIME_DURING_RESTART = 5;
+    /** The number of milliseconds on a second. 1000.*/
+    static final int TIME_SECOND_IN_MILLISECONDS = 1000;
+    /** The minimum number of arguments required.*/
+    public static final int ARGUMENTS_REQUIRED = 4;
+    /** The exact number of arguments required for test.*/
+    public static final int TEST_ARGUMENTS_REQUIRED = 4;
+    /** The maximum integer value in a character.*/
+    public static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
+    /** Directories to install under baseFileDir.*/
+    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {
+            dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
+            dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
+            dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME
+        };
+    /** The offset for the digit to replace during test in the 
+     * monitor jmx port.
+     */
+    static final int TEST_OFFSET_MONITOR_JMX_PORT = 2;
+    /** The offset for the digit to replace during test in the 
+     * monitor rmi port.
+     */
+    static final int TEST_OFFSET_MONITOR_RMI_PORT = 2;
+    /** The offset for the digit to replace during test in the 
+     * heritrix jmx port.
+     */
+    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
+    /** The offset for the digit to replace during test in the 
+     * heritrix gui port.
+     */
+    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+
     // File and directory names
     /** The name of the JMX remote password file.*/
     static final String JMX_PASSWORD_FILE_NAME = "jmxremote.password";
@@ -268,10 +302,14 @@ public final class Constants {
     static final String SCRIPT_NAME_INSTALL_ALL = "install";
     /** The name of the killall script. startall.*/
     static final String SCRIPT_NAME_START_ALL = "startall";
+    /** The name of the restart all application script. restart.*/
+    static final String SCRIPT_NAME_RESTART = "restart";
+    /** The name of the wait script for windows. wait.*/
+    static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. kill_ .*/
-    static final String SCRIPT_LOCAL_KILL_ALL = "kill_";
+    static final String SCRIPT_NAME_LOCAL_KILL = "kill_";
     /** Prefix for the application start script. start_ .*/
-    static final String SCRIPT_LOCAL_START_ALL = "start_";
+    static final String SCRIPT_NAME_LOCAL_START = "start_";
     /** Prefix for the application kill_ps script.*/
     static final String SCRIPT_KILL_PS = "kill_ps_";
     /** The prefix of the name for application specific settings files.*/
@@ -326,36 +364,6 @@ public final class Constants {
     /** The name of the temporary run-file for windows.*/
     public static final String FILE_TEMPORARY_RUN_WINDOWS_NAME = "running_";
     
-    // other constants
-    /** The minimum number of arguments required.*/
-    public static final int ARGUMENTS_REQUIRED = 4;
-    /** The exact number of arguments required for test.*/
-    public static final int TEST_ARGUMENTS_REQUIRED = 4;
-    /** The maximum integer value in a character.*/
-    public static final int TEST_OFFSET_INTEGER_MAXIMUM_VALUE = 9;
-    /** Directories to install under baseFileDir.*/
-    public static final String[] BASEFILEDIR_SUBDIRECTORIES = {
-            dk.netarkivet.archive.Constants.FILE_DIRECTORY_NAME,
-            dk.netarkivet.archive.Constants.TEMPORARY_DIRECTORY_NAME,
-            dk.netarkivet.archive.Constants.ATTIC_DIRECTORY_NAME
-        };
-    /** The offset for the digit to replace during test in the 
-     * monitor jmx port.
-     */
-    static final int TEST_OFFSET_MONITOR_JMX_PORT = 2;
-    /** The offset for the digit to replace during test in the 
-     * monitor rmi port.
-     */
-    static final int TEST_OFFSET_MONITOR_RMI_PORT = 2;
-    /** The offset for the digit to replace during test in the 
-     * heritrix jmx port.
-     */
-    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
-    /** The offset for the digit to replace during test in the 
-     * heritrix gui port.
-     */
-    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
-
     // argument parameters as constants.
     /** For initiating a argument. */
     public static final String ARG_INIT_ARG = "-";

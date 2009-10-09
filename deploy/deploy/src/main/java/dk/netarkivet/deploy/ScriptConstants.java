@@ -97,8 +97,10 @@ public final class ScriptConstants {
     static final String LINUX_ERROR_MESSAGE_TO_1 = "2>&1 &"; 
     /** /etc/profile.*/
     static final String ECT_PROFILE = "/etc/profile";
+    /** The linux command for sleeping. sleep.*/
+    static final String SLEEP = "sleep";
     /** sleep 5.*/
-    static final String SLEEP_5 = "sleep 5";
+    static final String SLEEP_5 = SLEEP + " 5";
     /** *.log.*/
     static final String STAR_LOG = "*.log";
     /** '      '.*/
@@ -288,6 +290,8 @@ public final class ScriptConstants {
         + "\" & oExec.ProcessID";
     /** f.close.*/
     static final String VB_WRITE_TF_CLOSE = "tf.close";
+    /** WScript.Sleep.*/
+    static final String VB_WRITE_WAIT = "WScript.Sleep";
     
     // integers
     /** Number of '-' repeat for the writeDashLine function.*/

@@ -305,7 +305,7 @@ public class LinuxMachine extends Machine {
                 for(Application app : applications) {
                     // Constructing filename
                     String appScript = Constants.DOT + Constants.SLASH
-                            + Constants.SCRIPT_LOCAL_KILL_ALL
+                            + Constants.SCRIPT_NAME_LOCAL_KILL
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
                     killPrinter.println(ScriptConstants.LINUX_IF_EXIST
@@ -369,7 +369,7 @@ public class LinuxMachine extends Machine {
                 for(Application app : applications) {
                     // make name of file
                     String appScript = Constants.DOT + Constants.SLASH
-                            + Constants.SCRIPT_LOCAL_START_ALL
+                            + Constants.SCRIPT_NAME_LOCAL_START
                             + app.getIdentification() + scriptExtension;
                     // check if file exists
                     startPrinter.println(ScriptConstants.LINUX_IF_EXIST
@@ -431,7 +431,7 @@ public class LinuxMachine extends Machine {
         // go through all applications and create their kill script
         for(Application app : applications) {
             File appKillScript = new File(directory, 
-                    Constants.SCRIPT_LOCAL_KILL_ALL + app.getIdentification() 
+                    Constants.SCRIPT_NAME_LOCAL_KILL + app.getIdentification() 
                     + scriptExtension);
             try {
                 // make print writer for writing to file
@@ -540,7 +540,7 @@ public class LinuxMachine extends Machine {
         // go through all applications and create their start script
         for(Application app : applications) {
             File appStartScript = new File(directory, 
-                    Constants.SCRIPT_LOCAL_START_ALL + app.getIdentification() 
+                    Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                     + scriptExtension);
             try {
                 // make print writer for writing to file
@@ -596,7 +596,8 @@ public class LinuxMachine extends Machine {
                             + Constants.SECURITY_POLICY_FILE_NAME 
                             + Constants.SPACE + app.getTotalName()
                             + Constants.SPACE + ScriptConstants.LINUX_DEV_NULL
-                            + Constants.SPACE + Constants.SCRIPT_LOCAL_START_ALL
+                            + Constants.SPACE 
+                            + Constants.SCRIPT_NAME_LOCAL_START
                             + app.getIdentification() 
                             + Constants.EXTENSION_LOG_FILES
                             + Constants.SPACE 
@@ -1050,5 +1051,60 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
 
         return res.toString();
+    }
+
+    /**
+     * Creates script for restarting all the applications on a machine.
+     * This script should start by killing all the existing processes, and then
+     * starting them again.
+     * 
+     * First the killall scripts is called, then wait for 5 seconds for the 
+     * applications to be fully terminated, and finally the startall 
+     * script is called.
+     * 
+     * @param dir The directory where the script file will be placed.
+     */
+    @Override
+    protected void createRestartScript(File dir) {
+        try {
+            // initialise the script file.
+            File restartScript = new File(dir, 
+                    Constants.SCRIPT_NAME_RESTART + scriptExtension);
+            
+            // make print writer for writing to file
+            PrintWriter restartPrint = new PrintWriter(restartScript);
+            try {
+                // init, go to directory
+                restartPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+                restartPrint.println(ScriptConstants.CD + Constants.SPACE
+                        + getConfDirPath());
+                
+                // call killall script.
+                restartPrint.print(Constants.DOT + Constants.SLASH
+                        + Constants.SCRIPT_NAME_KILL_ALL
+                        + scriptExtension);
+                restartPrint.print(Constants.NEWLINE);
+                
+                // call wait script.
+                restartPrint.print(ScriptConstants.SLEEP);
+                restartPrint.print(Constants.SPACE);
+                restartPrint.print(Constants.WAIT_TIME_DURING_RESTART);
+                restartPrint.print(Constants.NEWLINE);
+                
+                // call startall script.
+                restartPrint.print(Constants.DOT + Constants.SLASH
+                        + Constants.SCRIPT_NAME_START_ALL
+                        + scriptExtension);
+                restartPrint.print(Constants.NEWLINE);
+            } finally {
+                // close file
+                restartPrint.close();
+            }
+        } catch (IOException e) {
+            String msg = "Problems creating local restart script: "
+                + e;
+            log.trace(msg);
+            throw new IOFailure(msg);
+        }
     }
 }

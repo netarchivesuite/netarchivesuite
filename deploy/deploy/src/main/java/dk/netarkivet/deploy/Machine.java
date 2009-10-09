@@ -183,6 +183,8 @@ public abstract class Machine {
         // create start scripts
         createApplicationStartScripts(machineDirectory);
         createOSLocalStartAllScript(machineDirectory);
+        // create restart script
+        createRestartScript(machineDirectory);
         // copy the security policy file
         createSecurityPolicyFile(machineDirectory);
         // create the log property files
@@ -818,6 +820,13 @@ public abstract class Machine {
      * @param dir The directory to put the file
      */
     protected abstract void createInstallDirScript(File dir);
+    
+    /**
+     * Creates a script for restating all the applications on a given machine.
+     * 
+     * @param dir The directory to put the script.
+     */
+    protected abstract void createRestartScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security 
