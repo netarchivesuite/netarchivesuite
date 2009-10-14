@@ -44,10 +44,11 @@ grant codeBase "file:TEMPDIR/BitPreservation/jsp/-" {
   permission java.security.AllPermission;
 };
 
-/* This allows third-party batch classes to figure out which location they're at
-*/
+/* This allows third-party batch classes and their libraries to read the 
+ * system properties and NetarchiveSuite settings.
+ */
 grant {
-  permission java.util.PropertyPermission "settings.common.thisPhysicalLocation", "read";
+  permission java.util.PropertyPermission "*", "read";
 };
 
 /* Directories in the bitarchives should be added below.
