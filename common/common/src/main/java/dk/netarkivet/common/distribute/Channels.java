@@ -23,7 +23,7 @@
 
 package dk.netarkivet.common.distribute;
 
-import java.util.Arrays;
+import java.util.Collection;
 
 import org.mortbay.log.Log;
 
@@ -84,98 +84,77 @@ public class Channels {
     }
 
     /**
-     * The following fields are read from settings.xml. allReplicaIds is the
-     * list of all replica ids in the environment. It is used for
-     * applications that need to communicate with e.g. all bitarchives. An
-     * example value is {"ONE","TWO"}.
+     * Contains the collection of replicas.
      */
-    private final String[] allReplicaIds = Settings.getAll(
-            CommonSettings.REPLICA_IDS);
-    
-    /**
-     * Contains the list of the types of all the replicas. The fields are read
-     * from the settings.xml file. It is used for the applications that need 
-     * to comminicate with the replicas.
-     * An example valus is {"bitarchive", "bitarchive", "checksum"}.  
-     */
-    private final String[] allReplicaTypes = Settings.getAll(
-            CommonSettings.REPLICA_TYPES);
+    private final Collection<Replica> replicas = Replica.getKnown();
 
     /**
-     * useReplicaId is the id of the replica, used for applications
-     * that only communicate with local processes. An example value is "ONE".
+     * This is the container for the replica which is used by applications
+     * that only communicate with local processes.
      */
-    private final String useReplicaId = Settings.get(
-            CommonSettings.USE_REPLICA_ID);
-
-    /** The index of use replica id n the allReplicas list. */
-    private final int indexOfUseReplicaId = Arrays.asList(allReplicaIds)
-            .indexOf(useReplicaId);
+    private final Replica useReplica = Replica.getReplicaFromId(
+            Settings.get(CommonSettings.USE_REPLICA_ID));
     
-    /** The constructor of Channels class. 
-     *  Validates that the current value of the setting USE_REPLICA_ID
-     *  corresponds to one of the replicas listed in the settings.
-     *  Furthermore we here fill content in the ALL_BA_ARRAY, ANY_BA_ARRAY,
-     *  THE_BAMON_ARRAY, and initialize ALL_BA, ANY_BA, and THE_BAMON.
-     *  
+    /** 
+     * The constructor of Channels class. 
+     * Validates that the current value of the setting USE_REPLICA_ID
+     * corresponds to one of the replicas listed in the settings.
+     * Furthermore we here fill content in the ALL_BA_ARRAY, ANY_BA_ARRAY,
+     * THE_BAMON_ARRAY, and initialize ALL_BA, ANY_BA, and THE_BAMON.
      */
     private Channels() {
-        if (indexOfUseReplicaId < 0) {
-             throw new ArgumentNotValid("Bad replicas " 
-                        + "useReplica: '" + useReplicaId + "'");
-        }
-        
-        // Initialising the 'ALL_BA' channels. Null for checksum replicas
-        for (int i = 0; i < allReplicaIds.length; i++) {
-            if (allReplicaTypes[i]
-                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
+        // index count
+        int i = 0;
+        int useReplicaIndex = -1;
+        // go through all replicas and initialize their channels.
+        for(Replica rep : replicas) {
+            if(rep.getType() == ReplicaType.BITARCHIVE) {
+                // Bitarchive has 'ALL_BA', 'ANY_BA' and 'THE_BAMON'.
                 ALL_BA_ARRAY[i] = new ChannelID(ALLBA_CHANNEL_PREFIX,
-                        allReplicaIds[i], ChannelID.NO_IP,
+                        rep.getId(), ChannelID.NO_IP,
                         ChannelID.NO_APPLINST_ID, ChannelID.TOPIC);
-            } else {
-                ALL_BA_ARRAY[i] = null;
-            }
-        }
-        ALL_BA = ALL_BA_ARRAY[indexOfUseReplicaId];
-        
-        // Initialising the 'ANY_BA' channels. Null for checksum replicas
-        for (int i = 0; i < allReplicaIds.length; i++) {
-            if (allReplicaTypes[i]
-                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
                 ANY_BA_ARRAY[i] = new ChannelID(ANYBA_CHANNEL_PREFIX,
-                        allReplicaIds[i], ChannelID.NO_IP,
+                        rep.getId(), ChannelID.NO_IP,
                         ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
-            } else {
-                ANY_BA_ARRAY[i] = null;
-            }
-        }
-        ANY_BA = ANY_BA_ARRAY[indexOfUseReplicaId];
-        
-        // Initialising the 'THE_BAMON' channels. Null for checksum replicas
-        for (int i = 0; i < allReplicaIds.length; i++) {
-            if (allReplicaTypes[i]
-                    .equals(ReplicaType.BITARCHIVE_REPLICATYPE_AS_STRING)) {
                 THE_BAMON_ARRAY[i] = new ChannelID(THEBAMON_CHANNEL_PREFIX,
-                        allReplicaIds[i], ChannelID.NO_IP,
+                        rep.getId(), ChannelID.NO_IP,
                         ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
-            } else {
-                THE_BAMON_ARRAY[i] = null;
-            }
-        }
-        THE_BAMON = THE_BAMON_ARRAY[indexOfUseReplicaId];
-        
-        // Initialising the 'THE_CR' channels. Null for bitarchive replicas
-        for (int i = 0; i < allReplicaIds.length; i++) {
-            if (allReplicaTypes[i]
-                    .equals(ReplicaType.CHECKSUM_REPLICATYPE_AS_STRING)) {
-                THE_CR_ARRAY[i] = new ChannelID(THECR_CHANNEL_PREFIX,
-                        allReplicaIds[i], ChannelID.NO_IP,
-                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
-            } else {
                 THE_CR_ARRAY[i] = null;
+            } else if(rep.getType() == ReplicaType.CHECKSUM){
+                // Checksum has only 'THE_CR'.
+                ALL_BA_ARRAY[i] = null;
+                ANY_BA_ARRAY[i] = null;
+                THE_BAMON_ARRAY[i] = null;
+                THE_CR_ARRAY[i] = new ChannelID(THECR_CHANNEL_PREFIX,
+                        rep.getId(), ChannelID.NO_IP,
+                        ChannelID.NO_APPLINST_ID, ChannelID.QUEUE);
+            } else {
+                // Throw an exception when unknown replica type.
+                throw new UnknownID("The replica '" + rep + "' does not have "
+                        + "a valid replica type.");
             }
+            
+            // find the 'useReplica'
+            if(rep == useReplica) {
+                useReplicaIndex = i;
+            }
+            
+            i++;
         }
-        THE_CR = THE_CR_ARRAY[indexOfUseReplicaId];
+        
+        // validate the index of the useReplica
+        if(useReplicaIndex < 0 || useReplicaIndex >= replicas.size()) {
+            // issue an error, if the use replica could not be found. 
+            throw new ArgumentNotValid(
+                    "The useReplica '" + useReplica + "' was not found in the "
+                    + "list of replicas: '" + replicas + "'.");
+        }
+        
+        // set the channels for the useReplica
+        ALL_BA = ALL_BA_ARRAY[useReplicaIndex];
+        ANY_BA = ANY_BA_ARRAY[useReplicaIndex];
+        THE_BAMON = THE_BAMON_ARRAY[useReplicaIndex];
+        THE_CR = THE_CR_ARRAY[useReplicaIndex];
     }
     
     /**
@@ -184,8 +163,8 @@ public class Channels {
      * 
      * @return The replica ids in the same order as their channels.
      */
-    public static String[] getUsedReplicaIds() {
-	return getInstance().allReplicaIds;
+    public static Collection<Replica> getReplicas() {
+        return getInstance().replicas;
     }
     
     /**
@@ -270,7 +249,7 @@ public class Channels {
     }
 
     private final ChannelID[] THE_BAMON_ARRAY =
-        new ChannelID[allReplicaIds.length];
+        new ChannelID[replicas.size()];
 
     /**
      * Returns the queue for sending messages to bitarchive monitors.
@@ -285,8 +264,7 @@ public class Channels {
             throw new IllegalState(
                     "The channel for the bitarchive monitor "
                             + " cannot to be retrieved for replica '"
-                            + Replica.getReplicaFromId(
-                                    getInstance().allReplicaIds[getInstance().indexOfUseReplicaId])
+                            + getInstance().useReplica
                             + "'.");
         }
 
@@ -311,7 +289,7 @@ public class Channels {
     
     /** The array containing the 'THE_CR' channels.*/
     private final ChannelID[] THE_CR_ARRAY
-        = new ChannelID[allReplicaIds.length];
+        = new ChannelID[replicas.size()];
    
     /** 
      * Method for retrieving the 'THE_CR' channel for this replica.
@@ -350,7 +328,7 @@ public class Channels {
      * the list of ALL_BA for all archives (i.e. archive replicas).
      */
     private final ChannelID[] ALL_BA_ARRAY
-        = new ChannelID[allReplicaIds.length];
+        = new ChannelID[replicas.size()];
 
     /**
      * Returns the topic that all bitarchive machines on this replica
@@ -390,7 +368,7 @@ public class Channels {
      * following is the list of ANY_BA for all archives.
      */
     private final ChannelID[] ANY_BA_ARRAY
-        = new ChannelID[allReplicaIds.length];
+        = new ChannelID[replicas.size()];
 
     /**
      * Returns the channel where exactly one of all the bitarchive machines at
