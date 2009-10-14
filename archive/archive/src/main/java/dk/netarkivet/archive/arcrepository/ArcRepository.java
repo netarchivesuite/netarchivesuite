@@ -165,16 +165,18 @@ public class ArcRepository implements CleanupIF {
      */
     private void initialiseReplicaClients() {
         // Get channels
-        String[] replicaIds = Channels.getUsedReplicaIds();
         ChannelID[] allBas = Channels.getAllArchives_ALL_BAs();
         ChannelID[] anyBas = Channels.getAllArchives_ANY_BAs();
         ChannelID[] theBamons = Channels.getAllArchives_BAMONs();
         ChannelID[] theCrs = Channels.getAllArchives_CRs();
+        
+        Replica[] replicas = Channels.getReplicas().toArray(
+                new Replica[theBamons.length]);
         // Checks equal number of channels
         checkChannels(allBas, anyBas, theBamons);
 
         for (int i = 0; i < allBas.length; i++) {
-            Replica rep = Replica.getReplicaFromId(replicaIds[i]);
+            Replica rep = replicas[i];
             if (rep.getType() == ReplicaType.BITARCHIVE) {
                 connectedReplicas.put(rep, BitarchiveClient.getInstance(
                         allBas[i], anyBas[i], theBamons[i]));
