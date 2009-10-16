@@ -23,6 +23,7 @@
 package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.commons.logging.LogFactory;
 
@@ -77,29 +78,12 @@ public class CorrectMessage extends ArchiveMessage {
     }
     
     /**
-     * Writes the the content of the retrieved file into a local file.
-     * Note: This is transferred through a remote file handle, and then the
-     * handle is invalidated. This method may only be called once.
-     * @param toFile where to write the content
-     * @throws IOFailure on error reading the remote file
-     * or writing the local file
+     * Method for retrieving the remote file.
+     * 
+     * @return The remote file.
      */
-    public void getData(File toFile) {
-        ArgumentNotValid.checkNotNull(toFile, "toFile");
-        if (theRemoteFile == null) {
-            throw new IOFailure("No file present in message to get file '"
-                    + arcFilename + "'");
-        }
-        theRemoteFile.copyTo(toFile);
-        try {
-            theRemoteFile.cleanup();
-        } catch (IOFailure e) {
-            //Just log errors on deleting. They are fairly harmless.
-            // Can't make Logger a field, as this class is Serializable
-            LogFactory.getLog(getClass()).warn(
-                    "Could not delete remote file " + theRemoteFile.getName());
-        }
-        theRemoteFile = null;
+    public RemoteFile getRemoteFile() {
+        return theRemoteFile;
     }
 
     /**

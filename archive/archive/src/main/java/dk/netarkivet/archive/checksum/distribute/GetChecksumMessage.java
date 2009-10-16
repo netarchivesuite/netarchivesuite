@@ -40,6 +40,8 @@ public class GetChecksumMessage extends ArchiveMessage {
     private String arcFilename;
     /** The resulting checksum for the arcFile.*/
     private String checksum;
+
+    // TODO: the replica id is not used, why is it here?
     /** The id of the replica where the checksum should be retrieved.*/
     private String replicaId;
 
@@ -51,7 +53,7 @@ public class GetChecksumMessage extends ArchiveMessage {
      * @param filename The name of the file.
      * @param repId The id of the replica where the message is to be sent.
      */
-    protected GetChecksumMessage(ChannelID to, ChannelID replyTo, 
+    public GetChecksumMessage(ChannelID to, ChannelID replyTo, 
             String filename, String repId) {
         super(to, replyTo);
         // validate arguments

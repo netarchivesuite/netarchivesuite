@@ -55,7 +55,8 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
      * @param repId The replica where the job involved in this message is
      * to be performed.
      */
-    public GetAllChecksumsMessage(ChannelID to, ChannelID replyTo, String repId) {
+    public GetAllChecksumsMessage(ChannelID to, ChannelID replyTo, 
+            String repId) {
         super(to, replyTo);
         this.replicaId = repId;
     }

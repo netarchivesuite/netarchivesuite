@@ -23,8 +23,11 @@
  */
 package dk.netarkivet.archive.checksum.distribute;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.archive.util.FileUtils;
 
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.ChecksumArchive;
@@ -32,6 +35,7 @@ import dk.netarkivet.archive.checksum.FileChecksumArchive;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
@@ -171,8 +175,14 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         log.debug("Receving upload message: " + msg.toString());
         try {
             try {
+                // retrieve the data file.
+                RemoteFile uploadFile = msg.getRemoteFile();
+                
                 // upload the file to the checksum instance.
-                cs.upload(msg.getRemoteFile(), msg.getArcfileName());
+                cs.upload(uploadFile, msg.getArcfileName());
+                
+                // cleanup after use of file.
+                uploadFile.cleanup();
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
@@ -204,21 +214,14 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     public void visit(CorrectMessage msg) {
         log.debug("Receving correct message: " + msg.toString());
         try {
-            // get the name of the file
-            String filename = msg.getArcfileName();
-
-            // try to remove the record.
-            boolean success = cs.removeRecord(filename, msg.getChecksum());
-
-            // if the record is successfully removed, then upload the corrected
-            // file. Else throw an error.
-            if (success) {
-                // TODO: handle this!
-//                cs.upload(msg.getRemoteFile(), filename);
-            } else {
-                throw new IllegalState("Cannot remove the record: '" + filename
-                        + "'");
-            }
+            // retrieve the file to correct
+            RemoteFile correctFile = msg.getRemoteFile();
+            
+            // correct the entry.
+            cs.correct(msg.getArcfileName(), correctFile, msg.getChecksum());
+            
+            // cleanup after use of file.
+            correctFile.cleanup();
         } catch (Throwable e) {
             // Handle errors.
             log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);

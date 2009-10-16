@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.InputStream;
 
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.IllegalState;
 
 /**
  * This abstract class is the interface for the checksum archives, which can be
@@ -56,13 +59,19 @@ public abstract class ChecksumArchive {
     /**
      * Method for removing a bad entry from the archive.
      * This finds the record and removes it if it has the incorrect checksum.
+     * The incorrect record is not deleted, but instead put into a backup file
+     * for all the incorrect records.
      * 
      * @param filename The name of the file whose record should be removed.
+     * @param rf The correct remote file to replace the bad one in the archive.
      * @param incorrectChecksum The checksum of the bad entry.
-     * @return Whether the record was successfully removed.
+     * @throws ArgumentNotValid If one of the arguments are not valid.
+     * @throws IOFailure If the entry cannot be corrected.
+     * @throws IllegalState If no such entry exists to be corrected, or if the 
+     * entry has a different checksum than the incorrectChecksum.
      */
-    public abstract boolean removeRecord(String filename, 
-            String incorrectChecksum);
+    public abstract void correct(String filename, RemoteFile rf, 
+            String incorrectChecksum) throws IOFailure, ArgumentNotValid;
     
     /**
      * Method for retrieving the checksum of a specific entry in the archive.
@@ -78,7 +87,7 @@ public abstract class ChecksumArchive {
      * The checksum of the file needs to be calculated before it is placed
      * in the archive with the given filename.
      * 
-     * @param arcfile The remote file.
+     * @param arcfile The remote file to be uploaded.
      * @param filename The name of the file.
      */
     public abstract void upload(RemoteFile arcfile, String filename);
