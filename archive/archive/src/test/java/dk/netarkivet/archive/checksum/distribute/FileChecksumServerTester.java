@@ -39,9 +39,11 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
+import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import junit.framework.TestCase;
@@ -49,28 +51,30 @@ import junit.framework.TestCase;
 public class FileChecksumServerTester extends TestCase {
 
     ReloadSettings rs = new ReloadSettings();
-    UseTestRemoteFile utrf = new UseTestRemoteFile();
-    ChannelID arcReposQ;
-    ChannelID theCs;
+    private UseTestRemoteFile utrf = new UseTestRemoteFile();
     JMSConnectionMockupMQ conn;
-    GenericMessageListener listener;
     
     ChecksumFileServer cfs;
     
     protected void setUp() {
 	rs.setUp();
+	utrf.setUp();
 	JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // ??
 
+	FileUtils.copyDirectory(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
+	
         // Set the test settings.
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.BASE_FILE_DIR.getAbsolutePath());
-        Settings.set(ArchiveSettings.CHECKSUM_FILENAME, TestInfo.CHECKSUM_FILE.getAbsolutePath());
+        Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_FILE.getParentFile().getAbsolutePath());
+        Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
 
         // Create/recreate the checksum.md5 file
         try {
 	    FileWriter fw = new FileWriter(TestInfo.CHECKSUM_FILE);
 	    
-	    fw.write("test1.arc##1234567890" + "\n" + "test2.arc##0987654321");
+	    fw.write("test1.arc##1234567890" + "\n" + "test2.arc##0987654321" + "\n");
 	    fw.flush();
 	    fw.close();
 	} catch (IOException e) {
@@ -78,25 +82,22 @@ public class FileChecksumServerTester extends TestCase {
 	    e.printStackTrace();
 	}
 	
-	Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
-	Replica THREE = Replica.getReplicaFromId("THREE");
-	
-	arcReposQ = Channels.getTheRepos();
-	theCs = Channels.getTheCR();
         conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
-        listener = new GenericMessageListener();
     }
     
     protected void tearDown() {
 	// ??
 	JMSConnectionMockupMQ.clearTestQueues();
+	utrf.tearDown();
 	rs.tearDown();
+	
+	FileUtils.removeRecursively(TestInfo.WORK_DIR);
     }
     
     public void testSingletonicity() {
         ClassAsserts.assertSingleton(ChecksumFileServer.class);
     }
-    
+
     /**
      * Checks the following:
      * - The connection has only one listener when we start listening.
@@ -116,25 +117,29 @@ public class FileChecksumServerTester extends TestCase {
 	    assertTrue(baseFileDir.mkdirs());	    
 	}
 	
-        conn.cleanup();
+        cfs = ChecksumFileServer.getInstance();
+        ChannelID arcReposQ = Channels.getTheRepos();
+        ChannelID theCs = Channels.getTheCR();
         conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
 
-	cfs = ChecksumFileServer.getInstance();
-	
+        GenericMessageListener listener = new GenericMessageListener();
         conn.setListener(arcReposQ, listener);
 
+        // make sure that there is 1 listener 
         int expectedListeners = 1;
         assertEquals("Number of listeners on queue " + theCs + " should be "
                 + expectedListeners + " before upload.",
                 expectedListeners, conn.getListeners(theCs).size());
 
         File testFile = TestInfo.UPLOADMESSAGE_TESTFILE_1;
-        RemoteFile rf = RemoteFileFactory.getInstance(
-                testFile, true, false, true);
+        assertTrue("The test file must already exist.", testFile.isFile());
+        RemoteFile rf = RemoteFileFactory.getInstance(testFile, false, false, false);
         UploadMessage upMsg = new UploadMessage(theCs, arcReposQ, rf);
-
+        JMSConnectionMockupMQ.updateMsgID(upMsg, "upload1");
+        
         cfs.visit(upMsg);
         conn.waitForConcurrentTasksToFinish();
+        expectedListeners = 0;
 
         // Check that UploadMessage has been replied to arcrepos queue.
         // It should have been received by GenericMessageListener:
@@ -143,16 +148,20 @@ public class FileChecksumServerTester extends TestCase {
 
         // Retrieve the map of the checksums.
         GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(theCs, 
-        	arcReposQ, Replica.getReplicaFromId("ONE").getId());
+        	arcReposQ, "THREE");
+        JMSConnectionMockupMQ.updateMsgID(gacMsg, "getallchecksums1");
         cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
         // retrieve the results
         File tmp = File.createTempFile("tmp2", "tmp", TestInfo.BASE_FILE_DIR);
         gacMsg.getData(tmp);
-
+        
+        String archive = FileUtils.readFile(tmp);
+        
         // Retrieve all file names
         GetAllFilenamesMessage afnMsg = new GetAllFilenamesMessage(theCs, 
         	arcReposQ, Replica.getReplicaFromId("ONE").getId());
+        JMSConnectionMockupMQ.updateMsgID(afnMsg, "allfilenames1");
         cfs.visit(afnMsg);
         conn.waitForConcurrentTasksToFinish();
   
@@ -172,6 +181,7 @@ public class FileChecksumServerTester extends TestCase {
         // (one file at the time)
         for(String name : names) {
             csMsg = new GetChecksumMessage(theCs, arcReposQ, name, "THREE");
+            JMSConnectionMockupMQ.updateMsgID(csMsg, "cs" + name + "1");
             cfs.visit(csMsg);
             conn.waitForConcurrentTasksToFinish();
             
@@ -180,36 +190,38 @@ public class FileChecksumServerTester extends TestCase {
         	    csMsg.isOk());
             assertNotNull("The checksum of file '" + name 
         	    + "' may not be null.", csMsg.getChecksum());
-  
-            // TODO: fix this.
-/*            // Check that the message contains the same checksum as the map
-            assertEquals("The checksum message in the Map is '" 
-        	    + csMap.get(name) + "' whereas the checksum from the "
-        	    + "checksum message is '" + csMsg.getChecksum() + "'.", 
-        	    csMsg.getChecksum(), csMap.get(name));
-*/
+
+            // check that the entry exists.
+            assertTrue("The archive should have a entry for the file with the correct checksum: "
+                    + name + "##" + csMsg.getChecksum(), 
+                    archive.contains(name + "##" + csMsg.getChecksum()));
         }
 
         
         // Retrieve the checksum for the uploaded file from the checksum 
         // archive.
         csMsg = new GetChecksumMessage(theCs, arcReposQ, testFile.getName(), "THREE");
+        JMSConnectionMockupMQ.updateMsgID(csMsg, "cs1");
         cfs.visit(csMsg);
         conn.waitForConcurrentTasksToFinish();
         
         // Check that the checksum is correct.
         String res = csMsg.getChecksum();
-        assertEquals("The arc file should have the checksum '" + TestInfo.TESTFILE_1_CHECKSUM
-        	+ "'", TestInfo.TESTFILE_1_CHECKSUM, res);
+        assertEquals("The file '" + testFile.getName() + "' should have the checksum '" 
+                + TestInfo.UPLOADFILE_1_CHECKSUM + "'", TestInfo.UPLOADFILE_1_CHECKSUM, res);
         
         // Check the CorrectMessage.
-        RemoteFile corFile = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE);
-        CorrectMessage corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.CORRECTFILE_1_CHECKSUM, corFile);
+        RemoteFile corFile = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_1);
+        CorrectMessage corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile);
+        JMSConnectionMockupMQ.updateMsgID(corMsg, "correct1");
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();
         
+        assertTrue("The correct message should be OK.", corMsg.isOk());
+        
         // make sure, that the checksum of the file has changed.
-        csMsg = new GetChecksumMessage(theCs, arcReposQ, TestInfo.CORRECTMESSAGE_TESTFILE.getName(), "THREE");
+        csMsg = new GetChecksumMessage(theCs, arcReposQ, TestInfo.CORRECTMESSAGE_TESTFILE_1.getName(), "THREE");
+        JMSConnectionMockupMQ.updateMsgID(csMsg, "cs2");
         cfs.visit(csMsg);
         conn.waitForConcurrentTasksToFinish();
 
@@ -218,24 +230,36 @@ public class FileChecksumServerTester extends TestCase {
         assertEquals("The checksum for the correct should be '" 
         	+ TestInfo.CORRECTFILE_1_CHECKSUM + "', but was '" + res + "'", 
         	TestInfo.CORRECTFILE_1_CHECKSUM, res);
+        
+        // Check that 
+        RemoteFile corFile2 = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_2);
+        corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile2);
+        JMSConnectionMockupMQ.updateMsgID(corMsg, "correct2");
+        cfs.visit(corMsg);
+        conn.waitForConcurrentTasksToFinish();
+        
+        assertFalse("The this correct message should not be OK.", corMsg.isOk());
     }
-    
+
     public void testNoInitialFile() throws IOException {
 	// Delete the checksum archive file.
-	String archiveFilename = Settings.get(ArchiveSettings.CHECKSUM_FILENAME);
-	File archiveFile = new File(archiveFilename);
+	File archiveFile = TestInfo.CHECKSUM_FILE;
 	archiveFile.delete();
 
 	// Restart the checksum file server.
 	cfs = ChecksumFileServer.getInstance();
 	cfs.cleanup();
-	cfs = ChecksumFileServer.getInstance();
-	
-	// set the listener.
+        cfs = ChecksumFileServer.getInstance();
+        ChannelID arcReposQ = Channels.getTheRepos();
+        ChannelID theCs = Channels.getTheCR();
+        conn = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
+
+        GenericMessageListener listener = new GenericMessageListener();
         conn.setListener(arcReposQ, listener);
 
 	GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(theCs, 
 		arcReposQ, Replica.getReplicaFromId("ONE").getId());
+        JMSConnectionMockupMQ.updateMsgID(gacMsg, "gac1");
 	cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
 
@@ -244,10 +268,11 @@ public class FileChecksumServerTester extends TestCase {
 	List<ChecksumEntry> content = ChecksumEntry.parseChecksumJob(tmp);
 	
 	assertNotNull("An empty map should be retrievable, not null.", content);
-	assertEquals("The retrieved map should be empty.",content.size(), 0);
+	assertEquals("The retrieved map should be empty.", 0, content.size());
 	
 	GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(theCs, 
 		arcReposQ, Replica.getReplicaFromId("ONE").getId());
+        JMSConnectionMockupMQ.updateMsgID(gafMsg, "gaf1");
 	cfs.visit(gafMsg);
 	conn.waitForConcurrentTasksToFinish();
 	
@@ -264,11 +289,13 @@ public class FileChecksumServerTester extends TestCase {
         RemoteFile rf = RemoteFileFactory.getInstance(
         	TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true);
 	UploadMessage upMsg = new UploadMessage(theCs, arcReposQ, rf);
+        JMSConnectionMockupMQ.updateMsgID(upMsg, "upload1");
 	cfs.visit(upMsg);
 	conn.waitForConcurrentTasksToFinish();
 	
 	gafMsg = new GetAllFilenamesMessage(theCs, arcReposQ, 
 		Replica.getReplicaFromId("ONE").getId());
+        JMSConnectionMockupMQ.updateMsgID(gafMsg, "gaf2");
 	cfs.visit(gafMsg);
 	conn.waitForConcurrentTasksToFinish();
 	
@@ -283,4 +310,5 @@ public class FileChecksumServerTester extends TestCase {
 	assertEquals("Wrong file name retrieved.", 
 		TestInfo.UPLOADMESSAGE_TESTFILE_1.getName(), filenames.get(0));
     }
+/* */
 }

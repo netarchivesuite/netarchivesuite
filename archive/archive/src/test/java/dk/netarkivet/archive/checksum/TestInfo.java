@@ -34,9 +34,9 @@ public class TestInfo {
     static final File UPLOAD_FILE_1 = new File(WORKING_DIR, "settings.xml");
     static final File UPLOAD_FILE_2 = new File(WORKING_DIR, "NetarchiveSuite-upload1.arc");
 
-    static final File CHECKSUM_FILE = new File(WORKING_DIR, "checksum.md5");
+    static final File CHECKSUM_DIR = new File(WORKING_DIR, "cs");
     
-    static final String TEST1_CHECKSUM = "71e82bb05fb7da1248ca96015fb06585"; 
+    static final String TEST1_CHECKSUM = "c06df1852355f3017e480a20116b7376"; 
     static final String TEST2_CHECKSUM = "d87cc8068fa49f3a4926ce4d1cdf14e1"; 
 
 }
