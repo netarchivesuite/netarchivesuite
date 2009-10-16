@@ -58,22 +58,22 @@ public class MetadataFile implements Comparable<MetadataFile> {
     private static final String URL_FORMAT =
             "metadata://netarkivet.dk/crawl/%s/%s"
             + "?heritrixVersion=%s&harvestid=%s&jobid=%s";
-    
+
     /**
      * A pattern identifying a CDX metadata entry.
-     * 
+     *
      * @see CDXDataCache#CDXDataCache()
      */
     public static final String CDX_PATTERN =
-    	"metadata://[^/]*/crawl/index/cdx.*";
-    
+        "metadata://[^/]*/crawl/index/cdx.*";
+
     /**
      * A pattern identifying the crawl log metadata entry.
-     * 
+     *
      * @see CrawlLogDataCache#CrawlLogDataCache()
      */
     public static final String CRAWL_LOG_PATTERN =
-    	"metadata://[^/]*/crawl/logs/crawl\\.log.*";
+        "metadata://[^/]*/crawl/logs/crawl\\.log.*";
 
     /**
      * The pattern controlling which files in the crawl directory root should be
@@ -96,14 +96,19 @@ public class MetadataFile implements Comparable<MetadataFile> {
     public static final String LOG_FILE_PATTERN =
             Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
 
+    /**
+     * The name of a domain-specific Heritrix settings file (a.k.a. override)
+     */
+    public static final String DOMAIN_SETTINGS_FILE = "settings.xml";
+
     private String url;
     private File heritrixFile;
     private MetadataType type;
 
     /**
      * Creates a metadata file and finds which metadata type it belongs to.
-     * First the name of a heritrixfile is tested against the reportfile 
-     * pattern, then again the logfile pattern. If the name matches neither of 
+     * First the name of a heritrixfile is tested against the reportfile
+     * pattern, then again the logfile pattern. If the name matches neither of
      * these, it is considered a setup file.
      */
     MetadataFile(

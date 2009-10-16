@@ -65,7 +65,7 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * metadata-ARC file has been written.
  */
 public class HarvestDocumentation {
-    
+
     private static Log log
             = LogFactory.getLog(HarvestDocumentation.class);
 
@@ -150,7 +150,7 @@ public class HarvestDocumentation {
                 ARCUtils.insertARCFile(preharvestMetadata, aw);
             }
             //TODO: This is a good place to copy deduplicate information from the
-            //crawl log to the cdx file. 
+            //crawl log to the cdx file.
 
             // Insert harvestdetails into metadata arcfile.
             List<File> filesAdded =
@@ -410,21 +410,21 @@ public class HarvestDocumentation {
             new HeritrixFiles(crawlDir, jobID, harvestID);
         // We will sort the files by URL
         TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
-        
+
         // List heritrix files in the crawl directory
         File[] heritrixFiles = crawlDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File f) {
                 return (f.isFile() && f.getName().matches(
                         MetadataFile.HERITRIX_FILE_PATTERN));
-            }            
+            }
         });
-        
+
         // Add files in the crawl directory
         for (File hf : heritrixFiles) {
             files.add(new MetadataFile(hf, harvestID, jobID, heritrixVersion));
         }
-        
+
         // Add log files
         File logDir = new File(crawlDir, "logs");
         if (logDir.exists()) {
@@ -433,7 +433,7 @@ public class HarvestDocumentation {
                 public boolean accept(File f) {
                     return (f.isFile() && f.getName().matches(
                             MetadataFile.LOG_FILE_PATTERN));
-                }            
+                }
             });
             for (File logFile : heritrixLogFiles) {
                 files.add(
@@ -445,40 +445,40 @@ public class HarvestDocumentation {
             log.debug("No logs dir found in crawldir: "
                       + crawlDir.getAbsolutePath());
         }
-        
+
         // Check if exists any settings directory (domain-specific settings)
         // if yes, add any settings.xml hiding in this directory.
         // TODO: Delete any settings-files found in the settings directory */
         File settingsDir = new File(crawlDir, "settings");
         if (settingsDir.isDirectory()) {
-            Map<File, String> domainSettingsFiles = 
+            Map<File, String> domainSettingsFiles =
                 findDomainSpecificSettings(settingsDir);
             for (File dsf : domainSettingsFiles.keySet()) {
                 String domain = domainSettingsFiles.get(dsf);
                 files.add(
                         new MetadataFile(
-                                dsf, 
-                                harvestID, jobID, heritrixVersion, 
+                                dsf,
+                                harvestID, jobID, heritrixVersion,
                                 domain));
             }
         } else {
             log.debug("No settings directory found in crawldir: "
                     + crawlDir.getAbsolutePath());
         }
-        
-        // Write files in order to ARC        
+
+        // Write files in order to ARC
         for (MetadataFile mdf : files) {
-            
-            File heritrixFile = mdf.getHeritrixFile();            
+
+            File heritrixFile = mdf.getHeritrixFile();
             String heritrixFileName = heritrixFile.getName();
-            String mimeType = 
+            String mimeType =
                 (heritrixFileName.endsWith(".xml") ? "text/xml" : "text/plain");
-            
+
             if (writeToArc(writer, heritrixFile, mdf.getUrl(), mimeType)) {
                 filesAdded.add(heritrixFile);
             }
         }
-        
+
         return filesAdded;
     }
 
@@ -522,20 +522,22 @@ public class HarvestDocumentation {
         // find any domain specific configurations (settings.xml)
         List<String> reversedDomainsWithSettings =
             findAllDomainsWithSettings(settingsDir, "");
-        
-        Map<File, String> settingsFileToDomain = new HashMap<File, String>();        
+
+        Map<File, String> settingsFileToDomain = new HashMap<File, String>();
         if (reversedDomainsWithSettings.isEmpty()) {
             log.debug("No settings/<domain> directories exists: "
                     + "no domain-specific configurations available");
         } else {
             for (String reversedDomain: reversedDomainsWithSettings) {
-                String domain =
-                    new StringBuilder(reversedDomain).reverse().toString();
-                File settingsXmlFile =
-                    new File(settingsDir, reversedDomain.replace('.', '/'));
+                String domain = reverseDomainString(reversedDomain);
+                File settingsXmlFile = new File(
+                        settingsDir
+                            + reversedDomain.replaceAll("\\.", File.separator),
+                        MetadataFile.DOMAIN_SETTINGS_FILE);
                 if (!settingsXmlFile.isFile()) {
                     log.debug("Directory settings/"
-                              + domain + "/settings.xml does not exist.");
+                              + domain + "/" + MetadataFile.DOMAIN_SETTINGS_FILE
+                              + " does not exist.");
                 } else  {
                     settingsFileToDomain.put(settingsXmlFile, domain);
                 }
@@ -553,7 +555,6 @@ public class HarvestDocumentation {
      */
     private static List<String> findAllDomainsWithSettings(File directory,
             String domainReversed) {
-        final String SETTINGSXML = "settings.xml";
         if (!directory.isDirectory()) {
             return new ArrayList<String>(0);
         }
@@ -571,7 +572,8 @@ public class HarvestDocumentation {
                     filesToReturn.addAll(resultList);
                 }
             } else {
-                if (fileInDir.getName().equals(SETTINGSXML)) {
+                if (fileInDir.getName().equals(
+                        MetadataFile.DOMAIN_SETTINGS_FILE)) {
                     // Store the domain, so that we can find the file later
                     filesToReturn.add(domainReversed);
                 }
@@ -649,5 +651,17 @@ public class HarvestDocumentation {
         ArgumentNotValid.checkNotNull(jobID, "jobID");
         return jobID + "-metadata-" + 1 + ".arc";
     }
-    
+
+    private static String reverseDomainString(String reversedDomain) {
+        String domain = "";
+        String remaining = new String(reversedDomain);
+        int lastDotIndex = remaining.lastIndexOf(".");
+        while (lastDotIndex != -1) {
+            domain += remaining.substring(lastDotIndex + 1) + ".";
+            remaining = remaining.substring(0, lastDotIndex);
+            lastDotIndex = remaining.lastIndexOf(".");
+        }
+        return domain.substring(0, domain.length() -1);
+    }
+
 }

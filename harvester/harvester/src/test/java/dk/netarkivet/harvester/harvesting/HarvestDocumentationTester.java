@@ -510,6 +510,11 @@ public class HarvestDocumentationTester extends TestCase {
      * @throws IOException
      */
     public void testWriteHarvestDetails() throws IOException {
+
+        ReloadSettings rs = new ReloadSettings(
+                new File(TestInfo.ORIGINALS_DIR, "metadata_settings.xml"));
+        rs.setUp();
+
         TestInfo.WORKING_DIR.mkdirs();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.CRAWLDIR_ORIGINALS_DIR,
@@ -594,6 +599,17 @@ public class HarvestDocumentationTester extends TestCase {
         // .equals() is called.
         checkThatStillExist(new File(logDir,
                                      new String("crawl.log".toCharArray())));
+
+        // Test that domain-specific settings (a.k.a overrides) are
+        // stored in the proper way.
+        URL = "metadata://netarkivet.dk/crawl/setup/settings.xml?"
+            + "heritrixVersion="
+            + Constants.getHeritrixVersionString() + "&harvestid="
+            + TestInfo.HARVEST_ID
+            + "&jobid=" + TestInfo.JOB_ID
+            + "&domain=kb.dk";
+        findAndVerifyMetadata(metadataArcFile, URL);
+
     }
 
     public void testMetadataFilters() {
