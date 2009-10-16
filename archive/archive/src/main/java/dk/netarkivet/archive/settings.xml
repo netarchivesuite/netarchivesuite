@@ -50,7 +50,9 @@
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
         <checksum>
-            <filename>checksum.md5</filename>
+            <baseDir>checksum</baseDir>
+            <!-- The default value amount of 1 MBytes. -->
+            <minSpaceLeft>1000000</minSpaceLeft>
         </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>

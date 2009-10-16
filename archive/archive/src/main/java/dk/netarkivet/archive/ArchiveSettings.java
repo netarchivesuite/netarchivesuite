@@ -165,8 +165,17 @@ public class ArchiveSettings {
             = "settings.archive.bitpreservation.class";
     
     /**
-     * The name for the checksum file.
+     * <b>settings.archive.checksum.baseDir</b>: <br>
+     * The directory for the checksum file.
      */
-    public static String CHECKSUM_FILENAME = 
-	"settings.archive.checksum.filename";
+    public static String CHECKSUM_BASEDIR = 
+	"settings.archive.checksum.baseDir";
+    
+    /**
+     * <b>settings.archive.checksum.minSpaceLeft</b>: <br>
+     * The default value for the minimum amount of space left for the checksum 
+     * archive to receive new upload messages. 
+     */
+    public static String CHECKSUM_MIN_SPACE_LEFT = 
+        "settings.archive.checksum.minSpaceLeft";
 }
