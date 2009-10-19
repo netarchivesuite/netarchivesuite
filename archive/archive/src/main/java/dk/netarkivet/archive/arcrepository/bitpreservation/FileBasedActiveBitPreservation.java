@@ -52,6 +52,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -244,17 +245,17 @@ public class FileBasedActiveBitPreservation
                 new HashMap<String, Map<Replica, List<String>>>();
         
         //Only make one checksum job for each replica
-        for (Replica ba : Replica.getKnown()) {
-            // Get the checksum information from Replica ba as
+        for (Replica rep : Replica.getKnown()) {
+            // Get the checksum information from Replica 'rep' as
             // a map ([filename]->[list of checksums]).
-            Map<String, List<String>> checksums = getChecksums(ba, filenames);
+            Map<String, List<String>> checksums = getChecksums(rep, filenames);
             log.debug("Adding checksums for replica '"
-                      + ba + "' for filenames: "
+                      + rep + "' for filenames: "
                       + StringUtils.conjoin(",", filenames));
             
             for (String filename : filenames) {
                 // Update 'checksummaps' datastructure with the checksums
-                // received from Replica 'ba'.
+                // received from Replica 'rep'.
                 
                 // replicaMap: map ([replica] 
                 //  -> [list of checksums for one filename]).
@@ -277,31 +278,69 @@ public class FileBasedActiveBitPreservation
                     checksumsForFileOnBa = new ArrayList<String>();
                 }
                 // Add the list of checksums for the given file
-                // on replica 'ba' to datastructure 'replicaMap'.
-                replicaMap.put(ba, checksumsForFileOnBa);
+                // on replica 'rep' to datastructure 'replicaMap'.
+                replicaMap.put(rep, checksumsForFileOnBa);
             }
         }
         return checksummaps;
     }
 
     /**
-     * Get the checksum of a list of files in a bitarchive
+     * Get the checksum of a list of files in a replica
      * (map ([filename] -> map ([replica] -> [list of checksums])).
      *
      * Note that this method runs a batch job on the bitarchives, and therefore
-     * may take a long time, depending on network delays.
+     * may take a long time, depending on network delays. 
      * 
      * TODO: remodel the retrieval of checksums by using GetAllChecksumsMessage.
+     * TODO: handle checksum replicas.
      *
      * @param rep The replica to ask for checksums.
      * @param filenames The names of the files to ask for checksums for.
      * @return The MD5 checksums of the files, or the empty string if the file
-     *         was not in the bitarchive.
+     *         was not in the replica.
      *
      * @see ChecksumJob#parseLine(String)
      */
     private Map<String, List<String>> getChecksums(
             Replica rep, Set<String> filenames) {
+        if(rep.getType() == ReplicaType.BITARCHIVE) {
+            return getChecksumsFromBitarchive(rep, filenames);
+        } else if(rep.getType() == ReplicaType.CHECKSUM) {
+            return getChecksumFromChecksumArchive(rep, filenames);
+        } else {
+            throw new UnknownID("Unknown replica type for replica: " + rep);
+        }
+    }
+    
+    /**
+     * Retrieves the checksums from the checksum archive.
+     * This currently just returns an empty map, since the map is used for 
+     * finding a replica with a valid instance of the file and checksum 
+     * archives does not have actual files.
+     * 
+     * TODO: create the correct method, so it can be used for finding the 
+     * correct checksums.
+     * 
+     * @param rep The checksum replica.
+     * @param filenames The list of filenames.
+     * @return An empty map.
+     */
+    private Map<String, List<String>> getChecksumFromChecksumArchive(
+            Replica rep, Set<String> filenames) {
+        return Collections.<String, List<String>>emptyMap();
+    }
+    
+    /**
+     * Sends a batchjob to the bitarchive replica. 
+     * 
+     * @param rep The replica to retrieve the checksums from.
+     * @param filenames The list of filenames to retrieve the checksums from.
+     * @return The MD5 checksum of the filenames or an empty string if the file
+     * was not found in the replica.
+     */
+    private Map<String, List<String>> getChecksumsFromBitarchive(Replica rep,
+            Set<String> filenames) {
         
         // Configure the Checksum batchjob.
         ChecksumJob checksumJob = new ChecksumJob();
@@ -433,8 +472,8 @@ public class FileBasedActiveBitPreservation
                   + WorkFiles.getPreservationDir(replica) + "'");
         admin.synchronize();
 
-        // Create set of file names from bitarchive data
-        Set<String> filesInBitarchive = new HashSet<String>(
+        // Create set of file names from replica data
+        Set<String> filesInReplica = new HashSet<String>(
                 WorkFiles.getLines(replica, WorkFiles.FILES_ON_BA));
 
         // Get set of files in arcrepository
@@ -442,14 +481,14 @@ public class FileBasedActiveBitPreservation
 
         // Find difference set 1
         Set<String> extraFilesInAdminData = new HashSet<String>(arcrepNameSet);
-        extraFilesInAdminData.removeAll(filesInBitarchive);
+        extraFilesInAdminData.removeAll(filesInReplica);
 
         // Log result
         if (extraFilesInAdminData.size() > 0) {
             log.warn("The " + extraFilesInAdminData.size() + " files '"
                      + new ArrayList<String>(extraFilesInAdminData).subList(0,
                              Math.min(extraFilesInAdminData.size(), 10))
-                     + "' have wrong checksum in the bitarchive listing in '"
+                     + "' have wrong checksum in the replcia listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
@@ -459,7 +498,7 @@ public class FileBasedActiveBitPreservation
                         extraFilesInAdminData);
 
         // Find difference set 2
-        Set<String> extraFilesInBA = new HashSet<String>(filesInBitarchive);
+        Set<String> extraFilesInBA = new HashSet<String>(filesInReplica);
         extraFilesInBA.removeAll(arcrepNameSet);
 
         // Log result
