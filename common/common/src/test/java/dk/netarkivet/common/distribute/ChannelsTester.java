@@ -24,7 +24,6 @@ package dk.netarkivet.common.distribute;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservationTester.MockupArcRepositoryClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -88,7 +87,7 @@ public class ChannelsTester extends TestCase {
             resetChannels();
             Channels.getTheBamon();
             fail("Should fail when getting channel after setting bad location");
-        } catch (ArgumentNotValid e) {
+        } catch (UnknownID e) {
             // Expected exception
         }
     }
