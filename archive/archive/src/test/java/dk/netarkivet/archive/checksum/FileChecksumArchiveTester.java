@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.List;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -34,71 +34,84 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import junit.framework.TestCase;
 
 /**
+ * Tester class for the FileChecksumArchive.
  * 
-test1.arc##1234567890
-GNU.arc##1029384756
-test2.arc##0987654321
- * @author jolf
- *
  */
-
 public class FileChecksumArchiveTester extends TestCase {
     FileChecksumArchive fca;
     ReloadSettings rs = new ReloadSettings();
-//    UseTestRemoteFile utrf = new UseTestRemoteFile();
-
+    UseTestRemoteFile utrf = new UseTestRemoteFile();
 
     public void setUp() {
-	rs.setUp();
-	
+        rs.setUp();
+        utrf.setUp();
+
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMP_DIR);
 
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINAL_DIR,
                 TestInfo.WORKING_DIR);
-        
+
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_DIR.getAbsolutePath());
-	
-	fca = FileChecksumArchive.getInstance();
+        Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
+
+        fca = FileChecksumArchive.getInstance();
     }
-    
+
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.removeRecursively(TestInfo.TMP_DIR);
-	rs.tearDown();
-	fca.cleanup();
+        rs.tearDown();
+        utrf.tearDown();
+        fca.cleanup();
     }
-    
+
+    /**
+     * Ensure that there is enough space.
+     */
     public void testChecksum() {
-	assert(fca.hasEnoughSpace());
+        assert(fca.hasEnoughSpace());
     }
-    
+
     /**
      * Checks whether the filename for the checksum file is defined correct in
      * the settings.
      */ 
     public void testFilename() {
-	String filename = Settings.get(ArchiveSettings.CHECKSUM_BASEDIR) + "/checksum_TWO.md5";
-	assertEquals("The files should have the same name. ", fca.getFilename(), filename);
+        String filename = Settings.get(ArchiveSettings.CHECKSUM_BASEDIR) + "/checksum_THREE.md5";
+        assertEquals("The files should have the same name. ", fca.getFilename(), filename);
     }
-    
-    public void testContent() throws Exception {
-	RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
-	fca.upload(arcfile1, "TEST1.arc");
-	RemoteFile arcfile2 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_2, false, false, false);
-	fca.upload(arcfile2, "TEST2.arc");
-	List<String> filenames = FileUtils.readListFromFile(fca.getAllFilenames());
 
-	// ---------------------------------------------------------------
-	// Make check for whether the correct files exist in the archive.
-	// ---------------------------------------------------------------
-	assertEquals("The expected number of filenames in the archive.", 2,
-		filenames.size());
-	assertTrue("TEST1.arc should be amongst the filenames", filenames.contains("TEST1.arc"));
-	assertTrue("TEST2.arc should be amongst the filenames", filenames.contains("TEST2.arc"));
+    /**
+     * Check the following:
+     * 1. FileChecksumArchiev can perform Upload.
+     * 2. The correct checksums are retrieved from the upload.
+     * 3. The correct file can be retrieved.
+     * 4. That the Correct function can be performed.
+     * 5. That the data also is changed appropriately.
+     * 6. The old and 'wrong' entries have been move to the backup file.
+     * 
+     * @throws Exception So it is unnecessary to catch IOExceptions, since the 
+     * test should fail.
+     */
+    public void testContent() throws Exception {
+        RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
+        fca.upload(arcfile1, "TEST1.arc");
+        RemoteFile arcfile2 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_2, false, false, false);
+        fca.upload(arcfile2, "TEST2.arc");
+        List<String> filenames = FileUtils.readListFromFile(fca.getAllFilenames());
+
+        // ---------------------------------------------------------------
+        // Make check for whether the correct files exist in the archive.
+        // ---------------------------------------------------------------
+        assertEquals("The expected number of filenames in the archive.", 2,
+                filenames.size());
+        assertTrue("TEST1.arc should be amongst the filenames", filenames.contains("TEST1.arc"));
+        assertTrue("TEST2.arc should be amongst the filenames", filenames.contains("TEST2.arc"));
 
         // ---------------------------------------------------------------
         // Make check for whether the correct checksums are stored in the archive.
@@ -113,9 +126,9 @@ public class FileChecksumArchiveTester extends TestCase {
         assertEquals("The value stored in the checksum archive and a precalculated value of the file",
                 fca.getChecksum("TEST2.arc"), TestInfo.TEST2_CHECKSUM);
 
-	// ---------------------------------------------------------------
-	// Check whether the archive file is identical to the retrieved archive
-	// ---------------------------------------------------------------	
+        // ---------------------------------------------------------------
+        // Check whether the archive file is identical to the retrieved archive
+        // ---------------------------------------------------------------	
         List<String> archiveChecksums = FileUtils.readListFromFile(fca.getArchiveAsFile());
         List<String> fileChecksums = FileUtils.readListFromFile(new File(fca.getFilename()));
 
@@ -126,10 +139,10 @@ public class FileChecksumArchiveTester extends TestCase {
             assertEquals("The checksum entry in the file should be identical to the one in the archive",
                     archiveChecksums.get(i), fileChecksums.get(i));
         }
-        
-	// ---------------------------------------------------------------
-	// Check the correct function, both good and bad examples.
-	// ---------------------------------------------------------------
+
+        // ---------------------------------------------------------------
+        // Check the correct function, both good and bad examples.
+        // ---------------------------------------------------------------
         try {
             fca.correct("ERROR!", arcfile1, "ERROR!");
             fail("It is not allowed for 'correct' to correct a wrong 'incorrectChecksum'.");
@@ -144,7 +157,7 @@ public class FileChecksumArchiveTester extends TestCase {
             assertTrue("The correct error message should be sent.",
                     e.getMessage().contains("Wrong checksum for the entry for file 'TEST1.arc'"));
         }
-        
+
         fca.correct("TEST1.arc", arcfile2, TestInfo.TEST1_CHECKSUM);
         assertEquals("The new checksum for 'TEST1.arc' should now be the checksum for 'TEST2.arc'.",
                 fca.getChecksum("TEST1.arc"), TestInfo.TEST2_CHECKSUM);
@@ -157,12 +170,12 @@ public class FileChecksumArchiveTester extends TestCase {
         // Check that the correct function has changed the archive file.
         // ---------------------------------------------------------------
         String correctChecksums = FileUtils.readFile(new File(fca.getFilename()));
-        
+
         assertTrue("The new checksums should be reversed.",
                 correctChecksums.contains("TEST1.arc" + "##" + TestInfo.TEST2_CHECKSUM));
         assertTrue("The new checksums should be reversed",
                 correctChecksums.contains("TEST2.arc" + "##" + TestInfo.TEST1_CHECKSUM));
-        
+
         // ---------------------------------------------------------------
         // Check that the correct function has put the old record into the 
         // wrong entry file.
