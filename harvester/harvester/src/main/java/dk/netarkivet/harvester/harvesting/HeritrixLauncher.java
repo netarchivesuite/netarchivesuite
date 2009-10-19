@@ -250,7 +250,8 @@ public class HeritrixLauncher {
             log.info("Job ID: " + files.getJobID()
                             + ", Harvest ID: " + files.getHarvestID()
                             + ", " + harvestInformation
-                            + "\n" + progressStats);
+                            + "\n" 
+                            + ((progressStats == null)? "": progressStats));
             // Note that we don't check for timeout while paused.
             int processedKBPerSec = 0;
             boolean paused = false;
