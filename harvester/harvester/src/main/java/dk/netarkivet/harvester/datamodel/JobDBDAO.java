@@ -29,6 +29,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
 
 /**
@@ -261,13 +263,17 @@ public class JobDBDAO extends JobDAO {
      * @see JobDAO#generateNextID()
      */
     synchronized Long generateNextID() {
+        // Set to zero original, can be set after admin machine breakdown,
+        // and the use this as the point of reference.
+        Long restoreId = Settings.getLong(Constants.NEXT_JOB_ID);
         Long maxVal = DBUtils.selectLongValue(DBConnect.getDBConnection(),
                                               "SELECT MAX(job_id) FROM jobs"
         );
         if (maxVal == null) {
             maxVal = 0L;
         }
-        return maxVal + 1L;
+        // return larges number of settings and DB
+        return ((restoreId > maxVal) ? restoreId : maxVal + 1L);
     }
 
     /**
@@ -483,7 +489,7 @@ public class JobDBDAO extends JobDAO {
      */
     private Document getOrderXMLdocFromClob(Clob clob) throws SQLException,
         DocumentException {
-        Document doc = null;
+        Document doc;
         try {
             SAXReader reader = new SAXReader();
             doc = reader.read(clob.getCharacterStream());
@@ -588,7 +594,7 @@ public class JobDBDAO extends JobDAO {
             + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
         
         if (jobStatusCode != JobStatus.ALL_STATUS_CODE)  {
-            sqlBuffer.append(" AND status = " + jobStatusCode);
+            sqlBuffer.append(" AND status = ").append(jobStatusCode);
         }
         sqlBuffer.append(" ORDER BY jobs.job_id");
         if (!asc)  { // Assume default is ASCENDING
@@ -697,14 +703,15 @@ public class JobDBDAO extends JobDAO {
         if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
             if (codes.size() == 1) {
                 Integer theWantedStatus = codes.iterator().next();
-                sqlBuffer.append(" AND status = " + theWantedStatus.intValue());
+                sqlBuffer.append(" AND status = ")
+                        .append(theWantedStatus.intValue());
             } else {
                 Iterator<Integer> it = codes.iterator();
                 Integer nextInt = it.next();
                 StringBuffer res = new StringBuffer("AND (status = " + nextInt);
                 while (it.hasNext()) {
                     nextInt = it.next();
-                    res.append(" OR status = " + nextInt);
+                    res.append(" OR status = ").append(nextInt);
                 }
                 res.append(") ");
                 sqlBuffer.append(res);
@@ -963,9 +970,7 @@ public class JobDBDAO extends JobDAO {
      */
     private Set<JobStatus> getSetWithAllStates() {
         Set<JobStatus>statusSet = new HashSet<JobStatus>();
-        for (JobStatus st : JobStatus.values()) {
-            statusSet.add(st);
-        }
+        statusSet.addAll(Arrays.asList(JobStatus.values()));
         return statusSet;
     }
     
@@ -992,14 +997,15 @@ public class JobDBDAO extends JobDAO {
            if (selectedStatusSet.size() == 1) {
                int theWantedStatus = selectedStatusSet.iterator()
                    .next().ordinal();
-               statusSortBuffer.append(" AND status = " + theWantedStatus);
+               statusSortBuffer.append(" AND status = ")
+                       .append(theWantedStatus);
            } else {
                Iterator<JobStatus> it = selectedStatusSet.iterator();
                int nextInt = it.next().ordinal();
                StringBuffer res = new StringBuffer("AND (status = " + nextInt);
                while (it.hasNext()) {
                    nextInt = it.next().ordinal();
-                   res.append(" OR status = " + nextInt);
+                   res.append(" OR status = ").append(nextInt);
                }
                res.append(") ");
                statusSortBuffer.append(res);

@@ -38,8 +38,8 @@ import org.dom4j.Node;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
@@ -97,6 +97,10 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Must get correct id after making more jobs",
                      new Long(INITIAL_JOB_COUNT + 1 + jobsMade + moreJobsMade),
                      dao.generateNextID());
+        Settings.set(dk.netarkivet.harvester.datamodel.Constants.NEXT_JOB_ID, "10");
+        assertEquals ("Must get id = 10 after an breakdown of admin machine",
+                     10L, (long)dao.generateNextID());
+
     }
 
 
