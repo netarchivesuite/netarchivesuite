@@ -97,7 +97,7 @@ public class MetadataFile implements Comparable<MetadataFile> {
             Settings.get(HarvesterSettings.METADATA_LOG_FILE_PATTERN);
 
     /**
-     * The name of a domain-specific Heritrix settings file (a.k.a. override)
+     * The name of a domain-specific Heritrix settings file (a.k.a. override).
      */
     public static final String DOMAIN_SETTINGS_FILE = "settings.xml";
 

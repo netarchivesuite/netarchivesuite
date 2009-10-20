@@ -652,6 +652,11 @@ public class HarvestDocumentation {
         return jobID + "-metadata-" + 1 + ".arc";
     }
 
+    /**
+     * Reverses a domain string, e.g. reverses "com.amazon" to "amazon.com"
+     * @param reversedDomain the domain name to reverse
+     * @return the reversed domain string
+     */
     private static String reverseDomainString(String reversedDomain) {
         String domain = "";
         String remaining = new String(reversedDomain);
@@ -661,7 +666,7 @@ public class HarvestDocumentation {
             remaining = remaining.substring(0, lastDotIndex);
             lastDotIndex = remaining.lastIndexOf(".");
         }
-        return domain.substring(0, domain.length() -1);
+        return domain.substring(0, domain.length() - 1);
     }
 
 }
