@@ -49,6 +49,7 @@
         <getTimeout>60000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+            <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
             <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
