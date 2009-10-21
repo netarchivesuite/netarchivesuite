@@ -127,7 +127,7 @@ public interface PreservationArcRepositoryClient  {
      * be retrieved.
      * @return A list of ChecksumEntries which is the results of the 
      * GetAllChecksumMessage.
-     * @see dk.netarkivet.archive.checksum.GetAllChecksumsMessage
+     * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
     File getAllChecksums(String replicaId);
     
@@ -141,7 +141,7 @@ public interface PreservationArcRepositoryClient  {
      * should be retrieved.
      * @return A list of all the filenames within the archive of the given 
      * replica.
-     * @see dk.netarkivet.archive.checksum.GetAllFilenamesMessage
+     * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     File getAllFilenames(String replicaId);
     

@@ -95,8 +95,7 @@ public interface ReplicaClient {
      * Retrieves the checksum for a specific arc file.
      * The GetChecksumMessage is sent along to the archive.
      * 
-     * @param arcName The name of the arcfile.
-     * @return The message for retrieving the arcfile.
+     * @param msg The GetChecksumMessage to be send to the replica.
      */
     public void getChecksum(GetChecksumMessage msg);
     
@@ -124,7 +123,7 @@ public interface ReplicaClient {
      * 
      * The message is sent from this method.
      * 
-     * @return The message for retrieving the checksums.
+     * @param msg The message for retrieving all the checksums.
      */
     public void getAllChecksums(GetAllChecksumsMessage msg);
     
@@ -142,6 +141,7 @@ public interface ReplicaClient {
      * 
      * @param arcfile The file which is to replace the wrong file within the 
      * archive.
+     * @param checksum The incorrect checksum, which has been recorded. 
      */
     public void correct(RemoteFile arcfile, String checksum);
     

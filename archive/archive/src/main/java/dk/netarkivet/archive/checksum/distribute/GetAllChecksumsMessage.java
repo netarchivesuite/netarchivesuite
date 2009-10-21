@@ -119,7 +119,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
     /**
      * Accept visitation. 
      * 
-     * @param The ArchiveMessageVisitor which accepts this message.
+     * @param v The ArchiveMessageVisitor which accepts this message.
      */
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);

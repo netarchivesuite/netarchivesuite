@@ -178,8 +178,9 @@ public class ChecksumClient implements ReplicaClient {
      * Method for retrieving the checksum of a specific arcfile within the
      * archive.
      * 
-     * @param msg The GetChecksumMessage which will be sent to the checksum
-     * archive though the jms connection.
+     * @param replyChannel The channel where the reply should be sent.
+     * @param filename The GetChecksumMessage which has been sent to the 
+     * checksum archive though the jms connection.
      * @return The GetChecksumMessage which is sent.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
