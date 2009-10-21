@@ -247,6 +247,13 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             // get the checksum of the arc file
             String checksum = cs.getChecksum(filename);
 
+            // Check if the checksum was found. If not throw exception.
+            if(checksum == null || checksum.isEmpty()) {
+                // The error is logged, when the exception is catched.
+                throw new IllegalState("Cannot fetch checksum of an entry, "
+                        + "which is not within the archive.");
+            } 
+            
             // send the checksum of the arc file.
             msg.setChecksum(checksum);
         } catch (Throwable e) {
