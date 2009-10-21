@@ -63,7 +63,6 @@ public class TestInfo {
     public static final File FILE_COMPLETE_SETTINGS = new File(
 	    TMPDIR, "complete_settings.xml");
 
-
     // arguments
     public static final String ARGUMENT_CONFIG_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_CONFIG_FILE;

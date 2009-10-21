@@ -19,7 +19,9 @@
             <thisCredentials>examplecredentials</thisCredentials>
         </bitarchive>
         <checksum>
-            <filename>checksum.md5</filename>
+            <baseDir>checksum</baseDir>
+            <!-- The default value amount of 1 MBytes. -->
+            <minSpaceLeft>1000000</minSpaceLeft>
         </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
@@ -81,6 +83,10 @@
             <language>
                 <locale>de</locale>
                 <name>Deutsch</name>
+            </language>
+            <language>
+                <locale>it</locale>
+                <name>Italiano</name>
             </language>
             <siteSection>
                 <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
@@ -435,7 +441,7 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- Used when creating ids for new jobs after a admin
+                <!-- Used when creating ids for new jobs after a admin 
                 database restore. -->
                 <nextJobId>0</nextJobId>
             </domain>
