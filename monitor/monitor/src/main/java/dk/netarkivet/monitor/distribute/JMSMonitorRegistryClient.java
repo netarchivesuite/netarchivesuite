@@ -28,11 +28,14 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.monitorregistry.MonitorRegistryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
 /**
@@ -53,7 +56,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
      * Used for control of timer task that sends messages. */
     private static final long MINUTE_IN_MILLISECONDS = 60000L;
     /** Delay between every reregistering in minutes. */
-    private static final long REREGISTER_DELAY = 1;
+    private static final long DEFAULT_REREGISTER_DELAY = 1;
     /** Zero milliseconds from now.
      * Used for control of timer task that sends messages. */
     private static final long NOW = 0L;
@@ -112,14 +115,33 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
                           + rmiPort);
             }
         };
+        
+        long reregister_delay = DEFAULT_REREGISTER_DELAY;
+        try {
+            reregister_delay = Long.parseLong(Settings.get(
+                    CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
+        }
+        catch (NumberFormatException e1) {
+            log.warn("Couldn't parse setting " 
+                     + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
+                     + ". Only numbers are allowed. Using defaultvalue "
+                     + DEFAULT_REREGISTER_DELAY);
+        }
+        catch(NetarkivetException e2) {
+            log.warn("Couldn't find setting " 
+                    + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
+                    + ". Using defaultvalue "
+                    + DEFAULT_REREGISTER_DELAY);
+        }
+
         log.info("Registering this client for monitoring every "
-                 + REREGISTER_DELAY
+                 + reregister_delay
                  + " minutes, using hostname '"
                  + localHostName + "' and JMX/RMI ports "
                  + jmxPort + "/"
                  + rmiPort);
         registryTimer.scheduleAtFixedRate(timerTask, NOW,
-                                          REREGISTER_DELAY
+                                            reregister_delay
                                           * MINUTE_IN_MILLISECONDS);
     }
 
