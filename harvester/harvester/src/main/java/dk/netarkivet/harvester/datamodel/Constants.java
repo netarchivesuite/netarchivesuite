@@ -96,7 +96,7 @@ public class Constants {
     /** Ascending sort order. */
     public static final String ASCENDING_SORT_ORDER = "ASC";
 
-    /** Settings used in JobDBDao after admin machine break down **/
+    /** Settings used in JobDBDao after admin machine break down. **/
     public static final String NEXT_JOB_ID =
                 "settings.harvester.datamodel.domain.nextJobId";
     

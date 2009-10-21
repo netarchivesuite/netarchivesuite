@@ -272,7 +272,8 @@ public class JobDBDAO extends JobDAO {
         if (maxVal == null) {
             maxVal = 0L;
         }
-        // return larges number of settings and DB
+        // return the largest number of the two numbers: the NEXT_JOB_ID
+        // declared in settings and max value of job_id used in the jobs table.
         return ((restoreId > maxVal) ? restoreId : maxVal + 1L);
     }
 

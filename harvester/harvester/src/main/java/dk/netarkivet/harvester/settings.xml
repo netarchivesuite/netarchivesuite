@@ -39,8 +39,8 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- this is a big nail in a bad solution, used when creating
-                ids for new jobs after a admin database restore -->
+                <!-- Used when creating ids for new jobs after a admin 
+                database restore. -->
                 <nextJobId>0</nextJobId>
             </domain>
         </datamodel>
