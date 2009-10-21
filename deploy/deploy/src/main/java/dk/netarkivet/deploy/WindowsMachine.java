@@ -161,7 +161,7 @@ public class WindowsMachine extends Machine {
         res.append(ScriptConstants.IF + Constants.SPACE 
                 + Constants.SQUARE_BRACKET_BEGIN + Constants.SPACE
                 + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN 
-                + ScriptConstants.SSH + Constants.SPACE);
+                + Constants.SPACE + ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
                 + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
