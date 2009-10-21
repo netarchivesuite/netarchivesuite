@@ -104,6 +104,14 @@ public class CommonSettings {
     public static String MONITOR_REGISTRY_CLIENT
             = "settings.common.monitorregistryClient.class";
 
+    /** 
+     * <b>settings.common.monitorregistryClient.reregisterdelay</b>: <br>
+     * Delay between every reregistering in minutes, 
+     * e.g. 1 for one minute. 
+     */ 
+    public static String MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
+            = "settings.common.monitorregistryClient.reregisterdelay";
+    
     /**
      * <b>settings.common.indexClient.class</b>: <br>
      * The class instantiated to give access to indices.  The class must
