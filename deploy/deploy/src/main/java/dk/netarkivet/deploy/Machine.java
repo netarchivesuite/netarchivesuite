@@ -824,7 +824,7 @@ public abstract class Machine {
     /**
      * Creates a script for restating all the applications on a given machine.
      * 
-     * @param dir The directory to put the script.
+     * @param dir The directory where the script will be placed.
      */
     protected abstract void createRestartScript(File dir);
 

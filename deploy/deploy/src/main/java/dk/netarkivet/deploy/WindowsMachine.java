@@ -193,8 +193,8 @@ public class WindowsMachine extends Machine {
         // 'environmentName'\\'jmxremote.access' /P BITARKIV\\'login':F; fi
         res.append(ScriptConstants.IF + Constants.SPACE 
                 + Constants.SQUARE_BRACKET_BEGIN + Constants.SPACE
-                + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN 
-                + ScriptConstants.SSH + Constants.SPACE);
+                + Constants.DOLLAR_SIGN + Constants.BRACKET_BEGIN
+                + Constants.SPACE + ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
                 + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
@@ -205,9 +205,9 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE + Constants.BRACKET_END 
                 + Constants.SPACE + Constants.SQUARE_BRACKET_END
                 + Constants.SEMICOLON + Constants.SPACE
-                + ScriptConstants.THEN + Constants.SPACE);
-        res.append(ScriptConstants.ECHO_Y + Constants.SPACE 
-                + Constants.SEPARATOR + Constants.SPACE
+                + ScriptConstants.THEN + Constants.SPACE 
+                + ScriptConstants.ECHO_Y + Constants.SPACE);
+        res.append(Constants.SEPARATOR + Constants.SPACE
                 + ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
@@ -1264,9 +1264,11 @@ public class WindowsMachine extends Machine {
      * script which is used by the restart script.
      * 
      * @param dir The directory where the script file will be placed.
+     * @throws IOFailure If the restart script cannot be created, or if the 
+     * wait script cannot be created.
      */
     @Override
-    protected void createRestartScript(File dir) {
+    protected void createRestartScript(File dir) throws IOFailure {
         // Start by creating the wait script.
         createWaitScript(dir);
         
@@ -1307,19 +1309,19 @@ public class WindowsMachine extends Machine {
                 restartPrint.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local restart script: "
-                + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_RESTART_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_RESTART_FILE, e);
         }
     }
     
     /**
-     * Createst the script for waiting during restart.
+     * Creates the script for waiting during restart.
      * 
      * @param dir The directory where the script should be placed.
+     * @throws IOFailure If the method fails in creating the wait script.
      */
-    protected void createWaitScript(File dir) {
+    protected void createWaitScript(File dir) throws IOFailure {
         try {
             // initialise the script file.
             File waitScript = new File(dir, 
@@ -1339,10 +1341,9 @@ public class WindowsMachine extends Machine {
                 waitPrint.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local wait script: "
-                + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
+            // log error and throw a IOFailure.
+            log.trace(Constants.MSG_ERROR_WAIT_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_WAIT_FILE, e);
         }
     }
 }

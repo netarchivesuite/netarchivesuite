@@ -296,21 +296,21 @@ public final class Constants {
     static final String SCRIPT_EXTENSION_LINUX = ".sh";
     /** The script extension for Windows.*/
     static final String SCRIPT_EXTENSION_WINDOWS = ".bat";
-    /** The name of the killall script. killall.*/
+    /** The name of the killall script. 'killall'.*/
     static final String SCRIPT_NAME_KILL_ALL = "killall";
-    /** The name of the killall script. install.*/
+    /** The name of the install script. 'install'.*/
     static final String SCRIPT_NAME_INSTALL_ALL = "install";
-    /** The name of the killall script. startall.*/
+    /** The name of the startall script. 'startall'.*/
     static final String SCRIPT_NAME_START_ALL = "startall";
-    /** The name of the restart all application script. restart.*/
+    /** The name of the restart all application script. 'restart'.*/
     static final String SCRIPT_NAME_RESTART = "restart";
-    /** The name of the wait script for windows. wait.*/
+    /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
-    /** Prefix for the application kill script. kill_ .*/
+    /** Prefix for the application kill script. 'kill_' .*/
     static final String SCRIPT_NAME_LOCAL_KILL = "kill_";
-    /** Prefix for the application start script. start_ .*/
+    /** Prefix for the application start script. 'start_' .*/
     static final String SCRIPT_NAME_LOCAL_START = "start_";
-    /** Prefix for the application kill_ps script.*/
+    /** Prefix for the application kill_ps script. 'kill_ps_'*/
     static final String SCRIPT_KILL_PS = "kill_ps_";
     /** The prefix of the name for application specific settings files.*/
     static final String PREFIX_SETTINGS = "settings_";
@@ -484,10 +484,16 @@ public final class Constants {
         "The environment name for the test instance was not valid to the "
         + "regular expressions: '" + VALID_REGEX_ENVIRONMENT_NAME + "'. "
         + "But was given: ";
-    /** .*/
+    /** The error message when the environment name is invalid.*/
     public static final String MSG_ERROR_INVALID_ENVIRONMENT_NAME = 
         "The environment name must be valid to the regular expression: '"
         + VALID_REGEX_ENVIRONMENT_NAME + "'. But the given was: ";
+    /** The error message when the wait script file cannot be written.*/
+    public static final String MSG_ERROR_WAIT_FILE =
+        "Problems creating local wait script.";
+    /** The error message when the restart script cannot be written.*/
+    public static final String MSG_ERROR_RESTART_FILE =
+        "Problems creating local restart script.";
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 

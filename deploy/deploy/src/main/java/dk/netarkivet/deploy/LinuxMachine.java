@@ -1063,9 +1063,10 @@ public class LinuxMachine extends Machine {
      * script is called.
      * 
      * @param dir The directory where the script file will be placed.
+     * @throws IOFailure If the restart script cannot be created.
      */
     @Override
-    protected void createRestartScript(File dir) {
+    protected void createRestartScript(File dir) throws IOFailure {
         try {
             // initialise the script file.
             File restartScript = new File(dir, 
@@ -1101,10 +1102,9 @@ public class LinuxMachine extends Machine {
                 restartPrint.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local restart script: "
-                + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_RESTART_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_RESTART_FILE, e);
         }
     }
 }
