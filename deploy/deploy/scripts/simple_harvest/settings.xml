@@ -51,6 +51,7 @@
         </arcrepositoryClient>
         <monitorregistryClient>
             <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+            <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
                 <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
