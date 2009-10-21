@@ -247,8 +247,11 @@ public class BitarchiveClient implements ReplicaClient {
     /**
      * This should creates a batch job for retrieving the checksum of the 
      * wanted files.
+     * This has not yet been implemented.
      * 
-     * @param msg The message.
+     * @param replyChannel The channel where the reply should be sent.
+     * @param filename The name of the file to retrieve the checksum from.
+     * @return The message when it has been sent.
      */
     @Override
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
