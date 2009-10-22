@@ -134,7 +134,7 @@ public class BitarchiveAdmin {
                      + Constants.FILE_DIRECTORY_NAME + "', '"
                      + Constants.TEMPORARY_DIRECTORY_NAME + "', '"
                      + Constants.ATTIC_DIRECTORY_NAME
-                     + "'} under base directory:'" + basedir+ "' with "
+                     + "'} under base directory: '" + basedir+ "' with "
                      + bytesUsedInDir + " bytes of content and "
                      + FileUtils.getBytesFree(basedir) + " bytes free");
         }
