@@ -113,7 +113,7 @@ public interface ReplicaClient {
     /**
      * Retrieves the names of all the arc file in the replica archive.
      * 
-     * @return The set of filenames for the files in the archive. 
+     * @param msg The GetAllFilenamesMessage to sent to the replica. 
      */
     public void getAllFilenames(GetAllFilenamesMessage msg);
     

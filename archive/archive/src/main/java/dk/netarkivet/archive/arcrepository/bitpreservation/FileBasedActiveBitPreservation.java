@@ -328,7 +328,34 @@ public class FileBasedActiveBitPreservation
      */
     private Map<String, List<String>> getChecksumFromChecksumArchive(
             Replica rep, Set<String> filenames) {
-        return Collections.<String, List<String>>emptyMap();
+        Map<String, List<String>> res = 
+            Collections.<String, List<String>>emptyMap();
+        
+        try {
+            // get all the checsums
+            PreservationArcRepositoryClient arcClient = 
+                ArcRepositoryClientFactory.getPreservationInstance();
+            File checksumFile = arcClient.getAllChecksums(rep.getId());
+            
+            // go through all entries and extract the relevant ones.
+            for(String line : FileUtils.readListFromFile(checksumFile)) {
+                KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
+                // If they 
+                if(filenames.contains(entry.getKey())) {
+                    // remove from filename list, so it is not found twice.
+                    filenames.remove(entry.getKey());
+                    
+                    List<String> csList = new ArrayList<String>(1);
+                    csList.add(entry.getValue());
+                    res.put(entry.getKey(), csList);
+                }
+            }
+            
+        } catch (NetarkivetException e) {
+            // TODO: handle this!
+        }
+        
+        return res;
     }
     
     /**
@@ -526,8 +553,9 @@ public class FileBasedActiveBitPreservation
      * @throws PermissionDenied if the output directories cannot be created
      * @throws IOFailure        if there is a problem writing the output file,
      *                          or if the job fails for some reason
+     * @throws UnknownID If the replica has an unknown replicaType.
      */
-    private void runFileListJob(Replica replica) throws IOFailure {
+    private void runFileListJob(Replica replica) throws IOFailure, UnknownID {
         // Pick the right directory to output to
         File batchOutputFile = WorkFiles.getFile(replica,
                                                  WorkFiles.FILES_ON_BA);
@@ -538,9 +566,14 @@ public class FileBasedActiveBitPreservation
             FileUtils.copyFile(ArcRepositoryClientFactory
                     .getPreservationInstance().getAllFilenames(replica.getId()),
                     batchOutputFile);
-        } else { // assume Bitarchive 
+        } else if (replica.getType() == ReplicaType.BITARCHIVE) {
             // Send filelist batch job
             runBatchJob(new FileListJob(), replica, null, batchOutputFile);
+        } else {
+            String errMsg = "Cannot handle the replica type of replica '"
+                + replica + "'.";
+            log.warn(errMsg);
+            throw new UnknownID(errMsg);
         }
     }
 
@@ -689,11 +722,16 @@ public class FileBasedActiveBitPreservation
             FileUtils.copyFile(ArcRepositoryClientFactory
                     .getPreservationInstance().getAllChecksums(replica.getId()),
                     outputFile);
-        } else {// assume Bitarchive 
+        } else if (replica.getType() == ReplicaType.BITARCHIVE) {
             // Send checksum batch job
-            log.info("Bit integrity check started on bit archive "
-        	    + replica);
+            log.info("Bit integrity check started on the bitarchive replica '"
+        	    + replica + "'.");
             runBatchJob(new ChecksumJob(), replica, null, outputFile);
+        } else {
+            String errMsg = "Cannot handle the replica type of replica '"
+                + replica + "'.";
+            log.warn(errMsg);
+            throw new UnknownID(errMsg);
         }
     }
 

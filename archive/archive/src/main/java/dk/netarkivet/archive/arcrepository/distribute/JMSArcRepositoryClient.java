@@ -401,25 +401,25 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * Request update of admin data to specific state.
      *
      * @param fileName       The file for which admin data should be updated.
-     * @param bitarchiveName The bitarchive for which admin data should be
-     *                       updated.
+     * @param replicaId The id if the replica that the administrative
+     * data for fileName is wrong for.
      * @param newval         The new value in admin data.
      *
      * @throws IOFailure If the reply to the request update timed out.
      */
-    public void updateAdminData(String fileName, String bitarchiveName,
+    public void updateAdminData(String fileName, String replicaId,
                                 ReplicaStoreState newval) {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveName, "bitarchiveName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "bitarchiveName");
         ArgumentNotValid.checkNotNull(newval, "newval");
 
         String msg = "Requesting update of admin data for file '" + fileName
-                     + "' bitarchive '" + bitarchiveName + "' to state "
+                     + "' replica '" + replicaId + "' to state "
                      + newval;
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         AdminDataMessage aMsg =
-                new AdminDataMessage(fileName, bitarchiveName, newval);
+                new AdminDataMessage(fileName, replicaId, newval);
         // We only need to know that a reply to our message has arrived. 
         // The replyMessage is thrown away, because it does not contain 
         // any more useful knowledge.
