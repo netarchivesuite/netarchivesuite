@@ -51,6 +51,7 @@ public class Constants {
     public static final String INDEXLABEL_PARAM = "indexLabel";
     public static final String SCHEDULE_PARAM = "schedulename";
     public static final String HARVEST_PARAM = "harvestname";
+    public static final String FROM_FILE_PARAM = "fromFile";
     public static final String DOMAINLIST_PARAM = "domainlist";
     public static final String OLDSNAPSHOT_PARAM = "old_snapshot_name";
     public static final String DOMAIN_OBJECTLIMIT_PARAM = "snapshot_object_limit";

@@ -21,8 +21,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
---%>
-<%--
+--%><%--
 
 This page shows a sorted lists of all domains and seeds of a single harvest definition
 
@@ -31,37 +30,34 @@ Parameters:
 harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
    displayed.
 
---%><%@ page import="java.util.Date,
-                 java.util.List,
+--%><%@ page import="java.util.Date, java.util.Collection, 
+                 java.util.List, java.util.Map, java.util.Set,
+                 java.util.Iterator,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.common.webinterface.SiteSection,
                  dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO,
-                 dk.netarkivet.harvester.datamodel.HarvestRunInfo,
-                 dk.netarkivet.harvester.datamodel.JobStatus,
-                 dk.netarkivet.harvester.datamodel.SparseFullHarvest,
-                 dk.netarkivet.harvester.datamodel.SparsePartialHarvest, dk.netarkivet.harvester.webinterface.Constants"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%>
-
-<%@page import="java.util.Map"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="java.util.Set"%>
-<%@page import="java.util.Collection"%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+                 dk.netarkivet.harvester.webinterface.Constants"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
        basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
-
     HTMLUtils.setUTF8(request);
     String harvestName = request.getParameter(Constants.HARVEST_PARAM);
-    String heading = "Domain/Seeds for " + HTMLUtils.escapeHtmlValues(harvestName);
+    if (harvestName == null) {
+        HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                "errormsg;missing.parameter.0",
+                Constants.HARVEST_PARAM);
+        return;
+    }
     HTMLUtils.generateHeader(pageContext);
-    
-    
 %>
-<h3 class="page_heading"><%=heading%></h3>
+<h3 class="page_heading"><fmt:message key="harveststatus.seeds.for.harvest.0">
+    <fmt:param><%=HTMLUtils.escapeHtmlValues(harvestName)%></fmt:param></fmt:message>
+</h3>
 
 <table class="selection_table" cols="6">
 <%
@@ -71,19 +67,19 @@ int seedCount = 0;
 HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
 
 List<String> result = hddao.getListOfDomainsOfHarvestDefinition(harvestName);
-domainCount+=result.size();
+domainCount += result.size();
 
 for (String domainname : result) {
-	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(harvestName, domainname);
-	seedCount+=seeds.size();
+	List<String> seeds = hddao.getListOfSeedsOfDomainOfHarvestDefinition(
+		harvestName, domainname);
+	seedCount += seeds.size();
 	
 	%>
 	<tr>
-	    <th colspan="2"><%=domainname%> (<%=seeds.size()%> <fmt:message key="harveststatus.seeds.seeds"/>)</th>
+	    <th colspan="2"><%=domainname%> (<%=seeds.size()%>
+	    <fmt:message key="harveststatus.seeds.seeds"/>)</th>
 	</tr>
 	<%
-	
-
 	for (String seed : seeds) { 
 	%>
 	<tr>
@@ -99,9 +95,11 @@ for (String domainname : result) {
 }
 %>
 </table>
-<p>
+</p>
 <table><tr><td>
-<fmt:message key="harveststatus.seeds.total"/>: <%=domainCount%> <fmt:message key="harveststatus.seeds.domains"/> / <%=seedCount%> <fmt:message key="harveststatus.seeds.seeds"/>
+	<fmt:message key="harveststatus.seeds.total"/>: <%=domainCount%> 
+	<fmt:message key="harveststatus.seeds.domains"/> / <%=seedCount%>
+	<fmt:message key="harveststatus.seeds.seeds"/>
 </td></tr></table>
 
   
