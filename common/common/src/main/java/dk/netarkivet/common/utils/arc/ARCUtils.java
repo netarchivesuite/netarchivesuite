@@ -93,7 +93,8 @@ public class ARCUtils {
             throw new IOFailure(message, e);
         }
         Iterator<ArchiveRecord> it = r.iterator();
-        ARCRecord record = (ARCRecord) it.next(); //Skip ARC file header
+        ARCRecord record;
+        it.next(); //Skip ARC file header
         // ARCReaderFactory guarantees the first record exists and is a
         // filedesc, or it would throw exception
         while (it.hasNext()) {
@@ -246,7 +247,8 @@ public class ARCUtils {
        //  1) the record at offset 0, returns too large a length
        //  2) readfully does not work
        //  3) ARCRecord.read(buf, offset, length) is broken.
-       // TODO verify if these "features" are still around: See bugs #903, #904, #905
+       // TODO verify if these "features" are still around: See bugs #903, #904,
+       // #905
        int dataLength = (int) in.getMetaData().getLength();
        byte[] tmpbuffer = new byte[dataLength];
        byte[] buffer = new byte[Constants.IO_BUFFER_SIZE];
@@ -270,24 +272,23 @@ public class ARCUtils {
 
     /**
      * TODO: write unit test
-     * @param in pointing at start of ARC record
-     * @param offset into ARC file
-     * @return pairwise headers
+     * @param in pointing at start of ARC record.
+     * @param offset into ARC file.
+     * @return pairwise headers.
      * @throws IOException if fails to read ARC files or ARC files isn't valid.
      */
-    public static Map<String, Object> getHeadersFromARCFile(InputStream in, Long offset) throws IOException {
+    public static Map<String, Object> getHeadersFromARCFile(InputStream in,
+                                                            Long offset) 
+            throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
-        // exstra needed headers
+        // exstra needed headers.
         headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
         headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
 
-        String line;
-        while((line = InputStreamUtils.readLine(in)).length() <= 0) {
-            // go forward to start of record, if offset is to early (happens in tests cases)
-        }
-        String[] tmp = line.split("\\s");
+        String line = InputStreamUtils.readLine(in);
+        String[] tmp = line.split(" ");
 
-        // decode header
+        // decode header.
         if(tmp.length == 5) {
             headers.put(ARCRecordMetaData.URL_FIELD_KEY, tmp[0]);
             headers.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, tmp[1]);
@@ -295,7 +296,9 @@ public class ARCUtils {
             headers.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, tmp[3]);
             headers.put(ARCRecordMetaData.LENGTH_FIELD_KEY, tmp[4]);
         } else {
-            throw new IOException("Does not include required metadata to be sa valid ARC header: " + line);
+            throw new IOException(
+                    "Does not include required metadata to be a valid "
+                    + "ARC header: " + line);
         }
         // Matches rest of header lines.
         line = InputStreamUtils.readLine(in);
@@ -306,14 +309,16 @@ public class ARCUtils {
             // not valid META DATA
             headers.put(RESPONSETEXT, line);
         }
-        while((line = InputStreamUtils.readLine(in)) != null && line.length() > 0 && line.startsWith("<") /* arc/warc header */) {
+        while((line = InputStreamUtils.readLine(in)) != null
+              && line.length() > 0
+              && line.startsWith("<") /* arc/warc header */) {
             int index = line.indexOf(':');
             if(index != -1) {
                 headers.put(line.substring(0, index), line.substring(index+2));
             } else {
-                throw new IOException("Inputstream doesn't not point to valid ARC record");
+                throw new IOException(
+                        "Inputstream doesn't not point to valid ARC record");
             }
-            index = -1;
         }
 
         return headers;
