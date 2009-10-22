@@ -212,20 +212,17 @@ public class BitarchiveClient implements ReplicaClient {
         log.debug("Client has been shutdown");
     }
 
-    @Override
     public void correct(RemoteFile arcfile, String checksum) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: implement me!");
     }
 
-    @Override
     public void getAllFilenames(GetAllFilenamesMessage msg) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: implement me!\n msg: '"
                 + msg.toString() + "'.");
     }
 
-    @Override
     public void getAllChecksums(GetAllChecksumsMessage msg) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: implement me!\n msg: '"
@@ -238,7 +235,6 @@ public class BitarchiveClient implements ReplicaClient {
      * 
      * @param msg The message.
      */
-    @Override
     public void getChecksum(GetChecksumMessage msg) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: implement me!");
@@ -247,13 +243,11 @@ public class BitarchiveClient implements ReplicaClient {
     /**
      * This should creates a batch job for retrieving the checksum of the 
      * wanted files.
-     * This has not yet been implemented.
      * 
      * @param replyChannel The channel where the reply should be sent.
      * @param filename The name of the file to retrieve the checksum from.
      * @return The message when it has been sent.
      */
-    @Override
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
             String filename) {
         // TODO Auto-generated method stub
@@ -265,7 +259,6 @@ public class BitarchiveClient implements ReplicaClient {
      * 
      * @return The type of this replica.
      */
-    @Override
     public ReplicaType getType() {
         // Returns the current replica type in the settings.
         return ReplicaType.BITARCHIVE;
