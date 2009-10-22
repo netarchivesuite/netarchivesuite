@@ -44,19 +44,13 @@ import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
  * because it has stalled.
  */
 public class HeritrixLauncher {
-    /**
-     * Class encapsulating placement of various files.
-     */
+    /** Class encapsulating placement of various files. */
     private HeritrixFiles files;
 
-    /**
-     * the arguments passed to the HeritricController constructor.
-     */
+    /** the arguments passed to the HeritricController constructor. */
     private Object[] args;
 
-    /**
-     * The CrawlController used.
-     */
+    /** The CrawlController used. */
     private HeritrixController heritrixController;
 
     /**
@@ -67,45 +61,38 @@ public class HeritrixLauncher {
 
     //Attributes regarding deduplication.
 
-    /**
-     * Xpath for the deduplicator index directory node in order.xml documents.
-     */
+    /** Xpath for the deduplicator index directory node in order.xml documents. */
     static final String DEDUPLICATOR_INDEX_LOCATION_XPATH
-            = HeritrixTemplate.DEDUPLICATOR_XPATH + "/string[@name='index-location']";
+            = HeritrixTemplate.DEDUPLICATOR_XPATH
+              + "/string[@name='index-location']";
 
     /**
-     * Xpath for the boolean telling if the deduplicator is enabled in
-     * order.xml documents.
+     * Xpath for the boolean telling if the deduplicator is enabled in order.xml
+     * documents.
      */
-    static final String DEDUPLICATOR_ENABLED 
-        = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
+    static final String DEDUPLICATOR_ENABLED
+            = HeritrixTemplate.DEDUPLICATOR_XPATH + "/boolean[@name='enabled']";
 
-    /**
-     * The class logger.
-     */
+    /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
 
     /** Number of milliseconds in a second. */
     private static final int MILLIS_PER_SECOND = 1000;
-    /**
-     * How long to wait before aborting a request from a webserver.
-     */
+    /** How long to wait before aborting a request from a webserver. */
     private static long timeOutInMillisReceivedData =
             Long.parseLong(Settings.get(
                     HarvesterSettings.CRAWLER_TIMEOUT_NON_RESPONDING))
             * MILLIS_PER_SECOND;
 
-    /**
-     * How long to wait without any activity before aborting the harvest.
-     */
+    /** How long to wait without any activity before aborting the harvest. */
     private static long timeOutInMillis =
             Long.parseLong(Settings.get(
                     HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS))
-                    * MILLIS_PER_SECOND;
-    /** Xpath for the 'disk-path' in the order.xml .*/
+            * MILLIS_PER_SECOND;
+    /** Xpath for the 'disk-path' in the order.xml . */
     private static final String DISK_PATH_XPATH =
-        "//crawl-order/controller"
-        + "/string[@name='disk-path']";
+            "//crawl-order/controller"
+            + "/string[@name='disk-path']";
     /** Xpath for the arcfile 'prefix' in the order.xml . */
     private static final String ARCFILE_PREFIX_XPATH =
             "//crawl-order/controller"
@@ -113,14 +100,14 @@ public class HeritrixLauncher {
             + "/newObject/string[@name='prefix']";
     /** Xpath for the ARCs dir in the order.xml. */
     private static final String ARCSDIR_XPATH =
-        "//crawl-order/controller"
-        + "/map[@name='write-processors']"
-        + "/newObject/stringList[@name='path']/string";
+            "//crawl-order/controller"
+            + "/map[@name='write-processors']"
+            + "/newObject/stringList[@name='path']/string";
     /** Xpath for the 'seedsfile' in the order.xml. */
     private static final String SEEDS_FILE_XPATH =
-        "//crawl-order/controller"
-        + "/newObject[@name='scope']"
-        + "/string[@name='seedsfile']";
+            "//crawl-order/controller"
+            + "/newObject[@name='scope']"
+            + "/string[@name='seedsfile']";
 
     /**
      * Private HeritrixLaucher constructor. Sets up the HeritrixLauncher from
@@ -128,6 +115,7 @@ public class HeritrixLauncher {
      *
      * @param files Object encapsulating location of Heritrix crawldir and
      *              configuration files.
+     *
      * @throws ArgumentNotValid If either seedsfile or orderfile does not
      *                          exist.
      */
@@ -156,9 +144,11 @@ public class HeritrixLauncher {
      *
      * @param files Object encapsulating location of Heritrix crawldir and
      *              configuration files
+     *
      * @return HeritrixLauncher object
-     * @throws ArgumentNotValid If either order.xml
-     * or seeds.txt does not exist, or argument files is null.
+     *
+     * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist,
+     *                          or argument files is null.
      */
     public static HeritrixLauncher getInstance(HeritrixFiles files)
             throws ArgumentNotValid {
@@ -169,24 +159,23 @@ public class HeritrixLauncher {
     /**
      * Generic constructor to allow HeritrixLauncher to use any implementation
      * of HeritrixController.
+     *
      * @param args the arguments to be passed to the constructor or non-static
-     * factory method of the HeritrixController class specified in settings
+     *             factory method of the HeritrixController class specified in
+     *             settings
      */
-    public HeritrixLauncher(Object ... args) {
+    public HeritrixLauncher(Object... args) {
         this.args = args;
     }
 
     /**
-     * This method launches heritrix in the following way:</br> 
-     * 1. copies the orderfile and the seedsfile to current working directory.
-     * </br>
-     * 2. sets up the newly created copy of the orderfile </br>
-     * 3. starts the crawler </br>
-     * 4. stops the crawler (Either when heritrix has finished crawling, or
-     * when heritrix is forcefully stopped due to inactivity).
-     * </p>
-     * The exit from the while-loop depends on Heritrix calling the crawlEnded()
-     * method, when the crawling is finished. This method is called from the
+     * This method launches heritrix in the following way:</br> 1. copies the
+     * orderfile and the seedsfile to current working directory. </br> 2. sets
+     * up the newly created copy of the orderfile </br> 3. starts the crawler
+     * </br> 4. stops the crawler (Either when heritrix has finished crawling,
+     * or when heritrix is forcefully stopped due to inactivity). </p> The exit
+     * from the while-loop depends on Heritrix calling the crawlEnded() method,
+     * when the crawling is finished. This method is called from the
      * HarvestControllerServer.onDoOneCrawl() method.
      *
      * @throws IOFailure - if the order.xml is invalid if unable to initialize
@@ -195,8 +184,8 @@ public class HeritrixLauncher {
      */
     public void doCrawl() throws IOFailure {
         setupOrderfile();
-        heritrixController 
-            = HeritrixControllerFactory.getDefaultHeritrixController(args);
+        heritrixController
+                = HeritrixControllerFactory.getDefaultHeritrixController(args);
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
@@ -209,7 +198,7 @@ public class HeritrixLauncher {
             }
         } catch (IOFailure e) {
             log.warn("Error during initialisation of crawl", e);
-            throw(e);
+            throw (e);
         } catch (Exception e) {
             log.warn("Exception during crawl", e);
             throw new RuntimeException("Exception during crawl", e);
@@ -225,18 +214,21 @@ public class HeritrixLauncher {
      * Monitors the crawling performed by Heritrix. Regularly checks whether any
      * progress is made. If no progress has been made for too long, the crawl is
      * ended.
+     *
      * @throws IOFailure if the call to HeritrixController.requestCrawlStop()
-     * fails. Other failures in calls to the controller are caught and logged.
+     *                   fails. Other failures in calls to the controller are
+     *                   caught and logged.
      */
-    private void doCrawlLoop() throws IOFailure{
-        String errorMessage = "Non-fatal error in JMX call during crawl";
+    private void doCrawlLoop() throws IOFailure {
+        String errorMessage = "Non-fatal I/O error while communicating with"
+                              + " Heritrix during crawl";
         long lastNonZeroActiveQueuesTime = System.currentTimeMillis();
         long lastTimeReceivedData = System.currentTimeMillis();
         boolean crawlIsEnded = false;
         try {
             crawlIsEnded = heritrixController.crawlIsEnded();
         } catch (IOFailure e) {
-            log.warn(errorMessage, e);
+            log.debug(errorMessage, e);
         }
         while (!crawlIsEnded) {
             String harvestInformation = null;
@@ -245,22 +237,22 @@ public class HeritrixLauncher {
                 harvestInformation = heritrixController.getHarvestInformation();
                 progressStats = heritrixController.getProgressStats();
             } catch (IOFailure e) {
-                log.warn(errorMessage, e);
+                log.debug(errorMessage, e);
             }
             log.info("Job ID: " + files.getJobID()
-                            + ", Harvest ID: " + files.getHarvestID()
-                            + ", " + harvestInformation
-                            + "\n" 
-                            + ((progressStats == null)? "": progressStats));
+                     + ", Harvest ID: " + files.getHarvestID()
+                     + ", " + harvestInformation
+                     + "\n"
+                     + ((progressStats == null) ? "" : progressStats));
             // Note that we don't check for timeout while paused.
             int processedKBPerSec = 0;
             boolean paused = false;
             try {
-                processedKBPerSec 
-                    = heritrixController.getCurrentProcessedKBPerSec();
+                processedKBPerSec
+                        = heritrixController.getCurrentProcessedKBPerSec();
                 paused = heritrixController.isPaused();
             } catch (IOFailure e) {
-                log.warn(errorMessage, e);
+                log.debug(errorMessage, e);
             }
             if (processedKBPerSec > 0 || paused) {
                 lastTimeReceivedData = System.currentTimeMillis();
@@ -271,7 +263,7 @@ public class HeritrixLauncher {
                 activeToeCount = heritrixController.getActiveToeCount();
                 paused = heritrixController.isPaused();
             } catch (IOFailure e) {
-                log.warn(errorMessage, e);
+                log.debug(errorMessage, e);
             }
             if (activeToeCount > 0 || paused) {
                 lastNonZeroActiveQueuesTime = System.currentTimeMillis();
@@ -288,7 +280,7 @@ public class HeritrixLauncher {
                 try {
                     queuedUriCount = heritrixController.getQueuedUriCount();
                 } catch (IOFailure e) {
-                    log.warn(errorMessage, e);
+                    log.debug(errorMessage, e);
                 }
                 log.warn("Aborting crawl because of inactivity. "
                          + "No active queues for the last "
@@ -313,7 +305,7 @@ public class HeritrixLauncher {
             try {
                 crawlIsEnded = heritrixController.crawlIsEnded();
             } catch (IOFailure e) {
-                log.warn(errorMessage, e);
+                log.debug(errorMessage, e);
             }
             if (!crawlIsEnded) {
                 try {
@@ -334,26 +326,22 @@ public class HeritrixLauncher {
     }
 
     /**
-     * This method prepares the orderfile used by the Heritrix crawler.
-     * </p>
-     * 1. alters the orderfile in the following-way: (overriding whatever is in
-     * the orderfile)</br>
-     * <ol>
-     *  <li>sets the disk-path to the outputdir specified in HeritrixFiles.</li>
-     *  <li>sets the seedsfile to the seedsfile specified in HeritrixFiles.</li>
-     *  <li>sets the prefix of the arcfiles to unique prefix defined in
-     *      HeritrixFiles</li>
-     *  <li>checks that the arcs-file dir is 'arcs' - to ensure that we know
-     *      where the arc-files are when crawl finishes</li>
+     * This method prepares the orderfile used by the Heritrix crawler. </p> 1.
+     * alters the orderfile in the following-way: (overriding whatever is in the
+     * orderfile)</br> <ol> <li>sets the disk-path to the outputdir specified in
+     * HeritrixFiles.</li> <li>sets the seedsfile to the seedsfile specified in
+     * HeritrixFiles.</li> <li>sets the prefix of the arcfiles to unique prefix
+     * defined in HeritrixFiles</li> <li>checks that the arcs-file dir is 'arcs'
+     * - to ensure that we know where the arc-files are when crawl
+     * finishes</li>
      *
-     *  <li>if deduplication is enabled, sets the node pointing to index
-     *      directory for deduplication (see step 3)</li>
-     *</ol>
-     * 2. saves the orderfile back to disk</p>
+     * <li>if deduplication is enabled, sets the node pointing to index
+     * directory for deduplication (see step 3)</li> </ol> 2. saves the
+     * orderfile back to disk</p>
      *
      * 3. if deduplication is enabled in the order.xml, it writes the absolute
      * path of the lucene index used by the deduplication processor.
-     * 
+     *
      * @throws IOFailure - When the orderfile could not be saved to disk When a
      *                   specific node is not found in the XML-document When the
      *                   SAXReader cannot parse the XML
@@ -368,12 +356,12 @@ public class HeritrixLauncher {
         XmlUtils.setNode(doc, SEEDS_FILE_XPATH,
                          files.getSeedsTxtFile().getAbsolutePath());
         XmlUtils.setNode(doc, ARCSDIR_XPATH, Constants.ARCDIRECTORY_NAME);
-        
+
         if (isDeduplicationEnabledInTemplate(doc)) {
             XmlUtils.setNode(doc, DEDUPLICATOR_INDEX_LOCATION_XPATH,
                              files.getIndexDir().getAbsolutePath());
         }
-        
+
         files.writeOrderXml(doc);
     }
 
@@ -381,13 +369,14 @@ public class HeritrixLauncher {
      * Return true if the given order.xml file has deduplication enabled.
      *
      * @param doc An order.xml document
+     *
      * @return True if Deduplicator is enabled.
      */
     public static boolean isDeduplicationEnabledInTemplate(Document doc) {
         ArgumentNotValid.checkNotNull(doc, "Document doc");
         Node xpathNode = doc.selectSingleNode(DEDUPLICATOR_ENABLED);
-        return xpathNode != null 
-            && xpathNode.getText().trim().equals("true");
+        return xpathNode != null
+               && xpathNode.getText().trim().equals("true");
 
     }
 }
