@@ -130,7 +130,11 @@ public class BitarchiveAdmin {
             ApplicationUtils.dirMustExist(atticdir);
             archivePaths.add(basedir);
             final Long bytesUsedInDir = calculateBytesUsed(basedir);
-            log.info("Using bit archive directory '" + basedir + "' with "
+            log.info("Using bit archive directorys {'"
+                     + Constants.FILE_DIRECTORY_NAME + "', '"
+                     + Constants.TEMPORARY_DIRECTORY_NAME + "', '"
+                     + Constants.ATTIC_DIRECTORY_NAME
+                     + "'} under base directory:'" + basedir+ "' with "
                      + bytesUsedInDir + " bytes of content and "
                      + FileUtils.getBytesFree(basedir) + " bytes free");
         }
