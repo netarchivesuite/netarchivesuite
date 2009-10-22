@@ -36,18 +36,16 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
- * Provides access to general application settings.
- * The settings are retrieved from xml files. XML files may be specified one of
- * two places:
- * 1) Default settings in XML files, specified by class path. These are intended
- * to be packaged in the jar files, to provide a fallback for settings.
- * 2) Overriding settings in XML files in file systems. These are intended to
- * override the necessary values with minimal XML files. The location of these
- * files are either specified by the system property 
- * {@link #SETTINGS_FILE_PROPERTY},
- * multiple files can be separated by {@link File#pathSeparator}, that is
- * ':' on linux and ';' on windows; or if that property is not set, the
- * default location is {@link #DEFAULT_SETTINGS_FILEPATH}.
+ * Provides access to general application settings. The settings are retrieved
+ * from xml files. XML files may be specified one of two places: 1) Default
+ * settings in XML files, specified by class path. These are intended to be
+ * packaged in the jar files, to provide a fallback for settings. 2) Overriding
+ * settings in XML files in file systems. These are intended to override the
+ * necessary values with minimal XML files. The location of these files are
+ * either specified by the system property {@link #SETTINGS_FILE_PROPERTY},
+ * multiple files can be separated by {@link File#pathSeparator}, that is ':' on
+ * linux and ';' on windows; or if that property is not set, the default
+ * location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
     static {
@@ -58,80 +56,79 @@ public class Settings {
     /** Logger for this class. */
     private static final Log log
             = LogFactory.getLog(Settings.class.getName());
-    
-    /** 
-     * The objects representing the contents of the settings xml files. 
-     * For handling multithreaded instances this list must be initialised 
-     * through the method Collections.synchronizedList().
+
+    /**
+     * The objects representing the contents of the settings xml files. For
+     * handling multithreaded instances this list must be initialised through
+     * the method Collections.synchronizedList().
      */
-    private static List<SimpleXml> fileSettingsXmlList;
+    private static final List<SimpleXml> fileSettingsXmlList
+            = Collections.synchronizedList(new ArrayList<SimpleXml>());
     /**
      * The objects representing the contents of the default settings xml files
-     * in classpath.
-     * For handling multithreaded instances this list must be initialised 
-     * through the method Collections.synchronizedList().
+     * in classpath. For handling multithreaded instances this list must be
+     * initialised through the method Collections.synchronizedList().
      */
-    private static List<SimpleXml> defaultClasspathSettingsXmlList
-            = new ArrayList<SimpleXml>();
+    private static final List<SimpleXml> defaultClasspathSettingsXmlList
+            = Collections.synchronizedList(new ArrayList<SimpleXml>());
     /**
      * This system property specifies alternative position(s) to look for
      * settings files. If more files are specified, they should be separated by
      * {@link File#pathSeparatorChar}
      */
     public static final String SETTINGS_FILE_PROPERTY
-        = "dk.netarkivet.settings.file";
+            = "dk.netarkivet.settings.file";
 
     /**
-     * The file path to look for settings in, if the system property
-     * {@link #SETTINGS_FILE_PROPERTY} is not set.
+     * The file path to look for settings in, if the system property {@link
+     * #SETTINGS_FILE_PROPERTY} is not set.
      */
     public static final String DEFAULT_SETTINGS_FILEPATH = "conf/settings.xml";
-    /**
-     * The newest "last modified" date of all settings files.
-     */
+    /** The newest "last modified" date of all settings files. */
     private static long lastModified;
 
     /**
      * Return the file these settings are read from. If the property given in
      * the constructor is set, that will be used to determine the file. If it is
-     * not set, the default settings file path given in the constructor will
-     * be used.
+     * not set, the default settings file path given in the constructor will be
+     * used.
      *
      * @return The settings file.
      */
     public static List<File> getSettingsFiles() {
-        String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY, 
-                DEFAULT_SETTINGS_FILEPATH).split(File.pathSeparator);
+        String[] pathList = System.getProperty(SETTINGS_FILE_PROPERTY,
+                                               DEFAULT_SETTINGS_FILEPATH).split(
+                File.pathSeparator);
         List<File> result = new ArrayList<File>();
         for (String path : pathList) {
             if (path.trim().length() != 0) {
                 File settingsFile = new File(path);
                 if (settingsFile.isFile()) {
                     result.add(settingsFile);
-                } 
+                }
             }
         }
         return result;
     }
-    
+
     /**
-     * Gets a setting.
-     * The search order for a given setting is as follows:
-     * 
-     * First it is checked, if the argument key is set as a System
-     * property. If yes, return this value. If no, we continue the search.
-     * 
-     * Secondly, we check, if the setting is in one of the loaded settings
-     * xml files. If the value is there, it is returned. If no, we continue
-     * the search.
-     * 
-     * Finally, we check if the setting is in one of default settings 
-     * files from classpath. If the value is there, it is returned.
-     * Otherwise an UnknownId exception is thrown.
+     * Gets a setting. The search order for a given setting is as follows:
+     *
+     * First it is checked, if the argument key is set as a System property. If
+     * yes, return this value. If no, we continue the search.
+     *
+     * Secondly, we check, if the setting is in one of the loaded settings xml
+     * files. If the value is there, it is returned. If no, we continue the
+     * search.
+     *
+     * Finally, we check if the setting is in one of default settings files from
+     * classpath. If the value is there, it is returned. Otherwise an UnknownId
+     * exception is thrown.
      *
      * Note: The retrieved value can be the empty string
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved value
      *
      * @throws ArgumentNotValid if key is null or the empty string
@@ -167,10 +164,11 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as an int.
-     * This method calls get(key) and then parses the value as integer.
+     * Gets a setting as an int. This method calls get(key) and then parses the
+     * value as integer.
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved int
      *
      * @throws ArgumentNotValid if key is null, the empty string or key is not
@@ -190,10 +188,11 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a long.
-     * This method calls get(key) and then parses the value as a long.
+     * Gets a setting as a long. This method calls get(key) and then parses the
+     * value as a long.
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved long
      *
      * @throws ArgumentNotValid if key is null, the empty string or key is not
@@ -213,10 +212,11 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a file.
-     * This method calls get(key) and then returns the value as a file.
+     * Gets a setting as a file. This method calls get(key) and then returns the
+     * value as a file.
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved file
      *
      * @throws ArgumentNotValid if key is null, the empty string
@@ -228,10 +228,11 @@ public class Settings {
     }
 
     /**
-     * Gets a setting as a boolean.
-     * This method calls get(key) and then parses the value as a boolean.
+     * Gets a setting as a boolean. This method calls get(key) and then parses
+     * the value as a boolean.
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved boolean
      *
      * @throws ArgumentNotValid if key is null or the empty string
@@ -245,21 +246,19 @@ public class Settings {
     }
 
     /**
-     * Gets a list of settings.
-     * First it is checked, if the key is registered as a System property.
-     * If yes, registered value is returned in a list of length 1.
-     * If no, the data loaded from the settings xml files are examined. 
-     * If value is there, it is returned in a list.
-     * If not, the default settings from classpath are
-     * examined. If values for this setting are found here, they
-     * are returned.
-     * Otherwise, an UnknownId exception is thrown.
-     *  
-     * Note that the values will not be concatenated, the first
-     * place with a match will define the entire list.
-     * Furthemore the list cannot be empty.
+     * Gets a list of settings. First it is checked, if the key is registered as
+     * a System property. If yes, registered value is returned in a list of
+     * length 1. If no, the data loaded from the settings xml files are
+     * examined. If value is there, it is returned in a list. If not, the
+     * default settings from classpath are examined. If values for this setting
+     * are found here, they are returned. Otherwise, an UnknownId exception is
+     * thrown.
+     *
+     * Note that the values will not be concatenated, the first place with a
+     * match will define the entire list. Furthemore the list cannot be empty.
      *
      * @param key name of the setting to retrieve
+     *
      * @return the retrieved values (as a non-empty String array)
      *
      * @throws ArgumentNotValid if key is null or the empty string
@@ -276,7 +275,7 @@ public class Settings {
         }
         if (fileSettingsXmlList.isEmpty()) {
             log.warn("The list of loaded data settings is empty."
-                + "Is this OK?");
+                     + "Is this OK?");
         }
         // Key not in System.properties try loaded data instead
         synchronized (fileSettingsXmlList) {
@@ -287,7 +286,7 @@ public class Settings {
                     continue;
                 }
                 log.debug("Value found in loaded data: "
-                        + StringUtils.conjoin(",", result));
+                          + StringUtils.conjoin(",", result));
                 return result.toArray(new String[result.size()]);
             }
         }
@@ -301,7 +300,7 @@ public class Settings {
                     continue;
                 }
                 log.debug("Value found in classpath data: "
-                        + StringUtils.conjoin(",", result));
+                          + StringUtils.conjoin(",", result));
                 return result.toArray(new String[result.size()]);
             }
         }
@@ -309,16 +308,16 @@ public class Settings {
     }
 
     /**
-     * Sets the key to one or more values. 
-     * Calls to this method are forgotten
+     * Sets the key to one or more values. Calls to this method are forgotten
      * whenever the {@link #reload()} is executed.
-     * 
-     * TODO write these values to its own simpleXml structure,
-     * that are not reset during reload.
-     * 
-     * @param key     The settings key to add this under, legal keys are
-     *                fields in this class.
-     * @param values  The (ordered) list of values to put under this key.
+     *
+     * TODO write these values to its own simpleXml structure, that are not
+     * reset during reload.
+     *
+     * @param key    The settings key to add this under, legal keys are fields
+     *               in this class.
+     * @param values The (ordered) list of values to put under this key.
+     *
      * @throws ArgumentNotValid if key or values are null
      * @throws UnknownID        if the key does not already exist
      */
@@ -338,9 +337,10 @@ public class Settings {
     }
 
     /**
-     * Reload the settings if they have changed on disk. This behaves exactly
-     * as forceReload, except it only reloads if the data of the file is
-     * different than last time it was loaded.
+     * Reload the settings if they have changed on disk. This behaves exactly as
+     * forceReload, except it only reloads if the data of the file is different
+     * than last time it was loaded.
+     *
      * @throws IOFailure if settings cannot be loaded
      */
     public static synchronized void conditionalReload() {
@@ -348,8 +348,8 @@ public class Settings {
         for (File settingsFile : settingsFiles) {
             if (settingsFile.lastModified() > lastModified) {
                 log.info("Do reload of settings, as the file '"
-                    + settingsFile.getAbsolutePath() 
-                    + "' has changed since last reload");
+                         + settingsFile.getAbsolutePath()
+                         + "' has changed since last reload");
                 reload();
                 return;
             }
@@ -359,10 +359,10 @@ public class Settings {
     /**
      * Reloads the settings. This will reload the settings from disk, and forget
      * all settings that were set with {@link #set}
-     * 
-     * The field {@link #lastModified} is updated to timestamp
-     * of the settings file that has been changed most recently.
-     * 
+     *
+     * The field {@link #lastModified} is updated to timestamp of the settings
+     * file that has been changed most recently.
+     *
      * @throws IOFailure if settings cannot be loaded
      * @see #conditionalReload()
      */
@@ -375,20 +375,20 @@ public class Settings {
                 simpleXmlList.add(new SimpleXml(settingsFile));
             } else {
                 log.warn("The file '"
-                        + settingsFile.getAbsolutePath()
-                        + "' is not a file, and therefore not loaded");
+                         + settingsFile.getAbsolutePath()
+                         + "' is not a file, and therefore not loaded");
             }
             if (settingsFile.lastModified() > lastModified) {
                 lastModified = settingsFile.lastModified();
             }
         }
-        fileSettingsXmlList = Collections.synchronizedList(simpleXmlList);
+        fileSettingsXmlList.addAll(simpleXmlList);
     }
-    
+
     /**
-     * Add the settings file represented by this path to the
-     * list of default classpath settings.
-     * 
+     * Add the settings file represented by this path to the list of default
+     * classpath settings.
+     *
      * @param defaultClasspathSettingsPath the given default classpath setting.
      */
     public static void addDefaultClasspathSettings(
@@ -399,22 +399,19 @@ public class Settings {
         InputStream stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(defaultClasspathSettingsPath);
         if (stream != null) {
-            if (defaultClasspathSettingsXmlList == null) {
-                defaultClasspathSettingsXmlList
-                        = Collections.synchronizedList(
-                        new ArrayList<SimpleXml>());
-            }
             defaultClasspathSettingsXmlList.add(new SimpleXml(stream));
         } else {
             log.warn("Unable to read the settings file represented by path: '"
-                    + defaultClasspathSettingsPath + "'");
+                     + defaultClasspathSettingsPath + "'");
         }
     }
 
-    /** Get a tree view of a part of the settings. Note: settings read with
-     * this mechanism do not support overriding with system properties!
+    /**
+     * Get a tree view of a part of the settings. Note: settings read with this
+     * mechanism do not support overriding with system properties!
      *
      * @param path Dotted path to a unique element in the tree.
+     *
      * @return The part of the setting structure below the element given.
      */
     public static StringTree<String> getTree(String path) {
