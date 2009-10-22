@@ -181,7 +181,8 @@ displayed, if no domains are found a message is shown.
             <tr>
                 <td><fmt:message key="prompt;enter.name.of.domain"/></td>
                 <td><span id="focusElement">
-                    <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>" size="25"/>
+                    <input name="<%=Constants.DOMAIN_SEARCH_PARAM%>" 
+                        size="<%=Constants.DOMAIN_NAME_FIELD_SIZE %>"/>
                     </span>
                 </td>
                 <td><input type="submit" value="<fmt:message key="search"/>"/></td>
