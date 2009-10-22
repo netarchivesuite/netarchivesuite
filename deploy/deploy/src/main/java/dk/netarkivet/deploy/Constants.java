@@ -531,7 +531,6 @@ public final class Constants {
      * 
      * @param name The environment name to validate.
      * @return Whether the environment name is valid.
-     * @see VALID_REGEX_ENVIRONMENT_NAME
      */
     public static boolean validEnvironmentName(String name) {
         return Pattern.matches(VALID_REGEX_ENVIRONMENT_NAME, name);
