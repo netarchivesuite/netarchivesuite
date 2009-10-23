@@ -75,6 +75,11 @@ public class HarvestController {
         "CRAWL ENDED";
 
     /**
+     * String which shows that the harvest was deliberately aborted
+     */
+    private static final String HARVEST_ABORTED = "Ended by operator";
+
+    /**
      * The max time to wait for heritrix to close last ARC files (in secs).
      */
     private static final int WAIT_FOR_HERITRIX_TIMEOUT_SECS = 5;
@@ -426,7 +431,11 @@ public class HarvestController {
         }
         String lastLine = FileUtils.readLastLine(logFile);
         if (lastLine.contains(HERITRIX_ORDERLY_FINISH_STRING)) {
-            return StopReason.DOWNLOAD_COMPLETE;
+            if (lastLine.contains(HARVEST_ABORTED)) {
+               return StopReason.DOWNLOAD_UNFINISHED;
+            } else {
+               return StopReason.DOWNLOAD_COMPLETE;
+            }
         } else {
             return StopReason.DOWNLOAD_UNFINISHED;
         }
