@@ -385,6 +385,7 @@ public class Settings {
                 lastModified = settingsFile.lastModified();
             }
         }
+        fileSettingsXmlList.clear();
         fileSettingsXmlList.addAll(simpleXmlList);
     }
 
