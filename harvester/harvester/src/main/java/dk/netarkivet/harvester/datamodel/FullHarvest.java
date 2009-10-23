@@ -150,6 +150,17 @@ public class FullHarvest extends HarvestDefinition {
     /**
      * Returns an iterator of domain configurations for this harvest
      * definition.
+     * Domains are filtered out if, on the previous harvest, they:
+     *   1) were completed
+     *   2) reached their maxBytes limit
+     *      (and the maxBytes limit has not changed since time of harvest)
+     *   3) reached their maxObjects limit
+     *     (and the maxObjects limit has not changed since time of harvest)
+     *   4) died uncleanly (e.g. due to a manual shutdown of heritrix) on their
+     *    last harvest.
+     *
+     * Domains are also excluded if they are aliases of another domain.
+     *
      *
      * @return Iterator containing information about the domain configurations
      */
@@ -166,23 +177,16 @@ public class FullHarvest extends HarvestDefinition {
         Iterator<HarvestInfo> i =
                 dao.getHarvestInfoBasedOnPreviousHarvestDefinition(
                         getPreviousHarvestDefinition());
-        // Filter out HarvestInfo objects for domains that either
-        // 1) are completed
-        // 2) have reached their maxBytes limit
-        //   (and the maxBytes limit has not changed since time of harvest)
-        // 2) have reached their maxObjects limit
-        //   (and the maxObjects limit has not changed since time of harvest)
-        // 3) that are current aliases of another domain
-        // 4) died uncleanly (e.g. due to a manual shutdown of heritrix) on their
-        // last harvest.
         //
-        // and get domain configurations for the rest.
         return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
             protected DomainConfiguration filter(HarvestInfo harvestInfo) {
 
-               if (harvestInfo.getStopReason()
-                    == StopReason.DOWNLOAD_COMPLETE || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
-                    // Don't include the ones that finished or died in an unclean fashion
+                if (harvestInfo.getStopReason()
+                    == StopReason.DOWNLOAD_COMPLETE ||
+                                               harvestInfo.getStopReason() ==
+                                             StopReason.DOWNLOAD_UNFINISHED) {
+                    // Don't include the ones that finished or died
+                    // in an unclean fashion
                     return null;
                 }
 
@@ -194,7 +198,7 @@ public class FullHarvest extends HarvestDefinition {
                     // been raised since previous harvest.
                     // If this is the case, return the configuration
                     int compare = NumberUtils.compareInf(config.getMaxBytes(),
-                                                         harvestInfo.getSizeDataRetrieved());
+                                            harvestInfo.getSizeDataRetrieved());
                     if (compare < 1) {
                         return null;
                     } else {
@@ -208,7 +212,7 @@ public class FullHarvest extends HarvestDefinition {
                     // been raised since previous harvest.
                     // If this is the case, return the configuration
                     int compare = NumberUtils.compareInf(config.getMaxObjects(),
-                                                         harvestInfo.getCountObjectRetrieved());
+                                        harvestInfo.getCountObjectRetrieved());
                     if (compare < 1) {
                         return null;
                     } else {
