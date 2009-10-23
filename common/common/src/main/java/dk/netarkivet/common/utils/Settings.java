@@ -48,14 +48,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * location is {@link #DEFAULT_SETTINGS_FILEPATH}.
  */
 public class Settings {
-    static {
-        // Perform an initial loading of the settings.
-        reload();
-    }
-
-    /** Logger for this class. */
-    private static final Log log
-            = LogFactory.getLog(Settings.class.getName());
 
     /**
      * The objects representing the contents of the settings xml files. For
@@ -64,6 +56,17 @@ public class Settings {
      */
     private static final List<SimpleXml> fileSettingsXmlList
             = Collections.synchronizedList(new ArrayList<SimpleXml>());
+    static {
+
+        // Perform an initial loading of the settings.
+        reload();
+    }
+
+    /** Logger for this class. */
+    private static final Log log
+            = LogFactory.getLog(Settings.class.getName());
+
+
     /**
      * The objects representing the contents of the default settings xml files
      * in classpath. For handling multithreaded instances this list must be
