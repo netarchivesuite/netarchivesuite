@@ -105,6 +105,41 @@ public class FullHarvestTester extends DataModelTestCase {
     }
 
     /**
+     * This tests the fix to the bug known as FR1773. The requirement is that a
+     * domain for which the status was "Harvesting aborted" on the previous harvest
+     * should not be included in this harvest
+     */
+    public void testGetDomainsPreviousHarvestAborted() {
+          DomainDAO ddao = DomainDAO.getInstance();
+        FullHarvest previousHarvest = HarvestDefinition.
+                createFullHarvest("previous", "comment", null, 200L, 10000L);
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
+        hddao.create(previousHarvest);
+        previousHarvest = (FullHarvest) hddao.getHarvestDefinition("previous");
+        Domain d = ddao.read("netarkivet.dk");
+          HarvestInfo hi = new HarvestInfo(previousHarvest.getOid(),
+                                           "netarkivet.dk",
+                                           d.getDefaultConfiguration().getName(),
+                                           new Date(),
+                                           200L,
+                                           50L,
+                                           StopReason.DOWNLOAD_UNFINISHED);
+        d.getHistory().addHarvestInfo(hi);
+        ddao.update(d);
+        FullHarvest newHarvest = HarvestDefinition.createFullHarvest("new", "comment", previousHarvest.getOid(), 500L, 100000L);
+        hddao.create(newHarvest);
+        newHarvest = (FullHarvest) hddao.getHarvestDefinition("new");
+        Iterator<DomainConfiguration> configs = newHarvest.getDomainConfigurations();
+        while (configs.hasNext()) {
+             if (configs.next().getDomain().getName().equals("netarkivet.dk")) {
+                 fail("DomainConfiguration for netarkivet.dk found but should "
+                      + "be absent because it has status DOWNLOAD_UNFINISHED in"
+                      + " the previous harvest");
+             }
+        }
+    }
+
+    /**
      * Test that the FullHarvester.getDomainConfigurations() part of bug 716 is fixed.
      *
      */

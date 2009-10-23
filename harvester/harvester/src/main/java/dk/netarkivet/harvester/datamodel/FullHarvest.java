@@ -173,13 +173,16 @@ public class FullHarvest extends HarvestDefinition {
         // 2) have reached their maxObjects limit
         //   (and the maxObjects limit has not changed since time of harvest)
         // 3) that are current aliases of another domain
+        // 4) died uncleanly (e.g. due to a manual shutdown of heritrix) on their
+        // last harvest.
         //
         // and get domain configurations for the rest.
         return new FilterIterator<HarvestInfo, DomainConfiguration>(i) {
             protected DomainConfiguration filter(HarvestInfo harvestInfo) {
-                if (harvestInfo.getStopReason()
-                    == StopReason.DOWNLOAD_COMPLETE) {
-                    // Don't include the ones that finished.
+
+               if (harvestInfo.getStopReason()
+                    == StopReason.DOWNLOAD_COMPLETE || harvestInfo.getStopReason() == StopReason.DOWNLOAD_UNFINISHED) {
+                    // Don't include the ones that finished or died in an unclean fashion
                     return null;
                 }
 
