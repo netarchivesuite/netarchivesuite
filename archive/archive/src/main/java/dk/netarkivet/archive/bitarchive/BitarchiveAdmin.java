@@ -195,8 +195,9 @@ public class BitarchiveAdmin {
                           + " bytes. Only " + bytesFreeInDir + " left");
             }
         }
-        String errMsg = "No space left to store file '" + arcFileName
-            + "' of size " + requestedSize;
+        String errMsg = "No space left in dirs: " + archivePaths
+                        + ", to store file '" + arcFileName
+                        + "' of size " + requestedSize;
 
         log.warn(errMsg);
         throw new IOFailure(errMsg);
