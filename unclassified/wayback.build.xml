@@ -112,7 +112,7 @@ v) repacking the warfile as ROOT.war for deployment
               tofile="${wayback.tempdir}/WEB-INF/conf/settings.xml" />
         <copy file="${wayback.waybacm.xml.file}"
               tofile="${wayback.tempdir}/WEB-INF/" />
-        <copy file="${wayback.cdxcollection.xml.file"
+        <copy file="${wayback.cdxcollection.xml.file}"
               tofile="${wayback.tempdir}/WEB-INF/" />
     </target>
 
