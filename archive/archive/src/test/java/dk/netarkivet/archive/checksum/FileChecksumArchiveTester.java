@@ -144,25 +144,18 @@ public class FileChecksumArchiveTester extends TestCase {
         // Check the correct function, both good and bad examples.
         // ---------------------------------------------------------------
         try {
-            fca.correct("ERROR!", arcfile1, "ERROR!");
+            fca.correct("ERROR!", TestInfo.UPLOAD_FILE_1);
             fail("It is not allowed for 'correct' to correct a wrong 'incorrectChecksum'.");
         } catch(IllegalState e) {
             assertTrue("The correct error message should be sent.",
                     e.getMessage().contains("No file entry for file 'ERROR!'"));
         }
-        try {
-            fca.correct("TEST1.arc", arcfile1, "ERROR!");
-            fail("It is not allowed for 'correct' to correct a wrong 'incorrectChecksum'.");
-        } catch(IllegalState e) {
-            assertTrue("The correct error message should be sent.",
-                    e.getMessage().contains("Wrong checksum for the entry for file 'TEST1.arc'"));
-        }
 
-        fca.correct("TEST1.arc", arcfile2, TestInfo.TEST1_CHECKSUM);
+        fca.correct("TEST1.arc", TestInfo.UPLOAD_FILE_2);
         assertEquals("The new checksum for 'TEST1.arc' should now be the checksum for 'TEST2.arc'.",
                 fca.getChecksum("TEST1.arc"), TestInfo.TEST2_CHECKSUM);
 
-        fca.correct("TEST2.arc", arcfile1, TestInfo.TEST2_CHECKSUM);
+        fca.correct("TEST2.arc", TestInfo.UPLOAD_FILE_1);
         assertEquals("The new checksum for 'TEST2.arc' should now be the checksum for 'TEST1.arc'.",
                 fca.getChecksum("TEST2.arc"), TestInfo.TEST1_CHECKSUM);
 
