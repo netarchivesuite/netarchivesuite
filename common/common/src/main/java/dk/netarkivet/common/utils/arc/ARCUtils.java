@@ -281,7 +281,7 @@ public class ARCUtils {
                                                             Long offset) 
             throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
-        // exstra needed headers.
+        // extra needed headers.
         headers.put(ARCRecordMetaData.VERSION_FIELD_KEY, "");
         headers.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
 

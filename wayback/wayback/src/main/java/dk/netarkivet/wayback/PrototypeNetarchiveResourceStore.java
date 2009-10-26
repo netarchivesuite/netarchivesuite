@@ -57,7 +57,9 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
  */
 
 
-
+/**
+ * @deprecated from version 3.9.2.
+ */
 public class PrototypeNetarchiveResourceStore implements ResourceStore {
    /** Matches HTTP header lines like
      * HTTP/1.1 404 Page has gone south
@@ -99,7 +101,7 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         for (String field:required_fields) {
             logger.info("Required field: '" + field + "'");
         }*/
-
+				logger.info(client.toString());
         BitarchiveRecord bitarchive_record = client.get(arcfile, offset);
         if (bitarchive_record == null) {
             //log here because we don't trust wayback not to swallow our log messages

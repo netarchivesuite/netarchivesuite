@@ -40,28 +40,36 @@ import org.archive.wayback.core.Resource;
 import org.archive.wayback.exception.ResourceNotAvailableException;
 import org.archive.wayback.resourcestore.resourcefile.ArcResource;
 
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
-import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.InputStreamUtils;
 
+/**
+ * This is the connector between netarchivesuite and wayback. And is based on
+ * PrototypeNetarchiveResourceStore.java which was made as a prototype
+ * connector.
+ *
+ * @author hbk
+ * @since Aug 19, 2009
+ */
 public class NetarchiveResourceStore implements ResourceStore {
 
-    // JMS Arch Repository Client.
-    private ArcRepositoryClient client;
+    /* JMS ArcRepositoryClient. */
+    private ViewerArcRepositoryClient client;
 
-    // http header pattern.
+    /* Pattern for matching http version header. */
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
-    // logger.
+    /* Logger. */
     private Log logger = LogFactory.getLog(getClass().getName());
 
     /**
      *  Constuctor.
      */
     public NetarchiveResourceStore() {
-        client = JMSArcRepositoryClient.getInstance();
+        client = ArcRepositoryClientFactory.getViewerInstance();
     }
 
     /**
@@ -73,7 +81,8 @@ public class NetarchiveResourceStore implements ResourceStore {
      * @throws ResourceNotAvailableException if something went wrong fetching
      * record.
      */
-    public Resource retrieveResource(CaptureSearchResult captureSearchResult) throws ResourceNotAvailableException {
+    public Resource retrieveResource(CaptureSearchResult captureSearchResult)
+            throws ResourceNotAvailableException {
         long offset;
         String responseCode = null;
         Map<String, Object> metadata = new HashMap<String, Object>();
@@ -85,16 +94,20 @@ public class NetarchiveResourceStore implements ResourceStore {
             offset = captureSearchResult.getOffset();
         } catch(NumberFormatException e) {
             logger.error("Error looking for non existing resource", e);
-            throw new ResourceNotAvailableException("NumberFormatException");
+            throw new ResourceNotAvailableException("NetarchiveResourceStore "
+                       + "thows NumberFormatException when reading offset.");
         } catch (NullPointerException e) {
             logger.error("Error looking for non existing resource", e);
-            throw new ResourceNotAvailableException("NullPointerException");
+            throw new ResourceNotAvailableException("NetarchiveResourceStore "
+                       + "throws NullPointerException when accessing "
+                       + "CaptureResult given from Wayback.");
         }
         logger.info("Received request for resource from file '" + arcfile
                     + "' at offset '" + offset + "'");
         BitarchiveRecord bitarchiveRecord = client.get(arcfile, offset);
         if (bitarchiveRecord == null) {
-            throw new ResourceNotAvailableException("Resource not in archive");
+            throw new ResourceNotAvailableException("NetarchiveResourceStore: "
+                    + "Bitarchive didn't return requested record.");
         }
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '"
                     + offset + "'");
@@ -129,7 +142,8 @@ public class NetarchiveResourceStore implements ResourceStore {
                         captureSearchResult.getCaptureDate().toString());
         metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY,
                         captureSearchResult.getMimeType());
-        metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, "HTTP/1.1");
+        metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY,
+                        captureSearchResult.getHttpCode());
         metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY,
                         ""+bitarchiveRecord.getLength());
@@ -160,7 +174,7 @@ public class NetarchiveResourceStore implements ResourceStore {
         }
         final String statusCode = responseCode;
 
-        //TODO This the sleaziest thing in this prototype. Why does the
+        //TODO This the sleaziest thing in this class. Why does the
         //ARCRecord give the wrong status code if we don't override this method?
         Resource resource = new ArcResource(arcRecord, null)  {
             public int getStatusCode() {
@@ -172,6 +186,7 @@ public class NetarchiveResourceStore implements ResourceStore {
     }
 
     public void shutdown() throws IOException {
-        // TODO: should this method do something?
+        // Close JMS connection.
+        client.close();
     }
 }
