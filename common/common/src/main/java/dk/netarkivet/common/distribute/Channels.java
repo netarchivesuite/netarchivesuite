@@ -101,6 +101,8 @@ public class Channels {
      * corresponds to one of the replicas listed in the settings.
      * Furthermore we here fill content in the ALL_BA_ARRAY, ANY_BA_ARRAY,
      * THE_BAMON_ARRAY, and initialize ALL_BA, ANY_BA, and THE_BAMON.
+     * 
+     * @throws UnknownID If one of the replicas has an unhandled replica type.
      */
     private Channels() {
         // index count

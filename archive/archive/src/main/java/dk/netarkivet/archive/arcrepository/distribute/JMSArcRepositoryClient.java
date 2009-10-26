@@ -404,11 +404,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param replicaId The id if the replica that the administrative
      * data for fileName is wrong for.
      * @param newval         The new value in admin data.
-     *
+     * @throws ArgumentNotValid If one of the arguments are invalid (null or 
+     * empty string).
      * @throws IOFailure If the reply to the request update timed out.
      */
     public void updateAdminData(String fileName, String replicaId,
-                                ReplicaStoreState newval) {
+            ReplicaStoreState newval) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "fileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "bitarchiveName");
         ArgumentNotValid.checkNotNull(newval, "newval");

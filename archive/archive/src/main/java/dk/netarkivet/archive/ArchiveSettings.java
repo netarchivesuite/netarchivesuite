@@ -173,8 +173,8 @@ public class ArchiveSettings {
     
     /**
      * <b>settings.archive.checksum.minSpaceLeft</b>: <br>
-     * The default value for the minimum amount of space left for the checksum 
-     * archive to receive new upload messages. 
+     * The path to the settings for the minimum amount of space left for the 
+     * checksum archive to receive new upload messages. 
      */
     public static String CHECKSUM_MIN_SPACE_LEFT = 
         "settings.archive.checksum.minSpaceLeft";

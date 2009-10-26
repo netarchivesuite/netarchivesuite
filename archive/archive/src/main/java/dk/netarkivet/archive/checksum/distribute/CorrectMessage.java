@@ -23,7 +23,6 @@
 package dk.netarkivet.archive.checksum.distribute;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.apache.commons.logging.LogFactory;
 
@@ -48,7 +47,7 @@ public class CorrectMessage extends ArchiveMessage {
     /** The name of the arc-file. */
     private String arcFilename;
     /** The 'bad' checksum. */
-    private String theChecksum;
+    private String theIncorrectChecksum;
 
     /**
      * Constructor.
@@ -64,7 +63,7 @@ public class CorrectMessage extends ArchiveMessage {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String checksum");
-        this.theChecksum = badChecksum;
+        this.theIncorrectChecksum = badChecksum;
         this.theRemoteFile = file;
         this.arcFilename = file.getName();
     }
@@ -78,22 +77,45 @@ public class CorrectMessage extends ArchiveMessage {
     }
     
     /**
-     * Method for retrieving the remote file.
+     * Retrieves the content of the remoteFile and writes it into the local 
+     * file.
+     * Note: This is transferred through a remote file handle, and then the
+     * handle is invalidated. This method may only be called once.
      * 
-     * @return The remote file.
+     * @param toFile where to write the content
+     * @throws IOFailure on error reading the remote file
+     * or writing the local file
+     * @throws ArgumentNotValid If <b>toFile</b> is null.
      */
-    public RemoteFile getRemoteFile() {
-        return theRemoteFile;
+    public void getData(File toFile) {
+        ArgumentNotValid.checkNotNull(toFile, "toFile");
+        
+        // ensure that the local file exists.
+        if (theRemoteFile == null) {
+            throw new IOFailure("No remoteFile in this message.");
+        }
+        // retrieve the data.
+        theRemoteFile.copyTo(toFile);
+        try {
+            // cleanup afterwards.
+            theRemoteFile.cleanup();
+        } catch (IOFailure e) {
+            //Just log errors on deleting. They are fairly harmless.
+            // Can't make Logger a field, as this class is Serializable
+            LogFactory.getLog(getClass().getName()).warn(
+                    "Could not cleanup remote file " + theRemoteFile.getName());
+        }
+        theRemoteFile = null;
     }
-
+    
     /**
      * Method for retrieving the 'bad' checksum which should correspond to
      * the checksum of the current entry on this file in the archive.
      * 
      * @return The checksum for the archive entry.
      */
-    public String getChecksum() {
-        return theChecksum;
+    public String getIncorrectChecksum() {
+        return theIncorrectChecksum;
     }
 
     /**

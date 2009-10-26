@@ -40,8 +40,6 @@ public class GetChecksumMessage extends ArchiveMessage {
     private String arcFilename;
     /** The resulting checksum for the arcFile.*/
     private String checksum;
-
-    // TODO: the replica id is not used, why is it here?
     /** The id of the replica where the checksum should be retrieved.*/
     private String replicaId;
 
@@ -56,10 +54,9 @@ public class GetChecksumMessage extends ArchiveMessage {
     public GetChecksumMessage(ChannelID to, ChannelID replyTo, 
             String filename, String repId) {
         super(to, replyTo);
-        // validate arguments
-        ArgumentNotValid.checkNotNull(to, "ChannelID to");
-        ArgumentNotValid.checkNotNull(replyTo, "ChannelID replyTo");
+        // validate arguments (channels are validated in 'super').
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNullOrEmpty(repId, "String repId");
 
         this.arcFilename = filename;
         this.replicaId = repId;

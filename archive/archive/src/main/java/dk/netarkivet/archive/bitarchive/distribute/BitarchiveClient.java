@@ -212,21 +212,46 @@ public class BitarchiveClient implements ReplicaClient {
         log.debug("Client has been shutdown");
     }
 
+    /**
+     * This should replace the current 'GetAndRemoveFile' followed by 'Upload'.
+     * 
+     * @param msg The message.
+     * @throws NotImplementedException Always, since this method has not yet 
+     * been implemented.
+     */
     public void correct(RemoteFile arcfile, String checksum) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: implement me!");
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
     }
 
-    public void getAllFilenames(GetAllFilenamesMessage msg) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: implement me!\n msg: '"
-                + msg.toString() + "'.");
+    /**
+     * This should creates a batch job for retrieving all the filenames.
+     * 
+     * @param msg The message.
+     * @throws NotImplementedException Always, since this method has not yet 
+     * been implemented.
+     */
+    public void getAllFilenames(GetAllFilenamesMessage msg) 
+            throws NotImplementedException {
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
     }
 
-    public void getAllChecksums(GetAllChecksumsMessage msg) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: implement me!\n msg: '"
-                + msg.toString() + "'.");
+    /**
+     * This should creates a batch job for retrieving the checksum of all the 
+     * files.
+     * 
+     * @param msg The message.
+     * @throws NotImplementedException Always, since this method has not yet 
+     * been implemented.
+     */
+    public void getAllChecksums(GetAllChecksumsMessage msg) 
+            throws NotImplementedException {
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
     }
 
     /**
@@ -234,10 +259,14 @@ public class BitarchiveClient implements ReplicaClient {
      * wanted files.
      * 
      * @param msg The message.
+     * @throws NotImplementedException Always, since this method has not yet 
+     * been implemented.
      */
-    public void getChecksum(GetChecksumMessage msg) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: implement me!");
+    public void getChecksum(GetChecksumMessage msg) 
+            throws NotImplementedException {
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
     }
 
     /**
@@ -247,20 +276,22 @@ public class BitarchiveClient implements ReplicaClient {
      * @param replyChannel The channel where the reply should be sent.
      * @param filename The name of the file to retrieve the checksum from.
      * @return The message when it has been sent.
+     * @throws NotImplementedException Always, since it has not yet been 
+     * impemented.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
-            String filename) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: implement me!");
+            String filename) throws NotImplementedException {
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
     }
 
     /**
-     * Retrieves the type of replica.
+     * Retrieves the type of replica. 
      * 
-     * @return The type of this replica.
+     * @return The type of this replica. In this case Bitarchive.
      */
     public ReplicaType getType() {
-        // Returns the current replica type in the settings.
         return ReplicaType.BITARCHIVE;
     }
 }

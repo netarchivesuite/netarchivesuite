@@ -36,6 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
@@ -212,16 +213,28 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * correct. 
      */
     public void visit(CorrectMessage msg) {
-        log.debug("Receving correct message: " + msg.toString());
+        log.debug("Receiving correct message: " + msg.toString());
         try {
-            // retrieve the file to correct
-            RemoteFile correctFile = msg.getRemoteFile();
+            String filename = msg.getArcfileName();
+            String currentCs = cs.getChecksum(filename);
+            String incorrectCs = msg.getIncorrectChecksum();
+
+            // check that the current checksum is incorrect as supposed.
+            if(!currentCs.equals(incorrectCs)) {
+                String errMsg = "Wrong checksum for the entry for file '" + filename
+                + "' has the checksum '" + currentCs + "', though it "
+                + "was supposed to have the checksum '" + incorrectCs + "'.";
+                log.error(errMsg);
+                throw new IllegalState(errMsg);
+            }
+
+            // retrieve the data as a file.
+            File correctFile = File.createTempFile("correct", filename, 
+                    FileUtils.TMPDIR);
+            msg.getData(correctFile);
             
-            // correct the entry.
-            cs.correct(msg.getArcfileName(), correctFile, msg.getChecksum());
-            
-            // cleanup after use of file.
-            correctFile.cleanup();
+            // put the file into the archive.
+            cs.correct(filename, correctFile);
         } catch (Throwable e) {
             // Handle errors.
             log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);
@@ -238,8 +251,11 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * 
      * @param msg The GetChecksumMessage which contains the name of the record
      * to have its checksum retrieved.
+     * @throws ArgumentNotValid If the message is null.
      */
     public void visit(GetChecksumMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
+        
         log.debug("Recieving get checksum message: " + msg.toString());
         try {
             // get the name of the arc file
@@ -300,7 +316,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         log.debug("Receiving get all checksum message: " + msg.toString());
 
         try {
-            msg.setFile(cs.getArchiveAsFile());
+            msg.setResultingFile(cs.getArchiveAsFile());
         } catch (Throwable e) {
             log.warn("Cannot retrieve all the checksums.", e);
             msg.setNotOk(e);

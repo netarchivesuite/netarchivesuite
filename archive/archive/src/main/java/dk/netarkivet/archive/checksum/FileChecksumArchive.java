@@ -37,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -99,7 +100,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     private File wrongEntryFile;
     
     /**
-     * 
+     * This map consists of the archive loaded into the memory. It is faster to 
+     * use a memory archive than the the checksum file, though all entries must
+     * exist both in the file and the memory.   
      */
     private Map<String,String> checksumArchive = Collections.synchronizedMap(
             new HashMap<String,String>());
@@ -189,8 +192,10 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @return False only if there is not enough space left.
      */
     private boolean hasEnoughSpaceForRecreate() {
-        // check if the checksum file is larger than space left.
-        if(checksumFile.length() > FileUtils.getBytesFree(checksumFile)) {
+        // check if the checksum file is larger than space left and the minimum
+        // space left.
+        if(checksumFile.length() + minSpaceLeft 
+                > FileUtils.getBytesFree(checksumFile)) {
             return false;
         }
         
@@ -233,11 +238,14 @@ public final class FileChecksumArchive extends ChecksumArchive {
             try {
                 checksumFile.createNewFile();
             } catch (IOException e) {
-                String msg = "Cannot create checksum file!";
+                String msg = "Cannot create checksum archive file!";
                 log.error(msg);
                 throw new IOFailure(msg, e);
             }
         } else {
+            // If the archive file already exists, then it must consist of the
+            // archive for this replica. It must therefore be loaded into the 
+            // memory.
             loadFile();
         }
     }
@@ -248,8 +256,16 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * loaded into the checksumArchive map in the memory. If the line is 
      * invalid then a warning is issued and the line is put into the 
      * wrongEntryFile.
+     * 
+     * If a bad entry is found, then the archive file has to be recreated 
+     * afterwards, since the bad entry otherwise still would be in the archive 
+     * file.
      */
     private void loadFile() {
+        // Checks whether a bad entry was found, to decide whether the archive
+        // file should be recreated.
+        boolean recreate = false;
+        
         // extract all the data from the file.
         List<String> entries;
         synchronized(checksumFile) {
@@ -273,20 +289,28 @@ public final class FileChecksumArchive extends ChecksumArchive {
                         + "' This will be put in the wrong entry file.", e);
                 // put into wrongEntryFile!
                 appendWrongRecordToWrongEntryFile(record);
+                recreate = true;
             }
+        }
+        
+        // If a bad entry is found, then the archive file should be recreated.
+        // Otherwise the bad entries might still be in the archive file next 
+        // time the FileChecksumArchive is initialized/restarted.
+        if(recreate) {
+            recreateArchiveFile();
         }
     }
     
     /**
-     * Recreates the correct archive file from the memory.
-     * Makes a new file which contains to contain the entire archive, and then
+     * Recreates the archive file from the memory.
+     * Makes a new file which contains the entire archive, and then
      * move the new archive file on top of the old one.
-     * This is used when to create the new archive file, when an record has been
+     * This is used when to recreate the archive file, when an record has been
      * removed.
      * 
      * @throws IOFailure If a problem occur when writing the new file.
      */
-    private void saveArchiveToFile() throws IOFailure {
+    private void recreateArchiveFile() throws IOFailure {
         try {
             // Handle the case, when there is not enough space left for 
             // recreating the 
@@ -440,7 +464,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @param checksum The checksum of the file to add.
      * @throws IOException If something is wrong when writing to the file.
      */
-    private synchronized void appendRecordToFile(String filename, String 
+    private synchronized void appendEntryToFile(String filename, String 
             checksum) throws IOException {
         // initialise the record.
         String record = filename + CHECKSUM_SEPARATOR + checksum + "\n";
@@ -448,6 +472,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // get a filewriter for the checksum file, and append the record. 
         boolean appendToFile = true;
         
+        // Synchronize to ensure that the file is not overridden during the
+        // appending of the new entry.
         synchronized(checksumFile) {
             FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
             fwrite.append(record);
@@ -490,6 +516,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The method for uploading an arcFile to the archive.
      * 
+     * TODO use file instead of remoteFile. Now the remoteFile is not 
+     * automatically cleaned up afterwards.
+     * 
      * @param arcfile The remote file containing the arcFile to upload.
      * @param filename The name of the arcFile.
      * @throws IOFailure If the entry cannot be added to the archive.
@@ -527,7 +556,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // otherwise put the file into memory and file. 
         try {
-            appendRecordToFile(filename, checksum);
+            appendEntryToFile(filename, checksum);
             checksumArchive.put(filename, checksum);
         } catch (IOException e) {
             String msg = "Could not append the file '" + filename 
@@ -544,8 +573,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @return The checksum of a record, or null if it was not found.
      * @throws ArgumentNotValid If the filename is not valid (null or empty).
      */
-    public String getChecksum(String filename) throws IOFailure, 
-            ArgumentNotValid {
+    public String getChecksum(String filename) throws ArgumentNotValid {
         // validate the argument
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         
@@ -589,11 +617,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     
     /**
      * Method for correcting a bad entry from the archive.
-     * It checks that the entry for the file exists and that it has the 
-     * incorrect checksum. 
-     * Then it calculates the checksum and corrects the entry for the file. 
-     * It puts the incorrect entry in the wrongEntryFile, before correcting it. 
-     * Then the checksum file is recreated from the archive in the memory.
+     * The current incorrect entry is put into the wrongEntryFile. 
+     * Then it calculates the checksum and corrects the entry for the file, and 
+     * then the checksum file is recreated from the archive in the memory.
      * 
      * @param filename The name of the file whose record should be removed.
      * @param rf The correct remote file to replace the bad one in the archive.
@@ -605,9 +631,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * entry has a different checksum than the incorrectChecksum.
      */
     @Override
-    public void correct(String filename, RemoteFile rf, 
-            String incorrectChecksum) throws IOFailure, ArgumentNotValid, 
-            IllegalState {
+    public void correct(String filename, File correctFile) 
+            throws IOFailure, ArgumentNotValid, IllegalState {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
+        
         // If no file entry exists, then IllegalState
         if(!checksumArchive.containsKey(filename)) {
             String errMsg = "No file entry for file '" + filename + "'.";
@@ -618,23 +646,13 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // retrieve the checksum
         String currentChecksum = checksumArchive.get(filename);
         
-        // check that the checksum is incorrect as supposed.
-        if(!currentChecksum.equals(incorrectChecksum)) {
-            String errMsg = "Wrong checksum for the entry for file '" + filename
-                    + "' has the checksum '" + currentChecksum + "', though it "
-                    + "was supposed to have the checksum '" + incorrectChecksum 
-                    + "'.";
-            log.error(errMsg);
-            throw new IllegalState(errMsg);
-        }
-        
         // Make entry in the wrongEntryFile.
-        appendWrongRecordToWrongEntryFile(filename + CHECKSUM_SEPARATOR 
-                + currentChecksum);
+        appendWrongRecordToWrongEntryFile(ChecksumJob.makeLine(filename, 
+                currentChecksum));
         
         // Calculate the new checksum and correct the entry.
-        String newChecksum = calculateChecksum(rf.getInputStream());
-        if(newChecksum.equals(incorrectChecksum)) {
+        String newChecksum = calculateChecksum(correctFile);
+        if(newChecksum.equals(currentChecksum)) {
             // TODO: finish?
             log.warn("The correct and the incorrect checksums are the same!");
             return;
@@ -646,7 +664,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         checksumArchive.put(filename, newChecksum);
         
         // Recreate the archive file.
-        saveArchiveToFile();
+        recreateArchiveFile();
     }
     
     /**

@@ -189,25 +189,25 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // TODO: make method for not having the replica id.
+        // TODO make method for not having the replica id.
         GetChecksumMessage msg = new GetChecksumMessage(theCR, replyChannel, 
                 filename, "No replicaId is needed. This message is sent "
                 + "directly to the checksum archive.");
         jmsCon.send(msg);
 
         // log what we are doing.
-        log.debug("\nSending GetChecksumMessage: \n" + msg.toString());
+        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
         
         return msg;
     }
 
     /**
-     * Method for retrieving the type of replica.
+     * Method for retrieving the type of replica. In this case the replica is
+     * a checksum replica.
      * 
-     * @return The type of this replica.
+     * @return The type of this replica, in this case Checksum replica.
      */
     public ReplicaType getType() {
-        // Returns the current replica type in the settings.
         return ReplicaType.CHECKSUM;
     }
 
@@ -215,10 +215,10 @@ public class ChecksumClient implements ReplicaClient {
      * Method for uploading a file to the archive. This is only uploaded to one
      * of the archives, not all of them. Thus using the 'any' channel.
      * 
-     * @param rf
-     * The file to upload to the archive.
+     * @param rf The file to upload to the archive.
+     * @throws ArgumentNotValid If the remote file is null.
      */
-    public void upload(RemoteFile rf) {
+    public void upload(RemoteFile rf) throws ArgumentNotValid {
         // validate arguments.
         ArgumentNotValid.checkNotNull(rf, "rf");
 
@@ -241,9 +241,13 @@ public class ChecksumClient implements ReplicaClient {
      * to run batchjobs on a checksum archive.
      * @throws IllegalState Always. Since it is not legal to send a batchjob to
      * a checksum replica.
+     * @throws ArgumentNotValid If the channel or the batchjob is null.
      */
     public BatchMessage batch(ChannelID replyChannel, FileBatchJob job) 
-            throws IllegalState {
+            throws IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+        
         String errMsg = "Trying to execute the batchjob '" 
             + job.getClass().getName() + "' on a checksum replica with reply "
             + "channel '" + replyChannel + "'. This is not allowed!"; 
@@ -261,8 +265,12 @@ public class ChecksumClient implements ReplicaClient {
      * to run batchjobs on a checksum archive.
      * @throws IllegalState Always. Since it is not legal to send a batchjob to
      * a checksum replica.
+     * @throws ArgumentNotValid If the message is null.
      */
-    public BatchMessage batch(BatchMessage msg) throws IllegalState{
+    public BatchMessage batch(BatchMessage msg) throws IllegalState, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
+        
         String errMsg = "Trying to execute the batchjob '" + msg.toString()
                 + "' on a checksum replica."; 
         log.error(errMsg);
@@ -277,8 +285,11 @@ public class ChecksumClient implements ReplicaClient {
      * @param msg The GetMessage for retrieving the arc-record from the archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this 
      * kind of messages.
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void get(GetMessage msg) throws IllegalState {
+    public void get(GetMessage msg) throws IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
+        
         String errMsg = "The GetMessage '" + msg + "' cannot be sent to checksum"
                 + " replica.";
         log.error(errMsg);
@@ -294,8 +305,12 @@ public class ChecksumClient implements ReplicaClient {
      * archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this 
      * kind of messages.
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void getFile(GetFileMessage gfm) {
+    public void getFile(GetFileMessage gfm) throws IllegalState, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(gfm, "GetFileMessage gfm");
+        
         String errMsg = "The GetFileMessage '" + gfm + "' cannot be sent to "
                 + "checksum replica.";
         log.error(errMsg);
@@ -311,8 +326,12 @@ public class ChecksumClient implements ReplicaClient {
      * arc-file from the archive.
      * @throws IllegalState Always. Since checksum replicas cannot handle this 
      * kind of messages.
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void removeAndGetFile(RemoveAndGetFileMessage msg) {
+    public void removeAndGetFile(RemoveAndGetFileMessage msg) 
+            throws IllegalState, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
+        
         String errMsg = "The RemoveAndGetFileMessage '" + msg + "' cannot be "
                 + "handled by a checksum replica.";
         log.error(errMsg);

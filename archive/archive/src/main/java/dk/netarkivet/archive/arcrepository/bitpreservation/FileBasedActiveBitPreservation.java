@@ -100,7 +100,7 @@ public class FileBasedActiveBitPreservation
     /** Hook to close down application. */
     private CleanupHook closeHook;
 
-    /** Initialises a FileBasedActiveBitPreservation instance. */
+    /** Initializes a FileBasedActiveBitPreservation instance. */
     protected FileBasedActiveBitPreservation() {
         this.admin = AdminData.getReadOnlyInstance();
         this.closeHook = new CleanupHook(this);
@@ -292,35 +292,32 @@ public class FileBasedActiveBitPreservation
      * Note that this method runs a batch job on the bitarchives, and therefore
      * may take a long time, depending on network delays. 
      * 
-     * TODO: remodel the retrieval of checksums by using GetAllChecksumsMessage.
-     * TODO: handle checksum replicas.
+     * TODO remodel the retrieval of checksums by using GetAllChecksumsMessage.
      *
      * @param rep The replica to ask for checksums.
      * @param filenames The names of the files to ask for checksums for.
      * @return The MD5 checksums of the files, or the empty string if the file
      *         was not in the replica.
-     *
+     * @throws UnknownID If the replica has a unhandled replica type.
      * @see ChecksumJob#parseLine(String)
      */
     private Map<String, List<String>> getChecksums(
             Replica rep, Set<String> filenames) {
+        // Retrieve the checksums dependent on the type of replica
         if(rep.getType() == ReplicaType.BITARCHIVE) {
             return getChecksumsFromBitarchive(rep, filenames);
         } else if(rep.getType() == ReplicaType.CHECKSUM) {
             return getChecksumFromChecksumArchive(rep, filenames);
         } else {
-            throw new UnknownID("Unknown replica type for replica: " + rep);
+            throw new UnknownID("Unhandled replica type for replica: " + rep);
         }
     }
     
     /**
      * Retrieves the checksums from the checksum archive.
-     * This currently just returns an empty map, since the map is used for 
-     * finding a replica with a valid instance of the file and checksum 
-     * archives does not have actual files.
-     * 
-     * TODO: create the correct method, so it can be used for finding the 
-     * correct checksums.
+     * This is currently done by retrieving all the checksums and extracting 
+     * only the wanted. 
+     * TODO change this to do the intended method.
      * 
      * @param rep The checksum replica.
      * @param filenames The list of filenames.
@@ -340,28 +337,35 @@ public class FileBasedActiveBitPreservation
             // go through all entries and extract the relevant ones.
             for(String line : FileUtils.readListFromFile(checksumFile)) {
                 KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
-                // If they 
+                // If the file is wanted, then put it into the map.
                 if(filenames.contains(entry.getKey())) {
                     // remove from filename list, so it is not found twice.
                     filenames.remove(entry.getKey());
                     
+                    // put this entry into the map.
                     List<String> csList = new ArrayList<String>(1);
                     csList.add(entry.getValue());
                     res.put(entry.getKey(), csList);
                 }
+                // TODO if an entry for the file already has been put into the 
+                // map, then also add this entry to corresponding list.
             }
-            
         } catch (NetarkivetException e) {
-            // TODO: handle this!
+            // This is not critical. Log and continue.
+            log.warn("The retrieval of checksums from a checksum archive was "
+                    + "not successfull.", e);
         }
         
         return res;
     }
     
     /**
-     * Sends a batchjob to the bitarchive replica. 
+     * Creates an instance of the batchjob ChecksumBatchJob limited to only run 
+     * upon the listed files and sends it to the replica, which has to be a
+     * bitarchive replica. 
      * 
-     * @param rep The replica to retrieve the checksums from.
+     * @param rep The replica to retrieve the checksums from. This has to be 
+     * a bitarchive replica.
      * @param filenames The list of filenames to retrieve the checksums from.
      * @return The MD5 checksum of the filenames or an empty string if the file
      * was not found in the replica.
@@ -515,7 +519,7 @@ public class FileBasedActiveBitPreservation
             log.warn("The " + extraFilesInAdminData.size() + " files '"
                      + new ArrayList<String>(extraFilesInAdminData).subList(0,
                              Math.min(extraFilesInAdminData.size(), 10))
-                     + "' have wrong checksum in the replcia listing in '"
+                     + "' have wrong checksum in the replica listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
@@ -708,11 +712,13 @@ public class FileBasedActiveBitPreservation
      * written to file returned by WorkFiles.getChecksumOutputFile(replica).
      *
      * @param replica One of the bitarchive replicas.
-     *
+     * @throws ArgumentNotValid If <b>replica</b> is null.
+     * @throws UnknownID If the replica has an unhandled replica type.
      * @throws IOFailure If unable to create output dirs or if unable to
      *                   write/read output to files.
      */
-    private void runChecksumJob(Replica replica) {
+    private void runChecksumJob(Replica replica) throws ArgumentNotValid, 
+            UnknownID, IOFailure {
         ArgumentNotValid.checkNotNull(replica, "replica");
         // Create directories for output
         File outputFile = WorkFiles.getFile(replica,
@@ -723,6 +729,7 @@ public class FileBasedActiveBitPreservation
                     .getPreservationInstance().getAllChecksums(replica.getId()),
                     outputFile);
         } else if (replica.getType() == ReplicaType.BITARCHIVE) {
+            // TODO It should be written when  the integrity check is complete.
             // Send checksum batch job
             log.info("Bit integrity check started on the bitarchive replica '"
         	    + replica + "'.");

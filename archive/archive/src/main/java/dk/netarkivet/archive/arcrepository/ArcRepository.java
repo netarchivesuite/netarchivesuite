@@ -170,7 +170,7 @@ public class ArcRepository implements CleanupIF {
         ChannelID[] theBamons = Channels.getAllArchives_BAMONs();
         ChannelID[] theCrs = Channels.getAllArchives_CRs();
         
-        Replica[] replicas = Channels.getReplicas().toArray(
+        Replica[] replicas = Replica.getKnown().toArray(
                 new Replica[theBamons.length]);
         // Checks equal number of channels
         checkChannels(allBas, anyBas, theBamons);

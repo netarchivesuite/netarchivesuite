@@ -63,15 +63,16 @@ public abstract class ChecksumArchive {
      * for all the incorrect records.
      * 
      * @param filename The name of the file whose record should be removed.
-     * @param rf The correct remote file to replace the bad one in the archive.
+     * @param correctFile The correct remote file to replace the bad one in 
+     * the archive.
      * @param incorrectChecksum The checksum of the bad entry.
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected.
      * @throws IllegalState If no such entry exists to be corrected, or if the 
      * entry has a different checksum than the incorrectChecksum.
      */
-    public abstract void correct(String filename, RemoteFile rf, 
-            String incorrectChecksum) throws IOFailure, ArgumentNotValid;
+    public abstract void correct(String filename, File correctFile) 
+            throws IOFailure, ArgumentNotValid, IllegalState;
     
     /**
      * Method for retrieving the checksum of a specific entry in the archive.

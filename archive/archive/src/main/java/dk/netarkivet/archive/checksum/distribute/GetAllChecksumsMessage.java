@@ -43,7 +43,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  */
 public class GetAllChecksumsMessage extends ArchiveMessage {
     /** The file containing the output.*/
-    private RemoteFile remoteFile;
+    private RemoteFile rf;
     /** The id for the replica where this message should be sent.*/
     private String replicaId;
 
@@ -66,35 +66,41 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
      * the caller of this message. This should be a movable instance since the
      * temporary file should be removed after is has been retrieved.
      * 
+     * TODO cleanup if remoteFile already has been set.
+     * 
      * @param file The file with the checksum message.
+     * @throws ArgumentNotValid If <b>file</b> is null. 
      */
-    public void setFile(File file) {
+    public void setResultingFile(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
 
-        remoteFile = RemoteFileFactory.getMovefileInstance(file);
+        rf = RemoteFileFactory.getMovefileInstance(file);
     }
     
     /**
-     * Method for retrieving the resulting file.
+     * Method for retrieving the resulting file. This method can only be called 
+     * once, since the remoteFile is cleaned up and set to null.
      * 
      * @param toFile The file for the remotely retrieved content.
+     * @throws IOFailure If the data in the remoteFile already has be retrieved.
+     * @throws ArgumentNotValid If <b>toFile</b> is null.
      */
-    public void getData(File toFile) {
+    public void getData(File toFile) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(toFile, "File toFile");
-        if (remoteFile == null) {
+        if (rf == null) {
             throw new IOFailure("The remote file is not valid. "
                     + "Data cannot be retrieved.");
         }
-        remoteFile.copyTo(toFile);
+        rf.copyTo(toFile);
         try {
-            remoteFile.cleanup();
+            rf.cleanup();
         } catch (IOFailure e) {
             // Just log errors on deleting. They are fairly harmless.
             // Can't make Logger a field, as this class is Serializable
             LogFactory.getLog(getClass().getName()).warn(
-                    "Could not delete remote file " + remoteFile.getName());
+                    "Could not delete remote file " + rf.getName());
         }
-        remoteFile = null;
+        rf = null;
     }
     
     /**
