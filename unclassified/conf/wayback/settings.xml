@@ -1,0 +1,49 @@
+<settings>
+    <common>
+        <environmentName>STANDALONE</environmentName>
+        <!-- Use the tomcat port of the proxy connection as instance id. -->
+        <applicationInstanceId>WAYBACK_8670</applicationInstanceId>
+
+        <jms>
+            <class>
+                dk.netarkivet.common.distribute.JMSConnectionSunMQ
+            </class>
+            <broker>localhost</broker>
+            <port>7676</port>
+        </jms>
+        <jmx>
+            <passwordFile>conf/jmxremote.password</passwordFile>
+            <accessFile>conf/jmxremote.access</accessFile>
+            <timeout>120</timeout>
+            <port>8100</port>
+            <rmiPort>8200</rmiPort>
+        </jmx>
+        <replicas>
+        <!-- The names of all bit archive replicas in the environment, e.g.,
+        "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
+            <replica>
+                <replicaId>A</replicaId>
+                <replicaName>ReplicaA</replicaName>
+                <replicaType>bitarchive</replicaType>
+            </replica>
+        </replicas>
+        <remoteFile>
+            <!-- TODO: See user documentation for NetarchiveSuite
+            http://netarkivet.dk/suite/Documentation . -->
+            <serverName>ftp.yourdomain.com</serverName>
+            <userName>ftpuser</userName>
+            <userPassword>ftppassword</userPassword>
+        </remoteFile>
+        <!-- TODO: Insert mail server and to, from emails. --> 
+        <mail>
+            <server>mail.yourdomain.com</server>
+        </mail>
+        <notifications>
+            <class>dk.netarkivet.common.utils.EMailNotifications</class>
+            <sender>example@yourdomain.com</sender>
+            <receiver>example@yourdomain.com</receiver>
+        </notifications>
+        <useReplicaId>A</useReplicaId>
+        <thisPhysicalLocation>S</thisPhysicalLocation>
+    </common>
+</settings>
