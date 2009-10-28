@@ -40,16 +40,24 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
-public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation, CleanupIF {
+/**
+ * The database based active bit preservation.
+ * This is the alternative to the FileBasedActiveBitPreservation.
+ * 
+ * A database is used to handle the bitpreservation. 
+ */
+public final class DatabaseBasedActiveBitPreservation implements 
+        ActiveBitPreservation, CleanupIF {
     /** The log.*/
-    protected static final Log log
-            = LogFactory.getLog(DatabaseBasedActiveBitPreservation.class.getName());
+    protected Log log
+            = LogFactory.getLog(
+                    DatabaseBasedActiveBitPreservation.class);
     
     /**
      * When replacing a broken file, the broken file is downloaded and stored in
@@ -124,8 +132,11 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
      * 
      * @param replica The replica to retrieve the filelist from.
      * @return The names of the files in a list.
+     * @throws ArgumentNotValid If the replica is 'null'.
+     * @throws UnknownID If the replica has a unhandled replica type.
      */
-    private List<String> getFilenamesList(Replica replica) {
+    private List<String> getFilenamesList(Replica replica) throws 
+            ArgumentNotValid, UnknownID {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -155,7 +166,7 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
             String msg = "Cannot handle the replica type of replica '"
                     + replica + "'. Thus cannot find changed files.";
             log.warn(msg);
-            throw new IllegalState(msg);
+            throw new UnknownID(msg);
         }
     }
     
@@ -230,9 +241,11 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
      * @param batchOutputFile Where to put the result of the job.
      * @throws IllegalState If the replica is not of the type 'BITARCHIVE', 
      * which is required for a batchjob.
+     * @throws IOFailure If the batchjob status is invalid.
      */
     private void runBatchJob(FileBatchJob job, Replica replica,
-            List<String> specifiedFiles, File batchOutputFile) {
+            List<String> specifiedFiles, File batchOutputFile) 
+            throws IOFailure, IllegalState {
         // Makes sure, that the replica is of the type 'bitarchive'.
         if (!replica.getType().equals(ReplicaType.BITARCHIVE)) {
             String msg = "The replica '" + replica + "' has to be of the "
@@ -498,8 +511,9 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
      * be performed to check for corrupted replicafileinfo.
      * 
      * @param replica The replica to find the changed files for.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public void findChangedFiles(Replica replica) {
+    public void findChangedFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -518,8 +532,9 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
      * the database with this list of filenames.
      * 
      * @param replica The replica to find the missing files for.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public void findMissingFiles(Replica replica) {
+    public void findMissingFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -530,8 +545,20 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
         cache.addFileListInformation(filenames, replica);
     }
 
+    /**
+     * Method for retrieving the FilePreservationState for a specific file.
+     * 
+     * @param filename The name of the file for whom the FilePreservationState
+     * should be retrieved.
+     * @return The FilePreservationState for the file.
+     * @throws NotImplementedException This method has not yet been implemented.
+     * @throws ArgumentNotValid If the filename does not have a valid name.
+     */
     @Override
-    public FilePreservationState getFilePreservationState(String filename) {
+    public FilePreservationState getFilePreservationState(String filename) 
+            throws NotImplementedException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        
         // TODO requires changing the FilePreservationState ->
         // should not use admin.data
 
@@ -541,9 +568,21 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
         throw new NotImplementedException("TODO: Implement me!");
     }
 
+    /**
+     * Method for retrieving the FilePreservationState for a list of files.
+     * 
+     * @param filenames The list of filenames whos FilePreservationState should
+     * be retrieved.
+     * @return A mapping between the filenames and their FilePreservationState.
+     * @throws NotImplementedException Since it has not yet been implemented.
+     * @throws ArgumentNotValid If the filenames are invalid.
+     */
     @Override
     public Map<String, FilePreservationState> getFilePreservationStateMap(
-            String... filenames) {
+            String... filenames) throws ArgumentNotValid, 
+            NotImplementedException {
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
+        
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: Implement me!");
     }
@@ -577,11 +616,12 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
      * @param checksum  The known bad checksum. Only a file with this bad
      * checksum is attempted repaired.
      * @throws IOFailure if the file cannot be reestablished.
-     * @throws PermissionDenied if the file is not in correct state.
+     * @throws UnknownID if the file is not in correct state.
      * @throws ArgumentNotValid if any of the arguments are not valid.
      */
     public void replaceChangedFile(Replica replica, String filename,
-            String credentials, String checksum) {
+            String credentials, String checksum) throws UnknownID, IOFailure, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -612,7 +652,7 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
             String errMsg = "The replica is of a type which is currently not "
                 + "handled: " + replica;
             log.warn(errMsg);
-            throw new NotImplementedException(errMsg);
+            throw new UnknownID(errMsg);
         }
     }
 
@@ -667,31 +707,62 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
         }
     }
 
+    /**
+     * This should reestablish the state for the file.
+     * 
+     * @param filename The name of the file to change the state for.
+     * @throws ArgumentNotValid If the filename is invalid.
+     * @throws NotImplementedException Since it has not yet been implemented.
+     */
     @Override
-    public void changeStateForAdminData(String filename) {
-        // This function should not deal with admin.data.
+    public void changeStateForAdminData(String filename) 
+            throws ArgumentNotValid, NotImplementedException {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // TODO Auto-generated method stub
+        // This function should not deal with admin.data.
         throw new NotImplementedException("TODO: Implement me!");
     }
 
+    /**
+     * Old method, which refers to the checksum replica part of admin data.
+     * 
+     * @return nothing, since it always throws an exception.
+     * @throws NotImplementedException This method will not be implemented.
+     */
     @Override
     public Iterable<String> getMissingFilesForAdminData() {
-        // TODO Auto-generated method stub
+        // This function should not deal with admin.data.
         throw new NotImplementedException("Old method, which refers to the "
                 + "checksum replica part of admin data.");
     }
 
+    /**
+     * Old method, which refers to the checksum replica part of admin data.
+     * 
+     * @return nothing, since it always throws an exception.
+     * @throws NotImplementedException This method will not be implemented.
+     */
     @Override
     public Iterable<String> getChangedFilesForAdminData() {
-        // TODO Auto-generated method stub
+        // This function should not deal with admin.data.
         throw new NotImplementedException("Old method, which refers to the "
                 + "checksum replica part of admin data.");
     }
 
+    /**
+     * Old method, which refers to teh checksum replica part of admin data.
+     * 
+     * @param filenames The list of filenames which should be added to admin 
+     * data.
+     * @throws NotImplementedException This method will not be implemented.
+     * @throws ArgumentNotValid If filenames invalid.
+     */
     @Override
-    public void addMissingFilesToAdminData(String... filenames) {
-        // TODO Auto-generated method stub
+    public void addMissingFilesToAdminData(String... filenames) throws 
+            ArgumentNotValid, NotImplementedException {
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
+        
+        // This function should not deal with admin.data.        
         throw new NotImplementedException("Old method, which refers to the "
                 + "checksum replica part of admin data.");
     }
@@ -707,6 +778,9 @@ public class DatabaseBasedActiveBitPreservation implements ActiveBitPreservation
         cleanup();
     }
     
+    /**
+     * Method for cleaning up this instance.
+     */
     @Override
     public void cleanup() {
         instance = null;
