@@ -215,7 +215,9 @@ public class BitarchiveClient implements ReplicaClient {
     /**
      * This should replace the current 'GetAndRemoveFile' followed by 'Upload'.
      * 
-     * @param msg The message.
+     * @param arcfile The arcfile to replace the current bad entry
+     * @param checksum The checksum of the bad entry to verify that the entry 
+     * is still bad
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
      */

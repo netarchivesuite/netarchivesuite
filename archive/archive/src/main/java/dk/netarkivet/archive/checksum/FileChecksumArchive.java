@@ -104,8 +104,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * use a memory archive than the the checksum file, though all entries must
      * exist both in the file and the memory.   
      */
-    private Map<String,String> checksumArchive = Collections.synchronizedMap(
-            new HashMap<String,String>());
+    private Map<String, String> checksumArchive = Collections.synchronizedMap(
+            new HashMap<String, String>());
     
     /**
      * The minimum space left.
@@ -269,7 +269,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // extract all the data from the file.
         List<String> entries;
         synchronized(checksumFile) {
-            entries= FileUtils.readListFromFile(checksumFile);
+            entries = FileUtils.readListFromFile(checksumFile);
         }
 
         String filename;
@@ -331,7 +331,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
 
                 // put the archive into the file.
                 FileWriter fw = new FileWriter(recreateFile);
-                for(Map.Entry<String, String> entry : checksumArchive.entrySet()) {
+                for(Map.Entry<String, String> entry
+                        : checksumArchive.entrySet()) {
                     String record = entry.getKey() + CHECKSUM_SEPARATOR 
                     + entry.getValue();
                     fw.append(record + "\n");
@@ -546,7 +547,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
                         + "it is already archived with different checksum."
                         + " Archive checksum: '" + checksumArchive.get(filename)
                         + "' and the uploaded file has: '" + checksum + "'.");
-                // TODO: Perhaps throw exception?
+                // TODO Perhaps throw exception?
             }
             
             // It is a success that it already is within the archive, thus do
@@ -622,8 +623,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * then the checksum file is recreated from the archive in the memory.
      * 
      * @param filename The name of the file whose record should be removed.
-     * @param rf The correct remote file to replace the bad one in the archive.
-     * @param incorrectChecksum The checksum of the bad entry.
+     * @param correctFile The file that should replace the current entry
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected. Either the bad entry
      * cannot be stored, or the new checksum file cannot be created.
