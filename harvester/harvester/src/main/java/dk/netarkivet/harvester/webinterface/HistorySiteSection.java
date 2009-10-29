@@ -41,8 +41,7 @@ public class HistorySiteSection extends SiteSection {
                       {"perhd", "pagetitle;all.jobs.per.harvestdefinition"},
                       {"perharvestrun", "pagetitle;all.jobs.per.harvestrun"},
                       {"jobdetails", "pagetitle;details.for.job"},
-                      {"seeds", "pagetitle;seeds.for.harvestdefinition" }
-                      
+                      {"seeds", "pagetitle;seeds.for.harvestdefinition" }  
               }, "History",
                  dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
     }
