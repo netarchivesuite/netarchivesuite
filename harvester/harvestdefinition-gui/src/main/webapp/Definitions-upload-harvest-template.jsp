@@ -83,30 +83,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         }
     } catch (Exception e) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                "errormsg;template.upload.failed", e);
+                "errormsg;template.upload.failed.with.exception.0", e);
         return;
     }
 
-    if (orderXmlToReplace.equals("") && orderXmlToUpload.equals("")) {
+    if (orderXmlToReplace.isEmpty() && orderXmlToUpload.isEmpty()) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;harvest.template.name.missing");
         return;
     }
-    if (fileName.equals("")) {
+    if (fileName.isEmpty()) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;upload.file.missing");
         return;
     }
     if (!orderXmlFile.exists()) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                "errormsg;uploading.file.0.failed", fileName);
+                "errormsg;uploading.file.0.failed.it.does.not.exist", fileName);
         return;
     }
     TemplateDAO dao = TemplateDAO.getInstance();
     // We now have both the upload file itself and the name of a harvest
     // template to create or replace.
 
-    boolean replaceOperation = !orderXmlToReplace.equals("");
+    boolean replaceOperation = !orderXmlToReplace.isEmpty();
     String message = "";
     try {
         // 1: Try to convert orderxml-file to HeritrixTemplate object
@@ -151,8 +151,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         return;
     }
     HTMLUtils.generateHeader(
-            pageContext);
-
-    out.println("<h4>" + HTMLUtils.escapeHtmlValues(message) + "</h4>");
-    HTMLUtils.generateFooter(out);
+            pageContext);%>
+       
+   <h4> <%=HTMLUtils.escapeHtmlValues(message) %> </h4><%
+   HTMLUtils.generateFooter(out);
 %>
