@@ -75,7 +75,9 @@ public class HarvestController {
         "CRAWL ENDED";
 
     /**
-     * String which shows that the harvest was deliberately aborted
+     * String which shows that the harvest was deliberately aborted from
+     * the Heritrix GUI or forcibly stopped by the Netarchive Suite
+     * software due to an inactivity timeout.
      */
     private static final String HARVEST_ABORTED = "Ended by operator";
 
