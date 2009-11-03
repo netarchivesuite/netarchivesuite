@@ -46,4 +46,11 @@
         <useReplicaId>A</useReplicaId>
         <thisPhysicalLocation>S</thisPhysicalLocation>
     </common>
+    <wayback>
+         <urlcanonicalizer>
+             <classname>
+                 org.archive.wayback.util.url.AggressiveUrlCanonicalizer
+             </classname>
+         </urlcanonicalizer>
+    </wayback>
 </settings>
