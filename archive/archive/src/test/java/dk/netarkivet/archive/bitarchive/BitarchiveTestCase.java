@@ -30,10 +30,10 @@ import java.util.logging.LogManager;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -43,6 +43,7 @@ public abstract class BitarchiveTestCase extends TestCase {
     protected static Bitarchive archive;
     ReloadSettings rs = new ReloadSettings();
 
+    MockupJMS mj = new MockupJMS();
     /** Make a new BitarchiveTestCase using the given directory for originals.
      *
      * @param s Name of the test.
@@ -56,7 +57,7 @@ public abstract class BitarchiveTestCase extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
-        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        mj.setUp();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         try {
             // This forces an emptying of the log file.
@@ -83,7 +84,7 @@ public abstract class BitarchiveTestCase extends TestCase {
             archive.close();
         }
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        JMSConnectionMockupMQ.clearTestQueues();
+        mj.tearDown();
         rf.tearDown();
         rs.tearDown();
         super.tearDown();
