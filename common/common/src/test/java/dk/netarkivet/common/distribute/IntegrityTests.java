@@ -435,8 +435,8 @@ public class IntegrityTests extends TestCase {
         File LOGFILE = new File("tests/testlogs/netarkivtest.log");
         int tries = 100;
         for (int i = 0; i < tries; i++) {
-            RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true, false,
-                                                          true);
+            RemoteFile rf = RemoteFileFactory.getInstance(testFile1, true,
+                                                          false, true);
             rf.cleanup();
         }
         LogUtils.flushLogs(FTPRemoteFile.class.getName());

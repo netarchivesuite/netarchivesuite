@@ -133,11 +133,11 @@ public class IntegrityTestsFTP extends TestCase {
             assertTrue("Must be possible to set the file type to binary after login",
                     theFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE));
         } catch (SocketException e) {
-            throw new IOFailure("Connect to " + ftpServerName + " failed",
-                    e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort +
+                                " failed", e.getCause());
         } catch (IOException e) {
-            throw new IOFailure("Connect to " + ftpServerName + " failed",
-                    e.getCause());
+            throw new IOFailure("Connect to " + ftpServerName + ":" + ftpServerPort +
+                                " failed",  e.getCause());
         }
         
         
