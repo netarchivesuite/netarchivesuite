@@ -54,13 +54,16 @@ import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class HarvestDocumentationTester extends TestCase {
+    ReloadSettings rs = new ReloadSettings();
 
     public void setUp() {
+        rs.setUp();
         FileUtils.createDir(TestInfo.WORKING_DIR);
     }
 
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
+        rs.tearDown();
     }
 
     /**
@@ -603,11 +606,11 @@ public class HarvestDocumentationTester extends TestCase {
         // Test that domain-specific settings (a.k.a overrides) are
         // stored in the proper way.
         URL = "metadata://netarkivet.dk/crawl/setup/settings.xml?"
-            + "heritrixVersion="
-            + Constants.getHeritrixVersionString() + "&harvestid="
-            + TestInfo.HARVEST_ID
-            + "&jobid=" + TestInfo.JOB_ID
-            + "&domain=kb.dk";
+              + "heritrixVersion="
+              + Constants.getHeritrixVersionString() + "&harvestid="
+              + TestInfo.HARVEST_ID
+              + "&jobid=" + TestInfo.JOB_ID
+              + "&domain=kb.dk";
         findAndVerifyMetadata(metadataArcFile, URL);
 
     }

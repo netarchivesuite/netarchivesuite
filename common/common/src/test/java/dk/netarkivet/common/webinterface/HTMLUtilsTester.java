@@ -53,9 +53,7 @@ import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-/**
- * Unit tests for the HTMLUtils utility class.
- */
+/** Unit tests for the HTMLUtils utility class. */
 public class HTMLUtilsTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
@@ -75,6 +73,7 @@ public class HTMLUtilsTester extends TestCase {
     /**
      * Test expected behaviour: Escape double quotes, newlines and other special
      * characters.
+     *
      * @throws Exception
      */
     public void testEscapeJavascriptQuotes() throws Exception {
@@ -88,9 +87,9 @@ public class HTMLUtilsTester extends TestCase {
                      HTMLUtils.escapeJavascriptQuotes("\b\f\n\r\t\u000B\\"));
         assertEquals("Other control characters should be escaped",
                      "\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007"
-                    + "\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015"
-                    + "\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D"
-                    + "\\u001E\\u001F",
+                     + "\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015"
+                     + "\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D"
+                     + "\\u001E\\u001F",
                      HTMLUtils.escapeJavascriptQuotes(
                              "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007"
                              + "\u000E\u000F\u0010\u0011\u0012\u0013\u0014"
@@ -101,20 +100,21 @@ public class HTMLUtilsTester extends TestCase {
     /** Test URL encoding. */
     public void testEncode() throws Exception {
         assertEquals("Should encode space as +", "a+b",
-                HTMLUtils.encode("a b"));
+                     HTMLUtils.encode("a b"));
         assertEquals("Should encode å in UTF-8", "%C3%A5",
-                HTMLUtils.encode("å"));
+                     HTMLUtils.encode("å"));
     }
 
     /** Test URL decoding. */
     public void testDecode() throws Exception {
-        assertEquals("Should decode + as space", "a b", 
-                HTMLUtils.decode("a+b"));
-        assertEquals("Should decode å in UTF-8", "å", 
-                HTMLUtils.decode("%C3%A5"));
+        assertEquals("Should decode + as space", "a b",
+                     HTMLUtils.decode("a+b"));
+        assertEquals("Should decode å in UTF-8", "å",
+                     HTMLUtils.decode("%C3%A5"));
         assertEquals("Should be reverse of eachother",
                      "æblegrød med :// i og ()!!\"#¤%",
-                     HTMLUtils.decode(HTMLUtils.encode("æblegrød med :// i og ()!!\"#¤%")));
+                     HTMLUtils.decode(HTMLUtils.encode(
+                             "æblegrød med :// i og ()!!\"#¤%")));
     }
 
     /** Test header. */
@@ -123,10 +123,10 @@ public class HTMLUtilsTester extends TestCase {
 
         ServletRequest confRequest = makeHttpServletRequest(
                 "HarvestDefinition/Definitions-selective-harvests.jsp");
-           
+
         PageContext pageContext
                 = new WebinterfaceTestCase.TestPageContext(confRequest, out,
-                new Locale("da"));
+                                                           new Locale("da"));
         HTMLUtils.generateHeader("TestTitle", pageContext);
         String result = out.sw.toString();
         StringAsserts.assertStringContains("Should contain title",
@@ -139,8 +139,8 @@ public class HTMLUtilsTester extends TestCase {
             String tree = jwm.sw.toString();
             StringAsserts.assertStringContains(
                     "Should contain site section navigation tree for this sitesection",
-                                               tree,
-                                               result);
+                    tree,
+                    result);
         }
 
         //Test locale
@@ -150,15 +150,16 @@ public class HTMLUtilsTester extends TestCase {
 
         for (StringTree<String> language
                 : webinterfaceSettings.getSubTrees(
-                     CommonSettings.WEBINTERFACE_LANGUAGE)) {
+                CommonSettings.WEBINTERFACE_LANGUAGE)) {
             String locale = language.getValue(CommonSettings.
                     WEBINTERFACE_LANGUAGE_LOCALE);
             String name = language.getValue(CommonSettings.
                     WEBINTERFACE_LANGUAGE_NAME);
             StringAsserts.assertStringContains("Should contain link to locale",
                                                "locale=" + locale, result);
-            StringAsserts.assertStringContains("Should contain name of locale",
-                                               "name=" + name, result);
+            StringAsserts.assertStringContains(
+                    "Should contain name of locale",
+                    "name=" + HTMLUtils.encodeAndEscapeHTML(name), result);
         }
 
         out = new JspWriterMockup();
@@ -166,16 +167,18 @@ public class HTMLUtilsTester extends TestCase {
                 "http://foo.bar/History/Harveststatus-jobdetails.jsp");
 
         pageContext = new WebinterfaceTestCase.TestPageContext(confRequest, out,
-                new Locale("en"));
+                                                               new Locale(
+                                                                       "en"));
         HTMLUtils.generateHeader(pageContext);
         result = out.sw.toString();
         StringAsserts.assertStringContains("Should contain English title",
-                     "Details for Job",
-                     result);
+                                           "Details for Job",
+                                           result);
         out = new JspWriterMockup();
         pageContext
                 = new WebinterfaceTestCase.TestPageContext(confRequest,
-                        out, new Locale("da"));
+                                                           out,
+                                                           new Locale("da"));
         HTMLUtils.generateHeader(pageContext);
         result = out.sw.toString();
         StringAsserts.assertStringContains("Should contain Danish title",
@@ -191,7 +194,7 @@ public class HTMLUtilsTester extends TestCase {
 
         PageContext pageContext
                 = new WebinterfaceTestCase.TestPageContext(
-                        confRequest, out, new Locale("da"));
+                confRequest, out, new Locale("da"));
         HTMLUtils.generateHeader("TestTitle", pageContext);
         HTMLUtils.generateFooter(out);
         String result = out.sw.toString();
@@ -213,8 +216,8 @@ public class HTMLUtilsTester extends TestCase {
     /** Test null is hyphenated. */
     public void testNullToHyphen() {
         assertEquals("Should give hyphen", "-", HTMLUtils.nullToHyphen(null));
-        assertEquals("Should give text", "text", 
-                HTMLUtils.nullToHyphen("text"));
+        assertEquals("Should give text", "text",
+                     HTMLUtils.nullToHyphen("text"));
         assertEquals("Should give nothing", "", HTMLUtils.nullToHyphen(""));
     }
 
@@ -247,47 +250,52 @@ public class HTMLUtilsTester extends TestCase {
 
     public void testParseOptionalLong() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("aLong", new String[]{ "10" });
+        parameterMap.put("aLong", new String[]{"10"});
         WebinterfaceTestCase.TestServletRequest request
                 = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
         //I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
+        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+                request);
 
         assertEquals("Should be able to parse simple long",
-                new Long(10L), HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
+                     new Long(10L),
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
-        parameterMap.put("aLong", new String[]{ " -11  " });
+        parameterMap.put("aLong", new String[]{" -11  "});
 
         assertEquals("Should be able to parse spaced negative long",
-                new Long(-11L), HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
+                     new Long(-11L),
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
         assertEquals("Should get default if not set",
-                new Long(-1L),  HTMLUtils.parseOptionalLong(pageContext,
-                "anotherLong", -1L));
+                     new Long(-1L), HTMLUtils.parseOptionalLong(pageContext,
+                                                                "anotherLong",
+                                                                -1L));
 
-        parameterMap.put("aLong", new String[]{ Long.toString(((long) Integer.MAX_VALUE) * 5) });
+        parameterMap.put("aLong", new String[]{
+                Long.toString(((long) Integer.MAX_VALUE) * 5)});
         assertEquals("Should be able to parse large long",
-                new Long(((long) Integer.MAX_VALUE) * 5),
-                HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
+                     new Long(((long) Integer.MAX_VALUE) * 5),
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", -1L));
 
-        parameterMap.put("aLong", new String[]{ ""} );
+        parameterMap.put("aLong", new String[]{""});
         assertEquals("Should get default from empty param",
-                new Long(-2),
-                HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
+                     new Long(-2),
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
-        parameterMap.put("aLong", new String[]{ "   "} );
+        parameterMap.put("aLong", new String[]{"   "});
         assertEquals("Should get default from space-only param",
-                new Long(-2),
-                HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
+                     new Long(-2),
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", -2L));
 
-        parameterMap.put("aLong", new String[]{ "   "} );
+        parameterMap.put("aLong", new String[]{"   "});
         assertEquals("Should get null default from space-only param",
-                null,
-                HTMLUtils.parseOptionalLong(pageContext, "aLong", null));
+                     null,
+                     HTMLUtils.parseOptionalLong(pageContext, "aLong", null));
 
         try {
-            parameterMap.put("noLong", new String[] { "not a long" });
+            parameterMap.put("noLong", new String[]{"not a long"});
             HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
             fail("Should have died on bad format");
         } catch (ForwardedToErrorPage e) {
@@ -295,8 +303,9 @@ public class HTMLUtilsTester extends TestCase {
         }
 
         try {
-            parameterMap.put("noLong", new String[] { " 2.5" });
-            Long noLong = HTMLUtils.parseOptionalLong(pageContext, "noLong", -1L);
+            parameterMap.put("noLong", new String[]{" 2.5"});
+            Long noLong = HTMLUtils.parseOptionalLong(pageContext, "noLong",
+                                                      -1L);
             /*fail("Should have died on float format, but was interpreted as the long value : "
                     +  noLong);*/
         } catch (ForwardedToErrorPage e) {
@@ -307,52 +316,67 @@ public class HTMLUtilsTester extends TestCase {
 
     public void testParseOptionalDate() {
         Map<String, String[]> parameterMap = new HashMap<String, String[]>();
-        parameterMap.put("aDate", new String[]{ "10/8 2007 6:17" });
+        parameterMap.put("aDate", new String[]{"10/8 2007 6:17"});
         WebinterfaceTestCase.TestServletRequest request
-        = new WebinterfaceTestCase.TestServletRequest();
+                = new WebinterfaceTestCase.TestServletRequest();
         request.setParameterMap(parameterMap);
-        I18n I18N = new I18n(dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(request);
+        I18n I18N = new I18n(
+                dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
+        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+                request);
 
         GregorianCalendar calendar = new GregorianCalendar(2007,
-                Calendar.AUGUST,
-                10, 6, 17, 00);
+                                                           Calendar.AUGUST,
+                                                           10, 6, 17, 00);
         assertEquals("Should be able to parse simple date",
-                calendar.getTime(),
-                HTMLUtils.parseOptionalDate(pageContext, "aDate", "dd/M yyyy HH:mm", null));
+                     calendar.getTime(),
+                     HTMLUtils.parseOptionalDate(pageContext, "aDate",
+                                                 "dd/M yyyy HH:mm", null));
 
         assertEquals("Should get default if not set",
-                calendar.getTime(),  HTMLUtils.parseOptionalDate(pageContext,
-                        "anotherDate", "dd/M yyyy HH:mm", calendar.getTime()));
+                     calendar.getTime(),
+                     HTMLUtils.parseOptionalDate(pageContext,
+                                                 "anotherDate",
+                                                 "dd/M yyyy HH:mm",
+                                                 calendar.getTime()));
 
-        parameterMap.put("aDate", new String[]{ ""} );
+        parameterMap.put("aDate", new String[]{""});
         assertEquals("Should get default from empty param",
-                calendar.getTime(),  HTMLUtils.parseOptionalDate(pageContext,
-                        "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
+                     calendar.getTime(),
+                     HTMLUtils.parseOptionalDate(pageContext,
+                                                 "aDate", "dd/M yyyy HH:mm",
+                                                 calendar.getTime()));
 
-        parameterMap.put("aDate", new String[]{ "   "} );
+        parameterMap.put("aDate", new String[]{"   "});
         assertEquals("Should get default from space-only param",
-                calendar.getTime(),  HTMLUtils.parseOptionalDate(pageContext,
-                        "aDate", "dd/M yyyy HH:mm", calendar.getTime()));
+                     calendar.getTime(),
+                     HTMLUtils.parseOptionalDate(pageContext,
+                                                 "aDate", "dd/M yyyy HH:mm",
+                                                 calendar.getTime()));
 
-        parameterMap.put("aDate", new String[]{ "   "} );
+        parameterMap.put("aDate", new String[]{"   "});
         assertEquals("Should get null default from space-only param",
-                null,  HTMLUtils.parseOptionalDate(pageContext,
-                        "aDate", "dd/M yyyy HH:mm", null));
+                     null, HTMLUtils.parseOptionalDate(pageContext,
+                                                       "aDate",
+                                                       "dd/M yyyy HH:mm",
+                                                       null));
 
         try {
-            parameterMap.put("noDate", new String[] { "not a date" });
-            HTMLUtils.parseOptionalDate(pageContext, "noDate", "dd/M yyyy HH:mm", null);
+            parameterMap.put("noDate", new String[]{"not a date"});
+            HTMLUtils.parseOptionalDate(pageContext, "noDate",
+                                        "dd/M yyyy HH:mm", null);
             fail("Should have died on bad format");
         } catch (ForwardedToErrorPage e) {
             // expected
         }
     }
-    
-    
+
+
     /**
      * Make a HttpServletRequest with the given requestUrl.
+     *
      * @param requestUrl
+     *
      * @return
      */
     private HttpServletRequest makeHttpServletRequest(final String requestUrl) {
@@ -472,7 +496,7 @@ public class HTMLUtilsTester extends TestCase {
 
             public void setCharacterEncoding(String string)
                     throws UnsupportedEncodingException {
-                
+
             }
 
             public int getContentLength() {
@@ -511,7 +535,7 @@ public class HTMLUtilsTester extends TestCase {
                 return null;
             }
 
-            
+
             public String getServerName() {
                 return null;
             }

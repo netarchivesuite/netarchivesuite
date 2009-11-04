@@ -25,42 +25,69 @@
         </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
-            <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
+            <class>
+                dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation
+            </class>
             <database>
-                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics
+                </class>
                 <url>jdbc:derby:bitpreservationdb</url>
             </database>
         </bitpreservation>
     </archive>
-<common>
+    <common>
         <environmentName>DEV</environmentName>
         <tempDir>./tests/commontempdir</tempDir>
         <remoteFile>
             <class>dk.netarkivet.common.distribute.HTTPRemoteFile</class>
-        <serverName>localhost</serverName><serverPort>21</serverPort><userName>anonymous</userName><userPassword>anonymous</userPassword><retries>3</retries><port>8100</port><certificateKeyStore>conf/keystore</certificateKeyStore><certificateKeyStorePassword>1234</certificateKeyStorePassword><certificatePassword>1234</certificatePassword></remoteFile>
+            <serverName>localhost</serverName>
+            <serverPort>21</serverPort>
+            <userName>anonymous</userName>
+            <userPassword>anonymous</userPassword>
+            <retries>3</retries>
+            <port>8100</port>
+            <certificateKeyStore>conf/keystore</certificateKeyStore>
+            <certificateKeyStorePassword>1234</certificateKeyStorePassword>
+            <certificatePassword>1234</certificatePassword>
+        </remoteFile>
         <jms> <!-- Connection data for JMS-->
             <class>dk.netarkivet.common.distribute.JMSConnectionSunMQ</class>
-        <broker>localhost</broker><port>7676</port></jms>
+            <broker>localhost</broker>
+            <port>7676</port>
+        </jms>
         <http>
             <port/>
         </http>
         <arcrepositoryClient>
-            <class>dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient</class>
-        <getTimeout>60000</getTimeout><storeRetries>3</storeRetries><storeTimeout>3600000</storeTimeout></arcrepositoryClient>
+            <class>
+                dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient
+            </class>
+            <getTimeout>60000</getTimeout>
+            <storeRetries>3</storeRetries>
+            <storeTimeout>3600000</storeTimeout>
+        </arcrepositoryClient>
         <monitorregistryClient>
-            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient</class>
+            <class>dk.netarkivet.monitor.distribute.JMSMonitorRegistryClient
+            </class>
+            <reregisterdelay>1</reregisterdelay>
         </monitorregistryClient>
         <indexClient>
-            <class>dk.netarkivet.archive.indexserver.distribute.IndexRequestClient</class>
-        <indexRequestTimeout>3600000</indexRequestTimeout></indexClient>
+            <class>
+                dk.netarkivet.archive.indexserver.distribute.IndexRequestClient
+            </class>
+            <indexRequestTimeout>3600000</indexRequestTimeout>
+        </indexClient>
         <cacheDir>cache</cacheDir>
         <processTimeout>5000</processTimeout>
         <notifications>
             <class>dk.netarkivet.common.utils.EMailNotifications</class>
-        <receiver>root@localhost</receiver><sender>root@localhost</sender></notifications>
+            <receiver>root@localhost</receiver>
+            <sender>root@localhost</sender>
+        </notifications>
         <freespaceprovider>
             <class>dk.netarkivet.common.utils.DefaultFreeSpaceProvider</class>
-        <dir>/home/netarchivesuite/freespace</dir></freespaceprovider>
+            <dir>/home/netarchivesuite/freespace</dir>
+        </freespaceprovider>
         <mail>
             <server>localhost</server>
         </mail>
@@ -93,23 +120,30 @@
                 <name>Français</name>
             </language>
             <siteSection>
-                <class>dk.netarkivet.harvester.webinterface.DefinitionsSiteSection</class>
+                <class>
+                    dk.netarkivet.harvester.webinterface.DefinitionsSiteSection
+                </class>
                 <webapplication>webpages/HarvestDefinition.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection</class>
+                <class>dk.netarkivet.harvester.webinterface.HistorySiteSection
+                </class>
                 <webapplication>webpages/History.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.archive.webinterface.BitPreservationSiteSection</class>
+                <class>
+                    dk.netarkivet.archive.webinterface.BitPreservationSiteSection
+                </class>
                 <webapplication>webpages/BitPreservation.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection</class>
+                <class>dk.netarkivet.viewerproxy.webinterface.QASiteSection
+                </class>
                 <webapplication>webpages/QA.war</webapplication>
             </siteSection>
             <siteSection>
-                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
+                <class>dk.netarkivet.monitor.webinterface.StatusSiteSection
+                </class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
         </webinterface>
@@ -408,14 +442,16 @@
             <tld>zw</tld>
         </topLevelDomains>
         <database>
-            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+            <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics
+            </class>
             <url>jdbc:derby:harvestdefinitionbasedir/fullhddb</url>
             <backupInitHour>3</backupInitHour>
             <validityCheckTimeout>0</validityCheckTimeout>
         </database>
         <repository>
             <!-- Currently set to 10 MB -->
-            <limitForRecordDatatransferInFile>10485760</limitForRecordDatatransferInFile>
+            <limitForRecordDatatransferInFile>10485760
+            </limitForRecordDatatransferInFile>
         </repository>
         <batch>
             <maxExceptions>100</maxExceptions>
@@ -436,7 +472,8 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
-    </common><harvester>
+    </common>
+    <harvester>
         <datamodel>
             <domain>
                 <defaultSeedlist>defaultseeds</defaultSeedlist>
@@ -483,27 +520,32 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts/>                
+                <javaOpts/>
             </heritrix>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController
+                </class>
             </heritrixController>
             <deduplication>
                 <enabled>true</enabled>
             </deduplication>
             <metadata>
-                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)
+                </heritrixFilePattern>
                 <reportFilePattern>.*-report.txt</reportFilePattern>
                 <logFilePattern>.*(\.log|\.out)</logFilePattern>
             </metadata>
         </harvesting>
-    </harvester><monitor>
+    </harvester>
+    <monitor>
         <jmxUsername>monitorRole</jmxUsername>
         <jmxPassword>JMX_MONITOR_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
         <jmxProxyTimeout>500</jmxProxyTimeout>
         <logging>
             <historySize>100</historySize>
         </logging>
-    </monitor><viewerproxy>
+    </monitor>
+    <viewerproxy>
         <baseDir>viewerproxy</baseDir>
-    </viewerproxy></settings>
+    </viewerproxy>
+</settings>
