@@ -92,10 +92,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 
     FileBasedActiveBitPreservation abp;
     
-    private static final Replica ONE = Replica.getReplicaFromId("ONE");
-    private static final Replica TWO = Replica.getReplicaFromId("TWO");
+    private static final Replica ONE = Replica.getReplicaFromId(TestInfo.REPLICA_ID_ONE);
+    private static final Replica TWO = Replica.getReplicaFromId(TestInfo.REPLICA_ID_TWO);
 //    private static final Replica THREE = Replica.getReplicaFromId("THREE");
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         rs.setUp();
@@ -110,6 +111,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, TestInfo.WORKING_DIR.getAbsolutePath());
     }
 
+    @Override
     protected void tearDown() throws Exception {
         // Make sure admin data instance is closed.
         UpdateableAdminData.getInstance().close();
@@ -775,13 +777,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             return output;
         }
 
-	@Override
 	public File getAllChecksums(String replicaId) {
 	    // TODO Auto-generated method stub
 	    throw new NotImplementedException("TODO: Implement me!");
 	}
 
-	@Override
 	public File getAllFilenames(String replicaId) {
 	    // TODO Auto-generated method stub
 	    throw new NotImplementedException("TODO: Implement me!");
@@ -796,7 +796,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 */
 	}
 
-	@Override
 	public void correct(String replicaId, String checksum, 
 		File file, String credentials) {
 	    // TODO: something!
