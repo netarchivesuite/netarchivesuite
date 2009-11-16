@@ -385,8 +385,10 @@ public class Settings {
                 lastModified = settingsFile.lastModified();
             }
         }
-        fileSettingsXmlList.clear();
-        fileSettingsXmlList.addAll(simpleXmlList);
+        synchronized (fileSettingsXmlList) {
+            fileSettingsXmlList.clear();
+            fileSettingsXmlList.addAll(simpleXmlList);
+        }
     }
 
     /**
