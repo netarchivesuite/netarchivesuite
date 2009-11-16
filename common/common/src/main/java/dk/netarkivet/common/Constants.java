@@ -74,9 +74,9 @@ public class Constants {
     /** Major version number. */
     public static final int MAJORVERSION = 3;
     /** Minor version number. */
-    public static final int MINORVERSION = 9;
+    public static final int MINORVERSION = 10;
     /** Patch version number. */
-    public static final int PATCHVERSION = 2;
+    public static final int PATCHVERSION = 0;
     /** Current status of code. */
     private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
