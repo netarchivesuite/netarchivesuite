@@ -81,70 +81,71 @@
     </settings>
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
-      <deployInstallDir>/home/henrik/work/run_archive</deployInstallDir>
-        <deployMachineUserName>henrik</deployMachineUserName>
+      <!-- TODO chaneg to fit your setup. -->
+      <deployInstallDir>~/run_archive</deployInstallDir>
+      <deployMachineUserName>test</deployMachineUserName>
     
-        <settings>
-            <common>
-                <remoteFile>
-                    <!-- TODO change to JMS broker host and username/password. -->
-                    <serverName>localhost</serverName>
-                    <userName>admin</userName>
-                    <userPassword>admin</userPassword>
-                </remoteFile>
-                <useReplicaId>A</useReplicaId>
-                <mail>
-                    <server>mail.yourdomain.com</server>
-                </mail>
-                <notifications>
-                    <class>dk.netarkivet.common.utils.EMailNotifications</class>
-                    <receiver>example</receiver>
-                    <sender>example</sender>
-                </notifications>
-            </common>
-            <viewerproxy>
-                <baseDir>viewerproxy</baseDir>
-            </viewerproxy>
-        </settings>
+    <settings>
+        <common>
+            <remoteFile>
+                <!-- TODO change to JMS broker host and username/password. -->
+                <serverName>localhost</serverName>
+                <userName>admin</userName>
+                <userPassword>admin</userPassword>
+            </remoteFile>
+            <useReplicaId>A</useReplicaId>
+            <mail>
+                <server>mail.yourdomain.com</server>
+            </mail>
+            <notifications>
+                <class>dk.netarkivet.common.utils.EMailNotifications</class>
+                <receiver>example</receiver>
+                <sender>example</sender>
+            </notifications>
+        </common>
+        <viewerproxy>
+            <baseDir>viewerproxy</baseDir>
+        </viewerproxy>
+    </settings>
 
-        <deployMachine name="localhost">
-            <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
-            <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
-                <settings>
-                    <common>
-                        <jmx>
-                            <port>8111</port> 
-                            <rmiPort>8211</rmiPort>
-                        </jmx>
-                    </common>
-                </settings>
-            </applicationName>
-            <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
-                <settings>
-                    <common>
-                        <jmx>
-                            <port>8112</port>  
-                            <rmiPort>8212</rmiPort>
-                        </jmx>
-                    </common>
-                </settings>
-            </applicationName>
-            <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
-                <settings>
-                    <common>
-                        <jmx>
-                            <port>8113</port>  
-                            <rmiPort>8213</rmiPort>
-                        </jmx>
-                    </common>
-                    <archive>
-                        <bitarchive>
-                            <!-- TODO: Point this directory at your ARC files. -->
-                            <baseFileDir>/arcs/</baseFileDir>
-                        </bitarchive>
-                    </archive>
-                </settings>
-            </applicationName>
-        </deployMachine>
-    </thisPhysicalLocation>
+    <deployMachine name="localhost">
+        <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
+        <applicationName name="dk.netarkivet.archive.arcrepository.ArcRepositoryApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8111</port>
+                        <rmiPort>8211</rmiPort>
+                    </jmx>
+                </common>
+            </settings>
+        </applicationName>
+        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8112</port>
+                        <rmiPort>8212</rmiPort>
+                    </jmx>
+                </common>
+            </settings>
+        </applicationName>
+        <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
+            <settings>
+                <common>
+                    <jmx>
+                        <port>8113</port>
+                        <rmiPort>8213</rmiPort>
+                    </jmx>
+                </common>
+                <archive>
+                    <bitarchive>
+                        <!-- TODO: Point this directory at your ARC files. -->
+                        <baseFileDir>/arcs/</baseFileDir>
+                    </bitarchive>
+                </archive>
+            </settings>
+        </applicationName>
+    </deployMachine>
+  </thisPhysicalLocation>
 </deployGlobal>
