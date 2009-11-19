@@ -35,7 +35,7 @@ ssh  ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c dir_kb-test-bar-010.bitarkiv.
 ssh  ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c del dir_kb-test-bar-010.bitarkiv.kb.dk.bat
 echo preparing for copying of settings and scripts
 if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
-if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
+if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.access /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-010.bitarkiv.kb.dk/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:test\\conf\\
 echo make password and access files readonly
@@ -55,7 +55,7 @@ ssh  ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c dir_kb-test-bar-011.bitarkiv.
 ssh  ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c del dir_kb-test-bar-011.bitarkiv.kb.dk.bat
 echo preparing for copying of settings and scripts
 if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
-if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.password /P BITARKIV\\ba-test:F; fi;
+if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist test\\conf\\jmxremote.access echo 1 ) ]; then echo Y | ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c cacls test\\conf\\jmxremote.access /P BITARKIV\\ba-test:F; fi;
 echo copying settings and scripts
 scp -r kb-test-bar-011.bitarkiv.kb.dk/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:test\\conf\\
 echo make password and access files readonly
