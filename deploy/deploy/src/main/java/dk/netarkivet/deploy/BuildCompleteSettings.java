@@ -43,6 +43,11 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public final class BuildCompleteSettings {
     /**
+     * Private constructor to disallow instantiation of this class.
+     */
+    private BuildCompleteSettings() {}
+    
+    /**
      * Run the program.
      * This loads and merges all the setting files into a single file.
      * 

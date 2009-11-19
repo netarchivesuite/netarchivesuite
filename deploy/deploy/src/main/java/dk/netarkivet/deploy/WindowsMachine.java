@@ -80,8 +80,8 @@ public class WindowsMachine extends Machine {
      * - $'create directories'.
      * - echo preparing for copying of settings and scripts
      * - if [ $( ssh 'login'@'machine' cmd /c if exist 
-     * 'environmentName'\\conf\\jmxremote.password echo 1 ) ]; then echo Y | ssh 
-     * 'login'@'machine' cmd /c cacls 
+     * 'environmentName'\\conf\\jmxremote.password echo 1 ) ]; then echo Y | 
+     * ssh 'login'@'machine' cmd /c cacls 
      * 'environmentName'\\conf\\jmxremote.password
      * /P BITARKIV\\'login':F; fi
      * - if [ $( ssh 'login'@'machine' cmd /c if exist 
@@ -494,7 +494,8 @@ public class WindowsMachine extends Machine {
                 String killPsName = Constants.SCRIPT_KILL_PS + id 
                         + scriptExtension;
                 File appKillScript = new File(directory, 
-                        Constants.SCRIPT_NAME_LOCAL_KILL + id + scriptExtension);
+                        Constants.SCRIPT_NAME_LOCAL_KILL + id 
+                        + scriptExtension);
                 File appKillPsScript = new File(directory, killPsName);
                 try {
                     // make print writer for writing to file

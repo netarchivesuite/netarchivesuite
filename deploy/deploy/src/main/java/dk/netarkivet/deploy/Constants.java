@@ -39,6 +39,11 @@ import dk.netarkivet.viewerproxy.ViewerProxySettings;
  * COMPLETE_ = path from beyond the settings branch.
  */
 public final class Constants {
+    /**
+     * Private constructor to avoid instantiation.
+     */
+    private Constants() {}
+    
     // Single character specific
     /** The empty string, "".*/
     static final String EMPTY = "";

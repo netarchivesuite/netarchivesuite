@@ -43,6 +43,11 @@ import dk.netarkivet.common.utils.Settings;
  * and this application should therefore not be run on Windows.
  */
 public final class DeployApplication {
+    /**
+     * Private constructor to disallow instantiation of this class.
+     */
+    private DeployApplication() {}
+    
     static {
         Settings.addDefaultClasspathSettings(
                 Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH

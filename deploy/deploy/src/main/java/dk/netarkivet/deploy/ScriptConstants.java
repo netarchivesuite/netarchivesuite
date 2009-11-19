@@ -31,6 +31,11 @@ import dk.netarkivet.common.utils.StringUtils;
  * scripts and other files for the different machines and applications. 
  */
 public final class ScriptConstants {
+    /**
+     * Private constructor to avoid instantiation of this class.
+     */
+    private ScriptConstants() {}
+    
     // Character constants as Strings.
     /** The newline '\n' - acquired from Constants. */
     static final String NEWLINE = Constants.NEWLINE;
