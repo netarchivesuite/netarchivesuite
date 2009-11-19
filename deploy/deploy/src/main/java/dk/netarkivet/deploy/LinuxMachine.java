@@ -65,7 +65,7 @@ public class LinuxMachine extends Machine {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
                 logProp, securityPolicy, dbFile, resetDir);
         // set operating system
-        OS = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
+        operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
     }
 

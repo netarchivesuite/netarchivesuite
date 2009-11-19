@@ -502,7 +502,8 @@ public final class Constants {
     /** The warning when the NetarchiveSuite file cannot be copied, since 
      * another file with same name exists.*/
     public static final String MSG_WARN_ZIPFILE_ALREADY_EXISTS = 
-        "Warning: A NetarchiveSuite file already exists. It will be overriden.";
+        "Warning: A NetarchiveSuite file already exists. "
+        + "It will be overriden. ";
     
     // functions
     /**

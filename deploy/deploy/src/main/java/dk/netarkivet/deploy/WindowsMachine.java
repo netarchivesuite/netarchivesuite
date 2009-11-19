@@ -40,7 +40,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 public class WindowsMachine extends Machine {
     /**
      * The constructor. 
-     * Starts by initialising the parent abstract class, then sets the 
+     * Starts by initializing the parent abstract class, then sets the 
      * operating system dependent variables.
      * 
      * @param e The XML root element.
@@ -64,7 +64,7 @@ public class WindowsMachine extends Machine {
         super(e, parentSettings, param, netarchiveSuiteSource,
                 logProp, securityPolicy, dbFile, resetDir);
         // set operating system
-        OS = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
+        operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
     }
 
@@ -200,7 +200,7 @@ public class WindowsMachine extends Machine {
                 + Constants.SPACE + ScriptConstants.IF + Constants.SPACE
                 + ScriptConstants.EXIST + Constants.SPACE);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
-        res.append(Constants.JMX_PASSWORD_FILE_NAME);
+        res.append(Constants.JMX_ACCESS_FILE_NAME);
         res.append(Constants.SPACE + ScriptConstants.ECHO_ONE);
         res.append(Constants.SPACE + Constants.BRACKET_END 
                 + Constants.SPACE + Constants.SQUARE_BRACKET_END
@@ -213,7 +213,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE + ScriptConstants.WINDOWS_COMMAND_RUN
                 + Constants.SPACE + ScriptConstants.CACLS + Constants.SPACE);
         res.append(ScriptConstants.doubleBackslashes(getLocalConfDirPath()));
-        res.append(Constants.JMX_PASSWORD_FILE_NAME + Constants.SPACE 
+        res.append(Constants.JMX_ACCESS_FILE_NAME + Constants.SPACE 
                 + ScriptConstants.SLASH_P + Constants.SPACE 
                 + ScriptConstants.BITARKIV_BACKSLASH_BACKSLASH);
         res.append(machineParameters.getMachineUserName().getText());

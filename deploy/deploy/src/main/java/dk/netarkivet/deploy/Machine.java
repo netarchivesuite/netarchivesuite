@@ -61,7 +61,7 @@ public abstract class Machine {
     /** The name of this machine.*/
     protected String name;
     /** The operating system on this machine: 'windows' or 'linux'.*/
-    protected String OS;
+    protected String operatingSystem;
     /** The extension on the scipt files (specified by operating system).*/
     protected String scriptExtension;
     /** The name of the NetarchiveSuite.zip file.*/

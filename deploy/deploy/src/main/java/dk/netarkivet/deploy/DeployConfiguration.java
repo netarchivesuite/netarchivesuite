@@ -156,6 +156,7 @@ public class DeployConfiguration {
      * Remove the existing file before copy of the given file. <br>
      * <li> outputDir != directory of zip file and no other zip file </li>
      *    Copy file to output directory.
+     * </ol>
      */
     private void copyNetarchiveSuiteFile() {
         try {
