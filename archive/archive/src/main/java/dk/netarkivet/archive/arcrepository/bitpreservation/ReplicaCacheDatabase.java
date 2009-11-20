@@ -1464,7 +1464,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * if no such bitarchive exists.
      */
     @Override
-    public Replica getBitarchiveWithGoodFile(String filename, Replica badReplica) {
+    public Replica getBitarchiveWithGoodFile(String filename,
+            Replica badReplica) {
         // First retrieve the file id for the filename
         long fileId = retrieveIdForFile(filename);
 
