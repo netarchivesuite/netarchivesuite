@@ -383,7 +383,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replicaId The id for the replica to contain the files.
      * @return The list of all the replicafileinfo_guid.
      */
-    private List<Long> retrieveReplicaFileInfoGuidsForReplica(String replicaId) {
+    private List<Long> retrieveReplicaFileInfoGuidsForReplica(
+            String replicaId) {
         // sql for retrieving the replicafileinfo_guid for the replica.
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "replica_id = ?";
@@ -452,7 +453,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * the replicafileinfo table.
      * @return The id of the replica for the given replicafileinfo entry.
      */
-    private String retrieveReplicaIdFromReplicaFileInfo(long replicafileinfoGuid) {
+    private String retrieveReplicaIdFromReplicaFileInfo(
+            long replicafileinfoGuid) {
         // The SQL statement to retrieve the replica_id for the given entry in
         // the replicafileinfo table.
         String sql = "SELECT replica_id FROM replicafileinfo WHERE "
@@ -564,7 +566,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
-                    + "filelist_checkdatetime = ? WHERE replicafileinfo_guid = ?";
+                    + "filelist_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
 
             // init.
             PreparedStatement statement = null;
@@ -595,11 +598,13 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param replicafileinfoId The id of the replicafileinfo.
      */
-    private void updateReplicaFileInfoMissingFromFilelist(long replicafileinfoId) {
+    private void updateReplicaFileInfoMissingFromFilelist(
+            long replicafileinfoId) {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
-                    + "filelist_checkdatetime = ? WHERE replicafileinfo_guid = ?";
+                    + "filelist_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
 
             // init.
             PreparedStatement statement = null;
@@ -634,7 +639,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
-                    + "checksum_checkdatetime = ? WHERE replicafileinfo_guid = ?";
+                    + "checksum_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
 
             // init.
             PreparedStatement statement = null;
@@ -669,7 +675,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
-                    + "checksum_checkdatetime = ? WHERE replicafileinfo_guid = ?";
+                    + "checksum_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
 
             // init.
             PreparedStatement statement = null;
@@ -704,7 +711,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
-                    + "checksum_checkdatetime = ? WHERE replicafileinfo_guid = ?";
+                    + "checksum_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
 
             // init.
             PreparedStatement statement = null;
@@ -1326,8 +1334,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         // The SQL statement to retrieve the filenames of the missing
         // replicafileinfo to the given replica.
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
-                + "file ON replicafileinfo.file_id = file.file_id WHERE replica_id"
-                + " = ? AND filelist_status = ?";
+                + "file ON replicafileinfo.file_id = file.file_id "
+                + "WHERE replica_id = ? AND filelist_status = ?";
         return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
                 FileListStatus.MISSING.ordinal());
     }
@@ -1367,8 +1375,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         // The SQL statement to retrieve the filenames for the corrupted files
         // in the replicafileinfo table for the given replica.
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
-                + "file ON replicafileinfo.file_id = file.file_id WHERE replica_id"
-                + " = ? AND checksum_status = ?";
+                + "file ON replicafileinfo.file_id = file.file_id "
+                + "WHERE replica_id = ? AND checksum_status = ?";
         return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
                 ChecksumStatus.CORRUPT.ordinal());
     }
@@ -1451,6 +1459,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param filename The name of the file which needs to have a valid version
      * in a bitarchive.
+     * @param badReplica The Replica which has a bad copy of the given file
      * @return A bitarchive which contains a valid version of the file, or null
      * if no such bitarchive exists.
      */
