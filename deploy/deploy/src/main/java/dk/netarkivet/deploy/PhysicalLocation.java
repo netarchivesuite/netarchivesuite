@@ -226,14 +226,20 @@ public class PhysicalLocation {
                     kWriter.println(ScriptConstants.writeDashLine());
                     kWriter.print(mac.writeToGlobalKillScript());
                 }
+                kWriter.println(ScriptConstants.writeDashLine());
+                iWriter.println(ScriptConstants.writeDashLine());
+                sWriter.println(ScriptConstants.writeDashLine());
             } finally {
                 // close writers
-                kWriter.println(ScriptConstants.writeDashLine());
-                kWriter.close();
-                iWriter.println(ScriptConstants.writeDashLine());
-                iWriter.close();
-                sWriter.println(ScriptConstants.writeDashLine());
-                sWriter.close();
+                if(kWriter != null) {
+                    kWriter.close();
+                }
+                if(iWriter != null) {
+                    iWriter.close();
+                }
+                if(sWriter != null) {
+                    sWriter.close();
+                }
             }
         } catch (IOException e) {
             String msg = "Problems creating the scripts for the physical "

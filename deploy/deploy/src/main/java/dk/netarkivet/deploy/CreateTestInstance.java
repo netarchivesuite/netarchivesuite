@@ -76,6 +76,9 @@ public class CreateTestInstance {
         
         source = configSource;
         deployConfiguration = new XmlStructure(source);
+        
+        offsetPaths = new OffsetSystem[0];
+        offsetVal = new String(); 
     }
 
     /**
@@ -106,7 +109,7 @@ public class CreateTestInstance {
             System.exit(1);
         }
         // change integer to string (easiest way to change integer to String)
-        offsetVal = new String(new Integer(offsetInt).toString());
+        offsetVal = Integer.toString(offsetInt);
 
         // vaildate the environment name.
         if(!Constants.validEnvironmentName(environmentName)) {
@@ -211,15 +214,16 @@ public class CreateTestInstance {
                 Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
         // append the environment name as sub directory to these leafs.
         for(Element el : elems) {
-            String content = el.getText();
-            // check if windows format has been used
-            if(content.contains(Constants.BACKSLASH)) {
-                content += Constants.BACKSLASH + environmentNameVal;
+            StringBuilder content = new StringBuilder(el.getText());
+            // check if windows format has been used (if the index of the 
+            // windows directory separator is different from -1).
+            if(content.indexOf(Constants.BACKSLASH) > -1) {
+                content.append(Constants.BACKSLASH + environmentNameVal);
             } else {
-                content += Constants.SLASH + environmentNameVal;
+                content.append(Constants.SLASH + environmentNameVal);
             }
             // then set new value.
-            el.setText(content);
+            el.setText(content.toString());
         }
     }
     
@@ -235,8 +239,13 @@ public class CreateTestInstance {
         File f = new File(filename);
 
         FileWriter fw = new FileWriter(f);
-        fw.write(deployConfiguration.getXML());
-        fw.close();
+        try {
+            fw.write(deployConfiguration.getXML());
+        } finally {
+            if(fw != null) {
+                fw.close();
+            }
+        }
     }
     
     /** 

@@ -612,7 +612,7 @@ public class LinuxMachine extends Machine {
                 String msg = "Problems creating application start script: " + e;
                 log.trace(msg);
                 throw new IOFailure(msg);
-            } catch(Exception e) {
+            } catch(Throwable e) {
                 String msg = "Error in creating application start script: " + e;
                 log.trace(msg);
                 System.out.println(msg);
@@ -827,17 +827,17 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
 
         String[] pathDirs = dir.split(Constants.REGEX_SLASH_CHARACTER);
-        String path = "";
+        StringBuilder path = new StringBuilder();
 
         // only make directories along path to last directory, 
         // don't create end directory.
         for(int i = 0; i < pathDirs.length-1; i++) {
             // don't make directory of empty path.
             if(!pathDirs[i].isEmpty()) {
-                path += pathDirs[i];
-                res.append(scriptCreateDir(path, false));
+                path.append(pathDirs[i]);
+                res.append(scriptCreateDir(path.toString(), false));
             }
-            path += Constants.SLASH;
+            path.append(Constants.SLASH);
         }
 
         return res.toString();
@@ -896,7 +896,7 @@ public class LinuxMachine extends Machine {
                         Constants.SETTINGS_TEMPDIR_LEAF);
                 for(String dir : dirs) {
                     // Don't make machine temp dir twice.
-                    if(dir != machineDir) {
+                    if(!dir.equals(machineDir)) {
                         res.append(createPathToDir(dir));
                         res.append(scriptCreateDir(dir, resetTempDir));
                     }

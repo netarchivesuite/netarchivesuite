@@ -276,36 +276,41 @@ public abstract class Machine {
                         ctd);
             }
             
-            // write to file.
-            secfw.write(prop);
-            
-            // initialise list of directories to add
-            List<String> dirs = new ArrayList<String>();
+            try {
+                // write to file.
+                secfw.write(prop);
 
-            // get all directories to add and put them into the list
-            for(Application app : applications) {
-                // get archive.fileDir directory.
-                String[] tmpDirs = app.getSettingsValues(
-                        Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
-                if(tmpDirs != null && tmpDirs.length > 0) {
-                    for(String st : tmpDirs) {
-                        dirs.add(st);
+                // initialise list of directories to add
+                List<String> dirs = new ArrayList<String>();
+
+                // get all directories to add and put them into the list
+                for(Application app : applications) {
+                    // get archive.fileDir directory.
+                    String[] tmpDirs = app.getSettingsValues(
+                            Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
+                    if(tmpDirs != null && tmpDirs.length > 0) {
+                        for(String st : tmpDirs) {
+                            dirs.add(st);
+                        }
                     }
                 }
-            }
 
-            // append file directories
-            if(!dirs.isEmpty()) {
-                secfw.write("grant {" + "\n");
-                for(String dir : dirs) {
-                    secfw.write(ScriptConstants
-                            .writeSecurityPolicyDirPermission(
-                            changeFileDirPathForSecurity(dir)));
+                // append file directories
+                if(!dirs.isEmpty()) {
+                    secfw.write("grant {" + "\n");
+                    for(String dir : dirs) {
+                        secfw.write(ScriptConstants
+                                .writeSecurityPolicyDirPermission(
+                                        changeFileDirPathForSecurity(dir)));
+                    }
+                    secfw.write("};");
                 }
-                secfw.write("};");
+            } finally {
+                // make sure, that the security file is properly closed.
+                if(secfw != null) {
+                    secfw.close();
+                }
             }
-
-            secfw.close();
         } catch (IOException e) {
             log.warn("IOException occurred: " + e);
         }
@@ -336,8 +341,13 @@ public abstract class Machine {
                         app.getIdentification());
 
                 // write to file.
-                logfw.write(prop);
-                logfw.close();
+                try {
+                    logfw.write(prop);
+                } finally {
+                    if(logfw != null) {
+                        logfw.close();
+                    }
+                }
             } catch (IOException e) {
                 log.warn("IOException occurred: " + e);
             }

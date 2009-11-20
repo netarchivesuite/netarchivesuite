@@ -232,7 +232,7 @@ public class XmlStructure {
         List<Element> elemList = getAllChildrenAlongPath(root, path);
         // check that any leafs exist.
         if(elemList.isEmpty()) {
-            return null;
+            return new String[0];
         }
 
         // extract the value of the elements to an array.

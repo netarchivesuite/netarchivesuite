@@ -488,91 +488,89 @@ public class WindowsMachine extends Machine {
     protected void createApplicationKillScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // go through all applications and create their kill script
-        try {
-            for(Application app : applications) {
-                String id = app.getIdentification();
-                String killPsName = Constants.SCRIPT_KILL_PS + id 
-                        + scriptExtension;
-                File appKillScript = new File(directory, 
-                        Constants.SCRIPT_NAME_LOCAL_KILL + id 
-                        + scriptExtension);
-                File appKillPsScript = new File(directory, killPsName);
+        for(Application app : applications) {
+            String id = app.getIdentification();
+            String killPsName = Constants.SCRIPT_KILL_PS + id 
+            + scriptExtension;
+            File appKillScript = new File(directory, 
+                    Constants.SCRIPT_NAME_LOCAL_KILL + id 
+                    + scriptExtension);
+            File appKillPsScript = new File(directory, killPsName);
+            try {
+                // make print writer for writing to file
+                PrintWriter appPrint = new PrintWriter(appKillScript);
+                PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
                 try {
-                    // make print writer for writing to file
-                    PrintWriter appPrint = new PrintWriter(appKillScript);
-                    PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
-                    try {
-                        // write dummy line in kill script.
-                        appPsPrint.println("ECHO Not started!");
-                        // initiate variables
-                        String tmpRunApp = Constants
-                                .FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
-                        // get the content for the kill script of 
-                        // this application
-                        // #echo kill windows application
-                        appPrint.println(
-                                ScriptConstants.ECHO_KILL_WINDOWS_APPLICATION
-                                + Constants.COLON + Constants.SPACE + id);
-                        // cd "path"
-                        appPrint.println(ScriptConstants.CD + Constants.SPACE
-                                + Constants.QUOTE_MARK
-                                + app.installPathWindows() 
-                                + Constants.CONF_DIR_WINDOWS
-                                + Constants.QUOTE_MARK);
-                        // if exist run_app.txt GOTO KILL
-                        appPrint.println(ScriptConstants.IF + Constants.SPACE
-                                + ScriptConstants.EXIST + Constants.SPACE
-                                + tmpRunApp + Constants.SPACE 
-                                + ScriptConstants.GOTO + Constants.SPACE
-                                + ScriptConstants.LABEL_KILL);
-                        // GOTO NOKILL
-                        appPrint.println(ScriptConstants.GOTO + Constants.SPACE
-                                + ScriptConstants.LABEL_NOKILL);
-                        // 
-                        appPrint.println();
-                        // :KILL
-                        appPrint.println(Constants.COLON 
-                                + ScriptConstants.LABEL_KILL);
-                        // cmdrun kill_ps_app.bat
-                        appPrint.println(ScriptConstants.
-                                OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE
-                                + Constants.QUOTE_MARK + killPsName 
-                                + Constants.QUOTE_MARK);
-                        // del run_app.txt
-                        appPrint.println(ScriptConstants.DEL + Constants.SPACE
-                                + tmpRunApp);
-                        // GOTO DONE
-                        appPrint.println(ScriptConstants.GOTO + Constants.SPACE
-                                + ScriptConstants.LABEL_DONE);
-                        //
-                        appPrint.println();
-                        // :NOKILL
-                        appPrint.println(Constants.COLON 
-                                + ScriptConstants.LABEL_NOKILL);
-                        // echo Cannot kill application. Already running.
-                        appPrint.println(ScriptConstants.ECHO_CANNOT_KILL_APP);
-                        //
-                        appPrint.println();
-                        // :DONE
-                        appPrint.println(Constants.COLON 
-                                + ScriptConstants.LABEL_DONE);
-                    } finally {
-                        // close files
+                    // write dummy line in kill script.
+                    appPsPrint.println("ECHO Not started!");
+                    // initiate variables
+                    String tmpRunApp = Constants
+                    .FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
+                    // get the content for the kill script of 
+                    // this application
+                    // #echo kill windows application
+                    appPrint.println(
+                            ScriptConstants.ECHO_KILL_WINDOWS_APPLICATION
+                            + Constants.COLON + Constants.SPACE + id);
+                    // cd "path"
+                    appPrint.println(ScriptConstants.CD + Constants.SPACE
+                            + Constants.QUOTE_MARK
+                            + app.installPathWindows() 
+                            + Constants.CONF_DIR_WINDOWS
+                            + Constants.QUOTE_MARK);
+                    // if exist run_app.txt GOTO KILL
+                    appPrint.println(ScriptConstants.IF + Constants.SPACE
+                            + ScriptConstants.EXIST + Constants.SPACE
+                            + tmpRunApp + Constants.SPACE 
+                            + ScriptConstants.GOTO + Constants.SPACE
+                            + ScriptConstants.LABEL_KILL);
+                    // GOTO NOKILL
+                    appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                            + ScriptConstants.LABEL_NOKILL);
+                    // 
+                    appPrint.println();
+                    // :KILL
+                    appPrint.println(Constants.COLON 
+                            + ScriptConstants.LABEL_KILL);
+                    // cmdrun kill_ps_app.bat
+                    appPrint.println(ScriptConstants.
+                            OPERATING_SYSTEM_WINDOWS_RUN_BATCH_FILE
+                            + Constants.QUOTE_MARK + killPsName 
+                            + Constants.QUOTE_MARK);
+                    // del run_app.txt
+                    appPrint.println(ScriptConstants.DEL + Constants.SPACE
+                            + tmpRunApp);
+                    // GOTO DONE
+                    appPrint.println(ScriptConstants.GOTO + Constants.SPACE
+                            + ScriptConstants.LABEL_DONE);
+                    //
+                    appPrint.println();
+                    // :NOKILL
+                    appPrint.println(Constants.COLON 
+                            + ScriptConstants.LABEL_NOKILL);
+                    // echo Cannot kill application. Already running.
+                    appPrint.println(ScriptConstants.ECHO_CANNOT_KILL_APP);
+                    //
+                    appPrint.println();
+                    // :DONE
+                    appPrint.println(Constants.COLON 
+                            + ScriptConstants.LABEL_DONE);
+                } finally {
+                    // close files
+                    if(appPrint != null) {
                         appPrint.close();
+                    }
+                    if(appPsPrint != null) {
                         appPsPrint.close();
                     }
-                } catch (IOException e) {
-                    String msg = "Cannot create the kill script for "
-                        + "application: " + app.getIdentification() 
-                        + ", at machine: " + name + ", with exception: " + e; 
-                    log.trace(msg);
-                    throw new IOFailure(msg);
-                } 
-            }
-        } catch(Exception e) {
-            String msg = "Error in creating kill script for applications: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+                }
+            } catch (IOException e) {
+                String msg = "Cannot create the kill script for "
+                    + "application: " + app.getIdentification() 
+                    + ", at machine: " + name + ", with exception: " + e; 
+                log.trace(msg);
+                throw new IOFailure(msg);
+            } 
         }
     }
 
@@ -937,19 +935,19 @@ public class WindowsMachine extends Machine {
         StringBuilder res = new StringBuilder();
 
         String[] pathDirs = dir.split(Constants.REGEX_BACKSLASH_CHARACTER);
-        String path = "";
+        StringBuilder path = new StringBuilder();
 
         // only make directories along path to last directory, 
         // don't create end directory.
         for(int i = 0; i < pathDirs.length-1; i++) {
             // don't make directory of empty path.
             if(!pathDirs[i].isEmpty()) {
-                path += pathDirs[i];
-                if(!path.endsWith(Constants.COLON)) {
-                    res.append(scriptCreateDir(path, false));
+                path.append(pathDirs[i]);
+                if(!path.substring(path.length()-1).endsWith(Constants.COLON)) {
+                    res.append(scriptCreateDir(path.toString(), false));
                 }
             }
-            path += Constants.BACKSLASH;
+            path.append(Constants.BACKSLASH);
         }
 
         return res.toString();
@@ -1009,7 +1007,7 @@ public class WindowsMachine extends Machine {
                         Constants.SETTINGS_TEMPDIR_LEAF);
                 for(String dir : dirs) {
                     // Don't make machine temp dir twice.
-                    if(dir != machineDir) {
+                    if(dir.equals(machineDir)) {
                         res.append(createPathToDir(dir));
                         res.append(scriptCreateDir(dir, resetTempDir));
                     }
