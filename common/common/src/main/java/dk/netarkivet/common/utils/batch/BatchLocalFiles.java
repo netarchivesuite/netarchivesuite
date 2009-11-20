@@ -25,12 +25,15 @@ package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Class for running FileBatchJobs on a set of local files. The constructor
@@ -42,6 +45,13 @@ public class BatchLocalFiles {
     private File[] files;
     /** The class logger. */
     private Log log = LogFactory.getLog(BatchLocalFiles.class);
+    /** 
+     * The last time logging was performed. 
+     * Initial 0 to ensure logging the first time.
+     */
+    private long lastLoggingDate = 0;
+    /** The time when the batchjob was started.*/
+    private long startTime = 0;
 
     /**
      * Given an array of files, constructs a BatchLocalFiles instance
@@ -70,15 +80,35 @@ public class BatchLocalFiles {
     public void run(FileBatchJob job, OutputStream os) {
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
-        //Initialize the job:
+        // Initialise the job:
         job.noOfFilesProcessed = 0;
         job.filesFailed = new HashSet<File>();
         try {
             job.initialize(os);
+            // count the files (used for logging).
+            int fileCount = 0;
+            // the time in milliseconds between the status logging
+            long logInterval = Settings.getLong(
+                    CommonSettings.BATCH_LOGGING_INTERVAL);
+            // get the time for starting the batchjob (used for logging).
+            startTime = new Date().getTime();
             //Process each file:
             for (File file : files) {
+                fileCount++;
                 if (job.getFilenamePattern().matcher(file.getName())
                         .matches()) {
+                    long currentTime = new Date().getTime();
+                    // perform logging if necessary.
+                    if(lastLoggingDate + logInterval < currentTime) {
+                        log.info("The batchjob '" + job.getClass() 
+                                + "' has run for " 
+                                + (currentTime-startTime)/1000 + " seconds and "
+                                + "has reached file '" + file.getName() 
+                                + "' which is number " + fileCount + " out of " 
+                                + files.length);
+                        // set that we have just logged.
+                        lastLoggingDate = currentTime;
+                    }
                     processFile(job, file, os);
                 }
             }
@@ -125,5 +155,4 @@ public class BatchLocalFiles {
             job.filesFailed.add(file);
         }
     }
-
 }

@@ -94,8 +94,19 @@ public class CommonSettings {
     public static String ARC_REPOSITORY_CLIENT
             = "settings.common.arcrepositoryClient.class";
 
+    /**
+     * <b>settings.common.batch.maxExceptions</b>: <br>
+     * The maximum number of exceptions to be stored for a batch job.
+     */
     public static String MAX_NUM_BATCH_EXCEPTIONS
             = "settings.common.batch.maxExceptions";
+    
+    /**
+     * <b>settings.common.batch.timeBetweenLogging</b>: <br>
+     * The time between logging the status of a batch job.
+     */
+    public static String BATCH_LOGGING_INTERVAL 
+            = "settings.common.batch.loggingInterval";
 
     /** 
      * <b>settings.common.monitorregistryClient.class</b>: <br>
