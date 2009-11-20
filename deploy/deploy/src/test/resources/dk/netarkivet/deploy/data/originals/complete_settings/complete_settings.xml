@@ -420,6 +420,8 @@
         </repository>
         <batch>
             <maxExceptions>100</maxExceptions>
+            <!-- Time between logging of batch status default 30 seconds -->
+            <loggingInterval>30000</loggingInterval>
         </batch>
         <replicas> <!-- The entire settings for replicas. -->
             <replica>
