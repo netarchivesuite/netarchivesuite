@@ -34,8 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     db/derbyclient-10.4.2.0.jar
     db/derbytools-10.4.2.0.jar
     commons-cli-1.0.jar	
-    commons-fileupload-1.0.jar
-    commons-net-1.4.1.jar
+    commons-fileupload-1.2.1.jar
+    commons-net-2.0.jar
     dom4j-1.5.2.jar
     heritrix/lib/heritrix-1.14.3.jar
     heritrix-dependencies/commons-codec-1.3.jar
@@ -47,13 +47,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     commons-logging-1.0.4.jar
     httpunit-1.6.jar
     jaxen-1.1.jar
-    jetty-6.1.6.jar
+    jetty-6.1.22.jar
     jetty-dependencies/ant-1.6.5.jar
     jetty-dependencies/core-3.1.1.jar
-    jetty-dependencies/jetty-util-6.1.6.jar
-    jetty-dependencies/jsp-2.1.jar
-    jetty-dependencies/jsp-api-2.1.jar
-    jetty-dependencies/servlet-api-2.5-6.1.6.jar
+    jetty-dependencies/jetty-util-6.1.22.jar
+    jetty-dependencies/jsp-2.1-jetty-6.1.22.jar
+    jetty-dependencies/jsp-2.1-glassfish-9.1.1.B60.25.p2.jar
+    jetty-dependencies/jsp-api-2.1-glassfish-9.1.1.B60.25.p2.jar
+    jetty-dependencies/servlet-api-2.5-20081211.jar
     jetty-dependencies/slf4j-api-1.3.1.jar
     jetty-dependencies/slf4j-jcl-1.3.1.jar
     sunjms-lib/imq-4.1-b22g.jar
@@ -73,8 +74,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             	<include name="db/derbyclient-10.4.2.0.jar"/>
             	<include name="db/derbytools-10.4.2.0.jar"/>
             	<include name="commons-cli-1.0.jar"/>
-                <include name="commons-fileupload-1.0.jar"/>
-                <include name="commons-net-1.4.1.jar"/>
+                <include name="commons-fileupload-1.2.1.jar"/>
+                <include name="commons-net-2.0.jar"/>
                 <include name="dom4j-1.5.2.jar"/>
                 <include name="heritrix/lib/heritrix-1.14.3.jar"/>
                 <include name="heritrix-dependencies/commons-codec-1.3.jar"/>
@@ -86,13 +87,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="commons-logging-1.0.4.jar"/>
                 <include name="junit-3.8.2.jar"/>
                 <include name="jaxen-1.1.jar"/>
-                <include name="jetty-6.1.6.jar"/>
+                <include name="jetty-6.1.22.jar"/>
                 <include name="jetty-dependencies/ant-1.6.5.jar"/>
                 <include name="jetty-dependencies/core-3.1.1.jar"/>
-                <include name="jetty-dependencies/jetty-util-6.1.6.jar"/>
-                <include name="jetty-dependencies/jsp-2.1.jar"/>
-                <include name="jetty-dependencies/jsp-api-2.1.jar"/>
-                <include name="jetty-dependencies/servlet-api-2.5-6.1.6.jar"/>
+                <include name="jetty-dependencies/jetty-util-6.1.22.jar"/>
+            	<include name="jetty-dependencies/jsp-2.1-jetty-6.1.22.jar"/>
+            	<include name="jetty-dependencies/jsp-2.1-glassfish-9.1.1.B60.25.p2.jar"/>
+            	<include name="jetty-dependencies/jsp-api-2.1-glassfish-9.1.1.B60.25.p2.jar"/>
+                <include name="jetty-dependencies/servlet-api-2.5-20081211.jar"/>
                 <include name="jetty-dependencies/slf4j-api-1.3.1.jar"/>
                 <include name="jetty-dependencies/slf4j-jcl-1.3.1.jar"/>
                 <include name="sunjms-lib/imq-4.1-b22g.jar"/>
@@ -115,11 +117,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <fileset dir="tests/lib">
             <include name="httpunit-1.6.jar"/>
             <include name="httpunit-dependencies/nekohtml-0.9.4.jar"/>
-            <include name="db/derbytools-10.1.1.0.jar"/>
             <include name="mockobjects-core-0.09.jar"/>
             <include name="mockobjects-jdk1.4-0.09.jar"/>
             <include name="mockobjects-jdk1.4-j2ee1.3-0.09.jar"/>
-            <include name="jakarta-oro-2.0.8.jar"/>
+       
         </fileset>
     	<fileset dir="lib/heritrix/lib">
     	 	<include name="commons-collections-3.1.jar"/>
