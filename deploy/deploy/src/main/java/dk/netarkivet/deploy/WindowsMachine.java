@@ -1007,7 +1007,7 @@ public class WindowsMachine extends Machine {
                         Constants.SETTINGS_TEMPDIR_LEAF);
                 for(String dir : dirs) {
                     // Don't make machine temp dir twice.
-                    if(dir.equals(machineDir)) {
+                    if(!dir.equals(machineDir)) {
                         res.append(createPathToDir(dir));
                         res.append(scriptCreateDir(dir, resetTempDir));
                     }
@@ -1082,10 +1082,9 @@ public class WindowsMachine extends Machine {
                 dirPrint.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local start all script: "
-                + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
+            String msg = "Problems creating install directory script: ";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -1126,7 +1125,7 @@ public class WindowsMachine extends Machine {
                 .SETTINGS_COMMON_JMX_ACCESSFILE);
 
         // extract the path, if any. Else set default.
-        if(options == null || options.length < 0) {
+        if(options.length == 0) {
             accessFilePath = Constants.JMX_ACCESS_FILE_PATH_DEFAULT;
         } else {
             accessFilePath = options[0];
@@ -1141,7 +1140,7 @@ public class WindowsMachine extends Machine {
                 .SETTINGS_COMMON_JMX_PASSWORDFILE);
 
         // extract the path, if any. Else set default.
-        if(options == null || options.length < 0) {
+        if(options.length == 0) {
             passwordFilePath = Constants.JMX_PASSWORD_FILE_PATH_DEFAULT;
         } else {
             passwordFilePath = options[0];

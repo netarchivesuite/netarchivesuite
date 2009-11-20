@@ -221,8 +221,8 @@ public class XmlStructure {
      * @param path Specifies the path in the tree (e.g. in HTML: 
      * GetSubChildValue("HTML", "HEAD", "TITLE") to get the title of 
      * a HTML document)
-     * @return The content of the leaf. If it is not a leaf, return null.
-     * Returns 'null' if the path to the branch cannot be found.   
+     * @return The content of the leaf. If no leafs are found then an empty
+     * collection of strings are returned (new String[0]).   
      */
     public String[] getLeafValues(String ...path) {
         // check argument

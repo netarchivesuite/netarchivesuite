@@ -223,7 +223,8 @@ public class Application {
      * For acquiring all the values of the leafs at the end of the path.
      * 
      * @param path The path to the branches.
-     * @return The values of the leafs.
+     * @return The values of the leafs. If no values were found, then an empty
+     * collection of strings are returned.
      */
     public String[] getSettingsValues(String[] path) {
         ArgumentNotValid.checkNotNull(path, "String[] path");

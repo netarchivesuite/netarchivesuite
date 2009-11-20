@@ -463,7 +463,7 @@ public class LinuxMachine extends Machine {
                     // then make script for killing the heritrix process.
                     String[] heritrixJmxPort = app.getSettingsValues(
                             Constants.SETTINGS_HARVEST_HETRIX_JMX_PORT);
-                    if(heritrixJmxPort != null) {
+                    if(heritrixJmxPort != null && heritrixJmxPort.length > 0) {
                         // log if more than one jmx port defined for heritrix.
                         if(heritrixJmxPort.length > 1) {
                             log.trace(heritrixJmxPort.length 
@@ -954,7 +954,7 @@ public class LinuxMachine extends Machine {
                 .SETTINGS_COMMON_JMX_ACCESSFILE);
 
         // extract the path, if any. Else set default.
-        if(options == null || options.length < 0) {
+        if(options.length == 0) {
             accessFilePath = Constants.JMX_ACCESS_FILE_PATH_DEFAULT;
         } else {
             accessFilePath = options[0];
@@ -969,7 +969,7 @@ public class LinuxMachine extends Machine {
                 .SETTINGS_COMMON_JMX_PASSWORDFILE);
 
         // extract the path, if any. Else set default.
-        if(options == null || options.length < 0) {
+        if(options.length == 0) {
             passwordFilePath = Constants.JMX_PASSWORD_FILE_PATH_DEFAULT;
         } else {
             passwordFilePath = options[0];

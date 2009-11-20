@@ -232,12 +232,15 @@ public class PhysicalLocation {
             } finally {
                 // close writers
                 if(kWriter != null) {
+                    kWriter.flush();
                     kWriter.close();
                 }
                 if(iWriter != null) {
+                    iWriter.flush();
                     iWriter.close();
                 }
                 if(sWriter != null) {
+                    sWriter.flush();
                     sWriter.close();
                 }
             }
