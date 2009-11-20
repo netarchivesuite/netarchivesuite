@@ -245,15 +245,10 @@ public class PhysicalLocation {
                 }
             }
         } catch (IOException e) {
-            String msg = "Problems creating the scripts for the physical "
-                + "locations: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in creating the scripts for the physical "
-                + "locations: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Cannot create the scripts for the physical "
+                + "location: '" + name + "'.";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 }

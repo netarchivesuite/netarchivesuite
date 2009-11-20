@@ -320,13 +320,9 @@ public class LinuxMachine extends Machine {
                 killPrinter.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local kill all script: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in create local kill all script: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Problems creating local kill all script. ";
+            log.error(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -358,7 +354,7 @@ public class LinuxMachine extends Machine {
         try {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
-        try {
+            try {
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
                         + Constants.COLON + Constants.SPACE 
                         + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
@@ -384,13 +380,9 @@ public class LinuxMachine extends Machine {
                 startPrinter.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local start all script: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in create local start all script: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Problems creating local start all script. ";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -492,13 +484,9 @@ public class LinuxMachine extends Machine {
                     appPrint.close();
                 }
             } catch (IOException e) {
-                String msg = "Problems creating application kill script: " + e;
-                log.trace(msg);
-                throw new IOFailure(msg);
-            } catch(Exception e) {
-                String msg = "Error in creating application kill script: " + e;
-                log.trace(msg);
-                System.out.println(msg);
+                String msg = "Problems creating application kill script: ";
+                log.error(msg, e);
+                throw new IOFailure(msg, e);
             }
         }
     }
@@ -609,13 +597,9 @@ public class LinuxMachine extends Machine {
                     appPrint.close();
                 }
             } catch (IOException e) {
-                String msg = "Problems creating application start script: " + e;
-                log.trace(msg);
-                throw new IOFailure(msg);
-            } catch(Throwable e) {
-                String msg = "Error in creating application start script: " + e;
-                log.trace(msg);
-                System.out.println(msg);
+                String msg = "Problems creating application start script. ";
+                log.trace(msg, e);
+                throw new IOFailure(msg, e);
             }
         }
     }

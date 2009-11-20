@@ -312,7 +312,9 @@ public abstract class Machine {
                 }
             }
         } catch (IOException e) {
-            log.warn("IOException occurred: " + e);
+            String errMsg = "Cannot create security policy file."; 
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 
@@ -349,7 +351,9 @@ public abstract class Machine {
                     }
                 }
             } catch (IOException e) {
-                log.warn("IOException occurred: " + e);
+                String errMsg = "Cannot create log property file.";
+                log.warn(errMsg, e);
+                throw new IOFailure(errMsg, e);
             }
         }
     }
@@ -382,13 +386,9 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating jmxremote.password: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in creating jmxremote.password " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Cannot create jmxremote.password";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
     
@@ -420,13 +420,9 @@ public abstract class Machine {
                 jw.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating jmxremote.access: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in creating jmxremote.access: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Cannot create jmxremote.access file. ";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
     
@@ -437,11 +433,11 @@ public abstract class Machine {
      * username and the same passwords.  
      *  
      * @return The string to add to the jmxremote.password file.
-     * @throws Exception If there is a different amount of usernames 
+     * @throws IllegalState If there is a different amount of usernames 
      * and passwords, or if two application has different values for their
      * username or passwords (applications without values are ignored). 
      */
-    protected String getMonitorLogin() throws Exception{
+    protected String getMonitorLogin() throws IllegalState {
         StringBuilder res = new StringBuilder();
         // initialise list of usernames and passwords to add
         List<String> usernames = new ArrayList<String>();
@@ -474,7 +470,7 @@ public abstract class Machine {
                     + "in monitor under applications on machine: '" 
                     + name + "'"; 
             log.warn(msg);
-            throw new Exception(msg);
+            throw new IllegalState(msg);
         }
 
         // warn if no usernames for monitor.
@@ -491,7 +487,7 @@ public abstract class Machine {
                 String msg = "Different usernames or passwords "
                     + "under monitor on the same machine: '" + name + "'";
                 log.warn(msg);
-                throw new Exception(msg);
+                throw new IllegalState(msg);
             }
         }
         
@@ -557,11 +553,11 @@ public abstract class Machine {
      * username and the same passwords.  
      *  
      * @return The string to add to the jmxremote.password file.
-     * @throws Exception If there is a different amount of usernames 
+     * @throws IllegalState If there is a different amount of usernames 
      * and passwords, or if two application has different values for their
      * username or passwords (applications without values are ignored). 
      */
-    protected String getHeritrixLogin() throws Exception{
+    protected String getHeritrixLogin() throws IllegalState { 
         StringBuilder res = new StringBuilder();
         // initialise list of usernames and passwords to add
         List<String> usernames = new ArrayList<String>();
@@ -594,7 +590,7 @@ public abstract class Machine {
                     + "in heritrix under applications on machine: '"
                     + name + "'";
             log.warn(msg);
-            throw new Exception(msg);
+            throw new IllegalState(msg);
         }
 
         // if no usernames, and thus no passwords, finish!
@@ -610,7 +606,7 @@ public abstract class Machine {
                 String msg = "Different usernames or passwords "
                     + "under heritrix on machine: '" + name + "'";
                 log.warn(msg);
-                throw new Exception(msg);
+                throw new IllegalState(msg);
             }
         }
 

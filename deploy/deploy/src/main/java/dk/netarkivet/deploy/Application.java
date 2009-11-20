@@ -24,6 +24,7 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import org.apache.commons.logging.Log;
@@ -130,9 +131,9 @@ public class Application {
                 applicationInstanceId = elem.getText();
             } 
         } catch(Exception e) {
-            String msg = "Application variables not extractable: " + e; 
-            log.debug(msg);
-            throw new IOFailure(msg);
+            String msg = "Application variables not extractable."; 
+            log.debug(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -183,9 +184,10 @@ public class Application {
             } finally {
                 pw.close();
             }
-        } catch (Exception e) {
-            log.debug("Error in creating settings file for application: " + e);
-            throw new IOFailure("Cannot create settings file: " + e);
+        } catch (FileNotFoundException e) {
+            String errMsg = "Cannot create settings file for an application.";
+            log.debug(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 

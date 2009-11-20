@@ -377,13 +377,9 @@ public class WindowsMachine extends Machine {
                 killPrinter.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating local kill all script: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in creating local kill all script: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+            String msg = "Problems creating local kill all script. ";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -428,13 +424,9 @@ public class WindowsMachine extends Machine {
             }
         } catch (IOException e) {
             String msg = "Problems during creation of the local start "
-                    + "all script: " + e;
-            log.trace(msg);
-            throw new IOFailure(msg);
-        } catch(Exception e) {
-            String msg = "Error in creating local start all script: " + e;
-            log.trace(msg);
-            System.out.println(msg);
+                    + "all script.";
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -567,9 +559,9 @@ public class WindowsMachine extends Machine {
             } catch (IOException e) {
                 String msg = "Cannot create the kill script for "
                     + "application: " + app.getIdentification() 
-                    + ", at machine: " + name + ", with exception: " + e; 
-                log.trace(msg);
-                throw new IOFailure(msg);
+                    + ", at machine: '" + name + "'"; 
+                log.trace(msg, e);
+                throw new IOFailure(msg, e);
             } 
         }
     }
@@ -588,17 +580,10 @@ public class WindowsMachine extends Machine {
     @Override
     protected void createApplicationStartScripts(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
-        try {
-            // go through all applications and create their start script
-            for(Application app : applications) {
-                windowsStartBatScript(app, directory);
-                windowsStartVbsScript(app, directory);
-            }
-        } catch(Exception e) {
-            String msg = "Error in creating start script for applications: " 
-                + e; 
-            log.trace(msg);
-            System.out.println(msg);
+        // go through all applications and create their start script
+        for(Application app : applications) {
+            windowsStartBatScript(app, directory);
+            windowsStartVbsScript(app, directory);
         }
     }
 
@@ -713,10 +698,9 @@ public class WindowsMachine extends Machine {
             }
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: "
-                + app.getIdentification() + ", at machine: "
-                + name + ", with exception: " + e; 
-            log.trace(msg);
-            throw new IOFailure(msg);
+                + app.getIdentification() + ", at machine: '" + name + "'"; 
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -812,10 +796,9 @@ public class WindowsMachine extends Machine {
             }
         } catch (IOException e) {
             String msg = "Cannot create the start script for application: "
-                + app.getIdentification() + ", at machine: "
-                + name + ", with exception: " + e; 
-            log.trace(msg);
-            throw new IOFailure(msg);
+                + app.getIdentification() + ", at machine: '" + name + "'"; 
+            log.trace(msg, e);
+            throw new IOFailure(msg, e);
         }
     }
 
@@ -1082,7 +1065,7 @@ public class WindowsMachine extends Machine {
                 dirPrint.close();
             }
         } catch (IOException e) {
-            String msg = "Problems creating install directory script: ";
+            String msg = "Problems creating install directory script. ";
             log.trace(msg, e);
             throw new IOFailure(msg, e);
         }

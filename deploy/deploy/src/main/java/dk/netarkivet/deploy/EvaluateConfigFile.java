@@ -35,6 +35,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 
@@ -61,14 +62,8 @@ public class EvaluateConfigFile {
     public EvaluateConfigFile(File deployConfigFile) {
         ArgumentNotValid.checkNotNull(deployConfigFile, 
                 "File deployConfigFile");
-        try {
-            initLoadDefaultSettings();
-            root = new XmlStructure(deployConfigFile);
-        } catch (Exception e) {
-            String msg = "Evaluation error: " + e;
-            log.warn(msg);
-            throw new IllegalState(msg);
-        }
+        initLoadDefaultSettings();
+        root = new XmlStructure(deployConfigFile);
     }
     
     /**
@@ -111,9 +106,8 @@ public class EvaluateConfigFile {
      * Load the default settings files as reference trees.
      * These are used for testing whether the branches in the settings file
      * are to be used or not.
-     * @throws IOException If file not found.
      */
-    private void initLoadDefaultSettings() throws IOException {
+    private void initLoadDefaultSettings() {
         File f = FileUtils.getResourceFileFromClassPath(
                 Constants.BUILD_COMPLETE_SETTINGS_FILE_PATH);
         try {
@@ -123,12 +117,13 @@ public class EvaluateConfigFile {
                 doc =  reader.read(f);
                 completeSettings = doc.getRootElement();
             } else {
-                System.out.println("Cannot read file: '" 
+                log.warn("Cannot read file: '" 
                         + f.getAbsolutePath() + "'");
             }
         } catch (DocumentException e) {
-            System.err.println("Problems with file: '" 
-                    + f.getAbsolutePath() + "'");
+            String errMsg = "Cannot handle complete settings file.";
+            log.error(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
     
@@ -161,6 +156,7 @@ public class EvaluateConfigFile {
                     evaluateElement(el);
                 }
             } else {
+                // Print out the 'illegal' branches.
                 System.out.println("Branch in settings not found: " 
                         + path.replace(Constants.SLASH, Constants.DOT));
             }

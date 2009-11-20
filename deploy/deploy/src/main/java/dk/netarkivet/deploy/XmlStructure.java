@@ -256,9 +256,7 @@ public class XmlStructure {
         try {
             overWriting(root, overwriter);
         } catch (IllegalState e) {
-            log.trace("Overwriting illegal area: " + e);
-        } catch(Exception e) {
-            log.warn("Error in overwritting an XML tree: " + e);
+            log.trace("Overwriting illegal area. ", e);
         }
     }
 
@@ -405,7 +403,8 @@ public class XmlStructure {
 
             return doc.getRootElement();
         } catch (Exception e) {
-            System.err.println("makeElementFromString error: " + e);
+            LogFactory.getLog(XmlStructure.class).warn(
+                    "makeElementFromString error caugth. Null returned.", e);
             return null;
         }
     }
