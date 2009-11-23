@@ -396,15 +396,14 @@ public final class DeployApplication {
      * @param evaluateArgument The argument for evaluation.
      */
     public static void initEvaluate(String evaluateArgument) {
-        if(evaluateArgument != null) {
-            // check if argument is acknowledgement ('y' or 'yes')
-            if(evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
-                    || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG)) {
-                // if yes, then evaluate config file
-                EvaluateConfigFile evf = 
-                    new EvaluateConfigFile(deployConfigFile);
-                evf.evaluate();
-            }
+        // check if argument is given and it is acknowledgement ('y' or 'yes')
+        if((evaluateArgument != null) && (!evaluateArgument.isEmpty()) && 
+            (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
+                    || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG))) {
+            // if yes, then evaluate config file
+            EvaluateConfigFile evf = 
+                new EvaluateConfigFile(deployConfigFile);
+            evf.evaluate();
         }
     }
        

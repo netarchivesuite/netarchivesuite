@@ -899,7 +899,7 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected void createInstallDirScript(File dir) {
-        return;
+        // Do nothing. Dummy function on linux machine.
     }
 
     /**
