@@ -279,10 +279,11 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        // If it is a reply, then make arcrepository handle it. 
+        log.info("Recieved GetChecksumMessage '" + msg + "'.");
+        
+        // If it is a reply, then handle by arc-repository. 
         // Otherwise send further.
-        if(msg.getReplyTo().getName().equals(Channels.getTheRepos())) {
-//        if(msg.hasBeenSent())
+        if(msg.getIsReply()) {
             try {
                 ar.onChecksumReply(msg);
             } catch(Throwable t) {

@@ -42,6 +42,8 @@ public class GetChecksumMessage extends ArchiveMessage {
     private String checksum;
     /** The id of the replica where the checksum should be retrieved.*/
     private String replicaId;
+    /** Variable to tell whether this is a reply.*/
+    private boolean isReply = false;
 
     /**
      * Constructor.
@@ -89,6 +91,25 @@ public class GetChecksumMessage extends ArchiveMessage {
      */
     public String getChecksum() {
         return checksum;
+    }
+    
+    /**
+     * Retrieves the variable for telling whether this it currently is a reply
+     * to this message or not.
+     * 
+     * @return Whether this is a reply or not.
+     */
+    public boolean getIsReply() {
+        return isReply;
+    }
+    
+    /**
+     * Set that this is a reply. This should be set when there is replied to 
+     * this message. 
+     * <b>isReply = true</b>.
+     */
+    public void setIsReply() {
+        isReply = true;
     }
 
     /**

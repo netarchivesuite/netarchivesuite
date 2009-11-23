@@ -280,6 +280,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         } finally {
             // log the message and reply.
             log.info(msg.toString());
+            // TODO this should be set elsewhere.
+            msg.setIsReply();
             jmsCon.reply(msg);
         }
     }
