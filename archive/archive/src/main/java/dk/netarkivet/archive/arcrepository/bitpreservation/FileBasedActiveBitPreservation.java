@@ -329,28 +329,29 @@ public class FileBasedActiveBitPreservation
             new HashMap<String, List<String>>();
         
         try {
-            // get all the checsums
-            PreservationArcRepositoryClient arcClient = 
+            PreservationArcRepositoryClient arcClient =
                 ArcRepositoryClientFactory.getPreservationInstance();
-            File checksumFile = arcClient.getAllChecksums(rep.getId());
-            
-            // go through all entries and extract the relevant ones.
-            for(String line : FileUtils.readListFromFile(checksumFile)) {
-                KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
-                // If the file is wanted, then put it into the map.
-                if(filenames.contains(entry.getKey())) {
-                    // remove from filename list, so it is not found twice.
-                    filenames.remove(entry.getKey());
-                    
-                    // put this entry into the map.
-//                    List<String> csList = Collections.<String>emptyList();
-                    List<String> csList = new ArrayList<String>(1);
-                    csList.add(entry.getValue());                    
-                    res.put(entry.getKey(), csList);
+            // for each file extract the checksum through an checksum message
+            // and then put it into the resulting map.
+            for(String file : filenames) {
+                // retrieve the checksum from the replica.
+                String checksum = arcClient.getChecksum(rep.getId(), file);
+                
+                // put the checksum into a list, or make empty list if the 
+                // checksum was not retrieved.
+                List<String> csList;
+                if(checksum == null || checksum.isEmpty()) {
+                    csList = Collections.<String>emptyList();
+                } else {
+                    csList = new ArrayList<String>();
+                    csList.add(checksum);
                 }
-                // TODO if an entry for the file already has been put into the 
-                // map, then also add this entry to corresponding list.
+                
+                // put the filename and list into the map.
+                res.put(file, csList);
             }
+
+            log.debug("The map from a checksum archive: " + res.toString());
         } catch (NetarkivetException e) {
             // This is not critical. Log and continue.
             log.warn("The retrieval of checksums from a checksum archive was "

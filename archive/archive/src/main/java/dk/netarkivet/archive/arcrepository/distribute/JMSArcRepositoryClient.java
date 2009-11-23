@@ -37,6 +37,7 @@ import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -632,6 +633,58 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             log.warn(errMsg);
             throw new IOFailure(errMsg, e);
         }
+    }
+    
+    /**
+     * Retrieves the checksum of a specific file.
+     * 
+     * This is the checksum archive alternative to running a ChecksumJob 
+     * limited to a specific file.
+     * 
+     * @param replicaId The name of the replica to send the message.
+     * @param filename The name of the file for whom the checksum should be
+     * retrieved.
+     * @return The checksum of the file in the replica. Or null if an 
+     * error occurred.
+     */
+    public String getChecksum(String replicaId, String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        log.debug("Sending GetChecksumMessage to replica '" + replicaId
+                  + "' for file '" + filename + "'.");
+        // time this.
+        long start = System.currentTimeMillis();
+        // make and send the message to the replica.
+        GetChecksumMessage gafMsg = new GetChecksumMessage(Channels
+                .getTheRepos(), replyQ, filename, replicaId);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
+                                                               getTimeout);
+        // calculate and log the time spent on handling the message.
+        long timePassed = System.currentTimeMillis() - start;
+        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        // check whether the output was valid.
+        if (replyNetMsg == null) {
+            log.info("Request for checksum timed out after "
+                     + (getTimeout / 1000) + " seconds. Null returned.");
+            // return an null
+            return null;
+        }
+        
+        // convert to the correct type of message.
+        GetChecksumMessage replyCSMsg;
+        try {
+            replyCSMsg = (GetChecksumMessage) replyNetMsg;
+        } catch (ClassCastException e) {
+            String errorMsg = "Received invalid reply message: '" + replyNetMsg;
+            log.warn(errorMsg, e);
+            throw new IOFailure(errorMsg, e);
+        }
+
+        if(!replyCSMsg.isOk()) {
+            log.warn("The reply message for retrieval of checksum was not OK."
+                    + " Tries to extract checksum anyway.");
+        }
+        return replyCSMsg.getChecksum();
     }
 
     /**

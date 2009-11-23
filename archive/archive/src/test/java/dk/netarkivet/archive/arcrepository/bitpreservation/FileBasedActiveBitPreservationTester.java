@@ -801,6 +801,12 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
 	    // TODO: something!
 	    
 	}
+
+    @Override
+    public String getChecksum(String replicaId, String filename) {
+        // TODO Auto-generated method stub
+        return null;
+    }
     }
 
 }

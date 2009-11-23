@@ -356,4 +356,10 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 	// TODO Auto-generated method stub
 	throw new NotImplementedException("TODO: Implement me!");
     }
+
+    @Override
+    public String getChecksum(String replicaId, String filename) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

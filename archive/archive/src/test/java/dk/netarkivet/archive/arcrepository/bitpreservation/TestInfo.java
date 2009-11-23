@@ -49,6 +49,13 @@ public class TestInfo {
     /** The filedir for the invalid bitarchive. */
     public static final File FAIL_ARCHIVE_FILE_DIR
             = new File(GOOD_ARCHIVE_DIR, "filedir");
+    
+    /** The directory for containing the files for the checksum replica.*/
+    public static final File CHECKSUM_ARCHIVE_DIR
+            = new File(WORKING_DIR, "checksum");
+    /** The checksum archive file for testing the missing files.*/
+    public static final File CHECKSUM_ARCHIVE_FILE
+            = new File(CHECKSUM_ARCHIVE_DIR, "checksum_THREE.md5");
 
     /** The files known to be present in the bitarchive dirs. */
     public static final String[] REFERENCE_FILES = new String[]{

@@ -132,6 +132,20 @@ public interface PreservationArcRepositoryClient  {
     File getAllChecksums(String replicaId);
     
     /**
+     * Retrieves the checksum of a specific file.
+     * 
+     * This is the checksum archive alternative to running a ChecksumJob 
+     * limited to a specific file.
+     * 
+     * @param replicaId The name of the replica to send the message.
+     * @param filename The name of the file for whom the checksum should be
+     * retrieved.
+     * @return The checksum of the file in the replica. Or null if an 
+     * error occurred.
+     */
+    String getChecksum(String replicaId, String filename);
+    
+    /**
      * Retrieves the names of all the files in the replica through a 
      * GetAllFilenamesMessage.
      * 
