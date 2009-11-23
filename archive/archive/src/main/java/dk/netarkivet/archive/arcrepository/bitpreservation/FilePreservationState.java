@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
@@ -209,9 +210,10 @@ public class FilePreservationState {
 
         for (Replica r : Replica.getKnown()) {
             String cs = getUniqueChecksum(r);
-            if (referenceCheckSum.equals(cs)) {
-                log.trace("Reference archive for file '" + filename + "' is '"
-                        + r.getName() + "'");
+            if (referenceCheckSum.equals(cs) && 
+                    (r.getType() == ReplicaType.BITARCHIVE)) {
+                log.debug("Reference archive for file '" + filename + "' is '"
+                        + r.getId() + "'");
                 return r;
             }
         }
