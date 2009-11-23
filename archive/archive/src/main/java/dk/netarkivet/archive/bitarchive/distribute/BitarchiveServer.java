@@ -234,6 +234,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      *
      * @param msg a container for upload request
      */
+    @Override
     public void visit(GetMessage msg) {
         BitarchiveRecord bar;
         log.trace("Processing getMessage(" + msg.getArcFile() + ":"
@@ -263,6 +264,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      *
      * @param msg a container for upload request
      */
+    @Override
     public void visit(UploadMessage msg) {
         // TODO Implement a thread-safe solution on resource level rather than
         // message processor level.
@@ -313,6 +315,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * - the supplied credentials are correct
      * @param msg a container for remove request
      */
+    @Override
     public void visit(RemoveAndGetFileMessage msg) {
         String mesg = "Request to move file '" + msg.getArcfileName()
                       + "' with checksum '" + msg.getCheckSum() + "' to attic";
@@ -386,8 +389,10 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      *
      * @param msg a container for batch jobs
      */
+    @Override
     public void visit(final BatchMessage msg) {
         Thread batchThread = new Thread("Batch-" + msg.getID()) {
+            @Override
             public void run() {
                 try {
                     // TODO Possibly tell batch something that will let
@@ -436,6 +441,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      *
      * @param msg a container for a getfile request
      */
+    @Override
     public void visit(GetFileMessage msg) {
         try {
             File foundFile = ba.getFile(msg.getArcfileName());
