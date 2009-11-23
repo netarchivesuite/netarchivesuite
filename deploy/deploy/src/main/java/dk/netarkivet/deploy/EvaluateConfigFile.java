@@ -24,7 +24,6 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -36,7 +35,6 @@ import org.dom4j.io.SAXReader;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 
 /**
