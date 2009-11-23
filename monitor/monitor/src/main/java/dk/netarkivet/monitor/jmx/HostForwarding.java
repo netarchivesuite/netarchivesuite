@@ -126,11 +126,11 @@ public class HostForwarding<T> {
      * each query string. Any subsequent call with the same query string will
      * simply return the previously initiated instance.
      *
-     * @param asInterface The interface remote mbeans should implement
+     * @param asInterface The interface remote mbeans should implement.
      * @param mBeanServer The MBean server to register proxy mbeans in.
      * @param query       The query for which we should proxy matching mbeans on
      *                    remote servers.
-     * @param <T>         The type of HostForwarding to return
+     * @param <T>         The type of HostForwarding to return.
      *
      * @return This host forwarding instance.
      */
@@ -154,7 +154,7 @@ public class HostForwarding<T> {
     private synchronized void updateJmx() {
         // Update username/password setting, if either of the settings
         // MonitorSettings.JMX_PASSWORD_SETTING,
-        // MonitorSettings.JMX_USERNAME_SETTING have changed
+        // MonitorSettings.JMX_USERNAME_SETTING have changed.
 
         boolean changed = updateJmxUsernameAndPassword();
         if (changed) {
@@ -162,15 +162,16 @@ public class HostForwarding<T> {
                      + MonitorSettings.JMX_USERNAME_SETTING
                      + "' and '" + MonitorSettings.JMX_PASSWORD_SETTING +
                      "' has been updated with value from a System property "
-                     + "or one of the files: " + StringUtils.conjoin(",",
-                                                                     Settings.getSettingsFiles()));
+                     + "or one of the files: "
+                     + StringUtils.conjoin(",", Settings.getSettingsFiles()));
         }
 
         List<HostEntry> newJmxHosts = new ArrayList<HostEntry>();
         for (Map.Entry<String, Set<HostEntry>> entries
                 : getCurrentHostEntries().entrySet()) {
             String host = entries.getKey();
-            //Take a copy of the host entries, to avoid concurrent modifications
+            // Take a copy of the host entries, to avoid concurrent
+            // modifications.
             Set<HostEntry> hostEntries
                     = new HashSet<HostEntry>(entries.getValue());
             if (knownJmxConnections.containsKey(host)) {
@@ -209,7 +210,7 @@ public class HostForwarding<T> {
     /**
      * Update JMX username and password.
      *
-     * @return true if the username and/or the password were changed
+     * @return true if the username and/or the password were changed.
      */
     private boolean updateJmxUsernameAndPassword() {
         boolean changed = false;
@@ -248,7 +249,7 @@ public class HostForwarding<T> {
      * reconnect on any invocation, and returns the status of the attempt as a
      * string.
      *
-     * @param hosts the list of remote Hosts
+     * @param hosts the list of remote Hosts.
      */
     private void registerRemoteMbeans(List<HostEntry> hosts) {
         for (HostEntry hostEntry : hosts) {
@@ -339,7 +340,7 @@ public class HostForwarding<T> {
      *
      * @param mBeanQuery The query to return the domain from.
      *
-     * @return the domain from a given query
+     * @return the domain from a given query.
      */
     private String queryToDomain(String mBeanQuery) {
         return mBeanQuery.replaceAll(":.*$", "");
@@ -451,12 +452,12 @@ public class HostForwarding<T> {
          *
          * @throws IOFailure On trouble establishing the connection.
          * @throws javax.management.RuntimeMBeanException
-         *                   On exceptions in the mbean invocations
+         *                   On exceptions in the mbean invocations.
          * @throws Throwable What ever the remote mbean has thrown.
          */
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws Throwable {
-            //establish or reestablish mbean
+            // establish or reestablish mbean.
             JMXProxyConnection connection;
             try {
                 connection = connectionFactory.getConnection(
@@ -471,7 +472,7 @@ public class HostForwarding<T> {
                                     + "', last seen active at '"
                                     + hostEntry.getTime() + "'\n", e);
             }
-            //call remote method
+            // call remote method.
             T mBean = connection.createProxy(name, asInterface);
             return method.invoke(mBean, args);
         }
