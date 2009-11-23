@@ -325,8 +325,8 @@ public class FileBasedActiveBitPreservation
      */
     private Map<String, List<String>> getChecksumFromChecksumArchive(
             Replica rep, Set<String> filenames) {
-        Map<String, List<String>> res = 
-            Collections.<String, List<String>>emptyMap();
+        Map<String, List<String>> res =
+            new HashMap<String, List<String>>();
         
         try {
             // get all the checsums
@@ -343,8 +343,9 @@ public class FileBasedActiveBitPreservation
                     filenames.remove(entry.getKey());
                     
                     // put this entry into the map.
+//                    List<String> csList = Collections.<String>emptyList();
                     List<String> csList = new ArrayList<String>(1);
-                    csList.add(entry.getValue());
+                    csList.add(entry.getValue());                    
                     res.put(entry.getKey(), csList);
                 }
                 // TODO if an entry for the file already has been put into the 
