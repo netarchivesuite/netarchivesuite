@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.distribute.indexserver;
-/**
- * lc forgot to comment this!
- */
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,7 +34,9 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
-
+/**
+ * Unit tests for the TrivialJobIndexCache class. 
+ */
 public class TrivialJobIndexCacheTester extends TestCase {
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.WORKING_DIR);

@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
+ * Unittestersuite for the dk.netarkivet.monitor.jmx package.
  *
  */
 public class MonitorJMXTesterSuite {
@@ -43,7 +43,7 @@ public class MonitorJMXTesterSuite {
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(CachingProxyConnectionFactoryTester.class);

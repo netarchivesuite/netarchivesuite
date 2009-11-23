@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.monitor.jmx;
-/**
- * lc forgot to comment this!
- */
 
 import javax.management.ObjectName;
 import java.util.Set;
@@ -32,7 +29,7 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
-
+/** Unittest for testing the CachingProxyConnectionFactory class. */ 
 public class CachingProxyConnectionFactoryTester extends TestCase {
     public CachingProxyConnectionFactoryTester(String s) {
         super(s);

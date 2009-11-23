@@ -26,10 +26,9 @@ package dk.netarkivet.archive.indexserver;
 import java.io.File;
 
 /**
- * lc forgot to comment this!
- *
+ * TestInfo class holding variables used by the tests for the
+ * indexserver package.
  */
-
 public class TestInfo {
     static final File BASE_DIR = new File("tests/dk/netarkivet/archive/indexserver/data");
     static final File ORIGINALS_DIR = new File(BASE_DIR, "originals");

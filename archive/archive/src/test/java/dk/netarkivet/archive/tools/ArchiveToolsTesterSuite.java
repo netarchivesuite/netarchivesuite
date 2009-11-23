@@ -28,10 +28,9 @@ import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
 /**
- * lc forgot to comment this!
+ * Unit-tester suite for the tests for package dk.netarkivet.archive.tools.
  *
  */
-
 public class ArchiveToolsTesterSuite {
     /**
      * Create a test suite just for these tests.
@@ -44,7 +43,7 @@ public class ArchiveToolsTesterSuite {
     }
 
     /**
-     * Add the tests here
+     * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(GetRecordTester.class);

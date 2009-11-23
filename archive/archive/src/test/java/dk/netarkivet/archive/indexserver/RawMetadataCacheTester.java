@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.archive.indexserver;
-/**
- * lc forgot to comment this!
- */
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -35,6 +32,9 @@ import dk.netarkivet.testutils.TestArcRepositoryClient;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 
 
+/**
+ * Unittests for the class RawMetadataCache.
+ */
 public class RawMetadataCacheTester extends CacheTestCase {
     MockupJMS mjms = new MockupJMS();
 
