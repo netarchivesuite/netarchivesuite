@@ -47,7 +47,8 @@ import dk.netarkivet.common.utils.SystemUtils;
  * Utility class that handles exposing the platform mbean server using rmi, and
  * using specified ports and password files. <br/><br/>
  *
- * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html <br/><br/>
+ * See http://java.sun.com/j2se/1.5.0/docs/guide/jmx/tutorial/security.html
+ * <br/><br/>
  *
  * TODO This implementation is not robust and could be improved. <br/>
  * TODO For instance: - Singleton behaviour <br/>
@@ -85,7 +86,7 @@ public class MBeanConnectorCreator {
                          + jmxPort + " communicating on port " + rmiPort
                          + " using password file '" + passwordFile + "'");
 
-                //Create a private registry for the exposing the JMX connector
+                // Create a private registry for the exposing the JMX connector.
                 LocateRegistry.createRegistry(jmxPort);
                 // Create a URL that signifies that we wish to use the local
                 // registry created above, and listen for rmi callbacks on the
@@ -111,7 +112,7 @@ public class MBeanConnectorCreator {
                 // Start the connector server.
                 cs.start();
                 isExposed = true;
-                //Register the JMX server at the registry.
+                // Register the JMX server at the registry.
                 MonitorRegistryClientFactory.getInstance().register(
                         SystemUtils.getLocalHostName(),
                         Settings.getInt(CommonSettings.JMX_PORT),
