@@ -655,9 +655,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // time this.
         long start = System.currentTimeMillis();
         // make and send the message to the replica.
-        GetChecksumMessage gafMsg = new GetChecksumMessage(Channels
+        GetChecksumMessage gcsMsg = new GetChecksumMessage(Channels
                 .getTheRepos(), replyQ, filename, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gcsMsg,
                                                                getTimeout);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;

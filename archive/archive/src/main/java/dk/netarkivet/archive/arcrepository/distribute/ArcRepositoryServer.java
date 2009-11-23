@@ -279,11 +279,25 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
-        // TODO: Make sure, that the message is a reply!
-        try {
-            ar.onChecksumReply(msg);
-        } catch(Throwable t) {
-            log.warn("Failed to handle GetChecksumMessage", t);
+        // If it is a reply, then make arcrepository handle it. 
+        // Otherwise send further.
+        if(msg.getReplyTo().getName().equals(Channels.getTheRepos())) {
+//        if(msg.hasBeenSent())
+            try {
+                ar.onChecksumReply(msg);
+            } catch(Throwable t) {
+                log.warn("Failed to handle GetChecksumMessage", t);
+            }
+        } else {
+            try {
+                ReplicaClient rc = ar.getReplicaClientFromReplicaId(
+                        msg.getReplicaId());
+                rc.getChecksum(msg);
+            } catch (Throwable e) {
+                log.warn("Failed to handle GetChecksumMessage.", e);
+                msg.setNotOk(e);
+                JMSConnectionFactory.getInstance().reply(msg);
+            }
         }
     }
 
