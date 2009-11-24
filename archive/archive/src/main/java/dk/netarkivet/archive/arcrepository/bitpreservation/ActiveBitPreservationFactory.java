@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -30,7 +31,8 @@ import dk.netarkivet.common.utils.SettingsFactory;
  * Creates an instance of the ActiveBitPreservation from on the setting
  * settings.archive.bitpreservation.class.
  * 
- * @see dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation
+ * @see 
+ * dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation
  */
 public class ActiveBitPreservationFactory 
         extends SettingsFactory<ActiveBitPreservation>{
@@ -43,6 +45,6 @@ public class ActiveBitPreservationFactory
      */
     public static ActiveBitPreservation getInstance() {
         return SettingsFactory.getInstance(
-        	ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION);
+                ArchiveSettings.CLASS_ARCREPOSITORY_BITPRESERVATION);
     }
 }

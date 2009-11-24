@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository;
 
@@ -274,11 +275,11 @@ public class ArcRepository implements CleanupIF {
     }
 
     /**
-     * Initiate uploading of file to a specific bitarchive. The corresponding
+     * Initiate uploading of file to a specific replica. The corresponding
      * upload record in admin data is created.
      *
-     * @param rf Remotefile to upload to bitarchive.
-     * @param replicaClient The bitarchive client to upload to.
+     * @param rf Remotefile to upload to replica.
+     * @param replicaClient The replica client to upload to.
      * @param replica The replica where RemoteFile is to be stored.
      */
     private synchronized void startUpload(RemoteFile rf,
@@ -416,7 +417,8 @@ public class ArcRepository implements CleanupIF {
         for (Replica rep : connectedReplicas.keySet()) {
             try {
                 // retrieve the replica channel and check upload status.
-                if (ad.getState(arcfileName, rep.getIdentificationChannel().getName()) 
+                if (ad.getState(arcfileName, 
+                        rep.getIdentificationChannel().getName()) 
                         != ReplicaStoreState.UPLOAD_COMPLETED) {
                     return false;
                 }
@@ -627,13 +629,13 @@ public class ArcRepository implements CleanupIF {
         RemoteFile checksumResFile = msg.getResultFile();
         String reportedChecksum = "";
         boolean checksumReadOk = false;
-        if (checksumResFile == null 
-                || checksumResFile instanceof NullRemoteFile) {
-                    log.debug("Message '" + msg.getID()
-                            + "' returned no results"
-                            + (checksumResFile == null ? " (was null)" : "")
-                            + "\nNo checksum to use for file '"
-                            + arcfileName + "'");
+        if (checksumResFile == null) {
+            log.debug("The results of message '" + msg.getID() + "' was null."
+                    + "\nNo checksum to use for file '" + arcfileName + "'");
+        } else if(checksumResFile instanceof NullRemoteFile) {
+            log.debug("The results of the message '" + msg.getID()
+                    + "' was instance of NullRemoteFile"
+                    + "\nNo checksum to use for file '" + arcfileName + "'");
         } else {
             //Read checksum
             // Copy result to a local file
@@ -710,28 +712,21 @@ public class ArcRepository implements CleanupIF {
                     + "\nTrying to process anyway.");
         }        
         
-        String orgChecksum = ad.getCheckSum(arcfileName);
-        String repChannelName = resolveReplicaChannel(msg.getTo().getName());
         String reportedChecksum = msg.getChecksum();
+        boolean checksumReadOk = true;
         
-        // Validate the checksum and set the upload state in admin.data. 
-        if (reportedChecksum != null && !reportedChecksum.isEmpty()
-                && orgChecksum.equals(reportedChecksum)) {
-            
-            // Checksum is valid and job matches expected results
-            ad.setState(arcfileName, repChannelName,
-                    ReplicaStoreState.UPLOAD_COMPLETED);
-        } else {
-            // Handle the case when the checksum is invalid.
-            log.warn("The arcfile '" + arcfileName + "' has a bad checksum. "
-                    + "Should have seen '" + orgChecksum + "', but saw '"
-                    + reportedChecksum + "'.");
-            ad.setState(arcfileName, repChannelName,
-                    ReplicaStoreState.UPLOAD_FAILED);
+        // check the checksum
+        if (reportedChecksum == null || reportedChecksum.isEmpty()) {
+            checksumReadOk = false;
+            // set the reported checksum to empty, like for BAs. 
+            reportedChecksum = "";
         }
         
-        // reply if upload is finished.
-        considerReplyingOnStore(arcfileName);
+        // process the checksum.
+        String orgChecksum = ad.getCheckSum(arcfileName);
+        String repChannelName = resolveReplicaChannel(msg.getTo().getName());
+        processCheckSum(arcfileName, repChannelName, orgChecksum,
+                reportedChecksum, checksumReadOk);
     }
 
     /**
@@ -749,9 +744,10 @@ public class ArcRepository implements CleanupIF {
      * @return The checksum, or the empty string
      *          if no checksum found for arcfilename.
      * @throws IOFailure If any error occurs reading the file.
-     * @throws IllegalState if readen format is wrong
+     * @throws IllegalState if the read format is wrong
      */
-    private String readChecksum(File outputFile, String arcfileName) {
+    private String readChecksum(File outputFile, String arcfileName) 
+            throws IOFailure, IllegalState {
         //List of lines in batch (checksum job) output file
         List<String> lines = FileUtils.readListFromFile(outputFile);
         //List of checksums found in batch (checksum job) output file
@@ -1027,11 +1023,16 @@ public class ArcRepository implements CleanupIF {
         }
 
         String message = "Handling request to change admin data for '" 
-                + msg.getFileName() + "'. "
-                + (msg.isChangeStoreState() ?
-                   "Change store state to " + msg.getNewvalue() : "")
-                + (msg.isChangeChecksum() ?
-                "Change checksum to " + msg.getChecksum() : "");
+                + msg.getFileName() + "'. ";
+        // add information if store-state is changed.
+        if(msg.isChangeStoreState()) {
+            message += "Change store state to " + msg.getNewvalue();
+        }
+        // add information if checksum is changed.
+        if(msg.isChangeChecksum()) {
+            message += "Change checksum to " + msg.getChecksum();
+        }
+        // log the message.
         log.warn(message);
         NotificationsFactory.getInstance().errorEvent(message);
 

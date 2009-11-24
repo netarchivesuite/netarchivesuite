@@ -173,6 +173,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * @param msg The upload message, containing the file to upload.
      */
     public void visit(UploadMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         log.debug("Receving upload message: " + msg.toString());
         try {
             try {
@@ -213,6 +214,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * correct. 
      */
     public void visit(CorrectMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         log.debug("Receiving correct message: " + msg.toString());
         try {
             String filename = msg.getArcfileName();
@@ -292,6 +294,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * @param msg The GetAllFilenamesMessage.
      */
     public void visit(GetAllFilenamesMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         log.debug("Receving get all filenames message: " + msg.toString());
 
         try {
@@ -315,6 +318,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * @param msg The GetAllChecksumMessage.
      */
     public void visit(GetAllChecksumsMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         log.debug("Receiving get all checksum message: " + msg.toString());
 
         try {

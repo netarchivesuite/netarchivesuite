@@ -341,6 +341,9 @@ public class FileBasedActiveBitPreservation
                 // checksum was not retrieved.
                 List<String> csList;
                 if(checksum == null || checksum.isEmpty()) {
+                    log.warn("The checksum for file '" + file + "' from "
+                            + "replica '" + rep + "' was invalid. "
+                            + "Empty list returned");
                     csList = Collections.<String>emptyList();
                 } else {
                     csList = new ArrayList<String>();
@@ -475,14 +478,15 @@ public class FileBasedActiveBitPreservation
     }
 
     /**
-     * This method takes as input the name of a bitarchive replica for which we
-     * wish to run a FileListJob. It also reads in the known files in the
+     * This method takes as input the name of a replica for which we wish to
+     * retrieve the list of files, either through a FileListJob or a 
+     * GetAllFilenamesMessage. It also reads in the known files in the
      * arcrepository from the AdminData directory specified in the Setting
      * DIRS_ARCREPOSITORY_ADMIN. The two file lists are compared and a
      * subdirectory missingFiles is created with two unsorted files:
      * 'missingba.txt' containing missing files, ie those registered in the
-     * admin data, but not found in the bitarchive, and 'missingadmindata.txt'
-     * containing extra files, ie. those found in the bitarchive but not in the
+     * admin data, but not found in the replica, and 'missingadmindata.txt'
+     * containing extra files, ie. those found in the replica but not in the
      * arcrepository admin data.
      *
      * TODO The second file is never used on the current implementation.
@@ -521,7 +525,7 @@ public class FileBasedActiveBitPreservation
             log.warn("The " + extraFilesInAdminData.size() + " files '"
                      + new ArrayList<String>(extraFilesInAdminData).subList(0,
                              Math.min(extraFilesInAdminData.size(), 10))
-                     + "' have wrong checksum in the replica listing in '"
+                     + "' are not present in the replica listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
         }
@@ -539,9 +543,10 @@ public class FileBasedActiveBitPreservation
             log.warn("The " + extraFilesInBA.size() + " files '"
                      + new ArrayList<String>(extraFilesInBA).subList(0,
                              Math.min(extraFilesInBA.size(), 10))
-                     + "' have wrong checksum in the bitarchive listing in '"
+                     + "' have been found in the replica listing in '"
                      + WorkFiles.getPreservationDir(replica)
-                    .getAbsolutePath() + "'");
+                    .getAbsolutePath() + "' though they are not known by the "
+                    + "system.");
         }
 
         // Write output data
@@ -913,8 +918,7 @@ public class FileBasedActiveBitPreservation
                     "Unable to reestablish missing file. '" + fileName + "'. "
                     + "It is not in the right state.");
         }
-        // Retrieve the file from the reference archive
-        // TODO: ensure that referenceArchive is a bitarchive.
+        // Retrieve the file from the reference archive (must be a bitarchive)
         Replica referenceArchive = fps.getReferenceBitarchive();
         try {
             PreservationArcRepositoryClient arcrep =

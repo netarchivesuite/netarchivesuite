@@ -31,6 +31,11 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  */
 public class ArcRepositoryApplication {
 
+    /**
+     * Constructor. Private to ensure that this utility class cannot be 
+     * instantiated.
+     */
+    private ArcRepositoryApplication() {}
 
     /**
      * Runs the ArcRepository Application. Settings are read from
