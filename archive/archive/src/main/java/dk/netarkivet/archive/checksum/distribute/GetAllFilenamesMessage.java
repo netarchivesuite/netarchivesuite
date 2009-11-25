@@ -106,6 +106,10 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
         return replicaId;
     }
     
+    public String toString() {
+        return super.toString() + ", replicaId: " + replicaId;
+    }
+    
     /**
      * Accept this message.
      *

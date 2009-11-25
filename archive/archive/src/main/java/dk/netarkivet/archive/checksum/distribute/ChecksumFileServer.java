@@ -200,7 +200,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             log.warn("Cannnot remove listener after upload message '" + msg
                     + "'", e);
         } finally {
-            log.info(msg.toString());
+            log.debug("Replying to UploadMessage: " + msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -243,7 +243,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             msg.setNotOk(e);
         } finally {
             // log and reply at the end.
-            log.info(msg.toString());
+            log.info("Replying CorrectMessage: " + msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -280,10 +280,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                     + "' containing the message: " + msg, e);
             msg.setNotOk(e);
         } finally {
-            // log the message and reply.
-            log.info(msg.toString());
             // TODO this should be set elsewhere.
             msg.setIsReply();
+            // log the message and reply.
+            log.info("Replying GetChecksumMessage: " + msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -306,7 +306,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             msg.setNotOk(e);
         } finally {
             // log the message and reply.
-            log.info(msg.toString());
+            log.info("Replying GetAllFilenamesMessage: " + msg.toString());
             jmsCon.reply(msg);
         }
     }
@@ -328,7 +328,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             msg.setNotOk(e);
         } finally {
             // log the message and reply
-            log.info(msg.toString());
+            log.info("Replying GetAllChecksumsMessage: " + msg.toString());
             jmsCon.reply(msg);
         }
     }

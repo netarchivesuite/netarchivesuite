@@ -713,14 +713,16 @@ public class ArcRepository implements CleanupIF {
         }        
         
         String reportedChecksum = msg.getChecksum();
-        boolean checksumReadOk = true;
         
         // check the checksum
-        if (reportedChecksum == null || reportedChecksum.isEmpty()) {
-            checksumReadOk = false;
+        if (reportedChecksum == null) {
             // set the reported checksum to empty, like for BAs. 
             reportedChecksum = "";
         }
+        
+        // The checksum was not read by the batchjob, therefore this variable
+        // cannot be false
+        boolean checksumReadOk = true;
         
         // process the checksum.
         String orgChecksum = ad.getCheckSum(arcfileName);
