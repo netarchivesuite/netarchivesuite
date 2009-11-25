@@ -27,6 +27,7 @@ import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -144,6 +145,14 @@ public interface ReplicaClient {
      * @param incorrectChecksum The incorrect checksum, which has been recorded. 
      */
     public void correct(RemoteFile arcfile, String incorrectChecksum);
+
+    /**
+     * For correcting an erroneous entry in the archive. The message is sent
+     * the replica for correcting the 'bad' entry.
+     * 
+     * @param msg The correct message to correct the bad entry in the archive.
+     */
+    public void correct(CorrectMessage msg);
     
     /**
      * Close the replica client.

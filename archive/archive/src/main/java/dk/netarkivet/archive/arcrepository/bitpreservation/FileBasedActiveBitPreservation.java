@@ -1029,16 +1029,64 @@ public class FileBasedActiveBitPreservation
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
-        removeAndGetFile(filename, replica, checksum, credentials);
-        // The file named 'filename' is fetched from the reference replica
-        // and uploaded to this replica
-        uploadMissingFiles(replica, filename);
-        // Remove filename from the WRONG_FILES list
-        FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
-                replica,
-                WorkFiles.WRONG_FILES));
+        
+        // Handle replicas differently.
+        if(replica.getType() == ReplicaType.BITARCHIVE) {
+            removeAndGetFile(filename, replica, checksum, credentials);
+            // The file named 'filename' is fetched from the reference replica
+            // and uploaded to this replica
+            uploadMissingFiles(replica, filename);
+            // Remove filename from the WRONG_FILES list
+            FileUtils.removeLineFromFile(filename, WorkFiles.getFile(
+                    replica,
+                    WorkFiles.WRONG_FILES));
+        } else if(replica.getType() == ReplicaType.CHECKSUM) {
+            correctArchiveEntry(replica, filename, checksum, credentials);
+        } else {
+            String errMsg = "Cannot handle the ReplicaType of replica '"
+                + replica + "'.";
+            log.warn(errMsg);
+            throw new UnknownID(errMsg);
+        }
     }
+    
+    /**
+     * Method for correcting a bad entry in an archive.
+     * 
+     * Does currently only work with checksum replicas.
+     * 
+     * @param replica The replica which contains the bad entry.
+     * @param filename The name of the file.
+     * @param checksum The checksum of the bad entry.
+     * @param credentials The 'password' for correcting the bad entry.
+     */
+    private void correctArchiveEntry(Replica replica, String filename, 
+            String checksum, String credentials) {
+        // get the preservation state.
+        Map<String, FilePreservationState> preservationStates
+                =  getFilePreservationStateMap(filename);
+        FilePreservationState fps = preservationStates.get(filename);
 
+        // Use the preservation state to find a reference archive (bitarchive).
+        Replica referenceArchive = fps.getReferenceBitarchive();
+        
+        // Get the arc repository client and a temporary file
+        PreservationArcRepositoryClient arcrep =
+                ArcRepositoryClientFactory.getPreservationInstance();
+        File tmpDir = FileUtils.createUniqueTempDir(FileUtils.getTempDir(),
+                REMOVED_FILES);
+        File missingFile = new File(tmpDir, filename);
+        
+        // retrieve a good copy of the file
+        arcrep.getFile(filename, referenceArchive, missingFile);
+
+        // correct the bad entry in the archive with the retrieved good copy.
+        arcrep.correct(replica.getId(), checksum, missingFile, credentials);
+
+        // cleanup afterwards.
+        tmpDir.delete();
+    }
+    
     /**
      * Call upon the arc repository to remove a file, returning it to this
      * machine.  The file is left around in case problems are later discovered,
@@ -1221,5 +1269,4 @@ public class FileBasedActiveBitPreservation
         ArcRepositoryClientFactory.getPreservationInstance().close();
         instance = null;
     }
-
 }

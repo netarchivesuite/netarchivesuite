@@ -116,14 +116,29 @@ public class ChecksumClient implements ReplicaClient {
     public void correct(RemoteFile arcfile, String checksum) {
         // validate argument
         ArgumentNotValid.checkNotNull(arcfile, "RemoteFile arcfile");
+        
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
 
-        // create and send message.
+/*        // create and send message.
         CorrectMessage cmsg = new CorrectMessage(theCR, Channels.getTheRepos(),
                 checksum, arcfile);
         jmsCon.send(cmsg);
 
         // log that the message has been sent.
         log.debug("\nSending correct message: \n" + cmsg.toString());
+*/
+    }
+    
+    public void correct(CorrectMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
+        
+        // send the message to the archive.
+        jmsCon.resend(msg, theCR);
+        
+        // log the message.
+        log.debug("\nResending CorrectMessage:\n" + msg.toString());
     }
 
     /**

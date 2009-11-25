@@ -36,6 +36,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -299,6 +300,28 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
                 msg.setNotOk(e);
                 JMSConnectionFactory.getInstance().reply(msg);
             }
+        }
+    }
+    
+    /**
+     * Method for handling CorrectMessages. This message is just sent along to
+     * the corresponding replica archive, where the 'bad' entry will be 
+     * corrected (made backup of and then replaced).
+     * 
+     * @param msg The message for correcting a bad entry in an archive.
+     */
+    public void visit(CorrectMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
+        log.debug("Receiving CorrectMessage: " + msg.toString());
+        
+        try {
+            ReplicaClient rc = ar.getReplicaClientFromReplicaId(
+                    msg.getReplicaId());
+            rc.correct(msg);
+        } catch (Throwable e) {
+            log.warn("Could not handle Correct message properly.", e);
+            msg.setNotOk(e);
+            JMSConnectionFactory.getInstance().reply(msg);
         }
     }
 

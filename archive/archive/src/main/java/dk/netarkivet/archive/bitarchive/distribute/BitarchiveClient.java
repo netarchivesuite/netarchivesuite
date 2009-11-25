@@ -25,6 +25,7 @@ package dk.netarkivet.archive.bitarchive.distribute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -222,6 +223,19 @@ public class BitarchiveClient implements ReplicaClient {
      * been implemented.
      */
     public void correct(RemoteFile arcfile, String checksum) {
+        throw new NotImplementedException("Has not yet been implemented. Will "
+                + "be implemented by archive assignment B2.2 "
+                + "(hopefully release 3.12.0)");
+    }
+
+    /**
+     * For correcting an erroneous entry in the archive. The message is sent
+     * the replica for correcting the 'bad' entry.
+     * 
+     * @param msg The correct message to correct the bad entry in the archive.
+     */
+    @Override
+    public void correct(CorrectMessage msg) {
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");

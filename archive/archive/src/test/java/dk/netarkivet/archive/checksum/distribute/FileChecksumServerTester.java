@@ -212,7 +212,7 @@ public class FileChecksumServerTester extends TestCase {
         
         // Check the CorrectMessage.
         RemoteFile corFile = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_1);
-        CorrectMessage corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile);
+        CorrectMessage corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE", "examplecredentials");
         JMSConnectionMockupMQ.updateMsgID(corMsg, "correct1");
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();
@@ -233,7 +233,7 @@ public class FileChecksumServerTester extends TestCase {
         
         // Check that 
         RemoteFile corFile2 = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_2);
-        corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile2);
+        corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile2, "THREE", "examplecredentials");
         JMSConnectionMockupMQ.updateMsgID(corMsg, "correct2");
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();

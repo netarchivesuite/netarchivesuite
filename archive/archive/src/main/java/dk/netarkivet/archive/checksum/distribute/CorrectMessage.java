@@ -48,6 +48,10 @@ public class CorrectMessage extends ArchiveMessage {
     private String arcFilename;
     /** The 'bad' checksum. */
     private String theIncorrectChecksum;
+    /** The replica, where this message should be sent.*/
+    private String replicaId;
+    /** The credentials to allow the correction of the archive entry.*/
+    private String credentials;
 
     /**
      * Constructor.
@@ -59,13 +63,15 @@ public class CorrectMessage extends ArchiveMessage {
      * @param file The file to replace the 'bad' entry.
      */
     public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, 
-            RemoteFile file) {
+            RemoteFile file, String repId, String cred) {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String checksum");
         this.theIncorrectChecksum = badChecksum;
         this.theRemoteFile = file;
         this.arcFilename = file.getName();
+        this.replicaId = repId;
+        this.credentials = cred;
     }
 
     /**
@@ -116,6 +122,24 @@ public class CorrectMessage extends ArchiveMessage {
      */
     public String getIncorrectChecksum() {
         return theIncorrectChecksum;
+    }
+    
+    /**
+     * Method for retrieving the replica, where this message should be sent.
+     * 
+     * @return The id of the replica where this message should be sent.
+     */
+    public String getReplicaId() {
+        return replicaId;
+    }
+    
+    /**
+     * The credentials to allow correction of an entry in the archive.
+     * 
+     * @return The credentials.
+     */
+    public String getCredentials() {
+        return credentials;
     }
 
     /**

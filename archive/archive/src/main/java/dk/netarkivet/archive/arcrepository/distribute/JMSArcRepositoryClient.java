@@ -518,11 +518,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *
      * @param replicaId The id of the replica from which the checksums should be
      *                  retrieved.
-     *
      * @return A file containing filename and checksum of all the files in an 
      * archive in the same format as a ChecksumJob. 
      * Or null if the message had a timeout.
-     *
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
     public File getAllChecksums(String replicaId) {
@@ -581,10 +579,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *
      * @param replicaId The id of the replica from which the list of filenames
      *                  should be retrieved.
-     *
      * @return A list of all the filenames within the archive of the given
      *         replica.
-     *
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     public File getAllFilenames(String replicaId) {
@@ -710,7 +706,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
         CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
-                                                       replyQ, checksum, rm);
+                replyQ, checksum, rm, replicaId, credentials);
         CorrectMessage responseMessage
                 = (CorrectMessage) sendAndWaitForOneReply(correctMsg, 0);
 
