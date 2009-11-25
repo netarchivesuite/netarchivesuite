@@ -83,6 +83,15 @@ public abstract class ChecksumArchive {
     public abstract String getChecksum(String filename);
     
     /**
+     * Method for checking whether an entry exists within the archive.
+     * 
+     * @param filename The name of the file whose entry in the archive should 
+     * be determined.
+     * @return Whether an entry with the filename was found.
+     */
+    public abstract boolean hasEntry(String filename);
+    
+    /**
      * Method for uploading a new file to the archive.
      * The checksum of the file needs to be calculated before it is placed
      * in the archive with the given filename.

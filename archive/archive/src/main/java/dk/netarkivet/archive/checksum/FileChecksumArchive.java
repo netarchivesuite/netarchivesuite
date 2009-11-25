@@ -581,6 +581,13 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // Return the checksum of the record.
         return checksumArchive.get(filename);
     }
+    
+    public boolean hasEntry(String filename) {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+        // Return whether the archive contains an entry with the filename.
+        return checksumArchive.containsKey(filename);
+    }
 
     /**
      * Method for calculating the checksum of a file.

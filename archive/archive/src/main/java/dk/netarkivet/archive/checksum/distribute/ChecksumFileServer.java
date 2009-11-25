@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.archive.util.FileUtils;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.ChecksumArchive;
 import dk.netarkivet.archive.checksum.FileChecksumArchive;
@@ -220,7 +221,29 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             String filename = msg.getArcfileName();
             String currentCs = cs.getChecksum(filename);
             String incorrectCs = msg.getIncorrectChecksum();
-
+            
+            // ensure that the entry actually exists.
+            if(!cs.hasEntry(filename)) {
+                String errMsg = "Cannot correct an entry for the file '"
+                    + filename + "', since it is not within the archive.";
+                log.error(errMsg);
+                throw new IllegalState(errMsg);
+            }
+            
+            // Check credentials
+            String credentialsReceived = msg.getCredentials();
+            ArgumentNotValid.checkNotNullOrEmpty(credentialsReceived,
+                    "credentialsReceived");
+            if (!credentialsReceived.equals(Settings.get(
+                    ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
+                String message = "The received credentials '" 
+                    + credentialsReceived + "' were invalid. The entry of "
+                    + "file '" + filename + "' will not be corrected.";
+                log.warn(message);
+                msg.setNotOk(message);
+                return;
+            }
+            
             // check that the current checksum is incorrect as supposed.
             if(!currentCs.equals(incorrectCs)) {
                 String errMsg = "Wrong checksum for the entry for file '" + filename

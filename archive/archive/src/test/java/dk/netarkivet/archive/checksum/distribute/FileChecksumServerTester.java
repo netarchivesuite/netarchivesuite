@@ -211,8 +211,19 @@ public class FileChecksumServerTester extends TestCase {
                 + TestInfo.UPLOADFILE_1_CHECKSUM + "'", TestInfo.UPLOADFILE_1_CHECKSUM, res);
         
         // Check the CorrectMessage.
+        CorrectMessage corMsg;
+        // Check that it will not be possible to correct with wrong credentials.
         RemoteFile corFile = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_1);
-        CorrectMessage corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE", "examplecredentials");
+        corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE", "ERROR-CREDENTIALS!");
+        JMSConnectionMockupMQ.updateMsgID(corMsg, "correctError");
+        cfs.visit(corMsg);
+        conn.waitForConcurrentTasksToFinish();
+        
+        assertFalse("It should not be allowed to correct with a wrong credential.", corMsg.isOk());
+        assertTrue("The error message of the correct message should contain the wrong credentials: " + corMsg.getErrMsg(), corMsg.getErrMsg().contains("ERROR-CREDENTIALS!"));
+        
+        // Check that a valid message will go through.
+        corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE", "examplecredentials");
         JMSConnectionMockupMQ.updateMsgID(corMsg, "correct1");
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();
@@ -231,7 +242,7 @@ public class FileChecksumServerTester extends TestCase {
         	+ TestInfo.CORRECTFILE_1_CHECKSUM + "', but was '" + res + "'", 
         	TestInfo.CORRECTFILE_1_CHECKSUM, res);
         
-        // Check that 
+        // Check that you cannot correct with a different checksum than within the archive.
         RemoteFile corFile2 = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECTMESSAGE_TESTFILE_2);
         corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile2, "THREE", "examplecredentials");
         JMSConnectionMockupMQ.updateMsgID(corMsg, "correct2");
