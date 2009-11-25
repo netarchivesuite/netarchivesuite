@@ -78,7 +78,7 @@ public class CreateTestInstance {
         deployConfiguration = new XmlStructure(source);
         
         offsetPaths = new OffsetSystem[0];
-        offsetVal = new String(); 
+        offsetVal = ""; 
     }
 
     /**

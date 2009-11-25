@@ -207,42 +207,57 @@ public class PhysicalLocation {
         File startall = new File(directory, 
                 Constants.SCRIPT_NAME_START_ALL + ext);
         try {
+            // Make the killall script for the physical location
             PrintWriter kWriter = new PrintWriter(killall);
-            PrintWriter iWriter = new PrintWriter(install);
-            PrintWriter sWriter = new PrintWriter(startall);
             try {
                 kWriter.println(ScriptConstants.BIN_BASH_COMMENT);
+                // insert machine data
+                for(Machine mac : machines) {
+                    // write the call to the kill script of each machines
+                    kWriter.println(ScriptConstants.writeDashLine());
+                    kWriter.print(mac.writeToGlobalKillScript());
+                }
+                // write an extra line of dashes.
+                kWriter.println(ScriptConstants.writeDashLine());
+            } finally {
+                // close writer
+                kWriter.flush();
+                kWriter.close();
+            }
+            
+            // Make the install script for the physical location
+            PrintWriter iWriter = new PrintWriter(install);
+            try {
                 iWriter.println(ScriptConstants.BIN_BASH_COMMENT);
-                sWriter.println(ScriptConstants.BIN_BASH_COMMENT);
                 // insert machine data
                 for(Machine mac : machines) {
                     // write install script from machines
                     iWriter.println(ScriptConstants.writeDashLine());
                     iWriter.print(mac.writeToGlobalInstallScript());
+                }
+                // write an extra line of dashes.
+                iWriter.println(ScriptConstants.writeDashLine());
+            } finally {
+                // close writer
+                iWriter.flush();
+                iWriter.close();
+            }
+
+            // Make the startall script for the physical location
+            PrintWriter sWriter = new PrintWriter(startall);
+            try {
+                sWriter.println(ScriptConstants.BIN_BASH_COMMENT);
+                // insert machine data
+                for(Machine mac : machines) {
                     // write start script from machines
                     sWriter.println(ScriptConstants.writeDashLine());
                     sWriter.print(mac.writeToGlobalStartScript());
-                    // write kill script from machines
-                    kWriter.println(ScriptConstants.writeDashLine());
-                    kWriter.print(mac.writeToGlobalKillScript());
                 }
-                kWriter.println(ScriptConstants.writeDashLine());
-                iWriter.println(ScriptConstants.writeDashLine());
                 sWriter.println(ScriptConstants.writeDashLine());
             } finally {
-                // close writers
-                if(kWriter != null) {
-                    kWriter.flush();
-                    kWriter.close();
-                }
-                if(iWriter != null) {
-                    iWriter.flush();
-                    iWriter.close();
-                }
-                if(sWriter != null) {
-                    sWriter.flush();
-                    sWriter.close();
-                }
+                // close writer
+                sWriter.flush();
+                sWriter.close();
             }
         } catch (IOException e) {
             String msg = "Cannot create the scripts for the physical "

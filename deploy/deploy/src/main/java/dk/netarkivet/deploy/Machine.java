@@ -24,7 +24,6 @@
 package dk.netarkivet.deploy;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -253,32 +252,34 @@ public abstract class Machine {
     protected void createSecurityPolicyFile(File directory) {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make file
+        File secPolFile = new File(directory, 
+                Constants.SECURITY_POLICY_FILE_NAME);
         try {
-            // make file
-            File secPolFile = new File(directory, 
-                    Constants.SECURITY_POLICY_FILE_NAME);
-            FileWriter secfw = new FileWriter(secPolFile);
-            String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
-
-            // change the jmx monitor role (if defined in settings)
-            String monitorRole = settings.getLeafValue(
-                    Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
-            if(monitorRole != null) {
-                prop = prop.replace(Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
-                        monitorRole);
-            }
-            
-            // Change the common temp dir (if defined in settings)
-            String ctd = settings.getLeafValue(
-                    Constants.SETTINGS_TEMPDIR_LEAF);
-            if(ctd != null) {
-                prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
-                        ctd);
-            }
-            
+            // init writer
+            PrintWriter secPrinter = new PrintWriter(secPolFile);
             try {
+                // read the inherited security policy file.
+                String prop = FileUtils.readFile(inheritedSecurityPolicyFile);
+
+                // change the jmx monitor role (if defined in settings)
+                String monitorRole = settings.getLeafValue(
+                        Constants.SETTINGS_MONITOR_JMX_NAME_LEAF);
+                if(monitorRole != null) {
+                    prop = prop.replace(
+                            Constants.SECURITY_JMX_PRINCIPAL_NAME_TAG, 
+                            monitorRole);
+                }
+
+                // Change the common temp dir (if defined in settings)
+                String ctd = settings.getLeafValue(
+                        Constants.SETTINGS_TEMPDIR_LEAF);
+                if(ctd != null) {
+                    prop = prop.replace(Constants.SECURITY_COMMON_TEMP_DIR_TAG, 
+                            ctd);
+                }
+
                 // write to file.
-                secfw.write(prop);
+                secPrinter.write(prop);
 
                 // initialise list of directories to add
                 List<String> dirs = new ArrayList<String>();
@@ -297,19 +298,16 @@ public abstract class Machine {
 
                 // append file directories
                 if(!dirs.isEmpty()) {
-                    secfw.write("grant {" + "\n");
+                    secPrinter.write("grant {" + "\n");
                     for(String dir : dirs) {
-                        secfw.write(ScriptConstants
+                        secPrinter.write(ScriptConstants
                                 .writeSecurityPolicyDirPermission(
                                         changeFileDirPathForSecurity(dir)));
                     }
-                    secfw.write("};");
+                    secPrinter.write("};");
                 }
             } finally {
-                // make sure, that the security file is properly closed.
-                if(secfw != null) {
-                    secfw.close();
-                }
+                secPrinter.close();
             }
         } catch (IOException e) {
             String errMsg = "Cannot create security policy file."; 
@@ -329,26 +327,28 @@ public abstract class Machine {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make log property file for every application
         for(Application app : applications) {
+            // make file
+            File logProp = new File(directory, 
+                    Constants.LOG_PROP_APPLICATION_PREFIX 
+                    + app.getIdentification() 
+                    + Constants.LOG_PROP_APPLICATION_SUFFIX);
             try {
-                // make file
-                File logProp = new File(directory, 
-                        Constants.LOG_PROP_APPLICATION_PREFIX 
-                        + app.getIdentification() 
-                        + Constants.LOG_PROP_APPLICATION_SUFFIX);
-                FileWriter logfw = new FileWriter(logProp);
-                String prop = FileUtils.readFile(inheritedLogPropFile);
-
-                // append stuff!
-                prop = prop.replace(Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
-                        app.getIdentification());
-
-                // write to file.
+                // init writer
+                PrintWriter logPrinter = new PrintWriter(logProp);
+                
                 try {
-                    logfw.write(prop);
+                    // read the inherited log property file.
+                    String prop = FileUtils.readFile(inheritedLogPropFile);
+
+                    // append stuff!
+                    prop = prop.replace(
+                            Constants.LOG_PROPERTY_APPLICATION_ID_TAG, 
+                            app.getIdentification());
+
+                    // write to file.
+                    logPrinter.write(prop);
                 } finally {
-                    if(logfw != null) {
-                        logfw.close();
-                    }
+                        logPrinter.close();
                 }
             } catch (IOException e) {
                 String errMsg = "Cannot create log property file.";

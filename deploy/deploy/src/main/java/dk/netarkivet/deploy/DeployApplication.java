@@ -397,8 +397,8 @@ public final class DeployApplication {
      */
     public static void initEvaluate(String evaluateArgument) {
         // check if argument is given and it is acknowledgement ('y' or 'yes')
-        if((evaluateArgument != null) && (!evaluateArgument.isEmpty()) && 
-            (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
+        if((evaluateArgument != null) && (!evaluateArgument.isEmpty()) 
+                && (evaluateArgument.equalsIgnoreCase(Constants.YES_SHORT)
                     || evaluateArgument.equalsIgnoreCase(Constants.YES_LONG))) {
             // if yes, then evaluate config file
             EvaluateConfigFile evf = 
@@ -440,15 +440,12 @@ public final class DeployApplication {
         try {
             CreateTestInstance cti = new CreateTestInstance(deployConfigFile);
 
-            final int offsetIndex = 0;
-            final int httpIndex = 1;
-            final int environmentNameIndex = 2;
-            final int mailIndex = 3;
-            
             // apply the arguments
-            cti.applyTestArguments(changes[offsetIndex], changes[httpIndex], 
-                    changes[environmentNameIndex], changes[mailIndex]); 
-            //annoying 3 code-style 'warning' (change maximum acceptable value)
+            cti.applyTestArguments(
+                    changes[Constants.TEST_ARGUMENT_OFFSET_INDEX], 
+                    changes[Constants.TEST_ARGUMENT_HTTP_INDEX], 
+                    changes[Constants.TEST_ARGUMENT_ENVIRONMENT_NAME_INDEX], 
+                    changes[Constants.TEST_ARGUMENT_MAIL_INDEX]); 
 
             // replace ".xml" with "_test.xml"
             String tmp = deployConfigFile.getPath();

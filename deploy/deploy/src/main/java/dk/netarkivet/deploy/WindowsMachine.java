@@ -491,10 +491,7 @@ public class WindowsMachine extends Machine {
             try {
                 // make print writer for writing to file
                 PrintWriter appPrint = new PrintWriter(appKillScript);
-                PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
                 try {
-                    // write dummy line in kill script.
-                    appPsPrint.println("ECHO Not started!");
                     // initiate variables
                     String tmpRunApp = Constants
                     .FILE_TEMPORARY_RUN_WINDOWS_NAME + id;
@@ -548,13 +545,17 @@ public class WindowsMachine extends Machine {
                     appPrint.println(Constants.COLON 
                             + ScriptConstants.LABEL_DONE);
                 } finally {
-                    // close files
-                    if(appPrint != null) {
-                        appPrint.close();
-                    }
-                    if(appPsPrint != null) {
-                        appPsPrint.close();
-                    }
+                    // close file
+                    appPrint.close();
+                }
+                // Printer for making the kill process file.
+                PrintWriter appPsPrint = new PrintWriter(appKillPsScript);
+                try {
+                    // write dummy line in kill script.
+                    appPsPrint.println("ECHO Not started!");
+                } finally {
+                    // close file
+                    appPsPrint.close();
                 }
             } catch (IOException e) {
                 String msg = "Cannot create the kill script for "

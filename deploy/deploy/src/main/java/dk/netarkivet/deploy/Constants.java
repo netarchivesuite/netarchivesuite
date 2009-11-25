@@ -264,6 +264,14 @@ public final class Constants {
      * heritrix gui port.
      */
     static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    /** The index of the offset part of the test argument.*/ 
+    static final int TEST_ARGUMENT_OFFSET_INDEX = 0;
+    /** The index of the http part of the test argument.*/ 
+    static final int TEST_ARGUMENT_HTTP_INDEX = 1;
+    /** The index of the environment name part of the test argument.*/ 
+    static final int TEST_ARGUMENT_ENVIRONMENT_NAME_INDEX = 2;
+    /** The index of the mail part of the test argument.*/ 
+    static final int TEST_ARGUMENT_MAIL_INDEX = 3;
 
     // File and directory names
     /** The name of the JMX remote password file.*/
