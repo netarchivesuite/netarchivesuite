@@ -118,7 +118,7 @@ harvest.
     }
     if (update != null && update.length() > 0) {
         try {
-            EventHarvest.addConfigurations(pageContext, I18N, harvest);
+			EventHarvest.addConfigurations(pageContext, isMultiPart, I18N, harvest);
         } catch (ForwardedToErrorPage e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;error.adding.seeds.to.0", harvestName, e);

@@ -245,7 +245,7 @@ public class ARCUtilsTester extends TestCase {
         ARCWriter aw = getTestARCWriter(stream,outFile);
         ARCUtils.writeFileToARC(aw, INPUT_1_ARC, "metadata://tests.netarkivet.dk","text/plain");
         aw.close();
-        if (stream == null) {
+        if (stream != null) {
             stream.close();
         }
         // retrieve inserted record

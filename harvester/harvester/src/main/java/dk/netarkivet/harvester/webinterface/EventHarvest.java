@@ -23,11 +23,24 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Locale;
+
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
@@ -112,6 +125,108 @@ public class EventHarvest {
                     "errormsg;error.adding.seeds.to.0", eventHarvest.getName(),
                     e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
+        }
+    }
+    
+    /** addConfigurations with support for multipart data. */
+    public static void addConfigurations(PageContext context, boolean isMultipart, I18n i18n,
+            PartialHarvest eventHarvest) {
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
+        ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
+        ArgumentNotValid.checkNotNull(eventHarvest, "PartialHarvest eventHarvest");
+        if (!isMultipart) {
+            addConfigurations(context, i18n, eventHarvest);
+            return;
+        }
+        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        String seeds = null;
+        long maxBytes = 0L;
+        String orderTemplate = null;
+        //The seeds are found in a file 
+        try {
+            String maxbytesString = null;           
+            // Create a factory for disk-based file items
+            FileItemFactory factory = new DiskFileItemFactory();
+
+           // Create a new file upload handler
+           ServletFileUpload upload = new ServletFileUpload(factory);
+
+           File seedsFile = File.createTempFile("seeds", ".txt", 
+                    FileUtils.getTempDir());
+            String seedsFileName = "";
+            List items = upload.parseRequest(request);
+            for (Object o : items) {
+                FileItem item = (FileItem) o;
+                if (!item.isFormField()) {
+                    item.write(seedsFile);
+                    seedsFileName = item.getName();
+                } else {
+                    String fieldName = item.getFieldName();
+                    if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
+                        maxbytesString = item.getString();
+                    } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
+                        orderTemplate = item.getString();
+                }               
+                }
+            }
+            if (!seedsFileName.isEmpty()) { // A file was found
+                seeds = FileUtils.readFile(seedsFile);
+            } else {
+                seeds = "www.defaultdomain.dk";
+            }
+            if (maxbytesString == null){
+                maxBytes = dk.netarkivet.harvester
+                .datamodel.Constants.DEFAULT_MAX_BYTES;
+            } else {
+                maxBytes = parseLong(context, maxbytesString, dk.netarkivet.harvester
+            .datamodel.Constants.DEFAULT_MAX_BYTES);
+            }
+            //maxBytes = HTMLUtils.parseOptionalLong(context,
+            //        Constants.MAX_BYTES_PARAM, dk.netarkivet.harvester
+            //            .datamodel.Constants.DEFAULT_MAX_BYTES);
+        } catch (Exception e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n, 
+                    "Exception.thrown.when.adding.seeds", e);
+            return;
+        }
+        
+        if (orderTemplate == null) {
+            orderTemplate = "default_orderxml";
+        }
+        
+        // Check that order template exists
+        if (!TemplateDAO.getInstance().exists(orderTemplate)) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;harvest.template.0.does.not.exist",
+                    orderTemplate);
+            throw new ForwardedToErrorPage("The orderTemplate with name '"
+                    + orderTemplate + "' does not exist!");
+        }
+
+        // All parameters are valid, so call method
+        try {
+            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes);
+        } catch (Exception e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n,
+                    "errormsg;error.adding.seeds.to.0", e, eventHarvest.getName(),
+                    e);
+            throw new ForwardedToErrorPage("Error while adding seeds", e);
+        }
+    }
+
+    private static long parseLong(PageContext context, String maxbytesString, long defaultMaxBytes) {
+        Locale loc = HTMLUtils.getLocaleObject(context);
+        String paramValue = maxbytesString;
+        if (paramValue != null && paramValue.trim().length() > 0) {
+            paramValue = paramValue.trim();
+            try {
+                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
+            } catch (ParseException e) {
+                throw new ForwardedToErrorPage("Invalid value " + paramValue
+                        + " for integer parameter '" + Constants.MAX_BYTES_PARAM + "'", e);
+            }
+        } else {
+            return defaultMaxBytes;
         }
     }
 }
