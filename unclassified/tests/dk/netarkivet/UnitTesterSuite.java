@@ -81,16 +81,11 @@ public class UnitTesterSuite {
         ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
         ArchiveArcRepositoryAdminTesterSuite.addToSuite(suite);
-        ArchiveArcRepositoryTesterSuite.addToSuite(suite);
-        /* 
-         * The ArchiveArcrepositoryDistributeTesterSuite must be after the 
-         * ArchiveArcRepositoryTesterSuite, since it fails otherwise. 
-         */
         ArchiveArcrepositoryDistributeTesterSuite.addToSuite(suite);
+        ArchiveArcRepositoryTesterSuite.addToSuite(suite);
         ArchiveBitarchiveTesterSuite.addToSuite(suite);
         ArchiveBitarchiveDistributeTesterSuite.addToSuite(suite);
-        // Commented out, because half of tests still fail!
-        //ArchiveChecksumTesterSuite.addToSuite(suite);
+        ArchiveChecksumTesterSuite.addToSuite(suite);
         ArchiveArcrepositoryBitPreservationTesterSuite.addToSuite(suite);
         ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexServerTesterSuite.addToSuite(suite);

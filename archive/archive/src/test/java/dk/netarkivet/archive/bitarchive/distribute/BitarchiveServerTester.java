@@ -340,7 +340,7 @@ public class BitarchiveServerTester extends TestCase {
         GetMessage replyMsg = (GetMessage) listener.messagesReceived.get(0);
         assertTrue("Reply message should be ok", replyMsg.isOk());
         assertTrue("Reply should contain non-trivial amount of data",
-                replyMsg.record.getLength() > 1);
+                replyMsg.getRecord().getLength() > 1);
     }
 
     /**
@@ -394,7 +394,7 @@ public class BitarchiveServerTester extends TestCase {
         GetMessage replyMsg = (GetMessage) listener.messagesReceived.get(0);
         assertFalse("Reply message should not be ok", replyMsg.isOk());
         assertNull("Reply should contain no data",
-                replyMsg.record);
+                replyMsg.getRecord());
     }
 
     /**

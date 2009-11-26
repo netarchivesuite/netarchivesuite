@@ -670,9 +670,9 @@ public class BitarchiveMonitorServerTester extends TestCase {
         for (NetarkivetMessage naMsg : l) {
             if (naMsg instanceof BatchReplyMessage) {
                 brmsg = (BatchReplyMessage) naMsg;
+                brmsg.getResultFile().copyTo(output_file);
             }
         }
-        brmsg.getResultFile().copyTo(output_file);
 
         FileAsserts.assertFileNumberOfLines("Aggregated file should have two " +
                                             "lines", output_file, 2);

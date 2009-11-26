@@ -27,24 +27,24 @@
 	This file contains the settings needed to run our unittests.
 -->
 <settings>
-<common>
+    <common>
         <jms>
-        <class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
+        	<class>dk.netarkivet.common.distribute.JMSConnectionMockupMQ</class>
         </jms>
-	<jmx>
-	<!-- to reduce running time of our unittests -->
-	<timeout>2</timeout>
-	<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
-	<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
-	</jmx>
-	<http>
-    	<port>8076</port>
-    </http>
-    <remoteFile>
-        <class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
-        <userName>jms</userName>
-        <userPassword>jms*ftp</userPassword>
-    </remoteFile>
+	    <jmx>
+    		<!-- to reduce running time of our unittests -->
+			<timeout>2</timeout>
+			<passwordFile>tests/dk/netarkivet/jmxremote.password</passwordFile>
+			<accessFile>tests/dk/netarkivet/jmxremote.access</accessFile>
+		</jmx>
+		<http>
+    		<port>8076</port>
+	    </http>
+    	<remoteFile>
+	       	<class>dk.netarkivet.common.distribute.FTPRemoteFile</class>
+    	    <userName>jms</userName>
+	        <userPassword>jms*ftp</userPassword>
+    	</remoteFile>
         <tempDir>./tests/commontempdir</tempDir>
         <replicas>
             <!-- All bitarcive replicas in the environment, 
@@ -53,17 +53,17 @@
                  NOTE: settings for checksum replicas are not use yet -->
             <replica>
                 <replicaId>ONE</replicaId>
-                <replicaType>bitarchive</replicaType>
+                <replicaType>BiTaRcHiVe</replicaType>
                 <replicaName>BarOne</replicaName>                
             </replica>
             <replica>
                 <replicaId>TWO</replicaId>
-                <replicaType>bitarchive</replicaType>
+                <replicaType>bItArChIvE</replicaType>
                 <replicaName>BarTwo</replicaName>                
             </replica>
             <replica>
                 <replicaId>THREE</replicaId>
-                <replicaType>checksum</replicaType>
+                <replicaType>CHeCKSuM</replicaType>
                 <replicaName>CsOne</replicaName>
             </replica>
         </replicas>
@@ -77,6 +77,9 @@
              The monitor puts this with each log message -->
         <applicationName>IxxxxSxxxx</applicationName>
         <applicationInstanceId>XXX</applicationInstanceId>
+        <arcrepositoryClient>
+            <storeRetries>3</storeRetries>
+        </arcrepositoryClient>
      </common>
      <harvester>
      	<harvesting>
@@ -85,5 +88,5 @@
      			<jmxPassword>R_D</jmxPassword>
      		</heritrix>
      	</harvesting>
-     	</harvester>
+     </harvester>
 </settings>

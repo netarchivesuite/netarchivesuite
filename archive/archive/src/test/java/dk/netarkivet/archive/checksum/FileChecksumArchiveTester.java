@@ -83,7 +83,7 @@ public class FileChecksumArchiveTester extends TestCase {
      */ 
     public void testFilename() {
         String filename = Settings.get(ArchiveSettings.CHECKSUM_BASEDIR) + "/checksum_THREE.md5";
-        assertEquals("The files should have the same name. ", fca.getFilename(), filename);
+        assertEquals("The files should have the same name. ", fca.getFileName(), filename);
     }
 
     /**
@@ -130,7 +130,7 @@ public class FileChecksumArchiveTester extends TestCase {
         // Check whether the archive file is identical to the retrieved archive
         // ---------------------------------------------------------------	
         List<String> archiveChecksums = FileUtils.readListFromFile(fca.getArchiveAsFile());
-        List<String> fileChecksums = FileUtils.readListFromFile(new File(fca.getFilename()));
+        List<String> fileChecksums = FileUtils.readListFromFile(new File(fca.getFileName()));
 
         assertEquals("The amount of checksums should be identical in the file and from the archive.", 
                 fileChecksums.size(), archiveChecksums.size());
@@ -162,7 +162,7 @@ public class FileChecksumArchiveTester extends TestCase {
         // ---------------------------------------------------------------
         // Check that the correct function has changed the archive file.
         // ---------------------------------------------------------------
-        String correctChecksums = FileUtils.readFile(new File(fca.getFilename()));
+        String correctChecksums = FileUtils.readFile(new File(fca.getFileName()));
 
         assertTrue("The new checksums should be reversed.",
                 correctChecksums.contains("TEST1.arc" + "##" + TestInfo.TEST2_CHECKSUM));

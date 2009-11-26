@@ -33,6 +33,7 @@ import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -59,6 +60,7 @@ public class FileChecksumServerTester extends TestCase {
     protected void setUp() {
 	rs.setUp();
 	utrf.setUp();
+	ChannelsTester.resetChannels();
 	JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // ??
 
