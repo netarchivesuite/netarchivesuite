@@ -19,26 +19,26 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.monitor;
+package dk.netarkivet.harvester;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-public class MonitorTesterSuite {
+public class HarvesterTesterSuite {
     public static Test suite() {
         TestSuite suite;
-        suite = new TestSuite(MonitorTesterSuite.class.getName());
+        suite = new TestSuite(HarvesterTesterSuite.class.getName());
         addToSuite(suite);
         return suite;
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(MonitorSettingsTester.class);
+        suite.addTestSuite(HarvesterSettingsTester.class);
     }
 
     public static void main(String args[]) {
-        String args2[] = {"-noloading", MonitorTesterSuite.class.getName()};
+        String args2[] = {"-noloading", HarvesterTesterSuite.class.getName()};
 
         TestRunner.main(args2);
     }

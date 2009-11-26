@@ -37,6 +37,7 @@ public class CommonsTesterSuite {
 
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ConstantsTester.class);
+        suite.addTestSuite(CommonSettingsTester.class);
     }
 
     public static void main(String[] args) {

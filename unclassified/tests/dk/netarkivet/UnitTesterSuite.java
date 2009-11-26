@@ -50,6 +50,7 @@ import dk.netarkivet.common.utils.arc.CommonUtilsArcTesterSuite;
 import dk.netarkivet.common.utils.batch.CommonUtilsBatchTesterSuite;
 import dk.netarkivet.common.utils.cdx.CommonUtilsCdxTesterSuite;
 import dk.netarkivet.deploy.DeployTesterSuite;
+import dk.netarkivet.harvester.HarvesterTesterSuite;
 import dk.netarkivet.harvester.datamodel.HarvesterDataModelTesterSuite;
 import dk.netarkivet.harvester.distribute.HarvesterDistributeTesterSuite;
 import dk.netarkivet.harvester.harvesting.HarvestingTesterSuite;
@@ -117,6 +118,7 @@ public class UnitTesterSuite {
         /* 
          * Testersuites for the harvester module 
          */
+        HarvesterTesterSuite.addToSuite(suite);
         HarvestingTesterSuite.addToSuite(suite);
         HarvesterDataModelTesterSuite.addToSuite(suite);
         HarvesterDistributeTesterSuite.addToSuite(suite);
