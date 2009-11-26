@@ -31,6 +31,9 @@ update:
           method  EventHarvest.addConfigurations is called to process the seeds to be added
 seeds:
           A whitespace-separated list of seed urls to be added
+usingFileMode:
+		  if null, you enter the seeds in the designated textarea; otherwise, it will ask for a file
+		  that contains the seeds.	         
 orderTemplate:
           The name of the order template to use with these seeds
 
@@ -41,6 +44,7 @@ name of the harvest and the orderTemplate and add that configuration to the
 harvest.
 --%><%@ page import="java.text.NumberFormat,
                  java.util.Iterator,
+                 java.util.List,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -48,6 +52,10 @@ harvest.
                  dk.netarkivet.harvester.datamodel.PartialHarvest,
                  dk.netarkivet.harvester.datamodel.TemplateDAO,
                  dk.netarkivet.harvester.webinterface.Constants,
+                 org.apache.commons.fileupload.FileItemFactory,
+                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
+                 org.apache.commons.fileupload.servlet.ServletFileUpload,
+                 org.apache.commons.fileupload.FileItem,
                  dk.netarkivet.harvester.webinterface.EventHarvest"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -57,13 +65,48 @@ harvest.
             = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 %><%
     HTMLUtils.setUTF8(request);
-    String harvestName = request.getParameter(Constants.HARVEST_PARAM);
+    
+    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
+    String harvestName = null;
+    String mode = null;
+    String update = null;
+    if (isMultiPart) {
+    	// Create a factory for disk-based file items
+    	FileItemFactory factory = new DiskFileItemFactory();
+		// Create a new file upload handler
+   		ServletFileUpload upload = new ServletFileUpload(factory);
+        List items = upload.parseRequest(request);
+        for (Object o : items) {
+        		FileItem item = (FileItem) o;
+                String fieldName = item.getFieldName();
+                if (fieldName.equals(Constants.HARVEST_PARAM)) {
+                    harvestName = item.getString();
+                } else if (fieldName.equals(Constants.FROM_FILE_PARAM)) {
+                    mode = item.getString();
+                } else if (fieldName.equals(Constants.UPDATE_PARAM)) {
+                    update = item.getString();
+                } 
+            }
+    } else {
+    	harvestName = request.getParameter(Constants.HARVEST_PARAM);
+    	mode = request.getParameter(Constants.FROM_FILE_PARAM);
+    	update = request.getParameter(Constants.UPDATE_PARAM);
+    }
+    	
     if (harvestName == null) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                "errormsg.missing.parameter",
+                "errormsg;missing.parameter.0",
                 Constants.HARVEST_PARAM);
         return;
     }
+    
+    boolean usingFileMode = false;
+    if (mode != null) {
+        if (mode.equalsIgnoreCase("1")) {
+        	 usingFileMode = true;
+    	}
+    }
+    
     PartialHarvest harvest = (PartialHarvest)
             HarvestDefinitionDAO.getInstance().
                     getHarvestDefinition(harvestName);
@@ -73,13 +116,12 @@ harvest.
                 harvestName);
         return;
     }
-    if (request.getParameter(Constants.UPDATE_PARAM) != null
-            && request.getParameter(Constants.UPDATE_PARAM).length() > 0) {
+    if (update != null && update.length() > 0) {
         try {
             EventHarvest.addConfigurations(pageContext, I18N, harvest);
         } catch (ForwardedToErrorPage e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                    "errormsg.error.while.adding.seeds", e);
+                    "errormsg;error.adding.seeds.to.0", harvestName, e);
             return;
         }
         response.sendRedirect("Definitions-edit-selective-harvest.jsp?"
@@ -102,10 +144,13 @@ the user
     <%=HTMLUtils.escapeHtmlValues(harvest.getComments())%>
 </div>
 
-<form action="Definitions-add-event-seeds.jsp" method="post">
+<form action="Definitions-add-event-seeds.jsp" 
+<% if (usingFileMode) { %>enctype="multipart/form-data" <%} %> method="post">
+
     <input type="hidden" name="<%= Constants.UPDATE_PARAM %>" value="1"/>
     <input type="hidden" name="<%= Constants.HARVEST_PARAM %>"
            value="<%=HTMLUtils.escapeHtmlValues(harvestName)%>"/>
+           
     <%--Setting of these variables is not currently supported in the system so we
      just use default values as placeholders for a future upgrade --%>
     <input type="hidden" name="<%= Constants.MAX_RATE_PARAM %>" value="-1"/>
@@ -118,8 +163,13 @@ the user
         </tr>
         <tr>
             <td colspan="2">
+              <% if (!usingFileMode) { %>
                 <textarea name="<%= Constants.SEEDS_PARAM %>"
                           rows="20" cols="60"></textarea>
+              <% } else { %>
+                <fmt:message key="prompt;harvestdefinition.templates.upload.select.file"/>
+                <input type="file" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>" name="upload_file"/><br/>                
+              <% } %>
             </td>
         </tr>
         <tr>

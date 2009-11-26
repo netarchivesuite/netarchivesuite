@@ -358,8 +358,14 @@ setupNextdateCalendar();
     if (hdd != null) {
         String seedLink = "Definitions-add-event-seeds.jsp?" + Constants.HARVEST_PARAM
                           + "=" + HTMLUtils.encode(harvestName);
+        String seedFromFileLink = "Definitions-add-event-seeds.jsp?"
+        					+ Constants.FROM_FILE_PARAM + "=1&" 
+        					+ Constants.HARVEST_PARAM
+                          	+ "=" + HTMLUtils.encode(harvestName);                          
     %>
       <a href="<%= HTMLUtils.escapeHtmlValues(seedLink) %>"><fmt:message key="add.seeds"/></a>
+      &nbsp;&nbsp;
+      <a href="<%= HTMLUtils.escapeHtmlValues(seedFromFileLink) %>"><fmt:message key="add.seeds.from.file"/></a>
     <%
     } else {
     %>

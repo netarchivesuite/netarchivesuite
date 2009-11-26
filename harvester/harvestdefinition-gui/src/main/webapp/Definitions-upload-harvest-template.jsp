@@ -31,9 +31,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 --%><%@ page import="java.io.File,
                  java.util.List,
-                 org.apache.commons.fileupload.DiskFileUpload,
+                 org.apache.commons.fileupload.FileItemFactory,
+                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
+                 org.apache.commons.fileupload.servlet.ServletFileUpload,
                  org.apache.commons.fileupload.FileItem,
-                 org.apache.commons.fileupload.FileUpload,
                  org.dom4j.Document,
                  dk.netarkivet.common.exceptions.ArgumentNotValid,
                  dk.netarkivet.common.exceptions.IOFailure,
@@ -42,7 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  dk.netarkivet.common.utils.XmlUtils,
                  dk.netarkivet.common.webinterface.HTMLUtils,
                  dk.netarkivet.harvester.Constants,
-                 dk.netarkivet.harvester.datamodel.HeritrixTemplate, dk.netarkivet.harvester.datamodel.TemplateDAO"
+                 dk.netarkivet.harvester.datamodel.HeritrixTemplate,
+                 dk.netarkivet.harvester.datamodel.TemplateDAO"
          pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -57,13 +59,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             = File.createTempFile("order", ".xml", FileUtils.getTempDir());
     String orderXmlToReplace = "";
     String orderXmlToUpload = "";
-    boolean isMultiPart = FileUpload.isMultipartContent(request);
+    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     if (!isMultiPart) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;nothing.posted");
         return;
     }
-    DiskFileUpload upload = new DiskFileUpload();
+    
+    // Create a factory for disk-based file items
+    FileItemFactory factory = new DiskFileItemFactory();
+
+   // Create a new file upload handler
+   ServletFileUpload upload = new ServletFileUpload(factory);
+    
+    
     String fileName = "";
     try {
         List items = upload.parseRequest(request);

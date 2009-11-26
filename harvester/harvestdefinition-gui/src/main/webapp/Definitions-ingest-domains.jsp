@@ -30,9 +30,10 @@ The page tries to prevent a user-agent timeout by sending regular information on
 the progress of the ingestion.
 --%><%@ page import="java.io.File,
                  java.util.List,
-                 org.apache.commons.fileupload.DiskFileUpload,
+                 org.apache.commons.fileupload.FileItemFactory,
+                 org.apache.commons.fileupload.disk.DiskFileItemFactory,
+                 org.apache.commons.fileupload.servlet.ServletFileUpload,
                  org.apache.commons.fileupload.FileItem,
-                 org.apache.commons.fileupload.FileUpload,
                  dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -40,6 +41,7 @@ the progress of the ingestion.
                  dk.netarkivet.harvester.webinterface.DomainIngester"
          pageEncoding="UTF-8"
 %>
+<%@page import="org.apache.commons.fileupload.servlet.ServletFileUpload"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
@@ -54,15 +56,21 @@ the progress of the ingestion.
     //A temporary file to use for the domain list
     final File ingestFile = File.createTempFile("ingest_list", "txt",
             FileUtils.getTempDir());
-    boolean isMultiPart = FileUpload.isMultipartContent(request);
+            
+    boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
     if (!isMultiPart) {
         HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                 "errormsg;domain.upload.not.multipart");
         return;
     }
-    DiskFileUpload upload = new DiskFileUpload();
+    
+    // Create a factory for disk-based file items
+    FileItemFactory factory = new DiskFileItemFactory();
 
-    //Read the multipart request to the temporary file on the server machine
+   // Create a new file upload handler
+   ServletFileUpload upload = new ServletFileUpload(factory);
+
+   //Read the multipart request to the temporary file on the server machine
     try {
         List items = upload.parseRequest(request);
         for (Object o : items) {
