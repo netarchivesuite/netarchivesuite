@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Date:        $Date$
- * Revision:    $Revision$
- * Author:      $Author$
+/* File:     $Id$
+ * Date:     $Date$
+ * Revision: $Revision$
+ * Author:   $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.distribute;
 
@@ -34,7 +35,11 @@ import dk.netarkivet.common.distribute.Channels;
  * This contains a method for retrieving all the replica clients at once.
  */
 public class ReplicaClientFactory {
-
+    /**
+     * Private constructor. Prevents instantiation of this class.
+     */
+    private ReplicaClientFactory() {}
+    
     /**
      * Method for retrieving the clients for the correct replicas.
      * 

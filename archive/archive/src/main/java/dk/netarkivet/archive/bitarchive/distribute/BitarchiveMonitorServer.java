@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -127,11 +128,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                                              CommonSettings.USE_REPLICA_ID));
             con.send(outbMsg);
             long batchTimeout = inbMsg.getJob().getBatchJobTimeout();
+            // if batch time out is not a positive number, then use settings.
+            if(batchTimeout <= 0) {
+                batchTimeout = Settings.getLong(
+                        ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
+            }
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
-                        outbMsg.getID(),
-                        batchTimeout > 0 ? batchTimeout : Settings.getLong(
-                ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT)
-            );
+                        outbMsg.getID(), batchTimeout);
         } catch (Exception e) {
             log.warn("Trouble while handling batch request '" + inbMsg + "'",
                      e);
@@ -144,7 +147,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * This delegates the handling of the reply to the bitarchive monitor, which
      * will notify us if the batch job is now done.
      *
-     * @param beMsg
+     * @param beMsg The BatchEndedMessage to be handled.
      */
     public void visit(final BatchEndedMessage beMsg) {
         log.info("Received batch ended from bitarchive '"
@@ -153,15 +156,19 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         try {
             new Thread() {
                 public void run() {
+                    // retrieve the error messages.
+                    String errorMessages = null;
+                    if(!beMsg.isOk()) {
+                        errorMessages = beMsg.getErrMsg();
+                    }
+                    // send reply to the bitarchive.
                     bamon.bitarchiveReply(beMsg.getOriginatingBatchMsgID(),
                                           beMsg.getBitarchiveID(),
                                           beMsg.getNoOfFilesProcessed(),
                                           beMsg.getFilesFailed(),
                                           beMsg.getRemoteFile(),
-                                          beMsg.isOk() ? null :
-                                          beMsg.getErrMsg(),
+                                          errorMessages,
                                           beMsg.getExceptions());
-
                 }
             }.start();
         } catch (Exception e) {
@@ -251,8 +258,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                                       bjs.originalRequestID,
                                       bjs.noOfFilesProcessed,
                                       bjs.filesFailed, resultsFile);
-        if (bjs.errMsg != null) {
-            brMsg.setNotOk(bjs.errMsg);
+        if (bjs.errorMessages != null) {
+            brMsg.setNotOk(bjs.errorMessages);
         }
         con.send(brMsg);
 

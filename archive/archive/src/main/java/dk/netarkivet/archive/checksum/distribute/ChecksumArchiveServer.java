@@ -35,14 +35,14 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
     /**
      * Method for cleaning up.
      */
-    abstract public void cleanup();
+    public abstract void cleanup();
     
     /**
      * Method for retrieving the application id.
      * 
      * @return The application id.
      */
-    abstract public String getAppId();
+    public abstract String getAppId();
 
     /**
      * Requiring all inheritors of this interface to handle the UploadMessage. 
@@ -50,7 +50,7 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
      * 
      * @param msg The UploadMessage to be handled.
      */
-    abstract public void visit(UploadMessage msg);
+    public abstract void visit(UploadMessage msg);
     
     /**
      * Requiring all inheritors of this interface to handle the CorrectMessage. 
@@ -60,7 +60,7 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
      * 
      * @param msg The CorrectMessage to be handled.
      */
-    abstract public void visit(CorrectMessage msg);
+    public abstract void visit(CorrectMessage msg);
     
     /**
      * Requiring all inheritors of this interface to handle the 
@@ -69,7 +69,7 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
      * 
      * @param msg The GetChecksumMessage to be handled.
      */
-    abstract public void visit(GetChecksumMessage msg);
+    public abstract void visit(GetChecksumMessage msg);
     
     /**
      * Requiring all inheritors of this interface to handle the 
@@ -79,7 +79,7 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
      * 
      * @param msg The GetAllChecksumMessage to be handled.
      */
-    abstract public void visit(GetAllChecksumsMessage msg);
+    public abstract void visit(GetAllChecksumsMessage msg);
     
     /**
      * Requiring all inheritors of this interface to handle the 
@@ -89,5 +89,5 @@ public abstract class ChecksumArchiveServer extends ArchiveMessageHandler
      * 
      * @param msg The GetAllFilenamesMessage to be handled.
      */
-    abstract public void visit(GetAllFilenamesMessage msg);
+    public abstract void visit(GetAllFilenamesMessage msg);
 }

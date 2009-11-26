@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
@@ -27,7 +28,7 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
  * Constants used in bit preservation.
  *
  */
-public class Constants {
+public final class Constants {
 
     /** Characters used for separating a file identifier 
      * from the checksum in the output from a checksum job.
@@ -35,11 +36,12 @@ public class Constants {
     public static final String STRING_FILENAME_SEPARATOR = "##";
 
     /**
-     * On min in milliseconds
+     * On min in milliseconds.
      */
     public static final long ONE_MIN_IN_MILLIES = 60*1000;
+    
     /**
-     * One hour in milliseconds
+     * One hour in milliseconds.
      */
     public static final long ONE_HOUR_IN_MILLIES = 60*ONE_MIN_IN_MILLIES;
 

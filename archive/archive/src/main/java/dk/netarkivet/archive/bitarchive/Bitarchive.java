@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive;
 
@@ -106,7 +107,7 @@ public class Bitarchive {
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid, UnknownID, IOFailure {
         /*
-         * TODO: Change return type into RemoteFile. This should only cause
+         * TODO Change return type into RemoteFile. This should only cause
          * changes in GetFileMessage.
          */
         log.info("GET: " + arcfile + ":" + index);
@@ -215,7 +216,8 @@ public class Bitarchive {
      *             if there was problems writing to the RemoteFile
      * @return A localBatchStatus
      */
-    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) {
+    public BatchStatus batch(String bitarchiveAppId, final FileBatchJob job) 
+            throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(
                 bitarchiveAppId, "String bitarchiveAppId");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -282,8 +284,8 @@ public class Bitarchive {
      */
     private File copyRemoteFileToArchive(RemoteFile arcfile, String fileName)
             throws IOFailure {
-        File temp_destination
-                = admin.getTemporaryPath(fileName, arcfile.getSize());
+        File tempDestination = admin.getTemporaryPath(fileName, 
+                arcfile.getSize());
         File destination = null;
         try {
             //The file is first copied to a temporary destination on the same
@@ -293,14 +295,14 @@ public class Bitarchive {
             //the file is uploaded. It also means that we do not need to clean 
             //up in the file directory, in case of failure - only the temporary 
             //destination needs clean up.
-            arcfile.copyTo(temp_destination);
+            arcfile.copyTo(tempDestination);
             //Note that the move operation is a constant time operation within
             //the same mount
-            destination = admin.moveToStorage(temp_destination);
+            destination = admin.moveToStorage(tempDestination);
         } catch (Throwable e) {
             // destination is known to be null here, so don't worry about it.
-            if (temp_destination.exists()) {
-                temp_destination.delete();
+            if (tempDestination.exists()) {
+                tempDestination.delete();
             }
             throw new IOFailure("Can't copy file into archive: " + fileName, e);
         }

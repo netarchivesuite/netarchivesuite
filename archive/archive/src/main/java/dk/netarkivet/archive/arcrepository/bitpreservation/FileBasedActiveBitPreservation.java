@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -130,10 +131,11 @@ public class FileBasedActiveBitPreservation
      * The preservationstate is null, if the file named does not exist
      * in admin data.
      *
-     * @throws ArgumentNotValid if argument is null
+     * @throws ArgumentNotValid If the list of filenames is null or contains 
+     * a null.
      */
     public Map<String, FilePreservationState> getFilePreservationStateMap(
-            String... filenames) {
+            String... filenames) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         // check, that the files are not empty strings
         for (String file: filenames) {
@@ -193,7 +195,8 @@ public class FileBasedActiveBitPreservation
         // Phase 3: construct FilePreservationState objects for subset of
         // filenames known by admin data. The rest of the filenames are
         // represented with a null FilePreservationState object.        
-        for (Map.Entry<String,ArcRepositoryEntry> entry: adminInfo.entrySet()) {
+        for (Map.Entry<String, ArcRepositoryEntry> entry 
+                : adminInfo.entrySet()) {
             String filename = entry.getKey();
             ArcRepositoryEntry adminFileInfo = entry.getValue();
             filepreservationStates.put(filename, 
@@ -301,8 +304,8 @@ public class FileBasedActiveBitPreservation
      * @throws UnknownID If the replica has a unhandled replica type.
      * @see ChecksumJob#parseLine(String)
      */
-    private Map<String, List<String>> getChecksums(
-            Replica rep, Set<String> filenames) {
+    private Map<String, List<String>> getChecksums(Replica rep, 
+            Set<String> filenames) throws UnknownID {
         // Retrieve the checksums dependent on the type of replica
         if(rep.getType() == ReplicaType.BITARCHIVE) {
             return getChecksumsFromBitarchive(rep, filenames);
@@ -461,12 +464,11 @@ public class FileBasedActiveBitPreservation
      * Get a list of missing files in a given replica.
      *
      * @param replica A given replica.
-     *
      * @return A list of missing files in a given replica.
-     *
      * @throws IllegalState if the file with the list cannot be found.
      */
-    public Iterable<String> getMissingFiles(Replica replica) {
+    public Iterable<String> getMissingFiles(Replica replica) 
+            throws IllegalState {
         ArgumentNotValid.checkNotNull(replica, "Replica bitarchive");
         File missingOutput = WorkFiles.getFile(replica,
                                                WorkFiles.MISSING_FILES_BA);
@@ -497,12 +499,13 @@ public class FileBasedActiveBitPreservation
      *
      * @param replica the replica to search for missing files
      *
-     * @throws ArgumentNotValid if the given directory does not contain a file
+     * @throws ArgumentNotValid If the given directory does not contain a file
      *                          filelistOutput/sorted.txt, or the argument
-     *                          replica is null
-     * @throws PermissionDenied if the output directory cannot be created
+     *                          replica is null.
+     * @throws PermissionDenied If the output directory cannot be created.
      */
-    public void findMissingFiles(Replica replica) {
+    public void findMissingFiles(Replica replica) throws ArgumentNotValid, 
+            PermissionDenied {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         runFileListJob(replica);
         log.trace("findMissingFile in dir '"
@@ -566,7 +569,8 @@ public class FileBasedActiveBitPreservation
      *                          or if the job fails for some reason
      * @throws UnknownID If the replica has an unknown replicaType.
      */
-    private void runFileListJob(Replica replica) throws IOFailure, UnknownID {
+    private void runFileListJob(Replica replica) throws IOFailure, UnknownID, 
+            PermissionDenied {
         // Pick the right directory to output to
         File batchOutputFile = WorkFiles.getFile(replica,
                                                  WorkFiles.FILES_ON_BA);
@@ -597,7 +601,8 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IllegalState if the file with the list cannot be found.
      */
-    public Iterable<String> getChangedFiles(Replica bitarchive) {
+    public Iterable<String> getChangedFiles(Replica bitarchive) 
+            throws IllegalState {
         ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File wrongFilesOutput = WorkFiles.getFile(bitarchive,
                                                   WorkFiles.WRONG_FILES);
@@ -628,7 +633,8 @@ public class FileBasedActiveBitPreservation
      * @throws PermissionDenied if the output directory cannot be created
      * @throws ArgumentNotValid if argument replica is null
      */
-    public void findChangedFiles(Replica replica) {
+    public void findChangedFiles(Replica replica) throws IOFailure, 
+            PermissionDenied, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         runChecksumJob(replica);
         admin.synchronize();
@@ -739,7 +745,7 @@ public class FileBasedActiveBitPreservation
             // TODO It should be written when  the integrity check is complete.
             // Send checksum batch job
             log.info("Bit integrity check started on the bitarchive replica '"
-        	    + replica + "'.");
+                    + replica + "'.");
             runBatchJob(new ChecksumJob(), replica, null, outputFile);
         } else {
             String errMsg = "Cannot handle the replica type of replica '"
@@ -761,7 +767,7 @@ public class FileBasedActiveBitPreservation
     public long getNumberOfFiles(Replica bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         File unsortedOutput = WorkFiles.getFile(bitarchive,
-                                                WorkFiles.FILES_ON_BA);
+                WorkFiles.FILES_ON_BA);
 
         if (!unsortedOutput.exists()) {
             return -1;
@@ -847,8 +853,11 @@ public class FileBasedActiveBitPreservation
      * (For all known files, there will be an attempt at udpload)
      * @throws IOFailure If some file cannot be reestablished. All files
      *  will be attempted, though.
+     * @throws ArgumentNotValid If the replica or the list of filenames are 
+     * null.
      */
-    public void uploadMissingFiles(Replica replica, String... filenames) {
+    public void uploadMissingFiles(Replica replica, String... filenames) 
+            throws IOFailure, IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         
@@ -907,9 +916,9 @@ public class FileBasedActiveBitPreservation
      * @param fps The FilePreservationStatus of the file to fix.
      * @throws IOFailure On trouble updating the file.
      */
-    private void reestablishMissingFile(
-            String fileName,
-            Replica damagedReplica, FilePreservationState fps) {
+    private void reestablishMissingFile(String fileName, 
+            Replica damagedReplica, FilePreservationState fps) 
+            throws IOFailure {
         log.debug("Reestablishing missing file '" + fileName
                   + "' in bitarchive '" + damagedReplica + "'.");
         if (!satisfiesMissingFileConditions(fps, damagedReplica,
@@ -934,11 +943,9 @@ public class FileBasedActiveBitPreservation
                             + "' in '" + damagedReplica.getName()
                             + "' with copy from '" + referenceArchive + "'";
             log.warn(errmsg, e);
-            throw new IOFailure(errmsg,
-                                e);
+            throw new IOFailure(errmsg, e);
         }
-        log.info("Reestablished " + fileName
-                 + " in " + damagedReplica.getName()
+        log.info("Reestablished " + fileName + " in " + damagedReplica.getName()
                  + " with copy from " + referenceArchive.getName());
         FileUtils.removeLineFromFile(fileName,
                                      WorkFiles.getFile(
@@ -1004,7 +1011,11 @@ public class FileBasedActiveBitPreservation
      *
      * @throws ArgumentNotValid if arguments are null or empty strings
      */
-    private void setAdminDataFailed(String filename, Replica rep) {
+    private void setAdminDataFailed(String filename, Replica rep) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNull(rep, "Replica rep");
+        
         ArcRepositoryClientFactory.getPreservationInstance()
                 .updateAdminData(filename, rep.getId(),
                                  ReplicaStoreState.UPLOAD_FAILED);
@@ -1022,9 +1033,12 @@ public class FileBasedActiveBitPreservation
      *
      * @throws IOFailure        if the file cannot be reestablished
      * @throws PermissionDenied if the file is not in correct state
+     * @throws ArgumentNotValid If the filename, the credentials or the checksum
+     * either are null or contain the empty string, or if the replica is null.
      */
-    public void replaceChangedFile(Replica replica, String filename,
-                                   String credentials, String checksum) {
+    public void replaceChangedFile(Replica replica, String filename, 
+            String credentials, String checksum) throws ArgumentNotValid, 
+            IOFailure, PermissionDenied {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -1115,10 +1129,9 @@ public class FileBasedActiveBitPreservation
      * Return a list of files present in bitarchive but missing in AdminData.
      *
      * @return A list of missing files.
-     *
      * @throws IOFailure if the list cannot be generated.
      */
-    public Iterable<String> getMissingFilesForAdminData() {
+    public Iterable<String> getMissingFilesForAdminData() throws IOFailure {
         //TODO implement method
         throw new NotImplementedException("Not implemented");
     }
@@ -1127,10 +1140,9 @@ public class FileBasedActiveBitPreservation
      * Return a list of files with wrong checksum or status in admin data.
      *
      * @return A list of files with wrong checksum or status.
-     *
      * @throws IOFailure if the list cannot be generated.
      */
-    public Iterable<String> getChangedFilesForAdminData() {
+    public Iterable<String> getChangedFilesForAdminData() throws IOFailure {
         //TODO implement method
         throw new NotImplementedException("Not implemented");
     }
@@ -1139,10 +1151,10 @@ public class FileBasedActiveBitPreservation
      * Reestablish admin data to match bitarchive states for files.
      *
      * @param filename The files to reestablish state for.
-     *
      * @throws PermissionDenied if the file is not in correct state
      */
-    public void addMissingFilesToAdminData(String... filename) {
+    public void addMissingFilesToAdminData(String... filename) 
+            throws PermissionDenied {
         //TODO implement method
         throw new NotImplementedException("Not implemented");
     }
@@ -1151,10 +1163,11 @@ public class FileBasedActiveBitPreservation
      * Reestablish admin data to match bitarchive states for file.
      *
      * @param filename The file to reestablish state for.
-     *
      * @throws PermissionDenied if the file is not in correct state
+     * @throws ArgumentNotValid If the filename is null or empty.
      */
-    public void changeStateForAdminData(String filename) {
+    public void changeStateForAdminData(String filename) 
+            throws PermissionDenied, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         admin.synchronize();
         FilePreservationState fps 
@@ -1192,9 +1205,8 @@ public class FileBasedActiveBitPreservation
      *                        run on all files.
      * @param batchOutputFile Where to put the result of the job.
      */
-    private void runBatchJob(FileBatchJob job, Replica replica,
-                             List<String> specifiedFiles,
-                             File batchOutputFile) {
+    private void runBatchJob(FileBatchJob job, Replica replica, 
+            List<String> specifiedFiles, File batchOutputFile) {
         job.processOnlyFilesNamed(specifiedFiles);
         BatchStatus status
                 = ArcRepositoryClientFactory.getPreservationInstance()

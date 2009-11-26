@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -64,7 +65,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
     private static ReplicaCacheDatabase instance;
     
     /** The connection to the database.*/
-    Connection dbConnection;
+    private Connection dbConnection;
     
     /**
      * Constructor.
@@ -790,58 +791,6 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             throw new IOFailure(msg, e);
         }
     }
-    
-    /**
-     * Method for updating the upload_status for a specific replicafileinfo 
-     * entry.
-     * This method contacts the admin data to retrieve the upload_status for 
-     * the file in the replica.
-     * 
-     * TODO Chose when to update the upload status.
-     * 
-     * @param replicafileinfoGuid The identification for the replicafileinfo 
-     * entry, which should have the upload_status updated.
-     */
-    private void updateUploadStatus(long replicafileinfoGuid) {
-        // gain access to the admin data
-        ReadOnlyAdminData admin = AdminData.getReadOnlyInstance();
-
-        // Retrieve the replica id and the filename.
-        String repId = retrieveReplicaIdFromReplicaFileInfo(
-                replicafileinfoGuid);
-        String fileName = retrieveFilenameForFileId(
-                retrieveFileIDFromReplicaFileInfo(replicafileinfoGuid));
-
-        // retrieve the upload status from the admin data.
-        ReplicaStoreState uploadStatus;
-        try {
-            uploadStatus = admin.getState(fileName, repId);
-        } catch (UnknownID e) {
-            log.warn("Cannot retrieve the upload status for replicafileinfo '"
-                    + replicafileinfoGuid + "' for replica '" + repId
-                    + "' with file '" + fileName + "'.");
-            return;
-        }
-
-        // The SQL statement for updating the upload status for the entry
-        // in the replicafileinfo table.
-        String sql = "UPDATE replicafileinfo SET upload_status = ? WHERE "
-                + "replicafileinfo = ?";
-
-        try {
-            PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
-            statement = DBUtils.prepareStatement(dbConnection, sql,
-                    uploadStatus.ordinal(), replicafileinfoGuid);
-            statement.executeUpdate();
-            dbConnection.commit();
-        } catch (SQLException e) {
-            String msg = "";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
-        }
-
-    }
 
     /**
      * Method for testing whether a replica already is within the database.
@@ -983,26 +932,26 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
     
     /**
      * This method is used to update the status for the checksums for all 
-     * replicafileinfo entries. </br>
-     * </br>
+     * replicafileinfo entries. <br/>
+     * <br/>
      * For each file in the database, the checksum vote is made in the 
-     * following way. </br>
+     * following way. <br/>
      * Each entry in the replicafileinfo table containing the file is retrieved.
      * All the unique checksums are retrieved, e.g. if a checksum is found more
-     * than one, then it is ignored. </br>
+     * than one, then it is ignored. <br/>
      * If only one unique checksum is found, then if must be the correct one, 
      * and all the replicas with this file will have their checksum_status set 
-     * to 'OK'. </br>
+     * to 'OK'. <br/>
      * If more than one checksum is found, then a vote for the correct checksum
      * is performed. This is done by counting the amount of time each of the 
      * unique checksum is found among the replicafileinfo entries for the 
      * current file. The checksum with most votes is chosen as the correct one,
      * and the checksum_status for all the replicafileinfo entries with this 
      * checksum is set to 'OK', whereas the replicafileinfo entries with a 
-     * different checksum is set to 'CORRUPT'. </br>  
+     * different checksum is set to 'CORRUPT'. <br/>  
      * If no winner is found then a warning and a notification is issued, and 
      * the checksum_status for all the replicafileinfo entries with for the 
-     * current file is set to 'UNKNOWN'. </br>
+     * current file is set to 'UNKNOWN'. <br/>
      */
     public void updateChecksumStatus() {
         // Get all the fileids
@@ -1052,7 +1001,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // else count the amount of times each checksum is found.
             int[] csCount = new int[hs.size()];
-            String[] uniqueCs = hs.toArray(new String[0]);
+            String[] uniqueCs = hs.toArray(new String[hs.size()]);
             for (ReplicaFileInfo rfi : rfis) {
                 for (int i = 0; i < hs.size(); i++) {
                     if (rfi.checksum.equals(uniqueCs[i])) {
@@ -1252,6 +1201,12 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         updateFilelistDateForReplica(replica);
     }
 
+    /**
+     * Get the date for the last file list job.
+     * 
+     * @param replica The replica to get the date for.
+     * @return The date of the last missing files update for the replica.
+     */
     @Override
     public Date getDateOfLastMissingFilesUpdate(Replica replica) {
         // sql for retrieving thie replicafileinfo_guid.
@@ -1618,6 +1573,9 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         System.out.println();
     }
 
+    /**
+     * Method for cleaning up.
+     */
     @Override
     public void cleanup() {
         instance = null;

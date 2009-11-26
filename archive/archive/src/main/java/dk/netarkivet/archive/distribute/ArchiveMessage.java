@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.distribute;
@@ -35,8 +36,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  *
  * @see NetarkivetMessage
  */
-public abstract class ArchiveMessage extends NetarkivetMessage
-        implements Serializable {
+public abstract class ArchiveMessage extends NetarkivetMessage {
     /**
      * Creates a new ArchiveMessage.
      *
@@ -44,7 +44,8 @@ public abstract class ArchiveMessage extends NetarkivetMessage
      * @param replyTo   the initial sender of the message
      * @throws ArgumentNotValid if to==replyTo or there is a null parameter.
      */
-    protected ArchiveMessage(ChannelID to, ChannelID replyTo) {
+    protected ArchiveMessage(ChannelID to, ChannelID replyTo) 
+            throws ArgumentNotValid {
         super(to, replyTo);
     }
 

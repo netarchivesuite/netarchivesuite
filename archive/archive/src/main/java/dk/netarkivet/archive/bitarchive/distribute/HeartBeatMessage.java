@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -50,11 +51,11 @@ public class HeartBeatMessage extends ArchiveMessage {
      * Creates a heartbeat message.
      * The time of the heartbeat is set to the creation of this object.
      *
-     * @param in_receiver   ChannelID for the recipient of this message.
+     * @param inReceiver   ChannelID for the recipient of this message.
      * @param applicationId - id of the application that sent the heartbeat
      */
-    public HeartBeatMessage(ChannelID in_receiver, String applicationId) {
-        super(in_receiver, Channels.getError());
+    public HeartBeatMessage(ChannelID inReceiver, String applicationId) {
+        super(inReceiver, Channels.getError());
         ArgumentNotValid.checkNotNullOrEmpty(applicationId, "applicationId");
         timestamp = System.currentTimeMillis();
         this.applicationId = applicationId;
@@ -74,6 +75,11 @@ public class HeartBeatMessage extends ArchiveMessage {
         return applicationId;
     }
 
+    /**
+     * Retrieval of a string representation of this instance.
+     * 
+     * @return The string representation of this instance.
+     */
     public String toString() {
         return ("Heartbeat for " + applicationId + " at " + timestamp);
     }
@@ -87,5 +93,4 @@ public class HeartBeatMessage extends ArchiveMessage {
     public void accept(ArchiveMessageVisitor v) {
         v.visit(this);
     }
-
 }

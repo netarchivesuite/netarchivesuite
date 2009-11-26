@@ -37,11 +37,11 @@ import dk.netarkivet.common.utils.KeyValuePair;
  * ChecksumJob into a list of ChecksumEntry, which is used by the 
  * BitPreservationDAO.
  */
-public class ChecksumEntry extends Object{
+public class ChecksumEntry extends Object {
     /** The name of the file for which the checksum belongs.*/
-    public String filename;
+    private String filename;
     /** The checksum of the file.*/
-    public String checksum;
+    private String checksum;
     
     /**
      * Constructor.
@@ -64,6 +64,34 @@ public class ChecksumEntry extends Object{
     }
     
     /**
+     * Retrieves the checksum.
+     * 
+     * @return The checksum.
+     */
+    public String getChecksum() {
+        return checksum;
+    }
+    
+    /**
+     * Retrieval of the hashCode of this instance.
+     * 
+     * @return The hashCode of this instance.
+     */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result;
+        if(checksum != null) {
+            result += checksum.hashCode();
+        }
+        result = prime * result;
+        if(filename != null) {
+            result += filename.hashCode();
+        }
+        return result;
+    }
+
+    /**
      * Method for testing whether a ChecksumEntry is identical to another
      * ChecksumEntry. 
      * 
@@ -73,34 +101,27 @@ public class ChecksumEntry extends Object{
      * It returns false if the argument is not of type ChecksumEntry, or if
      * it has either different filename or different checksum.
      */
-    public boolean equals(Object o) {
-        ChecksumEntry ce;
-        try {
-            ce = (ChecksumEntry) o;
-        } catch (Throwable e) {
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        }
-
-        if (!ce.getFilename().equals(filename)) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-
-        if (!ce.getChecksum().equals(checksum)) {
+        ChecksumEntry other = (ChecksumEntry) obj;
+        if (checksum == null) {
+            if (other.checksum != null)
+                return false;
+        } else if (!checksum.equals(other.checksum))
             return false;
-        }
-
+        if (filename == null) {
+            if (other.filename != null)
+                return false;
+        } else if (!filename.equals(other.filename))
+            return false;
         return true;
     }
-    
-    /**
-     * Retrieves the checksum.
-     * 
-     * @return The checksum.
-     */
-    public String getChecksum() {
-        return checksum;
-    }
-    
+
     /**
      * Make human readable string.
      * 

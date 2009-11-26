@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -53,6 +53,7 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
      * 
      * @param to The channel the message is sent to.
      * @param replyTo The channel the reply is sent to.
+     * @param repId The id of the replica.
      */
     public GetAllFilenamesMessage(ChannelID to, ChannelID replyTo, 
             String repId) {
@@ -106,6 +107,9 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
         return replicaId;
     }
     
+    /**
+     * Retrieval of a string representation of this instance.
+     */
     public String toString() {
         return super.toString() + ", replicaId: " + replicaId;
     }

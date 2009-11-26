@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -49,7 +50,6 @@ import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
-
 
 /**
  * Bitarchive container responsible for processing the different classes of
@@ -123,7 +123,8 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * @throws ArgumentNotValid - if the heartbeat frequency in settings is
      *                          invalid or either argument is null
      */
-    public static synchronized BitarchiveServer getInstance() {
+    public static synchronized BitarchiveServer getInstance() 
+            throws ArgumentNotValid, UnknownID {
         if (instance == null) {
             instance = new BitarchiveServer();
         }
@@ -279,12 +280,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
                 log.warn("Error while processing upload message '" + msg + "'",
                          e);
                 msg.setNotOk(e);
-            }
-            // Stop listening if disk is now full
-            finally {
+            } finally { // Stop listening if disk is now full
                 if (!baa.hasEnoughSpace()) {
                     log.warn("Cannot guarantee enough space, no longer "
-                            + "listening to " + anyBa.getName() + "for uploads");
+                            + "listening to " + anyBa.getName() 
+                            + "for uploads");
                     con.removeListener(anyBa, this);
                 }
             }

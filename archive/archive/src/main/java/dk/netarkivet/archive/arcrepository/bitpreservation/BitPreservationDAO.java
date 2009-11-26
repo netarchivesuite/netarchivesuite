@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -28,22 +29,27 @@ import java.util.List;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.CleanupIF;
 
+/**
+ * This is an interface for communicating with bitpreservation databases.
+ */
 public interface BitPreservationDAO extends CleanupIF {
     /** Given the output of a checksum job, add the results to the database.
      * NOTE: the Checksum version of Replica must be implemented with output
      *       in the same form as checksumJobOutput for implementation of
      *       bitArchive replicas
+     *       
      * @param checksumOutput The parsed output of a checksum job or the output
      * from a GetAllChecksumMessage.
      * @param replica The replica this checksum job is for.
      */
     void addChecksumInformation(List<ChecksumEntry> checksumOutput, 
-	    Replica replica);
+            Replica replica);
     
     /** Given the output of a file list job, add the results to the database.
      * NOTE: the Checksum version of Replica must be implemented with output
      *       in the same form as filelistJobOutput for implementation of
      *       bitArchive replicas
+     *       
      * @param filelistOutput The list of filenames for the given replica.
      * @param replica The replica this filelist job is for.
      */
@@ -51,28 +57,39 @@ public interface BitPreservationDAO extends CleanupIF {
 
     /** Return files with upload_status = COMPLETE for the replica, but the
      * filelist_status = MISSING.
-     * This is done by querying the database for files with no or different update date from
-     * the last known update date for bitarchive, but which are present from admin data.
+     * This is done by querying the database for files with no or different 
+     * update date from the last known update date for bitarchive, but which 
+     * are present from admin data.
+     * 
      * @param replica The replica to check for.
+     * @return The list of missing files for a specific replica.
      */
     Iterable<String> getMissingFilesInLastUpdate(Replica replica);
 
     /** Return files with filelist_status CORRUPT for the replica, but not 
      * present in the last missing files job.
-     * This is done by querying the database for files with different checksum from the
-     * checksum in the last known update date for bitarchive, but which are present from admin
-     * data.
+     * This is done by querying the database for files with different checksum 
+     * from the checksum in the last known update date for bitarchive, but 
+     * which are present from admin data.
+     * 
      * @param replica The replica to check for.
+     * @return The list of wrong files for the replica in the last update.
      */
     Iterable<String> getWrongFilesInLastUpdate(Replica replica);
 
-    /** Return the count of missing files for replica.
+    /** 
+     * Return the count of missing files for replica.
+     * 
      * @param replica The replica to get the count for.
+     * @return The count of missing files for a replica.
      */
-    long getNumberOfMissingFilesInLastUpdate(Replica replica );
+    long getNumberOfMissingFilesInLastUpdate(Replica replica);
 
-    /** Return the count of corrupt files for replica.
+    /** 
+     * Return the count of corrupt files for replica.
+     * 
      * @param replica The replica to get the count for.
+     * @return The number of wrong files for a replica.
      */
     long getNumberOfWrongFilesInLastUpdate(Replica replica);
 
@@ -85,13 +102,19 @@ public interface BitPreservationDAO extends CleanupIF {
      */
     long getNumberOfFiles(Replica replica);
     
-    /** Get the date for the last file list job.
+    /** 
+     * Get the date for the last file list job.
+     * 
      * @param replica The replica to get the date for.
+     * @return The date of the last missing files update for the replica.
      */
     Date getDateOfLastMissingFilesUpdate(Replica replica);
 
-    /** Get the date for the last file list job.
+    /** 
+     * Get the date for the last file list job.
+     * 
      * @param replica The replica to get the date for.
+     * @return The date of the last wrong file update for the replica.
      */
     Date getDateOfLastWrongFilesUpdate(Replica replica);
     

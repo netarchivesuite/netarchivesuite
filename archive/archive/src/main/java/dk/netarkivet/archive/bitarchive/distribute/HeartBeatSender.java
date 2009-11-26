@@ -1,6 +1,7 @@
-/* File:                  $Id$
- * Revision:              $Revision$
- * Author:                $Author$
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -17,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -39,7 +41,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
  *
  */
 public class HeartBeatSender extends TimerTask {
-
+    /** The log.*/ 
     private final Log log = LogFactory.getLog(this.getClass().getName());
     /** the receiver to receive heartbeats. */
     private ChannelID receiver;
@@ -49,23 +51,21 @@ public class HeartBeatSender extends TimerTask {
     private String applicationId;
     /** the connection to use when sending heartbeats. */
     private JMSConnection con;
-    /** a flag indicating whether to stop the thread or not. */
-    private boolean end = false;
 
     /**
      * Constructs a HearBeatSender that sends heartbeats.
      *
-     * @param in_receiver  - the receiver to receive the heartbeats
-     * @param in_baServer  - the BitarchiveServer of this HeartBeatSender
+     * @param inReceiver  - the receiver to receive the heartbeats
+     * @param inBaServer  - the BitarchiveServer of this HeartBeatSender
      * @throws ArgumentNotValid - if in_baServer is null
      * @throws IOFailure        - if getting an JMSConnection instance fails
      */
-    public HeartBeatSender(ChannelID in_receiver, BitarchiveServer in_baServer)
-    throws ArgumentNotValid, IOFailure {
-        ArgumentNotValid.checkNotNull(in_baServer, "in_baServer");
-        receiver = in_receiver;
-        applicationId = in_baServer.getBitarchiveAppId();
-        baServer = in_baServer;
+    public HeartBeatSender(ChannelID inReceiver, BitarchiveServer inBaServer)
+            throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(inBaServer, "inBaServer");
+        receiver = inReceiver;
+        applicationId = inBaServer.getBitarchiveAppId();
+        baServer = inBaServer;
         con = JMSConnectionFactory.getInstance();
     }
 
@@ -81,5 +81,15 @@ public class HeartBeatSender extends TimerTask {
                     + "BitarchiveServer couldn't ping BitarchiveMonitorServer.",
                     t);
         }
+    }
+    
+    /**
+     * Retrieval of a string representation of this instance.
+     * 
+     * @return The string representation of this instance.
+     */
+    public String toString() {
+        return super.toString() + ", Receiver: " + receiver 
+        + ", BitArchiveServer: " + baServer.toString();
     }
 }

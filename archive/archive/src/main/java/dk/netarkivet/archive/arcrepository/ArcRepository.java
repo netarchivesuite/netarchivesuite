@@ -794,18 +794,15 @@ public class ArcRepository implements CleanupIF {
                 }
             }
             
-            //Check against earlier readen checksums, if more than one
-            if (checksumList.size() > 0 && !ignoreLine) {
-                //Ignore if the checksums are the same
-                if (!checksum.equals(
-                        checksumList.get(checksumList.size() - 1))) {
-                    String errMsg = "The arc-file '" + arcfileName 
-                        + "' was found with two different checksums: " 
-                        + checksumList.get(0) + " and " + checksum 
-                        + ". Last line: '" + line + "'.";
-                    log.warn(errMsg);
-                    throw new IllegalState(errMsg);
-                }
+            // If previously checksum found, then check if they are different.
+            if (checksumList.size() > 0 && !ignoreLine && !checksum.equals(
+                    checksumList.get(checksumList.size() - 1))) {
+                String errMsg = "The arc-file '" + arcfileName 
+                + "' was found with two different checksums: " 
+                + checksumList.get(0) + " and " + checksum 
+                + ". Last line: '" + line + "'.";
+                log.warn(errMsg);
+                throw new IllegalState(errMsg);
             }
             
             //Add error free non-empty found checksum in list
@@ -985,11 +982,11 @@ public class ArcRepository implements CleanupIF {
 
         Integer retryCount = replicaRetries.get(arcfileName);
         if (retryCount == null) {
-            replicaRetries.put(arcfileName, new Integer(1));
+            replicaRetries.put(arcfileName, Integer.valueOf(1));
             return;
         }
 
-        replicaRetries.put(arcfileName, new Integer(retryCount + 1));
+        replicaRetries.put(arcfileName, Integer.valueOf(retryCount + 1));
     }
 
     /**

@@ -59,6 +59,7 @@ import dk.netarkivet.common.exceptions.PermissionDenied;
 public abstract class ArchiveMessageHandler
         implements ArchiveMessageVisitor, MessageListener {
 
+    /** The log.*/
     private final Log log = LogFactory.getLog(getClass().getName());
 
     /**
@@ -92,7 +93,7 @@ public abstract class ArchiveMessageHandler
      * @param msg The received message.
      * @throws PermissionDenied Always
      */
-    private void deny(ArchiveMessage msg) {
+    private void deny(ArchiveMessage msg) throws PermissionDenied {
         throw new PermissionDenied("'" + this + "' provides no handling for "
                 + msg + " of type " + msg.getClass().getName()
                 + " and should not be invoked!");
@@ -248,8 +249,8 @@ public abstract class ArchiveMessageHandler
      * @throws PermissionDenied when invoked
      */
     public void visit(GetAllChecksumsMessage msg) throws PermissionDenied {
-	ArgumentNotValid.checkNotNull(msg, "msg");
-	deny(msg);
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
     }
     
     /**

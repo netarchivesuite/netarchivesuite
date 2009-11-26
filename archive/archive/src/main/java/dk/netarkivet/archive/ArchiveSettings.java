@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.archive;
 
@@ -169,7 +170,7 @@ public class ArchiveSettings {
      * The directory for the checksum file.
      */
     public static String CHECKSUM_BASEDIR = 
-	"settings.archive.checksum.baseDir";
+        "settings.archive.checksum.baseDir";
     
     /**
      * <b>settings.archive.checksum.minSpaceLeft</b>: <br>

@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -47,30 +48,35 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
+    /** The log.*/
     protected static final Log log = LogFactory.getLog(BitarchiveClient.class);
 
-    // Connection to JMS provider
+    /** Connection to JMS provider.*/
     private JMSConnection con;
 
     // connection information
-    private ChannelID all_ba;
-    private ChannelID any_ba;
-    private ChannelID the_bamon;
+    /** The ALL_BA channel for this replica.*/
+    private ChannelID allBa;
+    /** The ANY_BA channel for this replica.*/
+    private ChannelID anyBa;
+    /** The THE_BAMON channel for this replica.*/
+    private ChannelID theBamon;
+    /** The channel to the ArcRepository.*/
     private ChannelID clientId = Channels.getTheRepos();
 
     /**
      * Establish the connection to the server.
      * 
-     * @param all_ba_in topic to all bitarchives
-     * @param any_ba_in queue to one of the bitarchives
-     * @param the_bamon_in queue to the bitarchive monitor
+     * @param allBaIn topic to all bitarchives
+     * @param anyBaIn queue to one of the bitarchives
+     * @param theBamonIn queue to the bitarchive monitor
      * @throws IOFailure If there is a problem making the connection.
      */
-    private BitarchiveClient(ChannelID all_ba_in, ChannelID any_ba_in,
-            ChannelID the_bamon_in) throws IOFailure {
-        this.all_ba = all_ba_in;
-        this.any_ba = any_ba_in;
-        this.the_bamon = the_bamon_in;
+    private BitarchiveClient(ChannelID allBaIn, ChannelID anyBaIn,
+            ChannelID theBamonIn) throws IOFailure {
+        this.allBa = allBaIn;
+        this.anyBa = anyBaIn;
+        this.theBamon = theBamonIn;
         con = JMSConnectionFactory.getInstance();
     }
 
@@ -100,7 +106,7 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNegative(index, "index");
 
         // Create and send get message
-        GetMessage msg = new GetMessage(all_ba, clientId, arcfile, index);
+        GetMessage msg = new GetMessage(allBa, clientId, arcfile, index);
         con.send(msg);
 
         return msg;
@@ -117,7 +123,6 @@ public class BitarchiveClient implements ReplicaClient {
 
         log.debug("Resending get message '" + msg + "' to bitarchives");
 
-        JMSConnection con = JMSConnectionFactory.getInstance();
         try {
             con.resend(msg, Channels.getAllBa());
         } catch (Throwable e) {
@@ -139,7 +144,7 @@ public class BitarchiveClient implements ReplicaClient {
     public void getFile(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.debug("Resending get file message '" + msg + "' to bitarchives");
-        con.resend(msg, this.all_ba);
+        con.resend(msg, this.allBa);
     }
 
     /**
@@ -149,7 +154,7 @@ public class BitarchiveClient implements ReplicaClient {
      */
     public void removeAndGetFile(RemoveAndGetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        con.resend(msg, this.all_ba);
+        con.resend(msg, this.allBa);
     }
 
     /**
@@ -159,9 +164,9 @@ public class BitarchiveClient implements ReplicaClient {
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void upload(RemoteFile rf) {
+    public void upload(RemoteFile rf) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
-        UploadMessage up = new UploadMessage(any_ba, clientId, rf);
+        UploadMessage up = new UploadMessage(anyBa, clientId, rf);
         log.debug("\nSending upload message\n" + up.toString());
         con.send(up);
     }
@@ -177,8 +182,8 @@ public class BitarchiveClient implements ReplicaClient {
     public BatchMessage batch(BatchMessage bMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
         log.debug("Resending batch message '" + bMsg + "' to bitarchive"
-                + " monitor " + this.the_bamon);
-        con.resend(bMsg, this.the_bamon);
+                + " monitor " + this.theBamon);
+        con.resend(bMsg, this.theBamon);
         return bMsg;
     }
 
@@ -199,7 +204,7 @@ public class BitarchiveClient implements ReplicaClient {
             throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(replyChannel, "replyChannel");
         ArgumentNotValid.checkNotNull(job, "job");
-        BatchMessage bMsg = new BatchMessage(this.the_bamon, replyChannel, job,
+        BatchMessage bMsg = new BatchMessage(this.theBamon, replyChannel, job,
                 "No value should be needed; this message was sent "
                         + "directly to the bit archive.");
         con.send(bMsg);
@@ -222,7 +227,8 @@ public class BitarchiveClient implements ReplicaClient {
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
      */
-    public void correct(RemoteFile arcfile, String checksum) {
+    public void correct(RemoteFile arcfile, String checksum) 
+            throws NotImplementedException {
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -233,9 +239,12 @@ public class BitarchiveClient implements ReplicaClient {
      * the replica for correcting the 'bad' entry.
      * 
      * @param msg The correct message to correct the bad entry in the archive.
+     * @throws NotImplementedException Always, since this method has not yet 
+     * been implemented.
      */
     @Override
-    public void correct(CorrectMessage msg) {
+    public void correct(CorrectMessage msg)
+        throws NotImplementedException {
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -293,7 +302,7 @@ public class BitarchiveClient implements ReplicaClient {
      * @param filename The name of the file to retrieve the checksum from.
      * @return The message when it has been sent.
      * @throws NotImplementedException Always, since it has not yet been 
-     * impemented.
+     * implemented.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
             String filename) throws NotImplementedException {

@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -43,6 +44,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <br>2) the actual upload status
  */
 public class FilePreservationState {
+    /** The log.*/
     private static final Log log = LogFactory.getLog(
             FilePreservationState.class);
 
@@ -69,7 +71,7 @@ public class FilePreservationState {
      *  or if admindata is null.
      */
     FilePreservationState(String filename, ArcRepositoryEntry admindata,
-                           Map<Replica, List<String>> checksumMap) {
+            Map<Replica, List<String>> checksumMap) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(admindata,
                 "ArcRepositoryEntry admindata");
@@ -103,7 +105,7 @@ public class FilePreservationState {
 
     /** Get the status of the file in a bitarchive, according to the admin data.
      * This returns the status as a string for presentation purposes only.
-     * TODO: Needs localisation.
+     * TODO Needs localisation.
      *
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
@@ -210,8 +212,8 @@ public class FilePreservationState {
 
         for (Replica r : Replica.getKnown()) {
             String cs = getUniqueChecksum(r);
-            if (referenceCheckSum.equals(cs) && 
-                    (r.getType() == ReplicaType.BITARCHIVE)) {
+            if (referenceCheckSum.equals(cs) 
+                    &&  (r.getType() == ReplicaType.BITARCHIVE)) {
                 log.debug("Reference archive for file '" + filename + "' is '"
                         + r.getId() + "'");
                 return r;

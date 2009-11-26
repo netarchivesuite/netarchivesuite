@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
@@ -51,10 +52,17 @@ import dk.netarkivet.harvester.datamodel.DBSpecifics;
 
 public class DBConnect {
 
+    /** The pool of connections.*/
     private static Map<Thread, Connection> connectionPool
             = new WeakHashMap<Thread, Connection>();
+    /** The log.*/
     private static final Log log = LogFactory.getLog(DBConnect.class);
 
+    /**
+     * Private constructor to prevent instantiation of this class.
+     */
+    private DBConnect() {}
+    
     /**
      * Get a connection to our database. If a connection is already registered 
      * to the current thread, checks that it is valid, and if not renews it. 
@@ -63,24 +71,23 @@ public class DBConnect {
      * @throws IOFailure if we cannot connect to the database (or find the
      * driver).
      */
-    public static Connection getDBConnection() {
+    public static Connection getDBConnection() throws IOFailure {
         String dbUrl = Settings.get(
                 ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE);
-        try {    		
+        try {	
             int validityCheckTimeout = Settings.getInt(
                     CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
 
             Connection connection = connectionPool.get(Thread.currentThread());
             boolean renew = ((connection == null) 
-                    || (! connection.isValid(validityCheckTimeout)));
+                    || (!connection.isValid(validityCheckTimeout)));
 
             if (renew) {  
                 Class.forName(DBSpecifics.getInstance().getDriverClassName());
                 connection = DriverManager.getConnection(dbUrl);
                 connectionPool.put(Thread.currentThread(), connection);
                 log.info("Connected to database using DBurl '"
-                        + dbUrl 
-                        + "'  using driver '"
+                        + dbUrl + "'  using driver '"
                         + DBSpecifics.getInstance().getDriverClassName() + "'");
             }
 
@@ -93,16 +100,16 @@ public class DBConnect {
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
                 + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                + DBSpecifics.getInstance().getDriverClassName() + "'" +
-                "\n" +
-                ExceptionUtils.getSQLExceptionCause(e);
+                + DBSpecifics.getInstance().getDriverClassName() + "'" 
+                + "\n" + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
     }
 
-    /** Update a table by executing all the statements in
-     *  the updates String array.
+    /** 
+     * Update a table by executing all the statements in
+     * the updates String array.
      *
      * @param table The table to update
      * @param newVersion The version that the table should end up at
@@ -110,14 +117,13 @@ public class DBConnect {
      * updates.
      * @throws IOFailure in case of problems in interacting with the database
      */
-    protected static void updateTable(final String table,
-            final int newVersion,
-            final String... updates) {
-        
+    protected static void updateTable(final String table, final int newVersion, 
+            final String... updates) throws IOFailure {
+
         log.info("Updating table to version " + newVersion);
 
         String[] sqlStatements = new String[updates.length + 1];
-        final String updateSchemaversionSql = 
+        final String updateSchemaversionSql =
             "UPDATE schemaversions SET version = "
             + newVersion + " WHERE tablename = '" + table + "'";
         System.arraycopy(updates, 0, sqlStatements, 0, updates.length);

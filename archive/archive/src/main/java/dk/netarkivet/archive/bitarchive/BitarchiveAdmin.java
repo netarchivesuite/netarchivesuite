@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.bitarchive;
@@ -77,12 +78,12 @@ public class BitarchiveAdmin {
      * Creates a new BitarchiveAdmin object for an existing bit archive.
      * Reads the directories to use from settings.
      *
-     * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive
-     *                          or the setting for minSpaceRequired is negative. 
+     * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive 
+     * or the setting for minSpaceRequired is negative. 
      * @throws PermissionDenied If any of the directories cannot be created or
-     *                          are not writeable.
+     * are not writeable.
      */
-    private BitarchiveAdmin() {
+    private BitarchiveAdmin() throws ArgumentNotValid, PermissionDenied {
         String[] filedirnames =
                 Settings.getAll(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR);
         minSpaceLeft = Settings.getLong(
@@ -216,8 +217,10 @@ public class BitarchiveAdmin {
      * @return The location where the file is now stored
      * @throws IOFailure if tempLocation is not created from getTemporaryPath
      *                   or file cannot be moved to Storage location.
+     * @throws ArgumentNotValid If the tempLocation file is null.
      */
-    public File moveToStorage(File tempLocation) {
+    public File moveToStorage(File tempLocation) throws IOFailure, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(tempLocation, "tempLocation");
         tempLocation = tempLocation.getAbsoluteFile();
         String arcFileName = tempLocation.getName();
@@ -265,7 +268,8 @@ public class BitarchiveAdmin {
      * does not exist
      * @throws ArgumentNotValid if theDir is null
      */
-    protected boolean isBitarchiveDirectory(File theDir) {
+    protected boolean isBitarchiveDirectory(File theDir) 
+            throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(theDir, "File theDir");
         try {
             theDir = theDir.getCanonicalFile();
@@ -291,7 +295,7 @@ public class BitarchiveAdmin {
      * @return true, if 'file' is an existing directory and is writable.
      * @throws ArgumentNotValid if 'file' is null.
      */
-    private boolean checkArchiveDir(File file) {
+    private boolean checkArchiveDir(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "file");
         if (!file.exists()) {
             log.warn("Directory '" + file + "' does not exist");

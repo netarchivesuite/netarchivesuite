@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive;
 
@@ -31,6 +32,11 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  * @see BitarchiveMonitorServer
  */
 public class BitarchiveMonitorApplication {
+    /**
+     * Private constructor to prevent instantiation of this class.
+     */
+    private BitarchiveMonitorApplication() {}
+    
    /**
     * Runs the BitarchiveMonitor. Settings are read from
     * config files

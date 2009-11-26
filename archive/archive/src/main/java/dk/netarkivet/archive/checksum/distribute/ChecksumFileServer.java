@@ -189,9 +189,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
-            }
-            // check if enough space and thus whether to remove listener.
-            finally {
+            } finally { // check if enough space
                 if (!cs.hasEnoughSpace()) {
                     log.warn("Not enough space any more.");
                     jmsCon.removeListener(theCR, this);
@@ -246,9 +244,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             
             // check that the current checksum is incorrect as supposed.
             if(!currentCs.equals(incorrectCs)) {
-                String errMsg = "Wrong checksum for the entry for file '" + filename
-                + "' has the checksum '" + currentCs + "', though it "
-                + "was supposed to have the checksum '" + incorrectCs + "'.";
+                String errMsg = "Wrong checksum for the entry for file '" 
+                    + filename + "' has the checksum '" + currentCs + "', "
+                    + "though it was supposed to have the checksum '" 
+                    + incorrectCs + "'.";
                 log.error(errMsg);
                 throw new IllegalState(errMsg);
             }
@@ -278,7 +277,8 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * to have its checksum retrieved.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void visit(GetChecksumMessage msg) {
+    public void visit(GetChecksumMessage msg) throws ArgumentNotValid, 
+            IllegalState {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
         log.debug("Recieving get checksum message: " + msg.toString());

@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -55,7 +56,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 public final class DatabaseBasedActiveBitPreservation implements 
         ActiveBitPreservation, CleanupIF {
     /** The log.*/
-    protected Log log
+    private Log log
             = LogFactory.getLog(
                     DatabaseBasedActiveBitPreservation.class);
     
@@ -726,11 +727,12 @@ public final class DatabaseBasedActiveBitPreservation implements
     /**
      * Old method, which refers to the checksum replica part of admin data.
      * 
-     * @return nothing, since it always throws an exception.
+     * @return Nothing, since it always throws an exception.
      * @throws NotImplementedException This method will not be implemented.
      */
     @Override
-    public Iterable<String> getMissingFilesForAdminData() {
+    public Iterable<String> getMissingFilesForAdminData() 
+            throws NotImplementedException {
         // This function should not deal with admin.data.
         throw new NotImplementedException("Old method, which refers to the "
                 + "checksum replica part of admin data.");
@@ -739,11 +741,12 @@ public final class DatabaseBasedActiveBitPreservation implements
     /**
      * Old method, which refers to the checksum replica part of admin data.
      * 
-     * @return nothing, since it always throws an exception.
+     * @return Nothing, since it always throws an exception.
      * @throws NotImplementedException This method will not be implemented.
      */
     @Override
-    public Iterable<String> getChangedFilesForAdminData() {
+    public Iterable<String> getChangedFilesForAdminData() 
+            throws NotImplementedException {
         // This function should not deal with admin.data.
         throw new NotImplementedException("Old method, which refers to the "
                 + "checksum replica part of admin data.");

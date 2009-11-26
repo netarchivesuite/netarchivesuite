@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive;
 
@@ -83,7 +84,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * status for this batch job. The Map contains all batch jobs currently
      * running.
      */
-    public Map<String, BatchJobStatus> runningBatchJobs =
+    private Map<String, BatchJobStatus> runningBatchJobs =
             Collections.synchronizedMap(new HashMap<String, BatchJobStatus>());
 
     /**
@@ -132,11 +133,11 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * @param bitarchiveBatchID The ID of the batch job sent on to the bit
      *                          archives.
      * @param timeout           Timeout of specific batch job.
-     * @throws ArgumentNotValid If any argument is null, or either string is                                                       q`
+     * @throws ArgumentNotValid If any argument is null, or either string is 
      *                          empty.
      */
     public void registerBatch(String requestID, ChannelID requestReplyTo,
-                      String bitarchiveBatchID, long timeout) {
+            String bitarchiveBatchID, long timeout) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(requestID, "String requestID");
         ArgumentNotValid.checkNotNull(requestReplyTo,
                                       "ChannelID requestReplyTo");
@@ -164,7 +165,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             signsOfLifeCopy = new HashMap<String, Long>(bitarchiveSignsOfLife);
         }
         Set<String> runningApps = new HashSet<String>();
-        for (Map.Entry<String,Long> baID : signsOfLifeCopy.entrySet()) {
+        for (Map.Entry<String, Long> baID : signsOfLifeCopy.entrySet()) {
             if (baID.getValue() + acceptableSignOfLifeDelay > now) {
                 runningApps.add(baID.getKey());
             } else {
@@ -190,36 +191,32 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * If this is the last bitarchive we were missing replies from, notify
      * observers with the batch status for this job.
      *
-     * @param bitarchiveBatchID  The ID of the batch job sent on to the bit
-     *                           archives.
-     * @param bitarchiveID       The ID of the replying bitarchive.
-     * @param noOfFilesProcessed The number of files the bitarchive has
-     *                           processed.
-     * @param filesFailed        A collection of filenames of failed files in
-     *                           that bitarchive. Might be null if no files
-     * failed.
-     * @param remoteFile         A remote pointer to a file with results from
-     *                           that bitarchive. Might be null if job was
-     * not OK.
-     * @param errMsg             An error message, if the job was not successful
-     *                           on the bitarchive, or null for none.
-     * @param exceptions         A list of exceptions caught during
-     *                           batch processing.
-     * @throws ArgumentNotValid  If either ID is null.
+     * @param bitarchiveBatchID The ID of the batch job sent on to the bit 
+     * archives.
+     * @param bitarchiveID The ID of the replying bitarchive.
+     * @param noOfFilesProcessed The number of files the bitarchive has 
+     * processed.
+     * @param filesFailed A collection of filenames of failed files in 
+     * that bitarchive. Might be null if no files failed.
+     * @param remoteFile A remote pointer to a file with results from that 
+     * bitarchive. Might be null if job was not OK.
+     * @param errMsg An error message, if the job was not successful on the 
+     * bitarchive, or null for none.
+     * @param exceptions A list of exceptions caught during batch processing.
+     * @throws ArgumentNotValid If either ID is null.
      */
-    public void bitarchiveReply(
-            String bitarchiveBatchID,
-            String bitarchiveID, int noOfFilesProcessed,
-            Collection<File> filesFailed,
+    public void bitarchiveReply(String bitarchiveBatchID, String bitarchiveID, 
+            int noOfFilesProcessed, Collection<File> filesFailed, 
             RemoteFile remoteFile, String errMsg,
-            List<FileBatchJob.ExceptionOccurrence> exceptions) {
+            List<FileBatchJob.ExceptionOccurrence> exceptions) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
                                              "String bitarchiveBatchID");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID,
                                              "String bitarchiveID");
-        //ArgumentNotValid.checkNotNull(exceptions, "exceptions");
         ArgumentNotValid.checkNotNegative(noOfFilesProcessed, 
                 "int noOfFilesProcessed");
+        // TODO should we validate exceptions ?
        
         BatchJobStatus bjs = runningBatchJobs.get(bitarchiveBatchID);
         if (bjs == null) {
@@ -237,9 +234,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                 remoteFile.cleanup();
             }
         } else {
-            bjs.updateWithBitarchiveReply(bitarchiveID,
-                                          noOfFilesProcessed, filesFailed,
-                                          remoteFile, errMsg, exceptions);
+            bjs.updateWithBitarchiveReply(bitarchiveID, noOfFilesProcessed, 
+                    filesFailed, remoteFile, errMsg);
         }
     }
 
@@ -268,7 +264,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * from all bitarchive replies received. It also contains information about
      * the original requester of the batchjob.
      */
-    public class BatchJobStatus {
+    public final class BatchJobStatus {
 
         /**
          * The timer task that handles timeout of this batch job.
@@ -287,33 +283,40 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * the ID of the original batch request.
          */
         public final String originalRequestID;
+        
         /**
          * The reply channel for the original request.
          */
         public final ChannelID originalRequestReplyTo;
+        
         /**
          * set containing the bitarchives that were live when we sent the
          * job, but haven't answered yet.
          */
         public final Set<String> missingRespondents;
+        
         /**
          * The accumulated number of files processed in replies received so
          * far.
          */
         public int noOfFilesProcessed;
+        
         /**
          * The accumulated list of files failed in replies received so far.
          */
         public final Collection<File> filesFailed;
+        
         /**
          * A string with a concatenation of errors. This error message is null,
          * if the job is successful.
          */
-        public String errMsg;
+        public String errorMessages;
+        
         /**
          * A File with a concatenation of results from replies received so far.
          */
         public final File batchResultFile;
+        
         /**
          * A list of the exceptions that occurred during processing.
          */
@@ -339,10 +342,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * @param timeout                Timeout for Batch job
          * @throws IOFailure if a file for batch results cannot be made.
          */
-        private BatchJobStatus(
-                String originalRequestID, ChannelID originalRequestReplyTo,
-                String bitarchiveBatchID,
-                Set<String> missingRespondents, long timeout) {
+        private BatchJobStatus(String originalRequestID, 
+                ChannelID originalRequestReplyTo, String bitarchiveBatchID,
+                Set<String> missingRespondents, long timeout) 
+                throws ArgumentNotValid {
             this.originalRequestID = originalRequestID;
             this.originalRequestReplyTo = originalRequestReplyTo;
             this.bitarchiveBatchID = bitarchiveBatchID;
@@ -364,7 +367,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             }
             this.filesFailed = new ArrayList<File>();
             //Null indicates no error
-            this.errMsg = null;
+            this.errorMessages = null;
             this.notifyInitiated = false;
 
             exceptions = new ArrayList<FileBatchJob.ExceptionOccurrence>();
@@ -376,10 +379,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * @param errMsg A message describing what went wrong.
          */
         public void appendError(String errMsg) {
-            if (this.errMsg == null) {
-                this.errMsg = errMsg;
+            if (this.errorMessages == null) {
+                this.errorMessages = errMsg;
             } else {
-                this.errMsg += "\n" + errMsg;
+                this.errorMessages += "\n" + errMsg;
             }
         }
 
@@ -390,23 +393,17 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
          * last remaining bitarchive, also sends a notification to all observers
          * of the bitarchive monitor.
          *
-         * @param bitarchiveID       The ID of the bitarchive that has replied
-         * @param noOfFilesProcessed The number of files processed by that bit
-         *                           archive
-         * @param filesFailed        List of files failed in that bit archive
-         * @param remoteFile         A pointer to a remote file with results
-         *                           from the bitarchive.
-         * @param errMsg             An error message with errors from that bit
-         *                           archive.
-         * @param exceptions         A List of exceptions caught during batch
-         *                           processing
+         * @param bitarchiveID The ID of the bitarchive that has replied
+         * @param numberOfFilesProcessed The number of files processed by that 
+         * bit archive.
+         * @param failedFiles List of files failed in that bit archive.
+         * @param remoteFile A pointer to a remote file with results from the 
+         * bitarchive.
+         * @param errMsg An error message with errors from that bit archive.
          */
-        private synchronized void updateWithBitarchiveReply(
-                String bitarchiveID,
-                int noOfFilesProcessed,
-                Collection<File> filesFailed, RemoteFile remoteFile,
-                String errMsg,
-                List<FileBatchJob.ExceptionOccurrence> exceptions) {
+        private synchronized void updateWithBitarchiveReply(String bitarchiveID,
+                int numberOfFilesProcessed, Collection<File> failedFiles, 
+                RemoteFile remoteFile, String errMsg) {
             if (notifyInitiated) {
                 log.debug("The reply for batch job: '"
                           + bitarchiveBatchID
@@ -428,9 +425,9 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                          + " from an unexpected bit archive: '"
                          + bitarchiveID + "'");
             }
-            this.noOfFilesProcessed += noOfFilesProcessed;
-            if (filesFailed != null) {
-                this.filesFailed.addAll(filesFailed);
+            this.noOfFilesProcessed += numberOfFilesProcessed;
+            if (failedFiles != null) {
+                this.filesFailed.addAll(failedFiles);
             }
 
             appendRemoteFileToAggregateFile(remoteFile);

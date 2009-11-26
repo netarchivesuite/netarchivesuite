@@ -56,9 +56,25 @@ import dk.netarkivet.common.utils.Settings;
  *
  */
 public enum WorkFiles {
-    MISSING_FILES_BA, MISSING_FILES_ADMINDATA, WRONG_FILES,
-    FILES_ON_REFERENCE_BA, INSERT_IN_ADMIN, DELETE_FROM_ADMIN,
-    UPLOAD_TO_BA, DELETE_FROM_BA, WRONG_STATES, FILES_ON_BA, CHECKSUMS_ON_BA ;
+    /** 
+     * The MISSING_FILES_BA is the workfile for the list of missing files 
+     * for a bitarchive. 
+     */
+    MISSING_FILES_BA, 
+    /** 
+     * The MISSING_FILES_ADMINDATA is the workfile for the list of missing files 
+     * for the admin data. 
+     */
+    MISSING_FILES_ADMINDATA, 
+    WRONG_FILES,
+    FILES_ON_REFERENCE_BA, 
+    INSERT_IN_ADMIN, 
+    DELETE_FROM_ADMIN,
+    UPLOAD_TO_BA, 
+    DELETE_FROM_BA, 
+    WRONG_STATES, 
+    FILES_ON_BA, 
+    CHECKSUMS_ON_BA;
 
     /** Directory and filenames to be used by ActiveBitPreservation when
      * checking for missing files in a bitarchive.

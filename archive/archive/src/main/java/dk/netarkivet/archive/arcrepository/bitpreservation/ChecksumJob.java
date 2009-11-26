@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *   USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -45,17 +46,23 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class ChecksumJob extends FileBatchJob {
 
+    /** The log.*/
     protected transient Log log = LogFactory.getLog(getClass().getName());
+    
+    /** The batch job timeout as a constant.*/
+    private static final long CHECKSUM_JOB_TIME = 
+        15 * Constants.ONE_MIN_IN_MILLIES;
 
+    /** The constructor.*/
     public ChecksumJob() {
-
-        batchJobTimeout = 15*Constants.ONE_MIN_IN_MILLIES;
+        batchJobTimeout = CHECKSUM_JOB_TIME;
     }
 
     /**
      * Initialization of a ChecksumJob: a new structure for storing files
      * failed is created.
-     *
+     * 
+     * @param os The output stream where the output data is written.
      * @see FileBatchJob#initialize(OutputStream)
      */
     public void initialize(OutputStream os) {
@@ -90,6 +97,7 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Finishing the job requires nothing particular.
      *
+     * @param os The output stream where the output data is written.
      * @see FileBatchJob#finish(OutputStream)
      */
     public void finish(OutputStream os) {
@@ -110,11 +118,12 @@ public class ChecksumJob extends FileBatchJob {
     /** Parse a line of output into a key-value pair.
      *
      * @param line The line to parse, of the form
-     *  <filename>##<checksum>
+     *  <b>filename</b>##<b>checksum</b>
      * @return The filename->checksum mapping.
      * @throws ArgumentNotValid if the line is not on the correct form.
      */
-    public static KeyValuePair<String, String> parseLine(String line) {
+    public static KeyValuePair<String, String> parseLine(String line) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "checksum line");
         String[] parts = line.split(Constants.STRING_FILENAME_SEPARATOR);
         if (parts.length != 2) {
@@ -159,8 +168,9 @@ public class ChecksumJob extends FileBatchJob {
     /**
      * Invoke default method for serializing object.
      * @param s the OutputStream
+     * @throws IOFailure If an exception is caught during writing of the object.
      */
-    private void writeObject(ObjectOutputStream s) {
+    private void writeObject(ObjectOutputStream s) throws IOFailure {
         try {
             s.defaultWriteObject();
         } catch (Exception e) {

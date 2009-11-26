@@ -477,7 +477,7 @@ public final class DeployApplication {
         /** The command line.*/
         private CommandLine cmd;
         /** Whether the options has an argument.*/
-        private final boolean hasArg = true;
+        private static final boolean hasArg = true;
         /**
          * Initialise options by setting legal parameters for batch jobs.
          */

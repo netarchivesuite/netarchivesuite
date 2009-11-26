@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.checksum.distribute;
 
@@ -50,13 +51,13 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * Can be used in combination with any type of ChecksumServerAPI.
  */
 public class ChecksumClient implements ReplicaClient {
-    // Each message is assigned a message id
+    /** The log.*/
     protected static final Log log = LogFactory.getLog(ChecksumClient.class);
 
-    // The instance.
+    /** The instance.*/
     private static ChecksumClient instance;
 
-    // Connection to JMS provider
+    /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
 
     /** 
@@ -120,17 +121,13 @@ public class ChecksumClient implements ReplicaClient {
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
-
-/*        // create and send message.
-        CorrectMessage cmsg = new CorrectMessage(theCR, Channels.getTheRepos(),
-                checksum, arcfile);
-        jmsCon.send(cmsg);
-
-        // log that the message has been sent.
-        log.debug("\nSending correct message: \n" + cmsg.toString());
-*/
     }
     
+    /**
+     * Method for sending correct messages to the replica.
+     * 
+     * @param The CorrectMessage to send to the replica.
+     */
     public void correct(CorrectMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         
@@ -305,8 +302,8 @@ public class ChecksumClient implements ReplicaClient {
     public void get(GetMessage msg) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         
-        String errMsg = "The GetMessage '" + msg + "' cannot be sent to checksum"
-                + " replica.";
+        String errMsg = "The GetMessage '" + msg 
+                + "' cannot be sent to checksum" + " replica.";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }

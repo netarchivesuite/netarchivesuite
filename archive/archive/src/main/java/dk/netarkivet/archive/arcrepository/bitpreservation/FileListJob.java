@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepository.bitpreservation;
@@ -48,10 +49,11 @@ public class FileListJob extends FileBatchJob {
      */
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
-
+    /** The constructor. Initializes the time out for this job.*/
     public FileListJob() {
         batchJobTimeout = Constants.ONE_HOUR_IN_MILLIES;
     }
+    
     /**
      * Initializes fields in this class.
      * @param os the OutputStream to which data is to be written
@@ -123,8 +125,8 @@ public class FileListJob extends FileBatchJob {
      * @return The list of filenames within the file.
      */
     public static List<String> extractListFromOutputFile(File outputFile) {
-	ArgumentNotValid.checkNotNull(outputFile, "File outputFile");
-	
-	return FileUtils.readListFromFile(outputFile);
+        ArgumentNotValid.checkNotNull(outputFile, "File outputFile");
+
+        return FileUtils.readListFromFile(outputFile);
     }
 }

@@ -251,7 +251,7 @@ public class CreateTestInstance {
     /** 
      * Structure for handling where to apply the new offset value.
      */
-    private class OffsetSystem {
+    private static class OffsetSystem {
         /** The index of the decimal to be replaced by the offset.*/
         private int index;
         /** The path to the leaf where the offset are to be applied.*/

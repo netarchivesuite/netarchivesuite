@@ -1,6 +1,7 @@
-/* File:                 $Id$
- * Revision:         $Revision$
- * Author:                $Author$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -17,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -85,13 +87,14 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * @return file content
      * @throws IOFailure on error reading the file
      */
-    public File getData() {
-        File file = new File(FileUtils.getTempDir(), remoteFile.getName());
-        if (remoteFile != null) {
-            remoteFile.copyTo(file);
-        } else {
+    public File getData() throws IOFailure {
+        // ensure that the remote file exists.
+        if (remoteFile == null) {
             throw new IOFailure("No file present in message");
         }
+        // Retrieve the remote file and put it into a temporary file.
+        File file = new File(FileUtils.getTempDir(), remoteFile.getName());
+            remoteFile.copyTo(file);
         try {
             remoteFile.cleanup();
         } catch (IOFailure e) {
@@ -156,6 +159,9 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
     }
 
     /**
+     * Retrieval of a string representation of this instance.
+     * 
+     * @return The string representation of this instance.
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */
     public String toString() {

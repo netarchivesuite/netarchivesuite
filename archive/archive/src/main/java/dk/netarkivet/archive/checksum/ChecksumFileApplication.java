@@ -18,14 +18,23 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.checksum;
 
 import dk.netarkivet.archive.checksum.distribute.ChecksumFileServer;
 import dk.netarkivet.common.utils.ApplicationUtils;
 
+/**
+ * This class is used to start the checksum file application.
+ */
 public class ChecksumFileApplication {
+    /**
+     * Private constructor. Prevents instantiation of this class.
+     */
+    private ChecksumFileApplication() {}
+    
     /**
      * Runs the Checksum File Application.
      * 

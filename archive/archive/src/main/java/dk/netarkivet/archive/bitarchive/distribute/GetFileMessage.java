@@ -1,6 +1,7 @@
 /* File:             $Id$
  * Revision:         $Revision$
  * Author:           $Author$
+ * Date:             $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -17,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -33,7 +35,6 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
-
 /**
  * Message requesting a file from a bitarchive. Messages is forwarded through
  * arcrepository, but reponds directly to sender.
@@ -48,9 +49,9 @@ public class GetFileMessage extends ArchiveMessage {
     private String replicaId;
 
     /**
-     * Constructor for get file message
+     * Constructor for get file message.
      *
-     * @param to Recepient
+     * @param to Recipient
      * @param replyTo Original sender
      * @param arcfileName The file to retrieve
      * @param replicaId The bitarchive replica id to retrieve it from.
@@ -78,8 +79,9 @@ public class GetFileMessage extends ArchiveMessage {
      * @param toFile where to write the content
      * @throws IOFailure on error reading the remote file
      * or writing the local file
+     * @throws ArgumentNotValid If the file is null.
      */
-    public void getData(File toFile) {
+    public void getData(File toFile) throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(toFile, "toFile");
         if (remoteFile == null) {
             throw new IOFailure("No file present in message to get file '"
@@ -131,6 +133,9 @@ public class GetFileMessage extends ArchiveMessage {
     }
 
     /**
+     * Retrieval of a string representation of this instance.
+     * 
+     * @return The string representing this instance.
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */
     public String toString() {

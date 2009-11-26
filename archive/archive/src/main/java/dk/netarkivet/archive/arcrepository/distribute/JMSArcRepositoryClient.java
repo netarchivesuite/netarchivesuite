@@ -114,7 +114,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * for the number of times to try sending a store message before failing,
      * including the first attempt.
      */
-    public static String ARCREPOSITORY_STORE_RETRIES
+    public final static String ARCREPOSITORY_STORE_RETRIES
             = "settings.common.arcrepositoryClient.storeRetries";
 
     /**

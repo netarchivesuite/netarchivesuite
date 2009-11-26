@@ -158,7 +158,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * 
      * @return The checksum file name.
      */
-    public String getFilename() {
+    public String getFileName() {
         return checksumFile.getPath();
     }
     
@@ -327,18 +327,24 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 // initialize and create the file.
                 File recreateFile = new File(checksumFile.getParentFile(), 
                         makeRecreateFileName());
-                recreateFile.createNewFile();
+                if(!recreateFile.createNewFile()) {
+                    log.warn("Cannot create new file. The recreate checksum "
+                            + "file did already exist.");
+                }
 
                 // put the archive into the file.
                 FileWriter fw = new FileWriter(recreateFile);
-                for(Map.Entry<String, String> entry
-                        : checksumArchive.entrySet()) {
-                    String record = entry.getKey() + CHECKSUM_SEPARATOR 
-                    + entry.getValue();
-                    fw.append(record + "\n");
+                try {
+                    for(Map.Entry<String, String> entry
+                            : checksumArchive.entrySet()) {
+                        String record = entry.getKey() + CHECKSUM_SEPARATOR 
+                        + entry.getValue();
+                        fw.append(record + "\n");
+                    }
+                } finally {
+                    fw.flush();
+                    fw.close();
                 }
-                fw.flush();
-                fw.close();
                 
                 // Move the file.
                 FileUtils.moveFile(recreateFile, checksumFile);
@@ -477,11 +483,13 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // appending of the new entry.
         synchronized(checksumFile) {
             FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
-            fwrite.append(record);
-
-            // close fileWriter.
-            fwrite.flush();
-            fwrite.close();
+            try {
+                fwrite.append(record);
+            } finally {
+                // close fileWriter.
+                fwrite.flush();
+                fwrite.close();
+            }
         }
     }
     
@@ -582,6 +590,13 @@ public final class FileChecksumArchive extends ChecksumArchive {
         return checksumArchive.get(filename);
     }
     
+    /**
+     * Method for checking whether an entry exists within the archive.
+     * 
+     * @param filename The name of the file whose entry in the archive should 
+     * be determined.
+     * @return Whether an entry with the filename was found.
+     */
     public boolean hasEntry(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
@@ -660,7 +675,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // Calculate the new checksum and correct the entry.
         String newChecksum = calculateChecksum(correctFile);
         if(newChecksum.equals(currentChecksum)) {
-            // TODO: finish?
+            // TODO finish?
             log.warn("The correct and the incorrect checksums are the same!");
             return;
         }
@@ -713,16 +728,19 @@ public final class FileChecksumArchive extends ChecksumArchive {
             File tempFile = File.createTempFile("tmp", "tmp", 
                     FileUtils.getTempDir());
             FileWriter fw = new FileWriter(tempFile);
-            
-            // put the content into the file.
-            for(String filename : checksumArchive.keySet()) {
-                fw.append(filename);
-                fw.append("\n");
-            }
 
-            // flush and close the file, before returning it.
-            fw.flush();
-            fw.close();
+            try {
+                // put the content into the file.
+                for(String filename : checksumArchive.keySet()) {
+                    fw.append(filename);
+                    fw.append("\n");
+                }
+
+            } finally {
+                // flush and close the file, before returning it.
+                fw.flush();
+                fw.close();
+            }
             return tempFile;
         } catch (IOException e) {
             String msg = "Cannot create the output file containing the "

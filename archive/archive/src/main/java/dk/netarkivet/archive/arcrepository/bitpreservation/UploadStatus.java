@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -45,7 +46,7 @@ public enum UploadStatus {
      * @throws ArgumentNotValid If argument rt does not correspond
      * to a UploadStatus.
      */
-    public static UploadStatus fromOrdinal(int us) {
+    public static UploadStatus fromOrdinal(int us) throws ArgumentNotValid {
         switch (us) {
             case 0: return NO_UPLOAD_STATUS;
             case 1: return STARTED;

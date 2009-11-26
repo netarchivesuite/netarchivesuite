@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
@@ -41,9 +42,9 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * finished processing a batch job.
  */
 public class BatchEndedMessage extends ArchiveMessage {
-
-    /** the identifier for BA application, that performed the batch-job. */
-    private String BA_ApplicationId;
+    /** The identifier for the bitarchive application, that performed the 
+     * batch-job. */
+    private String baApplicationId;
     /** The identifier for the message, that initiated the batch-job. */
     private String originatingBatchMsgId;
     /** Number of files processed by the batch-job. */
@@ -73,9 +74,11 @@ public class BatchEndedMessage extends ArchiveMessage {
      * @param originatingBatchMsgId the Id field from the original batch message
      * @param rf he remote file reference containing the output of the batch
      * job (may be null if no output is generated).
+     * @throws ArgumentNotValid If the BA_ApplicationId or the 
+     * originatingBatchMsgId are null or empty, or if the channel 'to' is null.
      */
     public BatchEndedMessage(ChannelID to, String BA_ApplicationId,
-                             String originatingBatchMsgId, RemoteFile rf) {
+            String originatingBatchMsgId, RemoteFile rf) {
         super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(to, "to");
         ArgumentNotValid.checkNotNullOrEmpty(BA_ApplicationId,
@@ -83,7 +86,7 @@ public class BatchEndedMessage extends ArchiveMessage {
         ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
                 "originatingBatchMsgId");
 
-        this.BA_ApplicationId = BA_ApplicationId;
+        this.baApplicationId = BA_ApplicationId;
         this.originatingBatchMsgId = originatingBatchMsgId;
         this.rf = rf;
     }
@@ -111,7 +114,7 @@ public class BatchEndedMessage extends ArchiveMessage {
         ArgumentNotValid.checkNotNull(status, "BatchStatus status");
 
         this.originatingBatchMsgId = originatingBatchMsgId;
-        this.BA_ApplicationId = status.getBitArchiveAppId();
+        this.baApplicationId = status.getBitArchiveAppId();
         this.rf = status.getResultFile();
         this.noOfFilesProcessed = status.getNoOfFilesProcessed();
         this.filesFailed = status.getFilesFailed();
@@ -123,7 +126,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      * @return the id information
      */
     public String getBitarchiveID() {
-        return BA_ApplicationId;
+        return baApplicationId;
     }
 
     /**
@@ -145,7 +148,8 @@ public class BatchEndedMessage extends ArchiveMessage {
     /**
      * Returns a collection of the names of files on which this batch job.
      * failed
-     * @return a Collection<String> of the file names
+     * 
+     * @return a Collection of strings with the file names
      */
     public Collection<File> getFilesFailed() {
         return filesFailed;
@@ -159,7 +163,7 @@ public class BatchEndedMessage extends ArchiveMessage {
     }
 
     /** Set the files that failed in batch job.
-      * @param files Collection<File> The files that failed
+      * @param files The collection of files that failed
      */
     public void setFilesFailed(Collection<File> files) {
         filesFailed = files;
@@ -189,7 +193,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      */
     public String toString(){
         return "\nBatchEndedMessage for batch job " + originatingBatchMsgId
-                + "\nFrom Bitarchive " + BA_ApplicationId
+                + "\nFrom Bitarchive " + baApplicationId
                 + "\nFilesProcessed = " + noOfFilesProcessed
                 + "\n" + super.toString();
     }
