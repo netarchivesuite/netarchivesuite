@@ -85,7 +85,10 @@ insert into schemaversions ( tablename, version )
     values ( 'jobs', 5);
 insert into schemaversions ( tablename, version ) 
     values ( 'job_configs', 1);
-
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_lists', 1);
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_expressions', 1);
 
 --***************************************************************************--
 -- Area: Domains
@@ -445,3 +448,35 @@ create table job_configs(
 );
 
 create index jobconfigjob on job_configs(job_id);
+
+-------------------------------------------------------------------------------
+-- Name:   global_crawler_trap_lists
+-- Descr.: Models a list of crawler traps which may be applied globally
+-- Purpose:Each list is referenced by one or more crawler trap expressions
+--         which are regular expressions stored in the table
+--         global_crawler_trap_expressions. If the list is active, then any
+--         url matching any of these expressions is added as a crawler trap
+--         to all jobs scheduled with any harvest template.
+create table global_crawler_trap_lists(
+  global_crawler_trap_list_id int not null generated always as identity primary key,
+  name varchar(300) not null unique,     -- A name by which this list is known
+                                         -- e.g. "Statsbibliotekets Master List'
+  description varchar(30000),            -- An optional description of the
+                                         -- list
+  isActive int not null                  -- boolean valued int indicating
+                                         -- whether or not the list is active
+                                         -- 0=inactive, 1=active
+);
+
+-------------------------------------------------------------------------------
+-- Name:    global_crawler_trap_expressions
+-- Descr.:  Contains the regular expressions defining url's to be ignored
+-- Purpose: Specifies the actual crawler traps in each list
+create table global_crawler_trap_expressions(
+    crawler_trap_list_id int not null, -- references
+                                                  -- global_crawler_trap_list_id
+    trap_expression varchar(1000),               -- the actual regular
+                                                  -- expression for the crawler
+                                                  -- trap
+    primary key (crawler_trap_list_id, trap_expression)
+);
