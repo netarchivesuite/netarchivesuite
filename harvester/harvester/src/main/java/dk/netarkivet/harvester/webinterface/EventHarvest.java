@@ -26,20 +26,17 @@ package dk.netarkivet.harvester.webinterface;
 import java.io.File;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
@@ -51,6 +48,9 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
  *
  */
 public class EventHarvest {
+    
+    final static Log log = LogFactory.getLog(EventHarvest.class.getName());
+    
     /**
      * Private Constructor. Instances are not meaningful.
      */
@@ -128,84 +128,59 @@ public class EventHarvest {
         }
     }
     
-    /** addConfigurations with support for multipart data. */
-    public static void addConfigurations(PageContext context, boolean isMultipart, I18n i18n,
-            PartialHarvest eventHarvest) {
+    
+    
+    /**
+     * Add configurations to an existing selective harvest.
+     * @param context@param context the current JSP context
+     * @param i18n the translation information to use in this context
+     * @param eventHarvest the partial harvest to which these
+     * seeds are to be added.
+     * @param seedsFile The seeds file
+     * @param maxbytesString The given maxbytes as a string
+     * @param maxobjectsString The given maxobjects as a string (currently not used)
+     * @param maxrateString The given maxrate as a string (currently not used)
+     * @param ordertemplate The name of the ordertemplate to use
+     */
+    public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n,
+            PartialHarvest eventHarvest, File seedsFile, String maxbytesString, 
+            String maxobjectsString, String maxrateString, String ordertemplate) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(eventHarvest, "PartialHarvest eventHarvest");
-        if (!isMultipart) {
-            addConfigurations(context, i18n, eventHarvest);
-            return;
-        }
-        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        ArgumentNotValid.checkNotNull(seedsFile, "File seedsFile");
+        
         String seeds = null;
         long maxBytes = 0L;
-        String orderTemplate = null;
-        //The seeds are found in a file 
         try {
-            String maxbytesString = null;           
-            // Create a factory for disk-based file items
-            FileItemFactory factory = new DiskFileItemFactory();
-
-           // Create a new file upload handler
-           ServletFileUpload upload = new ServletFileUpload(factory);
-
-           File seedsFile = File.createTempFile("seeds", ".txt", 
-                    FileUtils.getTempDir());
-            String seedsFileName = "";
-            List items = upload.parseRequest(request);
-            for (Object o : items) {
-                FileItem item = (FileItem) o;
-                if (!item.isFormField()) {
-                    item.write(seedsFile);
-                    seedsFileName = item.getName();
-                } else {
-                    String fieldName = item.getFieldName();
-                    if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
-                        maxbytesString = item.getString();
-                    } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
-                        orderTemplate = item.getString();
-                }               
-                }
-            }
-            if (!seedsFileName.isEmpty()) { // A file was found
-                seeds = FileUtils.readFile(seedsFile);
+            if (seedsFile.length() < 0) {
+                throw new IllegalState("SeedsFile not uploaded correctly");
             } else {
-                seeds = "www.defaultdomain.dk";
+                seeds = FileUtils.readFile(seedsFile);
             }
             if (maxbytesString == null){
-                maxBytes = dk.netarkivet.harvester
-                .datamodel.Constants.DEFAULT_MAX_BYTES;
+                maxBytes = dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES;
             } else {
                 maxBytes = parseLong(context, maxbytesString, dk.netarkivet.harvester
             .datamodel.Constants.DEFAULT_MAX_BYTES);
             }
-            //maxBytes = HTMLUtils.parseOptionalLong(context,
-            //        Constants.MAX_BYTES_PARAM, dk.netarkivet.harvester
-            //            .datamodel.Constants.DEFAULT_MAX_BYTES);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, 
                     "Exception.thrown.when.adding.seeds", e);
             return;
         }
-        
-        if (orderTemplate == null) {
-            orderTemplate = "default_orderxml";
-        }
-        
         // Check that order template exists
-        if (!TemplateDAO.getInstance().exists(orderTemplate)) {
+        if (ordertemplate == null || !TemplateDAO.getInstance().exists(ordertemplate)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;harvest.template.0.does.not.exist",
-                    orderTemplate);
+                    ordertemplate);
             throw new ForwardedToErrorPage("The orderTemplate with name '"
-                    + orderTemplate + "' does not exist!");
+                    + ordertemplate + "' does not exist!");
         }
 
         // All parameters are valid, so call method
         try {
-            eventHarvest.addSeeds(seeds, orderTemplate, maxBytes);
+            eventHarvest.addSeeds(seeds, ordertemplate, maxBytes);
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;error.adding.seeds.to.0", e, eventHarvest.getName(),
@@ -213,7 +188,15 @@ public class EventHarvest {
             throw new ForwardedToErrorPage("Error while adding seeds", e);
         }
     }
-
+    
+    /**
+     * Utility method to validate the maxbytesString, coming from the form data.
+     * @param context the given JSP context (only used to get the current loc)
+     * @param maxbytesString The given Maxbytes as a string
+     * @param defaultMaxBytes The default value for maxbytes.
+     * @return the maxbytesString as a long, if it is not null and can be parsed; otherwise
+     * it returns the default value for maxbytes. 
+     */
     private static long parseLong(PageContext context, String maxbytesString, long defaultMaxBytes) {
         Locale loc = HTMLUtils.getLocaleObject(context);
         String paramValue = maxbytesString;

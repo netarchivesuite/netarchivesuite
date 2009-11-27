@@ -45,6 +45,8 @@ harvest.
 --%><%@ page import="java.text.NumberFormat,
                  java.util.Iterator,
                  java.util.List,
+                 java.io.File,
+                 dk.netarkivet.common.utils.FileUtils,
                  dk.netarkivet.common.exceptions.ForwardedToErrorPage,
                  dk.netarkivet.common.utils.I18n,
                  dk.netarkivet.common.webinterface.HTMLUtils,
@@ -58,7 +60,9 @@ harvest.
                  org.apache.commons.fileupload.FileItem,
                  dk.netarkivet.harvester.webinterface.EventHarvest"
          pageEncoding="UTF-8"
-%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%>
+<%@page import="java.util.logging.Level"%>
+<%@page import="java.lang.reflect.Field"%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
@@ -70,22 +74,44 @@ harvest.
     String harvestName = null;
     String mode = null;
     String update = null;
+    // These fields are necessary
+    File seedsFile = File.createTempFile("seeds", ".txt", 
+                    FileUtils.getTempDir());
+    String maxbytesString = null;
+    String maxobjectsString = null;
+    String orderTemplateString = null;
+    String maxrateString = null;
+    String seedsFileName = "";
+                    
     if (isMultiPart) {
     	// Create a factory for disk-based file items
     	FileItemFactory factory = new DiskFileItemFactory();
 		// Create a new file upload handler
    		ServletFileUpload upload = new ServletFileUpload(factory);
+        // As the parsing of the formdata has the sideeffect of removing the
+        // formdata from the request(!), we have to extract all possible data the first time around.
         List items = upload.parseRequest(request);
+        EventHarvest.logmessage("found fields" + items.size());
         for (Object o : items) {
         		FileItem item = (FileItem) o;
                 String fieldName = item.getFieldName();
+                EventHarvest.logmessage("found field w/name " + fieldName);
                 if (fieldName.equals(Constants.HARVEST_PARAM)) {
                     harvestName = item.getString();
-                } else if (fieldName.equals(Constants.FROM_FILE_PARAM)) {
-                    mode = item.getString();
                 } else if (fieldName.equals(Constants.UPDATE_PARAM)) {
                     update = item.getString();
-                } 
+                } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
+                        maxbytesString = item.getString();
+                } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
+                        maxobjectsString = item.getString();
+                 } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
+                        maxrateString = item.getString();             
+                } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
+                        orderTemplateString = item.getString();
+                } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
+                	item.write(seedsFile);
+                    seedsFileName = item.getName();
+                }
             }
     } else {
     	harvestName = request.getParameter(Constants.HARVEST_PARAM);
@@ -118,7 +144,12 @@ harvest.
     }
     if (update != null && update.length() > 0) {
         try {
-			EventHarvest.addConfigurations(pageContext, isMultiPart, I18N, harvest);
+            if (!isMultiPart) {
+			  	EventHarvest.addConfigurations(pageContext, I18N, harvest);
+			} else {
+				EventHarvest.addConfigurationsFromSeedsFile(pageContext, I18N, harvest, 
+					seedsFile,maxbytesString, maxobjectsString, maxrateString, orderTemplateString);
+			}
         } catch (ForwardedToErrorPage e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
                     "errormsg;error.adding.seeds.to.0", harvestName, e);

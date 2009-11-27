@@ -80,6 +80,7 @@ public class Constants {
     public static final String ORDER_TEMPLATE_PARAM = "orderTemplate";
     public static final String ALIAS_PARAM = "alias";
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
+    public static final String UPLOAD_FILE_PARAM = "upload_file";
     
     /** Names of the two directories for the sitesections belonging to
      * the harvester package, and the directory belonging to the viewerproxy
