@@ -66,7 +66,7 @@ public abstract class ApplicationUtils {
     /**
      * Helper class that prints a String to STDOUT, and logs it at INFO level
      * at the same time.
-     * @param s the given string
+     * @param s the given string.
      */
     private static void logAndPrint(String s) {
         System.out.println(s);
@@ -77,8 +77,8 @@ public abstract class ApplicationUtils {
      * Helper class for logging an exception (at level fatal)
      * and printing it to STDOUT at the same time.
      * Also invokes the error notifyer.
-     * @param s a given String
-     * @param t a given Exception
+     * @param s a given String.
+     * @param t a given Exception.
      */
     private static void logExceptionAndPrint(String s, Throwable t) {
         System.out.println(s);
@@ -89,8 +89,8 @@ public abstract class ApplicationUtils {
 
     /**
      * Checks that the arguments for a class are empty. Exits the JVM with error
-     * code 1 if the arguments are not empty
-     * @param args the argument array
+     * code 1 if the arguments are not empty.
+     * @param args the argument array.
      */
     private static void checkArgs(String[] args) {
         if (args.length != 0) {
@@ -102,8 +102,8 @@ public abstract class ApplicationUtils {
     /**
      * Starts up an application. The applications class must:
      * (i) Have a static getInstance() method which returns a
-     *     an instance of itself
-     * (ii) Implement CleanupIF
+     *     an instance of itself.
+     * (ii) Implement CleanupIF.
      * If the class cannot be started and a shutdown hook added, the JVM
      * exits with a return code depending on the problem:
      * 1 means wrong arguments
@@ -112,8 +112,8 @@ public abstract class ApplicationUtils {
      * 4 means couldn't add shutdown hook
      * 5 means couldn't add liveness logger
      * 6 means couldn't add remote management
-     * @param c The class to be started
-     * @param args The arguments to the application (should be empty)
+     * @param c The class to be started.
+     * @param args The arguments to the application (should be empty).
      */
     public static void startApp(Class c, String[] args) {
         String appName = c.getName();
@@ -175,7 +175,7 @@ public abstract class ApplicationUtils {
      * the install script) and throws a PermissionDenied exception
      * if the directory cannot be created.
      *
-     * @param dir A File object denoting a directory
+     * @param dir A File object denoting a directory.
      * @throws PermissionDenied if the directory doesn't exist and
      * cannot be created/written to, or if the File object indicates an existing
      * non-directory.
