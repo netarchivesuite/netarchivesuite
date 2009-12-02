@@ -69,8 +69,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     // Create a factory for disk-based file items
     FileItemFactory factory = new DiskFileItemFactory();
 
-   // Create a new file upload handler
-   ServletFileUpload upload = new ServletFileUpload(factory);
+   	// Create a new file upload handler
+   	ServletFileUpload upload = new ServletFileUpload(factory);
     
     
     String fileName = "";

@@ -40,9 +40,7 @@ the progress of the ingestion.
                  dk.netarkivet.harvester.Constants,
                  dk.netarkivet.harvester.webinterface.DomainIngester"
          pageEncoding="UTF-8"
-%>
-<%@page import="org.apache.commons.fileupload.servlet.ServletFileUpload"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
@@ -67,11 +65,11 @@ the progress of the ingestion.
     // Create a factory for disk-based file items
     FileItemFactory factory = new DiskFileItemFactory();
 
-   // Create a new file upload handler
-   ServletFileUpload upload = new ServletFileUpload(factory);
+   	// Create a new file upload handler
+   	ServletFileUpload upload = new ServletFileUpload(factory);
 
-   //Read the multipart request to the temporary file on the server machine
-    try {
+   	// Read the multipart request to the temporary file on the server machine
+   	try {
         List items = upload.parseRequest(request);
         for (Object o : items) {
             FileItem item = (FileItem) o;

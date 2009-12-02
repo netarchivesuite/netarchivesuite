@@ -24,8 +24,6 @@
 package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Locale;
 
 import javax.servlet.ServletRequest;
@@ -132,10 +130,10 @@ public class EventHarvest {
     
     /**
      * Add configurations to an existing selective harvest.
-     * @param context@param context the current JSP context
-     * @param i18n the translation information to use in this context
-     * @param eventHarvest the partial harvest to which these
-     * seeds are to be added.
+     * @param context The current JSP context
+     * @param i18n The translation information to use in this context
+     * @param eventHarvest The partial harvest to which these
+     * seeds are to be added
      * @param seedsFile The seeds file
      * @param maxbytesString The given maxbytes as a string
      * @param maxobjectsString The given maxobjects as a string (currently not used)
@@ -149,6 +147,7 @@ public class EventHarvest {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(eventHarvest, "PartialHarvest eventHarvest");
         ArgumentNotValid.checkNotNull(seedsFile, "File seedsFile");
+        ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
         
         String seeds = null;
         long maxBytes = 0L;
@@ -159,10 +158,14 @@ public class EventHarvest {
                 seeds = FileUtils.readFile(seedsFile);
             }
             if (maxbytesString == null){
-                maxBytes = dk.netarkivet.harvester.datamodel.Constants.DEFAULT_MAX_BYTES;
+                maxBytes = dk.netarkivet.harvester.datamodel
+                    .Constants.DEFAULT_MAX_BYTES;
             } else {
-                maxBytes = parseLong(context, maxbytesString, dk.netarkivet.harvester
-            .datamodel.Constants.DEFAULT_MAX_BYTES);
+                Locale loc = HTMLUtils.getLocaleObject(context);
+                maxBytes = HTMLUtils.parseLong(
+                        loc, maxbytesString,  Constants.MAX_BYTES_PARAM, 
+                        dk.netarkivet.harvester.datamodel
+                        .Constants.DEFAULT_MAX_BYTES);
             }
         } catch (Exception e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, 
@@ -170,7 +173,7 @@ public class EventHarvest {
             return;
         }
         // Check that order template exists
-        if (ordertemplate == null || !TemplateDAO.getInstance().exists(ordertemplate)) {
+        if (!TemplateDAO.getInstance().exists(ordertemplate)) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
                     "errormsg;harvest.template.0.does.not.exist",
                     ordertemplate);
@@ -186,30 +189,6 @@ public class EventHarvest {
                     "errormsg;error.adding.seeds.to.0", e, eventHarvest.getName(),
                     e);
             throw new ForwardedToErrorPage("Error while adding seeds", e);
-        }
-    }
-    
-    /**
-     * Utility method to validate the maxbytesString, coming from the form data.
-     * @param context the given JSP context (only used to get the current loc)
-     * @param maxbytesString The given Maxbytes as a string
-     * @param defaultMaxBytes The default value for maxbytes.
-     * @return the maxbytesString as a long, if it is not null and can be parsed; otherwise
-     * it returns the default value for maxbytes. 
-     */
-    private static long parseLong(PageContext context, String maxbytesString, long defaultMaxBytes) {
-        Locale loc = HTMLUtils.getLocaleObject(context);
-        String paramValue = maxbytesString;
-        if (paramValue != null && paramValue.trim().length() > 0) {
-            paramValue = paramValue.trim();
-            try {
-                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
-            } catch (ParseException e) {
-                throw new ForwardedToErrorPage("Invalid value " + paramValue
-                        + " for integer parameter '" + Constants.MAX_BYTES_PARAM + "'", e);
-            }
-        } else {
-            return defaultMaxBytes;
         }
     }
 }

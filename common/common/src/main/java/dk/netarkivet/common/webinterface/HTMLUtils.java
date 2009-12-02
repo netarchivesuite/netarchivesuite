@@ -803,20 +803,7 @@ public class HTMLUtils {
 
         Locale loc = HTMLUtils.getLocaleObject(context);
         String paramValue = context.getRequest().getParameter(param);
-        if (paramValue != null && paramValue.trim().length() > 0) {
-            paramValue = paramValue.trim();
-            try {
-                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
-            } catch (ParseException e) {
-                forwardWithErrorMessage(context, I18N,
-                        "errormsg;parameter.0.not.an.integer.1", param,
-                        paramValue);
-                throw new ForwardedToErrorPage("Invalid value " + paramValue
-                        + " for integer parameter '" + param + "'", e);
-            }
-        } else {
-            return defaultValue;
-        }
+        return parseLong(loc, paramValue, param, defaultValue);
     }
 
     /** Parse an optionally present date-value from a request parameter.
@@ -853,15 +840,56 @@ public class HTMLUtils {
             return defaultValue;
         }
     }
-
+    
+    /**
+     * Create a localized string representation of the given long. 
+     * @param i A long integer
+     * @param context The given JSP context
+     * @return a localized string representation of the given long
+     * TODO Should this method throw ArgumentNotValid if the context is null
+     */
     public static String localiseLong(long i, PageContext context) {
         NumberFormat nf = NumberFormat.getInstance(
                 HTMLUtils.getLocaleObject(context));
         return nf.format(i);
     }
-
+    
+    /**
+     * Create a localized string representation of the given long. 
+     * @param i A long integer
+     * @param locale The given locale.
+     * @return a localized string representation of the given long
+     * TODO Should this method throw ArgumentNotValid if the locale is null
+     */
     public static String localiseLong(long i, Locale locale) {
         NumberFormat nf = NumberFormat.getInstance(locale);
         return nf.format(i);
+    }
+    
+    /**
+     * Parse a given String for a long value.
+     * @param loc The given Locale.
+     * @param paramValue The given parameter value
+     * @param parameterName The given parameter name (used for debugging)
+     * @param defaultValue The default value for the parameter,
+     * in case the string cannot be parsed
+     * @return the long value found in the paramValue
+     */
+    public static Long parseLong(Locale loc, String paramValue, String parameterName, Long defaultValue) {
+        ArgumentNotValid.checkNotNull(loc, "Locale loc");
+        ArgumentNotValid.checkNotNullOrEmpty(
+                parameterName, "String parameterName");
+        
+        if (paramValue != null && paramValue.trim().length() > 0) {
+            paramValue = paramValue.trim();
+            try {
+                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
+            } catch (ParseException e) {
+                throw new ForwardedToErrorPage("Invalid value " + paramValue
+                        + " for integer parameter '" + parameterName + "'", e);
+            }
+        } else {
+            return defaultValue;
+        }
     }
 }

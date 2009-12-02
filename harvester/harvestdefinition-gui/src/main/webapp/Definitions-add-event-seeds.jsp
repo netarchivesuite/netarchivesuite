@@ -42,8 +42,7 @@ This page has major side effects in that it will:
 2) Create for every seedlist a configuration and seedlist formed from the
 name of the harvest and the orderTemplate and add that configuration to the
 harvest.
---%><%@ page import="java.text.NumberFormat,
-                 java.util.Iterator,
+--%><%@ page import="java.util.Iterator,
                  java.util.List,
                  java.io.File,
                  dk.netarkivet.common.utils.FileUtils,
@@ -60,9 +59,7 @@ harvest.
                  org.apache.commons.fileupload.FileItem,
                  dk.netarkivet.harvester.webinterface.EventHarvest"
          pageEncoding="UTF-8"
-%>
-<%@page import="java.util.logging.Level"%>
-<%@page import="java.lang.reflect.Field"%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
+%><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page" basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N
@@ -89,30 +86,29 @@ harvest.
 		// Create a new file upload handler
    		ServletFileUpload upload = new ServletFileUpload(factory);
         // As the parsing of the formdata has the sideeffect of removing the
-        // formdata from the request(!), we have to extract all possible data the first time around.
+        // formdata from the request(!), we have to extract all possible data
+        // the first time around.
         List items = upload.parseRequest(request);
-        EventHarvest.logmessage("found fields" + items.size());
         for (Object o : items) {
-        		FileItem item = (FileItem) o;
-                String fieldName = item.getFieldName();
-                EventHarvest.logmessage("found field w/name " + fieldName);
-                if (fieldName.equals(Constants.HARVEST_PARAM)) {
-                    harvestName = item.getString();
-                } else if (fieldName.equals(Constants.UPDATE_PARAM)) {
-                    update = item.getString();
-                } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
-                        maxbytesString = item.getString();
-                } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
-                        maxobjectsString = item.getString();
-                 } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
-                        maxrateString = item.getString();             
-                } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
-                        orderTemplateString = item.getString();
-                } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
-                	item.write(seedsFile);
-                    seedsFileName = item.getName();
-                }
+        	FileItem item = (FileItem) o;
+            String fieldName = item.getFieldName();
+            if (fieldName.equals(Constants.HARVEST_PARAM)) {
+            	harvestName = item.getString();
+          	} else if (fieldName.equals(Constants.UPDATE_PARAM)) {
+           		update = item.getString();
+            } else if (fieldName.equals(Constants.MAX_BYTES_PARAM)) {
+           		maxbytesString = item.getString();
+            } else if (fieldName.equals(Constants.MAX_OBJECTS_PARAM)) {
+          		maxobjectsString = item.getString();
+            } else if (fieldName.equals(Constants.MAX_RATE_PARAM)) {
+               	maxrateString = item.getString();             
+            } else if (fieldName.equals(Constants.ORDER_TEMPLATE_PARAM)) {
+             	orderTemplateString = item.getString();
+            } else if (fieldName.equals(Constants.UPLOAD_FILE_PARAM)) {
+              	item.write(seedsFile);
+           		seedsFileName = item.getName();
             }
+       	}
     } else {
     	harvestName = request.getParameter(Constants.HARVEST_PARAM);
     	mode = request.getParameter(Constants.FROM_FILE_PARAM);
@@ -126,6 +122,7 @@ harvest.
         return;
     }
     
+    // if mode set to "1", we read the seeds from a file
     boolean usingFileMode = false;
     if (mode != null) {
         if (mode.equalsIgnoreCase("1")) {
@@ -148,7 +145,7 @@ harvest.
 			  	EventHarvest.addConfigurations(pageContext, I18N, harvest);
 			} else {
 				EventHarvest.addConfigurationsFromSeedsFile(pageContext, I18N, harvest, 
-					seedsFile,maxbytesString, maxobjectsString, maxrateString, orderTemplateString);
+					seedsFile, maxbytesString, maxobjectsString, maxrateString, orderTemplateString);
 			}
         } catch (ForwardedToErrorPage e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
