@@ -38,6 +38,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.
@@ -80,6 +82,9 @@ public class JMXSummaryUtils {
         JMXHarvestPriorityProperty,
         JMXArchiveReplicaNameProperty,
         JMXIndexProperty};
+    /** Status/Monitor-JMXsummary.jsp. */
+    public static final String STATUS_MONITOR_JMXSUMMARY =
+                               "Status/Monitor-JMXsummary.jsp";
 
     /** The log MBean name prefix.*/
     private static final String LOGGING_MBEAN_NAME_PREFIX =
@@ -95,9 +100,6 @@ public class JMXSummaryUtils {
     private static final String CHARACTER_NOT_COLUMN = "-";
     /** The character for only seeing the first row of the log.*/
     private static final String CHARACTER_FIRST_ROW = "0";
-    /** Status/Monitor-JMXsummary.jsp. */
-    private static final String STATUS_MONITOR_JMXSUMMARY = 
-        "Status/Monitor-JMXsummary.jsp";
     
 
     /** Instance of class Random used to generate a unique id for each div. */
@@ -322,6 +324,42 @@ public class JMXSummaryUtils {
         }
     }
 
+    /**
+     * Select zero or more beans from JMX and unregister these.
+     * @param parameters The parameters to query JMX for.
+     * @param request A request possibly containing values for some of the
+     * parameters, which select zero or more beans.
+     * @param context the current JSP context.
+     */
+    public static void unregisterJMXInstance(String[] parameters,
+                                             StarredRequest request,
+                                             PageContext context) {
+        String query = null;
+        try {
+            query = createJMXQuery(parameters, request);
+            JMXStatusEntry.unregisterJMXInstance(query);
+        } catch (MalformedObjectNameException e) {
+            if (query != null) {
+                HTMLUtils.forwardWithErrorMessage(context, I18N, e,
+                        "errormsg;error.in.querying.jmx.with.query.0", query);
+                throw new ForwardedToErrorPage(
+                        "Error in querying JMX with query '" + query + "'.", e);
+            } else {
+                HTMLUtils.forwardWithErrorMessage(context, I18N, e,
+                        "errormsg;error.in.building.jmxquery");
+                throw new ForwardedToErrorPage("Error building JMX query", e);
+            }
+        }
+        // Both InstanceNotFoundException and MBeanRegistrationException are 
+        // treated equal.
+        catch (Exception e) {
+            HTMLUtils.forwardWithErrorMessage(context, I18N, e,
+                    "errormsg;error.when.unregistering.mbean.0", query);
+            throw new ForwardedToErrorPage(
+                    "Error when unregistering JMX MBean with query '" + query + "'.", e);
+        }
+    }
+
     /** Build a JMX query string (ObjectName) from a request and a list
      * of parameters to query for.  This string is always a property
      * pattern (wildcarded), even if all the values we define in the names
@@ -333,7 +371,7 @@ public class JMXSummaryUtils {
      * @return A query, wildcarded for those parameters that are
      * * or missing in starredRequest.
      */
-    private static String createJMXQuery(String[] parameters,
+    public static String createJMXQuery(String[] parameters,
                                          StarredRequest starredRequest) {
         StringBuilder query = new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
         for (String queryPart : parameters) {
@@ -350,6 +388,7 @@ public class JMXSummaryUtils {
 
         return query.toString();
     }
+
 
     /** Make an HTML fragment that shows a log message preformatted.
      * If the log message is longer than three lines, the rest are hidden

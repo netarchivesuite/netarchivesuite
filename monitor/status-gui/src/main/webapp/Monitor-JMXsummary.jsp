@@ -55,6 +55,21 @@ will not appear here.
     HTMLUtils.setUTF8(request);
     // Reload settings if changed
     HTMLUtils.generateHeader(pageContext);
+
+    // remove application if
+    String remove = request.getParameter(Constants.REMOVE);
+    if(remove != null) {
+        JMXSummaryUtils.StarredRequest starredRequest =
+            new JMXSummaryUtils.StarredRequest(request);
+        try {
+            JMXSummaryUtils.unregisterJMXInstance(
+                JMXSummaryUtils.STARRABLE_PARAMETERS, starredRequest,
+                            pageContext);
+        } catch (ForwardedToErrorPage e) {
+            return;
+        }
+
+    }
 %>
 <h3 class="page_heading">
     <fmt:message key="pagetitle;monitor.summary"/>
@@ -73,7 +88,11 @@ will not appear here.
     Locale currentLocale = response.getLocale();
 %><%= JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale) %>
 <table>
-    <tr><%
+    <tr>
+        <th>
+            <fmt:message key="tablefield;removeapplication"/>
+        </th>
+        <%
         if (JMXSummaryUtils.showColumn(starredRequest,
                                        JMXSummaryUtils.JMXPhysLocationProperty)) {
     %>
@@ -156,10 +175,19 @@ will not appear here.
         for (StatusEntry entry : result) {
             if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
     %>
-    <tr><%
+    <tr>
+        <td><%="<a href=\"/"+ JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY + "?"
+               + Constants.REMOVE + "=" + Constants.REMOVE
+               + "&amp;machine=" + HTMLUtils.escapeHtmlValues(entry.getMachineName())
+               + "&amp;httpport=" + HTMLUtils.escapeHtmlValues(entry.getHTTPPort())
+               + "&amp;applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName())
+               + "\">"
+               + entry.getMachineName() + ":" + entry.getHTTPPort() + "</a>"%>
+        </td>
+        <%
         if (JMXSummaryUtils.showColumn(starredRequest,
                                        JMXSummaryUtils.JMXPhysLocationProperty)) {
-    %>
+        %>
         <td><%=JMXSummaryUtils.generateLink(starredRequest,
                                             JMXSummaryUtils.JMXPhysLocationProperty,
                                             entry.getPhysicalLocation(),

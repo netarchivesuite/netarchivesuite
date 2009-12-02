@@ -40,6 +40,9 @@ import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.ObjectInstance;
 
 /**
  * Implementation of StatusEntry, that receives its data from the MBeanServer
@@ -72,18 +75,27 @@ public class JMXStatusEntry implements StatusEntry {
         this.mBeanName = mBeanName;
     }
 
-    /** @return the location designated by the key {@link JMXSummaryUtils#JMXPhysLocationProperty} */
+    /**
+     * @return the location designated by the key {@link
+     * JMXSummaryUtils#JMXPhysLocationProperty}
+     */
     public String getPhysicalLocation() {
         return mBeanName.getKeyProperty(
                 JMXSummaryUtils.JMXPhysLocationProperty);
     }
 
-    /** @return the hostname designated by the key {@link JMXSummaryUtils#JMXMachineNameProperty} */
+    /**
+     * @return the hostname designated by the key {@link
+     * JMXSummaryUtils#JMXMachineNameProperty}
+     */
     public String getMachineName() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXMachineNameProperty);
     }
 
-    /** @return the http-port designated by the key {@link JMXSummaryUtils#JMXHttpportProperty} */
+    /**
+     * @return the http-port designated by the key {@link
+     * JMXSummaryUtils#JMXHttpportProperty}
+     */
     public String getHTTPPort() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXHttpportProperty);
     }
@@ -115,13 +127,19 @@ public class JMXStatusEntry implements StatusEntry {
                 JMXSummaryUtils.JMXHarvestPriorityProperty);
     }
 
-    /** @return the replica id designated by the key {@link JMXSummaryUtils#JMXArchiveReplicaNameProperty} */
+    /**
+     * @return the replica id designated by the key
+     *      {@link JMXSummaryUtils#JMXArchiveReplicaNameProperty}
+     */
     public String getArchiveReplicaName() {
         return mBeanName.getKeyProperty(
                 JMXSummaryUtils.JMXArchiveReplicaNameProperty);
     }
 
-    /** @return the index designated by the key {@link JMXSummaryUtils#JMXIndexProperty} */
+    /**
+     * @return the index designated by the key
+     *      {@link JMXSummaryUtils#JMXIndexProperty}
+     */
     public String getIndex() {
         return mBeanName.getKeyProperty(JMXSummaryUtils.JMXIndexProperty);
     }
@@ -133,9 +151,7 @@ public class JMXStatusEntry implements StatusEntry {
      * null.
      *
      * @param l the current Locale
-     *
      * @return A log message.
-     *
      * @throws ArgumentNotValid if the current Locale is null
      */
     public String getLogMessage(Locale l) {
@@ -179,7 +195,6 @@ public class JMXStatusEntry implements StatusEntry {
      * their index.
      *
      * @param o The object to compare with
-     *
      * @return A negative number if this entry comes first, a positive if it
      *         comes second and 0 if they are equal.
      */
@@ -296,14 +311,15 @@ public class JMXStatusEntry implements StatusEntry {
     /**
      * Query the JMX system for system status mbeans.
      *
-     * @param query A JMX request, e.g. dk.netarkivet.logging:location=EAST,httpport=8080,*
-     *
+     * @param query A JMX request, e.g.
+     *      dk.netarkivet.logging:location=EAST,httpport=8080,*
      * @return A list of status entries for the mbeans that match the query.
-     *
      * @throws MalformedObjectNameException If the query has wrong format.
      */
     public static List<StatusEntry> queryJMX(String query)
             throws MalformedObjectNameException {
+        List<StatusEntry> entries = new ArrayList<StatusEntry>();
+
         // Make sure mbeans are forwarded
         HostForwarding.getInstance(SingleLogRecord.class,
                                    mBeanServer,
@@ -312,11 +328,28 @@ public class JMXStatusEntry implements StatusEntry {
         // query.
         Set<ObjectName> resultSet = mBeanServer.queryNames(
                 new ObjectName(query), null);
-        List<StatusEntry> entries = new ArrayList<StatusEntry>();
         for (ObjectName objectName : resultSet) {
             entries.add(new JMXStatusEntry(objectName));
         }
         Collections.sort(entries);
         return entries;
+    }
+
+    /**
+     * Unregister an JMX MBean instance.
+     *
+     * @param query A JMX request.
+     * @throws MalformedObjectNameException if query is malformed.
+     * @throws InstanceNotFoundException if the instanced unregistered
+     *  doesn't exists.
+     * @throws MBeanRegistrationException if unregeterBean is thrown.
+     */
+    public static void unregisterJMXInstance(String query)
+            throws MalformedObjectNameException, InstanceNotFoundException,
+                   MBeanRegistrationException {
+        for(ObjectName name:
+                    mBeanServer.queryNames(new ObjectName(query), null)) {
+            mBeanServer.unregisterMBean(name);
+        }
     }
 }
