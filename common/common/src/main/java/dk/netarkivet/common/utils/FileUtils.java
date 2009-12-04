@@ -1256,8 +1256,7 @@ public class FileUtils {
      */
     public static File getResourceFileFromClassPath(String filePath) 
             throws IOFailure {
-        ArgumentNotValid.checkNotNullOrEmpty(filePath,
-               "String defaultClasspathSettingsPath");
+        ArgumentNotValid.checkNotNullOrEmpty(filePath, "String filePath");
         try {
             // retrieve the file as a stream from the classpath.
             InputStream stream = Thread.currentThread().getContextClassLoader()
