@@ -144,8 +144,18 @@ harvest.
             if (!isMultiPart) {
 			  	EventHarvest.addConfigurations(pageContext, I18N, harvest);
 			} else {
-				EventHarvest.addConfigurationsFromSeedsFile(pageContext, I18N, harvest, 
-					seedsFile, maxbytesString, maxobjectsString, maxrateString, orderTemplateString);
+				if (!seedsFileName.isEmpty()) { // File exists
+					String seeds = FileUtils.readFile(seedsFile);			
+					if (!seeds.isEmpty()) {
+						EventHarvest.addConfigurationsFromSeedsFile(
+							pageContext, I18N, harvest, seeds, maxbytesString, 
+							maxobjectsString, maxrateString, orderTemplateString);
+					}
+				} else {
+					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
+                	"errormsg;no.seedsfile.was.given");
+        			return;
+        		}
 			}
         } catch (ForwardedToErrorPage e) {
             HTMLUtils.forwardWithErrorMessage(pageContext, I18N,

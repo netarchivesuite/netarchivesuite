@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.webinterface;
 
-import java.io.File;
 import java.util.Locale;
 
 import javax.servlet.ServletRequest;
@@ -34,8 +33,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
 import dk.netarkivet.harvester.datamodel.PartialHarvest;
@@ -134,29 +131,23 @@ public class EventHarvest {
      * @param i18n The translation information to use in this context
      * @param eventHarvest The partial harvest to which these
      * seeds are to be added
-     * @param seedsFile The seeds file
+     * @param seeds The seeds as a String
      * @param maxbytesString The given maxbytes as a string
      * @param maxobjectsString The given maxobjects as a string (currently not used)
      * @param maxrateString The given maxrate as a string (currently not used)
      * @param ordertemplate The name of the ordertemplate to use
      */
     public static void addConfigurationsFromSeedsFile(PageContext context, I18n i18n,
-            PartialHarvest eventHarvest, File seedsFile, String maxbytesString, 
+            PartialHarvest eventHarvest, String seeds, String maxbytesString, 
             String maxobjectsString, String maxrateString, String ordertemplate) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         ArgumentNotValid.checkNotNull(eventHarvest, "PartialHarvest eventHarvest");
-        ArgumentNotValid.checkNotNull(seedsFile, "File seedsFile");
+        ArgumentNotValid.checkNotNull(seeds, "String seeds");
         ArgumentNotValid.checkNotNull(ordertemplate, "String ordertemplate");
         
-        String seeds = null;
         long maxBytes = 0L;
         try {
-            if (seedsFile.length() < 0) {
-                throw new IllegalState("SeedsFile not uploaded correctly");
-            } else {
-                seeds = FileUtils.readFile(seedsFile);
-            }
             if (maxbytesString == null){
                 maxBytes = dk.netarkivet.harvester.datamodel
                     .Constants.DEFAULT_MAX_BYTES;
