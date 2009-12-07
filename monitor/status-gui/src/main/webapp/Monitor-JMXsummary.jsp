@@ -56,9 +56,10 @@ will not appear here.
     // Reload settings if changed
     HTMLUtils.generateHeader(pageContext);
 
-    // remove application if
+    // remove application if parameter remove is set.
     String remove = request.getParameter(Constants.REMOVE);
     if(remove != null) {
+        System.out.println("remove app");
         JMXSummaryUtils.StarredRequest starredRequest =
             new JMXSummaryUtils.StarredRequest(request);
         try {
@@ -89,9 +90,6 @@ will not appear here.
 %><%= JMXSummaryUtils.generateShowColumn(starredRequest, currentLocale) %>
 <table>
     <tr>
-        <th>
-            <fmt:message key="tablefield;removeapplication"/>
-        </th>
         <%
         if (JMXSummaryUtils.showColumn(starredRequest,
                                        JMXSummaryUtils.JMXPhysLocationProperty)) {
@@ -170,20 +168,24 @@ will not appear here.
                 JMXSummaryUtils.JMXIndexProperty, currentLocale)%>
         </th>
         <th><fmt:message key="tablefield;logmessage"/></th>
+        <%
+            if (JMXSummaryUtils.showColumn(starredRequest,
+                                           JMXSummaryUtils.JMXRemoveApplication)) {
+        %>
+        <th><fmt:message
+                key="tablefield;removeapplication"/> <%=JMXSummaryUtils.generateShowLink(
+                starredRequest,
+                JMXSummaryUtils.JMXRemoveApplication, currentLocale)%>
+        </th>
+        <%
+            }
+        %>
     </tr>
     <%
         for (StatusEntry entry : result) {
             if (entry.getLogMessage(response.getLocale()).trim().length() > 0) {
     %>
     <tr>
-        <td><%="<a href=\"/"+ JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY + "?"
-               + Constants.REMOVE + "=" + Constants.REMOVE
-               + "&amp;machine=" + HTMLUtils.escapeHtmlValues(entry.getMachineName())
-               + "&amp;httpport=" + HTMLUtils.escapeHtmlValues(entry.getHTTPPort())
-               + "&amp;applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName())
-               + "\">"
-               + entry.getMachineName() + ":" + entry.getHTTPPort() + "</a>"%>
-        </td>
         <%
         if (JMXSummaryUtils.showColumn(starredRequest,
                                        JMXSummaryUtils.JMXPhysLocationProperty)) {
@@ -274,6 +276,22 @@ will not appear here.
         <td><%=JMXSummaryUtils.generateMessage(entry.getLogMessage(response
                 .getLocale()), currentLocale)%>
         </td>
+        <%
+            if (JMXSummaryUtils.showColumn(starredRequest,
+                                           JMXSummaryUtils.JMXRemoveApplication)) {
+        %>
+        <td><%="<form>"
+               + "<input onClick=\"parent.location='/"+ JMXSummaryUtils.STATUS_MONITOR_JMXSUMMARY + "?"
+               + Constants.REMOVE + "=" + Constants.REMOVE
+               + "&machine=" + HTMLUtils.escapeHtmlValues(entry.getMachineName())
+               + "&httpport=" + HTMLUtils.escapeHtmlValues(entry.getHTTPPort())
+               + "&applicationname=" + HTMLUtils.escapeHtmlValues(entry.getApplicationName()) + "'\" type=\"button\" value=\""%><fmt:message key="tablefield;removeapplication"/><%="\" />"
+               + "</form>"
+            %>
+        </td>
+        <%
+            }
+        %>
     </tr>
     <%
             }

@@ -54,4 +54,6 @@ public final class Constants {
     public static final String PRIORITY_KEY_REPLICANAME = "replicaname";
     /** The index key word.*/
     public static final String PRIORITY_KEY_INDEX = "index";
+    /** The remove jmx application keyword. */
+    public static final String REMOVE_JMX_APPLICATION = "removeapplication";
 }

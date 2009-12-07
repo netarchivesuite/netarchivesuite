@@ -318,6 +318,8 @@ public class JMXStatusEntry implements StatusEntry {
      */
     public static List<StatusEntry> queryJMX(String query)
             throws MalformedObjectNameException {
+        ArgumentNotValid.checkNotNull(query, "query");
+        
         List<StatusEntry> entries = new ArrayList<StatusEntry>();
 
         // Make sure mbeans are forwarded
@@ -338,7 +340,7 @@ public class JMXStatusEntry implements StatusEntry {
     /**
      * Unregister an JMX MBean instance.
      *
-     * @param query A JMX request.
+     * @param query A JMX request, for picking the beans to unregister.
      * @throws MalformedObjectNameException if query is malformed.
      * @throws InstanceNotFoundException if the instanced unregistered
      *  doesn't exists.
@@ -347,6 +349,8 @@ public class JMXStatusEntry implements StatusEntry {
     public static void unregisterJMXInstance(String query)
             throws MalformedObjectNameException, InstanceNotFoundException,
                    MBeanRegistrationException {
+        ArgumentNotValid.checkNotNull(query, "query");
+        
         for(ObjectName name:
                     mBeanServer.queryNames(new ObjectName(query), null)) {
             mBeanServer.unregisterMBean(name);

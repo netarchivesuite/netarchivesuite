@@ -46,6 +46,9 @@ import javax.management.MBeanRegistrationException;
  * and a bunch of JMX properties used by Monitor-JMXsummary.jsp. 
  */
 public class JMXSummaryUtils {
+    /** JMX property for remove application button. */
+    public static final String JMXRemoveApplication =
+        dk.netarkivet.common.management.Constants.REMOVE_JMX_APPLICATION;
     /** JMX property for the physical location.*/
     public static final String JMXPhysLocationProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_LOCATION;
@@ -71,9 +74,11 @@ public class JMXSummaryUtils {
     /** JMX property for the index. */
     public static final String JMXIndexProperty = 
         dk.netarkivet.common.management.Constants.PRIORITY_KEY_INDEX;
-    
+
+
     /** JMX properties, which can set to star. */   
     public static final String[] STARRABLE_PARAMETERS = new String[]{
+        JMXRemoveApplication,
         JMXPhysLocationProperty,
         JMXMachineNameProperty, 
         JMXApplicationNameProperty,
@@ -306,6 +311,7 @@ public class JMXSummaryUtils {
         ArgumentNotValid.checkNotNull(parameters, "parameters");
         ArgumentNotValid.checkNotNull(request, "request");
         ArgumentNotValid.checkNotNull(context, "context");
+        
         String query = null;
         try {
             query = createJMXQuery(parameters, request);
@@ -334,6 +340,8 @@ public class JMXSummaryUtils {
     public static void unregisterJMXInstance(String[] parameters,
                                              StarredRequest request,
                                              PageContext context) {
+        ArgumentNotValid.checkNotNull(parameters, "parameters");
+        ArgumentNotValid.checkNotNull(context, "context");
         String query = null;
         try {
             query = createJMXQuery(parameters, request);
