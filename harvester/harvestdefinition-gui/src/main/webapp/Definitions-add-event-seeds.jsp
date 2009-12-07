@@ -153,7 +153,7 @@ harvest.
 					}
 				} else {
 					HTMLUtils.forwardWithErrorMessage(pageContext, I18N,
-                	"errormsg;no.seedsfile.was.given");
+                	"errormsg;no.seedsfile.was.uploaded");
         			return;
         		}
 			}
