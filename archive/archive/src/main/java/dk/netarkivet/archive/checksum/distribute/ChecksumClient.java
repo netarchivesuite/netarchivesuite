@@ -126,7 +126,7 @@ public class ChecksumClient implements ReplicaClient {
     /**
      * Method for sending correct messages to the replica.
      * 
-     * @param The CorrectMessage to send to the replica.
+     * @param msg The CorrectMessage to send to the replica.
      */
     public void correct(CorrectMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");

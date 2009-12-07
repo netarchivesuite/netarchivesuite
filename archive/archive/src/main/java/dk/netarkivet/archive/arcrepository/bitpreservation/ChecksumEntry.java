@@ -95,7 +95,7 @@ public class ChecksumEntry extends Object {
      * Method for testing whether a ChecksumEntry is identical to another
      * ChecksumEntry. 
      * 
-     * @param o The object to evaluate whether it is identical to this 
+     * @param obj The object to evaluate whether it is identical to this 
      * ChecksumEntry.
      * @return Whether the argument has the same values as this ChecksumEntry.
      * It returns false if the argument is not of type ChecksumEntry, or if
