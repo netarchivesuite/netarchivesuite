@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -58,6 +60,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.ClassAsserts;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -89,7 +92,8 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
         if(first) {
             first = false;
-            clearDatabase(DBConnect.getDBConnection());
+            clearDatabase(DBConnect.getDBConnection(Settings.get(
+                    ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE)));
 //            initChecksumReplica();
         }
         
@@ -120,10 +124,16 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         super.tearDown();
     }
 
+    /**
+     * Check that this is a singleton.
+     */
     public void testSingleton() {
 	ClassAsserts.assertSingleton(DatabaseBasedActiveBitPreservation.class);
     }
     
+    /**
+     * Check that the bitpreservation factory works.
+     */
     public void testFactory() {
 	ActiveBitPreservation abp = ActiveBitPreservationFactory.getInstance();
 	
@@ -140,6 +150,11 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 		abp2 instanceof DatabaseBasedActiveBitPreservation);
     }
     
+    /**
+     * Test that it correctly identifies a missing file.
+     * 
+     * @throws Exception If error!
+     */
     public void testMissingFiles() throws Exception {
 	// initialise the database. Clean database and put new intries.
 	ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
@@ -160,6 +175,11 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 		0, dbabp.getNumberOfMissingFiles(THREE));
     }
     
+    /**
+     * Test that it correctly finds a changed file.
+     * 
+     * @throws Exception if error.
+     */
     public void testChangedFiles() throws Exception {
 	// initialise the database. Clean database and put new intries.
 	ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
@@ -199,7 +219,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      *
      * @throws IOException
      */
-/*    public void testRunFileListJob() throws IOException, NoSuchMethodException,
+    public void testRunFileListJob() throws IOException, NoSuchMethodException,
                                             InvocationTargetException,
                                             IllegalAccessException {
         Method runFilelistJob = ReflectUtils.getPrivateMethod(
@@ -243,7 +263,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
         dbabp.close();
 // */
-//    }
+    }
     
     private void clearDatabase(Connection con) throws SQLException {
 	    // clear the database.

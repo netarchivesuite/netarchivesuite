@@ -78,17 +78,17 @@ public class UnitTesterSuite {
         /* 
          * Testersuites for the archive module 
          */        
-        ArchiveDistributeTesterSuite.addToSuite(suite);
-        ArchiveToolsTesterSuite.addToSuite(suite);
-        ArchiveArcRepositoryAdminTesterSuite.addToSuite(suite);
-        ArchiveArcrepositoryDistributeTesterSuite.addToSuite(suite);
         ArchiveArcRepositoryTesterSuite.addToSuite(suite);
+        ArchiveArcRepositoryAdminTesterSuite.addToSuite(suite);
+        ArchiveArcrepositoryBitPreservationTesterSuite.addToSuite(suite);
+        ArchiveArcrepositoryDistributeTesterSuite.addToSuite(suite);
         ArchiveBitarchiveTesterSuite.addToSuite(suite);
         ArchiveBitarchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveChecksumTesterSuite.addToSuite(suite);
-        ArchiveArcrepositoryBitPreservationTesterSuite.addToSuite(suite);
+        ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexServerTesterSuite.addToSuite(suite);
+        ArchiveToolsTesterSuite.addToSuite(suite);
         
         /* 
          * Testersuites for the common module 

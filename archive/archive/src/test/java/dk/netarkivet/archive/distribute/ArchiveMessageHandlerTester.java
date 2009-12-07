@@ -36,6 +36,7 @@ import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.archive.bitarchive.distribute.HeartBeatMessage;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -46,6 +47,7 @@ public class ArchiveMessageHandlerTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws Exception {
+        ChannelsTester.resetChannels();
         super.setUp();
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();

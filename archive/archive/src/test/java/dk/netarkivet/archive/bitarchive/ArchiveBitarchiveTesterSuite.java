@@ -41,6 +41,7 @@ public class ArchiveBitarchiveTesterSuite {
         suite.addTestSuite(BatchMessageTester.class);
         suite.addTestSuite(BitarchiveAdminTester.class);
         suite.addTestSuite(BitarchiveARCFileTester.class);
+        suite.addTestSuite(BitarchiveMonitorTester.class);
         suite.addTestSuite(BitarchiveTesterAdmin.class);
         suite.addTestSuite(BitarchiveTesterBatch.class);
         suite.addTestSuite(BitarchiveTesterCTOR.class);

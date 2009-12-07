@@ -94,7 +94,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
     
     private static final Replica ONE = Replica.getReplicaFromId(TestInfo.REPLICA_ID_ONE);
     private static final Replica TWO = Replica.getReplicaFromId(TestInfo.REPLICA_ID_TWO);
-//    private static final Replica THREE = Replica.getReplicaFromId("THREE");
+    private static final Replica THREE = Replica.getReplicaFromId("THREE");
 
     @Override
     protected void setUp() throws Exception {
