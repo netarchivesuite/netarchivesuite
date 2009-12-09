@@ -6,7 +6,7 @@
  * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
- * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@
  */
 -->
 <!-- 
-	This file contains an example of a deploy configuration file.
+        This file contains an example of a deploy configuration file.
 -->
 <deployGlobal>
     <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
@@ -33,27 +33,76 @@
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
-            <environmentName>test</environmentName>
+            <environmentName>TEST</environmentName>
+            <applicationInstanceId></applicationInstanceId>
+            <remoteFile>
+                <class>
+                    dk.netarkivet.common.distribute.FTPRemoteFile
+                </class>
+                <serverPort>21</serverPort>
+                <retries>3</retries>
+            </remoteFile>
+            <jms>
+                <class>
+                    dk.netarkivet.common.distribute.JMSConnectionSunMQ
+                </class>
+                <broker>east-adm-001.kb.dk</broker>
+                <port>7676</port>
+            </jms>
+            <jmx>
+                <passwordFile>conf/jmxremote.password</passwordFile>
+                <timeout>120</timeout>
+            </jmx>
             <indexClient>
                 <indexRequestTimeout>43200000</indexRequestTimeout>
             </indexClient>
             <replicas>
+                <!-- The names of all bit archive replicas in the
+                 environment, e.g., "nameOfBitachiveOne" and "nameOfBitachiveTwo". -->
                 <replica>
                     <replicaId>A</replicaId>
                     <replicaName>ReplicaA</replicaName>
-                    <replicaType>bitArchive</replicaType>
+                    <replicaType>bitarchive</replicaType>
                 </replica>
                 <replica>
                     <replicaId>B</replicaId>
                     <replicaName>ReplicaB</replicaName>
-                    <replicaType>bitArchive</replicaType>
+                    <replicaType>bitarchive</replicaType>
                 </replica>
             </replicas>
+            <!-- Default bit archive to use for batch jobs (if none is specified) --> 
+            <!-- or get and getFile oprations, (as well as bitArchive monitor)    --> 
+            <database>
+                <url></url>
+            </database>
+
+            <!-- tempDir corrected from ./tests/commontempdir -->
+            <tempDir>tmpdircommon</tempDir>
         </common>
+
         <monitor>
             <jmxUsername>monitorRole</jmxUsername>
-            <jmxPassword>test</jmxPassword>
-        </monitor>
+            <jmxPassword>test</jmxPassword>       
+        </monitor>                                
+                                                  
+        <!-- directory for install -->
+        <archive>
+            <bitpreservation>
+                <baseDir>bitpreservation</baseDir>
+            </bitpreservation>
+            <arcrepository>
+                <baseDir>.</baseDir>
+            </arcrepository>
+        </archive>
+        <!-- viewerproxy.baseDir is set below -->
+        <!-- harvester.harvesting.serverDir is set below -->
+        <harvester>
+            <harvesting>
+                <deduplication>
+                    <enabled>false</enabled>
+                </deduplication>
+            </harvesting>
+        </harvester>
     </settings>
     
     <thisPhysicalLocation name="EAST">
@@ -63,7 +112,7 @@
         <settings>
             <common>
                 <remoteFile>
-                    <serverName>kb-test-har-001.kb.dk</serverName>
+                    <serverName>east-har-001.kb.dk</serverName>
                     <userName>ftptestuser</userName>
                     <userPassword>ftptestpasswd</userPassword>
                 </remoteFile>
@@ -75,7 +124,7 @@
             </common>
         </settings>
         
-        <deployMachine name="kb-dev-adm-001.kb.dk">
+        <deployMachine name="east-adm-001.kb.dk">
             <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
             <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
@@ -136,7 +185,7 @@
             </applicationName>
         </deployMachine>
         
-        <deployMachine os="windows" name="kb-dev-bar-010.bitarkiv.kb.dk">
+        <deployMachine os="windows" name="east-bar-001.kb.dk">
             <deployMachineUserName>ba-test</deployMachineUserName>
             <deployInstallDir>c:\Documents and Settings\ba-test</deployInstallDir>
             <deployJavaOpt>-Xmx1150m</deployJavaOpt>
@@ -158,7 +207,7 @@
             </applicationName>
         </deployMachine>
         
-        <deployMachine os="windows" name="kb-dev-bar-011.bitarkiv.kb.dk">
+        <deployMachine os="windows" name="east-bar-002.kb.dk">
             <deployMachineUserName>ba-test</deployMachineUserName>
             <deployInstallDir>c:\Documents and Settings\ba-test</deployInstallDir>
             <deployJavaOpt>-Xmx1150m</deployJavaOpt>
@@ -180,7 +229,7 @@
             </applicationName>
         </deployMachine>
 
-        <deployMachine name="kb-dev-har-001.kb.dk">
+        <deployMachine name="east-har-001.kb.dk">
              <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
@@ -211,7 +260,7 @@
              </applicationName>
         </deployMachine>
 
-        <deployMachine name="kb-dev-har-002.kb.dk">
+        <deployMachine name="east-har-002.kb.dk">
              <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
@@ -242,7 +291,7 @@
              </applicationName>
         </deployMachine>
 
-        <deployMachine name="kb-dev-acs-001.kb.dk">
+        <deployMachine name="east-acs-001.kb.dk">
             <settings>
                 <common>
                     <http>
@@ -264,7 +313,6 @@
                     </common>
                 </settings>
             </applicationName>
-
             <applicationName name="dk.netarkivet.viewerproxy.ViewerProxyApplication">
                 <settings>
                     <common>
@@ -284,7 +332,7 @@
         <settings>
             <common>
                 <remoteFile>
-                    <serverName>sb-dev-har-001.statsbiblioteket.dk</serverName>
+                    <serverName>west-har-001.statsbiblioteket.dk</serverName>
                     <userName>ftptestuser</userName>
                     <userPassword>ftptestpasswd</userPassword>
                 </remoteFile>
@@ -300,7 +348,7 @@
             </common>
         </settings>
         
-        <deployMachine name="sb-dev-bar-001.statsbiblioteket.dk">
+        <deployMachine name="west-bar-001.statsbiblioteket.dk">
             <applicationName name="dk.netarkivet.archive.bitarchive.BitarchiveApplication">
                 <settings>
                     <common>
@@ -321,7 +369,7 @@
             </applicationName>
         </deployMachine>
 
-        <deployMachine name="sb-dev-har-001.statsbiblioteket.dk">
+        <deployMachine name="west-har-001.statsbiblioteket.dk">
              <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
              <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
@@ -354,7 +402,7 @@
              </applicationName>
         </deployMachine>
         
-        <deployMachine name="sb-dev-acs-001.statsbiblioteket.dk">
+        <deployMachine name="west-acs-001.statsbiblioteket.dk">
             <applicationName name="dk.netarkivet.archive.indexserver.IndexServerApplication">
                 <settings>
                     <common>
