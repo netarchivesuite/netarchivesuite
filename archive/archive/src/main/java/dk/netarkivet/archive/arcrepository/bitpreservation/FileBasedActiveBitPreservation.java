@@ -224,7 +224,6 @@ public class FileBasedActiveBitPreservation
         return filepreservationStates.get(filename);
     }
     
-    
     /**
      * Generate a map of checksums for these filenames in the bitarchives (
      * map ([filename] -> map ([replica] -> [list of checksums]))).

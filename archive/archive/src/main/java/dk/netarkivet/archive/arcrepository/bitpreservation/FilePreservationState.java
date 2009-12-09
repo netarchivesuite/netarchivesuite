@@ -125,7 +125,7 @@ public class FilePreservationState {
      * @param bitarchive The bitarchive to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
-    public ReplicaStoreState getAdminBitarchiveStoreState(
+    private ReplicaStoreState getAdminBitarchiveStoreState(
             Replica bitarchive) {
         ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         String bamonname = bitarchive.getIdentificationChannel().getName();
@@ -293,7 +293,7 @@ public class FilePreservationState {
      * @return true, if the checksum reported by admin data is equal to the
      * majority checksum
      */
-    public boolean isAdminCheckSumOk() {
+    private boolean isAdminCheckSumOk() {
         String referenceCheckSum = getReferenceCheckSum();
         if ("".equals(referenceCheckSum)) {
             return true;

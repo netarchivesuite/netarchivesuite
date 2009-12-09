@@ -68,6 +68,11 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
+     * The current instance.
+     */
+    private static BitarchiveMonitor instance;
+    
+    /**
      * The time of the latest sign of life received from each bitarchive.
      */
     private Map<String, Long> bitarchiveSignsOfLife =
@@ -97,11 +102,19 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * between signs of life and the timeout setting for batchjobs are read and
      * logged.
      */
-    public BitarchiveMonitor() {
+    private BitarchiveMonitor() {
         acceptableSignOfLifeDelay = Settings.getLong(
                 ArchiveSettings.BITARCHIVE_ACCEPTABLE_HEARTBEAT_DELAY);
         log.info("Bitarchive liveness times out after "
                  + acceptableSignOfLifeDelay + " milliseconds.");
+    }
+    
+    public static BitarchiveMonitor getInstance() {
+        if(instance == null) {
+            instance = new BitarchiveMonitor();
+        }
+        return instance;
+//        return new BitarchiveMonitor();
     }
 
     /**
@@ -255,6 +268,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      * Closes this BitarchiveMonitor cleanly. Currently does nothing.
      */
     public void cleanup() {
+        instance = null;
     }
 
     /**

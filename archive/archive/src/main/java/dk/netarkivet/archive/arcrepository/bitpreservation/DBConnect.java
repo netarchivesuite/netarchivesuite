@@ -33,14 +33,10 @@ import java.util.WeakHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.datamodel.DBSpecifics;
-
 
 /**
  * Logic to connect with the harvest definition database.
@@ -71,9 +67,7 @@ public class DBConnect {
      * @throws IOFailure if we cannot connect to the database (or find the
      * driver).
      */
-    public static Connection getDBConnection() throws IOFailure {
-        String dbUrl = Settings.get(
-                ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE);
+    public static Connection getDBConnection(String dbUrl) throws IOFailure {
         try {	
             int validityCheckTimeout = Settings.getInt(
                     CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
@@ -105,30 +99,5 @@ public class DBConnect {
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
-    }
-
-    /** 
-     * Update a table by executing all the statements in
-     * the updates String array.
-     *
-     * @param table The table to update
-     * @param newVersion The version that the table should end up at
-     * @param updates The SQL update statements that makes the necessary
-     * updates.
-     * @throws IOFailure in case of problems in interacting with the database
-     */
-    protected static void updateTable(final String table, final int newVersion, 
-            final String... updates) throws IOFailure {
-
-        log.info("Updating table to version " + newVersion);
-
-        String[] sqlStatements = new String[updates.length + 1];
-        final String updateSchemaversionSql =
-            "UPDATE schemaversions SET version = "
-            + newVersion + " WHERE tablename = '" + table + "'";
-        System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
-        sqlStatements[updates.length] = updateSchemaversionSql;
-
-        DBUtils.executeSQL(getDBConnection(), sqlStatements);
     }
 }

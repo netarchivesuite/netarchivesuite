@@ -432,6 +432,11 @@
                 <replicaName>replicaTwo</replicaName>
                 <replicaType>bitarchive</replicaType>
             </replica>
+            <replica>
+                <replicaId>THREE</replicaId>
+                <replicaName>checksum</replicaName>
+                <replicaType>checksum</replicaType>
+            </replica>
         </replicas>
         <useReplicaId>TWO</useReplicaId>
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>

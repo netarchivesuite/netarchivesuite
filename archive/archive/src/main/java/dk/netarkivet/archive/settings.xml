@@ -58,7 +58,7 @@
             <baseDir>bitpreservation</baseDir>
             <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
             <database>
-                <class>dk.netarkivet.harvester.datamodel.DerbyEmbeddedSpecifics</class>
+                <class>dk.netarkivet.archive.arcrepository.bitpreservation.DerbyEmbeddedSpecifics</class>
                 <url>jdbc:derby:bitpreservationdb</url>
             </database>
         </bitpreservation>

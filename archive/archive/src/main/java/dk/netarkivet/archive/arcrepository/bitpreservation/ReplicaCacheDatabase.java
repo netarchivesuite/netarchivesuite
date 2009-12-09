@@ -39,17 +39,15 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
-import dk.netarkivet.archive.arcrepositoryadmin.ReadOnlyAdminData;
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -72,7 +70,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private ReplicaCacheDatabase() {
         // Initialise the database
-        dbConnection = DBConnect.getDBConnection();
+        dbConnection = DBConnect.getDBConnection(Settings.get(
+                ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE));
 
         // initialise the database.
         initialiseDB();
@@ -252,15 +251,14 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
                 if (!existsReplicaFileInfoInDB(fileId, repId)) {
                     // Only update the relevant fields.
                     statement = DBUtils.prepareStatement(
-                                    dbConnection,
-                                    "INSERT INTO replicafileinfo "
-                                    + "(file_id, replica_id, filelist_status, "
-                                    + "checksum_status, upload_status ) VALUES "
-                                            + "( ?, ?, ?, ?, ? )", fileId,
-                                    repId, FileListStatus.NO_FILELIST_STATUS
-                                            .ordinal(), ChecksumStatus.UNKNOWN
-                                            .ordinal(),
-                                    UploadStatus.NO_UPLOAD_STATUS.ordinal());
+                            dbConnection,
+                            "INSERT INTO replicafileinfo "
+                            + "(file_id, replica_id, filelist_status, "
+                            + "checksum_status, upload_status ) VALUES "
+                            + "( ?, ?, ?, ?, ? )", fileId, repId, 
+                            FileListStatus.NO_FILELIST_STATUS.ordinal(), 
+                            ChecksumStatus.UNKNOWN.ordinal(),
+                            UploadStatus.NO_UPLOAD_STATUS.ordinal());
 
                     // execute the SQL statement
                     statement.executeUpdate();
