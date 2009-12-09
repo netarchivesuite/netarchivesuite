@@ -31,7 +31,7 @@ cd $BASEDIR
 
 # (3) Run deploy
 echo DEPLOYING $CONFIG
-java -classpath lib/dk.netarkivet.deploy.jar dk.netarkivet.deploy.DeployApplication -C$CONFIG -Z$NETARCHIVESUITE -L./conf/log_template.prop -S./conf/security_template.policy -O. -Eyes
+java -classpath lib/dk.netarkivet.deploy.jar dk.netarkivet.deploy.DeployApplication -C$CONFIG -Z$NETARCHIVESUITE -L./examples/log_template.prop -S./examples/security_template.policy -O. -Eyes
 
 # (4) Make script files executable
 echo MAKING FILES EXECUTABLE
@@ -43,7 +43,6 @@ FILES=`ls install_*.sh`
 for I in $FILES; do
   bash $I;
 done
-#bash install_*.sh
 
 # (6) Starting applications
 echo STARTING APPLICATIONS
