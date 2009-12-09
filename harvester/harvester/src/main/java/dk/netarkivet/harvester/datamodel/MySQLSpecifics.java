@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 
@@ -185,5 +186,19 @@ public class MySQLSpecifics extends DBSpecifics {
             };
         DBConnect.updateTable("fullharvests", 3, sqlStatements);
     }
-    
+
+    /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */
+    protected void createGlobalCrawlerTrapLists() {
+        //TODO: implement method
+        throw new NotImplementedException("Not yet implemented:"
+                                          + "dk.netarkivet.harvester.datamodel.MySQLSpecifics.createGlobalCrawlerTrapLists()");
+    }
+
+    /** Creates the initial (version 1) of table 'global_crawler_trap_expressions'. */
+    protected void createGlobalCrawlerTrapExpressions() {
+        //TODO: implement method
+        throw new NotImplementedException("Not yet implemented:"
+                                          + "dk.netarkivet.harvester.datamodel.MySQLSpecifics.createGlobalCrawlerTrapExpressions()");
+    }
+
 }

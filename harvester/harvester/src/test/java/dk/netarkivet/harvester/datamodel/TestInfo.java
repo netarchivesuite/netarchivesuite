@@ -183,6 +183,8 @@ public class TestInfo {
             = TestSiteSection.class.getName();
     public static final String HARVESTDEFINITION_SITESECTIONCLASS
             = DefinitionsSiteSection.class.getName();
+    public static final String CRAWLER_TRAPS_01 = "crawler_traps_01.txt";
+    public static final String CRAWLER_TRAPS_02 = "crawler_traps_02.txt";
 
     /**
      * Load resources needed by unit tests.

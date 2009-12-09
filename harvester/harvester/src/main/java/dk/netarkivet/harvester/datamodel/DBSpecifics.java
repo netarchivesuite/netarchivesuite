@@ -230,6 +230,28 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                         + "' is not an acceptable/known version. ");
             }
 
+        } else if (tableName.equals("global_crawler_trap_lists")) {
+            if (currentVersion == 0 && toVersion == 1) {
+                createGlobalCrawlerTrapLists();
+                currentVersion = 1;
+            }
+            if (currentVersion > 1) {
+                throw new NotImplementedException(
+                        "No method exists for migrating table '" + tableName
+                                + "' from version " + currentVersion
+                                + " to version " + toVersion);
+            }
+        } else if (tableName.equals("global_crawler_trap_expressions")) {
+           if (currentVersion == 0 && toVersion == 1) {
+                createGlobalCrawlerTrapExpressions();
+                currentVersion = 1;
+            }
+            if (currentVersion > 1) {
+                throw new NotImplementedException(
+                        "No method exists for migrating table '" + tableName
+                                + "' from version " + currentVersion
+                                + " to version " + toVersion);
+            }
         } else {
             // This includes cases where currentVersion < toVersion
             // for all tables that does not have migration functions yet
@@ -262,4 +284,16 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * This consists of altering the default value of field 'maxbytes' to -1.
      */
     protected abstract void migrateFullharvestsv2tov3();
+
+    /**
+     * Creates the initial (version 1) of table 'global_crawler_trap_lists'.
+     */
+    protected abstract void createGlobalCrawlerTrapLists();
+
+    /**
+     * Creates the initial (version 1) of table
+     * 'global_crawler_trap_expressions'.
+     */
+    protected abstract void createGlobalCrawlerTrapExpressions();
+
 }

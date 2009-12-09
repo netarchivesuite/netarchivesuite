@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.LogManager;
 
@@ -251,6 +252,36 @@ public class DBConnectTester extends DataModelTestCase {
         storedContents = retrieveStoredClob(id);
     	assertEquals("storedContents differs from original", contents.substring(0,(int) maxSize), storedContents);
     }
+
+
+    public void testCreateTable() throws SQLException {
+        String[] stmts = {
+                "CREATE TABLE dummy (id INT)"
+        };
+        DBConnect.updateTable("dummy", 1, stmts);
+        Connection con = DBConnect.getDBConnection();
+        PreparedStatement s = con.prepareStatement("SELECT id FROM dummy");
+        ResultSet rs = s.executeQuery();
+        assertEquals("Newly created table should have version number 1", 1,
+                     DBUtils.getTableVersion(con, "dummy"));
+    }
+
+     public void testCreateAndUpdateTable() throws SQLException {
+        String[] stmts = {
+                "CREATE TABLE dummy (id INT)"
+        };
+        DBConnect.updateTable("dummy", 1, stmts);
+        String[] stmts2 = {
+                "ALTER TABLE dummy ADD new_field INT"
+        };
+         DBConnect.updateTable("dummy", 2, stmts2);
+         Connection con = DBConnect.getDBConnection();
+        PreparedStatement s = con.prepareStatement("SELECT id, new_field FROM "
+                                                   + "dummy");
+        ResultSet rs = s.executeQuery();
+        assertEquals("Update table should have version number 2", 2,
+                     DBUtils.getTableVersion(con, "dummy"));
+    }
     
     public PreparedStatement getPreparedStatementForTestingSetStringMaxLength(int id, String orderxml, String orderxmldoc)
     throws SQLException {
@@ -284,7 +315,10 @@ public class DBConnectTester extends DataModelTestCase {
     		+ " orderxmldoc clob(64M) not null ) ");
     	s.execute();
     }
-    
+
+
+
+
     private void dropTestTable() throws SQLException {
     	//  drop table "DBConnectTester" used for testing set*Max methods
     	Connection c = DBConnect.getDBConnection();

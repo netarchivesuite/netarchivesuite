@@ -1,0 +1,6 @@
+.*cal\.asp\?view=yearly&amp;date=.*
+.*cal\.asp\?view=yearly&amp;year=.*
+.*cal\/cal_day\.php\?op=day&amp;date=.*
+.*cal\/cal_week\.php\?op=week&amp;date=.*
+.*cal\/calendar\.php\?op=cal&amp;month=.*
+.*cal\/yearcal\.php\?op=yearcal&amp;ycyear=.*

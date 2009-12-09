@@ -24,7 +24,9 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.List;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.UnknownID;
 
 /**
  * A Data Access Object for managing persistent collections of global crawler
@@ -76,12 +78,20 @@ public abstract class GlobalCrawlerTrapListDAO {
 
     // CRUD methods for this DAO.
 
-    public abstract int create(GlobalCrawlerTrapList trapList);
+    /**
+     *
+     * @param trapList
+     * @return
+     * @throws ArgumentNotValid if the name of the trapList is already in use.
+     */
+    public abstract int create(GlobalCrawlerTrapList trapList) throws
+                                                               ArgumentNotValid;
 
-    public abstract void delete(int id);
+    public abstract void delete(int id) throws UnknownID;
 
-    public abstract void update(GlobalCrawlerTrapList trapList);
 
-    public abstract GlobalCrawlerTrapList read(int id);
+    public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
+
+    public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
 
 }
