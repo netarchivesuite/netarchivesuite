@@ -9,7 +9,6 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
-      <maximumStackSize value="32" />
       <properties />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/wayback.build.xml">
@@ -17,7 +16,6 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
-      <maximumStackSize value="32" />
       <properties />
     </buildFile>
   </component>
@@ -117,15 +115,6 @@
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
           <option name="INDENT_SIZE" value="4" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="sql">
-          <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
           <option name="USE_TAB_CHARACTER" value="false" />
@@ -400,11 +389,11 @@
       <module fileurl="file://$PROJECT_DIR$/netarchivesuite.iml" filepath="$PROJECT_DIR$/netarchivesuite.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="All Unittests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -412,7 +401,7 @@
       <option name="MAIN_CLASS_NAME" value="dk.netarkivet.UnitTesterSuite" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Djava.security.manager -Djava.security.policy=tests/dk/netarkivet/test.policy -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy " />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml -Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger -Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop -Djava.security.manager -Djava.security.policy=tests/dk/netarkivet/test.policy -Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy " />
       <option name="PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
@@ -434,7 +423,7 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="All Integritytests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -458,7 +447,7 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="All Heritrixtests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
       <module name="netarchivesuite" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -516,7 +505,6 @@
       </map>
     </option>
     <option name="myVersion" value="123" />
-    <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
