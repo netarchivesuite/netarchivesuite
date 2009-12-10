@@ -102,9 +102,9 @@ public class BatchLocalFiles {
                     if(lastLoggingDate + logInterval < currentTime) {
                         log.info("The batchjob '" + job.getClass() 
                                 + "' has run for " 
-                                + (currentTime-startTime)/1000 + " seconds and "
-                                + "has reached file '" + file.getName() 
-                                + "' which is number " + fileCount + " out of " 
+                                + (currentTime-startTime)/1000 + " seconds and"
+                                + " has reached file '" + file.getName() 
+                                + "', which is number " + fileCount + " out of "
                                 + files.length);
                         // set that we have just logged.
                         lastLoggingDate = currentTime;
