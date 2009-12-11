@@ -434,7 +434,7 @@
             </replica>
             <replica>
                 <replicaId>THREE</replicaId>
-                <replicaName>checksum</replicaName>
+                <replicaName>replicaCs</replicaName>
                 <replicaType>checksum</replicaType>
             </replica>
         </replicas>

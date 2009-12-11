@@ -1,7 +1,7 @@
-/* File:        $Id: DerbyServerSpecifics.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision:    $Revision: 1042 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -57,10 +57,16 @@ public class DerbyServerSpecifics extends DerbySpecifics {
      * by the DB_BACKUP_INIT_HOUR settings.
      *
      * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException
+     * @param c The connection to the database to backup.
+     * @throws ArgumentNotValid If the connection or the backup directory is 
+     * null.
      */
-    public void backupDatabase(Connection c, File backupDir) throws SQLException {
+    public void backupDatabase(Connection c, File backupDir) throws 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(backupDir, "File backupDir");
+        ArgumentNotValid.checkTrue(!backupDir.isFile(), "The file backupDir is "
+                + "a file and not a directory.");
+        ArgumentNotValid.checkNotNull(c, "Connection c");
         log.warn("Attempt to backup the database to directory '" 
                 + backupDir.getAbsolutePath() + "'. ignored. " 
                 + "Backup of your external Derby database should be done by your SysOp");

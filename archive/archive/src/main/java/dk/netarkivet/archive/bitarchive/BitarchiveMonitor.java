@@ -109,7 +109,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                  + acceptableSignOfLifeDelay + " milliseconds.");
     }
     
-    public static BitarchiveMonitor getInstance() {
+    public synchronized static BitarchiveMonitor getInstance() {
         if(instance == null) {
             instance = new BitarchiveMonitor();
         }

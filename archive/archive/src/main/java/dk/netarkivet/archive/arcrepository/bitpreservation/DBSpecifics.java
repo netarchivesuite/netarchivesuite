@@ -1,7 +1,7 @@
-/* File:        $Id: DBSpecifics.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision:    $Revision: 1042 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -51,6 +51,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
     
+    /** The log of this class.*/
     Log log = LogFactory.getLog(DBSpecifics.class);
 
     /** Get the singleton instance of the DBSpecifics implementation class.
@@ -80,11 +81,12 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * by the DB_BACKUP_INIT_HOUR settings.
      *
      * @param backupDir Directory to which the database should be backed up
+     * @param c The connection to the database.
      * @throws SQLException On SQL trouble backing up database
      * @throws PermissionDenied if the directory cannot be created.
      */
     public abstract void backupDatabase(Connection c, File backupDir) 
-            throws SQLException;
+            throws SQLException, PermissionDenied;
 
     /** Get the name of the JDBC driver class that handles interfacing
      * to this server.

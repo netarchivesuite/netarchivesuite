@@ -127,7 +127,6 @@ public class FilePreservationState {
      */
     private ReplicaStoreState getAdminBitarchiveStoreState(
             Replica bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
         String bamonname = bitarchive.getIdentificationChannel().getName();
         return adminStatus.getStoreState(bamonname);
     }
@@ -298,7 +297,7 @@ public class FilePreservationState {
      */
     private boolean isAdminCheckSumOk() {
         String referenceCheckSum = getReferenceCheckSum();
-        if ("".equals(referenceCheckSum)) {
+        if(referenceCheckSum.isEmpty()) {
             return true;
         }
         return adminStatus.getChecksum().equals(referenceCheckSum);

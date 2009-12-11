@@ -1,7 +1,7 @@
-/* File:        $Id: DerbyEmbeddedSpecifics.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision:    $Revision: 1042 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -77,12 +77,14 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
      * by the DB_BACKUP_INIT_HOUR settings.
      *
      * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException If the underlying SQL driver throws an exception
+     * @param c The connection to the database.
      * @throws PermissionDenied if the directory cannot be created.
      * @throws IOFailure If we cannot connect to the database
+     * @throws ArgumentNotValid If the connection or the backupDir if null.
      */
-    public void backupDatabase(Connection c, File backupDir) 
-            throws SQLException {
+    public void backupDatabase(Connection c, File backupDir) throws 
+            PermissionDenied, ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(c, "Connection c");
         ArgumentNotValid.checkNotNull(backupDir, "backupDir");
 
         FileUtils.createDir(backupDir);
@@ -94,9 +96,9 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             cs.close();
             log.info("Backed up database to " + backupDir.getCanonicalPath());
         } catch (IOException e) {
-            String message = "Couldn't back up database to " + backupDir;
-            log.warn(message, e);
-            throw new IOFailure(message, e);
+            throw new IOFailure("Couldn't back up database to " + backupDir, e);
+        } catch (SQLException e) {
+            throw new IOFailure("Could not execute sql statememt.", e);
         } finally {
             DBUtils.closeStatementIfOpen(cs);
         }
