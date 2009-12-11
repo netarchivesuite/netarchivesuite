@@ -55,6 +55,8 @@ import dk.netarkivet.common.utils.Settings;
  * The entries on a line is in the format of a ChecksumJob: <br>
  * <b>'filename' + ## + 'checksum'</b> <br>
  * The lines are not sorted.
+ * 
+ * TODO synchronize the memory archive with the file archive.
  */
 public final class FileChecksumArchive extends ChecksumArchive {
     /**
@@ -233,7 +235,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // get the name of the file and initialise it.
         checksumFile = new File(checksumDir, makeChecksumFileName());
         
-        // make sure, that the file exists.
+        // Create file is checksumFile does not exist.
         if(!checksumFile.exists()) {
             try {
                 checksumFile.createNewFile();
@@ -268,6 +270,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // extract all the data from the file.
         List<String> entries;
+        
+        // This should be synchronized to prevent reading the file while it is
+        // being written.
         synchronized(checksumFile) {
             entries = FileUtils.readListFromFile(checksumFile);
         }
@@ -423,8 +428,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * 
      * @param record The record from which the filename should be extracted.
      * @return The filename of a record.
+     * @throws IllegalState If the record cannot be parsed. 
      */
-    private String extractFilename(String record) {
+    private String extractFilename(String record) throws IllegalState {
         // A record is : filename##checksum,
         // thus the split gives the array: [filename, checksum]
         // and the first element in the array is thus the filename.
@@ -469,10 +475,10 @@ public final class FileChecksumArchive extends ChecksumArchive {
      *  
      * @param filename The name of the file to add.
      * @param checksum The checksum of the file to add.
-     * @throws IOException If something is wrong when writing to the file.
+     * @throws IOFailure If something is wrong when writing to the file.
      */
     private synchronized void appendEntryToFile(String filename, String 
-            checksum) throws IOException {
+            checksum) throws IOFailure {
         // initialise the record.
         String record = filename + CHECKSUM_SEPARATOR + checksum + "\n";
         
@@ -482,21 +488,26 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // Synchronize to ensure that the file is not overridden during the
         // appending of the new entry.
         synchronized(checksumFile) {
-            FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
             try {
-                fwrite.append(record);
-            } finally {
-                // close fileWriter.
-                fwrite.flush();
-                fwrite.close();
+                FileWriter fwrite = new FileWriter(checksumFile, appendToFile);
+                try {
+                    fwrite.append(record);
+                } finally {
+                    // close fileWriter.
+                    fwrite.flush();
+                    fwrite.close();
+                }
+            } catch(IOException e) {
+                throw new IOFailure("An error occured while appending an entry"
+                        + " to the archive file.", e);
             }
         }
     }
-    
+
     /**
      * Method for appending a 'wrong' entry in the wrongEntryFile.
      * It will be written when the wrong entry was appended:
-     * date + ## + wrongRecord.
+     * date + " : " + wrongRecord.
      * 
      * @param wrongRecord The record to append.
      * @throws IOFailure If the wrong record cannot be appended correctly.
@@ -530,11 +541,10 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * 
      * @param arcfile The remote file containing the arcFile to upload.
      * @param filename The name of the arcFile.
-     * @throws IOFailure If the entry cannot be added to the archive.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename
      * is not valid.
      */
-    public void upload(RemoteFile arcfile, String filename) throws IOFailure, 
+    public void upload(RemoteFile arcfile, String filename) throws  
             ArgumentNotValid {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(arcfile, "RemoteFile arcfile");
@@ -551,28 +561,21 @@ public final class FileChecksumArchive extends ChecksumArchive {
                         + "it is already archived with the same checksum: '"
                         + checksum);
             } else {
-                log.error("Cannot upload arcfile '" + filename + "', "
-                        + "it is already archived with different checksum."
+                // This is not allowed!
+                throw new IllegalState("Cannot upload arcfile '" + filename 
+                        + "', it is already archived with different checksum."
                         + " Archive checksum: '" + checksumArchive.get(filename)
                         + "' and the uploaded file has: '" + checksum + "'.");
-                // TODO Perhaps throw exception?
             }
-            
+                
             // It is a success that it already is within the archive, thus do
             // not throw an exception. 
             return;
         }
         
         // otherwise put the file into memory and file. 
-        try {
-            appendEntryToFile(filename, checksum);
-            checksumArchive.put(filename, checksum);
-        } catch (IOException e) {
-            String msg = "Could not append the file '" + filename 
-                    + "' with the checksum '" + checksum + "' to the archive.";
-            log.warn(msg);
-            throw new IOFailure(msg, e);
-        }
+        appendEntryToFile(filename, checksum);
+        checksumArchive.put(filename, checksum);
     }
     
     /**
@@ -675,9 +678,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // Calculate the new checksum and correct the entry.
         String newChecksum = calculateChecksum(correctFile);
         if(newChecksum.equals(currentChecksum)) {
-            // TODO finish?
-            log.warn("The correct and the incorrect checksums are the same!");
-            return;
+            // This should never occur.
+            throw new IllegalState("The checksum of the old 'bad' entry is "
+                    + " the same as the checksum of the new correcting entry");
         }
         
         // Correct the bad entry, by changing the value to the newChecksum.'

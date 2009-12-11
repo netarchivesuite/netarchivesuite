@@ -27,7 +27,6 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.archive.util.FileUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
@@ -42,6 +41,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
+import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * The server for the ChecksumFileApplication. 
@@ -172,8 +172,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * The method for uploading arc files.
      * 
      * @param msg The upload message, containing the file to upload.
+     * @throws ArgumentNotValid If the UploadMessage is null.
      */
-    public void visit(UploadMessage msg) {
+    public void visit(UploadMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         log.debug("Receving upload message: " + msg.toString());
         try {
@@ -206,55 +207,58 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
 
     /**
      * Method for correcting an entry in the archive.
-     * This method starts by removing the record, and then uploading it again 
-     * to the checksum archive.
+     * It start by ensuring that the file exists, then it checks the 
+     * credentials. Then it is checked whether the "bad entry" does have the 
+     * "bad checksum".
+     * If no problems occurred, then the bad entry will be corrected by the 
+     * archive (the bad entry is removed from the archive file and put into
+     * the "wrong entry" file. Then the new entry is placed in the archive file.
+     * 
+     * If it fails in any of the above, then the method fails (throws an 
+     * exception which is caught and use for replying NotOk to the message). 
      * 
      * @param msg The message containing the correct instance of the file to 
-     * correct. 
+     * correct.
+     * @throws ArgumentNotValid If the correct message is null. 
      */
-    public void visit(CorrectMessage msg) {
+    public void visit(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         log.debug("Receiving correct message: " + msg.toString());
+        // the file for containing the received file from the message.
+        File correctFile = null;
         try {
             String filename = msg.getArcfileName();
             String currentCs = cs.getChecksum(filename);
             String incorrectCs = msg.getIncorrectChecksum();
             
             // ensure that the entry actually exists.
-            if(!cs.hasEntry(filename)) {
-                String errMsg = "Cannot correct an entry for the file '"
-                    + filename + "', since it is not within the archive.";
-                log.error(errMsg);
-                throw new IllegalState(errMsg);
+            if(currentCs == null) {
+                // This exception is logged later.
+                throw new IllegalState("Cannot correct an entry for the file '"
+                        + filename + "', since it is not within the archive.");
             }
             
             // Check credentials
             String credentialsReceived = msg.getCredentials();
-            ArgumentNotValid.checkNotNullOrEmpty(credentialsReceived,
-                    "credentialsReceived");
-            if (!credentialsReceived.equals(Settings.get(
+            if (credentialsReceived == null || credentialsReceived.isEmpty()
+                    || !credentialsReceived.equals(Settings.get(
                     ArchiveSettings.ENVIRONMENT_THIS_CREDENTIALS))) {
-                String message = "The received credentials '" 
-                    + credentialsReceived + "' were invalid. The entry of "
-                    + "file '" + filename + "' will not be corrected.";
-                log.warn(message);
-                msg.setNotOk(message);
-                return;
+                throw new IllegalState("The received credentials '" 
+                        + credentialsReceived + "' were invalid. The entry of "
+                        + "file '" + filename + "' will not be corrected.");
             }
             
             // check that the current checksum is incorrect as supposed.
             if(!currentCs.equals(incorrectCs)) {
-                String errMsg = "Wrong checksum for the entry for file '" 
-                    + filename + "' has the checksum '" + currentCs + "', "
-                    + "though it was supposed to have the checksum '" 
-                    + incorrectCs + "'.";
-                log.error(errMsg);
-                throw new IllegalState(errMsg);
+                throw new IllegalState("Wrong checksum for the entry for file '" 
+                        + filename + "' has the checksum '" + currentCs + "', "
+                        + "though it was supposed to have the checksum '" 
+                        + incorrectCs + "'.");
             }
 
             // retrieve the data as a file.
-            File correctFile = File.createTempFile("correct", filename, 
-                    FileUtils.TMPDIR);
+            correctFile = File.createTempFile("correct", filename, 
+                    FileUtils.getTempDir());
             msg.getData(correctFile);
             
             // put the file into the archive.
@@ -267,6 +271,11 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             // log and reply at the end.
             log.info("Replying CorrectMessage: " + msg.toString());
             jmsCon.reply(msg);
+            
+            // cleanup the data file
+            if(correctFile != null) {
+                FileUtils.remove(correctFile);
+            }
         }
     }
 
@@ -277,8 +286,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * to have its checksum retrieved.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void visit(GetChecksumMessage msg) throws ArgumentNotValid, 
-            IllegalState {
+    public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
         log.debug("Recieving get checksum message: " + msg.toString());
@@ -315,8 +323,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * Method for retrieving all the filenames within the archive.
      * 
      * @param msg The GetAllFilenamesMessage.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessages is null.
      */
-    public void visit(GetAllFilenamesMessage msg) {
+    public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         log.debug("Receving get all filenames message: " + msg.toString());
 
@@ -339,8 +348,9 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      * corresponding filenames within the archive.
      * 
      * @param msg The GetAllChecksumMessage.
+     * @throws ArgumentNotValid If the GetAllChecksumMessage is null.
      */
-    public void visit(GetAllChecksumsMessage msg) {
+    public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         log.debug("Receiving get all checksum message: " + msg.toString());
 

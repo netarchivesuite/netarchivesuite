@@ -61,19 +61,25 @@ public class CorrectMessage extends ArchiveMessage {
      * @param to Where the message should be sent.
      * @param replyTo Who is sending this message.
      * @param badChecksum The checksum of the 'bad' entry.
-     * @param file The file to replace the 'bad' entry.
+     * @param rf The remote file to replace the 'bad' entry.
      * @param repId The identification of the replica, where this message 
      * should be sent.
      * @param cred The credentials to allow the correction of an entry.
+     * @throws ArgumentNotValid If any of the arguments are null, or any of the
+     * strings are empty.
      */
     public CorrectMessage(ChannelID to, ChannelID replyTo, String badChecksum, 
-            RemoteFile file, String repId, String cred) {
+            RemoteFile rf, String repId, String cred) 
+            throws ArgumentNotValid {
         super(to, replyTo);
-        ArgumentNotValid.checkNotNull(file, "RemoteFile file");
+        // Validate arguments ('super' validates the channels).
+        ArgumentNotValid.checkNotNull(rf, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(repId, "String repId");
+        ArgumentNotValid.checkNotNullOrEmpty(cred, "String cred");
         this.theIncorrectChecksum = badChecksum;
-        this.theRemoteFile = file;
-        this.arcFilename = file.getName();
+        this.theRemoteFile = rf;
+        this.arcFilename = rf.getName();
         this.replicaId = repId;
         this.credentials = cred;
     }

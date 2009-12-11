@@ -546,11 +546,11 @@ public class ArcRepository implements CleanupIF {
     /**
      * Process the report by a bitarchive that a file was correctly uploaded.
      * <ol>
-     * <il>1. Update the upload, and store states appropriately.</il><br>
+     * <il>1. Update the upload, and store states appropriately.</il><br/>
      * <il>2. Verify that data are correctly stored in the archive by running a 
      * batch job on the archived file to perform a MD5 checksum comparison.</il>
-     * <br><il>3. Check if store operation is completed and update admin data 
-     * if so.</il><br>
+     * <br/><il>3. Check if store operation is completed and update admin data 
+     * if so.</il><br/>
      * </ol>
      *
      * @param arcfileName The arcfile that was uploaded.

@@ -137,16 +137,6 @@ public interface ReplicaClient {
     ReplicaType getType();
     
     /**
-     * For correcting a erroneous file in the archive. This creates and sends 
-     * the message for correcting the corrupted file entry.
-     * 
-     * @param arcfile The file which is to replace the wrong file within the 
-     * archive.
-     * @param incorrectChecksum The incorrect checksum, which has been recorded.
-     */
-    void correct(RemoteFile arcfile, String incorrectChecksum);
-
-    /**
      * For correcting an erroneous entry in the archive. The message is sent
      * the replica for correcting the 'bad' entry.
      * 

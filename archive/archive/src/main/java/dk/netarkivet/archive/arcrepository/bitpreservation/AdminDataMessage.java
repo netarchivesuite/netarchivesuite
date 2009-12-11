@@ -89,6 +89,8 @@ public class AdminDataMessage extends ArchiveMessage {
     }
 
     /**
+     * Method for retrieving the replica id from this message.
+     * 
      * @return Returns the replicaId.
      */
     public String getReplicaId() {
@@ -96,6 +98,9 @@ public class AdminDataMessage extends ArchiveMessage {
     }
 
     /**
+     * Method for retrieving the name of the file which are refered to in this
+     * message.
+     * 
      * @return Returns the fileName.
      */
     public String getFileName() {

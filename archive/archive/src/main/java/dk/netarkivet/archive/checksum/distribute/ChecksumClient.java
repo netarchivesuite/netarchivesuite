@@ -41,7 +41,6 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
@@ -86,11 +85,11 @@ public class ChecksumClient implements ReplicaClient {
      * @param theCRin
      * The channel for contacting the checksum archive.
      * @return The instance.
-     * @throws IOFailure
-     * If there is a problem with the connection.
+     * @throws IOFailure If there is a problem with the connection.
+     * @throws ArgumentNotValid If the checksum replica channel is null.
      */
     public static ChecksumClient getInstance(ChannelID theCRin)
-            throws IOFailure {
+            throws IOFailure, ArgumentNotValid {
         // validate arguments
         ArgumentNotValid.checkNotNull(theCRin, "ChannelID theCRin");
 
@@ -102,56 +101,37 @@ public class ChecksumClient implements ReplicaClient {
     }
 
     /**
-     * Method for correcting a entity in the archive. If the entry in the 
-     * archive has the incorrect checksum, then it will be removed and the
-     * remote arcfile will be used to replace it.
-     * The old 'wrong' entry should not be thrown away, it should be placed in
-     * a container for the incorrect entries.
-     * 
-     * @param arcfile
-     * The RemoteFile which should correct the current one in the
-     * archive, which is wrong.
-     * @param checksum The checksum of the 'wrong' entry to validate that it is
-     * wrong.
-     */
-    public void correct(RemoteFile arcfile, String checksum) {
-        // validate argument
-        ArgumentNotValid.checkNotNull(arcfile, "RemoteFile arcfile");
-        
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
-    }
-    
-    /**
-     * Method for sending correct messages to the replica.
+     * Method for sending correct messages to the replica. This CorrectMessage
+     * is used to correct a bad entry in the archive.
      * 
      * @param msg The CorrectMessage to send to the replica.
+     * @throws ArgumentNotValid If the CorrectMessage is null.
      */
-    public void correct(CorrectMessage msg) {
+    public void correct(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         
         // send the message to the archive.
         jmsCon.resend(msg, theCR);
         
         // log the message.
-        log.debug("\nResending CorrectMessage:\n" + msg.toString());
+        log.debug("Resending CorrectMessage: " + msg.toString() + "'.");
     }
 
     /**
      * Method for sending a GetAllFilenamesMessage to a checksum archive.
      * 
-     * @param msg
-     * The GetAllFilenamesMessage, which will be send through the jms
-     * connection to the checksum archive.
+     * @param msg The GetAllFilenamesMessage, which will be send through the 
+     * jms connection to the checksum archive.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
-    public void getAllFilenames(GetAllFilenamesMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+    public void getAllFilenames(GetAllFilenamesMessage msg) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theCR);
 
         // log message.
-        log.debug("\nResending GetAllFilenamesMessage:\n " + msg.toString());
+        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() + "'.");
     }
 
     /**
@@ -159,14 +139,16 @@ public class ChecksumClient implements ReplicaClient {
      * 
      * @param msg The GetAllChecksumMessage, which will be sent through the jms
      * connection to the checksum archive.
+     * @throws ArgumentnotValid If the GetAllChecksumsMessage is null.
      */
-    public void getAllChecksums(GetAllChecksumsMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+    public void getAllChecksums(GetAllChecksumsMessage msg) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         // send the message to the archive.
         jmsCon.resend(msg, theCR);
 
         // log message.
-        log.debug("\nSending GetAllChecksumMessage:\n " + msg.toString());
+        log.debug("Sending GetAllChecksumMessage: '" + msg.toString() + "'.");
     }
 
     /**
@@ -178,12 +160,12 @@ public class ChecksumClient implements ReplicaClient {
      */
     public void getChecksum(GetChecksumMessage msg) {
         // Validate arguments
-        ArgumentNotValid.checkNotNull(msg, "msg");
+        ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 
         jmsCon.resend(msg, theCR);
 
         // log what we are doing.
-        log.debug("\nSending GetChecksumMessage: \n" + msg.toString());
+        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
     }
 
     /**
@@ -194,9 +176,11 @@ public class ChecksumClient implements ReplicaClient {
      * @param filename The GetChecksumMessage which has been sent to the 
      * checksum archive though the jms connection.
      * @return The GetChecksumMessage which is sent.
+     * @throws ArgumentNotValid If the reply channel is null or if the filename
+     * is either null or the empty string.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
-            String filename) {
+            String filename) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
@@ -232,14 +216,14 @@ public class ChecksumClient implements ReplicaClient {
      */
     public void upload(RemoteFile rf) throws ArgumentNotValid {
         // validate arguments.
-        ArgumentNotValid.checkNotNull(rf, "rf");
+        ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
 
         // create and send message.
         UploadMessage up = new UploadMessage(theCR, Channels.getTheRepos(), rf);
         jmsCon.send(up);
 
         // log message
-        log.debug("Sending upload message\n" + up.toString());
+        log.debug("Sending upload message '" + up.toString() + "'.");
     }
 
     /**

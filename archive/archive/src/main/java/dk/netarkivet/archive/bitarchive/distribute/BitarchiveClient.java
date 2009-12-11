@@ -219,32 +219,18 @@ public class BitarchiveClient implements ReplicaClient {
     }
 
     /**
-     * This should replace the current 'GetAndRemoveFile' followed by 'Upload'.
-     * 
-     * @param arcfile The arcfile to replace the current bad entry
-     * @param checksum The checksum of the bad entry to verify that the entry 
-     * is still bad
-     * @throws NotImplementedException Always, since this method has not yet 
-     * been implemented.
-     */
-    public void correct(RemoteFile arcfile, String checksum) 
-            throws NotImplementedException {
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
-    }
-
-    /**
      * For correcting an erroneous entry in the archive. The message is sent
      * the replica for correcting the 'bad' entry.
      * 
      * @param msg The correct message to correct the bad entry in the archive.
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
+     * @throws ArgumentNotValid If the CorrectMessage is null.
      */
     @Override
-    public void correct(CorrectMessage msg)
-        throws NotImplementedException {
+    public void correct(CorrectMessage msg) throws NotImplementedException, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -256,9 +242,11 @@ public class BitarchiveClient implements ReplicaClient {
      * @param msg The message.
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
     public void getAllFilenames(GetAllFilenamesMessage msg) 
-            throws NotImplementedException {
+            throws NotImplementedException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -271,9 +259,11 @@ public class BitarchiveClient implements ReplicaClient {
      * @param msg The message.
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
+     * @throws ArgumentNotValid If the GetAllChecksumMessage is null.
      */
     public void getAllChecksums(GetAllChecksumsMessage msg) 
-            throws NotImplementedException {
+            throws NotImplementedException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -286,9 +276,11 @@ public class BitarchiveClient implements ReplicaClient {
      * @param msg The message.
      * @throws NotImplementedException Always, since this method has not yet 
      * been implemented.
+     * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
     public void getChecksum(GetChecksumMessage msg) 
-            throws NotImplementedException {
+            throws NotImplementedException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");
@@ -303,9 +295,13 @@ public class BitarchiveClient implements ReplicaClient {
      * @return The message when it has been sent.
      * @throws NotImplementedException Always, since it has not yet been 
      * implemented.
+     * @throws ArgumentNotValid If the replyChannel is null or the filename 
+     * either is null or empty.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
-            String filename) throws NotImplementedException {
+            String filename) throws NotImplementedException, ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         throw new NotImplementedException("Has not yet been implemented. Will "
                 + "be implemented by archive assignment B2.2 "
                 + "(hopefully release 3.12.0)");

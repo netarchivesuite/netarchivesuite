@@ -210,8 +210,11 @@ public class FilePreservationState {
             return null;
         }
 
+        // go through all the replicas to find a bitarchive replica which 
+        // contains the file with the correct checksum.
         for (Replica r : Replica.getKnown()) {
             String cs = getUniqueChecksum(r);
+            // The replica has to have the correct checksum and be a bitarchive.
             if (referenceCheckSum.equals(cs) 
                     &&  (r.getType() == ReplicaType.BITARCHIVE)) {
                 log.debug("Reference archive for file '" + filename + "' is '"

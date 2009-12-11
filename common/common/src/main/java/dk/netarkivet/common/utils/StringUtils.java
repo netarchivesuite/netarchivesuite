@@ -90,6 +90,49 @@ public class StringUtils {
         }
         return res.toString();
     }
+    
+    /**
+     * Concatenate the string representation of a maximum number of objects in 
+     * a collection with a given separator between them. If the Collection is 
+     * a List, this method will generate the conjoined string in list order. If 
+     * the objects are not Strings, the toString method will be used to convert 
+     * them to strings.
+     *  
+     * @param <T> The type of collection.
+     * @param separator The string to separate the entries in the collection
+     * with. This is allowed to be the empty string.
+     * @param objects The collection to have the string representation of its
+     * entries concatenated. 
+     * @param max The maximum number of objects in the collection to 
+     * concatenate. If this number is 0 or below only the first entry in the 
+     * collection is returned. 
+     * @return The concatenation of the string representation of a limited 
+     * amount of entries in the collection. 
+     * @throws ArgumentNotValid If the separator or the objects are null.
+     */
+    public static final <T> String conjoin(String separator, Collection<T> 
+            objects, int max) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(separator, "String separator");
+        ArgumentNotValid.checkNotNull(objects, "Collection<T> objects");
+
+        StringBuilder res = new StringBuilder();
+        int index = 0;
+        // go through all the objects.
+        for(T o : objects) {
+            if(res.length() != 0) {
+                res.append(separator);
+            }
+            res.append(o);
+            
+            // check if max is reached.
+            index++;
+            if(index > max) {
+                break;
+            }
+        }
+        
+        return res.toString();
+    }
 
     /** Concatenate all strings in a collection with the given separator
      *  between each.

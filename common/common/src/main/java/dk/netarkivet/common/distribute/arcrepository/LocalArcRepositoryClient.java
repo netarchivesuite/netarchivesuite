@@ -340,26 +340,22 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
 
     @Override
     public File getAllChecksums(String replicaId) {
-	// TODO Auto-generated method stub
 	throw new NotImplementedException("TODO: Implement me!");
     }
 
     @Override
     public File getAllFilenames(String replicaId) {
-	// TODO Auto-generated method stub
 	throw new NotImplementedException("TODO: Implement me!");
     }
 
     @Override
     public void correct(String replicaId, String checksum, File file, 
 	    String credentials) {
-	// TODO Auto-generated method stub
 	throw new NotImplementedException("TODO: Implement me!");
     }
 
     @Override
     public String getChecksum(String replicaId, String filename) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException("TODO: Implement me!");
     }
 }

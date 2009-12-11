@@ -109,6 +109,8 @@ public class GetAllFilenamesMessage extends ArchiveMessage {
     
     /**
      * Retrieval of a string representation of this instance.
+     * 
+     * @return A string representation of this instance.
      */
     public String toString() {
         return super.toString() + ", replicaId: " + replicaId;

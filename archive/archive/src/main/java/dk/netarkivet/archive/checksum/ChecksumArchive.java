@@ -78,7 +78,7 @@ public abstract class ChecksumArchive {
      * 
      * @param filename The name of the file entry in the archive for whom the 
      * checksum should be retrieved.
-     * @return The checksum of the file.
+     * @return The checksum of a record, or null if it was not found.
      */
     public abstract String getChecksum(String filename);
     

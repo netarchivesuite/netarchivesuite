@@ -231,7 +231,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     
     /**
      * For retrieving all the filenames from a replica.
-     * This only works for ChecksumReplicas.
+     * TODO This only works for ChecksumReplicas.
      * 
      * @param msg The message to be processed.
      * @throws ArgumentNotValid If the argument is null.
@@ -253,10 +253,13 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     
     /**
      * Method for retrieving all the checksums from a replica.
-     * Currently only checksum replicas.
+     * TODO Currently only checksum replicas.
+     * 
+     * @param msg The GetAllChecksumsMessage.
+     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
-    public void visit(GetAllChecksumsMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+    public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         
         try {
             // retrieve the checksum client
@@ -274,6 +277,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Method for handling the results of a GetChecksumMessage.
      * This should be handled similar to a ReplyBatchMessage, when a batchjob
      * has run on a single file.
+     * TODO This currently only work for checksum replicas.
      * 
      * @param msg The GetChecksumMessage message.
      */
@@ -307,10 +311,12 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Method for handling CorrectMessages. This message is just sent along to
      * the corresponding replica archive, where the 'bad' entry will be 
      * corrected (made backup of and then replaced).
+     * TODO This currently only works for checksum replicas.
      * 
      * @param msg The message for correcting a bad entry in an archive.
+     * @throws ArgumentNotValid If the CorrectMessage is null.
      */
-    public void visit(CorrectMessage msg) {
+    public void visit(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         log.debug("Receiving CorrectMessage: " + msg.toString());
         
