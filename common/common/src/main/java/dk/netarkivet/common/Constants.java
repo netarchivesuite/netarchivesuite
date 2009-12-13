@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
  *
  * This class is never instantiated, so thread security is not an issue.
  *
- * Date: Feb 15, 2005 Time: 6:04:25 PM
  */
 public class Constants {
     /** The pattern for an IP-address key. */
@@ -52,8 +51,8 @@ public class Constants {
     public static final Pattern IPv6_KEY_REGEXP
             = Pattern.compile("^([0-9A-F]{1,2}\\:){5}[0-9A-F]{1,2}$");
     /**
-     * The suffic of a regexp that matches the metadata files.  Add job IDs to
-     * the front as necessary.
+     * The suffix of a regular expression that matches the metadata files.
+     * Add job IDs to the front as necessary.
      */
     public static final String METADATA_FILE_PATTERN_SUFFIX
             = "-metadata-[0-9]+.arc";
@@ -66,7 +65,7 @@ public class Constants {
         RELEASE, CODEFREEZE, UNSTABLE
     }
 
-    /** Extension of xml file names. */
+    /** Extension of XML file names. */
     public static final String XML_EXTENSION = ".xml";
 
     //It is QA's responsibility to update the following parameters on all
@@ -78,7 +77,7 @@ public class Constants {
     /** Patch version number. */
     public static final int PATCHVERSION = 0;
     /** Current status of code. */
-    private static final CodeStatus BUILDSTATUS = CodeStatus.UNSTABLE;
+    private static final CodeStatus BUILDSTATUS = CodeStatus.CODEFREEZE;
 
     /** Current version of Heritrix used by netarkivet-code. */
     private static final String HERITRIX_VERSION = "1.14.3";
@@ -90,7 +89,7 @@ public class Constants {
      * calling mmap.
      */
     public static final long IO_CHUNK_SIZE = 65536L;
-    /** The dirname of the heritrix directory with arcfiles. */
+    /** The directory name of the heritrix directory with arcfiles. */
     public static final String ARCDIRECTORY_NAME = "arcs";
     /**
      * How big a buffer we use for read()/write() operations on InputStream/
@@ -150,10 +149,10 @@ public class Constants {
     /** One minute in milliseconds. */
     public static final long ONE_MIN_IN_MILLIES = 60 * 1000;
 
-    /** One day in milli seconds. */
+    /** One day in milliseconds. */
     public static final long ONE_DAY_IN_MILLIES = 24 * 60 * ONE_MIN_IN_MILLIES;
 
-    /** Pattern that matches our our CDX mime type. */
+    /** Pattern that matches our our CDX mimetype. */
     public static String CDX_MIME_PATTERN = "application/x-cdx";
 
     /** Pattern that matches everything. */
