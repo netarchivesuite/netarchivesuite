@@ -295,7 +295,7 @@ public class FilePreservationState {
      * @return true, if the checksum reported by admin data is equal to the
      * majority checksum
      */
-    private boolean isAdminCheckSumOk() {
+    public boolean isAdminCheckSumOk() {
         String referenceCheckSum = getReferenceCheckSum();
         if(referenceCheckSum.isEmpty()) {
             return true;

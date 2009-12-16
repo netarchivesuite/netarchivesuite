@@ -285,6 +285,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Build a package of all source code needed to build the project, and develop new code">
         <zip basedir="." destfile="NetarchiveSuite-src.zip">
             <include name="conf/**"/>
+        	<include name="examples/**"/>
             <include name="harvestdefinitionbasedir/**"/>
             <include name="lib/**"/>
             <exclude name="lib/dk.netarkivet.*.jar"/>
@@ -316,6 +317,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <zip basedir="." destfile="NetarchiveSuite.zip">
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>
+        	<include name="examples/**"/>
             <include name="harvestdefinitionbasedir/**"/>
             <include name="lib/**"/>
             <include name="log"/>
