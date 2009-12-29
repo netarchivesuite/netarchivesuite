@@ -88,7 +88,7 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                = GlobalCrawlerTrapListDBDAO.getInstance();
        int id = dao.create(list1);
        GlobalCrawlerTrapList list3 = dao.read(id);
-        assertEquals("Should get back the object we inserted.", list1.getTraps(), list2.getTraps());
+        assertEquals("Should get back the object we inserted.", list1.getTraps(), list3.getTraps());
     }
 
     /**

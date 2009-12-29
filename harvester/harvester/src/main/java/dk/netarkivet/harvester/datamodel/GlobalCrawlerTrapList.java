@@ -130,7 +130,7 @@ public class GlobalCrawlerTrapList {
                   traps.add(line.trim());
             }
         } catch (IOException e) {
-            throw new IOFailure("Couldn not read crawler traps", e);
+            throw new IOFailure("Could not read crawler traps", e);
         }
     }
 

@@ -72,6 +72,9 @@ public class DataModelTestCase extends TestCase {
         super(s);
     }
 
+    //TODO this method is highly derby-specific. Implement a mechanism, e.g. a
+    //command-line system parameter, to switch between derby and MySQL for
+    //unit tests.
     public void setUp() throws Exception {
         super.setUp();
         rs.setUp();
