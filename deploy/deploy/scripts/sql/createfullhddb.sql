@@ -20,7 +20,7 @@
 -- License along with this library; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-
+ 
 -- This script will create, but not populate, a Derby database for the
 -- web archiving system.  The database will be created in the current
 -- directory under the name 'fullhddb'.
@@ -44,48 +44,51 @@ connect 'jdbc:derby:fullhddb;create=true';
 -- Name:    schemaversions
 -- Descr.:  This table contains an overview of tables and which version they
 --          belong to
--- Purpose: This table allows automatic change of tables as they evolve.
---          When starting a DAO, it must check the version of the table.
+-- Purpose: This table allows automatic change of tables as they evolve. 
+--          When starting a DAO, it must check the version of the table. 
 --          If it is not the newest version, then it runs the necessary SQL
 --          statements to update to the newest version.
 create table schemaversions (
     tablename varchar(100) not null, -- Name of table
-    version int not null             -- Version of table
+    version int not null             -- Version of table 
 );
 
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'domains', 2);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'configurations', 4);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'seedlists', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'passwords', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'ownerinfo', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'historyinfo', 2);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'config_passwords', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'config_seedlists', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'harvestdefinitions', 2);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'partialharvests', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'fullharvests', 3);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'harvest_configs', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'schedules', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'ordertemplates', 1);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'jobs', 5);
-insert into schemaversions ( tablename, version )
+insert into schemaversions ( tablename, version ) 
     values ( 'job_configs', 1);
-
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_lists', 1);
+insert into schemaversions (tablename, version )
+    values ( 'global_crawler_trap_expressions', 1);
 
 --***************************************************************************--
 -- Area: Domains
@@ -101,11 +104,11 @@ create table domains (
     domain_id bigint not null generated always as identity primary key,
                                        -- Unique id for the domain
     name varchar(300) not null unique, -- Name of the domain
-    comments varchar(30000),           -- Comments on domain, if any
+    comments varchar(30000),           -- Comments on domain, if any 
     defaultconfig bigint not null,     -- Configuration used for snapshot
                                        --  harvests
     crawlertraps varchar(1000),        -- Regexp(s) for excluded urls.
-    edition bigint not null,           -- Marker for optimistic locking by
+    edition bigint not null,           -- Marker for optimistic locking by 
                                        --  web interface
     alias bigint,                      -- Domain that this domain is an alias
                                        --  of. Null, if this domain is not an
@@ -152,14 +155,14 @@ create table configurations (
 --             same as the domain relation in the referenced password.
 --          2. Not all passwords belong to a configuration
 --          3. Even though it is possible to make many-to-many relations there
---             are in reality a one (configuration) to many (passwords)
+--             are in reality a one (configuration) to many (passwords) 
 --             relation
 create table config_passwords (
     config_id bigint not null, -- Reference to table configurations
     password_id int not null,  -- Reference to table passwords
-    primary key (config_id, password_id)
+    primary key (config_id, password_id) 
 );
-
+ 
 -------------------------------------------------------------------------------
 -- Name:    config_seedlists
 -- Descr.:  This table contains relations between configurations and seed lists
@@ -168,14 +171,14 @@ create table config_passwords (
 --             same as the domain relation in the referenced seedlist.
 --          2. Not all seedlists belong to a configuration
 --          3. Even though it is possible to make many-to-many relations there
---             are in reality a one (configuration) to many (seedlists)
+--             are in reality a one (configuration) to many (seedlists) 
 --             relation
 create table config_seedlists (
     config_id bigint not null, -- Reference to table configurations
     seedlist_id int not null,  -- Reference to table seedlists
-    primary key (config_id, seedlist_id)
+    primary key (config_id, seedlist_id) 
 );
-
+ 
 -------------------------------------------------------------------------------
 -- Name:    seedlists
 -- Descr.:  This table contains all seed lists for all configurations.
@@ -190,11 +193,11 @@ create table seedlists (
 
 create index seedlistname on seedlists(name);
 create index seedlistdomain on seedlists(domain_id);
-
+ 
 -------------------------------------------------------------------------------
 -- Name:    passwords
--- Descr.:  This table contains all passwords for all configurations.
---          It currently only supports HTTP-style passwords:
+-- Descr.:  This table contains all passwords for all configurations. 
+--          It currently only supports HTTP-style passwords: 
 --          (URL+realm+username+password).
 -- Expected entry count: Few
 create table passwords (
@@ -206,12 +209,12 @@ create table passwords (
     url varchar(300) not null,     -- URL for entry to the protected area
     realm varchar(300) not null,   -- Name of the password realm
     username varchar(20) not null, -- User name used for login
-    password varchar(40) not null  -- The actual password for login
+    password varchar(40) not null  -- The actual password for login 
 );
 
 create index passwordname on passwords(name);
 create index passworddomain on passwords(domain_id);
-
+ 
 -------------------------------------------------------------------------------
 -- Name:    ownerinfo
 -- Descr.:  This table contains the owner information on domains
@@ -232,19 +235,19 @@ create index ownerinfodomain on ownerinfo(domain_id);
 create table historyinfo (
     historyinfo_id bigint not null generated always as identity primary key,
                                     -- Unique id for history information
-    stopreason int not null,        -- Reason for stopping is defined and
+    stopreason int not null,        -- Reason for stopping is defined and  
                                     --  documented in StopReason.java
     objectcount bigint not null,    -- Count of collected objects
     bytecount bigint not null,      -- Count of collected bytes
     config_id bigint not null,      -- Configuration for the harvest
     harvest_id bigint not null,     -- Identification of harvest the
-                                    --  information origins from - must be the
+                                    --  information origins from - must be the 
                                     --  same as the one given via the jobs table
     job_id bigint,                  -- Identification of job the information
                                     --  origins from
-    harvest_time timestamp not null -- Time when the harvest was done
+    harvest_time timestamp not null -- Time when the harvest was done 
 );
-
+ 
  create index historyinfoharvest on historyinfo (harvest_id);
  create index historyinfoconfigharvest on historyinfo (config_id,harvest_id);
  create index historyinfojobharvest on historyinfo (job_id,harvest_id);
@@ -253,7 +256,7 @@ create table historyinfo (
  create index historyinfojob on historyinfo(job_id);
 
 --***************************************************************************--
--- Area: Harvest Definitions
+-- Area: Harvest Definitions      
 -- Contains defined harvests, both snapshot and selective harvests, including
 -- when they have previously been run.
 --***************************************************************************--
@@ -261,24 +264,24 @@ create table historyinfo (
 -------------------------------------------------------------------------------
 -- Name:    harvestdefinitions
 -- Descr.:  This table contains harvest definitions
--- Purpose: This table is used, together with table fullharvests and
---          partialharvests, to contain all information to make Harvest
---          Definition objects. For historical reasons, the harvest_id field
+-- Purpose: This table is used, together with table fullharvests and 
+--          partialharvests, to contain all information to make Harvest 
+--          Definition objects. For historical reasons, the harvest_id field 
 --          is not autogenerated, but is created programmatically.
 create table harvestdefinitions (
-    harvest_id bigint not null primary key, -- Unique id for the harvest
+    harvest_id bigint not null primary key, -- Unique id for the harvest 
                                             --  definition
     name varchar(300) not null unique, -- Name of the harvest definition
     comments varchar(30000),    -- User-defined comments
     numevents int not null,     -- How many times the harvest is scheduled for
-    submitted timestamp not null, -- Time when harvest definition was first
+    submitted timestamp not null, -- Time when harvest definition was first 
                                   --  created
-    isactive int not null,      -- Indicates whether the harvest is activated
+    isactive int not null,      -- Indicates whether the harvest is activated 
                                 --  and will be run at the scheduled time
-    edition bigint not null     -- Marker for optimistic locking by web
+    edition bigint not null     -- Marker for optimistic locking by web 
                                 --  interface
 );
-
+ 
 create index harvestdefinitionssubmitdate on harvestdefinitions (submitted);
 
 -------------------------------------------------------------------------------
@@ -293,7 +296,7 @@ create table fullharvests (
 
 -------------------------------------------------------------------------------
 -- Name:    partialharvests
--- Descr.:  This table contains additional information for selective/event
+-- Descr.:  This table contains additional information for selective/event 
 --          harvests
 create table partialharvests (
     harvest_id bigint not null primary key, -- Unique id for the selective/
@@ -307,15 +310,15 @@ create index partialharvestsnextdate ON partialharvests (nextdate);
 
 -------------------------------------------------------------------------------
 -- Name:    harvest_configs
--- Descr.:  This table contains relations between harvest definitions and
+-- Descr.:  This table contains relations between harvest definitions and 
 --          configurations.
 --          Note that even though it is possible to make many-to-many relations
---          there are in reality a one (harvestdefinition) to many
+--          there are in reality a one (harvestdefinition) to many 
 --          (configurations) relation
 create table harvest_configs (
     harvest_id bigint not null, -- Reference to table harvestdefinitions
     config_id bigint not null,  -- Reference to table configurations
-    primary key ( harvest_id, config_id )
+    primary key ( harvest_id, config_id ) 
 );
 
 --***************************************************************************--
@@ -336,18 +339,18 @@ create table schedules (
      enddate timestamp,            -- Time to stop. timeframe is endless, if
                                    --  both this field and maxrepeats are null.
      maxrepeats bigint,            -- Count of times it can be started. It must
-                                   --  be set, if enddate is null, in order to
+                                   --  be set, if enddate is null, in order to 
                                    --  avoid timeframe is endless
-     timeunit int not null,        -- Time unit used for time measure between
+     timeunit int not null,        -- Time unit used for time measure between 
                                    --  repetitions. It indicates whether it is
                                    --  hours, days, weeks or months. Possible
                                    --  values are defined in TimeUnit.java
-     numtimeunits bigint not null, -- Count of time unit, for time of next
+     numtimeunits bigint not null, -- Count of time unit, for time of next 
                                    --  repetition
-     anytime int not null,   -- True, if this is an anytime frequency, i.e.
+     anytime int not null,   -- True, if this is an anytime frequency, i.e. 
                              --  onminute, onhour, ondayofweek and dayofmonth
                              --  has no meaning.
-     onminute int,           -- Which minute is it about to run
+     onminute int,           -- Which minute is it about to run 
      onhour int,             -- Which hour is it about to run
      ondayofweek int,        -- Which day of week is it about to run
      ondayofmonth int,       -- Which day of month is it about to run
@@ -362,7 +365,7 @@ create table schedules (
 
 -------------------------------------------------------------------------------
 -- Name:    ordertemplates
--- Descr.:  This table contains predefined crawler setups in the form of
+-- Descr.:  This table contains predefined crawler setups in the form of 
 --          Heritrix order.xml files.
 create table ordertemplates (
     template_id bigint not null generated always as identity primary key,
@@ -383,12 +386,12 @@ create table jobs (
     job_id bigint not null primary key, -- Unique id for a job
     harvest_id bigint not null,         -- Reference to the harvest that
                                         --  produced the job
-    status int not null,                -- Job status where valid values are
+    status int not null,                -- Job status where valid values are 
                                         --  defined in JobStatus.java
     priority int not null,              -- Job priority here valid values are
                                         --  defined in JobPriority.java
     forcemaxbytes bigint not null default -1, -- Max byte count that overrides
-                                              --  the maxbytes value in the
+                                              --  the maxbytes value in the 
                                               --  harvest definition
     forcemaxcount bigint,           -- Max object count that overwrites the
                                     --  maxcount value in the harvest
@@ -401,23 +404,23 @@ create table jobs (
                                     --  as crawlertraps
     seedlist clob(64M) not null,    -- The final seed list
     harvest_num int not null,       -- For repeating harvests, which run number
-                                    --  of the harvest created this job
+                                    --  of the harvest created this job 
     harvest_errors varchar(300),    -- Short description of all errors from the
                                     --  harvest, if any.
-    harvest_error_details varchar(10000), -- Details of all errors from the
+    harvest_error_details varchar(10000), -- Details of all errors from the 
                                           --  harvest, if any.
-    upload_errors varchar(300),     -- Short description of all errors from
+    upload_errors varchar(300),     -- Short description of all errors from 
                                     --  upload, if any.
     upload_error_details varchar(10000), -- Details of all errors from upload,
                                          --  if any.
-    startdate timestamp,                 -- The time when a crawler started
+    startdate timestamp,                 -- The time when a crawler started 
                                          --  executing this job.
-    enddate timestamp,                   -- The time when this job was reported
+    enddate timestamp,                   -- The time when this job was reported 
                                          --  done or failed.
     submitteddate timestamp, 			-- The time when this job was submitted
     resubmitted_as_job bigint,          -- The jobId this job was resubmitted as.
-                                        --  This is null, if this job has not been
-                                        --  resubmitted.
+                                        --  This is null, if this job has not been 
+                                        --  resubmitted.  
     num_configs int not null default 0,  -- Number of configurations in the
                                          --  job, autocreated for optimization
                                          --  purposes
@@ -430,9 +433,9 @@ create index jobharvestid on jobs(harvest_id);
 -------------------------------------------------------------------------------
 -- Name:    job_configs
 -- Descr.:  This table contains relations between jobs and configurations.
--- Purpose: The information is used to find out which configurations used to
---          create a job. The information is basis for making a list of domain
---          configurations for a job. Note that it is possible to identify the
+-- Purpose: The information is used to find out which configurations used to 
+--          create a job. The information is basis for making a list of domain 
+--          configurations for a job. Note that it is possible to identify the 
 --          domain from the configuration, so the domain is not stored here.
 --          Note that even though it is possible to make many-to-many relations
 --          there are in reality a one (jobs) to many
@@ -441,7 +444,39 @@ create index jobharvestid on jobs(harvest_id);
 create table job_configs(
     job_id bigint not null,     -- Reference to table jobs
     config_id bigint not null,  -- Reference to table configurations
-    primary key ( job_id, config_id )
+    primary key ( job_id, config_id ) 
 );
 
 create index jobconfigjob on job_configs(job_id);
+
+-------------------------------------------------------------------------------
+-- Name:   global_crawler_trap_lists
+-- Descr.: Models a list of crawler traps which may be applied globally
+-- Purpose:Each list is referenced by one or more crawler trap expressions
+--         which are regular expressions stored in the table
+--         global_crawler_trap_expressions. If the list is active, then any
+--         url matching any of these expressions is added as a crawler trap
+--         to all jobs scheduled with any harvest template.
+create table global_crawler_trap_lists(
+  global_crawler_trap_list_id int not null generated always as identity primary key,
+  name varchar(300) not null unique,     -- A name by which this list is known
+                                         -- e.g. "Statsbibliotekets Master List'
+  description varchar(30000),            -- An optional description of the
+                                         -- list
+  isActive int not null                  -- boolean valued int indicating
+                                         -- whether or not the list is active
+                                         -- 0=inactive, 1=active
+);
+
+-------------------------------------------------------------------------------
+-- Name:    global_crawler_trap_expressions
+-- Descr.:  Contains the regular expressions defining url's to be ignored
+-- Purpose: Specifies the actual crawler traps in each list
+create table global_crawler_trap_expressions(
+    crawler_trap_list_id int not null, -- references
+                                                  -- global_crawler_trap_list_id
+    trap_expression varchar(1000),               -- the actual regular
+                                                  -- expression for the crawler
+                                                  -- trap
+    primary key (crawler_trap_list_id, trap_expression)
+);

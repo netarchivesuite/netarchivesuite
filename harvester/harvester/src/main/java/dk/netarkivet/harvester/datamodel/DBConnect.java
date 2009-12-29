@@ -101,7 +101,10 @@ public class DBConnect {
     }
 
     /** Update a table by executing all the statements in
-     *  the updates String array.
+     *  the updates String array. If newVersion=1 then the
+     *  table is created. Note that this method does not make
+     *  any checks that the SQL statements in the updates
+     *  parameter actually update or create the correct table.
      *
      * @param table The table to update
      * @param newVersion The version that the table should end up at
@@ -116,12 +119,19 @@ public class DBConnect {
         log.info("Updating table to version " + newVersion);
 
         String[] sqlStatements = new String[updates.length + 1];
-        final String updateSchemaversionSql = 
-            "UPDATE schemaversions SET version = "
-            + newVersion + " WHERE tablename = '" + table + "'";
+        String updateSchemaversionSql = null;
+        if (newVersion == 1) {
+           updateSchemaversionSql = "INSERT INTO schemaversions(tablename, "
+                                    + "version) VALUES ('" + table + "', 1)";
+        } else {
+            updateSchemaversionSql =
+                    "UPDATE schemaversions SET version = "
+                    + newVersion + " WHERE tablename = '" + table + "'";
+        }
         System.arraycopy(updates, 0, sqlStatements, 0, updates.length);
         sqlStatements[updates.length] = updateSchemaversionSql;
 
         DBUtils.executeSQL(getDBConnection(), sqlStatements);
     }
+
 }

@@ -37,6 +37,7 @@ import org.apache.commons.httpclient.Header;
 /**
  *This class is cut and paste from waybacks ARCRecordToSearchResultAdapter,
  *except for the use of NetarchiveSuiteUrlOperations as a substitute for UrlOperations
+ * @deprecated use org.archive.wayback.
  */
 public class NetarchiveSuiteARCRecordToSearchResultAdapter implements Adapter<ARCRecord,CaptureSearchResult> {
         private UrlCanonicalizer canonicalizer = null;

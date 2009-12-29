@@ -1,7 +1,30 @@
 <!--
-This build file contains a target for building a deployable webapp warfile containing
-wayback with the netarchivesuite plugin. The target "warfile" takes the warfile distributed with
-wayback and customises it by
+$Id$
+$Revision$
+$Date$
+$Author$
+
+The Netarchive Suite - Software to harvest and preserve websites
+Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!--
+This build file contains a target for building a deployable webapp warfile
+containing wayback with the netarchivesuite plugin. The target "warfile" takes
+the warfile distributed with wayback and customises it by
 i) unpacking it
 ii) replacing the spring configuration files with customised versions
 iii) adding necessary jarfiles from netarchivesuite and dependencies
@@ -74,7 +97,7 @@ v) repacking the warfile as ROOT.war for deployment
     <target name="checkFile">
         <available file="${wayback.dist.war}" property="isFileAvail" />
         <fail unless="isFileAvail"
-              message="Wayback is not currently included with Netarchivesuite! Download it from http://sourceforge.net/project/showfiles.php?group_id=118427 and move the wayback war file to ${wayback.dist.war}."
+              message="Wayback is not currently included with Netarchivesuite! Download it from http://sourceforge.net/project/showfiles.php?group_id=118427 and move the wayback war file to ${wayback.dist.war}." 
                 />
     </target>
 

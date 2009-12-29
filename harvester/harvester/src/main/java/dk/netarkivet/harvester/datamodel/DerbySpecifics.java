@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -291,5 +292,33 @@ public abstract class DerbySpecifics extends DBSpecifics {
                 "ALTER TABLE fullharvests ALTER maxbytes WITH DEFAULT -1"
             };
         DBConnect.updateTable("fullharvests", 3, SqlStatements);
+    }
+
+    @Override
+    protected void createGlobalCrawlerTrapLists() {
+        String createStatement = "CREATE TABLE global_crawler_trap_lists(\n"
+                                 + "  global_crawler_trap_list_id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n"
+                                 + "  name VARCHAR(300) NOT NULL UNIQUE,     -- A name by which this list is known\n"
+                                 + "                                         -- e.g. \"Statsbibliotekets Master List'\n"
+                                 + "  description VARCHAR(30000),            -- An optional description of the\n"
+                                 + "                                         -- list\n"
+                                 + "  isActive INT NOT NULL                  -- boolean valued int indicating\n"
+                                 + "                                         -- whether or not the list is active\n"
+                                 + "                                         -- 0=inactive, 1=active\n"
+                                 + ") ";
+        DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
+    }
+
+    @Override
+    protected void createGlobalCrawlerTrapExpressions() {
+        String createStatement = "CREATE TABLE global_crawler_trap_expressions(\n"
+                                 + "    crawler_trap_list_id INT NOT NULL, -- references\n"
+                                 + "                                                  -- global_crawler_trap_list_id\n"
+                                 + "    trap_expression VARCHAR(1000),               -- the actual regular\n"
+                                 + "                                                  -- expression for the crawler\n"
+                                 + "                                                  -- trap\n"
+                                 + "    PRIMARY KEY (CRAWLER_TRAP_LIST_ID, TRAP_EXPRESSION)\n"
+                                 + ")";
+        DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
     }
 }

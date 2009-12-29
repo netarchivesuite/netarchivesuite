@@ -67,6 +67,8 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
     private static final Pattern HTTP_HEADER_PATTERN =
         Pattern.compile("^HTTP/1\\.[01] (\\d+) (.*)$");
 
+    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("^[cC]ontent-[tT]ype:(.*)");
+
     private Log logger = LogFactory.getLog(getClass().getName());
 
     private ArcRepositoryClient client;
@@ -112,24 +114,25 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
         metadata.put(ARCRecordMetaData.URL_FIELD_KEY, captureSearchResult.getUrlKey());
         metadata.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY, captureSearchResult.getOriginalHost());
         metadata.put(ARCRecordMetaData.DATE_FIELD_KEY, captureSearchResult.getCaptureDate().toString());
-        metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, captureSearchResult.getMimeType());
+        metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, captureSearchResult.getMimeType());   //MIMETYPE_FIELD_KEY = "content-type"
         metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY, "HTTP/1.1");
         metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "0");
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, ""+bitarchive_record.getLength());
         logger.info("Retrieved resource from file '" + arcfile + "' at offset '" + offset + "'");
         InputStream is = bitarchive_record.getData();
+
         ARCRecord arc_record;
         String responsecode = null;
         try {
             for (String line = readLine(is); line != null && line.length()>0; line=readLine(is)  ) {
                 logger.info("Header line: '" + line + "'");
-                Matcher m = HTTP_HEADER_PATTERN.matcher(line);
-                if (m.matches()) {
-                    responsecode = m.group(1);
-                    String responsetext = m.group(2);
+                Matcher matcher = HTTP_HEADER_PATTERN.matcher(line);
+                if (matcher.matches()) {
+                    responsecode = matcher.group(1);
+                    String responsetext = matcher.group(2);
                     logger.info("Setting response code '" + responsecode + "'");
                     metadata.put(ARCRecordMetaData.STATUSCODE_FIELD_KEY, responsecode);
-                } {
+                }
                 // try to match header-lines containing colon,
                 // like "Content-Type: text/html"
                 String[] parts = line.split(":", 2);
@@ -142,10 +145,13 @@ public class PrototypeNetarchiveResourceStore implements ResourceStore {
                         if (name.equals("Content-Length")) {
                             logger.info("Setting length header to '" + contents + "'");
                             metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, contents);
+                        } else if (name.equals("Content-Type")) {
+                            logger.info("Setting Content-Type header to '" + contents + "'");
+                            metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, contents);
                         }
                     }
                 }
-            }
+
 
             }
         } catch (IOException e) {

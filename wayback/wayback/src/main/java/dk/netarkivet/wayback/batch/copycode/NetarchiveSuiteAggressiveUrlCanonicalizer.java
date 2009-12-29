@@ -31,6 +31,8 @@ import org.apache.commons.httpclient.URIException;
  * version of UURIFactory (see Bug 1719). Everything in this class is cut and pasted
  * from wayback's AggressiveUrlCanonicalizer, with substitution of
  * NetarchiveSuiteUURIFactory for UURIFactory.
+ * @deprecated use org.archive.wayback.util.url.AggressiveUrlCanonicalizer
+ * instead
  */
 public class NetarchiveSuiteAggressiveUrlCanonicalizer extends
                                                        AggressiveUrlCanonicalizer {
