@@ -1,7 +1,7 @@
-/* File:    $Id: BitarchiveMonitorServerTester.java 1160 2009-11-26 15:41:21Z jolf $
- * Version: $Revision: 1160 $
- * Date:    $Date: 2009-11-26 16:41:21 +0100 (Thu, 26 Nov 2009) $
- * Author:  $Author: jolf $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
