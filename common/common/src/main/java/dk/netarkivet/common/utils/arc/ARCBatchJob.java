@@ -49,7 +49,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  * the archive, and then runs finish().
  */
 public abstract class ARCBatchJob extends FileBatchJob {
-  
+                                
     /** The total number of records processed. */
     protected int noOfRecordsProcessed = 0;
 

@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Set;
 
 import dk.netarkivet.common.exceptions.UnknownID;
 
@@ -58,7 +59,8 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     @Override
     public void tearDown() throws Exception {
-       super.setUp();
+       super.tearDown();
+        GlobalCrawlerTrapListDBDAO.reset();
     }
 
     /**
@@ -78,6 +80,13 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                 .execute();
         con.prepareStatement("SELECT * from global_crawler_trap_expressions")
                 .execute();        
+    }
+
+     public void testCreate() {
+       GlobalCrawlerTrapListDBDAO dao
+               = GlobalCrawlerTrapListDBDAO.getInstance();
+       int id = dao.create(list1);
+       assertEquals("Should have set list id to returned id", id, list1.getId());
     }
 
     /**
@@ -108,6 +117,58 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         }
     }
 
+    /**
+     * Test that we can update a list and retrieve the updated list
+     */
+    public void testUpdate() {
+          GlobalCrawlerTrapListDBDAO dao =
+                  GlobalCrawlerTrapListDBDAO.getInstance();
+        int id1 = dao.create(list1);
+        int id2 = dao.create(list2);
+        list2.setDescription("new description");
+        Set<String> traps = list2.getTraps();
+        int oldLength = traps.size();
+        traps.remove(traps.iterator().next());
+        dao.update(list2);
+        GlobalCrawlerTrapList list3 = dao.read(id2);
+        assertEquals("New list and old list should be equal", list2, list3);
+    }
+
+    /**
+     * Tests that we can get a list of active traplists
+     *
+     */
+    public void testGetAllActive() {
+          GlobalCrawlerTrapListDBDAO dao =
+                  GlobalCrawlerTrapListDBDAO.getInstance();
+        list1.setActive(true);
+        list2.setActive(false);
+        dao.create(list1);
+        dao.create(list2);
+        assertEquals("Should be one active list", 1, dao.getAllActive().size());
+        assertEquals("Should be list1", list1, dao.getAllActive().get(0));
+    }
+
+    public void testGetAllInactive() {
+           GlobalCrawlerTrapListDBDAO dao =
+                  GlobalCrawlerTrapListDBDAO.getInstance();
+        list1.setActive(false);
+        list2.setActive(false);
+        dao.create(list1);
+        dao.create(list2);
+        assertEquals("Should be two inactive lists", 2, dao.getAllInActive().size());
+    }
+
+    public void testGetExpressions() {
+           GlobalCrawlerTrapListDBDAO dao =
+                  GlobalCrawlerTrapListDBDAO.getInstance();
+        list1.setActive(true);
+        list2.setActive(true);
+        dao.create(list1);
+        dao.create(list2);
+        assertEquals("Should combine the two lists to get 9 distinct traps"
+                , 9, dao.getAllActiveTrapExpressions().size());
+    }
 
 
 }

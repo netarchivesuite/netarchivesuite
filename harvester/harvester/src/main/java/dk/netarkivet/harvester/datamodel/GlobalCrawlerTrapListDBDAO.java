@@ -23,12 +23,23 @@
 package dk.netarkivet.harvester.datamodel;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.ExceptionUtils;
 
 /**
  * A singleton giving access to global crawler traps.
@@ -95,46 +106,216 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         return instance;
     }
 
+
+    private static final String SELECT_BY_ACTIVITY =
+            "SELECT global_crawler_trap_list_id FROM "
+            + "global_crawler_trap_lists WHERE isActive = ?";
+    private List<GlobalCrawlerTrapList> getAllByActivity(boolean isActive) {
+        List<GlobalCrawlerTrapList> result =
+                new ArrayList<GlobalCrawlerTrapList>();
+         Connection conn = DBConnect.getDBConnection();
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(SELECT_BY_ACTIVITY);
+            stmt.setBoolean(1, isActive);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(read(rs.getInt(1)));
+            }
+            return result;
+        } catch (SQLException e) {
+            String message = "Error reading trap list\n" +
+                             ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new UnknownID(message, e);
+        }
+    }
+
+
     public List<GlobalCrawlerTrapList> getAllActive() {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.getAllActive()");
+        return getAllByActivity(true);
     }
 
     public List<GlobalCrawlerTrapList> getAllInActive() {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.getAllInActive()");
+           return getAllByActivity(false);
     }
 
+    private static final String SELECT_EXPRS_STMT =
+            "SELECT DISTINCT trap_expression "
+            + "FROM global_crawler_trap_lists, global_crawler_trap_expressions "
+            + "WHERE global_crawler_trap_list_id = crawler_trap_list_id "
+            + "AND isActive = 1" ;
     public List<String> getAllActiveTrapExpressions() {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.getAllActiveTrapExpressions()");
+        Connection conn = DBConnect.getDBConnection();
+        List<String> result = new ArrayList<String>();
+        try {
+            PreparedStatement stmt = conn.prepareStatement(SELECT_EXPRS_STMT);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                result.add(rs.getString(1));
+            }
+            return result;
+        } catch (SQLException e) {
+            String message = "Error retrieving expressions.\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
     }
 
+    private static final String INSERT_TRAPLIST_STMT = "INSERT INTO global_crawler_trap_lists "
+                                              + "(name, description, isActive)"
+                                              + "VALUES (?,?,?)";
+    private static final String INSERT_TRAP_EXPR_STMT =
+            "INSERT INTO global_crawler_trap_expressions "
+            + "(crawler_trap_list_id, trap_expression) "
+            + "VALUES (?,?) ";
+
+    @Override
     public int create(GlobalCrawlerTrapList trapList) {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.create()");
+        ArgumentNotValid.checkNotNull(trapList, "trapList");
+        int trapId;
+        Connection conn = DBConnect.getDBConnection();
+        PreparedStatement stmt = null;
+        try {
+            conn.setAutoCommit(false);
+            stmt = conn.prepareStatement(INSERT_TRAPLIST_STMT,
+                                         Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, trapList.getName());
+            stmt.setString(2, trapList.getDescription());
+            stmt.setBoolean(3, trapList.isActive());
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            rs.next();
+            trapId = rs.getInt(1);
+            trapList.setId(trapId);
+            for (String expr: trapList.getTraps()) {
+                stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
+                stmt.setInt(1, trapId);
+                stmt.setString(2, expr);
+                stmt.executeUpdate();
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            String message = "SQL error creating global crawler trap list \n"
+                             + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+           DBUtils.closeStatementIfOpen(stmt);
+           DBUtils.rollbackIfNeeded(conn, "create trap list", trapList);
+        }
+        return trapId;
     }
 
+
+    private static final String DELETE_TRAPLIST_STMT =
+            "DELETE from global_crawler_trap_lists WHERE "
+            + "global_crawler_trap_list_id = ?";
+    private static final String DELETE_EXPR_STMT =
+            "DELETE FROM global_crawler_trap_expressions WHERE "
+            + "crawler_trap_list_id = ?";
+    @Override
     public void delete(int id) {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.delete()");
+        Connection conn = DBConnect.getDBConnection();
+        PreparedStatement stmt = null;
+        try {
+            conn.setAutoCommit(false);
+            stmt = conn.prepareStatement(DELETE_TRAPLIST_STMT);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement(DELETE_EXPR_STMT);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            String message = "Error deleting trap list: '" + id + "'\n"
+                             + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new UnknownID(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(stmt);
+            DBUtils.rollbackIfNeeded(conn, "delete trap list", id);
+        }
     }
 
+    private static final String LIST_UPDATE_STMT =
+            "UPDATE global_crawler_trap_lists SET "
+            + "name = ?, description = ?, isActive = ? "
+            + "WHERE global_crawler_trap_list_id = ?";
+    @Override
     public void update(GlobalCrawlerTrapList trapList) {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.update()");
+        Connection conn = DBConnect.getDBConnection();
+        PreparedStatement stmt = null;
+        try {
+            conn.setAutoCommit(false);
+            stmt = conn.prepareStatement(LIST_UPDATE_STMT);
+            stmt.setString(1, trapList.getName());
+            stmt.setString(2, trapList.getDescription());
+            stmt.setBoolean(3, trapList.isActive());
+            stmt.setInt(4, trapList.getId());
+            stmt.executeUpdate();
+            stmt = conn.prepareStatement(DELETE_EXPR_STMT);
+            stmt.setInt(1, trapList.getId());
+            stmt.executeUpdate();
+            for (String expr: trapList.getTraps()) {
+                stmt = conn.prepareStatement(INSERT_TRAP_EXPR_STMT);
+                stmt.setInt(1, trapList.getId());
+                stmt.setString(2, expr);
+                stmt.executeUpdate();
+            }
+            conn.commit();
+        } catch (SQLException e) {
+            String message = "Error updating trap list :'" + trapList.getId() +
+                             "'\n" + ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new UnknownID(message, e);
+        } finally {
+            DBUtils.rollbackIfNeeded(conn, "update trap list", trapList);
+            DBUtils.closeStatementIfOpen(stmt);
+        }}
+
+
+    private static final String SELECT_TRAPLIST_STMT = "SELECT name, "
+          + "description, isActive FROM global_crawler_trap_lists WHERE "
+          + "global_crawler_trap_list_id = ?";
+    private static final String SELECT_TRAP_EXPRESSIONS_STMT = "SELECT "
+          + "trap_expression from global_crawler_trap_expressions WHERE "
+          + "crawler_trap_list_id = ?";
+    @Override
+    public GlobalCrawlerTrapList read(int id) {
+        Connection conn = DBConnect.getDBConnection();
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(SELECT_TRAPLIST_STMT);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.next()){
+                throw new UnknownID("No such GlobalCrawlerTrapList: '" + id +
+                                    "'");
+            }
+            String name = rs.getString("name");
+            String description = rs.getString("description");
+            boolean isActive = rs.getBoolean("isActive");
+            stmt = conn.prepareStatement(SELECT_TRAP_EXPRESSIONS_STMT);
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+            List<String> exprs = new ArrayList<String>();
+            while (rs.next()) {
+                exprs.add(rs.getString("trap_expression"));
+            }
+            return new GlobalCrawlerTrapList(id, exprs, name, description,
+                                             isActive);
+        } catch (SQLException e) {
+            String message = "Error retrieving trap list for id '" + id + "'\n" +
+                             ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        }
     }
 
-    public GlobalCrawlerTrapList read(int id) {
-        //TODO: implement method
-        throw new NotImplementedException("Not yet implemented:"
-                                          + "dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO.read()");
+    public static void reset() {
+        instance = null;
     }
 
 

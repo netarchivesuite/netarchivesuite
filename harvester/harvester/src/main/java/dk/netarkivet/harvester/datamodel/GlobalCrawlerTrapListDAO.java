@@ -79,7 +79,9 @@ public abstract class GlobalCrawlerTrapListDAO {
     // CRUD methods for this DAO.
 
     /**
-     *
+     * This method creates the object in the database and has the side effect
+     * of settinf the trapLists id field to the auto-generated id in the
+     * database.
      * @param trapList
      * @return
      * @throws ArgumentNotValid if the name of the trapList is already in use.
@@ -93,5 +95,6 @@ public abstract class GlobalCrawlerTrapListDAO {
     public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
 
     public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
+    
 
 }
