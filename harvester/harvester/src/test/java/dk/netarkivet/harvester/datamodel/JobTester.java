@@ -25,6 +25,9 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -48,6 +51,7 @@ import org.archive.crawler.deciderules.DecideRuleSequence;
 import org.archive.crawler.deciderules.MatchesListRegExpDecideRule;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.Node;
 
 import dk.netarkivet.common.CommonSettings;
@@ -964,5 +968,36 @@ public class JobTester extends DataModelTestCase {
         job = JobDAO.getInstance().read(jobID);
         assertEquals(now, job.getSubmittedDate());
     }
-    
+
+    /**
+     * Tests that global crawler traps defined in the dao are added to new jobs.
+     * @throws FileNotFoundException
+     */
+    public void testCreateJobWithGlobalCrawlerTraps()
+            throws FileNotFoundException {
+         GlobalCrawlerTrapList list1 = new GlobalCrawlerTrapList(
+                new FileInputStream(new File(TestInfo.TOPDATADIR, TestInfo.CRAWLER_TRAPS_01)), "list1",
+                "A Description of list1", true);
+        GlobalCrawlerTrapList list2 = new GlobalCrawlerTrapList(
+                new FileInputStream(new File(TestInfo.TOPDATADIR, TestInfo.CRAWLER_TRAPS_02)), "list2",
+                "A Description of list2", true);
+        GlobalCrawlerTrapListDBDAO trapDao = GlobalCrawlerTrapListDBDAO.getInstance();
+        trapDao.create(list1);
+        trapDao.create(list2);
+        Job job = Job.createJob(new Long(42),
+                TestInfo.getDefaultConfig(TestInfo.getDefaultDomain()), 0);
+        Document doc = job.getOrderXMLdoc();
+        String TRAPS_XPATH =
+        "/crawl-order/controller/newObject"
+        + "/newObject[@name='decide-rules']"
+        + "/map[@name='rules']/newObject[@name='" +
+        Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME + "']";
+        Node trapsNode = doc.selectSingleNode(TRAPS_XPATH);
+        assertNotNull("Should have added a node", trapsNode);
+
+        Element stringList = (Element)((Element) trapsNode).elements(
+                "stringList").get(0);
+        assertTrue("Should be several crawler traps present", stringList.elements("string").size()>2);
+    }
+
 }

@@ -301,7 +301,7 @@ public class Job implements Serializable {
         // The seedlist, configuration map, and max/min limits are changed
         // as result of this method-call.
         addConfiguration(cfg);
-
+        addGlobalCrawlerTraps();
         status = JobStatus.NEW;
     }
 
@@ -340,6 +340,7 @@ public class Job implements Serializable {
         this.harvestNum = harvestNum;
 
         underConstruction = false;
+        addGlobalCrawlerTraps();
     }
 
     /**
@@ -390,6 +391,14 @@ public class Job implements Serializable {
         return new Job(harvestID, cfg, JobPriority.LOWPRIORITY,
                 maxObjectsPerDomain, maxBytesPerDomain, harvestNum);
     }
+
+    private void addGlobalCrawlerTraps() {
+        GlobalCrawlerTrapListDBDAO dao =
+                GlobalCrawlerTrapListDBDAO.getInstance();
+        editOrderXMLAddCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
+                                    dao.getAllActiveTrapExpressions());
+    }
+
 
     /**
      * Adds a configuration to this Job.
@@ -480,7 +489,7 @@ public class Job implements Serializable {
             }
         }
 
-        editOrderXML_crawlerTraps(cfg.getDomain());
+        editOrderXMLAddPerDomainCrawlerTraps(cfg.getDomain());
 
         //TODO update limits in settings files - see also bug 269
 
@@ -516,9 +525,15 @@ public class Job implements Serializable {
      * @throws IllegalState
      *          If unable to update order.xml due to wrong order.xml format
      */
-    private void editOrderXML_crawlerTraps(Domain d) {
+    private void editOrderXMLAddPerDomainCrawlerTraps(Domain d) {
         //Get the regexps to exclude
         List<String> crawlerTraps = d.getCrawlerTraps();
+        String elementName = d.getName();
+        editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
+    }
+
+    private void editOrderXMLAddCrawlerTraps(String elementName,
+                                             List<String> crawlerTraps) {
         if (crawlerTraps.size() == 0) {
             return;
         }
@@ -538,9 +553,9 @@ public class Job implements Serializable {
         //Add all regexps for the domain in a single MatchesListRegExpDecideRule
         //which is appended to the rulesMapNode.
         Element deciderule = rulesMap.addElement("newObject");
-        deciderule.addAttribute("name", d.getName());
+        deciderule.addAttribute("name", elementName);
         deciderule.addAttribute("class",
-                MatchesListRegExpDecideRule.class.getName()        
+                MatchesListRegExpDecideRule.class.getName()
             );
 
         Element decision = deciderule.addElement("string");
@@ -550,7 +565,7 @@ public class Job implements Serializable {
         Element listlogic = deciderule.addElement("string");
         listlogic.addAttribute("name", "list-logic");
         listlogic.addText("OR");
-        
+
         Element regexpList = deciderule.addElement("stringList");
         regexpList.addAttribute("name", "regexp-list");
         for (String trap : crawlerTraps) {

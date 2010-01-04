@@ -99,6 +99,13 @@ public class Constants {
     /** Settings used in JobDBDao after admin machine break down. **/
     public static final String NEXT_JOB_ID =
                 "settings.harvester.datamodel.domain.nextJobId";
+
+    /**
+     * The name used for the element in order.xml which contains
+     * global crawler traps.
+     */
+    public static final String GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME =
+            "dk.netarkivet.global_crawler_traps";
     
     /** Uncallable constructor. */
     private Constants() { }

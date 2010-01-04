@@ -29,6 +29,9 @@ import junit.textui.TestRunner;
 import dk.netarkivet.common.webinterface.GUIWebServerTester;
 import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
 
+//import dk.netarkivet.common.webinterface.GUIWebServerTester;
+//import dk.netarkivet.harvester.webinterface.HarvestDefinitionGUITester;
+
 /**
  * 
  * Unit-tester suite for the package dk.netarkivet.harvester.datamodel.
