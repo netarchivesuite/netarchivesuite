@@ -62,6 +62,8 @@ public class PhysicalLocation {
     private File securityPolicyFile;
     /** The inherited database file name.*/
     private File databaseFile;
+    /** The inherited bitpreservation database file name.*/
+    private File bpDatabaseFile;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -81,7 +83,7 @@ public class PhysicalLocation {
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-        File securityPolicy, File dbFile, boolean resetDir) {
+        File securityPolicy, File dbFile, File bpdbFile, boolean resetDir) {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, 
                 "Element elem (physLocRoot)");
@@ -101,6 +103,7 @@ public class PhysicalLocation {
         logPropFile = logProp;
         securityPolicyFile = securityPolicy;
         databaseFile = dbFile;
+        bpDatabaseFile = bpdbFile;
         resetDirectory = resetDir;
         
         // retrieve the specific settings for this instance 
@@ -160,11 +163,13 @@ public class PhysicalLocation {
                     Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFile, resetDirectory));
+                        securityPolicyFile, databaseFile, bpDatabaseFile, 
+                        resetDirectory));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFile, resetDirectory));
+                        securityPolicyFile, databaseFile, bpDatabaseFile,
+                        resetDirectory));
             }
         }
     }

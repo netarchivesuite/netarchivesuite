@@ -101,6 +101,9 @@ public final class Constants {
     static final String DEPLOY_MACHINE_USER_NAME = "deployMachineUserName";
     /** The path to the directory for the database.*/
     static final String DEPLOY_DATABASE_DIR = "deployDatabaseDir";
+    /** The path to the directory for the bitpreservation database.*/
+    static final String DEPLOY_BITPRESERVATION_DATABASE_DIR = 
+        "deployBitpreservationDatabaseDir";
     /** The path to physical locations in from the global scope.*/
     static final String DEPLOY_PHYSICAL_LOCATION = "thisPhysicalLocation";
     /** The path to machines from a physical location.*/
@@ -303,6 +306,18 @@ public final class Constants {
      */
     static final String DATABASE_BASE_PATH = 
         DATABASE_BASE_DIR + DATABASE_BASE_FILE;
+    /**
+     * The name of the bitpreservation database in the database base dir above.
+     * This is the default name of the bitpreservation database.
+     */
+    static final String BP_DATABASE_BASE_FILE = "bpdb.jar";
+    /** 
+     * The path to the base bitpreservation database (the one above combined 
+     * with the base database dir).
+     * This is the default location for the bitpreservation database. 
+     */
+    static final String BP_DATABASE_BASE_PATH =
+        DATABASE_BASE_DIR + BP_DATABASE_BASE_FILE;
     /** The name of the new modified configuration file for tests.*/
     static final String TEST_CONFIG_FILE_REPLACE_ENDING = "_test.xml";
     /** The script extension for Linux/Unix.*/
@@ -396,8 +411,10 @@ public final class Constants {
     public static final String ARG_TEST = "T";
     /** For giving the optional reset directory argument.*/
     public static final String ARG_RESET = "R";
-    /** For giving the optional argument.*/
+    /** For giving the optional evaluation argument.*/
     public static final String ARG_EVALUATE = "E";
+    /** For giving the optional bitpreservation database argument.*/
+    public static final String ARG_BP_DB = "B";
     
     // Argument values
     /** The long yes argument.*/
@@ -461,6 +478,10 @@ public final class Constants {
     /** The error message when database file does not exist.*/
     public static final String MSG_ERROR_NO_DATABASE_FILE_FOUND = 
         "Reference to non-existing database file (-D argument).";
+    /** The error message when bitpreservation database file does not exist.*/
+    public static final String MSG_ERROR_NO_BPDB_FILE_FOUND = 
+        "Reference to non-existing bitpreservation database file " 
+        + "(-D argument).";
     /** The error message for wrong deploy-config file extension.*/
     public static final String MSG_ERROR_CONFIG_EXTENSION = 
         "Config file must be '.xml'!.\n";
@@ -476,6 +497,8 @@ public final class Constants {
     /** The error message for wrong database extension.*/
     public static final String MSG_ERROR_DATABASE_EXTENSION = 
         "Database file must have extension '.jar' or '.zip'";
+    public static final String MSG_ERROR_BPDB_EXTENSION = 
+        "Bitpreservation database file must have extension '.jar' or '.zip'";
     /** The error message when test wrong number of test arguments.*/
     public static final String MSG_ERROR_TEST_ARGUMENTS = 
         "There have to be " + TEST_ARGUMENTS_REQUIRED + " test arguments.";

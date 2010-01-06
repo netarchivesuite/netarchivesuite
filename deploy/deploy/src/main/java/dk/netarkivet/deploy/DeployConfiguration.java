@@ -58,6 +58,8 @@ public class DeployConfiguration {
     private File outputDir;
     /** The name of the database.*/
     private File databaseFileName;
+    /** The name of the bitpreservation database.*/
+    private File bpDatabaseFileName;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -70,6 +72,7 @@ public class DeployConfiguration {
      * @param logPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
+     * @param bpdbFileName The name of the database.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public DeployConfiguration(File deployConfigFileName, 
@@ -78,6 +81,7 @@ public class DeployConfiguration {
             File logPropFileName,
             String outputDirName,
             File dbFileName,
+            File bpdbFileName,
             boolean resetDir) {
         ArgumentNotValid.checkNotNull(
                 deployConfigFileName, "No config file");
@@ -93,6 +97,7 @@ public class DeployConfiguration {
         secPolicyFile = secPolicyFileName;
         logPropFile = logPropFileName;
         databaseFileName = dbFileName;
+        bpDatabaseFileName = bpdbFileName;
         resetDirectory = resetDir;
 
         // get configuration tree, settings and parameters
@@ -140,7 +145,8 @@ public class DeployConfiguration {
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
                     netarchiveSuiteFile.getName(), logPropFile, 
-                    secPolicyFile, databaseFileName, resetDirectory));
+                    secPolicyFile, databaseFileName, bpDatabaseFileName, 
+                    resetDirectory));
         }
     }
     

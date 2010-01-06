@@ -56,6 +56,8 @@ public class TestInfo {
 	    WORKING_DIR, "log.prop");
     public static final File FILE_DATABASE = new File(
 	    WORKING_DIR, "database.jar");
+    public static final File FILE_BP_DATABASE = new File(
+            WORKING_DIR, "bpdb.jar");
 
     // arguments for complete settings
     public static final File COMPLETE_SETTINGS_DIR = new File(
@@ -76,6 +78,8 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
     public static final String ARGUMENT_DATABASE_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
+    public static final String ARGUMENT_BP_DATABASE_FILE = 
+        Constants.ARG_INIT_ARG + Constants.ARG_BP_DB;
     public static final String ARGUMENT_TEST = 
 	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
     public static final String ARGUMENT_EVALUATE = 

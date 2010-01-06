@@ -60,9 +60,9 @@ public class WindowsMachine extends Machine {
     public WindowsMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
                 File logProp, File securityPolicy, File dbFile,
-                boolean resetDir) {
+                File bpdbFile, boolean resetDir) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, resetDir);
+                logProp, securityPolicy, dbFile, bpdbFile, resetDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
@@ -234,6 +234,8 @@ public class WindowsMachine extends Machine {
         res.append(Constants.NEWLINE);
         // APPLY DATABASE!
         res.append(osInstallDatabase());
+        // APPLY BITPRESERVATION DATABASE!
+        res.append(osInstallBitPreservationDatabase());
         // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
         res.append(getJMXremoteFilesCommand());
         // END OF SCRIPT
@@ -824,6 +826,37 @@ public class WindowsMachine extends Machine {
         String databaseDir = machineParameters.getDatabaseDirValue();
         // Do not install if no proper database directory.
         if(databaseDir == null || databaseDir.isEmpty()) {
+            return Constants.EMPTY;
+        }
+
+        StringBuilder res = new StringBuilder(
+                ScriptConstants.ECHO_WINDOWS_DATABASE);
+        res.append(Constants.NEWLINE);
+
+        return res.toString();
+    }
+    
+    /**
+     * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
+     * 
+     * Checks if a specific directory for the bitpreservation database is given 
+     * in the settings, and thus if the bitpreservation database should be 
+     * installed on this machine.
+     * 
+     * If not specific database is given (bitpresevationDatabaseFileName = null)
+     * then use the default in the NetarchiveSuite.zip package.
+     * Else send the new bitpreservation database to the standard database 
+     * location, and extract it to the given location.
+     * 
+     * @return The script for installing the bitpreservation database 
+     * (if needed).
+     */
+    @Override
+    protected String osInstallBitPreservationDatabase() {
+        String bpDatabaseDir = 
+            machineParameters.getBitPreservationDatabaseDirValue();
+        // Do not install if no proper bitpreservation database directory.
+        if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
             return Constants.EMPTY;
         }
 

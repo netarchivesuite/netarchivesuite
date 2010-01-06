@@ -61,9 +61,9 @@ public class LinuxMachine extends Machine {
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFile,
-            boolean resetDir) {
+            File bpdbFile, boolean resetDir) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, resetDir);
+                logProp, securityPolicy, dbFile, bpdbFile, resetDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
@@ -169,6 +169,8 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
         // APPLY DATABASE!
         res.append(osInstallDatabase());
+        // APPLY BITPRESERVATION DATABASE!
+        res.append(osInstallBitPreservationDatabase());
         // echo make scripts executable
         res.append(ScriptConstants.ECHO_MAKE_EXECUTABLE);
         res.append(Constants.NEWLINE);
@@ -697,6 +699,84 @@ public class LinuxMachine extends Machine {
 
         return res.toString();
     }
+    
+    /**
+     * Checks if a specific directory for the bitpreservation database is given 
+     * in the settings, and thus if the bitpreservation database should be 
+     * installed on this machine.
+     * 
+     * If not specific database is given (bitpresevationDatabaseFileName = null)
+     * then use the default in the NetarchiveSuite.zip package.
+     * Else send the new bitpreservation database to the standard database 
+     * location, and extract it to the given location.
+     * 
+     * @return The script for installing the bitpreservation database 
+     * (if needed).
+     */
+    @Override
+    protected String osInstallBitPreservationDatabase() {
+        String bpDatabaseDir = 
+            machineParameters.getBitPreservationDatabaseDirValue();
+        // Do not install if no proper bitpreservation database directory.
+        if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
+            return Constants.EMPTY;
+        }
+
+        // TODO implement me!
+        StringBuilder res = new StringBuilder();
+//        res.append("\n BITPRESERVATION DATABASE:" + bpDatabaseDir + "\n");
+
+        // copy to final destination if database argument.
+        if(bpDatabaseFile != null) {
+            // echo Copying database
+            res.append(ScriptConstants.ECHO_COPYING_BP_DATABASE);
+            res.append(Constants.NEWLINE);
+            // scp database.jar user@machine:dbDir/bpdb
+            res.append(ScriptConstants.SCP + Constants.SPACE);
+            res.append(bpDatabaseFile.getPath());
+            res.append(Constants.SPACE);
+            res.append(machineUserLogin());
+            res.append(Constants.COLON);
+            res.append(getInstallDirPath());
+            res.append(Constants.SLASH);
+            res.append(Constants.BP_DATABASE_BASE_PATH);
+            res.append(Constants.NEWLINE);
+        }
+        // unzip database.
+        res.append(ScriptConstants.ECHO_UNZIPPING_BP_DATABASE);
+        res.append(Constants.NEWLINE);
+        // ssh user@machine "
+        // cd dir; if [ -d bpDatabaseDir ]; then echo ; 
+        // else mkdir bpDatabaseDir; fi; if [ $(ls -A bpDatabaseDir) ]; 
+        // then echo ERROR MESSAGE: DIR NOT EMPTY; 
+        // else unzip -q -o dbDir/bpdb -d databaseDir/.; fi; exit;
+        // "
+        res.append(ScriptConstants.SSH + Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.SPACE + Constants.QUOTE_MARK
+                + ScriptConstants.CD + Constants.SPACE);
+        res.append(getInstallDirPath());
+        res.append(Constants.SEMICOLON + Constants.SPACE 
+                + ScriptConstants.LINUX_IF_DIR_EXIST + Constants.SPACE);
+        res.append(bpDatabaseDir);
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE + ScriptConstants.ECHO + Constants.SPACE);
+        res.append(ScriptConstants.DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY);
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.ELSE
+                + Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
+                + Constants.SPACE);
+        res.append(Constants.BP_DATABASE_BASE_PATH);
+        res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
+                + Constants.SPACE);
+        res.append(bpDatabaseDir);
+        res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
+                + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.EXIT
+                + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+
+        return res.toString();
+    }
+
 
     /**
      * Creates the specified directories in the deploy-configuration file.

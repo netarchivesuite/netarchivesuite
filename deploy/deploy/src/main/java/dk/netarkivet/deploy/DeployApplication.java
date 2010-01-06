@@ -69,6 +69,8 @@ public final class DeployApplication {
     private static File dbFile;
     /** The arguments for resetting tempDir.*/
     private static boolean resetDirectory;
+    /** The bitpreservation database file.*/
+    private static File bpdbFile;
 
     /**
      * Run the new deploy.
@@ -85,6 +87,7 @@ public final class DeployApplication {
      *                                    environmentName, mailReceiver)
      * -R  [OPTIONAL] For resetting the tempDir (takes arguments 'y' or 'yes')
      * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
+     * -B  [OPTIONAL] For bitpreservation database.
      */
     public static void main(String[] args) {
         try {
@@ -146,6 +149,9 @@ public final class DeployApplication {
             // Retrieving the evaluate argument
             String evaluateArgument = ap.getCommandLine().getOptionValue(
                     Constants.ARG_EVALUATE);
+            // Retrieve the bitpreservation database filename.
+            String bpdbFileName = ap.getCommandLine().getOptionValue(
+                    Constants.ARG_BP_DB);
 
             // check deployConfigFileName and retrieve the corresponding file
             initConfigFile(deployConfigFileName);
@@ -171,6 +177,9 @@ public final class DeployApplication {
             // evaluates the config file
             initEvaluate(evaluateArgument);
             
+            // check the bitpreservation database
+            initBitPreservationDatabase(bpdbFileName);
+            
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(
                     deployConfigFile,
@@ -179,6 +188,7 @@ public final class DeployApplication {
                     logPropFile,
                     outputDir,
                     dbFile,
+                    bpdbFile,
                     resetDirectory); 
 
             // Write the scripts, directories and everything
@@ -406,6 +416,38 @@ public final class DeployApplication {
             evf.evaluate();
         }
     }
+    
+    /**
+     * Checks the argument for the bitpreservation database.
+     * 
+     * @param bpdbFileName The path to the bitpreservation database.
+     */
+    public static void initBitPreservationDatabase(String bpdbFileName) {
+        bpdbFile = null;
+        // check the extension on the database, if it is given as argument 
+        if(bpdbFileName != null) {
+            if(!bpdbFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
+                    && !bpdbFileName.endsWith(
+                            Constants.EXTENSION_ZIP_FILES)) {
+                System.err.print(
+                        Constants.MSG_ERROR_BPDB_EXTENSION);
+                System.out.println();
+                System.exit(1);
+            }
+            
+            // get the file
+            bpdbFile = new File(bpdbFileName);
+            // check whether the database file exists.
+            if(!bpdbFile.exists()) {
+                System.err.print(
+                            Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
+                System.out.println();
+                System.out.println("Couldn't find file: " 
+                        + bpdbFile.getAbsolutePath());
+                System.exit(1);
+            }
+        }
+    }
        
     /**
      * Applies the test arguments.
@@ -504,6 +546,8 @@ public final class DeployApplication {
                     + " an error message.");
             options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
                     + "Evaluate the config file.");
+            options.addOption(Constants.ARG_BP_DB,
+                    hasArg, "The bitpreservation database file");
         }
 
         /**

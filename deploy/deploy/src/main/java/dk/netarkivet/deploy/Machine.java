@@ -71,6 +71,8 @@ public abstract class Machine {
     protected File inheritedSecurityPolicyFile;
     /** The inherited database file name.*/
     protected File databaseFile;
+    /** The inherited bitpreservation file name.*/
+    protected File bpDatabaseFile;
     /** The directory for this machine.*/
     protected File machineDirectory;
     /** Whether the temp dir should be cleaned.*/
@@ -93,8 +95,8 @@ public abstract class Machine {
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
-            File logProp, File securityPolicy, File dbFileName, 
-            boolean resetDir) {
+            File logProp, File securityPolicy, File dbFileName,
+            File bpdbFileName, boolean resetDir) {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
@@ -111,6 +113,7 @@ public abstract class Machine {
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFile = dbFileName;
+        bpDatabaseFile = bpdbFileName;
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
@@ -784,6 +787,21 @@ public abstract class Machine {
      * @return The script for installing the database (if needed).
      */
     protected abstract String osInstallDatabase();
+    
+    /**
+     * Checks if a specific directory for the bitpreservation database is given 
+     * in the settings, and thus if the bitpreservation database should be 
+     * installed on this machine.
+     * 
+     * If not specific database is given (bitpresevationDatabaseFileName = null)
+     * then use the default in the NetarchiveSuite.zip package.
+     * Else send the new bitpreservation database to the standard database 
+     * location, and extract it to the given location.
+     * 
+     * @return The script for installing the bitpreservation database 
+     * (if needed).
+     */
+    protected abstract String osInstallBitPreservationDatabase();
     
     /**
      * This functions makes the script for creating the new directories.

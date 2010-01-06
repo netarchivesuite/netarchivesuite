@@ -50,6 +50,8 @@ public class Parameters {
     private Element machineUserName;
     /** The directory for the database.*/
     private Element databaseDir;
+    /** The directory for the bitpreservation database.*/
+    private Element bpDatabaseDir;
 
     /**
      * Constructor.
@@ -67,6 +69,8 @@ public class Parameters {
         machineUserName = root.getChild(
                 Constants.DEPLOY_MACHINE_USER_NAME);
         databaseDir = root.getChild(Constants.DEPLOY_DATABASE_DIR);
+        bpDatabaseDir = root.getChild(
+                Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR);
     }
 
     /**
@@ -97,8 +101,12 @@ public class Parameters {
         } 
         // copy parent database dir (if any)
         if(parent.databaseDir != null) {
-            databaseDir = parent.databaseDir;
-        } 
+            databaseDir = parent.databaseDir.createCopy();
+        }
+        // copy the parent bitpreservation database dir (if any)
+        if(parent.bpDatabaseDir != null) {
+            bpDatabaseDir = parent.bpDatabaseDir.createCopy();
+        }
     }
 
     /**
@@ -153,6 +161,17 @@ public class Parameters {
                         + " but " + tmp.size() + " received.");
             }
         }
+        // check if new database dir to overwrite existing
+        tmp = root.elements(Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR);
+        if(tmp.size() > 0) {
+            bpDatabaseDir = tmp.get(0);
+            // log if more than one database directory.
+            if(tmp.size() > 1) {
+                Log.info("Maximum 1 value expected at: "
+                        + Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR
+                        + " but " + tmp.size() + " received.");
+            }
+        }
     }
 
     /**
@@ -191,6 +210,19 @@ public class Parameters {
     public String getDatabaseDirValue() {
         if(databaseDir != null) {
             return databaseDir.getText();
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * For retrieving the directory for the bitpreservation database.
+     * 
+     * @return The database directory element.
+     */
+    public String getBitPreservationDatabaseDirValue() {
+        if(bpDatabaseDir != null) {
+            return bpDatabaseDir.getText();
         } else {
             return "";
         }

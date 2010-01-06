@@ -263,8 +263,14 @@ public final class ScriptConstants {
         "    echo Application already running.";
     /** echo Copying database.*/
     static final String ECHO_COPYING_DATABASE = "echo Copying database";
+    /** echo Copying bitpreservation database.*/
+    static final String ECHO_COPYING_BP_DATABASE = 
+        "echo Copying bitpreservation database";
     /** echo Unzipping database.*/
     static final String ECHO_UNZIPPING_DATABASE = "echo Unzipping database";
+    /** echo Unzipping bitpreservation database.*/
+    static final String ECHO_UNZIPPING_BP_DATABASE = 
+        "echo Unzipping bitpreservation database";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/

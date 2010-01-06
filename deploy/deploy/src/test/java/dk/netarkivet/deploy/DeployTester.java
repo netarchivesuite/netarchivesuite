@@ -47,6 +47,7 @@ public class DeployTester extends TestCase {
     private String nullzipName = TestInfo.FILE_NETATCHIVE_SUITE.getPath();
     private String output_dir = TestInfo.TMPDIR.getPath();
     private String databaseName = TestInfo.FILE_DATABASE.getPath();
+    private String bpDatabaseName = TestInfo.FILE_BP_DATABASE.getPath();
     
     public void setUp() {
         rs.setUp();
@@ -141,7 +142,8 @@ public class DeployTester extends TestCase {
     }
     
     /** 
-     * Test that we can deploy with a database defined.
+     * Test that we can deploy with both databases (harvest database and
+     * bitpreservations database) defined.
      */
     public void testDeployDatabase() {
         String database_it_conf_xml_name = 
@@ -153,9 +155,12 @@ public class DeployTester extends TestCase {
         	TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
         	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
         	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_DATABASE_FILE + databaseName
+                TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
+                TestInfo.ARGUMENT_BP_DATABASE_FILE + bpDatabaseName
                 };
+        pss.tearDown();
         DeployApplication.main(args);
+        pss.setUp();
         // compare the resulting output files with the target files
         String differences =
                 TestFileUtils.compareDirsText(TestInfo.DATABASE_TARGET_DIR,
@@ -240,6 +245,7 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_OUTPUT_DIRECTORY + "ERROR", 
 		TestInfo.ARGUMENT_CONFIG_FILE + "ERROR", 
 		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR", 
+                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR",
 		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR" 
 	};
 	DeployApplication.main(args);
@@ -391,6 +397,30 @@ public class DeployTester extends TestCase {
         assertTrue("The error message should start with: " 
                 + Constants.MSG_ERROR_DATABASE_EXTENSION, 
                 pssMsg.startsWith(Constants.MSG_ERROR_DATABASE_EXTENSION));
+    }
+    
+    /**
+     * tests bitpreservation database file argument with wrong extension.
+     */
+    public void testDeployArgumentsExtension6() {
+        String[] args = {
+                TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+                TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+                TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_BP_DATABASE_FILE + "database.ERROR"
+        };
+        DeployApplication.main(args);
+
+        // get message and exit value
+        int pseVal = pse.getExitValue();
+        String pssMsg = pss.getErr();
+
+        assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_BPDB_EXTENSION, 
+                pssMsg.startsWith(Constants.MSG_ERROR_BPDB_EXTENSION));
     }
     
     /**
