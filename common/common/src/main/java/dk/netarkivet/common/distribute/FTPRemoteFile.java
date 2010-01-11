@@ -439,6 +439,8 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
                          + "' for file '" + file.getName() + "'", e);
             }
         }
+        log.debug("File '" + ftpFileName + "' deleted from ftp server. "
+                + "Cleanup finished.");
     }
 
     /**
