@@ -49,7 +49,7 @@ public class DefinitionsSiteSection extends SiteSection {
     /** The scheduler being started to schedule and monitor jobs. */
     private HarvestScheduler theScheduler;
     /** number of pages visible in the left menu. */
-    private static final int PAGES_VISIBLE_IN_MENU = 8;
+    private static final int PAGES_VISIBLE_IN_MENU = 9;
 
     /**
      * Create a new definition SiteSection object.
@@ -66,6 +66,8 @@ public class DefinitionsSiteSection extends SiteSection {
                       {"alias-summary", "pagetitle;alias.summary"},
                       {"edit-harvest-templates", 
                           "pagetitle;edit.harvest.templates"},
+                      {"edit-global-crawler-traps",
+                          "pagetitle;edit.global.crawler.traps"},
                       // The pages listed below are not visible in the left menu
                       {"upload-harvest-template",
                               "pagetitle;upload.template"},

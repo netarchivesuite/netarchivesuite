@@ -81,6 +81,22 @@ public class Constants {
     public static final String ALIAS_PARAM = "alias";
     public static final String RENEW_ALIAS_PARAM = "renewAlias";
     public static final String UPLOAD_FILE_PARAM = "upload_file";
+
+    /**
+     * Names of some parameters used in management of global crawler
+     * traps
+     */
+    public static final String TRAP_ID = "trap_id";
+    public static final String TRAP_ACTION = "trap_action";
+    public static final String TRAP_CREATE = "trap_create";
+    public static final String TRAP_DOWNLOAD = "trap_download";
+    public static final String TRAP_ACTIVATE = "trap_activate";
+    public static final String TRAP_INACTIVATE = "trap_inactivate";
+    public static final String TRAP_CONTENT_TYPE = "trap_content_type";
+    public static final String TRAP_NAME = "trap_name";
+    public static final String TRAP_IS_ACTIVE = "trap_is_active" ;
+    public static final String TRAP_FILENAME = "trap_filename";
+    public static final String TRAP_DESCRIPTION = "trap_description";
     
     /** Names of the two directories for the sitesections belonging to
      * the harvester package, and the directory belonging to the viewerproxy
