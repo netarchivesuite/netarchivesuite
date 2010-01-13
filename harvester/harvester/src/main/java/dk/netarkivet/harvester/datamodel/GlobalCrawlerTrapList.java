@@ -123,6 +123,16 @@ public class GlobalCrawlerTrapList {
         } else {
             this.description = description;
         }
+        setTrapsFromInputStream(is);
+    }
+
+    /**
+     * A utility method to read the list of traps from an InputStream,
+     * line-by-line
+     * @param is  The input stream from which to read.
+     */
+    public void setTrapsFromInputStream(InputStream is) {
+        traps.clear();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         try {

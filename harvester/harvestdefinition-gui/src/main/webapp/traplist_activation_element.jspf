@@ -1,4 +1,4 @@
-<form action="Definitions-edit-global-crawler-traps.jsp" method ="post"  enctype="multipart/form-data" style="display:inline;">
+<form action="Definitions-edit-global-crawler-traps.jsp" method ="post" style="display:inline;">
     <input name="<%=TRAP_ACTION%>" value="<%=activationAction%>" type="hidden"/>
     <input type="hidden" name="<%=TRAP_ID%>" value="<%=trapList.getId()%>"/>
     <input type="submit" name="download" value=<fmt:message key="<%=activationKey%>"/> />

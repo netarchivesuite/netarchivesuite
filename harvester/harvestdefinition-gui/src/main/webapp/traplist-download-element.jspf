@@ -1,6 +1,7 @@
-    <%=trapList.getName()%>
-    <form action="./Definitions-edit-global-crawler-traps.jsp" method="post" enctype="multipart/form-data" style="display:inline;">
-        <input type="hidden" name="<%=TRAP_ACTION%>" value="<%=TRAP_DOWNLOAD%>"/>
+<%@ page import="dk.netarkivet.harvester.webinterface.TrapActionEnum" %>
+<%=HTMLUtils.escapeHtmlValues(trapList.getName())%>
+    <form action="./Definitions-edit-global-crawler-traps.jsp" method="post" style="display:inline;">
+        <input type="hidden" name="<%=TRAP_ACTION%>" value="<%=TrapActionEnum.READ.name()%>"/>
         <input type="hidden" name="<%=TRAP_ID%>" value="<%=trapList.getId()%>"/>
         <select name="<%=TRAP_CONTENT_TYPE%>">
             <%
