@@ -102,6 +102,14 @@ public final class FileChecksumArchive extends ChecksumArchive {
     private File wrongEntryFile;
     
     /**
+     * The last modified date for the checksum file. This variable is used
+     * for determining whether to reload the archive from the checksum file, 
+     * when they are synchronized.
+     * This has to be updated whenever the checksum file is changed.
+     */
+    private long lastModifiedChecksumFile;
+    
+    /**
      * This map consists of the archive loaded into the memory. It is faster to 
      * use a memory archive than the the checksum file, though all entries must
      * exist both in the file and the memory.   
@@ -239,6 +247,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         if(!checksumFile.exists()) {
             try {
                 checksumFile.createNewFile();
+                lastModifiedChecksumFile = checksumFile.lastModified();
             } catch (IOException e) {
                 String msg = "Cannot create checksum archive file!";
                 log.error(msg);
@@ -304,6 +313,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
         if(recreate) {
             recreateArchiveFile();
         }
+        
+        // retrieve the 'last modified' from the checksum file.
+        lastModifiedChecksumFile = checksumFile.lastModified();
     }
     
     /**
@@ -501,6 +513,10 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 throw new IOFailure("An error occured while appending an entry"
                         + " to the archive file.", e);
             }
+            
+            // The checksum has been updated and so has its timestamp. Thus 
+            // update the last modified date for the checksum file.  
+            lastModifiedChecksumFile = checksumFile.lastModified();
         }
     }
 
@@ -543,12 +559,17 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @param filename The name of the arcFile.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename
      * is not valid.
+     * @throws IllegalState If the file already within the archive but with a 
+     * different checksum.
      */
     public void upload(RemoteFile arcfile, String filename) throws  
-            ArgumentNotValid {
+            ArgumentNotValid, IllegalState {
         // Validate arguments.
         ArgumentNotValid.checkNotNull(arcfile, "RemoteFile arcfile");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+
+        // synchronize the memory.
+        synchronizeWithFile();
 
         // calculate the checksum
         String checksum = calculateChecksum(arcfile.getInputStream());
@@ -588,6 +609,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     public String getChecksum(String filename) throws ArgumentNotValid {
         // validate the argument
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        
+        // Synchronize memory with file.
+        synchronizeWithFile();
         
         // Return the checksum of the record.
         return checksumArchive.get(filename);
@@ -661,6 +685,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
         
+        // synchronize the memory.
+        synchronizeWithFile();
+
         // If no file entry exists, then IllegalState
         if(!checksumArchive.containsKey(filename)) {
             String errMsg = "No file entry for file '" + filename + "'.";
@@ -701,6 +728,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @throws IOFailure If problems occurs during the creation of the file.
      */
     public File getArchiveAsFile() throws IOFailure {
+        // synchronize the memory.
+        synchronizeWithFile();
+        
         try {
             // create new temporary file of the archive.
             File tempFile = File.createTempFile("tmp", "tmp", 
@@ -727,6 +757,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @throws IOFailure If problems occurs during the creation of the file.
      */
     public File getAllFilenames() throws IOFailure {
+        // synchronize the memory.
+        synchronizeWithFile();
+        
         try {
             File tempFile = File.createTempFile("tmp", "tmp", 
                     FileUtils.getTempDir());
@@ -750,6 +783,28 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 + "filenames of all the entries of this archive.";
             log.warn(msg);
             throw new IOFailure(msg);
+        }
+    }
+    
+    /**
+     * Ensures that the file and memory archives are identical.
+     * 
+     * The timestamp of last communication with the file (read/write) will
+     * be checked whether it corresponds the 'last modified' date of the file.
+     * If they are different, then the memory archive is reloaded from the file.
+     */
+    public synchronized void synchronizeWithFile() {
+        log.debug("Synchronizing memory archive with file archive.");
+        
+        // Check if the checksum file has changed since last access.
+        if(checksumFile.lastModified() > lastModifiedChecksumFile) {
+            log.info("Archive in memory out of sync with archive in file.");
+            
+            // The archive is then reloaded by clearing the current memory 
+            // archive and loading the file again.
+            checksumArchive.clear();
+            // The 'last modified' is reset during loading.
+            loadFile();
         }
     }
     
