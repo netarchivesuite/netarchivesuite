@@ -426,7 +426,6 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
         log.debug("Deleting file '" + ftpFileName + "' from ftp server");
         try {
             logOn();
-            log.debug("Logged on. Starting to delete. ");
             currentFTPClient.deleteFile(ftpFileName);
         } catch (Exception e) {
             log.warn("Error while deleting ftp file '" + ftpFileName
@@ -434,7 +433,6 @@ final public class FTPRemoteFile extends AbstractRemoteFile {
         } finally {
             // try to disconnect before returning from method
             try {
-                log.debug("Delete finshed (or failed). Logging off.");
                 logOut();
             } catch (Exception e) {
                 log.warn("Error while deleting ftp file '" + ftpFileName

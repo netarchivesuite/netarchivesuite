@@ -184,9 +184,6 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
                 
                 // upload the file to the checksum instance.
                 cs.upload(uploadFile, msg.getArcfileName());
-                
-                // cleanup after use of file.
-                uploadFile.cleanup();
             } catch (Throwable e) {
                 log.warn("Cannot process upload message '" + msg + "'", e);
                 msg.setNotOk(e);
