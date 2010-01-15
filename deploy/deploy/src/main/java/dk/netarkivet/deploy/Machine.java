@@ -92,12 +92,15 @@ public abstract class Machine {
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
      * @param resetDir Whether the temporary directory should be reset.
+     * @throws ArgumentNotValid If one of the following arguments are null:
+     * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
+     * securityPolicy.
      */
     public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFileName,
-            File bpdbFileName, boolean resetDir) {
-        ArgumentNotValid.checkNotNull(subTreeRoot, "Element e");
+            File bpdbFileName, boolean resetDir) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
         ArgumentNotValid.checkNotNull(param, "Parameters param");
@@ -167,8 +170,9 @@ public abstract class Machine {
      * and call the functions for creating all the scripts in this directory.
      * 
      * @param parentDirectory The directory where to write the files.
+     * @throws ArgumentNotValid If the parenteDirectory is null.
      */
-    public void write(File parentDirectory) {
+    public void write(File parentDirectory) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(parentDirectory, "File parentDirectory");
 
         // create the directory for this machine
@@ -250,10 +254,12 @@ public abstract class Machine {
     /**
      * Copy inherited securityPolicyFile to local directory.
      * 
-     * @param directory The local directory for this machine
+     * @param directory The local directory for this machine.
+     * @throws IOFailure If an error occurred during the creation of the 
+     * security policy file.
      */
-    protected void createSecurityPolicyFile(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createSecurityPolicyFile(File directory) 
+            throws IOFailure {
         // make file
         File secPolFile = new File(directory, 
                 Constants.SECURITY_POLICY_FILE_NAME);
@@ -325,9 +331,10 @@ public abstract class Machine {
      * "APPID" in the file into the identification of the application.
      * 
      * @param directory The local directory for this machine
+     * @throws IOFailure If an error occurred during the creationg of the 
+     * log property file.
      */
     protected void createLogPropertyFiles(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
         // make log property file for every application
         for(Application app : applications) {
             // make file
@@ -364,10 +371,12 @@ public abstract class Machine {
     /**
      * Creates the jmxremote.password file, based on the settings.
      * 
-     * @param directory The local directory for this machine 
+     * @param directory The local directory for this machine
+     * @throws IOFailure If an error occurred during the creation of the
+     * jmx remote password file.  
      */
-    protected void createJmxRemotePasswordFile(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createJmxRemotePasswordFile(File directory) 
+            throws IOFailure {
         // make file
         File jmxFile = new File(directory, Constants.JMX_PASSWORD_FILE_NAME);
         try {
@@ -398,10 +407,12 @@ public abstract class Machine {
     /**
      * Creates the jmxremote.password file, based on the settings.
      * 
-     * @param directory The local directory for this machine 
+     * @param directory The local directory for this machine
+     * @throws IOFailure If an error occurred during the creation of the 
+     * jmx remote access file. 
      */
-    protected void createJmxRemoteAccessFile(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createJmxRemoteAccessFile(File directory) 
+            throws IOFailure {
         // make file
         File jmxFile = new File(directory, Constants.JMX_ACCESS_FILE_NAME);
         try {
@@ -510,8 +521,10 @@ public abstract class Machine {
      * 
      * @return The string for the jmxremote.access file for allowing the 
      * monitor user to readonly.
+     * @throws IllegalState If different applications on the machine have 
+     * different user names.
      */
-    protected String getMonitorUsername(){
+    protected String getMonitorUsername() throws IllegalState {
         StringBuilder res = new StringBuilder();
         // initialise list of usernames and passwords to add
         List<String> usernames = new ArrayList<String>();
@@ -777,9 +790,10 @@ public abstract class Machine {
      * Checks if a specific directory for the database is given in the settings,
      * and thus if the database should be installed on this machine.
      * 
-     * If no specific database is given (databaseFileName = null) then use the 
-     * standard database extracted from NetarchiveSuite.zip.
-     * Else send the given new database to the standard database location.
+     * If no specific database is given as deploy argument 
+     * (databaseFileName = null) then use the standard database extracted from 
+     * NetarchiveSuite.zip. Else send the given new database to the standard 
+     * database location.
      * 
      * Extract the database in the standard database location to the specified
      * database directory.
@@ -793,8 +807,9 @@ public abstract class Machine {
      * in the settings, and thus if the bitpreservation database should be 
      * installed on this machine.
      * 
-     * If not specific database is given (bitpresevationDatabaseFileName = null)
-     * then use the default in the NetarchiveSuite.zip package.
+     * If not specific database is given as deploy argument 
+     * (bitpresevationDatabaseFileName = null) then use the default in the 
+     * NetarchiveSuite.zip package.
      * Else send the new bitpreservation database to the standard database 
      * location, and extract it to the given location.
      * 

@@ -511,7 +511,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *                  retrieved.
      * @return A file containing filename and checksum of all the files in an 
      * archive in the same format as a ChecksumJob. 
-     * Or null if the message had a timeout.
      * @throws IOFailure If the reply is not of type GetAllChecksumsMessage
      * or if the file could not properly be retrieved from the reply message
      * or if the message timed out.
@@ -537,7 +536,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all checksum timed out after "
-                     + (getTimeout / 1000) + " seconds. Returning empty list.");
+                     + (getTimeout / 1000) + " seconds.");
         }
         // convert to the correct type of message.
         GetAllChecksumsMessage replyCSMsg;
@@ -574,7 +573,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * replica. A null is returned if the message timeout.
      * @throws IOFailure If the reply is not of type GetAllFilenamesMessage
      * or if the file could not properly be retrieved from the reply message
-     * or if the message timed out.
      * @throws ArgumentNotvalid If the replicaId is null or empty. 
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
@@ -597,7 +595,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all filenames timed out after "
-                     + (getTimeout / 1000) + " seconds. Null returned.");
+                     + (getTimeout / 1000) + " seconds.");
         }
         // convert to the correct type of message.
         GetAllFilenamesMessage replyCSMsg;
@@ -631,9 +629,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param replicaId The ID of the replica to send the message.
      * @param filename The name of the file for whom the checksum should be
      * retrieved.
-     * @return The checksum of the file in the replica. Or null if an 
-     * error occurred, or if the message timed out.
-     * @throws IOFailure If the reply is not of type GetChecksumMessage.
+     * @return The checksum of the file in the replica. 
+     * @throws IOFailure If the reply is not of type GetChecksumMessage. Or if
+     * the message timed out.
      * @throws ArgumentNotvalid If either the replicaId of the filename 
      * is null or empty. 
      */
@@ -656,7 +654,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for checksum timed out after "
-                     + (getTimeout / 1000) + " seconds. Null returned.");
+                     + (getTimeout / 1000) + " seconds.");
         }
         
         // convert to the expected type of message.

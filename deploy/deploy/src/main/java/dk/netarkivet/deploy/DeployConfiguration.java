@@ -64,7 +64,7 @@ public class DeployConfiguration {
     private boolean resetDirectory;
 
     /**
-     *  Initialise everything.
+     * Constructor. Initialise everything.
      * 
      * @param deployConfigFileName Name of configuration file.
      * @param netarchiveSuiteFileName Name of installation file.
@@ -74,15 +74,14 @@ public class DeployConfiguration {
      * @param dbFileName Name of the database.
      * @param bpdbFileName The name of the database.
      * @param resetDir Whether the temporary directory should be reset.
+     * @throws ArgumentNotValid If one of the following arguments is null:
+     * deployConfigFileName netarchiveSuiteFileName, secPolicyFileName,
+     * logPropFileName.
      */
     public DeployConfiguration(File deployConfigFileName, 
-            File netarchiveSuiteFileName, 
-            File secPolicyFileName,
-            File logPropFileName,
-            String outputDirName,
-            File dbFileName,
-            File bpdbFileName,
-            boolean resetDir) {
+            File netarchiveSuiteFileName,  File secPolicyFileName, 
+            File logPropFileName, String outputDirName, File dbFileName, 
+            File bpdbFileName, boolean resetDir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(
                 deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(

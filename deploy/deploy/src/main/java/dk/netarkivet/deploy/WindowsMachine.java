@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 
 import org.dom4j.Element;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -345,10 +344,11 @@ public class WindowsMachine extends Machine {
      * The scripts calls all the kill script for each application. 
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local
+     * killall script.
      */
     @Override
-    protected void createOSLocalKillAllScript(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createOSLocalKillAllScript(File directory) throws IOFailure {
         // create the kill all script file
         File killAllScript = new File(directory, 
                 Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
@@ -391,10 +391,12 @@ public class WindowsMachine extends Machine {
      * The scripts calls all the start script for each application. 
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local
+     * startall script.
      */
     @Override
-    protected void createOSLocalStartAllScript(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createOSLocalStartAllScript(File directory) 
+            throws IOFailure {
         // create the start all script file
         File startAllScript = new File(directory, 
                 Constants.SCRIPT_NAME_START_ALL + scriptExtension);
@@ -477,10 +479,12 @@ public class WindowsMachine extends Machine {
      * If we in the future add the possibility of running heritrix on Windows.
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the 
+     * application kill script file.
      */
     @Override
-    protected void createApplicationKillScripts(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createApplicationKillScripts(File directory) 
+            throws IOFailure {
         // go through all applications and create their kill script
         for(Application app : applications) {
             String id = app.getIdentification();
@@ -582,7 +586,6 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected void createApplicationStartScripts(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
         // go through all applications and create their start script
         for(Application app : applications) {
             windowsStartBatScript(app, directory);
@@ -600,7 +603,6 @@ public class WindowsMachine extends Machine {
      */
     @Override
     protected String osGetClassPath(Application app) {
-        ArgumentNotValid.checkNotNull(app, "Application app");
         StringBuilder res = new StringBuilder();
         // get all the classpaths (change from '\' to '\\')
         for(Element cp : app.getMachineParameters().getClassPaths()) {
@@ -644,8 +646,11 @@ public class WindowsMachine extends Machine {
      * 
      * @param app The application to start.
      * @param directory The directory where the script should be placed.
+     * @throws IOFailure If an error occurred during the creation of the 
+     * windows start bat script.
      */
-    protected void windowsStartBatScript(Application app, File directory) {
+    protected void windowsStartBatScript(Application app, File directory) 
+            throws IOFailure {
         File appStartScript = new File(directory, 
                 Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                 + scriptExtension);
@@ -727,8 +732,11 @@ public class WindowsMachine extends Machine {
      * 
      * @param app The application to start.
      * @param directory The directory where the script should be placed.
+     * @throws IOFailure If an error occurred during the creation of the 
+     * windows vb script.
      */
-    protected void windowsStartVbsScript(Application app, File directory) {
+    protected void windowsStartVbsScript(Application app, File directory) 
+            throws IOFailure {
         File appStartSupportScript = new File(directory,
                 Constants.SCRIPT_NAME_LOCAL_START + app.getIdentification() 
                 + Constants.EXTENSION_VBS_FILES);
@@ -1048,10 +1056,12 @@ public class WindowsMachine extends Machine {
      * Function to create the script which installs the new directories.
      * This is only used for windows machines!
      * 
-     * @param directory The directory to put the file
+     * @param directory The directory to put the file.
+     * @throws IOFailure If an error occurred during the creation of the 
+     * install-dir script.
      */
     @Override
-    protected void createInstallDirScript(File directory) {
+    protected void createInstallDirScript(File directory) throws IOFailure {
         File dirScript = new File(directory, 
                 getMakeDirectoryName());
         try {

@@ -323,28 +323,36 @@ public final class ScriptConstants {
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
+     * @throws ArgumentNotValid If the login is null. 
      */
-    public static String writeKillMachineHeader(String login) {
+    public static String writeKillMachineHeader(String login) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(login, "String login");
         return "echo KILLING MACHINE: " + login + NEWLINE;
     }
+    
     /**
      * The header for the start all script for the machine.
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
+     * @throws ArgumentNotValid If the login is null.
      */
-    public static String writeStartMachineHeader(String login) {
+    public static String writeStartMachineHeader(String login) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(login, "String login");
         return "echo STARTING MACHINE: " + login + NEWLINE;
     }
+    
     /**
      * The header for the install all script for the machine.
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
+     * @throws ArgumentNotValid If the login is null.
      */
-    public static String writeInstallMachineHeader(String login) {
+    public static String writeInstallMachineHeader(String login) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(login, "String login");
         return "echo INSTALLING TO MACHINE: " + login + NEWLINE;
     }
@@ -357,8 +365,10 @@ public final class ScriptConstants {
      *   
      * @param path The directory path to change to appropriate format.
      * @return The formatted path.
+     * @throws ArgumentNotValid If the path is null.
      */
-    public static String doubleBackslashes(String path) {
+    public static String doubleBackslashes(String path) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(path, "String path");
         return path.replaceAll("[\\\\]", "\\\\\\\\");
     }
@@ -371,8 +381,10 @@ public final class ScriptConstants {
      *   
      * @param path The directory path to change to appropriate format.
      * @return The formatted path.
+     * @throws ArgumentNotValid If the path is null.
      */
-    public static String replaceWindowsDirSeparators(String path) {
+    public static String replaceWindowsDirSeparators(String path) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(path, "String path");
         return path.replaceAll("[/]", "\\\\\\\\");
     }
@@ -384,8 +396,11 @@ public final class ScriptConstants {
      * the correct directory separator: '${/}', instead of '/' or '\\' for 
      * Windows and Linux respectively.
      * @return The permission string.
+     * @throws ArgumentNotValid If the dir is null.
      */
-    public static String writeSecurityPolicyDirPermission(String dir) {
+    public static String writeSecurityPolicyDirPermission(String dir) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(dir, "String dir");
         return "  permission java.io.FilePermission \"" + dir + "-\", \"read\""
                + ";" + "\n";
     }
@@ -399,9 +414,13 @@ public final class ScriptConstants {
      * @param path The path to the directory of the settings file (conf-dir).
      * @param id The identification of the application (name + instanceId).
      * @return The script for getting the list of running application.
+     * @throws ArgumentNotValid If the totalName, the path or the id is null.
      */
     public static String getLinuxPIDS(String totalName, String path, 
-            String id) {
+            String id) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(totalName, "String totalName");
+        ArgumentNotValid.checkNotNull(path, "String path");
+        ArgumentNotValid.checkNotNull(id, "String id");
         return "PIDS=$(ps -wwfe | grep " + totalName + " | grep -v grep | grep "
         + path + "settings_" + id + ".xml" + " | awk \"{print \\$2}\")";
     }

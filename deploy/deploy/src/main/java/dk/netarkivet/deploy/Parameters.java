@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Element;
-import org.mortbay.log.Log;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
@@ -59,8 +58,9 @@ public class Parameters {
      * 
      * @param root The root of the branch for the parent instance.
      * This retrieves the variables in the branch.
+     * @throws ArgumentNotValid If the root is null.
      */
-    public Parameters(XmlStructure root) {
+    public Parameters(XmlStructure root) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(root, "XmlStructure root");
         // initialise variables
         classPaths = root.getChildren(Constants.DEPLOY_CLASS_PATH);
@@ -78,8 +78,9 @@ public class Parameters {
      * Inherits the parameters of the parent instance.
      * 
      * @param parent The parameters of the parent instance.
+     * @throws ArgumentNotValid If the parent is null.
      */
-    public Parameters(Parameters parent) {
+    public Parameters(Parameters parent) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(parent, "Parameter parent");
         // copy parent class paths
         classPaths = new ArrayList<Element>();
@@ -113,61 +114,63 @@ public class Parameters {
      * Overwrites the inherited parameters, if the root has new specified.
      * 
      * @param root The root of the current instance.
+     * @throws ArgumentNotValid If the root is null.
      */
     @SuppressWarnings("unchecked")
-    public void newParameters(Element root) {
+    public void newParameters(Element root) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(root, "Element root");
         List<Element> tmp;
-        // check if any class paths to overwrite existing
+        // check if root contains any class paths to overwrite inherited ones.
         tmp = root.elements(Constants.DEPLOY_CLASS_PATH);
         if(tmp.size() > 0) {
             classPaths = tmp;
         }
-        // check if any java options to overwrite existing
+        // check if root contains any java options to overwrite inherited ones.
         tmp = root.elements(Constants.DEPLOY_JAVA_OPTIONS);
         if(tmp.size() > 0) {
             javaOptions = tmp;
         }
-        // check if new install dir to overwrite existing
+        // check if root contains an install dir to overwrite inherited one.
         tmp = root.elements(Constants.DEPLOY_INSTALL_DIR);
         if(tmp.size() > 0) {
             installDir = tmp.get(0);
             // log if more than one install directory.
             if(tmp.size() > 1) {
-                Log.info("Maximum 1 value expected at: "
+                System.out.println("Maximum 1 value expected at: "
                         + Constants.DEPLOY_INSTALL_DIR
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if new machine user name to overwrite existing
+        // check if root contains machine user name to overwrite inherited ones.
         tmp = root.elements(Constants.DEPLOY_MACHINE_USER_NAME);
         if(tmp.size() > 0) {
             machineUserName = tmp.get(0);
             // log if more than one machine user name.
             if(tmp.size() > 1) {
-                Log.info("Maximum 1 value expected at: "
+                System.out.println("Maximum 1 value expected at: "
                         + Constants.DEPLOY_MACHINE_USER_NAME
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if new database dir to overwrite existing
+        // check if root contains a database dir to overwrite inherited ones.
         tmp = root.elements(Constants.DEPLOY_DATABASE_DIR);
         if(tmp.size() > 0) {
             databaseDir = tmp.get(0);
             // log if more than one database directory.
             if(tmp.size() > 1) {
-                Log.info("Maximum 1 value expected at: "
+                System.out.println("Maximum 1 value expected at: "
                         + Constants.DEPLOY_DATABASE_DIR
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if new database dir to overwrite existing
+        // check if root contains a bitpreservation database dir to overwrite 
+        // inherited ones.
         tmp = root.elements(Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR);
         if(tmp.size() > 0) {
             bpDatabaseDir = tmp.get(0);
             // log if more than one database directory.
             if(tmp.size() > 1) {
-                Log.info("Maximum 1 value expected at: "
+                System.out.println("Maximum 1 value expected at: "
                         + Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR
                         + " but " + tmp.size() + " received.");
             }
@@ -192,7 +195,8 @@ public class Parameters {
     /**
      * For retrieving the install directory parameter.
      * 
-     * @return The install directory element.
+     * @return The install directory element, or empty string if install dir 
+     * is null.
      */
     public String getInstallDirValue() {
         if(installDir != null) {
@@ -205,7 +209,8 @@ public class Parameters {
     /** 
      * For retrieving the directory for the database.
      * 
-     * @return The database directory element.
+     * @return The database directory element, or empty string if install dir 
+     * is null.
      */
     public String getDatabaseDirValue() {
         if(databaseDir != null) {
@@ -218,7 +223,8 @@ public class Parameters {
     /**
      * For retrieving the directory for the bitpreservation database.
      * 
-     * @return The database directory element.
+     * @return The bitpreservation database install directory element, or 
+     * empty string if install dir is null.
      */
     public String getBitPreservationDatabaseDirValue() {
         if(bpDatabaseDir != null) {

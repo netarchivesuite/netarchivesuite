@@ -30,7 +30,6 @@ import java.io.PrintWriter;
 import org.archive.crawler.Heritrix;
 import org.dom4j.Element;
 
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 
 /**
@@ -286,10 +285,11 @@ public class LinuxMachine extends Machine {
      * ... = the same for other applications.
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local
+     * killall script.
      */
     @Override
-    protected void createOSLocalKillAllScript(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createOSLocalKillAllScript(File directory) throws IOFailure {
         // create the kill all script file
         File killAllScript = new File(directory, 
                 Constants.SCRIPT_NAME_KILL_ALL + scriptExtension);
@@ -346,10 +346,12 @@ public class LinuxMachine extends Machine {
      * ... = the same for other applications.
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the local
+     * startall script.
      */
     @Override
-    protected void createOSLocalStartAllScript(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createOSLocalStartAllScript(File directory) 
+            throws IOFailure {
         // create the start all script file
         File startAllScript = new File(directory, 
                 Constants.SCRIPT_NAME_START_ALL + scriptExtension);
@@ -418,10 +420,12 @@ public class LinuxMachine extends Machine {
      * heritrix = the heritrix class path.
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occured during the creation of the kill
+     * application script file.
      */
     @Override
-    protected void createApplicationKillScripts(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createApplicationKillScripts(File directory) 
+            throws IOFailure {
         // go through all applications and create their kill script
         for(Application app : applications) {
             File appKillScript = new File(directory, 
@@ -523,10 +527,12 @@ public class LinuxMachine extends Machine {
      * JAVA = the command to run the java application.
      * 
      * @param directory The directory for this machine (use global variable?).
+     * @throws IOFailure If an error occurred during the creation of the start 
+     * application script file. 
      */
     @Override
-    protected void createApplicationStartScripts(File directory) {
-        ArgumentNotValid.checkNotNull(directory, "File directory");
+    protected void createApplicationStartScripts(File directory) 
+            throws IOFailure {
         // go through all applications and create their start script
         for(Application app : applications) {
             File appStartScript = new File(directory, 
@@ -616,7 +622,6 @@ public class LinuxMachine extends Machine {
      */
     @Override
     protected String osGetClassPath(Application app) {
-        ArgumentNotValid.checkNotNull(app, "Application app");
         StringBuilder res = new StringBuilder();
         // get all the classpaths
         for(Element cp : app.getMachineParameters().getClassPaths()) {
@@ -722,9 +727,8 @@ public class LinuxMachine extends Machine {
             return Constants.EMPTY;
         }
 
-        // TODO implement me!
+        // Initialise the StringBuilder containing the resulting script.
         StringBuilder res = new StringBuilder();
-//        res.append("\n BITPRESERVATION DATABASE:" + bpDatabaseDir + "\n");
 
         // copy to final destination if database argument.
         if(bpDatabaseFile != null) {
@@ -923,7 +927,7 @@ public class LinuxMachine extends Machine {
                     Constants.SETTINGS_BITARCHIVE_BASEFILEDIR_LEAF);
             if(dirs != null && dirs.length > 0) {
                 for(String dir : dirs) {
-                    res.append(createPathToDir(dir));
+                    res.append(createPathToDir(dir));   
                     res.append(scriptCreateDir(dir, false));
                     for(String subdir : Constants.BASEFILEDIR_SUBDIRECTORIES) {
                         res.append(scriptCreateDir(

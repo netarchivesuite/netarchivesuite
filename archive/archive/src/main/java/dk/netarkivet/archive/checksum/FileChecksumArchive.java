@@ -154,7 +154,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // make sure, that minSpaceLeft is non-negative.
         if(minSpaceLeft < 0) {
             String msg = "Wrong setting of minSpaceRequired read from "
-                + "Settings: " + minSpaceLeft;
+                + "Settings: int " + minSpaceLeft;
             log.warn(msg);
             throw new ArgumentNotValid(msg);
         }
@@ -514,8 +514,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
                         + " to the archive file.", e);
             }
             
-            // The checksum has been updated and so has its timestamp. Thus 
-            // update the last modified date for the checksum file.  
+            // The checksum file has been updated and so has its timestamp. 
+            // Thus update the last modified date for the checksum file.  
             lastModifiedChecksumFile = checksumFile.lastModified();
         }
     }
@@ -798,7 +798,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // Check if the checksum file has changed since last access.
         if(checksumFile.lastModified() > lastModifiedChecksumFile) {
-            log.info("Archive in memory out of sync with archive in file.");
+            log.warn("Archive in memory out of sync with archive in file.");
             
             // The archive is then reloaded by clearing the current memory 
             // archive and loading the file again.

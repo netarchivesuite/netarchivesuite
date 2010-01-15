@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.EMailNotifications;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.monitor.MonitorSettings;
@@ -497,6 +498,7 @@ public final class Constants {
     /** The error message for wrong database extension.*/
     public static final String MSG_ERROR_DATABASE_EXTENSION = 
         "Database file must have extension '.jar' or '.zip'";
+    /** The error message for wrong bitpreservation database extension.*/
     public static final String MSG_ERROR_BPDB_EXTENSION = 
         "Bitpreservation database file must have extension '.jar' or '.zip'";
     /** The error message when test wrong number of test arguments.*/
@@ -547,8 +549,11 @@ public final class Constants {
      * 
      * @param scope The name of the XML-scope to have the start created.
      * @return The beginning of the XML-scope.
+     * @throws ArgumentNotValid If the scope is null.
      */
-    public static String changeToXMLBeginScope(String scope) {
+    public static String changeToXMLBeginScope(String scope) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(scope, "String scope");
         return LESS_THAN + scope + GREATER_THAN;
     }
 
@@ -557,8 +562,11 @@ public final class Constants {
      * 
      * @param scope The name of the XML-scope to have the end created.
      * @return The ending of the XML-scope.
+     * @throws ArgumentNotValid If the scope is null.
      */
-    public static String changeToXMLEndScope(String scope) {
+    public static String changeToXMLEndScope(String scope) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(scope, "String scope");
         return LESS_THAN + SLASH + scope + GREATER_THAN;
     }
     
@@ -568,8 +576,11 @@ public final class Constants {
      * 
      * @param name The environment name to validate.
      * @return Whether the environment name is valid.
+     * @throws ArgumentNotValid If the name is null.
      */
-    public static boolean validEnvironmentName(String name) {
+    public static boolean validEnvironmentName(String name) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(name, "String name");
         return Pattern.matches(VALID_REGEX_ENVIRONMENT_NAME, name);
     }
 }

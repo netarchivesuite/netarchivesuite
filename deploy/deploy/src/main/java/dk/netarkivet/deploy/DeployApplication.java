@@ -355,7 +355,7 @@ public final class DeployApplication {
             // get the file
             dbFile = new File(databaseFileName);
             // check whether the database file exists.
-            if(!dbFile.exists()) {
+            if(!dbFile.isFile()) {
                 System.err.print(
                             Constants.MSG_ERROR_NO_DATABASE_FILE_FOUND);
                 System.out.println();
@@ -438,7 +438,7 @@ public final class DeployApplication {
             // get the file
             bpdbFile = new File(bpdbFileName);
             // check whether the database file exists.
-            if(!bpdbFile.exists()) {
+            if(!bpdbFile.isFile()) {
                 System.err.print(
                             Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
                 System.out.println();

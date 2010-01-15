@@ -80,10 +80,14 @@ public class PhysicalLocation {
      * @param securityPolicy The security policy file.
      * @param dbFile The name of the database.
      * @param resetDir Whether the temporary directory should be reset.
+     * @throws ArgumentNotValid If one of the following arguments are null:
+     * subTreeRoot, parentSettings, param, logProp, securityPolicy; or if the
+     * netarchiveSuiteSource if either null or empty. 
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-        File securityPolicy, File dbFile, File bpdbFile, boolean resetDir) {
+            File securityPolicy, File dbFile, File bpdbFile, boolean resetDir) 
+            throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, 
                 "Element elem (physLocRoot)");
@@ -178,8 +182,9 @@ public class PhysicalLocation {
      * Initiate the creation of global scripts and machine scripts.
      * 
      * @param directory The directory where the files are to be placed.
+     * @throws ArgumentNotValid If the directory is null.
      */
-    public void write(File directory) {
+    public void write(File directory) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make the script in the directory!
         makeScripts(directory);
@@ -198,8 +203,11 @@ public class PhysicalLocation {
      * The scripts for a physical location will only work from Linux/Unix.  
      *
      * @param directory The directory where the scripts are to be placed.
+     * @throws ArgumentNotValid If the directory is null.
+     * @throws IOFailure If an error occurs during the creation of the scripts.
      */
-    private void makeScripts(File directory) {
+    private void makeScripts(File directory) throws ArgumentNotValid, 
+            IOFailure {
         ArgumentNotValid.checkNotNull(directory, "File directory");
         // make extension (e.g. '_kb.sh' in the script 'killall_kb.sh')
         String ext = Constants.UNDERSCORE + name 
