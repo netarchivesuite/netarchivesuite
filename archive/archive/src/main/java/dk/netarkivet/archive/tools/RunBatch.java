@@ -36,6 +36,7 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
@@ -311,14 +312,11 @@ public class RunBatch extends ToolRunnerBase {
             
             //Check number of arguments
             if (args.length < 1) {
-                System.err.println(
-                        "Missing required argument: "
-                        + "jar or "
-                        + "class file"
-                );
+                System.err.println("Missing required argument: jar or class "
+                        + "file");
                 return false;
             } 
-            if (args.length > parms.cmd.getOptions().length) {
+            if(args.length > parms.options.getOptions().size()) {
                 System.err.println("Too many arguments");
                 return false;
             }
@@ -366,20 +364,38 @@ public class RunBatch extends ToolRunnerBase {
                 }
                 
                 String[] jarList = jars.split(JARFILELIST_SEPARATOR);
-                for (String jar : jarList) {
+                File[] jarFiles = new File[jarList.length];
+                for (int i = 0; i < jarList.length; i++) {
+                    String jar = jarList[i];
+                    
+                    // check extension
                     if (!getFileType(jar).equals(FileType.JAR)) {
                         System.err.println("Argument '" + jar
                                 + "' is not denoting a jar file");
                         return false;
                     }
-
-                    if (!new File(jar).canRead()) {
+                    
+                    File jarFile = new File(jar);
+                    jarFiles[i] = jarFile;
+                    
+                    // Check if file is readable.
+                    if (!jarFile.canRead()) {
                         System.err.println("Cannot read jar file: '" + jar
                                 + "'");
                         return false;
                     }
                 }
-            } 
+
+                // Try to load the jar batch job.
+                try {
+                    new LoadableJarBatchJob(className, jarFiles);
+                } catch(Throwable e) {
+                    System.err.println("Cannot create batchjob '" + className 
+                            + "' from the jarfiles '" + jars + "'");
+                    e.printStackTrace();
+                    return false;
+                }
+            }
 
             //Check regular expression argument
             String reg = parms.cmd.getOptionValue(REGEXP_OPTION_KEY);
@@ -389,17 +405,28 @@ public class RunBatch extends ToolRunnerBase {
                 } catch (PatternSyntaxException e) {
                     System.err.println("Illegal pattern syntax: '"
                                        + reg + "'");
+                    e.printStackTrace();
                     return false;
                 }
             }
             
-            //Check bitarchive replica argument
+            //Check replica argument
             String rep = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
             if (rep != null) {
+                // Is the replica known
                 if (!Replica.isKnownReplicaName(rep)) {
                     System.err.println("Unknown replica name '" + rep
-                                       + "', known replicas are "
-                                       + Replica.getKnownNames());
+                            + "', known replicas are "
+                            + Replica.getKnownNamesAsSet());
+                    return false;
+                }
+                // Is it a bitarchive replica.
+                if(!Replica.getReplicaFromName(rep).getType()
+                        .equals(ReplicaType.BITARCHIVE)) {
+                    System.err.println("Can only send a batchjob to a "
+                            + "bitarchive replica, and '" + rep + "' is the " 
+                            + "replica '" + Replica.getReplicaFromName(rep) 
+                            + "'");
                     return false;
                 }
             }
@@ -419,6 +446,7 @@ public class RunBatch extends ToolRunnerBase {
                     return false;
                 }
             }
+            
             return true;
         }
 
@@ -505,7 +533,7 @@ public class RunBatch extends ToolRunnerBase {
             System.out.println(
                 "Running batch job '" 
                + ((classFileName == null)? "" : classFileName + "' ")
-               + ((jarArgs == null) ? "" : className + " from jar-file '"
+               + ((jarArgs == null) ? "" : className + "' from jar-file '"
                        + jarArgs + "' ")
                 + "on files matching '" + regexp + "' "
                 + "on replica '" + batchReplica.getName() + "', " 
@@ -514,6 +542,7 @@ public class RunBatch extends ToolRunnerBase {
                 + "errors written to " 
                    + ((eFile == null) ? "stderr " : "file '" + eFile + "' ")
             );
+            
             BatchStatus status = arcrep.batch(job, batchReplica.getId());
             final Collection<File> failedFiles = status.getFilesFailed();
             Collection<ExceptionOccurrence> exceptions = status.getExceptions();

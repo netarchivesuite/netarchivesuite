@@ -26,8 +26,10 @@ package dk.netarkivet.common.distribute.arcrepository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -201,10 +203,21 @@ public class Replica {
         }
         return knownIds;
     }
+    
+    /**
+     * Get the id of all known replicas as a string set.
+     * 
+     * @return The id of all known replicas as a string set.
+     */
+    public static Set<String> getKnownIdsAsSet() {
+        initializeKnownReplicasList();
+        return knownReplicas.keySet();
+    }
 
     /**
-     * Get all known replica as names.
-     * @return all known replicas as names
+     * Get names of all known replicas as string array.
+     * 
+     * @return The names of all known replicas.
      */
     public static String[] getKnownNames() {
         initializeKnownReplicasList();
@@ -215,6 +228,20 @@ public class Replica {
             index++;
         }
         return knownNames;
+    }
+    
+    /**
+     * Get the names of all known replicas as a string set.
+     *   
+     * @return The names of all known replicas as a string set.
+     */
+    public static Set<String> getKnownNamesAsSet() {
+        initializeKnownReplicasList();
+        Set<String> res = new HashSet<String>(knownReplicas.size()); 
+        for(Replica rep : knownReplicas.values()) {
+            res.add(rep.getName());
+        }
+        return res;
     }
 
     /** Get the type of this replica.

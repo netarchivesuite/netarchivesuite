@@ -48,6 +48,7 @@ public class ArchiveToolsTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(GetRecordTester.class);
         suite.addTestSuite(UploadTester.class);
+        suite.addTestSuite(RunBatchTester.class);
     }
 
     public static void main(String args[]) {

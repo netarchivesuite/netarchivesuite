@@ -167,6 +167,23 @@ public class LoadableJarBatchJob extends FileBatchJob {
         res.append(" and jobclass '" + jobClass);
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
+        
+        try {
+            loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
+                    .newInstance();
+        } catch (InstantiationException e) {
+            final String msg = "Cannot instantiate loaded job class";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (IllegalAccessException e) {
+            final String msg = "Cannot access loaded job from byte array";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (ClassNotFoundException e) {
+            final String msg = "Cannot create job class from jar file";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        }
     }
 
     /**

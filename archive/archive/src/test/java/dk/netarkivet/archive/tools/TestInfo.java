@@ -26,6 +26,8 @@ package dk.netarkivet.archive.tools;
 
 import java.io.File;
 
+import dk.netarkivet.common.distribute.arcrepository.Replica;
+
 public class TestInfo {
     static final File WORKING_DIR 
         = new File("./tests/dk/netarkivet/archive/tools/working/");
@@ -53,4 +55,14 @@ public class TestInfo {
     static final String TEST_ENTRY_FILENAME 
         = "2-2-20060731110420-00000-sb-test-har-001.statsbiblioteket.dk.arc";
     static final long TEST_ENTRY_OFFSET = 8459;
+    
+    static final String BATCH_ARG_ERROR_FILE_EXT = "ClassFile.error";
+    static final String BATCH_C_ARG_NOREAD_FILE = "TestBatchClass.class";
+    static final String BATCH_J_ARG_NOREAD_FILE = "TestBatchJar.jar";
+    static final String BATCH_TEST_JAR_FILENAME = "testJar.jar";
+    static final File BATCH_TEST_JAR_FILE = new File(WORKING_DIR, BATCH_TEST_JAR_FILENAME);     
+    static final String BATCH_REPLICA_ERROR = "repErr";
+    static final String BATCH_TEST_JAR_ERROR_CLASS = "error";
+    static final String BATCH_TEST_JAR_GOOD_CLASS = "batch.PersonDataArcBatch";
+    static final String BATCH_CS_REPLICA_NAME = Replica.getReplicaFromId("THREE").getName(); 
 }
