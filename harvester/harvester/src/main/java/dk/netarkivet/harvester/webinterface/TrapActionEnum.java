@@ -49,9 +49,7 @@ public enum TrapActionEnum {
     DELETE{
         @Override
         public TrapAction getTrapAction() {
-            //TODO: implement method
-            throw new NotImplementedException(
-                    "Not yet implemented:" + ".getTrapAction()");
+            return new TrapDeleteAction();           
         }},
     ACTIVATE{
         @Override

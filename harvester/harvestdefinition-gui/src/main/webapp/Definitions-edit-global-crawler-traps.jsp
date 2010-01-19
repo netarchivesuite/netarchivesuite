@@ -36,27 +36,36 @@ dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,static dk.netarkivet.har
 <fmt:message key="crawlertrap.noactive"/>
 <%
 } else {
-    for (GlobalCrawlerTrapList trapList: activeTrapLists) {
 %>
-<div class="traplist">
-    <%@ include file="traplist-download-element.jspf" %>
+<table>
     <%
-        String activationAction = TrapActionEnum.DEACTIVATE.name();
-        String activationKey = "crawlertrap.deactivate";
+        for (GlobalCrawlerTrapList trapList: activeTrapLists) {
     %>
-    <%@ include file="traplist_activation_element.jspf" %>
-    <%
-        String trapIdString = trapList.getId() + "";
-        String trapName = trapList.getName();
-        String trapDescription = trapList.getDescription();
-    %>
+    <div class="traplist">
+        <tr>
+            <td><%@ include file="traplist-download-element.jspf" %></td>
+            <%
+                String activationAction = TrapActionEnum.DEACTIVATE.name();
+                String activationKey = "crawlertrap.deactivate";
+            %>
+            <td><%@ include file="traplist_activation_element.jspf" %></td>
+            <%
+                String trapIdString = trapList.getId() + "";
+                String trapName = trapList.getName();
+                String trapDescription = trapList.getDescription();
+            %>
 
-    <%@ include file="traplist_createorupdate_element.jspf"%>
-</div>
-</div>
-<%
+            <td><%@ include file="traplist_createorupdate_element.jspf"%></td>
+            <td><%@include file="traplist_delete_element.jspf"%></td>
+        </tr>
+    </div>
+
+    <%
         }
-    }
+    %>
+</table>
+<%
+}
 %>
 
 <h3 class="page_heading"><fmt:message key="crawlertrap.inactive.header"/></h3>
@@ -66,24 +75,33 @@ dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,static dk.netarkivet.har
 <fmt:message key="crawlertrap.noinactive"/>
 <%
 } else {
-    for (GlobalCrawlerTrapList trapList: inactiveTrapLists) {
 %>
-<div class="traplist">
-    <%@ include file="traplist-download-element.jspf" %>
+<table>
     <%
-        String activationAction = TrapActionEnum.ACTIVATE.name();
-        String activationKey = "crawlertrap.activate";
+        for (GlobalCrawlerTrapList trapList: inactiveTrapLists) {
     %>
-    <%@ include file="traplist_activation_element.jspf" %>
+    <div class="traplist">
+        <tr>
+            <td><%@ include file="traplist-download-element.jspf" %></td>
+            <%
+                String activationAction = TrapActionEnum.ACTIVATE.name();
+                String activationKey = "crawlertrap.activate";
+            %>
+            <td><%@ include file="traplist_activation_element.jspf" %></td>
+            <%
+                String trapIdString = trapList.getId() + "";
+                String trapName = trapList.getName();
+                String trapDescription = trapList.getDescription();
+            %>
+            <td><%@ include file="traplist_createorupdate_element.jspf"%></td>
+            <td><%@include file="traplist_delete_element.jspf"%></td>
+        </tr>
+    </div>
     <%
-        String trapIdString = trapList.getId() + "";
-        String trapName = trapList.getName();
-        String trapDescription = trapList.getDescription();
-    %>
-    <%@ include file="traplist_createorupdate_element.jspf"%>
-</div>
-<%
         }
+    %>
+</table>
+<%
     }
 %>
 
