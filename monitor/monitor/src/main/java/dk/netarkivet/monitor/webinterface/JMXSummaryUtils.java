@@ -428,8 +428,7 @@ public class JMXSummaryUtils {
                 int id = random.nextInt();
                 msg.append("<a id=\"show");
                 msg.append(id);
-                msg.append("\" href=\"#\""
-                           + " onclick=\"document.getElementById('log");
+                msg.append("\" onclick=\"document.getElementById('log");
                 msg.append(id);
                 msg.append("').style.display='block';"
                            + "document.getElementById('show");
