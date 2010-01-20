@@ -105,7 +105,8 @@ public class JMXSummaryUtils {
     private static final String CHARACTER_NOT_COLUMN = "-";
     /** The character for only seeing the first row of the log.*/
     private static final String CHARACTER_FIRST_ROW = "0";
-    
+    /** The number of log lines showed in generateMessage */
+    private static final int NUMBER_OF_LOG_LINES = 5;
 
     /** Instance of class Random used to generate a unique id for each div. */
     private static final Random random = new Random();
@@ -114,9 +115,12 @@ public class JMXSummaryUtils {
      *
      * @param applicationName The class name of the application
      * @return A reduced name suitable for user output.
+     * @throws ArgumentNotValid if argument isn't valid.
      */
-    public static String reduceApplicationName(String applicationName) {
-        ArgumentNotValid.checkNotNull(applicationName, "applicationName");
+    public static String reduceApplicationName(String applicationName)
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(applicationName, 
+                "String applicationName");
         String[] split = applicationName.split("\\.");
         return split[split.length - 1];
     }
@@ -125,9 +129,11 @@ public class JMXSummaryUtils {
      *
      * @param hostname A host name.
      * @return The same host name with all domain parts stripped off.
+     * @throws ArgumentNotValid if argument isn't valid.
      */
-    public static String reduceHostname(String hostname) {
-        ArgumentNotValid.checkNotNull(hostname, "hostName");
+    public static String reduceHostname(String hostname)
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(hostname, "String hostName");
         String[] split = hostname.split("\\.", 2);
         return split[0];
     }
@@ -142,10 +148,12 @@ public class JMXSummaryUtils {
      * @param starredRequest A request to take parameters from.
      * @param l For retrieving the correct words form the current language.
      * @return The link to show the parameter again.
+     * @throws ArgumentNotValid if argument isn't valid.
      */
     public static String generateShowColumn(StarredRequest starredRequest, 
-            Locale l) {
-        ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
+            Locale l) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(starredRequest, 
+                "StarredRequest starredRequest");
         
         StringBuilder res = new StringBuilder();
         
@@ -180,11 +188,13 @@ public class JMXSummaryUtils {
      * be unrestricted in the "show all" link.
      * @param l the current locale
      * @return HTML to insert at the top of the JMX monitor table.
+     * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static String generateShowAllLink(StarredRequest starredRequest,
-                                             String parameter, Locale l) {
-        ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
-        ArgumentNotValid.checkNotNull(parameter, "parameter");
+            String parameter, Locale l) throws ArgumentNotValid{
+        ArgumentNotValid.checkNotNull(starredRequest, 
+                "StarredRequest starredRequest");
+        ArgumentNotValid.checkNotNull(parameter, "String parameter");
         if (CHARACTER_SHOW_ALL.equals(starredRequest.getParameter(parameter))) {
             return "";
         } else {
@@ -204,11 +214,13 @@ public class JMXSummaryUtils {
      * be unrestricted in the "show all".
      * @param l the current locale
      * @return HTML to insert at the top of the JMX monitor table.
+     * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static String generateShowLink(StarredRequest starredRequest,
-                                             String parameter, Locale l) {
-        ArgumentNotValid.checkNotNull(starredRequest, "starredRequest");
-        ArgumentNotValid.checkNotNull(parameter, "parameter");
+             String parameter, Locale l) throws ArgumentNotValid{
+        ArgumentNotValid.checkNotNull(starredRequest, 
+                "StarredRequest starredRequest");
+        ArgumentNotValid.checkNotNull(parameter, "String parameter");
         if (CHARACTER_SHOW_ALL.equals(starredRequest.getParameter(parameter))) {
             return "("
                    + generateLink(starredRequest, parameter, 
@@ -234,9 +246,10 @@ public class JMXSummaryUtils {
      * @param starredRequest A request to take parameters from.
      * @param parameter The parameter that should be tested.
      * @return Whether the parameter is set to "-".
+     * @throws ArgumentNotValid if argument isn't valid.
      */
     public static boolean showColumn(StarredRequest starredRequest, 
-            String parameter) {
+            String parameter) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(starredRequest, 
                 "StarredRequest starredRequest");
         ArgumentNotValid.checkNotNullOrEmpty(parameter, "String parameter");
@@ -260,8 +273,8 @@ public class JMXSummaryUtils {
      * @throws ArgumentNotValid if request is null
      */
     public static String generateLink(StarredRequest request, String setPart,
-                                      String setValue, String linkText) {
-        ArgumentNotValid.checkNotNull(request, "request");
+                   String setValue, String linkText) throws ArgumentNotValid{
+        ArgumentNotValid.checkNotNull(request, "StarredRequest request");
         if (linkText == null) {
             return "";
         }
@@ -304,13 +317,11 @@ public class JMXSummaryUtils {
      * invalid parameters).
      * @throws ForwardedToErrorPage if unable to create JMX-query
      */
-    public static List<StatusEntry> queryJMXFromRequest(
-            String[] parameters,
-            StarredRequest request,
-            PageContext context) {
-        ArgumentNotValid.checkNotNull(parameters, "parameters");
-        ArgumentNotValid.checkNotNull(request, "request");
-        ArgumentNotValid.checkNotNull(context, "context");
+    public static List<StatusEntry> queryJMXFromRequest(String[] parameters,
+           StarredRequest request, PageContext context) throws ArgumentNotValid{
+        ArgumentNotValid.checkNotNull(parameters, "String[] parameters");
+        ArgumentNotValid.checkNotNull(request, "StarredRequest request");
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
         
         String query = null;
         try {
@@ -336,12 +347,12 @@ public class JMXSummaryUtils {
      * @param request A request possibly containing values for some of the
      * parameters, which select zero or more beans.
      * @param context the current JSP context.
+     * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static void unregisterJMXInstance(String[] parameters,
-                                             StarredRequest request,
-                                             PageContext context) {
-        ArgumentNotValid.checkNotNull(parameters, "parameters");
-        ArgumentNotValid.checkNotNull(context, "context");
+          StarredRequest request, PageContext context) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(parameters, "String[] parameters");
+        ArgumentNotValid.checkNotNull(context, "PageContext context");
         String query = null;
         try {
             query = createJMXQuery(parameters, request);
@@ -399,13 +410,17 @@ public class JMXSummaryUtils {
 
 
     /** Make an HTML fragment that shows a log message preformatted.
-     * If the log message is longer than three lines, the rest are hidden
-     * and replaced with an internationalized link "More..." that will show the rest.
+     * If the log message is longer than NUMBER_OF_LOG_LINES lines, the rest are
+     * hidden and replaced with an internationalized link "More..." that will
+     * show the rest.
      * @param logMessage The log message to present
      * @param l the current Locale
      * @return An HTML fragment as defined above.
+     * @throws ArgumentNotValid if argument isn't valid.
      */
-    public static String generateMessage(String logMessage, Locale l) {
+    public static String generateMessage(String logMessage, Locale l) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(logMessage, "String logMessage");
         StringBuilder msg = new StringBuilder();
         logMessage = HTMLUtils.escapeHtmlValues(logMessage);
         // All strings starting with "http:" or "https:" are replaced with 
@@ -417,7 +432,8 @@ public class JMXSummaryUtils {
         int lineno = 0;
         String line;
         try {
-            while (lineno < 5 && (line = sr.readLine()) != null) {
+            while (lineno < NUMBER_OF_LOG_LINES &&
+                    (line = sr.readLine()) != null) {
                 msg.append(line);
                 msg.append('\n');
                 ++lineno;
@@ -442,6 +458,8 @@ public class JMXSummaryUtils {
                 msg.append(id);
                 msg.append("\" style=\"display:none\">");
                 msg.append("<pre>");
+                // Display the rest of the message in a div, which are not
+                // visible.
                 do  {
                     msg.append(HTMLUtils.escapeHtmlValues(line));
                     msg.append('\n');
@@ -463,7 +481,12 @@ public class JMXSummaryUtils {
     public static class StarredRequest {
         HttpServletRequest req;
 
-        public StarredRequest(HttpServletRequest req) {
+        /**
+         * Makes the request reusable for this class.
+         * @param req A http request, for a starred request.
+         * @throws ArgumentNotValid if argument isn't valid.
+         */
+        public StarredRequest(HttpServletRequest req) throws ArgumentNotValid {
             ArgumentNotValid.checkNotNull(req, "HttpServletRequest req");
             this.req = req;
         }
@@ -478,9 +501,10 @@ public class JMXSummaryUtils {
          * 
          * @param paramName The parameter.
          * @return The parameter or "*", "0" or "-"; never null.
+         * @throws ArgumentNotValid if argument isn't valid.
          */
-        public String getParameter(String paramName) {
-            ArgumentNotValid.checkNotNull(paramName, "paramName");
+        public String getParameter(String paramName) throws ArgumentNotValid {
+            ArgumentNotValid.checkNotNull(paramName, "String paramName");
             String value = req.getParameter(paramName);
             if (value == null || value.length() == 0) {
                 if (JMXIndexProperty.equals(paramName)) {
