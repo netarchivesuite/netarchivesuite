@@ -80,6 +80,7 @@ body,table,tr,td {
  padding:0;
  margin:0;
  border:none;
+ vertical-align:text-top;
 }
 
 th {
