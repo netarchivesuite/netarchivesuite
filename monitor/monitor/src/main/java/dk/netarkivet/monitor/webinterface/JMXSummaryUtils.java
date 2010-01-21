@@ -105,7 +105,7 @@ public class JMXSummaryUtils {
     private static final String CHARACTER_NOT_COLUMN = "-";
     /** The character for only seeing the first row of the log.*/
     private static final String CHARACTER_FIRST_ROW = "0";
-    /** The number of log lines showed in generateMessage */
+    /** The number of log lines showed in generateMessage. */
     private static final int NUMBER_OF_LOG_LINES = 5;
 
     /** Instance of class Random used to generate a unique id for each div. */
@@ -113,7 +113,8 @@ public class JMXSummaryUtils {
 
     /** Reduce the class name of an application to the essentials.
      *
-     * @param applicationName The class name of the application
+     * @param applicationName The class name of the application, should not be
+     * null.
      * @return A reduced name suitable for user output.
      * @throws ArgumentNotValid if argument isn't valid.
      */
@@ -127,7 +128,7 @@ public class JMXSummaryUtils {
 
     /** Reduce a hostname to a more readable form.
      *
-     * @param hostname A host name.
+     * @param hostname A host name, should not be null.
      * @return The same host name with all domain parts stripped off.
      * @throws ArgumentNotValid if argument isn't valid.
      */
@@ -145,7 +146,8 @@ public class JMXSummaryUtils {
      * If a column is not active, the link to showing a specific column again
      * is generated.
      * 
-     * @param starredRequest A request to take parameters from.
+     * @param starredRequest A request to take parameters from, should be
+     * different from null.
      * @param l For retrieving the correct words form the current language.
      * @return The link to show the parameter again.
      * @throws ArgumentNotValid if argument isn't valid.
@@ -183,10 +185,11 @@ public class JMXSummaryUtils {
      * This function is only used by JMXIndexProperty field, 
      * the other properties uses generateShowLing instead.
      *
-     * @param starredRequest A request to take parameters from.
+     * @param starredRequest A request to take parameters from, should not be
+     * null.
      * @param parameter The parameter that, if not already unrestricted, should
-     * be unrestricted in the "show all" link.
-     * @param l the current locale
+     * be unrestricted in the "show all" link, should not be null.
+     * @param l the current locale.
      * @return HTML to insert at the top of the JMX monitor table.
      * @throws ArgumentNotValid if arguments isn't valid.
      */
@@ -209,10 +212,11 @@ public class JMXSummaryUtils {
     /** Generate HTML to show at the top of the table, containing a "show all"
      * and a "off" links if the parameter is currently restricted.
      *
-     * @param starredRequest A request to take parameters from.
+     * @param starredRequest A request to take parameters from, should not be
+     * null.
      * @param parameter The parameter that, if not already unrestricted, should
-     * be unrestricted in the "show all".
-     * @param l the current locale
+     * be unrestricted in the "show all", should not be null.
+     * @param l the current locale.
      * @return HTML to insert at the top of the JMX monitor table.
      * @throws ArgumentNotValid if arguments isn't valid.
      */
@@ -243,7 +247,8 @@ public class JMXSummaryUtils {
     /**
      * Tests if a parameter in the request is "-" (thus off). 
      * 
-     * @param starredRequest A request to take parameters from.
+     * @param starredRequest A request to take parameters from, should not be
+     * null.
      * @param parameter The parameter that should be tested.
      * @return Whether the parameter is set to "-".
      * @throws ArgumentNotValid if argument isn't valid.
@@ -263,14 +268,15 @@ public class JMXSummaryUtils {
     /** Generate an HTML link to the JMX summary page with one part of the
      * URL parameters set to a specific value.
      *
-     * @param request A request to draw other parameter values from
+     * @param request A request to draw other parameter values from, should not
+     * be null.
      * @param setPart Which of the parameters to set.
      * @param setValue The value to set that parameter to.
      * @param linkText The HTML text that should go inside the link.  Remember
      * to escape HTML values if inserting a normal string.
      * @return A link to insert in the page, or an unlinked text, if setPart or
      * setValue is null, or an empty string if linkText is null.
-     * @throws ArgumentNotValid if request is null
+     * @throws ArgumentNotValid if request is null.
      */
     public static String generateLink(StarredRequest request, String setPart,
                    String setValue, String linkText) throws ArgumentNotValid{
@@ -307,15 +313,15 @@ public class JMXSummaryUtils {
 
     /** Get status entries from JMX based on a request and some parameters.
      *
-     * @param parameters The parameters to query JMX for.
+     * @param parameters The parameters to query JMX for, should not be null.
      * @param request A request possibly containing values for some of the
-     * parameters.
-     * @param context the current JSP context
+     * parameters, should not be null.
+     * @param context the current JSP context, should not be null.
      * @return Status entries for the MBeans that match the parameters.
      * 
      * @throws ArgumentNotValid if the query is invalid (typically caused by
      * invalid parameters).
-     * @throws ForwardedToErrorPage if unable to create JMX-query
+     * @throws ForwardedToErrorPage if unable to create JMX-query.
      */
     public static List<StatusEntry> queryJMXFromRequest(String[] parameters,
            StarredRequest request, PageContext context) throws ArgumentNotValid{
@@ -343,10 +349,10 @@ public class JMXSummaryUtils {
 
     /**
      * Select zero or more beans from JMX and unregister these.
-     * @param parameters The parameters to query JMX for.
+     * @param parameters The parameters to query JMX for, should not be null.
      * @param request A request possibly containing values for some of the
      * parameters, which select zero or more beans.
-     * @param context the current JSP context.
+     * @param context the current JSP context, should not be null.
      * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static void unregisterJMXInstance(String[] parameters,
@@ -375,7 +381,8 @@ public class JMXSummaryUtils {
             HTMLUtils.forwardWithErrorMessage(context, I18N, e,
                     "errormsg;error.when.unregistering.mbean.0", query);
             throw new ForwardedToErrorPage(
-                    "Error when unregistering JMX MBean with query '" + query + "'.", e);
+                    "Error when unregistering JMX MBean with query '"
+                    + query + "'.", e);
         }
     }
 
@@ -392,7 +399,8 @@ public class JMXSummaryUtils {
      */
     public static String createJMXQuery(String[] parameters,
                                          StarredRequest starredRequest) {
-        StringBuilder query = new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
+        StringBuilder query =
+                new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
         for (String queryPart : parameters) {
             if (!CHARACTER_SHOW_ALL.equals(starredRequest
                     .getParameter(queryPart)) && !CHARACTER_NOT_COLUMN.equals(
@@ -413,8 +421,8 @@ public class JMXSummaryUtils {
      * If the log message is longer than NUMBER_OF_LOG_LINES lines, the rest are
      * hidden and replaced with an internationalized link "More..." that will
      * show the rest.
-     * @param logMessage The log message to present
-     * @param l the current Locale
+     * @param logMessage The log message to present.
+     * @param l the current Locale.
      * @return An HTML fragment as defined above.
      * @throws ArgumentNotValid if argument isn't valid.
      */
@@ -483,7 +491,7 @@ public class JMXSummaryUtils {
 
         /**
          * Makes the request reusable for this class.
-         * @param req A http request, for a starred request.
+         * @param req A http request, for a starred request, should not be null.
          * @throws ArgumentNotValid if argument isn't valid.
          */
         public StarredRequest(HttpServletRequest req) throws ArgumentNotValid {
