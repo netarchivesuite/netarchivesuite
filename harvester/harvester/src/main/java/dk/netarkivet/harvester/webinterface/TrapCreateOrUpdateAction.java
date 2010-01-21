@@ -34,6 +34,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
@@ -52,6 +54,10 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  */
 
 public class TrapCreateOrUpdateAction extends TrapAction {
+
+    private static final Log log =
+            LogFactory.getLog(TrapCreateOrUpdateAction.class) ;
+
     @Override
     protected void doAction(PageContext context, I18n i18n) {
         String name = null;
@@ -59,6 +65,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
         String description = null;
         InputStream is = null;
         String id = null;
+        String fileName = null;
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
@@ -67,7 +74,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             items = upload.parseRequest(request);
         } catch (FileUploadException e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                                         "errormsg;crawlertrap.upload.error");
+                                              "errormsg;crawlertrap.upload.error");
             throw new ForwardedToErrorPage("Error on multipart post", e);
         }
         for (FileItem item: items) {
@@ -83,27 +90,32 @@ public class TrapCreateOrUpdateAction extends TrapAction {
                 }
             } else {
                 try {
+                    fileName = item.getName();
                     is = item.getInputStream();
                 } catch (IOException e) {
                     HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                                           "errormsg;crawlertrap.upload.error");
+                                                      "errormsg;crawlertrap.upload.error");
                     throw new
                             ForwardedToErrorPage("Error on multipart post", e);
                 }
             }
         }
-         GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDBDAO.getInstance();
-        if (id != null) {
+        GlobalCrawlerTrapListDAO dao = GlobalCrawlerTrapListDBDAO.getInstance();
+        if (id != null) {   //update existing trap list
             int trapId = Integer.parseInt(id);
             GlobalCrawlerTrapList trap = dao.read(trapId);
             trap.setActive(isActive);
             trap.setDescription(description);
             trap.setName(name);
-            trap.setTrapsFromInputStream(is);
+            if (fileName != null && !"".equals(fileName)) {
+                log.debug("Reading global crawler trap list from '" +
+                          fileName + "'");
+                trap.setTrapsFromInputStream(is);
+            }
             dao.update(trap);
-        } else {
+        } else {  //create new trap list
             GlobalCrawlerTrapList trap = new GlobalCrawlerTrapList(is, name,
-                                                        description, isActive);
+                                                                   description, isActive);
             dao.create(trap);
         }
 

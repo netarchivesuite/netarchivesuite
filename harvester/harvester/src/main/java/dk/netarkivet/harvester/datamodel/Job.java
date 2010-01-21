@@ -340,7 +340,6 @@ public class Job implements Serializable {
         this.harvestNum = harvestNum;
 
         underConstruction = false;
-        addGlobalCrawlerTraps();
     }
 
     /**
@@ -532,6 +531,13 @@ public class Job implements Serializable {
         editOrderXMLAddCrawlerTraps(elementName, crawlerTraps);
     }
 
+    /**
+     * Method to add a list of crawler traps with a given element name. It is
+     * used both to add per-domain traps and global traps.
+     * @param elementName The name of the added element.
+     * @param crawlerTraps A list of crawler trap regular expressions to add
+     * to this job.
+     */
     private void editOrderXMLAddCrawlerTraps(String elementName,
                                              List<String> crawlerTraps) {
         if (crawlerTraps.size() == 0) {
@@ -550,7 +556,7 @@ public class Job implements Serializable {
         }
         Element rulesMap = (Element) rulesMapNode;
 
-        //Add all regexps for the domain in a single MatchesListRegExpDecideRule
+        //Add all regexps in the list to a single MatchesListRegExpDecideRule
         //which is appended to the rulesMapNode.
         Element deciderule = rulesMap.addElement("newObject");
         deciderule.addAttribute("name", elementName);

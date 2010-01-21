@@ -35,7 +35,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 
 /**
- * csr forgot to comment this!
+ * Abstract class representing an action to take on the collection of global
+ * crawler traps.
  *
  * @author csr
  * @since Jan 13, 2010
@@ -48,7 +49,7 @@ public abstract class TrapAction {
 
     /**
      * This method processes the request to determine which action it
-     * corresponds to and pass the request along accordingly. If it
+     * corresponds to and passes the request along accordingly. If it
      * is a multipart post then it is passed along to a create-or-update
      * instance. Otherwise if no action is specified, none is taken.
      * Otherwise the request is passed on to a specific concrete instance
@@ -75,6 +76,11 @@ public abstract class TrapAction {
         }
     }
 
+    /**
+     * Method implementing the specific action to take
+     * @param context the context of the servlet request triggering this action.
+     * @param i18n the internationalisation to use for presenting the results.
+     */
     protected abstract void doAction(PageContext context, I18n i18n);
 
 }

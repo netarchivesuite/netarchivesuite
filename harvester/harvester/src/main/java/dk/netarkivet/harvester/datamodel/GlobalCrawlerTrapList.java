@@ -81,33 +81,35 @@ public class GlobalCrawlerTrapList {
     /**
      * Protected constructor used by the DAO to create instances of this class.
      *
-     * @param id
-     * @parame name
-     * @param traps
-     * @param description
-     * @param active
+     * @param id  the id of this list.
+     * @param name a name by which this list is known.
+     * @param traps the set of trap expressions.
+     * @param description A textual description of this list.
+     * @param isActive flag indicating whether this list is isActive.
      * @throws ArgumentNotValid if the name is empty or null.
      */
     protected GlobalCrawlerTrapList(int id, List<String> traps, String name,
-                                    String description, boolean active) throws
+                                    String description, boolean isActive) throws
                                                              ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         this.id = id;
         this.traps = new HashSet<String>(traps.size());
         this.traps.addAll(traps);
         this.description = description;
-        isActive = active;
+        this.isActive = isActive;
         this.name = name;
     }
 
     /**
      * Construct a new GlobalCrawlerTrapList from an input stream consisting of
      * newline-separated regular expressions.
-     * @param is
-     * @param description
-     * @param isActive
-     * @param name
+     * @param is an input stream from which the list of trap expressions
+     * can be read.
+     * @param name a name by which this list is known.
+     * @param description A textual description of this list.
+     * @param isActive flag indicating whether this list is isActive.
      * @throws IOFailure if the input stream cannot be found or read.
-     * @throws ArgumentNotValid if the file is null or the name is null or
+     * @throws ArgumentNotValid if the input stream is null or the name is null or
      * empty.
      */
     public GlobalCrawlerTrapList(InputStream is, String name, String description,

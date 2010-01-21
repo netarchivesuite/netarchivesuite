@@ -73,7 +73,10 @@ public enum TrapActionEnum {
         }}
     ;
 
-
+    /**
+     * Get the concrete TrapAction which can process this request.
+     * @return the correct TrapAction for this request type.
+     */
     public abstract TrapAction getTrapAction();
 
 

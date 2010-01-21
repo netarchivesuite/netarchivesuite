@@ -38,24 +38,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 
 public abstract class GlobalCrawlerTrapListDAO {
 
-    /**
-     * The singleton instace of this class.
-     */
-    private static GlobalCrawlerTrapListDAO instance;
 
-    /**
-     * Protected constructor called by concrete subclasses of this class.
-     */
-    protected GlobalCrawlerTrapListDAO() {
-    }
-
-    /**
-     * Get the singleton instance of this class.
-     * @return
-     */
-    public static synchronized GlobalCrawlerTrapListDAO getInstance() {
-        throw new NotImplementedException("Not yet implemented");
-    }
 
     /**
      * Get all active crawler traps.
@@ -80,11 +63,11 @@ public abstract class GlobalCrawlerTrapListDAO {
 
     /**
      * This method creates the object in the database and has the side effect
-     * of settinf the trapLists id field to the auto-generated id in the
+     * of setting the trapLists id field to the auto-generated id in the
      * database.
-     * @param trapList
-     * @return
-     * @throws ArgumentNotValid if the name of the trapList is already in use.
+     * @param trapList The list to persist
+     * @return the id of the created list
+     * @throws ArgumentNotValid if the trapList is null.
      */
     public abstract int create(GlobalCrawlerTrapList trapList) throws
                                                                ArgumentNotValid;

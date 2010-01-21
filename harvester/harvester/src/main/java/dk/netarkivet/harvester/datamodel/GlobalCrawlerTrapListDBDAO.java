@@ -113,7 +113,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     private List<GlobalCrawlerTrapList> getAllByActivity(boolean isActive) {
         List<GlobalCrawlerTrapList> result =
                 new ArrayList<GlobalCrawlerTrapList>();
-         Connection conn = DBConnect.getDBConnection();
+        Connection conn = DBConnect.getDBConnection();
         PreparedStatement stmt = null;
         try {
             stmt = conn.prepareStatement(SELECT_BY_ACTIVITY);
@@ -131,11 +131,12 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         }
     }
 
-
+    @Override
     public List<GlobalCrawlerTrapList> getAllActive() {
         return getAllByActivity(true);
     }
 
+    @Override
     public List<GlobalCrawlerTrapList> getAllInActive() {
            return getAllByActivity(false);
     }
@@ -145,6 +146,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             + "FROM global_crawler_trap_lists, global_crawler_trap_expressions "
             + "WHERE global_crawler_trap_list_id = crawler_trap_list_id "
             + "AND isActive = 1" ;
+    @Override
     public List<String> getAllActiveTrapExpressions() {
         Connection conn = DBConnect.getDBConnection();
         List<String> result = new ArrayList<String>();
@@ -314,6 +316,9 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         }
     }
 
+    /**
+     * Resets the singleton instance of this class. Mostly for testing.
+     */
     public static void reset() {
         instance = null;
     }
