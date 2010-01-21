@@ -199,20 +199,20 @@ public class MySQLSpecifics extends DBSpecifics {
                                  + "                                         -- whether or not the list is active\n"
                                  + "                                         -- 0=inactive, 1=active\n"
                                  + ")";
-        DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
+        DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
     /** Creates the initial (version 1) of table 'global_crawler_trap_expressions'. */
     protected void createGlobalCrawlerTrapExpressions() {
         String createStatement = "CREATE TABLE global_crawler_trap_expressions(\n"
+                                 + "    id bigint not null AUTO_INCREMENT primary key,\n"
                                  + "    crawler_trap_list_id INT NOT NULL, -- references\n"
                                  + "                                                  -- global_crawler_trap_list_id\n"
-                                 + "    trap_expression VARCHAR(950),               -- the actual regular\n"
+                                 + "    trap_expression VARCHAR(1000)               -- the actual regular\n"
                                  + "                                                  -- expression for the crawler\n"
                                  + "                                                  -- trap\n"
-                                 + "    PRIMARY KEY (CRAWLER_TRAP_LIST_ID, TRAP_EXPRESSION)\n"
                                  + ")";
-        DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
+        DBConnect.updateTable("global_crawler_trap_expressions", 1, createStatement);
     }
 
 }

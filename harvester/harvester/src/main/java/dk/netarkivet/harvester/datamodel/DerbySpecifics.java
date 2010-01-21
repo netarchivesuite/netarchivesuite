@@ -306,7 +306,6 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "                                         -- whether or not the list is active\n"
                                  + "                                         -- 0=inactive, 1=active\n"
                                  + ") ";
-        //DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
         DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
@@ -320,7 +319,6 @@ public abstract class DerbySpecifics extends DBSpecifics {
                                  + "                                                  -- trap\n"
                                  + "    PRIMARY KEY (CRAWLER_TRAP_LIST_ID, TRAP_EXPRESSION)\n"
                                  + ")";
-        //DBUtils.executeSQL(DBConnect.getDBConnection(), createStatement);
         DBConnect.updateTable("global_crawler_trap_expressions", 1, createStatement);
     }
 }
