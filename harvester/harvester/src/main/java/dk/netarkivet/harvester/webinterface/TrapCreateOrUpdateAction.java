@@ -55,6 +55,9 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 public class TrapCreateOrUpdateAction extends TrapAction {
 
+    /**
+     * The logger for this class.
+     */
     private static final Log log =
             LogFactory.getLog(TrapCreateOrUpdateAction.class) ;
 
@@ -74,16 +77,18 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             items = upload.parseRequest(request);
         } catch (FileUploadException e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                                              "errormsg;crawlertrap.upload.error");
+                                          "errormsg;crawlertrap.upload.error");
             throw new ForwardedToErrorPage("Error on multipart post", e);
         }
         for (FileItem item: items) {
             if (item.isFormField()) {
                 if (item.getFieldName().equals(Constants.TRAP_NAME)) {
                     name = item.getString();
-                } else if (item.getFieldName().equals(Constants.TRAP_IS_ACTIVE)){
+                } else if (item.getFieldName()
+                        .equals(Constants.TRAP_IS_ACTIVE)){
                     isActive = Boolean.parseBoolean(item.getString());
-                } else if (item.getFieldName().equals(Constants.TRAP_DESCRIPTION)) {
+                } else if (item.getFieldName()
+                        .equals(Constants.TRAP_DESCRIPTION)) {
                     description = item.getString();
                 } else if (item.getFieldName().equals(Constants.TRAP_ID)) {
                     id = item.getString();
@@ -94,7 +99,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
                     is = item.getInputStream();
                 } catch (IOException e) {
                     HTMLUtils.forwardWithErrorMessage(context, i18n, e,
-                                                      "errormsg;crawlertrap.upload.error");
+                                        "errormsg;crawlertrap.upload.error");
                     throw new
                             ForwardedToErrorPage("Error on multipart post", e);
                 }
@@ -115,7 +120,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             dao.update(trap);
         } else {  //create new trap list
             GlobalCrawlerTrapList trap = new GlobalCrawlerTrapList(is, name,
-                                                                   description, isActive);
+                                                       description, isActive);
             dao.create(trap);
         }
 

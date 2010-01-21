@@ -28,7 +28,7 @@ package dk.netarkivet.harvester.webinterface;
  * Harvester webinterface constants.
  */
 public class Constants {
-    
+
     /**
      * The contructor for this class. Making the constructor private prevents
      * the class from being instantiated.
@@ -91,7 +91,7 @@ public class Constants {
     public static final String TRAP_CREATE = "trap_create";
     public static final String TRAP_DOWNLOAD = "trap_download";
     public static final String TRAP_ACTIVATE = "trap_activate";
-    public static final String TRAP_INACTIVATE = "trap_inactivate";
+    public static final String TRAP_DEACTIVATE = "trap_deactivate";
     public static final String TRAP_CONTENT_TYPE = "trap_content_type";
     public static final String TRAP_NAME = "trap_name";
     public static final String TRAP_IS_ACTIVE = "trap_is_active" ;

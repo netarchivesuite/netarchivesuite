@@ -63,7 +63,7 @@ public class HarvesterDataModelTesterSuite {
         suite.addTestSuite(FrequencyTester.class);
         suite.addTestSuite(FullHarvestTester.class);
         suite.addTestSuite(GlobalCrawlerTrapListTester.class);
-        suite.addTestSuite(GlobalCrawlerTrapListDBDAOTester.class);
+        suite.addTestSuite(GlobalCrawlerTrapListDBDAOTester.class  );
         // TODO  move elsewhere
         suite.addTestSuite(GUIWebServerTester.class);
         suite.addTestSuite(HarvestDefinitionDAOTester.class);

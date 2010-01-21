@@ -39,12 +39,15 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 public class TrapActivationAction extends TrapAction {
 
+    /**
+     * The new activation state for the trap list.
+     */
     private boolean newActivationState;
 
     /**
      * Constructor specifying whether this actions activates or deactivates
-     * a trap list
-     * @param newActivationState the new activation state
+     * a trap list.
+     * @param newActivationState the new activation state.
      */
     public TrapActivationAction(boolean newActivationState) {
         this.newActivationState = newActivationState;

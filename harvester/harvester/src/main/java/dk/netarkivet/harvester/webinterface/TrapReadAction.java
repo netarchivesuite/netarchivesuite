@@ -37,7 +37,7 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 
 /**
- * Class to read and return a global crawler trap list to a web request
+ * Class to read and return a global crawler trap list to a web request.
  *
  * @author csr
  * @since Jan 13, 2010

@@ -1,9 +1,9 @@
-<%@ page import="dk.netarkivet.common.utils.I18n,
+<%@ page import="java.util.List,
+dk.netarkivet.common.utils.I18n,
 dk.netarkivet.common.webinterface.HTMLUtils,
-dk.netarkivet.harvester.webinterface.GlobalCrawlerTrapDefinition,
+dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,
 dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO,
-java.util.List,
-dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapList,static dk.netarkivet.harvester.webinterface.Constants.*, dk.netarkivet.harvester.webinterface.TrapAction"
+dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinterface.TrapAction"
          pageEncoding="UTF-8"
         %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
         %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
