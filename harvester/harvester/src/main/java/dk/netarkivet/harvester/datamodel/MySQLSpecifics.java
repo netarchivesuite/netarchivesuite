@@ -193,7 +193,7 @@ public class MySQLSpecifics extends DBSpecifics {
                                  + "  global_crawler_trap_list_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
                                  + "  name VARCHAR(300) NOT NULL UNIQUE,     -- A name by which this list is known\n"
                                  + "                                         -- e.g. \"Statsbibliotekets Master List'\n"
-                                 + "  description VARCHAR(30000),            -- An optional description of the\n"
+                                 + "  description VARCHAR(20000),            -- An optional description of the\n"
                                  + "                                         -- list\n"
                                  + "  isActive INT NOT NULL                  -- boolean valued int indicating\n"
                                  + "                                         -- whether or not the list is active\n"

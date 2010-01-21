@@ -12,15 +12,15 @@
 
             if (trapIdString != null) {
         %>
-        <input name="<%=TRAP_ID%>" value="<%=trapIdString%>" type="hidden" />
+        <input name="<%=Constants.TRAP_ID%>" value="<%=trapIdString%>" type="hidden" />
         <%
             }
         %>
-        <fmt:message key="crawlertrap.name"/>&nbsp;<input name="<%=TRAP_NAME%>" value="<%=trapName%>"/><br/>
-        <fmt:message key="crawlertrap.active"/>&nbsp;<input type="radio" name="<%=TRAP_IS_ACTIVE%>" value="true" checked="checked"/>
-        <fmt:message key="crawlertrap.inactive"/>&nbsp;<input type="radio" name="<%=TRAP_IS_ACTIVE%>" value="false"/> <br/>
-        <fmt:message key="crawlertrap.description"/>&nbsp;<textarea cols="60" rows="8" name="<%=TRAP_DESCRIPTION%>"><%=trapDescription%></textarea><br/>
-        <fmt:message key="crawlertrap.filetoupload"/>&nbsp;<input type="file" name="<%=TRAP_FILENAME%>" size="<%=UPLOAD_FILE_FIELD_WIDTH%>"/>
+        <fmt:message key="crawlertrap.name"/>&nbsp;<input name="<%=Constants.TRAP_NAME%>" value="<%=trapName%>"/><br/>
+        <fmt:message key="crawlertrap.active"/>&nbsp;<input type="radio" name="<%=Constants.TRAP_IS_ACTIVE%>" value="true" checked="checked"/>
+        <fmt:message key="crawlertrap.inactive"/>&nbsp;<input type="radio" name="<%=Constants.TRAP_IS_ACTIVE%>" value="false"/> <br/>
+        <fmt:message key="crawlertrap.description"/>&nbsp;<textarea cols="60" rows="8" name="<%=Constants.TRAP_DESCRIPTION%>"><%=trapDescription%></textarea><br/>
+        <fmt:message key="crawlertrap.filetoupload"/>&nbsp;<input type="file" name="<%=Constants.TRAP_FILENAME%>" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>"/>
         <%
             if (trapIdString == null) {
         %>
