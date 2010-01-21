@@ -512,6 +512,7 @@
         <logging>
             <historySize>100</historySize>
         </logging>
+        <reregisterDelay>1</reregisterDelay>
     </monitor><viewerproxy>
         <baseDir>viewerproxy</baseDir>
     </viewerproxy></settings>
