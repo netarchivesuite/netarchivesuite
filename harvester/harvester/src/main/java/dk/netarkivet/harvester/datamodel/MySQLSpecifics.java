@@ -207,7 +207,7 @@ public class MySQLSpecifics extends DBSpecifics {
         String createStatement = "CREATE TABLE global_crawler_trap_expressions(\n"
                                  + "    crawler_trap_list_id INT NOT NULL, -- references\n"
                                  + "                                                  -- global_crawler_trap_list_id\n"
-                                 + "    trap_expression VARCHAR(1000),               -- the actual regular\n"
+                                 + "    trap_expression VARCHAR(950),               -- the actual regular\n"
                                  + "                                                  -- expression for the crawler\n"
                                  + "                                                  -- trap\n"
                                  + "    PRIMARY KEY (CRAWLER_TRAP_LIST_ID, TRAP_EXPRESSION)\n"

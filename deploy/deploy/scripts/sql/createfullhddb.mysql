@@ -271,7 +271,7 @@ create table global_crawler_trap_lists(
 create table global_crawler_trap_expressions(
     crawler_trap_list_id int not null, -- references
                                                   -- global_crawler_trap_list_id
-    trap_expression varchar(950),               -- the actual regular
+    trap_expression varchar(850),               -- the actual regular
                                                   -- expression for the crawler
                                                   -- trap
     primary key (crawler_trap_list_id, trap_expression)
