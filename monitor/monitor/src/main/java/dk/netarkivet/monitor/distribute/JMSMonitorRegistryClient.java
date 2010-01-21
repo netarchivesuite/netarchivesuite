@@ -56,7 +56,8 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
      * Used for control of timer task that sends messages. */
     private static final long MINUTE_IN_MILLISECONDS = 60000L;
     /** Delay between every reregistering in minutes. */
-    private static final long DEFAULT_REREGISTER_DELAY = 1;
+    private static final String DEFAULT_REREGISTER_DELAY =
+            "settings.monitor.reregisterDelay";
     /** Zero milliseconds from now.
      * Used for control of timer task that sends messages. */
     private static final long NOW = 0L;
@@ -116,7 +117,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
             }
         };
         
-        long reregister_delay = DEFAULT_REREGISTER_DELAY;
+        long reregister_delay = Settings.getLong(DEFAULT_REREGISTER_DELAY);
         try {
             reregister_delay = Long.parseLong(Settings.get(
                     CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
