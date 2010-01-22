@@ -126,7 +126,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     private final HarvestController controller;
 
     /** This is true while a doOneCrawl is running. No jobs are accepted while
-     * this boolean is true */
+     * this boolean is true. */
     private boolean running = false;
     /** Jobs are fetched from this queue. */ 
     private final ChannelID jobChannel;
@@ -145,9 +145,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler
      * the administrator and pauses.
      *
      * @throws PermissionDenied
-     *             If the serverdir or oldjobsdir can't be created
+     *             If the serverdir or oldjobsdir can't be created.
      * @throws IOFailure
-     *             If harvestInfoFile contains invalid data
+     *             If harvestInfoFile contains invalid data.
      * @throws UnknownID if the settings file does not specify a valid queue
      * priority.
      */
@@ -555,9 +555,11 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         HeritrixFiles files =
             new HeritrixFiles(
                     crawlDir,
-                    harvestInfo.getJobID(),
+                    jobID,
                     harvestInfo.getOrigHarvestDefinitionID());
         try {
+            log.info("Store files in directory '" + crawlDir + "' "
+                    + "from jobID: " + jobID + ".");
             dhr = controller.storeFiles(
                     files, errorMessage, failedFiles);
         } catch (Exception e) {
@@ -576,8 +578,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             CrawlStatusMessage csm;
 
             if (crawlException == null && errorMessage.length() == 0) {
+                log.warn("JobID: " + jobID + " done.");
                 csm = new CrawlStatusMessage(jobID, JobStatus.DONE, dhr);
             } else {
+                log.warn("JobID: " + jobID + " failed.");
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
                 setErrorMessages(csm, crawlException, errorMessage.toString(),
                         dhr == null, failedFiles.size());
@@ -591,6 +595,8 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                 // Delete superfluous files and move the rest to oldjobs
                 // Cleanup is in an extra finally, because it is large amounts
                 // of data we need to remove, even on send trouble.
+                log.info("Cleanup after harvesting job with id: "
+                        + jobID + ".");
                 files.cleanUpAfterHarvest(new File(
                         Settings.get(
                                 HarvesterSettings.HARVEST_CONTROLLER_OLDJOBSDIR
@@ -696,6 +702,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
                                     job.getJobID() + "_"
                                     + System.currentTimeMillis());
                 FileUtils.createDir(crawlDir);
+                log.info("Created crawl directory: '" + crawlDir + "'");
                 return crawlDir;
             } catch (PermissionDenied e) {
                 String message = "Couldn't create the directory for job "
