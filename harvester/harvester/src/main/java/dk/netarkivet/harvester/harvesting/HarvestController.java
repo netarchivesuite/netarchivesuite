@@ -228,10 +228,11 @@ public class HarvestController {
      * Creates the actual HeritrixLauncher instance and runs it, after the
      * various setup files have been written.
      *
-     * @param files Description of files involved in running Heritrix.
+     * @param files Description of files involved in running Heritrix. Not Null.
+     * @throws ArgumentNotValid if an argument isn't valid.
      */
-    public void runHarvest(HeritrixFiles files) {
-        ArgumentNotValid.checkNotNull(files, "files");
+    public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         HeritrixLauncher hl = HeritrixLauncher.getInstance(files);
         hl.doCrawl();
     }
@@ -247,14 +248,15 @@ public class HarvestController {
      * Additionally, any leftover open ARC files are closed and harvest
      * documentation is extracted before upload starts.
      *
-     * @param files The HeritrixFiles object for this crawl.
-     * @param errorMessage A place where error messages accumulate.
-     * @param failedFiles  List of files that failed to upload.
+     * @param files The HeritrixFiles object for this crawl. Not Null.
+     * @param errorMessage A place where error messages accumulate. Not Null.
+     * @param failedFiles  List of files that failed to upload. Not Null.
      * @return An object containing info about the domains harvested.
+     * @throws ArgumentNotValid if an argument isn't valid.
      */
     public DomainHarvestReport storeFiles(
             HeritrixFiles files, StringBuilder errorMessage,
-            List<File> failedFiles) {
+            List<File> failedFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
         ArgumentNotValid.checkNotNull(errorMessage, 
                 "StringBuilder errorMessage");
@@ -358,8 +360,8 @@ public class HarvestController {
      * Runs through all metadata entries, finding duplicate reduction entries,
      * and parsing all jobIDs in them, warning only on errors.
      *
-     * @param metadataEntries list of metadataEntries
-     * @return the list of jobs for deduplicate reduction
+     * @param metadataEntries list of metadataEntries.
+     * @return the list of jobs for deduplicate reduction.
      */
     private List<Long> parseJobIDsForDuplicateReduction(
             List<MetadataEntry> metadataEntries) {
@@ -397,7 +399,7 @@ public class HarvestController {
      * us to use the cached smaller index anyway.
      *
      * @param metadataEntries list of metadataEntries top get jobIDs from.
-     * @return a directory  containing the index itself
+     * @return a directory  containing the index itself.
      * @throws IOFailure on errors retrieving the index from the client.
      * TODO: Better forgiving handling of no index available
      */
@@ -420,13 +422,14 @@ public class HarvestController {
 
     /**
      * Find out whether we stopped normally in progress statistics log.
-     * @param logFile A progress-statistics.log file
+     * @param logFile A progress-statistics.log file.
      * @return StopReason.DOWNLOAD_COMPLETE for progress statistics ending with
      * CRAWL ENDED, StopReason.DOWNLOAD_UNFINISHED otherwise or if file does
      * not exist.
      * @throws ArgumentNotValid on null argument.
      */
-    public static StopReason findDefaultStopReason(File logFile) {
+    public static StopReason findDefaultStopReason(File logFile) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(logFile, "File logFile");
         if (!logFile.exists()) {
             return StopReason.DOWNLOAD_UNFINISHED;
@@ -442,5 +445,4 @@ public class HarvestController {
             return StopReason.DOWNLOAD_UNFINISHED;
         }
     }
-
 }
