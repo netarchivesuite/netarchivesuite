@@ -1,25 +1,25 @@
 <%@ page import="dk.netarkivet.harvester.webinterface.TrapActionEnum" %>
-<%=HTMLUtils.escapeHtmlValues(trapList.getName())%>
-    <form action="./Definitions-edit-global-crawler-traps.jsp" method="post" style="display:inline;">
-        <input type="hidden" name="<%=Constants.TRAP_ACTION%>" value="<%=TrapActionEnum.READ.name()%>"/>
-        <input type="hidden" name="<%=Constants.TRAP_ID%>" value="<%=trapList.getId()%>"/>
-        <select name="<%=Constants.TRAP_CONTENT_TYPE%>">
-            <%
-                String[] contentTypes = { "text/plain",
-                                          "binary/octet-stream" };
-                String[] contentDescriptions = {
-                        I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
-                        I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
-                };
-                for (int i = 0;
-                     i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
-                    out.println("<option value=\""
-                                + HTMLUtils.escapeHtmlValues(contentTypes[i])
-                                + "\">"
-                                + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
-                                + "</option>");
-                }
-            %>
-        </select>
-        <input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> />
-    </form>
+<td><%=HTMLUtils.escapeHtmlValues(trapList.getName())%></td>
+<form action="./Definitions-edit-global-crawler-traps.jsp" method="post" style="display:inline;">
+    <input type="hidden" name="<%=Constants.TRAP_ACTION%>" value="<%=TrapActionEnum.READ.name()%>"/>
+    <input type="hidden" name="<%=Constants.TRAP_ID%>" value="<%=trapList.getId()%>"/>
+    <td><select name="<%=Constants.TRAP_CONTENT_TYPE%>">
+        <%
+            String[] contentTypes = { "text/plain",
+                                      "binary/octet-stream" };
+            String[] contentDescriptions = {
+                    I18N.getString(response.getLocale(), "harvestdefinition.templates.show.as.text"),
+                    I18N.getString(response.getLocale(), "harvestdefinition.templates.save.to.disk")
+            };
+            for (int i = 0;
+                 i < Math.min(contentTypes.length, contentDescriptions.length); i++) {
+                out.println("<option value=\""
+                            + HTMLUtils.escapeHtmlValues(contentTypes[i])
+                            + "\">"
+                            + HTMLUtils.escapeHtmlValues(contentDescriptions[i])
+                            + "</option>");
+            }
+        %>
+    </select></td>
+    <td><input type="submit" name="download" value=<fmt:message key="harvestdefinition.templates.retrieve"/> /></td>
+</form>

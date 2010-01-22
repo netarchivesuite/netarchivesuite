@@ -43,7 +43,7 @@ dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinte
     %>
     <div class="traplist">
         <tr>
-            <td><%@ include file="traplist-download-element.jspf" %></td>
+            <%@ include file="traplist-download-element.jspf" %>
             <%
                 String activationAction = TrapActionEnum.DEACTIVATE.name();
                 String activationKey = "crawlertrap.deactivate";
@@ -82,7 +82,7 @@ dk.netarkivet.harvester.webinterface.TrapAction, dk.netarkivet.harvester.webinte
     %>
     <div class="traplist">
         <tr>
-            <td><%@ include file="traplist-download-element.jspf" %></td>
+            <%@ include file="traplist-download-element.jspf" %>
             <%
                 String activationAction = TrapActionEnum.ACTIVATE.name();
                 String activationKey = "crawlertrap.activate";

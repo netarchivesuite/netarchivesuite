@@ -3,8 +3,8 @@
     String editLinkId = "edit_link_" + trapIdString;
     String hideLinkId = "hide_link_" + trapIdString;
 %>
-<a id="<%=editLinkId%>" onclick="show_block('<%=elementId%>');show_inline('<%=hideLinkId%>');hide('<%=editLinkId%>');">Edit</a>
-<a id="<%=hideLinkId%>" style="display:none;" onclick="hide('<%=elementId%>');hide('<%=hideLinkId%>');show_inline('<%=editLinkId%>');">Hide</a>
+<a id="<%=editLinkId%>" onclick="show_block('<%=elementId%>');show_inline('<%=hideLinkId%>');hide('<%=editLinkId%>');"><fmt:message key="edit"/> </a>
+<a id="<%=hideLinkId%>" style="display:none;" onclick="hide('<%=elementId%>');hide('<%=hideLinkId%>');show_inline('<%=editLinkId%>');"><fmt:message key="hide"/> </a>
 <div id="<%=elementId%>" style="display:none;">
     <form method="post" action="./Definitions-edit-global-crawler-traps.jsp"
           enctype="multipart/form-data">
