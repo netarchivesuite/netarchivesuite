@@ -352,7 +352,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
         log.debug("Receiving get all checksum message: " + msg.toString());
 
         try {
-            msg.setResultingFile(cs.getArchiveAsFile());
+            msg.setFile(cs.getArchiveAsFile());
         } catch (Throwable e) {
             log.warn("Cannot retrieve all the checksums.", e);
             msg.setNotOk(e);

@@ -27,6 +27,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -41,6 +42,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -58,6 +62,7 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.TestJob;
@@ -103,6 +108,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         File commontempdir = new File(TestInfo.BAMON_WORKING, "commontempdir");
         commontempdir.mkdir();
         assertTrue("commontempdir not created", commontempdir.exists());
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         con = (JMSConnectionMockupMQ) JMSConnectionFactory.getInstance();
         Settings.set(ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT, 
                 String.valueOf(TestInfo.BITARCHIVE_BATCH_MESSAGE_TIMEOUT));
@@ -115,15 +121,16 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 commontempdir.getAbsolutePath());
     }
 
-
     protected void tearDown() {
         if (bam_server != null) {
             bam_server.close();
         }
         mtf.tearDown();
+        JMSConnectionMockupMQ.clearTestQueues();
         ulrf.tearDown();
         mjms.tearDown();
         rls.tearDown();
+        RememberNotifications.resetSingleton();
         ChannelsTester.resetChannels();
     }
 
@@ -271,8 +278,9 @@ public class BitarchiveMonitorServerTester extends TestCase {
     /**
      * Verify that the BA monitor can timeout if no reply is received within the
      * timeout limit.
+     * @throws InterruptedException 
      */
-    public void testBatchTimeout() {
+    public void testBatchTimeout() throws InterruptedException {
 
         bam_server = new TestBitarchiveMonitorServer();
 
@@ -314,11 +322,14 @@ public class BitarchiveMonitorServerTester extends TestCase {
         // simulate a bitarchive that replies too late: send a
         // late batch ended message
         NetarkivetMessage bem = new BatchEndedMessage(THE_BAMON, ba_App_Id,
-                                                      bitarchive.getLastMessage().getID(),
-                                                      null);
+                bitarchive.getLastMessage().getID(), null);
 
         con.send(bem);
         con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(50);
+        }
 
         if (arcrepos.getLastBatchReplyMessage() == null) {
             fail("BA Monitor never sent a BatchReplyMessage.");
@@ -353,7 +364,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 "BA Monitor server was expected to contain the HeartBeatMessage: "
                 + message, receivedHeartBeatMsgs.contains(message));
 
-        Set runningBAApps = getLiveApps(bam_server);
+        Set<String> runningBAApps = getLiveApps(bam_server);
         assertTrue("BA application with id: " + ba_App_Id
                    + " not found among live BA applications.",
                    runningBAApps.contains(ba_App_Id));
@@ -419,7 +430,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         con.waitForConcurrentTasksToFinish();
 
         // By now each BA application should have sent out at least one heartbeat:
-        Set runningBAApps = getLiveApps(bam_server);
+        Set<String> runningBAApps = getLiveApps(bam_server);
 
         bam_server.close();
         assertTrue(
@@ -654,6 +665,9 @@ public class BitarchiveMonitorServerTester extends TestCase {
                                                        baID2, forwardedID, rf2);
         JMSConnectionMockupMQ.updateMsgID(bem2, "ID54");
         bms.visit(bem1);
+//        synchronized(this) {
+ //           wait(50);
+  //      }
         bms.visit(bem2);
         con.waitForConcurrentTasksToFinish();
         synchronized (this) {
@@ -673,7 +687,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
                 brmsg.getResultFile().copyTo(output_file);
             }
         }
-
+        
         FileAsserts.assertFileNumberOfLines("Aggregated file should have two " +
                                             "lines", output_file, 2);
         FileAsserts.assertFileContains("File contents not as expected",
@@ -698,7 +712,176 @@ public class BitarchiveMonitorServerTester extends TestCase {
                    ((TestRemoteFile) rf2).isDeleted());
     }
 
+    /**
+     * Testing GetAllChecksumMessage.
+     */
+    public void testGetAllChecksumMessage() throws InterruptedException, IOException {
+        bam_server = BitarchiveMonitorServer.getInstance();
+        
+        // Set up a listener on the reply queue for batch messages
+        TestMessageListener listener = new TestMessageListener();
+        con.setListener(Channels.getTheRepos(), listener);
+        
+        String repId = Settings.get(CommonSettings.USE_REPLICA_ID);
+        
+        MockupBitarchiveBatch mbb = new MockupBitarchiveBatch(repId);
+        mbb.heartBeat(bam_server);
+        
+        GetAllChecksumsMessage gacm = new GetAllChecksumsMessage(
+                Channels.getTheBamon(), Channels.getTheRepos(), repId);
 
+        JMSConnectionMockupMQ.updateMsgID(gacm, "gacm1");
+        
+        bam_server.visit(gacm);
+
+        synchronized(this) {
+            wait(50);
+        }
+        
+        bam_server.visit(mbb.replyForLatestJob(RemoteFileFactory.getMovefileInstance(
+                TestInfo.BATCH_ALL_CHECKSUM_OUTPUT_FILE)));
+
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(400);
+        }
+
+        assertEquals("The listener should have one message", 1, listener.getNumReceived());
+        NetarkivetMessage msg = listener.getReceived();
+        assertTrue("The following message should be a GetAllChecksumMessage reply: '" + msg + "'", 
+                msg instanceof GetAllChecksumsMessage);
+
+        GetAllChecksumsMessage returnMsg = (GetAllChecksumsMessage) msg;
+        File tempFile = File.createTempFile("checksum", "all", TestInfo.BAMON_WORKING);
+        returnMsg.getData(tempFile);
+        
+        List<String> batchOutput = FileUtils.readListFromFile(tempFile);
+        
+        assertEquals("The output from batch should have " + 2 + " lines, but it had " + batchOutput.size(), 
+                2, batchOutput.size());
+        
+        String batchResult1 = "myArc1.arc##1234567890";
+        String batchResult2 = "myArc2.arc##0987654321";
+        
+        assertTrue("The result '" + batchOutput.toString() + "' should contain '" + batchResult1, 
+                batchOutput.toString().contains(batchResult1));
+        assertTrue("The result '" + batchOutput.toString() + "' should contain '" + batchResult2 + "'", 
+                batchOutput.toString().contains(batchResult2));
+        
+        tempFile.delete();
+    }
+
+    /**
+     * Testing GetAllChecksumMessage.
+     */
+    public void testGetAllFilenamesMessage() throws InterruptedException, IOException {
+        bam_server = BitarchiveMonitorServer.getInstance();
+        
+        // Set up a listener on the reply queue for batch messages
+        TestMessageListener listener = new TestMessageListener();
+        con.setListener(Channels.getTheRepos(), listener);
+        
+        String repId = Settings.get(CommonSettings.USE_REPLICA_ID);
+        
+        MockupBitarchiveBatch mbb = new MockupBitarchiveBatch(repId);
+        mbb.heartBeat(bam_server);
+        
+        GetAllFilenamesMessage gafm = new GetAllFilenamesMessage(
+                Channels.getTheBamon(), Channels.getTheRepos(), repId);
+
+        JMSConnectionMockupMQ.updateMsgID(gafm, "gafm1");
+        
+        bam_server.visit(gafm);
+
+        synchronized(this) {
+            wait(50);
+        }
+        
+        bam_server.visit(mbb.replyForLatestJob(RemoteFileFactory.getMovefileInstance(
+                TestInfo.BATCH_ALL_FILENAMES_OUTPUT_FILE)));
+
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(200);
+        }
+
+        assertEquals("The listener should have one message", 1, listener.getNumReceived());
+        NetarkivetMessage msg = listener.getReceived();
+        assertTrue("The following message should be a GetAllChecksumMessage reply: '" + msg + "'", 
+                msg instanceof GetAllFilenamesMessage);
+
+        GetAllFilenamesMessage returnMsg = (GetAllFilenamesMessage) msg;
+        File tempFile = File.createTempFile("filenames", "all", TestInfo.BAMON_WORKING);
+        returnMsg.getData(tempFile);
+        
+        List<String> batchOutput = FileUtils.readListFromFile(tempFile);
+        
+        assertEquals("The output from batch should have " + 2 + " lines, but it had " + batchOutput.size(), 
+                2, batchOutput.size());
+        
+        String batchResult1 = "file1.arc";
+        String batchResult2 = "file2.arc";
+        
+        assertTrue("The result '" + batchOutput.toString() + "' should contain '" + batchResult1, 
+                batchOutput.toString().contains(batchResult1));
+        assertTrue("The result '" + batchOutput.toString() + "' should contain '" + batchResult2 + "'", 
+                batchOutput.toString().contains(batchResult2));
+        
+        tempFile.delete();
+    }
+
+    /**
+     * Testing GetChecksumMessage.
+     */
+    public void testGetChecksumMessage() throws InterruptedException, IOException {
+        bam_server = BitarchiveMonitorServer.getInstance();
+        
+        // Set up a listener on the reply queue for batch messages
+        TestMessageListener listener = new TestMessageListener();
+        TestMessageListener baListener = new TestMessageListener();
+        con.setListener(THE_ARCREPOS, listener);
+        con.setListener(ALL_BA, baListener);
+        
+        String repId = Settings.get(CommonSettings.USE_REPLICA_ID);
+        
+        MockupBitarchiveBatch mbb = new MockupBitarchiveBatch(repId);
+        mbb.heartBeat(bam_server);
+        
+        GetChecksumMessage gcm = new GetChecksumMessage(Channels.getTheBamon(), 
+                Channels.getTheRepos(), "requestedFile.arc", repId);
+
+        JMSConnectionMockupMQ.updateMsgID(gcm, "gcm1");
+        
+        bam_server.visit(gcm);
+        
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(50);
+        }
+        
+        bam_server.visit(mbb.replyForLatestJob(RemoteFileFactory.getMovefileInstance(
+                TestInfo.BATCH_ONE_CHECKSUM_OUTPUT_FILE)));
+        
+        synchronized(this) {
+            wait(200);
+        }
+
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("The listener should have one message", 1, listener.getNumReceived());
+        NetarkivetMessage msg = listener.getReceived();
+        assertTrue("The following message should be a GetAllChecksumMessage reply: '" + msg + "'", 
+                msg instanceof GetChecksumMessage);
+
+        GetChecksumMessage returnMsg = (GetChecksumMessage) msg;
+        
+        assertEquals("Did not give expected arcfilename", returnMsg.getArcfileName(), "requestedFile.arc");
+        assertEquals("Did not give expected checksum", returnMsg.getChecksum(), "0192837465");
+    }
+    
     /**
      * A mockup Bitarchive that knows how to send heartbeats and how to create a
      * reply of the last received batch job.
@@ -725,7 +908,9 @@ public class BitarchiveMonitorServerTester extends TestCase {
 
         private String getIDOfLatestJob() {
             ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
-            return getLastInstance(BatchMessage.class).getID();
+            NetarkivetMessage resMsg = getLastInstance(BatchMessage.class);
+            assertNotNull("The last instance of BatchMessage should not be null.", resMsg);
+            return resMsg.getID();
         }
     }
 

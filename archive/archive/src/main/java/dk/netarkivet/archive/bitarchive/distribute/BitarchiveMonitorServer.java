@@ -23,6 +23,9 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -30,17 +33,26 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Class representing message handling for the monitor for bitarchives. The
@@ -79,6 +91,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * Object that handles logical operations.
      */
     private BitarchiveMonitor bamon;
+    
+    /**
+     * Map for managing the messages, which are made into batchjobs.
+     * The String is the ID of the message.
+     */
+    private Map<String, NetarkivetMessage> batchConversions = 
+        new HashMap<String, NetarkivetMessage>();
 
     /**
      * Creates an instance of a BitarchiveMonitorServer.
@@ -193,7 +212,91 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                      + "'", e);
         }
     }
+    
+    /**
+     * Method for handling the 
+     * 
+     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
+     * and sent to the 
+     */
+    public void visit(GetAllChecksumsMessage msg) {
+        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        
+        // Create batchjob for the GetAllChecksumsMessage.
+        ChecksumJob cj = new ChecksumJob();
+        
+        // Execute the batchjob.
+        executeConvertedBatch(cj, msg);
+    }
 
+    /**
+     * Method for handling the 
+     * 
+     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
+     * and sent to the 
+     */
+    public void visit(GetAllFilenamesMessage msg) {
+        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+
+        // Create batchjob for the GetAllChecksumsMessage.
+        FileListJob flj = new FileListJob();
+
+        // Execute the batchjob.
+        executeConvertedBatch(flj, msg);
+    }
+
+    /**
+     * Method for handling the 
+     * 
+     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
+     * and sent to the 
+     */
+    public void visit(GetChecksumMessage msg) {
+        log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
+        
+        // Create batchjob for the GetAllChecksumsMessage.
+        ChecksumJob cj = new ChecksumJob();
+        cj.processOnlyFileNamed(msg.getArcfileName());
+        
+        // Execute the batchjob.
+        executeConvertedBatch(cj, msg);
+    }
+    
+    /**
+     * Method for executing messages converted into batchjobs.
+     * 
+     * @param job The job to execute.
+     * @param msg The message which is converted into the batchjob.
+     */
+    private void executeConvertedBatch(FileBatchJob job, 
+            NetarkivetMessage msg) {
+        try {
+            BatchMessage outbMsg =
+                    new BatchMessage(Channels.getAllBa(), job,
+                                     Settings.get(
+                                             CommonSettings.USE_REPLICA_ID));
+            con.send(outbMsg);
+            
+            long batchTimeout = job.getBatchJobTimeout();
+            // if batch time out is not a positive number, then use settings.
+            if(batchTimeout <= 0) {
+                batchTimeout = Settings.getLong(
+                        ArchiveSettings.BITARCHIVE_BATCH_JOB_TIMEOUT);
+            }
+            bamon.registerBatch(msg.getID(), msg.getReplyTo(),
+                        outbMsg.getID(), batchTimeout);
+            // Remember that the message is a batch conversion.
+            log.info(outbMsg);
+
+            batchConversions.put(msg.getID(), msg);
+        } catch (Throwable e) {
+            log.warn("Trouble while handling batch request '" + msg + "'",
+                     e);
+            msg.setNotOk(e);
+            con.reply(msg);
+        }
+    }
+    
     /**
      * Handles notifications from the bitarchive monitor, that a batch job is
      * complete.
@@ -227,7 +330,16 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         }
         new Thread() {
             public void run() {
-                doBatchReply((BitarchiveMonitor.BatchJobStatus) arg);
+                // convert the input argument.
+                BitarchiveMonitor.BatchJobStatus bjs = 
+                    (BitarchiveMonitor.BatchJobStatus) arg;
+                
+                // Check whether converted message or actual batchjob.
+                if(batchConversions.containsKey(bjs.originalRequestID)) {
+                    replyConvertedBatch(bjs);
+                } else {
+                    doBatchReply(bjs);
+                }
             }
         }.start();
     }
@@ -249,24 +361,122 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                     bjs.batchResultFile);
         } catch (Exception e) {
             log.warn("Make remote file from "
-                     + bjs.batchResultFile, e);
+                    + bjs.batchResultFile, e);
             bjs.appendError("Could not append batch results: " + e);
         }
+
+        // Make batch reply message
         BatchReplyMessage brMsg =
-                new BatchReplyMessage(bjs.originalRequestReplyTo,
-                                      Channels.getTheBamon(),
-                                      bjs.originalRequestID,
-                                      bjs.noOfFilesProcessed,
-                                      bjs.filesFailed, resultsFile);
+            new BatchReplyMessage(bjs.originalRequestReplyTo,
+                    Channels.getTheBamon(),
+                    bjs.originalRequestID,
+                    bjs.noOfFilesProcessed,
+                    bjs.filesFailed, resultsFile);
         if (bjs.errorMessages != null) {
             brMsg.setNotOk(bjs.errorMessages);
         }
+
+        // Send the batch reply message.
         con.send(brMsg);
 
-        log.info("BatchReplyMessage: '" + brMsg
-                 + "' sent from BA monitor to queue: '"
-                 + brMsg.getTo()
-                 + "'");
+        log.info("BatchReplyMessage: '" + brMsg + "' sent from BA monitor "
+                + "to queue: '" + brMsg.getTo() + "'");
+    }
+    
+    /**
+     * Uses the batchjobstatus on the message converted batchjob to reply on 
+     * the original message.
+     * 
+     * @param bjs The status of the batchjob.
+     */
+    private void replyConvertedBatch(BitarchiveMonitor.BatchJobStatus bjs) {
+        // Retrieve the message corresponding to the converted batchjob.
+        NetarkivetMessage msg = batchConversions.get(bjs.originalRequestID);
+        log.info("replying to converted batchjob message : " + msg);
+        try {
+            if(msg instanceof GetAllChecksumsMessage) {
+                // Handle GetAllChecksumsMessage
+                GetAllChecksumsMessage replyMsg = (GetAllChecksumsMessage) msg;
+                
+                // Set the resulting file.
+                replyMsg.setFile(bjs.batchResultFile);
+
+                // record any errors.
+                if(bjs.errorMessages != null) {
+                    replyMsg.setNotOk(bjs.errorMessages);
+                }
+                
+                // reply
+                log.info("Replying to GetAllChecksumsMessage '" + replyMsg 
+                        + "'");
+                con.reply(replyMsg);
+            } else if(msg instanceof GetAllFilenamesMessage) {
+                // Handle GetAllChecksumsMessage
+                GetAllFilenamesMessage replyMsg = (GetAllFilenamesMessage) msg;
+                
+                // Set the resulting file.
+                replyMsg.setFile(bjs.batchResultFile);
+
+                // record any errors.
+                if(bjs.errorMessages != null) {
+                    replyMsg.setNotOk(bjs.errorMessages);
+                }
+                
+                // reply
+                log.info("Replying to GetAllFilenamesMessage '" + replyMsg 
+                        + "'");
+                con.reply(replyMsg);
+            } else if(msg instanceof GetChecksumMessage) {
+                // Handle GetChecksumMessage 
+                GetChecksumMessage replyMsg = (GetChecksumMessage) msg;
+
+                // read the temporary file
+                List<String> output = FileUtils.readListFromFile(bjs.batchResultFile);
+                
+                if(output.size() < 1) {
+                    String errMsg = "The batchjob did not find the file '"
+                        + replyMsg.getArcfileName() + "' within the archive.";
+                    log.warn(errMsg);
+                    throw new IOFailure(errMsg);
+                }
+                if(output.size() > 1) {
+                    log.warn("The file '" + replyMsg.getArcfileName() 
+                            + "' was found " + output.size() + " times in the "
+                            + "archive. Using the first found: " 
+                            + output.get(0));
+                    // TODO handle if different or at least log the others
+                }
+  
+                // Extract the filename and checksum of the first result.
+                KeyValuePair<String, String> firstResult = 
+                    ChecksumJob.parseLine(output.get(0));
+                
+                // Check that the filename is valid
+                if(!replyMsg.getArcfileName().equals(firstResult.getKey())) {
+                    String errMsg = "The first result found the file '"
+                        + firstResult.getKey() + "' but should have found '"
+                        + replyMsg.getArcfileName() + "'.";
+                    log.error(errMsg);
+                    throw new IOFailure(errMsg);
+                }
+                
+                // Put the checksum into the reply message, and reply.
+                replyMsg.setChecksum(firstResult.getValue());
+                replyMsg.setIsReply();
+                con.reply(replyMsg);
+                
+                // cleanup batchjob file
+                FileUtils.remove(bjs.batchResultFile);
+                
+            } else /* unhandled message type. */{
+                String errMsg = "The message cannot be handled '" + msg + "'";
+                log.error(errMsg);
+                throw new IOFailure(errMsg);
+            }
+        } catch (Throwable e) {
+            msg.setNotOk(e);
+            con.reply(msg);
+        }
     }
 
     /**
@@ -284,6 +494,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     public void cleanup() {
         if (instance != null) {
             con.removeListener(Channels.getTheBamon(), this);
+            batchConversions.clear();
             instance = null;
             if (bamon != null) {
                 bamon.cleanup();

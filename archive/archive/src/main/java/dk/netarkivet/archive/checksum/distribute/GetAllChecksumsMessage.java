@@ -72,7 +72,7 @@ public class GetAllChecksumsMessage extends ArchiveMessage {
      * @param file The file with the checksum message.
      * @throws ArgumentNotValid If <b>file</b> is null. 
      */
-    public void setResultingFile(File file) throws ArgumentNotValid {
+    public void setFile(File file) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(file, "File file");
 
         rf = RemoteFileFactory.getMovefileInstance(file);

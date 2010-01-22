@@ -472,9 +472,10 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             if (rf != null) {
                 OutputStream aggregateStream = null;
                 try {
-                    aggregateStream
-                            = new FileOutputStream(batchResultFile, true);
+                    aggregateStream = new FileOutputStream(
+                            batchResultFile, true);
                     rf.appendTo(aggregateStream);
+
                     try {
                         rf.cleanup();
                     } catch (IOFailure e) {

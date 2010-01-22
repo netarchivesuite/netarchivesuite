@@ -57,6 +57,13 @@ public class TestInfo {
     static final File UPLOADMESSAGE_TESTFILE_1 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store1.arc");
     static final File UPLOADMESSAGE_TESTFILE_2 = new File(UPLOADMESSAGE_TEMP_DIR, "NetarchiveSuite-store2.arc");
 
+    
+    static final File BATCH_ALL_CHECKSUM_OUTPUT_FILE = 
+        new File(BAMON_WORKING, "batch_all_checksum_output.txt");
+    static final File BATCH_ALL_FILENAMES_OUTPUT_FILE = 
+        new File(BAMON_WORKING, "batch_all_filenames_output.txt");
+    static final File BATCH_ONE_CHECKSUM_OUTPUT_FILE =
+        new File(BAMON_WORKING, "batch_one_checksum_output.txt");
 
 
 
