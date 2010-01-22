@@ -52,7 +52,7 @@ public class BitarchiveClient implements ReplicaClient {
     protected static final Log log = LogFactory.getLog(BitarchiveClient.class);
 
     /** Connection to JMS provider.*/
-    private JMSConnection con;
+    private JMSConnection jmsCon;
 
     // connection information
     /** The ALL_BA channel for this replica.*/
@@ -77,7 +77,7 @@ public class BitarchiveClient implements ReplicaClient {
         this.allBa = allBaIn;
         this.anyBa = anyBaIn;
         this.theBamon = theBamonIn;
-        con = JMSConnectionFactory.getInstance();
+        jmsCon = JMSConnectionFactory.getInstance();
     }
 
     /**
@@ -107,7 +107,7 @@ public class BitarchiveClient implements ReplicaClient {
 
         // Create and send get message
         GetMessage msg = new GetMessage(allBa, clientId, arcfile, index);
-        con.send(msg);
+        jmsCon.send(msg);
 
         return msg;
     }
@@ -124,12 +124,12 @@ public class BitarchiveClient implements ReplicaClient {
         log.debug("Resending get message '" + msg + "' to bitarchives");
 
         try {
-            con.resend(msg, Channels.getAllBa());
+            jmsCon.resend(msg, Channels.getAllBa());
         } catch (Throwable e) {
             log.warn("Failure while resending " + msg, e);
             try {
                 msg.setNotOk(e);
-                con.reply(msg);
+                jmsCon.reply(msg);
             } catch (Throwable e1) {
                 log.warn("Failed to send error message back", e1);
             }
@@ -144,7 +144,7 @@ public class BitarchiveClient implements ReplicaClient {
     public void getFile(GetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.debug("Resending get file message '" + msg + "' to bitarchives");
-        con.resend(msg, this.allBa);
+        jmsCon.resend(msg, this.allBa);
     }
 
     /**
@@ -154,7 +154,7 @@ public class BitarchiveClient implements ReplicaClient {
      */
     public void removeAndGetFile(RemoveAndGetFileMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
-        con.resend(msg, this.allBa);
+        jmsCon.resend(msg, this.allBa);
     }
 
     /**
@@ -168,7 +168,7 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
         log.debug("\nSending upload message\n" + up.toString());
-        con.send(up);
+        jmsCon.send(up);
     }
 
     /**
@@ -183,7 +183,7 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
         log.debug("Resending batch message '" + bMsg + "' to bitarchive"
                 + " monitor " + this.theBamon);
-        con.resend(bMsg, this.theBamon);
+        jmsCon.resend(bMsg, this.theBamon);
         return bMsg;
     }
 
@@ -207,7 +207,7 @@ public class BitarchiveClient implements ReplicaClient {
         BatchMessage bMsg = new BatchMessage(this.theBamon, replyChannel, job,
                 "No value should be needed; this message was sent "
                         + "directly to the bit archive.");
-        con.send(bMsg);
+        jmsCon.send(bMsg);
         return bMsg;
     }
 
@@ -236,75 +236,85 @@ public class BitarchiveClient implements ReplicaClient {
                 + "(hopefully release 3.12.0)");
     }
 
+
     /**
-     * This should creates a batch job for retrieving all the filenames.
+     * Method for sending a GetAllFilenamesMessage to a checksum archive.
      * 
-     * @param msg The message.
-     * @throws NotImplementedException Always, since this method has not yet 
-     * been implemented.
+     * @param msg The GetAllFilenamesMessage, which will be send through the 
+     * jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
     public void getAllFilenames(GetAllFilenamesMessage msg) 
-            throws NotImplementedException, ArgumentNotValid {
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
+        // send the message to the archive.
+        jmsCon.resend(msg, theBamon);
+
+        // log message.
+        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() + "'.");
     }
 
     /**
-     * This should creates a batch job for retrieving the checksum of all the 
-     * files.
+     * Method for sending the GetAllChecksumMessage to the ChecksumReplica.
      * 
-     * @param msg The message.
-     * @throws NotImplementedException Always, since this method has not yet 
-     * been implemented.
-     * @throws ArgumentNotValid If the GetAllChecksumMessage is null.
+     * @param msg The GetAllChecksumMessage, which will be sent through the jms
+     * connection to the checksum archive.
+     * @throws ArgumentnotValid If the GetAllChecksumsMessage is null.
      */
     public void getAllChecksums(GetAllChecksumsMessage msg) 
-            throws NotImplementedException, ArgumentNotValid {
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
+        // send the message to the archive.
+        jmsCon.resend(msg, theBamon);
+
+        // log message.
+        log.debug("Sending GetAllChecksumMessage: '" + msg.toString() + "'.");
     }
 
     /**
-     * This should creates a batch job for retrieving the checksum of the 
-     * wanted files.
+     * Method for retrieving the checksum of a specific arcfile within the
+     * archive.
      * 
-     * @param msg The message.
-     * @throws NotImplementedException Always, since this method has not yet 
-     * been implemented.
-     * @throws ArgumentNotValid If the GetChecksumMessage is null.
+     * @param msg The GetChecksumMessage which will be sent to the checksum
+     * archive though the jms connection.
      */
-    public void getChecksum(GetChecksumMessage msg) 
-            throws NotImplementedException, ArgumentNotValid {
+    public void getChecksum(GetChecksumMessage msg) {
+        // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
-    }
 
+        jmsCon.resend(msg, theBamon);
+
+        // log what we are doing.
+        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
+    }
+    
     /**
-     * This should creates a batch job for retrieving the checksum of the 
-     * wanted files.
+     * Method for retrieving the checksum of a specific arcfile within the
+     * archive.
      * 
      * @param replyChannel The channel where the reply should be sent.
-     * @param filename The name of the file to retrieve the checksum from.
-     * @return The message when it has been sent.
-     * @throws NotImplementedException Always, since it has not yet been 
-     * implemented.
-     * @throws ArgumentNotValid If the replyChannel is null or the filename 
-     * either is null or empty.
+     * @param filename The GetChecksumMessage which has been sent to the 
+     * checksum archive though the jms connection.
+     * @return The GetChecksumMessage which is sent.
+     * @throws ArgumentNotValid If the reply channel is null or if the filename
+     * is either null or the empty string.
      */
     public GetChecksumMessage getChecksum(ChannelID replyChannel, 
-            String filename) throws NotImplementedException, ArgumentNotValid {
+            String filename) throws ArgumentNotValid {
+        // Validate arguments
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
+
+        // TODO make method for not having the replica id.
+        GetChecksumMessage msg = new GetChecksumMessage(theBamon, replyChannel, 
+                filename, "No replicaId is needed. This message is sent "
+                + "directly to the checksum archive.");
+        jmsCon.send(msg);
+
+        // log what we are doing.
+        log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
+        
+        return msg;
     }
 
     /**

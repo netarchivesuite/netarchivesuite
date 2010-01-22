@@ -141,34 +141,12 @@ public final class DatabaseBasedActiveBitPreservation implements
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
-        // handle the different types of replica.
-        if (replica.getType() == ReplicaType.BITARCHIVE) {
-            // create temporary file.
-            File outputFile = WorkFiles.getFile(replica,
-                    WorkFiles.CHECKSUMS_ON_BA);
+        // send request
+        log.info("Retrieving checksum from replica '" + replica + "'.");
 
-            // send the batch job.
-            log.info("Running ChecksumJob on replica '" + replica + "'.");
-            runBatchJob(new FileListJob(), replica, null, outputFile);
-
-            // parse the output file into resulting list and return it.
-            return FileUtils.readListFromFile(outputFile);
-        } else if (replica.getType() == ReplicaType.CHECKSUM) {
-            // send request
-            log.info("Retrieving checksum from replica '" + replica + "'.");
-
-            // Retrieve the checksum job.
-            return FileUtils
-                    .readListFromFile(ArcRepositoryClientFactory
-                            .getPreservationInstance().getAllFilenames(
-                                    replica.getId()));
-        } else {
-            // throw a error
-            String msg = "Cannot handle the replica type of replica '"
-                    + replica + "'. Thus cannot find changed files.";
-            log.warn(msg);
-            throw new UnknownID(msg);
-        }
+        // Retrieve the checksum job.
+        return FileUtils.readListFromFile(ArcRepositoryClientFactory
+                .getPreservationInstance().getAllFilenames(replica.getId()));
     }
     
     /**
@@ -190,96 +168,13 @@ public final class DatabaseBasedActiveBitPreservation implements
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
-        // handle the different types of replica.
-        if (replica.getType() == ReplicaType.BITARCHIVE) {
-            // create temporary file.
-            File outputFile = WorkFiles.getFile(replica,
-                    WorkFiles.CHECKSUMS_ON_BA);
-
-            // send the batch job.
-            log.info("Running ChecksumJob on replica '" + replica + "'.");
-            runBatchJob(new ChecksumJob(), replica, null, outputFile);
-
-            // handle the case where no output file was retrieved.
-            if (outputFile == null || !outputFile.exists()) {
-                String errMsg = "The ChecksumJob sent to replica '" + replica
-                        + "' did not give any output file.";
-                log.warn(errMsg);
-                throw new IOFailure(errMsg);
-            }
-
-            // parse the output file into resulting list and return it.
-            return ChecksumEntry.parseChecksumJob(outputFile);
-        } else if (replica.getType() == ReplicaType.CHECKSUM) {
             // send request
             log.info("Retrieving checksum from replica '" + replica + "'.");
 
             // Retrieve the checksum job.
-            return ChecksumEntry
-                    .parseChecksumJob(ArcRepositoryClientFactory
-                            .getPreservationInstance().getAllChecksums(
-                                    replica.getId()));
-        } else {
-            // Unknown replica type -> this is not allowed!
-            String msg = "Cannot handle the replica type of replica '"
-                    + replica + "'. Thus cannot find changed files.";
-            log.warn(msg);
-            throw new IllegalState(msg);
-        }
-    }
-    
-    /**
-     * Run any batch job on a replica, possibly restricted to a certain set of
-     * files, and place the output in the given file. The results will also be
-     * checked to verify that there for each file processed is a line in the
-     * output file.
-     *
-     * @param job The BatchJob to run upon the archive.
-     * @param replica The replica (which has to be a bitarchive) that the job 
-     * should run on.
-     * @param specifiedFiles  The files to run the job on, or null if it should
-     * run on all files.
-     * @param batchOutputFile Where to put the result of the job.
-     * @throws IllegalState If the replica is not of the type 'BITARCHIVE', 
-     * which is required for a batchjob.
-     * @throws IOFailure If the batchjob status is invalid.
-     */
-    private void runBatchJob(FileBatchJob job, Replica replica,
-            List<String> specifiedFiles, File batchOutputFile) 
-            throws IOFailure, IllegalState {
-        // Makes sure, that the replica is of the type 'bitarchive'.
-        if (!replica.getType().equals(ReplicaType.BITARCHIVE)) {
-            String msg = "The replica '" + replica + "' has to be of the "
-                    + "type '" + ReplicaType.BITARCHIVE.name();
-            log.warn(msg);
-            throw new IllegalState(msg);
-        }
-
-        job.processOnlyFilesNamed(specifiedFiles);
-        BatchStatus status = ArcRepositoryClientFactory
-                .getPreservationInstance().batch(job, replica.getId());
-        
-        // Write output to file, if we got any
-        if (!status.hasResultFile()) {
-            String msg = "No result file for FileBatchJob on replica '"
-                    + replica + "'.";
-            log.warn(msg);
-            throw new IOFailure(msg);
-        }
-
-        // Report errors
-        if (!status.getFilesFailed().isEmpty()) {
-            String msg = "Failed with the following files: "
-                    + status.getFilesFailed().toString();
-            log.warn(msg);
-            throw new IOFailure(msg);
-        }
-        
-        // copy the results to the output file.
-        status.copyResults(batchOutputFile);
-        log.info("FileBatchJob succeeded and processed "
-                 + status.getNoOfFilesProcessed() + " files on replica "
-                 + replica);
+            return ChecksumEntry.parseChecksumJob(ArcRepositoryClientFactory
+                    .getPreservationInstance().getAllChecksums(
+                            replica.getId()));
     }
     
     /**

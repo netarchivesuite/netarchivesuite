@@ -333,7 +333,7 @@ public class ArcRepository implements CleanupIF {
             ReplicaClient replicaClient) {
         NetarkivetMessage msg;
         
-        if(replicaClient.getType() == ReplicaType.BITARCHIVE) {
+/*        if(replicaClient.getType() == ReplicaType.BITARCHIVE) {
             // Retrieve the checksum from the BitarchiveReplica
             ChecksumJob checksumJob = new ChecksumJob();
             checksumJob.processOnlyFileNamed(filename);
@@ -350,6 +350,9 @@ public class ArcRepository implements CleanupIF {
             log.error(errMsg);
             throw new IllegalState(errMsg);
         }
+        */
+        // Retrieve the checksum of the file.
+        msg = replicaClient.getChecksum(Channels.getTheRepos(), filename);
 
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job submitted for: '" + filename 
