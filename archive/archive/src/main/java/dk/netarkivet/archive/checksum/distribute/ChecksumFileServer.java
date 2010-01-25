@@ -36,6 +36,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
@@ -259,7 +260,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             msg.getData(correctFile);
             
             // put the file into the archive.
-            cs.correct(filename, correctFile);
+            File badFile = cs.correct(filename, correctFile);
+            
+            // Send the file containing the removed entry back. 
+            msg.setRemovedFile(RemoteFileFactory.getMovefileInstance(badFile));
         } catch (Throwable e) {
             // Handle errors.
             log.warn("Cannot handle CorrectMessage: '" + msg + "'", e);

@@ -53,6 +53,8 @@ public class CorrectMessage extends ArchiveMessage {
     private String replicaId;
     /** The credentials to allow the correction of the archive entry.*/
     private String credentials;
+    /** The 'removed' file, which has to be returned.*/
+    private RemoteFile removedFile;
 
     /**
      * Constructor.
@@ -125,6 +127,15 @@ public class CorrectMessage extends ArchiveMessage {
     }
     
     /**
+     * Method for retrieving the correct file.
+     * 
+     * @return The RemoteFile for the correct file.
+     */
+    public RemoteFile getCorrectFile() {
+        return theRemoteFile;
+    }
+    
+    /**
      * Method for retrieving the 'bad' checksum which should correspond to
      * the checksum of the current entry on this file in the archive.
      * 
@@ -151,6 +162,32 @@ public class CorrectMessage extends ArchiveMessage {
     public String getCredentials() {
         return credentials;
     }
+    
+    /**
+     * Returns the removed file.
+     *  
+     * @return The removed file.
+     * @throws IOFailure If the removed file is null.
+     */
+    public RemoteFile getRemovedFile() throws IOFailure {
+        if(removedFile == null) {
+            throw new IOFailure("The removed file is null. Perhaps the message "
+                    + "has not been sent.");
+        }
+        return removedFile;
+    }
+    
+    /**
+     * Sets the removed file. This is the file which are returned to the sender 
+     * of the message.
+     * 
+     * @param rf The removed file which is part of the reply of this message.
+     * @throws ArgumentNotValid If the remote file is null.
+     */
+    public void setRemovedFile(RemoteFile rf) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
+        removedFile = rf;
+    }
 
     /**
      * Accept this message.
@@ -163,9 +200,11 @@ public class CorrectMessage extends ArchiveMessage {
 
     /**
      * Generate String representation of this object.
+     * 
      * @return String representation of this object
      */
     public String toString() {
-        return super.toString() + " Arcfile: " + arcFilename;
+        return super.toString() + ", Arcfile: " + arcFilename + ", Removed: " 
+        + (removedFile != null);
     }
 }

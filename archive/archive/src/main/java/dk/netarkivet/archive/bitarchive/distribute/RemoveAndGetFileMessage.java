@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.distribute.ArchiveMessage;
 import dk.netarkivet.archive.distribute.ArchiveMessageVisitor;
+import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
@@ -56,6 +57,8 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Constructor.
+     * TODO please kill this constructor! It should not contain hardcoded 
+     * channels.
      * @param arcfileName The file to retrieve & remove
      * @param replicaId The id of the bitarchive to receive the response
      * @param checksum the checksum of the file to retrieve & remove
@@ -65,6 +68,25 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
                                      String replicaId, String checksum,
                                      String credentials) {
         super(Channels.getTheRepos(), Channels.getThisReposClient());
+        this.arcfileName = arcfileName;
+        this.replicaId = replicaId;
+        this.checksum = checksum;
+        this.credentials = credentials;
+    }
+    
+    /**
+     * Constructor.
+     * @param to Where to send the message.
+     * @param replyTo Where the reply of the message should be sent.
+     * @param arcfileName The name of the file to remove and retrieve.
+     * @param replicaId The id of the replica to sent it to.
+     * @param checksum The checksum of the bad file to remove and retrieve.
+     * @param credentials The right credentials for the operation.
+     */
+    public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo, 
+            String arcfileName, String replicaId, String checksum, 
+            String credentials) {
+        super(to, replyTo);
         this.arcfileName = arcfileName;
         this.replicaId = replicaId;
         this.checksum = checksum;
@@ -107,6 +129,15 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
                         + remoteFile.getName());
         }
         return file;
+    }
+    
+    /**
+     * Returns the remote file.
+     * 
+     * @return The remote file.
+     */
+    public RemoteFile getRemoteFile() {
+        return remoteFile;
     }
 
     /**

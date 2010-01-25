@@ -675,12 +675,13 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * @param correctFile The file that should replace the current entry
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected. Either the bad entry
-     * cannot be stored, or the new checksum file cannot be created.
+     * cannot be stored, or the new checksum file cannot be created. Or if a 
+     * file for the removed entry cannot be created.
      * @throws IllegalState If no such entry exists to be corrected, or if the 
      * entry has a different checksum than the incorrectChecksum.
      */
     @Override
-    public void correct(String filename, File correctFile) 
+    public File correct(String filename, File correctFile) 
             throws IOFailure, ArgumentNotValid, IllegalState {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(correctFile, "File correctFile");
@@ -699,8 +700,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
         String currentChecksum = checksumArchive.get(filename);
         
         // Make entry in the wrongEntryFile.
-        appendWrongRecordToWrongEntryFile(ChecksumJob.makeLine(filename, 
-                currentChecksum));
+        String badEntry = ChecksumJob.makeLine(filename, 
+                currentChecksum);
+        appendWrongRecordToWrongEntryFile(badEntry);
         
         // Calculate the new checksum and correct the entry.
         String newChecksum = calculateChecksum(correctFile);
@@ -717,6 +719,29 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // Recreate the archive file.
         recreateArchiveFile();
+        
+        // Make the file to containing the bad entry, to be returned in the 
+        // correct message.
+        File removedEntryFile; 
+        try {
+            // Initialise file and writer.
+            removedEntryFile = File.createTempFile(filename, "tmp", 
+                    FileUtils.getTempDir());
+            FileWriter fw = new FileWriter(removedEntryFile);
+            
+            // Write the bad entry.
+            fw.write(badEntry);
+            
+            // flush and close.
+            fw.flush();
+            fw.close();
+        } catch (IOException e) {
+            throw new IOFailure("Unable to create return file for "
+                    + "CorrectMessage", e);
+        }
+        
+        // Return the file containing the removed entry.
+        return removedEntryFile;
     }
     
     /**

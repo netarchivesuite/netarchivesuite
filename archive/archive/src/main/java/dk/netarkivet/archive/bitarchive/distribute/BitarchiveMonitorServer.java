@@ -36,6 +36,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -47,6 +48,7 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -98,6 +100,25 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      */
     private Map<String, NetarkivetMessage> batchConversions = 
         new HashMap<String, NetarkivetMessage>();
+    
+    /**
+     * The map for managing the CorrectMessages. This involves three stages.
+     * 
+     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
+     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * 
+     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
+     * CorrectMessage from the Map. The CorrectMessage is then updated with the
+     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
+     * with the 'correct' file, where the ID of the UploadMessage is put into
+     * the map along the CorrectMessage.
+     * 
+     * Third, the reply of the UploadMessage is used to extract the 
+     * CorrectMessage from the map again, and the results of the UploadMessage 
+     * is used to update the UploadMessage, which is then returned.
+     */
+    private Map<String, CorrectMessage> correctMessages =
+        new HashMap<String, CorrectMessage>();
 
     /**
      * Creates an instance of a BitarchiveMonitorServer.
@@ -211,6 +232,128 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             log.warn("Trouble while handling bitarchive sign of life '" + hbMsg
                      + "'", e);
         }
+    }
+    
+    /**
+     * This is the first step in correcting a bad entry.
+     * 
+     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
+     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * 
+     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
+     * CorrectMessage from the Map. The CorrectMessage is then updated with the
+     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
+     * with the 'correct' file, where the ID of the UploadMessage is put into
+     * the map along the CorrectMessage.
+     * 
+     * Third, the reply of the UploadMessage is used to extract the 
+     * CorrectMessage from the map again, and the results of the UploadMessage 
+     * is used to update the UploadMessage, which is then returned.
+     * 
+     * @param cm The CorrectMessage to handle.
+     * @throws ArgumentNotValid If the CorrectMessage is null.
+     */
+    public void visit(CorrectMessage cm) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
+        log.info("Recieving CorrectMessage: " + cm);
+        
+        // Create the RemoveAndGetFileMessage for removing the file.
+        RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
+                Channels.getAllBa(), Channels.getTheBamon(), 
+                cm.getArcfileName(), cm.getReplicaId(), 
+                cm.getIncorrectChecksum(), cm.getCredentials());
+        
+        // Send the message.
+        con.send(ragfm);
+        
+        // Put the CorrectMessage into the map along the id of the 
+        // RemoveAndGetFileMessage
+        correctMessages.put(ragfm.getID(), cm);
+    }
+    
+    /**
+     * This is the second step in correcting a bad entry.
+     * 
+     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
+     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * 
+     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
+     * CorrectMessage from the Map. The CorrectMessage is then updated with the
+     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
+     * with the 'correct' file, where the ID of the UploadMessage is put into
+     * the map along the CorrectMessage.
+     * 
+     * Third, the reply of the UploadMessage is used to extract the 
+     * CorrectMessage from the map again, and the results of the UploadMessage 
+     * is used to update the UploadMessage, which is then returned.
+     * 
+     * @param The RemoteAndGetFileMessage.
+     * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
+     */
+    public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
+        log.info("Recieving RemoveAndGetFileMessage (presumably reply): " 
+                + msg);
+
+        // Retrieve the correct message
+        CorrectMessage cm = correctMessages.remove(msg.getID());
+
+        // update the correct message.
+        cm.setRemovedFile(msg.getRemoteFile());
+
+        // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
+        // has also filed, and should be returned as a fail.
+        if(!msg.isOk()) {
+            String errMsg = "The RemoveAndGetFileMessage has returned the error: '"
+                + msg.getErrMsg() + "'. Reply to CorrectMessage with "
+                + "the same error.";
+            log.warn(errMsg);
+            cm.setNotOk(errMsg);
+            con.reply(cm);
+            return;
+        }
+        
+        // Create the upload message, send it, and store the CorrectMessage 
+        // along with the ID of the upload message in the map.
+        UploadMessage um = new UploadMessage(Channels.getAllBa(), 
+                Channels.getTheBamon(), cm.getCorrectFile());
+        con.send(um);
+        correctMessages.put(um.getID(), cm);
+    }
+    
+    /**
+     * This is the third step in correcting a bad entry. 
+     * 
+     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
+     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * 
+     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
+     * CorrectMessage from the Map. The CorrectMessage is then updated with the
+     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
+     * with the 'correct' file, where the ID of the UploadMessage is put into
+     * the map along the CorrectMessage.
+     * 
+     * Third, the reply of the UploadMessage is used to extract the 
+     * CorrectMessage from the map again, and the results of the UploadMessage 
+     * is used to update the UploadMessage, which is then returned.
+     * 
+     * @param The reply of the UploadMessage.
+     * @throws ArgumentNotValid If the UploadMessage is null.  
+     */
+    public void visit(UploadMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
+        log.info("Receiving a reply to an UploadMessage: " + msg);
+        
+        // retrieve the CorrectMessage.
+        CorrectMessage cm = correctMessages.remove(msg.getID());
+        
+        // handle potential errors.
+        if(!msg.isOk()) {
+            cm.setNotOk(msg.getErrMsg());
+        }
+        
+        // reply to the correct message.
+        con.reply(cm);
     }
     
     /**
@@ -391,7 +534,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      */
     private void replyConvertedBatch(BitarchiveMonitor.BatchJobStatus bjs) {
         // Retrieve the message corresponding to the converted batchjob.
-        NetarkivetMessage msg = batchConversions.get(bjs.originalRequestID);
+        NetarkivetMessage msg = batchConversions.remove(bjs.originalRequestID);
         log.info("replying to converted batchjob message : " + msg);
         try {
             if(msg instanceof GetAllChecksumsMessage) {

@@ -676,7 +676,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
     /**
      * Method for correcting an entry in a replica.
-     * This is done by sending a correct message to the replica. 
+     * This is done by sending a correct message to the replica.
+     * 
+     * The file which is removed from the replica is put into the tempDir.
      * 
      * @param replicaId The id of the replica to send the message.
      * @param checksum The checksum of the wrong entry in the archive. It is 
@@ -700,8 +702,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         RemoteFile rm = RemoteFileFactory.getCopyfileInstance(file);
         CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
                 replyQ, checksum, rm, replicaId, credentials);
-        CorrectMessage responseMessage
-                = (CorrectMessage) sendAndWaitForOneReply(correctMsg, 0);
+        CorrectMessage responseMessage = (CorrectMessage) 
+                sendAndWaitForOneReply(correctMsg, getTimeout);
 
         if (responseMessage == null) {
             throw new IOFailure("Correct Message timed out before returning."
@@ -709,6 +711,17 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         } else if (!responseMessage.isOk()) {
             throw new IOFailure("CorrectMessage failed: "
                     + responseMessage.getErrMsg());
+        }
+        
+        // retrieve the wrong file.
+        RemoteFile removedFile = responseMessage.getRemovedFile();
+        try {
+            File destFile = new File(FileUtils.getTempDir(), 
+                    removedFile.getName());
+            responseMessage.getRemovedFile().copyTo(destFile);
+        } catch(Throwable e) {
+            log.warn("Problems occured during retrieval of file removed from "
+                    + "archive.", e);
         }
     }
 }

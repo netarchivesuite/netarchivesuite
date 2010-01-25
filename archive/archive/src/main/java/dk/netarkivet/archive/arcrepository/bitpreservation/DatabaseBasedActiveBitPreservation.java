@@ -33,10 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
-import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -45,7 +43,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * The database based active bit preservation.
@@ -124,20 +121,14 @@ public final class DatabaseBasedActiveBitPreservation implements
 
     /**
      * Method for retrieving the filelist from a specific replica.
-     * The filelist are retrieved differently for the different types of 
-     * replica:
-     * <br/> The filelist of a bitarchive is retrieved through running 
-     * the BatchJob FilelistJob on the replica.
-     * <br/> The filelist of a checksumsarchive is retrieved through a 
-     * GetAllFilenamesMessage.
+     * A GetAllFilenamesMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the filelist from.
      * @return The names of the files in a list.
      * @throws ArgumentNotValid If the replica is 'null'.
-     * @throws UnknownID If the replica has a unhandled replica type.
      */
     private List<String> getFilenamesList(Replica replica) throws 
-            ArgumentNotValid, UnknownID {
+            ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -151,30 +142,23 @@ public final class DatabaseBasedActiveBitPreservation implements
     
     /**
      * Method for retrieving the checksums from a specific replica.
-     * The checksum are retrieved differently for the different types of 
-     * replica:
-     * <br/> The checksums of a bitarchive is retrieved through running 
-     * the BatchJob ChecksumJob on the replica.
-     * <br/> The checksums of a checksumsarchive is retrieved through a 
-     * GetAllChecksumMessage.
+     * A GetAllChecksumsMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the checksums from.
      * @return The checksums in the format of ChecksumEntry.
-     * @throws IOFailure If a bitarchive does not return a output file.
-     * @throws IllegalState If the replica has an unknown replica type.
+     * @throws ArgumentNotValid If the replica is null.
      */
     private List<ChecksumEntry> getChecksumList(Replica replica)
-            throws IOFailure, IllegalState {
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
-            // send request
-            log.info("Retrieving checksum from replica '" + replica + "'.");
+        // send request
+        log.info("Retrieving checksum from replica '" + replica + "'.");
 
-            // Retrieve the checksum job.
-            return ChecksumEntry.parseChecksumJob(ArcRepositoryClientFactory
-                    .getPreservationInstance().getAllChecksums(
-                            replica.getId()));
+        // Retrieve the checksum job.
+        return ChecksumEntry.parseChecksumJob(ArcRepositoryClientFactory
+                .getPreservationInstance().getAllChecksums(replica.getId()));
     }
     
     /**
@@ -187,8 +171,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * 
      * @param filename The name of the file to reestablish.
      * @param repWithFile The replica where the file should be retrieved from.
+     * @throws IOFailure If the attempt to reestablish the file fails.
      */
-    private void reestablishMissingFile(String filename, Replica repWithFile) {
+    private void reestablishMissingFile(String filename, Replica repWithFile) 
+            throws IOFailure {
         // send a GetFileMessage to this bitarchive replica for the file.
         try {
             // Contact the ArcRepository.
@@ -214,7 +200,8 @@ public final class DatabaseBasedActiveBitPreservation implements
     }
     
     /**
-     * Method for retrieving a file from a bitarchive.
+     * Method for retrieving a file from a bitarchive (for replacing a bad 
+     * entry in another replica).
      * 
      * @param filename The file to retrieve.
      * @param repWithFile The replica where the file should be retrieved from.
@@ -282,8 +269,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * files.
      * @return The number of files for the replica where the checksum does not
      * correspond to the checksum of the same file in the other replicas.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public long getNumberOfChangedFiles(Replica replica) {
+    public long getNumberOfChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -302,8 +291,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica for which the changed files should be found.
      * @return The names of files in the replica where the checksum does not
      * correspond to the checksum of the same file in the other replicas.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public Iterable<String> getChangedFiles(Replica replica) {
+    public Iterable<String> getChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -321,8 +312,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica for which to count the number of missing 
      * files.
      * @return The number of files which is missing in the replica.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public long getNumberOfMissingFiles(Replica replica) {
+    public long getNumberOfMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -340,8 +333,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * 
      * @param replica The replica for which the missing files should be found.
      * @return The names of files in the replica which are missing.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public Iterable<String> getMissingFiles(Replica replica) {
+    public Iterable<String> getMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -362,8 +357,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * should be retrieved.
      * @return The date for the last time the checksums has been update. If the 
      * checksum update has never occurred, then a null is returned. 
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public Date getDateForChangedFiles(Replica replica) {
+    public Date getDateForChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -384,8 +381,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * should be retrieved.
      * @return The date for the last time the filelist has been update. If the 
      * filelist update has never occurred, then a null is returned. 
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public Date getDateForMissingFiles(Replica replica) {
+    public Date getDateForMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -396,9 +395,7 @@ public final class DatabaseBasedActiveBitPreservation implements
     
     /**
      * The method is used to update the checksum for all the files in a replica.
-     * The checksum for the replica is retrieved either through a ChecksumJob
-     * (for a bitarchive) or through a GetAllChecksumMessage (for a 
-     * checksumarchive).
+     * The checksum for the replica is retrieved through GetAllChecksumMessages.
      * This will take a very large amount of time for the bitarchive, but a 
      * more limited amount of time for the checksumarchive.
      * 
@@ -467,7 +464,7 @@ public final class DatabaseBasedActiveBitPreservation implements
     /**
      * Method for retrieving the FilePreservationState for a list of files.
      * 
-     * @param filenames The list of filenames whos FilePreservationState should
+     * @param filenames The list of filenames whose FilePreservationState should
      * be retrieved.
      * @return A mapping between the filenames and their FilePreservationState.
      * @throws NotImplementedException Since it has not yet been implemented.
@@ -495,8 +492,12 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica for which the number of files should be 
      * counted.
      * @return The number of files for a specific replica.
+     * @throws ArgumentNotValid If the replica is null.
      */
-    public long getNumberOfFiles(Replica replica) {
+    public long getNumberOfFiles(Replica replica) throws ArgumentNotValid {
+        // validate
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
         // returns the amount of files, which is not missing.
         return cache.getNumberOfFiles(replica);
     }
@@ -511,9 +512,9 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param credentials The credentials used to perform this replace operation
      * @param checksum  The known bad checksum. Only a file with this bad
      * checksum is attempted repaired.
-     * @throws IOFailure if the file cannot be reestablished.
-     * @throws UnknownID if the file is not in correct state.
-     * @throws ArgumentNotValid if any of the arguments are not valid.
+     * @throws IOFailure If the file cannot be reestablished.
+     * @throws UnknownID If the file is not in correct state.
+     * @throws ArgumentNotValid If any of the arguments are not valid.
      */
     public void replaceChangedFile(Replica replica, String filename,
             String credentials, String checksum) throws UnknownID, IOFailure, 
@@ -523,33 +524,14 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
 
-        // replace the file.
-        if(replica.getType().equals(ReplicaType.BITARCHIVE)) {
-            System.out.println("Trying to remove file from bitarchive.");
-            // remove file.
-            // Send remove file message!
-            ArcRepositoryClientFactory.getPreservationInstance()
-                    .removeAndGetFile(filename, replica.getId(), checksum, 
-                            credentials);
-            // upload file.
-            uploadMissingFiles(replica, filename);
-        } else if(replica.getType().equals(ReplicaType.CHECKSUM)) {
-            System.out.println("Trying to remove file from checksumarchive");
-            
-            // find replica
-            Replica repWithFile = cache.getBitarchiveWithGoodFile(filename, 
-                    replica);
-            // retrieve the file from the replica.
-            File missingFile = retrieveRemoteFile(filename, repWithFile);
-            // upload the file to the replica where it is missing
-            ArcRepositoryClientFactory.getPreservationInstance().correct(
-                    replica.getId(), checksum, missingFile, credentials);
-        } else {
-            String errMsg = "The replica is of a type which is currently not "
-                + "handled: " + replica;
-            log.warn(errMsg);
-            throw new UnknownID(errMsg);
-        }
+        // find replica
+        Replica repWithFile = cache.getBitarchiveWithGoodFile(filename, 
+                replica);
+        // retrieve the file from the replica.
+        File missingFile = retrieveRemoteFile(filename, repWithFile);
+        // upload the file to the replica where it is missing
+        ArcRepositoryClientFactory.getPreservationInstance().correct(
+                replica.getId(), checksum, missingFile, credentials);
     }
 
     /**
@@ -560,8 +542,17 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica where the files are missing.
      * @param filenames The names of the files which are missing in the given
      * replica.
+     * @throws ArgumentNotValid If the replica or list of filenames is null, 
+     * or if the list of filenames is empty.
+     * @throws IOFailure If some files could not be established.
      */
-    public void uploadMissingFiles(Replica replica, String... filenames) {
+    public void uploadMissingFiles(Replica replica, String... filenames) 
+            throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
+        ArgumentNotValid.checkPositive(filenames.length, "Length of argument "
+                + "String... filenames");
+        
         // make record of files, which is not uploaded correct.
         List<String> filesFailedReestablishment = new ArrayList<String>();
 
