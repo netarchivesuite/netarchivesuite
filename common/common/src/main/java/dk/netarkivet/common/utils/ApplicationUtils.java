@@ -44,7 +44,7 @@ public abstract class ApplicationUtils {
     private static final Log log =
             LogFactory.getLog(ApplicationUtils.class);
 
-    /** System.exit() value for the case where arguments are given. */
+    /** System.exit() value for the case where wrong arguments are given. */
     public static final int WRONG_ARGUMENTS = 1;
 
     /** System.exit() value for the case where the application does not
@@ -93,10 +93,23 @@ public abstract class ApplicationUtils {
      * @param args the argument array.
      */
     private static void checkArgs(String[] args) {
-        if (args.length != 0) {
+        if (showVersion(args)) {
+            logAndPrint("NetarchiveSuite "
+                    + dk.netarkivet.common.Constants.getVersionString());
+            System.exit(0);
+        }
+        if (args.length > 0) {
             logAndPrint("This application takes no arguments");
             System.exit(WRONG_ARGUMENTS);
         }
+    }
+
+    private static boolean showVersion(String[] args) {
+        if(args.length == 1
+                && (args[0].equals("-v") || args[0].equals("--version"))) {
+            return true;
+        }
+        return false;
     }
 
     /**
