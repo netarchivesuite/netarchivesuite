@@ -14,9 +14,9 @@
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/libidn-0.5.9.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/db/derby-10.4.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/db/derbyclient-10.4.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/db/derbynet-10.4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/db/derby-10.5.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbyclient-10.5.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbynet-10.5.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/ant-1.6.5.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/core-3.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/jetty-util-6.1.6.jar"/>
@@ -42,7 +42,7 @@
 	<classpathentry kind="lib" path="lib/heritrix/lib/commons-cli-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/wayback-core-1.4.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/db/derbytools-10.4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/db/derbytools-10.5.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/heritrix-dependencies/je-3.3.75.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
