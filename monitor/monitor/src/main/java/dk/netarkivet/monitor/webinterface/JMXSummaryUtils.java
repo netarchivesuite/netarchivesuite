@@ -194,7 +194,7 @@ public class JMXSummaryUtils {
      * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static String generateShowAllLink(StarredRequest starredRequest,
-            String parameter, Locale l) throws ArgumentNotValid{
+            String parameter, Locale l) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(starredRequest, 
                 "StarredRequest starredRequest");
         ArgumentNotValid.checkNotNull(parameter, "String parameter");
@@ -221,7 +221,7 @@ public class JMXSummaryUtils {
      * @throws ArgumentNotValid if arguments isn't valid.
      */
     public static String generateShowLink(StarredRequest starredRequest,
-             String parameter, Locale l) throws ArgumentNotValid{
+             String parameter, Locale l) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(starredRequest, 
                 "StarredRequest starredRequest");
         ArgumentNotValid.checkNotNull(parameter, "String parameter");
@@ -279,7 +279,7 @@ public class JMXSummaryUtils {
      * @throws ArgumentNotValid if request is null.
      */
     public static String generateLink(StarredRequest request, String setPart,
-                   String setValue, String linkText) throws ArgumentNotValid{
+                   String setValue, String linkText) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(request, "StarredRequest request");
         if (linkText == null) {
             return "";
@@ -324,7 +324,8 @@ public class JMXSummaryUtils {
      * @throws ForwardedToErrorPage if unable to create JMX-query.
      */
     public static List<StatusEntry> queryJMXFromRequest(String[] parameters,
-           StarredRequest request, PageContext context) throws ArgumentNotValid{
+           StarredRequest request, PageContext context) 
+           throws ArgumentNotValid, ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(parameters, "String[] parameters");
         ArgumentNotValid.checkNotNull(request, "StarredRequest request");
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -395,10 +396,15 @@ public class JMXSummaryUtils {
      * @param starredRequest A request containing current values for the given
      * parameters.
      * @return A query, wildcarded for those parameters that are
-     * * or missing in starredRequest.
+     * or missing in starredRequest.
+     * @throws ArgumentNotValid if one or all of the arguements are null.
      */
     public static String createJMXQuery(String[] parameters,
-                                         StarredRequest starredRequest) {
+                                         StarredRequest starredRequest) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(parameters, "String[] parameters");
+        ArgumentNotValid.checkNotNull(starredRequest,
+                                      "StarredRequest starredRequest");
         StringBuilder query =
                 new StringBuilder(LOGGING_MBEAN_NAME_PREFIX + "*");
         for (String queryPart : parameters) {
@@ -449,6 +455,8 @@ public class JMXSummaryUtils {
             msg.append("</pre>");
             if ((line = sr.readLine()) != null) {
                 //We use a random number for generating a unique id for the div.
+                // TODO should change method to take an integer, so no
+                // colidation is happening.
                 int id = random.nextInt();
                 msg.append("<a id=\"show");
                 msg.append(id);
@@ -487,6 +495,7 @@ public class JMXSummaryUtils {
      * parameters appear as "*" for wildcard (or "0" for the index parameter).
      */
     public static class StarredRequest {
+        /** A http request, for a starred request. */
         HttpServletRequest req;
 
         /**
