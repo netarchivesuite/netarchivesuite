@@ -64,7 +64,9 @@ public class ChecksumClient implements ReplicaClient {
      * The connection to contact all checksum archives.
      */
     private ChannelID theCR;
-
+    /** The name of the replica whose client this is.*/
+    private String replicaId;
+    
     /**
      * The constructor. Cannot be used directly, use getInstance instead.
      * 
@@ -75,6 +77,8 @@ public class ChecksumClient implements ReplicaClient {
      */
     private ChecksumClient(ChannelID theCRin) throws IOFailure {
         this.theCR = theCRin;
+        replicaId = Channels.retrieveReplicaFromIdentifierChannel(
+                theCR.getName()).getId();
         jmsCon = JMSConnectionFactory.getInstance();
     }
 
@@ -187,8 +191,7 @@ public class ChecksumClient implements ReplicaClient {
 
         // TODO make method for not having the replica id.
         GetChecksumMessage msg = new GetChecksumMessage(theCR, replyChannel, 
-                filename, "No replicaId is needed. This message is sent "
-                + "directly to the checksum archive.");
+                filename, replicaId);
         jmsCon.send(msg);
 
         // log what we are doing.

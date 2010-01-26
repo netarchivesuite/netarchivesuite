@@ -63,6 +63,8 @@ public class BitarchiveClient implements ReplicaClient {
     private ChannelID theBamon;
     /** The channel to the ArcRepository.*/
     private ChannelID clientId = Channels.getTheRepos();
+    /** The name of the replica whose client this is.*/
+    private String replicaId;
 
     /**
      * Establish the connection to the server.
@@ -77,6 +79,8 @@ public class BitarchiveClient implements ReplicaClient {
         this.allBa = allBaIn;
         this.anyBa = anyBaIn;
         this.theBamon = theBamonIn;
+        replicaId = Channels.retrieveReplicaFromIdentifierChannel(
+                theBamon.getName()).getId();
         jmsCon = JMSConnectionFactory.getInstance();
     }
 
@@ -205,8 +209,7 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(replyChannel, "replyChannel");
         ArgumentNotValid.checkNotNull(job, "job");
         BatchMessage bMsg = new BatchMessage(this.theBamon, replyChannel, job,
-                "No value should be needed; this message was sent "
-                        + "directly to the bit archive.");
+                replicaId);
         jmsCon.send(bMsg);
         return bMsg;
     }
@@ -231,9 +234,10 @@ public class BitarchiveClient implements ReplicaClient {
     public void correct(CorrectMessage msg) throws NotImplementedException, 
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
-        throw new NotImplementedException("Has not yet been implemented. Will "
-                + "be implemented by archive assignment B2.2 "
-                + "(hopefully release 3.12.0)");
+        
+        jmsCon.resend(msg, theBamon);
+        
+        log.debug("Sending CorrectMessage: '" + msg + "'");
     }
 
 
@@ -251,7 +255,8 @@ public class BitarchiveClient implements ReplicaClient {
         jmsCon.resend(msg, theBamon);
 
         // log message.
-        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() + "'.");
+        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() 
+                + "'.");
     }
 
     /**
@@ -307,8 +312,7 @@ public class BitarchiveClient implements ReplicaClient {
 
         // TODO make method for not having the replica id.
         GetChecksumMessage msg = new GetChecksumMessage(theBamon, replyChannel, 
-                filename, "No replicaId is needed. This message is sent "
-                + "directly to the checksum archive.");
+                filename, replicaId);
         jmsCon.send(msg);
 
         // log what we are doing.

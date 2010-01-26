@@ -253,7 +253,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     
     /**
      * Method for retrieving all the checksums from a replica.
-     * TODO Currently only checksum replicas.
      * 
      * @param msg The GetAllChecksumsMessage.
      * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
@@ -277,7 +276,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Method for handling the results of a GetChecksumMessage.
      * This should be handled similar to a ReplyBatchMessage, when a batchjob
      * has run on a single file.
-     * TODO This currently only work for checksum replicas.
      * 
      * @param msg The GetChecksumMessage message.
      */
