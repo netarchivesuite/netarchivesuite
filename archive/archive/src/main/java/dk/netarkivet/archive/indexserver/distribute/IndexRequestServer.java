@@ -191,10 +191,10 @@ public class IndexRequestServer extends ArchiveMessageHandler
         } finally {
             String state = "failed";
             if (irMsg.isOk()) {
-        	state = "successfull";
+        	state = "successful";
             }
             log.info("Sending " + state 
-        	    + " reply for IndexRequestMessage "
+        	    + " reply for IndexRequestMessage"
             		//"with ID='"
                     //+ irMsg.getReplyOfId()
                     + " back to sender '"
