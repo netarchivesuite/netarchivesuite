@@ -6,14 +6,21 @@
 # $3 = The directory to deploy from
 
 # (1) setting up directory and variables.
-if [ "$#" -ne 3 ]; then echo "Usage:\n\$ bash RunNetarchiveSuite.sh NetarchiveSuite.zip deploy.xml USER"; exit 0; fi;
+if [ "$#" -ne 3 ]; then 
+    echo "Usage:"
+    echo "\$ bash RunNetarchiveSuite.sh NetarchiveSuite.zip deploy.xml USER\n";
+    echo "\tNetarchiveSuite.zip - Release zip of NetarchiveSuite."
+    echo "\tdeploy.xml - Deploy xml file, which describe the configurations of"
+    echo "\t\tNetArchiveSuite."
+    echo "\tUSER - RunNetArchiveSuite.sh creates a USER directory, where "
+    echo "\t\tinstallation is placed.\n "
+    exit 0;
+fi;
 echo RETRIEVING AND TESTING VARIABLES
+# Retrieve command line parameters
 NETARCHIVESUITE=$1
-#if [ ! $NETARCHIVESUITE ]; then echo NO NETARCHIVESUITE FILE; exit 0; fi;
 CONFIG=$2
-#if [ ! $CONFIG ]; then echo NO CONFIG FILE; exit 0; fi;
 BASEDIR=$3
-#if [ ! $BASEDIR ]; then echo NO BASEDIR; exit 0; fi;
 
 # (2) create directory
 echo CREATING/CLEANING DIRECTORY $BASEDIR
