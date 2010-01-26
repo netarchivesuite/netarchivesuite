@@ -538,79 +538,13 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         log.info("replying to converted batchjob message : " + msg);
         try {
             if(msg instanceof GetAllChecksumsMessage) {
-                // Handle GetAllChecksumsMessage
-                GetAllChecksumsMessage replyMsg = (GetAllChecksumsMessage) msg;
-                
-                // Set the resulting file.
-                replyMsg.setFile(bjs.batchResultFile);
-
-                // record any errors.
-                if(bjs.errorMessages != null) {
-                    replyMsg.setNotOk(bjs.errorMessages);
-                }
-                
-                // reply
-                log.info("Replying to GetAllChecksumsMessage '" + replyMsg 
-                        + "'");
-                con.reply(replyMsg);
+                replyToGetAllChecksumsMessage(bjs, 
+                        (GetAllChecksumsMessage) msg);
             } else if(msg instanceof GetAllFilenamesMessage) {
-                // Handle GetAllChecksumsMessage
-                GetAllFilenamesMessage replyMsg = (GetAllFilenamesMessage) msg;
-                
-                // Set the resulting file.
-                replyMsg.setFile(bjs.batchResultFile);
-
-                // record any errors.
-                if(bjs.errorMessages != null) {
-                    replyMsg.setNotOk(bjs.errorMessages);
-                }
-                
-                // reply
-                log.info("Replying to GetAllFilenamesMessage '" + replyMsg 
-                        + "'");
-                con.reply(replyMsg);
+                replyToGetAllFilenamesMessage(bjs, 
+                        (GetAllFilenamesMessage) msg); 
             } else if(msg instanceof GetChecksumMessage) {
-                // Handle GetChecksumMessage 
-                GetChecksumMessage replyMsg = (GetChecksumMessage) msg;
-
-                // read the temporary file
-                List<String> output = FileUtils.readListFromFile(bjs.batchResultFile);
-                
-                if(output.size() < 1) {
-                    String errMsg = "The batchjob did not find the file '"
-                        + replyMsg.getArcfileName() + "' within the archive.";
-                    log.warn(errMsg);
-                    throw new IOFailure(errMsg);
-                }
-                if(output.size() > 1) {
-                    log.warn("The file '" + replyMsg.getArcfileName() 
-                            + "' was found " + output.size() + " times in the "
-                            + "archive. Using the first found: " 
-                            + output.get(0));
-                    // TODO handle if different or at least log the others
-                }
-  
-                // Extract the filename and checksum of the first result.
-                KeyValuePair<String, String> firstResult = 
-                    ChecksumJob.parseLine(output.get(0));
-                
-                // Check that the filename is valid
-                if(!replyMsg.getArcfileName().equals(firstResult.getKey())) {
-                    String errMsg = "The first result found the file '"
-                        + firstResult.getKey() + "' but should have found '"
-                        + replyMsg.getArcfileName() + "'.";
-                    log.error(errMsg);
-                    throw new IOFailure(errMsg);
-                }
-                
-                // Put the checksum into the reply message, and reply.
-                replyMsg.setChecksum(firstResult.getValue());
-                replyMsg.setIsReply();
-                con.reply(replyMsg);
-                
-                // cleanup batchjob file
-                FileUtils.remove(bjs.batchResultFile);
-                
+                replyToGetChecksumMessage(bjs, (GetChecksumMessage) msg);
             } else /* unhandled message type. */{
                 String errMsg = "The message cannot be handled '" + msg + "'";
                 log.error(errMsg);
@@ -619,6 +553,132 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         } catch (Throwable e) {
             msg.setNotOk(e);
             con.reply(msg);
+        }
+    }
+    
+    /**
+     * Method for replying to a GetAllChecksumsMessage.
+     * It uses the reply from the batchjob to make a proper reply to the 
+     * GetAllChecksumsMessage. 
+     * 
+     * @param bjs The BatchJobStatus used to reply to the 
+     * GetAllChecksumsMessage.
+     * @param msg The GetAllChecksumsMessage to reply to.
+     */
+    private void replyToGetAllChecksumsMessage(BitarchiveMonitor.BatchJobStatus
+            bjs, GetAllChecksumsMessage msg) {
+        try {
+            // Set the resulting file.
+            msg.setFile(bjs.batchResultFile);
+
+            // record any errors.
+            if(bjs.errorMessages != null) {
+                msg.setNotOk(bjs.errorMessages);
+            }
+        } catch (Throwable e) {
+            msg.setNotOk(e);
+            log.warn("An error occurred during the handling of the "
+                    + "GetAllChecksumsMessage", e);
+        } finally {
+            // reply
+            log.info("Replying to GetAllChecksumsMessage '" + msg 
+                    + "'");
+            con.reply(msg);
+        }
+    }
+    
+    /**
+     * Method for replying to a GetAllFilenamesMessage.
+     * It uses the reply from the batchjob to make a proper reply to the 
+     * GetAllFilenamesMessage. 
+     * 
+     * @param bjs The BatchJobStatus used to reply to the 
+     * GetAllFilenamesMessage.
+     * @param msg The GetAllFilenamesMessage to reply to.
+     */
+    private void replyToGetAllFilenamesMessage(BitarchiveMonitor.BatchJobStatus
+            bjs, GetAllFilenamesMessage msg) {
+        try {
+            // Set the resulting file.
+            msg.setFile(bjs.batchResultFile);
+
+            // record any errors.
+            if(bjs.errorMessages != null) {
+                msg.setNotOk(bjs.errorMessages);
+            }
+        } catch (Throwable e) {
+            msg.setNotOk(e);
+            log.warn("An error occurred during the handling of the "
+                    + "GetAllFilenamesMessage", e);
+        } finally {
+            // reply
+            log.info("Replying to GetAllFilenamesMessage '" + msg 
+                    + "'");
+            con.reply(msg);
+        }
+    }
+    
+    /**
+     * Method for replying to a GetChecksumMessage.
+     * It uses the reply from the batchjob to make a proper reply to the 
+     * GetChecksumMessage. 
+     * 
+     * @param bjs The BatchJobStatus to be used for the reply.
+     * @param msg The GetChecksumMessage to reply to.
+     */
+    private void replyToGetChecksumMessage(BitarchiveMonitor.BatchJobStatus bjs,
+            GetChecksumMessage msg) {
+        try {
+            // read the temporary file
+            List<String> output = 
+                FileUtils.readListFromFile(bjs.batchResultFile);
+
+            if(output.size() < 1) {
+                String errMsg = "The batchjob did not find the file '"
+                    + msg.getArcfileName() + "' within the "
+                    + "archive.";
+                log.warn(errMsg);
+
+                throw new IOFailure(errMsg);
+            }
+            if(output.size() > 1) {
+                log.warn("The file '" + msg.getArcfileName() 
+                        + "' was found " + output.size() + " times in "
+                        + "the archive. Using the first found: " 
+                        + output.get(0));
+                // TODO handle if different or at least log the others
+            }
+
+            // Extract the filename and checksum of the first result.
+            KeyValuePair<String, String> firstResult = 
+                ChecksumJob.parseLine(output.get(0));
+
+            // Check that the filename is valid
+            if(!msg.getArcfileName().equals(
+                    firstResult.getKey())) {
+                String errMsg = "The first result found the file '"
+                    + firstResult.getKey() + "' but should have found '"
+                    + msg.getArcfileName() + "'.";
+                log.error(errMsg);
+                throw new IOFailure(errMsg);
+            }
+
+            // Put the checksum into the reply message, and reply.
+            msg.setChecksum(firstResult.getValue());
+
+            // cleanup batchjob file
+            FileUtils.remove(bjs.batchResultFile);
+        } catch(Throwable e) {
+            msg.setNotOk(e); 
+            log.warn("An error occurred during the handling of the "
+                    + "GetChecksumMessage", e);
+        } finally {
+            log.info("Replying GetChecksumMessage: '" 
+                    + msg.toString() + "'.");
+            
+            // Reply to the original message (set 'isReply').
+            msg.setIsReply();
+            con.reply(msg);                    
         }
     }
 
