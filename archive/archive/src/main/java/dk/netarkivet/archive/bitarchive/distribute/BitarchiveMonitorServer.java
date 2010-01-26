@@ -266,6 +266,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // Send the message.
         con.send(ragfm);
         
+        log.info("Step 1 of handling CorrectMessage. Sending "
+                + "RemoveAndGetFileMessage: " + ragfm);
+        
         // Put the CorrectMessage into the map along the id of the 
         // RemoveAndGetFileMessage
         correctMessages.put(ragfm.getID(), cm);
@@ -313,11 +316,14 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             return;
         }
         
-        // Create the upload message, send it, and store the CorrectMessage 
-        // along with the ID of the upload message in the map.
+        // Create the upload message, send it. 
         UploadMessage um = new UploadMessage(Channels.getAllBa(), 
                 Channels.getTheBamon(), cm.getCorrectFile());
         con.send(um);
+        log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
+                + um);
+        
+        // Store the CorrectMessage along with the ID of the UploadMessage.
         correctMessages.put(um.getID(), cm);
     }
     
@@ -354,6 +360,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         
         // reply to the correct message.
         con.reply(cm);
+        log.info("Step 3 of handling CorrectMessage. Sending reply for "
+                + "CorrectMessage: '" + cm + "'");
     }
     
     /**
