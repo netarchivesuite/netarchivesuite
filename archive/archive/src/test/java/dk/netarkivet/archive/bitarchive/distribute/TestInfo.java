@@ -65,6 +65,8 @@ public class TestInfo {
     static final File BATCH_ONE_CHECKSUM_OUTPUT_FILE =
         new File(BAMON_WORKING, "batch_one_checksum_output.txt");
 
+    static final File CORRECT_ARC_FILE = new File(BAMON_WORKING, "file-1.arc");
+    static final File BAD_ARC_FILE = new File(BAMON_WORKING, "file-2.arc");
 
 
     //Moved from BitArchiveServerTester:

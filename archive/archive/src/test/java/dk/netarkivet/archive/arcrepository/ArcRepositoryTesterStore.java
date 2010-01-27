@@ -42,6 +42,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -438,15 +439,12 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
         assertTrue("The message should be a checksum message but was "
-                   + sentMsg.getClass(), sentMsg instanceof BatchMessage);
-        BatchMessage batchMsg = (BatchMessage) sentMsg;
-        assertTrue("The batchMsg should be okay", batchMsg.isOk());
-        assertTrue("Should be for the right sort of job",
-                   batchMsg.getJob() instanceof ChecksumJob);
-        ChecksumJob job = (ChecksumJob) batchMsg.getJob();
-        assertEquals("Should be for the right file",
-                     Pattern.quote(STORABLE_FILE.getName()),
-                     job.getFilenamePattern().toString());
+                   + sentMsg.getClass(), sentMsg instanceof GetChecksumMessage);
+        GetChecksumMessage gcm = (GetChecksumMessage) sentMsg;
+        assertTrue("The checksum message should be okay", gcm.isOk());
+        assertEquals("The GetChecksumMessage should ask for the file '" 
+                + STORABLE_FILE.getName() + "', not '" + gcm.getArcfileName(), 
+                STORABLE_FILE.getName(), gcm.getArcfileName());
 
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
@@ -519,15 +517,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
         assertTrue("The message should be a checksum message but was "
-                   + sentMsg.getClass(), sentMsg instanceof BatchMessage);
-        BatchMessage batchMsg = (BatchMessage) sentMsg;
-        assertTrue("The batchMsg should be okay", batchMsg.isOk());
-        assertTrue("Should be for the right sort of job",
-                   batchMsg.getJob() instanceof ChecksumJob);
-        ChecksumJob job = (ChecksumJob) batchMsg.getJob();
+                   + sentMsg.getClass(), sentMsg instanceof GetChecksumMessage);
+        GetChecksumMessage gcm= (GetChecksumMessage) sentMsg;
+        assertTrue("The checksum message should be okay", gcm.isOk());
         assertEquals("Should be for the right file",
-                     Pattern.quote(STORABLE_FILE.getName()),
-                     job.getFilenamePattern().toString());
+                     STORABLE_FILE.getName(), gcm.getArcfileName());
 
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
@@ -608,15 +602,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
         assertTrue("The message should be a checksum message but was "
-                   + sentMsg.getClass(), sentMsg instanceof BatchMessage);
-        BatchMessage batchMsg = (BatchMessage) sentMsg;
-        assertTrue("The batchMsg should be okay", batchMsg.isOk());
-        assertTrue("Should be for the right sort of job",
-                   batchMsg.getJob() instanceof ChecksumJob);
-        ChecksumJob job = (ChecksumJob) batchMsg.getJob();
+                   + sentMsg.getClass(), sentMsg instanceof GetChecksumMessage);
+        GetChecksumMessage gcm = (GetChecksumMessage) sentMsg;
+        assertTrue("The batchMsg should be okay", gcm.isOk());
         assertEquals("Should be for the right file",
-                     Pattern.quote(STORABLE_FILE.getName()),
-                     job.getFilenamePattern().toString());
+                     STORABLE_FILE.getName(), gcm.getArcfileName());
 
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());
@@ -705,15 +695,11 @@ public class ArcRepositoryTesterStore extends TestCase {
         //Expected message
         NetarkivetMessage sentMsg = gmlOneBaMon.messagesReceived.get(0);
         assertTrue("The message should be a checksum message but was "
-                   + sentMsg.getClass(), sentMsg instanceof BatchMessage);
-        BatchMessage batchMsg = (BatchMessage) sentMsg;
-        assertTrue("The batchMsg should be okay", batchMsg.isOk());
-        assertTrue("Should be for the right sort of job",
-                   batchMsg.getJob() instanceof ChecksumJob);
-        ChecksumJob job = (ChecksumJob) batchMsg.getJob();
+                   + sentMsg.getClass(), sentMsg instanceof GetChecksumMessage);
+        GetChecksumMessage gcm= (GetChecksumMessage) sentMsg;
+        assertTrue("The checksum message should be okay", gcm.isOk());
         assertEquals("Should be for the right file",
-                     Pattern.quote(STORABLE_FILE.getName()),
-                     job.getFilenamePattern().toString());
+                     STORABLE_FILE.getName(), gcm.getArcfileName());
 
         //Check admin data
         ArcRepositoryEntry entry = adminData.getEntry(STORABLE_FILE.getName());

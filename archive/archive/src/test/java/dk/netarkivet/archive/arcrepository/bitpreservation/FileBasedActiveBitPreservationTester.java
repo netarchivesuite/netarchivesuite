@@ -42,6 +42,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
+import org.mortbay.log.Log;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -69,6 +70,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
@@ -319,38 +321,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         acp.close();
     }
 
-    public void testRunBatchJob() throws NoSuchMethodException,
-                                         IllegalAccessException,
-                                         InvocationTargetException {
-        Method runBatchJob = ReflectUtils.getPrivateMethod(
-                FileBasedActiveBitPreservation.class,
-                "runBatchJob",
-                FileBatchJob.class, Replica.class, List.class, File.class);
-
-        abp = FileBasedActiveBitPreservation.getInstance();
-        FileListJob job = new FileListJob();
-        File outputFile = new File(TestInfo.WORKING_DIR, "outputFile");
-        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("TWO"),
-                           null, outputFile);
-        assertTrue("Output file should exist after successfull run",
-                   outputFile.exists());
-
-        // Mimic failure
-        File artificialFailure = new File(TestInfo.GOOD_ARCHIVE_FILE_DIR,
-                                           TestInfo.REFERENCE_FILES[0]);
-                List<File> l = new ArrayList<File>();
-                l.add(artificialFailure);
-                MockupArcRepositoryClient.getInstance().overrideBatch
-                        = new BatchStatus("AP1", l, 1, null,
-                                new ArrayList<FileBatchJob
-                                    .ExceptionOccurrence>(0));
-        outputFile.delete();
-        runBatchJob.invoke(abp, job, Replica.getReplicaFromId("TWO"),
-                           null, outputFile);
-        assertFalse("Output file should not exist after failed run",
-                    outputFile.exists());
-    }
-
     public void testGetFilePreservationStatus()
             throws NoSuchFieldException, IllegalAccessException {
 
@@ -468,12 +438,6 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                                         new ArrayList<FileBatchJob
                                             .ExceptionOccurrence>(0));
         runFilelistJob.invoke(abp, replica);
-        LogUtils.flushLogs(FileBasedActiveBitPreservation.class.getName());
-        FileAsserts.assertFileContains("Should have warning about wrong count",
-                                       "Number of files found (" + 6
-                                       + ") does not"
-                                       + " match with number reported by job (17)",
-                                       TestInfo.LOG_FILE);
 
         abp.close();
     }
@@ -503,14 +467,36 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                             replicaId);
                 }
             }
+            
+            public String getChecksum(String replicaId, String filename) {
+                if(results.containsKey(Replica.getReplicaFromId(replicaId))) {
+                    try {
+                        String res = results.get(Replica.getReplicaFromId(replicaId));
+                        KeyValuePair<String, String> kvp = ChecksumJob.parseLine(res);
+                        if(kvp.getKey().equals(filename)) {
+                            return kvp.getValue(); 
+                        }
+                        Log.warn("Found unexpected file '" + kvp.getKey() 
+                                + "' while asking replica '" 
+                                + Replica.getReplicaFromId(replicaId) 
+                                + "' for file '" + filename + "'");
+                    } catch (ArgumentNotValid e) {
+                        Log.warn("Unexpected error '" + e + "' while asking "
+                                + "replica '" + Replica.getReplicaFromId(replicaId) 
+                                + "' for file '" + filename + "'");
+                    }
+                }
+                return null;
+            }
         };
         results.put(ONE, "foobar##md5-1");
         results.put(TWO, "foobar##md5-2");
+        results.put(THREE, "foobar##md5-3");
         FilePreservationState fps 
             = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
         assertFalse("Should have received result non-null result for ONE",
-                fps.getBitarchiveChecksum(ONE) == null);        
+                fps.getBitarchiveChecksum(ONE) == null);
         assertEquals("Should have expected size for ONE",
                 1, fps.getBitarchiveChecksum(ONE).size());
         assertEquals("Should have expected value for ONE",
@@ -522,10 +508,17 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 1, fps.getBitarchiveChecksum(TWO).size());
         assertEquals("Should have expected value for TWO",
                 "md5-2", fps.getBitarchiveChecksum(TWO).get(0));
+        
+        assertFalse("Should have received result non-null result for THREE",
+                fps.getBitarchiveChecksum(THREE) == null);
+        assertEquals("Should have expected size for THREE",
+                1, fps.getBitarchiveChecksum(THREE).size());
+        assertEquals("Should have expected value for THREE",
+                "md5-3", fps.getBitarchiveChecksum(THREE).get(0));
 
         // Test fewer checksums
         results.clear();
-        results.put(ONE, "");
+        results.put(ONE, " ");
 
         fps = FileBasedActiveBitPreservation.getInstance()
             .getFilePreservationState("foobar");
@@ -553,33 +546,13 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 0, fps.getBitarchiveChecksum(ONE).size());
         assertEquals("Should have expected size for TWO",
                 0, fps.getBitarchiveChecksum(TWO).size());
+        assertEquals("Should have expected size for THREE",
+                0, fps.getBitarchiveChecksum(THREE).size());
         LogUtils.flushLogs(getClass().getName());
         
         FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
                 + FileUtils.readFile(TestInfo.LOG_FILE),
                 //Before: "while asking replica 'Replica One'", 
-                "while asking replica '" + ONE + "'",
-                TestInfo.LOG_FILE);
-        FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
-                + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking replica 'Replica TWO'",
-                "while asking replica '" + TWO + "'",
-                TestInfo.LOG_FILE);
-
-        // Test extra checksums
-        results.clear();
-        results.put(ONE, "barfu#klaf\nbarfu##klyf\nbarfu##knof");
-        results.put(TWO, "barfuf##klaff\nbarfu##klof\nbarfu##klof\nbarfu##klof");
-        fps = FileBasedActiveBitPreservation.getInstance()
-            .getFilePreservationState("barfu");
-        assertEquals("Should have expected size for ONE",
-                2, fps.getBitarchiveChecksum(ONE).size());
-        assertEquals("Should have expected size for TWO",
-                3, fps.getBitarchiveChecksum(TWO).size());
-        LogUtils.flushLogs(getClass().getName());
-        FileAsserts.assertFileContains("Should have warning about ONE in logfile: "
-                + FileUtils.readFile(TestInfo.LOG_FILE),
-                //Before: "while asking replica 'Replica ONE'",
                 "while asking replica '" + ONE + "'",
                 TestInfo.LOG_FILE);
         FileAsserts.assertFileContains("Should have warning about TWO in logfile: "
@@ -778,35 +751,43 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         }
 
 	public File getAllChecksums(String replicaId) {
-	    // TODO Auto-generated method stub
-	    throw new NotImplementedException("TODO: Implement me!");
+	    try {
+	        BatchStatus bs = batch(new ChecksumJob(), replicaId);
+	        File result = File.createTempFile("all", ".checksum", TestInfo.WORKING_DIR);
+	        bs.copyResults(result);
+	        return result;
+	    } catch(IOException e) {
+	        fail("Got the following error: " + e);
+	    }
+	    // This cannot happen!
+	    return null;
 	}
 
 	public File getAllFilenames(String replicaId) {
-	    // TODO Auto-generated method stub
-	    throw new NotImplementedException("TODO: Implement me!");
-/*	    File[] files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
-	    
-	    List<String> filenames = new ArrayList<String>(files.length);
-	    for(File file : files) {
-		filenames.add(file.getName());
-	    }
-	    
-	    return filenames;
-*/
+            try {
+                BatchStatus bs = batch(new FileListJob(), replicaId);
+                File result = File.createTempFile("all", ".filename", TestInfo.WORKING_DIR);
+                bs.copyResults(result);
+                return result;
+            } catch(IOException e) {
+                fail("Got the following error: " + e);
+            }
+            // This cannot happen!
+            return null;
 	}
 
 	public void correct(String replicaId, String checksum, 
 		File file, String credentials) {
 	    // TODO: something!
+	        throw new NotImplementedException("TODO: ME!");
 	    
 	}
 
-    @Override
-    public String getChecksum(String replicaId, String filename) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getChecksum(String replicaId, String filename) {
+	    
+	    throw new NotImplementedException("TODO: ME!");
+	}
     }
 
 }

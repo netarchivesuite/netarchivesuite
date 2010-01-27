@@ -51,6 +51,7 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -140,34 +141,15 @@ public class BitarchiveServerTester extends TestCase {
     }
 
     /**
-     * Test that we don't listen on ANY_BA if we are out of space.
-     */
-    public void testCTor() {
-        // Set to just over the minimum size guaranteed.
-        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
-        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(WORKING) + 1));
-
-        bas = BitarchiveServer.getInstance();
-        ChannelID anyBa = Channels.getAnyBa();
-        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
-                .getInstance();
-        assertEquals("We should not listen to " + anyBa
-                + " if we are out of space",
-                0, conn.getListeners(anyBa).size());
-        LogUtils.flushLogs(BitarchiveServer.class.getName());
-        FileAsserts.assertFileContains("Log file should have warning about "
-                + "having no space",
-                "WARNING", TestInfo.LOG_FILE);
-    }
-
-    /**
      * Test that a BitarchiveServer is removed as listener of the ANY_BA queue
      * when trying to upload a file that cannot fit in the archive.
      *
      * We currently don't resend the message, but just reply.
+     * @throws InterruptedException 
      */
-    public void testVisitUploadMessage() {
+    public void testVisitUploadMessage() throws InterruptedException {
         SERVER1.mkdirs();
+
         // Set to just over the minimum size guaranteed.        
         Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(SERVER1) - 12000));
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER1.getAbsolutePath());
@@ -195,7 +177,9 @@ public class BitarchiveServerTester extends TestCase {
         JMSConnectionMockupMQ.updateMsgID(msg, "upload1");
 
         bas.visit(msg);
+
         conn.waitForConcurrentTasksToFinish();
+        
         expectedListeners = 0;
         assertEquals("Number of listeners on queue " + anyBa
                 + " should be " + expectedListeners + " after upload.",
@@ -210,6 +194,27 @@ public class BitarchiveServerTester extends TestCase {
                 + "UploadMessage.",
                 msg, listener.messagesReceived.get(0));
 
+    }
+
+    /**
+     * Test that we don't listen on ANY_BA if we are out of space.
+     */
+    public void testCTor() {
+        // Set to just over the minimum size guaranteed.
+        Settings.set(ArchiveSettings.BITARCHIVE_SERVER_FILEDIR, dirs);
+        Settings.set(ArchiveSettings.BITARCHIVE_MIN_SPACE_LEFT, "" + (FileUtils.getBytesFree(WORKING) + 1));
+
+        bas = BitarchiveServer.getInstance();
+        ChannelID anyBa = Channels.getAnyBa();
+        JMSConnectionMockupMQ conn = (JMSConnectionMockupMQ) JMSConnectionFactory
+                .getInstance();
+        assertEquals("We should not listen to " + anyBa
+                + " if we are out of space",
+                0, conn.getListeners(anyBa).size());
+        LogUtils.flushLogs(BitarchiveServer.class.getName());
+        FileAsserts.assertFileContains("Log file should have warning about "
+                + "having no space",
+                "WARNING", TestInfo.LOG_FILE);
     }
 
     /**

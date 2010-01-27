@@ -42,6 +42,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
 import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
@@ -840,9 +841,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
         
         // Set up a listener on the reply queue for batch messages
         TestMessageListener listener = new TestMessageListener();
-        TestMessageListener baListener = new TestMessageListener();
         con.setListener(THE_ARCREPOS, listener);
-        con.setListener(ALL_BA, baListener);
         
         String repId = Settings.get(CommonSettings.USE_REPLICA_ID);
         
@@ -881,6 +880,84 @@ public class BitarchiveMonitorServerTester extends TestCase {
         assertEquals("Did not give expected arcfilename", returnMsg.getArcfileName(), "requestedFile.arc");
         assertEquals("Did not give expected checksum", returnMsg.getChecksum(), "0192837465");
     }
+
+    /**
+     * Tests the opportunity to correct a entry in the archive through CorrectMessage. 
+     * @throws InterruptedException 
+     */
+    public void testCorrectMessage() throws InterruptedException {
+        bam_server = BitarchiveMonitorServer.getInstance();
+        
+        TestMessageListener listener = new TestMessageListener();
+        con.setListener(THE_BAMON, listener);
+        
+        // Mockup listener replacement of a bitarchive.
+        TestMessageListener baListener = new TestMessageListener(); 
+        con.setListener(ALL_BA, baListener);
+        
+        // Mockup listener replacement of the arc repository.
+        TestMessageListener arcListener = new TestMessageListener();
+        con.setListener(THE_ARCREPOS, arcListener);
+        
+        // retrieve replica id
+        String repId = Settings.get(CommonSettings.USE_REPLICA_ID);
+
+        String badChecksum = "error-123";
+        String credentials = "exampleCredentials";
+        
+        RemoteFile rf = RemoteFileFactory.getCopyfileInstance(TestInfo.CORRECT_ARC_FILE);
+        
+        CorrectMessage cm = new CorrectMessage(THE_BAMON, THE_ARCREPOS, 
+                badChecksum, rf, repId, credentials);
+        
+        JMSConnectionMockupMQ.updateMsgID(cm, "cm1");
+        
+        bam_server.visit(cm);
+        
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(50);
+        }
+        
+        NetarkivetMessage msg1 = baListener.getReceived();
+        assertTrue("The message '" + msg1 + "' should be of the type RemoveAndGetFileMessage", 
+                msg1 instanceof RemoveAndGetFileMessage);
+        RemoveAndGetFileMessage ragfm = (RemoveAndGetFileMessage) msg1;
+        
+        ragfm.setFile(TestInfo.BAD_ARC_FILE);
+        bam_server.visit(ragfm);
+        
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(50);
+        }
+        
+        NetarkivetMessage msg2 = baListener.getReceived();
+        assertTrue("The message '" + msg2 + "' should be of the type UploadMessage",
+                msg2 instanceof UploadMessage);
+        UploadMessage um = (UploadMessage) msg2;
+        
+        bam_server.visit(um);
+        
+        con.waitForConcurrentTasksToFinish();
+        
+        synchronized(this) {
+            wait(50);
+        }
+        
+        NetarkivetMessage msg3 = arcListener.getReceived();
+        assertTrue("The message '" + msg3 + "' should be of the type CorrectMessage",
+                msg3 instanceof CorrectMessage);
+        
+        CorrectMessage res = (CorrectMessage) msg3;
+        
+        assertNotNull("The remoteFile in the reply to the CorrectMessage must not be null.", 
+                res.getRemovedFile());
+        assertEquals("The remoteFile should refer to the file 'file-2.arc'",
+                "file-2.arc", res.getRemovedFile().getName());
+    }
     
     /**
      * A mockup Bitarchive that knows how to send heartbeats and how to create a
@@ -913,7 +990,7 @@ public class BitarchiveMonitorServerTester extends TestCase {
             return resMsg.getID();
         }
     }
-
+    
     /**
      * Cannot use NullRemoteFile in tests, as the BAMON just ignores
      * NullRemoteFiles. Therefore, we need another passive implementation of

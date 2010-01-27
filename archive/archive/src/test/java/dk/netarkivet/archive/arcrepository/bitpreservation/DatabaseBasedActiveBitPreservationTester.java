@@ -205,65 +205,6 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 		"b3bb49b72718b89950f8b861d2e0e2ca");
 	    
     }
-
-    /**
-     * Test normal behaviour of runFileListJob():
-     *
-     * It should pick normal or reference dir. It should generate the correct
-     * files. It should restrict itself to specified files. It should check the
-     * number of lines. It should remove the temporary file.
-     *
-     * Note that we don't need to test if the expected files are found, as the
-     * file scanning is done in submethods, but it comes automatically when we
-     * check for restriction.
-     *
-     * @throws IOException
-     */
-    public void testRunFileListJob() throws IOException, NoSuchMethodException,
-                                            InvocationTargetException,
-                                            IllegalAccessException {
-        Method runFilelistJob = ReflectUtils.getPrivateMethod(
-                DatabaseBasedActiveBitPreservation.class, "getChecksumList",
-                Replica.class);
-
-        DatabaseBasedActiveBitPreservation dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-
-        // Check normal run
-        final String replicaId = TestInfo.REPLICA_ID_TWO;
-        Replica replica = Replica.getReplicaFromId(replicaId);
-        //final String otherLocationName = TestInfo.OTHER_LOCATION_NAME;
-        // Location otherLocation = Location.get(otherLocationName);
-        runFilelistJob.invoke(dbabp, TWO);
-        File normalOutputFile =
-                WorkFiles.getFile(replica, WorkFiles.FILES_ON_BA);
-        File referenceOutputFile =
-                WorkFiles.getFile(replica, WorkFiles.FILES_ON_REFERENCE_BA);
-        System.out.println(normalOutputFile.getAbsolutePath());
-        assertTrue("Output should exist", normalOutputFile.exists());
-        assertFalse("Reference output should not exist",
-                    referenceOutputFile.exists());
-        normalOutputFile.delete();
-/*
-        // Check that wrong counts are caught
-        MockupArcRepositoryClient.getInstance().overrideBatch
-                = new BatchStatus("AP1", Collections.<File>emptyList(), 17,
-                        RemoteFileFactory.getMovefileInstance(
-                                new File(TestInfo.WORKING_DIR, 
-                                        "test_file_list_output/"
-                                        + "filelistOutput/unsorted.txt")),
-                                        new ArrayList<FileBatchJob
-                                            .ExceptionOccurrence>(0));
-        runFilelistJob.invoke(dbabp, replica);
-        LogUtils.flushLogs(FileBasedActiveBitPreservation.class.getName());
-        FileAsserts.assertFileContains("Should have warning about wrong count",
-                                       "Number of files found (" + 6
-                                       + ") does not"
-                                       + " match with number reported by job (17)",
-                                       TestInfo.LOG_FILE);
-
-        dbabp.close();
-// */
-    }
     
     private void clearDatabase(Connection con) throws SQLException {
 	    // clear the database.
@@ -451,15 +392,21 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 
 	@Override
 	public File getAllChecksums(String replicaId) {
-	    // TODO Auto-generated method stub
-	    throw new NotImplementedException("TODO: Implement me!");
+	    try {
+	        ChecksumJob job = new ChecksumJob();
+	        File output = File.createTempFile("checksum", ".all", TestInfo.WORKING_DIR);
+	        File[] in_files = TestInfo.GOOD_ARCHIVE_FILE_DIR.listFiles();
+	        FileOutputStream os = new FileOutputStream(output);
+	        new BatchLocalFiles(in_files).run(job, os);
+	        os.close();
+	        return output;
+	    } catch (IOException e) {
+	        throw new IOFailure("", e);
+	    }
 	}
 
 	@Override
 	public File getAllFilenames(String replicaId) {
-	    
-	    // TODO Auto-generated method stub
-//	    throw new NotImplementedException("TODO: Implement me!");
 	    try {
 		File result = File.createTempFile("temp", "temp");
 		FileWriter fw = new FileWriter(result);
@@ -477,7 +424,6 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	    } catch (IOException e) {
 		throw new IOFailure("Cannot get all filenames!", e);
 	    }
-
 	}
 
 	@Override
