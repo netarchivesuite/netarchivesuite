@@ -64,5 +64,11 @@ public class TestInfo {
     static final String BATCH_REPLICA_ERROR = "repErr";
     static final String BATCH_TEST_JAR_ERROR_CLASS = "error";
     static final String BATCH_TEST_JAR_GOOD_CLASS = "batch.PersonDataArcBatch";
-    static final String BATCH_CS_REPLICA_NAME = Replica.getReplicaFromId("THREE").getName(); 
+    static final String BATCH_CS_REPLICA_NAME = Replica.getReplicaFromId("THREE").getName();
+    
+    static final File CACHE_DIR = new File(WORKING_DIR, "cache");
+    static final File CACHE_TEMP_DIR = new File(WORKING_DIR, "tempCache");
+    static final File CACHE_1_FILE = new File(CACHE_TEMP_DIR, "cache_file_1");
+    static final File CACHE_OUTPUT_DIR = new File(WORKING_DIR, "outCache");
+    static final File CACHE_ZIP_FILE = new File(CACHE_OUTPUT_DIR, "cache_file_1.gz");
 }

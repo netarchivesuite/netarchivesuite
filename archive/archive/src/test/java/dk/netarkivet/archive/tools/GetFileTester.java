@@ -23,9 +23,7 @@
 package dk.netarkivet.archive.tools;
 
 import javax.jms.Message;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 
 import junit.framework.TestCase;
 
@@ -36,7 +34,6 @@ import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestMessageListener;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
@@ -47,9 +44,8 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * Test the GetFile tool.
  */
 public class GetFileTester extends TestCase {
-    private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
-    private PreserveStdStreams pss = new PreserveStdStreams();
+    private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
             TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
@@ -82,20 +78,64 @@ public class GetFileTester extends TestCase {
      * Test that download of a small file succeeds.
      */
     public void testMain() {
-    	if (!TestUtils.runningAs("SVC")) {
-    		return;
-    	}
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
-        GetFile.main(new String[]{
-        		"test1.arc", "download.arc"}
-        );
-        System.out.flush();
-        String returnedContent = new String(baos.toByteArray());        
-        assertEquals("Should return content unchanged, but was: "
-                + returnedContent,CONTENT,returnedContent);
+        String[] args = new String[]{"test1.arc", new File(TestInfo.DATA_DIR, "download.arc").getPath()};
+        
+        try {
+            GetFile.main(args);
+            fail("GetFile should try to exit");
+        } catch (SecurityException e) {
+            //
+        }
+        
+        String errMsg = pss.getOut();
+        int exitCode = pse.getExitValue();
+        
+        assertEquals("Should have exit code 0, but was: " + exitCode, 
+                0, exitCode);
+        assertTrue("The output message should claim to retrieve the file", errMsg.contains(
+                "Retrieving file 'test1.arc' from replica 'BarOne' as file "));
+    }
+    
+    public void testTooManyArguments() {
+        String[] args = new String[]{"arg1.arc", "arg2.arc", "arg3.arc"};
+        
+        try {
+            GetFile.main(args);
+            fail("GetFile should try to exit");
+        } catch (SecurityException e) {
+            // This should occur.
+        }
+        
+        String errMsg = pss.getErr();
+        int exitCode = pse.getExitValue();
+        
+        assertEquals("Should have exit code 1, but was: " + exitCode,
+                1, exitCode);
+        assertTrue("Should contain a message for the usage of the tool.",
+                errMsg.contains(GetFile.class.getName() 
+                        + " filename [destination-file]"));
     }
 
+    public void testNoArguments() {
+        String[] args = new String[]{};
+        
+        try {
+            GetFile.main(args);
+            fail("GetFile should try to exit");
+        } catch (SecurityException e) {
+            // This should occur.
+        }
+        
+        String errMsg = pss.getErr();
+        int exitCode = pse.getExitValue();
+        
+        assertEquals("Should have exit code 1, but was: " + exitCode,
+                1, exitCode);
+        assertTrue("Should contain a message for the usage of the tool.",
+                errMsg.contains(GetFile.class.getName() 
+                        + " filename [destination-file]"));
+    }
+    
     /**
      * This class is a MessageListener that responds to GetFileMessage,
      * simulating an ArcRepository. It sends a constant response

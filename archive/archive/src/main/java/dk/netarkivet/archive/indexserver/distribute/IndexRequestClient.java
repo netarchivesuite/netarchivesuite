@@ -346,7 +346,6 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
                             + StringUtils.conjoin(",", jobSet));
                 }
             }
-
         }
     }
 }
