@@ -37,7 +37,6 @@ import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryCl
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupHook;

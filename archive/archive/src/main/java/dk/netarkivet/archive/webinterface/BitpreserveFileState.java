@@ -521,11 +521,8 @@ public class BitpreserveFileState {
      *
      * @throws IOException On trouble printing to a stream.
      */
-    public static void printFileState(JspWriter out,
-                                       FilePreservationState fs,
-                                       Locale locale
-    )
-            throws IOException {
+    public static void printFileState(JspWriter out, FilePreservationState fs,
+            Locale locale) throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
         ArgumentNotValid.checkNotNull(fs, "FilePreservationState fs");
         ArgumentNotValid.checkNotNull(locale, "Locale locale");

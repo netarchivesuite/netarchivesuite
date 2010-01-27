@@ -143,8 +143,8 @@ public class FileBasedActiveBitPreservation
         // known by admin data.
         // missingInAdminData: Contains the names of files that admindata just
         // don't know.
-        Map<String, ArcRepositoryEntry> adminInfo
-        = new HashMap<String, ArcRepositoryEntry>();
+        Map<String, ArcRepositoryEntry> adminInfo = new HashMap<String, 
+                ArcRepositoryEntry>();
         Set<String> missingInAdmindata = new HashSet<String>();
         
         for (String filename: filenames) {
@@ -291,14 +291,13 @@ public class FileBasedActiveBitPreservation
      * @param filenames The names of the files to ask for checksums for.
      * @return The MD5 checksums of the files, or the empty string if the file
      *         was not in the replica.
-     * @throws UnknownID If the replica has a unhandled replica type.
      * @see ChecksumJob#parseLine(String)
      */
     private Map<String, List<String>> getChecksums(Replica rep, 
-            Set<String> filenames) throws UnknownID {
+            Set<String> filenames) {
         
         // Use the GetAllChecksumsMessage to retrieve the checksums.
-        return getChecksumFromChecksumArchive(rep, filenames);
+        return getChecksum(rep, filenames);
     }
     
     /**
@@ -310,7 +309,7 @@ public class FileBasedActiveBitPreservation
      * @param filenames The list of filenames.
      * @return An empty map.
      */
-    private Map<String, List<String>> getChecksumFromChecksumArchive(
+    private Map<String, List<String>> getChecksum(
             Replica rep, Set<String> filenames) {
         Map<String, List<String>> res =
             new HashMap<String, List<String>>();
