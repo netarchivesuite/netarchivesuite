@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -53,14 +51,12 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -90,20 +86,20 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         jmsConnection.setUp();
         rf.setUp();
 
-        if(first) {
-            first = false;
-            clearDatabase(DBConnect.getDBConnection(Settings.get(
-                    ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE)));
-//            initChecksumReplica();
-        }
-        
-        
+        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE,
+                TestInfo.DATABASE_URL);
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                      MockupArcRepositoryClient.class.getName());
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, 
         	TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_BITPRESERVATION, 
         	TestInfo.WORKING_DIR.getAbsolutePath());
+        
+        if(first) {
+            first = false;
+            clearDatabase(DBConnect.getDBConnection(Settings.get(
+                    ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE)));
+        }
     }
     
     public void tearDown() throws Exception {

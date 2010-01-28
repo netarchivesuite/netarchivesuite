@@ -51,8 +51,6 @@ public class ArchiveArcrepositoryBitPreservationTesterSuite {
         suite.addTestSuite(FileBasedActiveBitPreservationTester.class);
         suite.addTestSuite(FileListJobTester.class);
         suite.addTestSuite(WorkFilesTester.class);
-        
-        // TESTS FOR B.2.2b
         suite.addTestSuite(ReplicaCacheDatabaseTester.class);
         suite.addTestSuite(DatabaseBasedActiveBitPreservationTester.class);
     }

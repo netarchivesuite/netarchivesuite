@@ -89,4 +89,9 @@ public class TestInfo {
     public static final String FILE_IN_ADMIN_DATA = "foobar";
     /** The filename of a file not in the valid admin data. */
     public static final String FILE_NOT_IN_ADMIN_DATA = "does.not.exist";
+    
+    /** The directory containing the database for DatabaseBasedActiveBitPreservationTester*/
+    public static final File DATABASE_DIR = new File(WORKING_DIR, "bitpreservationdb");
+    /** The complete database URL for the DatabaseBasedActiveBitPreservationTester. */
+    public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getPath();
 }

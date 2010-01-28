@@ -37,40 +37,35 @@ import junit.framework.TestCase;
 import org.apache.commons.collections.IteratorUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class ReplicaCacheDatabaseTester extends TestCase {
 
     private ReloadSettings rs = new ReloadSettings();
-    private Connection dbCon;
     private ReplicaCacheDatabase cache;
     static boolean clear = true;
+    private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
+            TestInfo.WORKING_DIR);
     
     public void setUp() {
-	try {
-	    rs.setUp();
-	    ReplicaCacheDatabase.getInstance().cleanup();
-	    // retrieve the connection to the database
-	    dbCon = DBConnect.getDBConnection(Settings.get(
-	            ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE));
+        rs.setUp();
+        mtf.setUp();
+        ChannelsTester.resetChannels();
+        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE,
+                TestInfo.DATABASE_URL);
+        ReplicaCacheDatabase.getInstance().cleanup();
 
-	    // Only clear the database once during setUp.
-	    if(clear) {
-		clearDatabase(dbCon);
-		clear = false;
-	    }
-
-	    cache = ReplicaCacheDatabase.getInstance();
-	} catch (SQLException e) {
-	    throw new IOFailure("Cannot clear the database, for testing.", e);
-	}
+        cache = ReplicaCacheDatabase.getInstance();
     }
     
     public void tearDown() {
+        mtf.tearDown();
         rs.tearDown();
     }
     
@@ -230,7 +225,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 			    Replica.getReplicaFromId("TWO")));
 	    
 	    // print content
-//	    cache.print();
+	    cache.print();
 	} catch (Exception e) {
 	    throw new IOFailure("Unit test for ReplicaCacheDatabase failed!"
 		    + " ERROR!!!!", e);
@@ -238,7 +233,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     }
     
     private File makeTemporaryFilelistFile() throws Exception {
-	File res = new File("filelist.out");
+	File res = new File(TestInfo.WORKING_DIR, "filelist.out");
 	FileWriter fw = new FileWriter(res);
 	
 	StringBuilder fileContent = new StringBuilder();
@@ -257,7 +252,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     }
     
     private File makeTemporaryEmptyFilelistFile() throws Exception {
-	File res = new File("filelist_empty.out");
+	File res = new File(TestInfo.WORKING_DIR, "filelist_empty.out");
 	FileWriter fw = new FileWriter(res);
 	
 	StringBuilder fileContent = new StringBuilder("");
@@ -271,7 +266,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
     
     private File makeTemporaryChecksumFile1() throws Exception {
-	File res = new File("checksum_1.out");
+	File res = new File(TestInfo.WORKING_DIR, "checksum_1.out");
 	FileWriter fw = new FileWriter(res);
 	
 	StringBuilder fileContent = new StringBuilder();
@@ -291,7 +286,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     }
 
     private File makeTemporaryChecksumFile2() throws Exception {
-	File res = new File("checksum_2.out");
+	File res = new File(TestInfo.WORKING_DIR, "checksum_2.out");
 	FileWriter fw = new FileWriter(res);
 	
 	StringBuilder fileContent = new StringBuilder();
@@ -308,27 +303,5 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 	fw.close();
 	
 	return res;
-    }
-   
-    private void clearDatabase(Connection con) throws SQLException {
-	    // clear the database.
-        PreparedStatement statement = null;
-        con.setAutoCommit(false);
-        
-        // Make the SQL statement for putting the replica into the database
-        // and insert the variables for the entry to the replica table.
-        // delete all entries in the 'replica' table.
-        statement = con.prepareStatement("DELETE FROM replica ");
-        statement.executeUpdate();
-        // delete all entries in the 'file' table.
-        statement = con.prepareStatement("DELETE FROM file ");
-        statement.executeUpdate();
-        // delete all entries in the 'replicafileinfo' table.
-        statement = con.prepareStatement("DELETE FROM replicafileinfo ");
-        statement.executeUpdate();
-        // delete all entries in the 'segment' table.
-        statement = con.prepareStatement("DELETE FROM segment ");
-        statement.executeUpdate();
-        con.commit();
     }
 }
