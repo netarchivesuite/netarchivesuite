@@ -411,22 +411,24 @@ public class RunBatch extends ToolRunnerBase {
             }
             
             //Check replica argument
-            String rep = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
-            if (rep != null) {
+            String repName = parms.cmd.getOptionValue(REPLICA_OPTION_KEY);
+            if (repName != null) {
                 // Is the replica known
-                if (!Replica.isKnownReplicaName(rep)) {
-                    System.err.println("Unknown replica name '" + rep
+                if (!Replica.isKnownReplicaName(repName)) {
+                    System.err.println("Unknown replica name '" + repName
                             + "', known replicas are "
                             + Replica.getKnownNamesAsSet());
                     return false;
                 }
                 // Is it a bitarchive replica.
-                if(!Replica.getReplicaFromName(rep).getType()
+                if(!Replica.getReplicaFromName(repName).getType()
                         .equals(ReplicaType.BITARCHIVE)) {
                     System.err.println("Can only send a batchjob to a "
-                            + "bitarchive replica, and '" + rep + "' is the " 
-                            + "replica '" + Replica.getReplicaFromName(rep) 
-                            + "'");
+                            + "bitarchive replica, and '" 
+                            + Replica.getReplicaFromName(repName) 
+                            + "' is of the type '" 
+                            + Replica.getReplicaFromName(repName).getType() 
+                            + "'"); 
                     return false;
                 }
             }

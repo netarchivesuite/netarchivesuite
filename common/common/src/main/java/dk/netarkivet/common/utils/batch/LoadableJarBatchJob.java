@@ -168,6 +168,16 @@ public class LoadableJarBatchJob extends FileBatchJob {
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
         
+        // Ensure that the batchjob can be loaded.
+        loadBatchJob();
+    }
+    
+    /**
+     * Method for initialising the batch job.
+     * 
+     * @throws IOFailure If the job is not loaded correctly.
+     */
+    private void loadBatchJob() throws IOFailure {
         try {
             loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
                     .newInstance();
@@ -195,22 +205,9 @@ public class LoadableJarBatchJob extends FileBatchJob {
      */
     public void initialize(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "os");
-        try {
-            loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
-                    .newInstance();
-        } catch (InstantiationException e) {
-            final String msg = "Cannot instantiate loaded job class";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
-        } catch (IllegalAccessException e) {
-            final String msg = "Cannot access loaded job from byte array";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
-        } catch (ClassNotFoundException e) {
-            final String msg = "Cannot create job class from jar file";
-            log.warn(msg, e);
-            throw new IOFailure(msg, e);
-        }
+        
+        // Initialise the loadedJob.
+        loadBatchJob();
         loadedJob.initialize(os);
     }
 

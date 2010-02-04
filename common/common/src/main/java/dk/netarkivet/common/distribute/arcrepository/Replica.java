@@ -217,7 +217,7 @@ public class Replica {
     /**
      * Get names of all known replicas as string array.
      * 
-     * @return The names of all known replicas.
+     * @return The names of all known replicas as a string array.
      */
     public static String[] getKnownNames() {
         initializeKnownReplicasList();
