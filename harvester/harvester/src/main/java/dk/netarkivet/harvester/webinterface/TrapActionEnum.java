@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -31,8 +31,6 @@ import dk.netarkivet.common.utils.I18n;
  * Represents the various actions which can be carried out to modify
  * Global Crawler Traps.
  *
- * @author csr
- * @since Jan 13, 2010
  */
 
 public enum TrapActionEnum {
