@@ -34,16 +34,14 @@ import java.nio.channels.FileChannel;
  * Bruce Eckel's solution
  * (http://www.java2s.com/ExampleCode/File-Input-Output/Creatingaverylargefileusingmapping.htm)
  * is slightly slower!
- *
  */
-
 public class WriteBytesToFile {
     /**
      * Writes a large number of bytes to a given file.
      * @param args
      * args[0] is the number of bytes to write
      * args[1] the name of the output file
-     * @throws IOException
+     * @throws IOException If unable to write to output file
      */
     public static void main(String[] args) throws IOException {
 
@@ -70,5 +68,4 @@ public class WriteBytesToFile {
         os.close();
         chan.close();
     }
-
 }

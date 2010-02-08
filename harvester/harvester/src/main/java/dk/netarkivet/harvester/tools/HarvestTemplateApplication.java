@@ -44,11 +44,11 @@ import dk.netarkivet.harvester.datamodel.TemplateDAO;
  *  - update existing templates
  *  - download one or more templates
  *  - show all existing templates
- *
  */
 public class HarvestTemplateApplication {
 
     /**
+     * The main method of the HarvestTemplateApplication.
      * @param args array of commandline arguments
      */
     public static void main(final String[] args) {
