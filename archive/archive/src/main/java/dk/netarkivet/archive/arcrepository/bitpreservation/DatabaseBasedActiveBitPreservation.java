@@ -82,8 +82,6 @@ public final class DatabaseBasedActiveBitPreservation implements
         // initialise the database.
         cache = ReplicaCacheDatabase.getInstance();
 
-        // TODO if the cache is empty, then rebuild the database.
-
         // create and initialise the closing hook
         closeHook = new CleanupHook(this);
         Runtime.getRuntime().addShutdownHook(closeHook);
@@ -134,9 +132,12 @@ public final class DatabaseBasedActiveBitPreservation implements
         // send request
         log.info("Retrieving checksum from replica '" + replica + "'.");
 
-        // Retrieve the checksum job.
-        return FileUtils.readListFromFile(ArcRepositoryClientFactory
-                .getPreservationInstance().getAllFilenames(replica.getId()));
+        // Retrieve a file containing the list of filenames of the replica.
+        File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
+                .getAllFilenames(replica.getId());
+        
+        // Return the content of the file in list form.
+        return FileUtils.readListFromFile(outputFile);
     }
     
     /**
@@ -155,9 +156,12 @@ public final class DatabaseBasedActiveBitPreservation implements
         // send request
         log.info("Retrieving checksum from replica '" + replica + "'.");
 
-        // Retrieve the checksum job.
-        return ChecksumEntry.parseChecksumJob(ArcRepositoryClientFactory
-                .getPreservationInstance().getAllChecksums(replica.getId()));
+        // Retrieve a file containing the checksums of the replica.
+        File outputFile = ArcRepositoryClientFactory.getPreservationInstance()
+                .getAllChecksums(replica.getId());
+        
+        // Return the content of the file in a list.
+        return ChecksumEntry.parseChecksumJob(outputFile);
     }
     
     /**
@@ -444,6 +448,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * should be retrieved.
      * @return The FilePreservationState for the file.
      * @throws NotImplementedException This method has not yet been implemented.
+     * This is required to be implemented by the webserver, before B.2.2b can 
+     * be considered finished.
      * @throws ArgumentNotValid If the filename does not have a valid name.
      */
     @Override
@@ -467,6 +473,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * be retrieved.
      * @return A mapping between the filenames and their FilePreservationState.
      * @throws NotImplementedException Since it has not yet been implemented.
+     * This is required to be implemented by the webserver, before B.2.2b can 
+     * be considered finished.
      * @throws ArgumentNotValid If the filenames are invalid.
      */
     @Override
@@ -511,13 +519,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param credentials The credentials used to perform this replace operation
      * @param checksum  The known bad checksum. Only a file with this bad
      * checksum is attempted repaired.
-     * @throws IOFailure If the file cannot be reestablished.
-     * @throws UnknownID If the file is not in correct state.
      * @throws ArgumentNotValid If any of the arguments are not valid.
      */
     public void replaceChangedFile(Replica replica, String filename,
-            String credentials, String checksum) throws UnknownID, IOFailure, 
-            ArgumentNotValid {
+            String credentials, String checksum) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -598,7 +603,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * 
      * @param filename The name of the file to change the state for.
      * @throws ArgumentNotValid If the filename is invalid.
-     * @throws NotImplementedException Since it has not yet been implemented.
+     * @throws NotImplementedException This will not be implemented.
      */
     @Override
     public void changeStateForAdminData(String filename) 
@@ -606,7 +611,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         // This function should not deal with admin.data.
-        throw new NotImplementedException("TODO: Implement me!");
+        throw new NotImplementedException("This will not be implemented");
     }
 
     /**
@@ -638,7 +643,7 @@ public final class DatabaseBasedActiveBitPreservation implements
     }
 
     /**
-     * Old method, which refers to teh checksum replica part of admin data.
+     * Old method, which refers to the checksum replica part of admin data.
      * 
      * @param filenames The list of filenames which should be added to admin 
      * data.

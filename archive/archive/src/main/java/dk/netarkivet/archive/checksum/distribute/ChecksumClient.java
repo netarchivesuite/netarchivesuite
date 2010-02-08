@@ -63,7 +63,7 @@ public class ChecksumClient implements ReplicaClient {
      * Connection information.
      * The connection to contact all checksum archives.
      */
-    private ChannelID theCR;
+    private ChannelID theChecksumChannel;
     /** The name of the replica whose client this is.*/
     private String replicaId;
     
@@ -76,9 +76,9 @@ public class ChecksumClient implements ReplicaClient {
      * If there is a problem with the connection.
      */
     private ChecksumClient(ChannelID theCRin) throws IOFailure {
-        this.theCR = theCRin;
+        this.theChecksumChannel = theCRin;
         replicaId = Channels.retrieveReplicaFromIdentifierChannel(
-                theCR.getName()).getId();
+                theChecksumChannel.getName()).getId();
         jmsCon = JMSConnectionFactory.getInstance();
     }
 
@@ -115,7 +115,7 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         
         // send the message to the archive.
-        jmsCon.resend(msg, theCR);
+        jmsCon.resend(msg, theChecksumChannel);
         
         // log the message.
         log.debug("Resending CorrectMessage: " + msg.toString() + "'.");
@@ -132,7 +132,7 @@ public class ChecksumClient implements ReplicaClient {
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         // send the message to the archive.
-        jmsCon.resend(msg, theCR);
+        jmsCon.resend(msg, theChecksumChannel);
 
         // log message.
         log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() + "'.");
@@ -149,7 +149,7 @@ public class ChecksumClient implements ReplicaClient {
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         // send the message to the archive.
-        jmsCon.resend(msg, theCR);
+        jmsCon.resend(msg, theChecksumChannel);
 
         // log message.
         log.debug("Sending GetAllChecksumMessage: '" + msg.toString() + "'.");
@@ -166,7 +166,7 @@ public class ChecksumClient implements ReplicaClient {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 
-        jmsCon.resend(msg, theCR);
+        jmsCon.resend(msg, theChecksumChannel);
 
         // log what we are doing.
         log.debug("Sending GetChecksumMessage: '" + msg.toString() + "'.");
@@ -189,9 +189,9 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // TODO make method for not having the replica id.
-        GetChecksumMessage msg = new GetChecksumMessage(theCR, replyChannel, 
-                filename, replicaId);
+        // make GetChecksumMessage for the specific file.
+        GetChecksumMessage msg = new GetChecksumMessage(theChecksumChannel, 
+                replyChannel, filename, replicaId);
         jmsCon.send(msg);
 
         // log what we are doing.
@@ -222,7 +222,8 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
 
         // create and send message.
-        UploadMessage up = new UploadMessage(theCR, Channels.getTheRepos(), rf);
+        UploadMessage up = new UploadMessage(theChecksumChannel, 
+                Channels.getTheRepos(), rf);
         jmsCon.send(up);
 
         // log message

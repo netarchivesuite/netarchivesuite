@@ -333,30 +333,12 @@ public class ArcRepository implements CleanupIF {
             ReplicaClient replicaClient) {
         NetarkivetMessage msg;
         
-/*        if(replicaClient.getType() == ReplicaType.BITARCHIVE) {
-            // Retrieve the checksum from the BitarchiveReplica
-            ChecksumJob checksumJob = new ChecksumJob();
-            checksumJob.processOnlyFileNamed(filename);
-            msg = replicaClient.batch(Channels.getTheRepos(), 
-                    checksumJob);
-        } else if (replicaClient.getType() == ReplicaType.CHECKSUM) {
-            // Retrieve the checskum from the ChecksumReplica
-            msg = replicaClient.getChecksum(Channels.getTheRepos(), filename);
-        } else {
-            // Unknown replica type
-            String errMsg = "Unknown replica type form replica client '"
-                + replicaClient + "'. Cannot retrieve checksum for file '"
-                + filename + "'.";
-            log.error(errMsg);
-            throw new IllegalState(errMsg);
-        }
-        */
         // Retrieve the checksum of the file.
         msg = replicaClient.getChecksum(Channels.getTheRepos(), filename);
 
         outstandingChecksumFiles.put(msg.getID(), filename);
-        log.debug("Checksum job submitted for: '" + filename 
-                + "', with message id: '" + msg.getID() + "'");
+        log.debug("Checksum job message submitted for file '" + filename 
+                + "' with message id: '" + msg.getID() + "'");
     }
 
     /**

@@ -226,13 +226,10 @@ public class BitarchiveClient implements ReplicaClient {
      * the replica for correcting the 'bad' entry.
      * 
      * @param msg The correct message to correct the bad entry in the archive.
-     * @throws NotImplementedException Always, since this method has not yet 
-     * been implemented.
      * @throws ArgumentNotValid If the CorrectMessage is null.
      */
     @Override
-    public void correct(CorrectMessage msg) throws NotImplementedException, 
-            ArgumentNotValid {
+    public void correct(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         
         jmsCon.resend(msg, theBamon);
@@ -240,11 +237,10 @@ public class BitarchiveClient implements ReplicaClient {
         log.debug("Sending CorrectMessage: '" + msg + "'");
     }
 
-
     /**
      * Method for sending a GetAllFilenamesMessage to a checksum archive.
      * 
-     * @param msg The GetAllFilenamesMessage, which will be send through the 
+     * @param msg The GetAllFilenamesMessage, which will be sent through the 
      * jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
@@ -282,8 +278,9 @@ public class BitarchiveClient implements ReplicaClient {
      * 
      * @param msg The GetChecksumMessage which will be sent to the checksum
      * archive though the jms connection.
+     * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
-    public void getChecksum(GetChecksumMessage msg) {
+    public void getChecksum(GetChecksumMessage msg) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 
@@ -310,7 +307,7 @@ public class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
-        // TODO make method for not having the replica id.
+        // Send a GetChecksumMessage to the replica.
         GetChecksumMessage msg = new GetChecksumMessage(theBamon, replyChannel, 
                 filename, replicaId);
         jmsCon.send(msg);

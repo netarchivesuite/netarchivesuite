@@ -295,22 +295,7 @@ public class FileBasedActiveBitPreservation
      */
     private Map<String, List<String>> getChecksums(Replica rep, 
             Set<String> filenames) {
-        
-        // Use the GetAllChecksumsMessage to retrieve the checksums.
-        return getChecksum(rep, filenames);
-    }
-    
-    /**
-     * Retrieves the checksums from the checksum archive.
-     * This is currently done by retrieving all the checksums and extracting 
-     * only the wanted. 
-     * 
-     * @param rep The checksum replica.
-     * @param filenames The list of filenames.
-     * @return An empty map.
-     */
-    private Map<String, List<String>> getChecksum(
-            Replica rep, Set<String> filenames) {
+        // initialise the resulting map.
         Map<String, List<String>> res =
             new HashMap<String, List<String>>();
         
@@ -344,7 +329,7 @@ public class FileBasedActiveBitPreservation
         } catch (NetarkivetException e) {
             // This is not critical. Log and continue.
             log.warn("The retrieval of checksums from a checksum archive was "
-                    + "not successfull.", e);
+                    + "not successful.", e);
         }
         
         return res;
@@ -360,7 +345,7 @@ public class FileBasedActiveBitPreservation
      */
     public Iterable<String> getMissingFiles(Replica replica) 
             throws IllegalState, ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(replica, "Replica bitarchive");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
         File missingOutput = WorkFiles.getFile(replica,
                                                WorkFiles.MISSING_FILES_BA);
         if (!missingOutput.exists()) {
@@ -399,8 +384,8 @@ public class FileBasedActiveBitPreservation
             PermissionDenied {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         runFileListJob(replica);
-        log.trace("findMissingFile in dir '"
-                  + WorkFiles.getPreservationDir(replica) + "'");
+        log.trace("Finding missing files in directory '" 
+                + WorkFiles.getPreservationDir(replica) + "'");
         admin.synchronize();
 
         // Create set of file names from replica data
@@ -410,7 +395,7 @@ public class FileBasedActiveBitPreservation
         // Get set of files in arcrepository
         Set<String> arcrepNameSet = admin.getAllFileNames();
 
-        // Find difference set 1
+        // Find difference set 1 (the files missing from the replica).
         Set<String> extraFilesInAdminData = new HashSet<String>(arcrepNameSet);
         extraFilesInAdminData.removeAll(filesInReplica);
 
@@ -428,7 +413,7 @@ public class FileBasedActiveBitPreservation
         WorkFiles.write(replica, WorkFiles.MISSING_FILES_BA,
                         extraFilesInAdminData);
 
-        // Find difference set 2
+        // Find difference set 2 (the files missing in admin.data).
         Set<String> extraFilesInRep = new HashSet<String>(filesInReplica);
         extraFilesInRep.removeAll(arcrepNameSet);
 
@@ -446,7 +431,7 @@ public class FileBasedActiveBitPreservation
         // Write output data
         WorkFiles.write(replica, WorkFiles.MISSING_FILES_ADMINDATA,
                         extraFilesInRep);
-        log.trace("Findmissing files - done");
+        log.trace("Finished finding missing files.");
     }
 
     /**
@@ -468,14 +453,17 @@ public class FileBasedActiveBitPreservation
         log.trace("runFileListJob for replica '" + replica
                   + "', output file '" + batchOutputFile + "'");
 
-        // Send a GetAllFilenamesMessage to the replica.
-        FileUtils.copyFile(ArcRepositoryClientFactory
-                .getPreservationInstance().getAllFilenames(replica.getId()),
-                batchOutputFile);
+        // Retrieve a file containing all the filenames of the replica through
+        // a GetAllFilenamesMessage
+        File filenames = ArcRepositoryClientFactory.getPreservationInstance()
+                .getAllFilenames(replica.getId());
+        
+        // copy the list of filenames to the output file.
+        FileUtils.copyFile(filenames, batchOutputFile);
     }
 
     /**
-     * Get a list of wrong files in a given bitarchive.
+     * Get a list of corrupt files in a given bitarchive.
      *
      * @param bitarchive a bitarchive
      *
@@ -615,10 +603,13 @@ public class FileBasedActiveBitPreservation
         File outputFile = WorkFiles.getFile(replica,
                                             WorkFiles.CHECKSUMS_ON_BA);
 
-        // Retrieve the checksums through a GetAllChecksumsMessage.
-        FileUtils.copyFile(ArcRepositoryClientFactory
-                .getPreservationInstance().getAllChecksums(replica.getId()),
-                outputFile);
+        // Retrieve a file containing the checksums of the replica through a 
+        // GetAllChecksumsMessage.
+        File checksumFile =  ArcRepositoryClientFactory
+                .getPreservationInstance().getAllChecksums(replica.getId());
+        
+        // copy the resulting file to the output file.
+        FileUtils.copyFile(checksumFile, outputFile);
     }
 
     /**
@@ -715,9 +706,9 @@ public class FileBasedActiveBitPreservation
 
 
     /**
-     * Check that files are indeed missing on the replica, and present in 
-     * admin data and reference replica. If so, upload missing files from 
-     * reference replica to this replica.
+     * Check that the files we want to restore are indeed missing on the 
+     * replica, and present in admin data and the reference bitarchive.
+     * If so, upload missing files from reference replica to this replica.
      *
      * @param replica The replica to restore files to
      * @param filenames The names of the files.
@@ -871,6 +862,8 @@ public class FileBasedActiveBitPreservation
      * Calls upon the arcrepository to change the known state for the given
      * file in one replica.  This method uses JMS and blocks until a reply is
      * sent.
+     * We don't wait for an acknowledgement that admin data indeed has been 
+     * updated.
      *
      * @param filename The file to change state for
      * @param rep       The replica to change state for the file for.
@@ -913,8 +906,8 @@ public class FileBasedActiveBitPreservation
     }
     
     /**
-     * Method for correcting a bad entry in an archive. This message is handled 
-     * different for the different replicas
+     * Method for correcting a corrupt entry in an archive. This message is 
+     * handled different for the different replicas
      * 
      * @param replica The replica which contains the bad entry.
      * @param filename The name of the file.
@@ -953,41 +946,41 @@ public class FileBasedActiveBitPreservation
      * Return a list of files present in bitarchive but missing in AdminData.
      *
      * @return A list of missing files.
-     * @throws NotImplementedException Always, since this has not been 
+     * @throws NotImplementedException Always, since this will not been 
      * implemented.
      */
     public Iterable<String> getMissingFilesForAdminData() 
             throws NotImplementedException {
         //TODO implement method
-        throw new NotImplementedException("Not implemented");
+        throw new NotImplementedException("Not to be implemented");
     }
 
     /**
      * Return a list of files with wrong checksum or status in admin data.
      *
      * @return A list of files with wrong checksum or status.
-     * @throws NotImplementedException Always, since this has not been 
+     * @throws NotImplementedException Always, since this will not been 
      * implemented.
      */
     public Iterable<String> getChangedFilesForAdminData() 
             throws NotImplementedException {
         //TODO implement method
-        throw new NotImplementedException("Not implemented");
+        throw new NotImplementedException("Not to be implemented");
     }
 
     /**
      * Reestablish admin data to match bitarchive states for files.
      *
      * @param filenames The files to reestablish state for.
-     * @throws NotImplementedException Always, since this has not been 
+     * @throws NotImplementedException Always, since this will not been 
      * implemented.
      * @throws ArgumentNotValid If the list of filenames are null.
      */
     public void addMissingFilesToAdminData(String... filenames) 
             throws NotImplementedException, ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(filenames, "String... filename");
+        ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         //TODO implement method
-        throw new NotImplementedException("Not implemented");
+        throw new NotImplementedException("Not to be implemented");
     }
 
     /**
@@ -1020,7 +1013,6 @@ public class FileBasedActiveBitPreservation
                         WorkFiles.getFile(rep, WorkFiles.WRONG_FILES));
             }
         }
-        //TODO Also update store states if wrong.
     }
 
     /** Shut down cleanly. */

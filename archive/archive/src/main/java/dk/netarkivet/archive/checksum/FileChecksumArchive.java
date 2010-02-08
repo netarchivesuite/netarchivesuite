@@ -720,8 +720,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // Recreate the archive file.
         recreateArchiveFile();
         
-        // Make the file to containing the bad entry, to be returned in the 
-        // correct message.
+        // Make the file containing the bad entry be returned in the 
+        // CorrectMessage.
         File removedEntryFile; 
         try {
             // Initialise file and writer.

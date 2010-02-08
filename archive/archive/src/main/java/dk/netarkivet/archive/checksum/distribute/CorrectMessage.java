@@ -76,7 +76,7 @@ public class CorrectMessage extends ArchiveMessage {
         super(to, replyTo);
         // Validate arguments ('super' validates the channels).
         ArgumentNotValid.checkNotNull(rf, "RemoteFile file");
-        ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String checksum");
+        ArgumentNotValid.checkNotNullOrEmpty(badChecksum, "String badChecksum");
         ArgumentNotValid.checkNotNullOrEmpty(repId, "String repId");
         ArgumentNotValid.checkNotNullOrEmpty(cred, "String cred");
         this.theIncorrectChecksum = badChecksum;
@@ -171,8 +171,8 @@ public class CorrectMessage extends ArchiveMessage {
      */
     public RemoteFile getRemovedFile() throws IOFailure {
         if(removedFile == null) {
-            throw new IOFailure("The removed file is null. Perhaps the message "
-                    + "has not been sent.");
+            LogFactory.getLog(CorrectMessage.class).warn("The removed file is "
+                    + "null. Perhaps the message has not been sent.");
         }
         return removedFile;
     }

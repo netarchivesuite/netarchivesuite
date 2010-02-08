@@ -104,18 +104,20 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * The map for managing the CorrectMessages. This involves three stages.
      * 
-     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
-     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * In the first, a RemoveAndGetFileMessage is sent, and then the 
+     * CorrectMessage is put in the map along the ID of the 
+     * RemoveAndGetFileMessage.
      * 
-     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
-     * CorrectMessage from the Map. The CorrectMessage is then updated with the
-     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
-     * with the 'correct' file, where the ID of the UploadMessage is put into
-     * the map along the CorrectMessage.
+     * In the second stage, the reply of the RemoveAndGetFileMessage is used to 
+     * extract the CorrectMessage from the Map. The CorrectMessage is then 
+     * updated with the results from the RemoveAndGetFileMessage. Then an 
+     * UploadMessage is send with the 'correct' file, where the ID of the 
+     * UploadMessage is put into the map along the CorrectMessage.
      * 
-     * Third, the reply of the UploadMessage is used to extract the 
-     * CorrectMessage from the map again, and the results of the UploadMessage 
-     * is used to update the UploadMessage, which is then returned.
+     * In the third stage, the reply of the UploadMessage is used to extract 
+     * the CorrectMessage from the map again, and the results of the 
+     * UploadMessage is used to update the UploadMessage, which is then 
+     * returned.
      */
     private Map<String, CorrectMessage> correctMessages =
         new HashMap<String, CorrectMessage>();
@@ -217,7 +219,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         }
     }
 
-
     /**
      * This is the message handling method for HeartBeatMessages.
      *
@@ -237,25 +238,18 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * This is the first step in correcting a bad entry.
      * 
-     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
-     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * In the first stage, a RemoveAndGetFileMessage is sent, and then the 
+     * CorrectMessage is put in the map along the ID of the 
+     * RemoveAndGetFileMessage.
      * 
-     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
-     * CorrectMessage from the Map. The CorrectMessage is then updated with the
-     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
-     * with the 'correct' file, where the ID of the UploadMessage is put into
-     * the map along the CorrectMessage.
-     * 
-     * Third, the reply of the UploadMessage is used to extract the 
-     * CorrectMessage from the map again, and the results of the UploadMessage 
-     * is used to update the UploadMessage, which is then returned.
+     * See the correctMessages Map.
      * 
      * @param cm The CorrectMessage to handle.
      * @throws ArgumentNotValid If the CorrectMessage is null.
      */
     public void visit(CorrectMessage cm) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
-        log.info("Recieving CorrectMessage: " + cm);
+        log.info("Receiving CorrectMessage: " + cm);
         
         // Create the RemoveAndGetFileMessage for removing the file.
         RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
@@ -277,25 +271,20 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * This is the second step in correcting a bad entry.
      * 
-     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
-     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * In the second stage, the reply of the RemoveAndGetFileMessage is used 
+     * to extract the CorrectMessage from the Map. The CorrectMessage is then 
+     * updated with the results from the RemoveAndGetFileMessage. Then an 
+     * UploadMessage is send with the 'correct' file, where the ID of the 
+     * UploadMessage is put into the map along the CorrectMessage.
      * 
-     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
-     * CorrectMessage from the Map. The CorrectMessage is then updated with the
-     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
-     * with the 'correct' file, where the ID of the UploadMessage is put into
-     * the map along the CorrectMessage.
-     * 
-     * Third, the reply of the UploadMessage is used to extract the 
-     * CorrectMessage from the map again, and the results of the UploadMessage 
-     * is used to update the UploadMessage, which is then returned.
+     * See the correctMessages Map.
      * 
      * @param The RemoteAndGetFileMessage.
      * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
      */
     public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
-        log.info("Recieving RemoveAndGetFileMessage (presumably reply): " 
+        log.info("Receiving RemoveAndGetFileMessage (presumably reply): " 
                 + msg);
 
         // Retrieve the correct message
@@ -305,7 +294,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         cm.setRemovedFile(msg.getRemoteFile());
 
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
-        // has also filed, and should be returned as a fail.
+        // has also failed, and should be returned as a fail.
         if(!msg.isOk()) {
             String errMsg = "The RemoveAndGetFileMessage has returned the error: '"
                 + msg.getErrMsg() + "'. Reply to CorrectMessage with "
@@ -330,18 +319,12 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * This is the third step in correcting a bad entry. 
      * 
-     * First, a RemoveAndGetFileMessage is sent, and then the CorrectMessage is
-     * put in the map along the ID of the RemoveAndGetFileMessage.
+     * In the third stage, the reply of the UploadMessage is used to extract 
+     * the CorrectMessage from the map again, and the results of the 
+     * UploadMessage is used to update the UploadMessage, which is then 
+     * returned.
      * 
-     * Second, the reply of the RemoveAndGetFileMessage is used to extract the
-     * CorrectMessage from the Map. The CorrectMessage is then updated with the
-     * results from the RemoveAndGetFileMessage. Then a UploadMessage is send 
-     * with the 'correct' file, where the ID of the UploadMessage is put into
-     * the map along the CorrectMessage.
-     * 
-     * Third, the reply of the UploadMessage is used to extract the 
-     * CorrectMessage from the map again, and the results of the UploadMessage 
-     * is used to update the UploadMessage, which is then returned.
+     * See the correctMessages Map.
      * 
      * @param The reply of the UploadMessage.
      * @throws ArgumentNotValid If the UploadMessage is null.  
@@ -365,12 +348,18 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
     
     /**
-     * Method for handling the 
+     * Method for handling the GetAllChecksumsMessage.
+     * This message will be made into a batchjob, which will executed on the 
+     * bitarchives. The reply to the batchjob will be handled and uses as reply
+     * to the GetAllChecksumsMessage.
      * 
      * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
-     * and sent to the 
+     * and sent to the bitarchives.
+     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
-    public void visit(GetAllChecksumsMessage msg) {
+    public void visit(GetAllChecksumsMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
+        
         log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
         
         // Create batchjob for the GetAllChecksumsMessage.
@@ -381,12 +370,18 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
 
     /**
-     * Method for handling the 
+     * Method for handling the GetAllFilenamesMessage.
+     * The GetAllFilenamesMessage will be made into a filelist batchjob, which
+     * will be sent to the bitarchives. The reply to the batchjob will then be
+     * used as reply to the GetAllFilenamesMessage.
      * 
-     * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
-     * and sent to the 
+     * @param msg The GetAllFilenamesMessage, which will be made into a batchjob
+     * and sent to the bitarchives.
+     * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
-    public void visit(GetAllFilenamesMessage msg) {
+    public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
+        
         log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
 
         // Create batchjob for the GetAllChecksumsMessage.
@@ -397,12 +392,19 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     }
 
     /**
-     * Method for handling the 
+     * Method for handling the GetChecksumMessage.
+     * This is made into the batchjob ChecksumsJob which will be limitted to
+     * the specific filename. The batchjob will be executed on the bitarchives
+     * and the reply to the batchjob will be used as reply to the 
+     * GetChecksumMessage. 
      * 
      * @param msg The GetAllChecksumsMessage, which will be made into a batchjob
-     * and sent to the 
+     * and sent to the bitarchives.
+     * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
-    public void visit(GetChecksumMessage msg) {
+    public void visit(GetChecksumMessage msg) throws ArgumentNotValid { 
+        ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
+        
         log.info("Receiving GetAllChecksumsMessage '" + msg + "'");
         
         // Create batchjob for the GetAllChecksumsMessage.
@@ -441,8 +443,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
             batchConversions.put(msg.getID(), msg);
         } catch (Throwable e) {
-            log.warn("Trouble while handling batch request '" + msg + "'",
-                     e);
+            log.warn("Unable to handle batch '" + msg + "'request due to "
+                    + "unexpected exception", e);
             msg.setNotOk(e);
             con.reply(msg);
         }
@@ -544,22 +546,18 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // Retrieve the message corresponding to the converted batchjob.
         NetarkivetMessage msg = batchConversions.remove(bjs.originalRequestID);
         log.info("replying to converted batchjob message : " + msg);
-        try {
-            if(msg instanceof GetAllChecksumsMessage) {
-                replyToGetAllChecksumsMessage(bjs, 
-                        (GetAllChecksumsMessage) msg);
-            } else if(msg instanceof GetAllFilenamesMessage) {
-                replyToGetAllFilenamesMessage(bjs, 
-                        (GetAllFilenamesMessage) msg); 
-            } else if(msg instanceof GetChecksumMessage) {
-                replyToGetChecksumMessage(bjs, (GetChecksumMessage) msg);
-            } else /* unhandled message type. */{
-                String errMsg = "The message cannot be handled '" + msg + "'";
-                log.error(errMsg);
-                throw new IOFailure(errMsg);
-            }
-        } catch (Throwable e) {
-            msg.setNotOk(e);
+        if(msg instanceof GetAllChecksumsMessage) {
+            replyToGetAllChecksumsMessage(bjs, 
+                    (GetAllChecksumsMessage) msg);
+        } else if(msg instanceof GetAllFilenamesMessage) {
+            replyToGetAllFilenamesMessage(bjs, 
+                    (GetAllFilenamesMessage) msg); 
+        } else if(msg instanceof GetChecksumMessage) {
+            replyToGetChecksumMessage(bjs, (GetChecksumMessage) msg);
+        } else /* unhandled message type. */{
+            String errMsg = "The message cannot be handled '" + msg + "'";
+            log.error(errMsg);
+            msg.setNotOk(errMsg);
             con.reply(msg);
         }
     }
@@ -637,7 +635,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     private void replyToGetChecksumMessage(BitarchiveMonitor.BatchJobStatus bjs,
             GetChecksumMessage msg) {
         try {
-            // read the temporary file
+            // Fetch the content of the batchresultfile.
             List<String> output = 
                 FileUtils.readListFromFile(bjs.batchResultFile);
 
@@ -652,8 +650,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             if(output.size() > 1) {
                 log.warn("The file '" + msg.getArcfileName() 
                         + "' was found " + output.size() + " times in "
-                        + "the archive. Using the first found: " 
-                        + output.get(0));
+                        + "the archive. Using the first found '" 
+                        + output.get(0) + "' out of '" + output + "'");
                 // TODO handle if different or at least log the others
             }
 
@@ -661,7 +659,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             KeyValuePair<String, String> firstResult = 
                 ChecksumJob.parseLine(output.get(0));
 
-            // Check that the filename is valid
+            // Check that the filename has the expected value (the name of 
+            // the requested file).
             if(!msg.getArcfileName().equals(
                     firstResult.getKey())) {
                 String errMsg = "The first result found the file '"

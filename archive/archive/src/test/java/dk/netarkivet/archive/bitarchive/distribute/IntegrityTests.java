@@ -357,7 +357,8 @@ public class IntegrityTests extends TestCase {
                                                  Settings.get(
                                                          CommonSettings.USE_REPLICA_ID));
             bac.batch(bMsg);
-            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(FILENAME_TO_GET, "ONE", "FFFF", "42");
+            RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                    Channels.getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.removeAndGetFile(rMsg);
         }
 

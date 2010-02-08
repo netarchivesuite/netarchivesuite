@@ -477,8 +477,9 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         log.warn(msg);
         NotificationsFactory.getInstance().errorEvent(msg);
         RemoveAndGetFileMessage aMsg =
-                new RemoveAndGetFileMessage(fileName, bitarchiveId,
-                                            checksum, credentials);
+                new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                        Channels.getThisReposClient(), fileName, bitarchiveId,
+                        checksum, credentials);
         RemoveAndGetFileMessage replyMsg =
                 (RemoveAndGetFileMessage)
                         sendAndWaitForOneReply(aMsg, storeTimeout);
@@ -681,7 +682,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * The file which is removed from the replica is put into the tempDir.
      * 
      * @param replicaId The id of the replica to send the message.
-     * @param checksum The checksum of the wrong entry in the archive. It is 
+     * @param checksum The checksum of the corrupt entry in the archive. It is 
      * important to validate that the checksum actually is wrong before 
      * correcting the entry.
      * @param file The file to correct the entry in the archive of the replica.
@@ -718,7 +719,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         try {
             File destFile = new File(FileUtils.getTempDir(), 
                     removedFile.getName());
-            responseMessage.getRemovedFile().copyTo(destFile);
+            removedFile.copyTo(destFile);
         } catch(Throwable e) {
             log.warn("Problems occured during retrieval of file removed from "
                     + "archive.", e);

@@ -69,7 +69,7 @@ public abstract class ChecksumArchive {
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected.
      * @throws IllegalState If no such entry exists to be corrected, or if the 
-     * entry has a different checksum than the incorrectChecksum.
+     * entry has a different checksum than expected.
      */
     public abstract File correct(String filename, File correctFile) 
             throws IOFailure, ArgumentNotValid, IllegalState;

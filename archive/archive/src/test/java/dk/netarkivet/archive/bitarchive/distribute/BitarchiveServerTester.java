@@ -576,7 +576,8 @@ public class BitarchiveServerTester extends TestCase {
 
         //Verify that operation fails if the filename is wrong:
         RemoveAndGetFileMessage m1 =
-                new RemoveAndGetFileMessage(
+                new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                        Channels.getThisReposClient(),
                         arcFile + "-NOT",
                         dummyReplicaId,
                         checksum,
@@ -589,7 +590,8 @@ public class BitarchiveServerTester extends TestCase {
 
         //Verify that operation fails if the checksum is wrong:
         RemoveAndGetFileMessage m2 =
-                new RemoveAndGetFileMessage(
+                new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                        Channels.getThisReposClient(),
                         arcFile,
                         dummyReplicaId,
                         checksum + "-NOT",
@@ -608,7 +610,8 @@ public class BitarchiveServerTester extends TestCase {
 
         //Verify that operation fails if credentials are wrong:
         RemoveAndGetFileMessage m3 =
-                new RemoveAndGetFileMessage(
+                new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                        Channels.getThisReposClient(),
                         arcFile,
                         dummyReplicaId,
                         checksum,
@@ -627,7 +630,8 @@ public class BitarchiveServerTester extends TestCase {
 
         //Verify that operation succeeds in the correct case:
         RemoveAndGetFileMessage m4 =
-                new RemoveAndGetFileMessage(
+                new RemoveAndGetFileMessage(Channels.getTheRepos(), 
+                        Channels.getThisReposClient(), 
                         arcFile,
                         dummyReplicaId,
                         checksum,

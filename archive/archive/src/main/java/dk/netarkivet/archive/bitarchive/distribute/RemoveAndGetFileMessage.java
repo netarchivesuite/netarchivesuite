@@ -33,6 +33,7 @@ import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
@@ -57,25 +58,6 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Constructor.
-     * TODO please kill this constructor! It should not contain hardcoded 
-     * channels.
-     * @param arcfileName The file to retrieve & remove
-     * @param replicaId The id of the bitarchive to receive the response
-     * @param checksum the checksum of the file to retrieve & remove
-     * @param credentials the right credentials for this operation
-     */
-    public RemoveAndGetFileMessage(String arcfileName,
-                                     String replicaId, String checksum,
-                                     String credentials) {
-        super(Channels.getTheRepos(), Channels.getThisReposClient());
-        this.arcfileName = arcfileName;
-        this.replicaId = replicaId;
-        this.checksum = checksum;
-        this.credentials = credentials;
-    }
-    
-    /**
-     * Constructor.
      * @param to Where to send the message.
      * @param replyTo Where the reply of the message should be sent.
      * @param arcfileName The name of the file to remove and retrieve.
@@ -95,10 +77,13 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
 
     /**
      * Set the file this message should remove and return.
-     * Note: This will make a remote file handle fopr the file.
+     * Note: This will make a remote file handle for the file.
      * @param data Content of the file to retrieve
+     * @throws ArgumentNotValid If the data file is null.
      */
-    public void setFile(File data) {
+    public void setFile(File data) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(data, "File data");
+        
         remoteFile = RemoteFileFactory.getCopyfileInstance(data);
     }
 
