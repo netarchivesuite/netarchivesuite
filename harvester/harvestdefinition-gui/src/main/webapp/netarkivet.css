@@ -148,8 +148,6 @@ h3 a {
 
 input[type=submit] {
     background-color:#FFFDED;
-    /*position:absolute;
-    right:0%;*/
 }
 
 input[name=addDomains] {
