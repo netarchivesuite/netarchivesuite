@@ -1,7 +1,7 @@
-/*$Id: HarvestDefinitionGUITester.java 25 2007-07-27 14:25:27Z kfc $
-* $Revision: 25 $
-* $Date: 2007-07-27 16:25:27 +0200 (Fri, 27 Jul 2007) $
-* $Author: kfc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

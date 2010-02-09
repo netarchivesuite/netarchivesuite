@@ -1,7 +1,7 @@
--- File:        $Id: createfullhddb.sql 772 2009-03-19 17:55:38Z svc $
--- Revision:    $Revision: 772 $
--- Author:      $Author: svc $
--- Date:        $Date: 2009-03-19 18:55:38 +0100 (Thu, 19 Mar 2009) $
+-- File:        $Id$
+-- Revision:    $Revision$
+-- Author:      $Author$
+-- Date:        $Date$
 --
 -- The Netarchive Suite - Software to harvest and preserve websites
 -- Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

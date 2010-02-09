@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -31,8 +31,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * csr forgot to comment this!
  *
- * @author csr
- * @since Nov 26, 2009
  */
 
 public class GlobalCrawlerTrapListTester extends DataModelTestCase {

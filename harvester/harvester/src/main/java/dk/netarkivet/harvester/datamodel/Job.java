@@ -391,13 +391,16 @@ public class Job implements Serializable {
                 maxObjectsPerDomain, maxBytesPerDomain, harvestNum);
     }
 
+    /**
+     *  Reads a list of all active global crawler trap expressions from the
+     * database and adds them to the crawl template for this job.
+     */
     private void addGlobalCrawlerTraps() {
         GlobalCrawlerTrapListDBDAO dao =
                 GlobalCrawlerTrapListDBDAO.getInstance();
         editOrderXMLAddCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
                                     dao.getAllActiveTrapExpressions());
     }
-
 
     /**
      * Adds a configuration to this Job.

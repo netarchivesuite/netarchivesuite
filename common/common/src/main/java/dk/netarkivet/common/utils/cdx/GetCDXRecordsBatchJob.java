@@ -35,8 +35,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 /**
  * Job to get cdx records out of metadata files.
  *
- * @author csr
- * @since Jan 20, 2009
  */
 
 public class GetCDXRecordsBatchJob extends ARCBatchJob {

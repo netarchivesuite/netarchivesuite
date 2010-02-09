@@ -82,4 +82,8 @@ public class MonitorSettings {
      */
     public static String JMX_PROXY_TIMEOUT
             = "settings.monitor.jmxProxyTimeout";
+
+    /** Delay between every reregistering in minutes. */
+    public static final String DEFAULT_REREGISTER_DELAY =
+            "settings.monitor.reregisterDelay";
 }

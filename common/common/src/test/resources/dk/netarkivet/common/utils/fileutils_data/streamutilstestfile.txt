@@ -1,8 +1,8 @@
 <!--
-$Id: build.xml 547 2008-11-24 11:23:35Z svc $
-$Revision: 547 $
-$Date: 2008-11-24 12:23:35 +0100 (Mon, 24 Nov 2008) $
-$Author: svc $
+$Id$
+$Revision$
+$Date$
+$Author$
 
 The Netarchive Suite - Software to harvest and preserve websites
 Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

@@ -1,7 +1,7 @@
-/*$Id: $
-* $Revision: $
-* $Date: $
-* $Author: $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

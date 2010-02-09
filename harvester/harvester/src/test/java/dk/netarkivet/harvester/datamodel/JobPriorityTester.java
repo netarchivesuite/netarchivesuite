@@ -1,7 +1,7 @@
-/*$Id: StopReasonTester.java 11 2007-07-24 10:11:24Z kfc $
-* $Revision: 11 $
-* $Date: 2007-07-24 12:11:24 +0200 (Tue, 24 Jul 2007) $
-* $Author: kfc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

@@ -1,7 +1,7 @@
-/* $Id: MetadataFile.java 1012 2009-09-21 17:26:49Z ngiraud $
- * $Revision: 1012 $
- * $Date: 2009-09-16 14:39:49 +0200 (Wed, 16 Sep 2009) $
- * $Author: ngiraud $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

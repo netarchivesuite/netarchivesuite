@@ -50,8 +50,6 @@ import dk.netarkivet.common.utils.InputStreamUtils;
  * PrototypeNetarchiveResourceStore.java which was made as a prototype
  * connector.
  *
- * @author hbk
- * @since Aug 19, 2009
  */
 public class NetarchiveResourceStore implements ResourceStore {
 

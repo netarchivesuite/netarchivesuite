@@ -297,28 +297,23 @@ public abstract class DerbySpecifics extends DBSpecifics {
     @Override
     protected void createGlobalCrawlerTrapLists() {
         String createStatement = "CREATE TABLE global_crawler_trap_lists(\n"
-                                 + "  global_crawler_trap_list_id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n"
-                                 + "  name VARCHAR(300) NOT NULL UNIQUE,     -- A name by which this list is known\n"
-                                 + "                                         -- e.g. \"Statsbibliotekets Master List'\n"
-                                 + "  description VARCHAR(30000),            -- An optional description of the\n"
-                                 + "                                         -- list\n"
-                                 + "  isActive INT NOT NULL                  -- boolean valued int indicating\n"
-                                 + "                                         -- whether or not the list is active\n"
-                                 + "                                         -- 0=inactive, 1=active\n"
-                                 + ") ";
+                                 + "  global_crawler_trap_list_id INT NOT NULL "
+                                 + "GENERATED ALWAYS AS IDENTITY PRIMARY KEY,"
+                                 + "  name VARCHAR(300) NOT NULL UNIQUE,  "
+                                 + "  description VARCHAR(30000),"
+                                 + "  isActive INT NOT NULL) ";
         DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
     @Override
     protected void createGlobalCrawlerTrapExpressions() {
-        String createStatement = "CREATE TABLE global_crawler_trap_expressions(\n"
-                                 + "    crawler_trap_list_id INT NOT NULL, -- references\n"
-                                 + "                                                  -- global_crawler_trap_list_id\n"
-                                 + "    trap_expression VARCHAR(1000),               -- the actual regular\n"
-                                 + "                                                  -- expression for the crawler\n"
-                                 + "                                                  -- trap\n"
-                                 + "    PRIMARY KEY (CRAWLER_TRAP_LIST_ID, TRAP_EXPRESSION)\n"
-                                 + ")";
-        DBConnect.updateTable("global_crawler_trap_expressions", 1, createStatement);
+        String createStatement = "CREATE TABLE global_crawler_trap_expressions("
+                                 + "    crawler_trap_list_id INT NOT NULL, "
+                                 + ""
+                                 + "    trap_expression VARCHAR(1000),"
+                                 + "    PRIMARY KEY (crawler_trap_list_id, "
+                                 + "trap_expression))";
+        DBConnect.updateTable("global_crawler_trap_expressions", 1,
+                              createStatement);
     }
 }

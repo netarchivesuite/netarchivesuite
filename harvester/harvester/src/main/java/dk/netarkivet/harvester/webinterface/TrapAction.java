@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -25,6 +25,8 @@ package dk.netarkivet.harvester.webinterface;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import java.sql.SQLException;
+
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -32,14 +34,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
+import dk.netarkivet.common.webinterface.HTMLUtils;
 
 /**
  * Abstract class representing an action to take on the collection of global
  * crawler traps.
  *
- * @author csr
- * @since Jan 13, 2010
  */
 
 public abstract class TrapAction {
@@ -55,24 +57,36 @@ public abstract class TrapAction {
      * Otherwise the request is passed on to a specific concrete instance
      * of this class for further processing.
      *
-     * @param context
-     * @param i18n
+     * @param context the original servlet context of the request.
+     * @param i18n the internationalisation to be used.
+     * @throws ForwardedToErrorPage if an exception is thrown while carrying
+     * out the action.
      */
-    public static void processRequest(PageContext context, I18n i18n) {
+    public static void processRequest(PageContext context, I18n i18n) throws
+                                                       ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         log.debug("Processing request");
         HttpServletRequest request = (HttpServletRequest) context.getRequest();
-        if (ServletFileUpload.isMultipartContent(request)) {
-            TrapActionEnum.CREATE_OR_UPDATE.getTrapAction().doAction(context, i18n);
-        } else {
-            String requestType = request.getParameter(Constants.TRAP_ACTION);
-            if (requestType == null || "".equals(requestType)) {
-                TrapActionEnum.NULL_ACTION.getTrapAction().doAction(context, i18n);
+        try {
+            if (ServletFileUpload.isMultipartContent(request)) {
+                TrapActionEnum.CREATE_OR_UPDATE.getTrapAction()
+                        .doAction(context, i18n);
             } else {
-                TrapActionEnum actionType = TrapActionEnum.valueOf(requestType);
-                actionType.getTrapAction().doAction(context, i18n);
+                String requestType = request.getParameter(Constants.TRAP_ACTION);
+                if (requestType == null || requestType.isEmpty()) {
+                    TrapActionEnum.NULL_ACTION.getTrapAction()
+                            .doAction(context, i18n);
+                } else {
+                    TrapActionEnum actionType =
+                            TrapActionEnum.valueOf(requestType);
+                    actionType.getTrapAction().doAction(context, i18n);
+                }
             }
+        } catch (Throwable e) {
+            HTMLUtils.forwardWithErrorMessage(context, i18n, e,
+                                         "errormsg;crawlertrap.action.error");
+            throw new ForwardedToErrorPage("Error in Global Crawler Traps", e);
         }
     }
 

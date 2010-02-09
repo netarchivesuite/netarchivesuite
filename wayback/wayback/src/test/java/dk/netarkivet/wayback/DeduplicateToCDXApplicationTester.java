@@ -36,8 +36,6 @@ import dk.netarkivet.testutils.TestFileUtils;
 /**
  * csr forgot to comment this!
  *
- * @author csr
- * @since Sep 1, 2009
  */
 
 public class DeduplicateToCDXApplicationTester extends TestCase {

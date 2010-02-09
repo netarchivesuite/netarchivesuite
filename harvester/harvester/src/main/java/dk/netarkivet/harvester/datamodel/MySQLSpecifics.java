@@ -190,29 +190,23 @@ public class MySQLSpecifics extends DBSpecifics {
     /** Creates the initial (version 1) of table 'global_crawler_trap_lists'. */
     protected void createGlobalCrawlerTrapLists() {
         String createStatement = "CREATE TABLE global_crawler_trap_lists(\n"
-                                 + "  global_crawler_trap_list_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
-                                 + "  name VARCHAR(300) NOT NULL UNIQUE,     -- A name by which this list is known\n"
-                                 + "                                         -- e.g. \"Statsbibliotekets Master List'\n"
-                                 + "  description VARCHAR(20000),            -- An optional description of the\n"
-                                 + "                                         -- list\n"
-                                 + "  isActive INT NOT NULL                  -- boolean valued int indicating\n"
-                                 + "                                         -- whether or not the list is active\n"
-                                 + "                                         -- 0=inactive, 1=active\n"
-                                 + ")";
+                                 + "  global_crawler_trap_list_id INT NOT NULL "
+                                 + "AUTO_INCREMENT PRIMARY KEY,\n"
+                                 + "  name VARCHAR(300) NOT NULL UNIQUE, "
+                                 + "  description VARCHAR(20000), "
+                                 + "  isActive INT NOT NULL )";
         DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
     /** Creates the initial (version 1) of table 'global_crawler_trap_expressions'. */
     protected void createGlobalCrawlerTrapExpressions() {
-        String createStatement = "CREATE TABLE global_crawler_trap_expressions(\n"
-                                 + "    id bigint not null AUTO_INCREMENT primary key,\n"
-                                 + "    crawler_trap_list_id INT NOT NULL, -- references\n"
-                                 + "                                                  -- global_crawler_trap_list_id\n"
-                                 + "    trap_expression VARCHAR(1000)               -- the actual regular\n"
-                                 + "                                                  -- expression for the crawler\n"
-                                 + "                                                  -- trap\n"
-                                 + ")";
-        DBConnect.updateTable("global_crawler_trap_expressions", 1, createStatement);
+        String createStatement = "CREATE TABLE global_crawler_trap_expressions("
+                                 + "    id bigint not null AUTO_INCREMENT "
+                                 + "primary key,"
+                                 + "    crawler_trap_list_id INT NOT NULL, "
+                                 + "    trap_expression VARCHAR(1000) )";
+        DBConnect.updateTable("global_crawler_trap_expressions", 1,
+                              createStatement);
     }
 
 }

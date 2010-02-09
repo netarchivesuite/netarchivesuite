@@ -1,8 +1,8 @@
 <%--
-File:       $Id: Harveststatus-show-harvest-template.jsp 84 2007-09-28 11:29:23Z svc $
-Revision:   $Revision: 84 $
-Author:     $Author: svc $
-Date:       $Date: 2007-09-28 13:29:23 +0200 (fr, 28 sep 2007) $
+File:       $Id$
+Revision:   $Revision$
+Author:     $Author$
+Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
 Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

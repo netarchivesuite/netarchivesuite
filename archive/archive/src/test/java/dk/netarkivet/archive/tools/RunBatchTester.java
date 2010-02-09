@@ -1,7 +1,7 @@
-/*$Id: GetRecordTester.java 1042 2009-09-30 18:12:50Z kfc $
-* $Revision: 1042 $
-* $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
-* $Author: kfc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

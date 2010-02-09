@@ -39,8 +39,6 @@ import dk.netarkivet.wayback.batch.ExtractDeduplicateCDXBatchJob;
 /**
  * csr forgot to comment this!
  *
- * @author csr
- * @since Aug 28, 2009
  */
 
 public class ExtractDeduplicateCDXBatchJobTester extends TestCase {

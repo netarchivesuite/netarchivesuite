@@ -52,8 +52,6 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
  *
  * //TODO replace this class with one that satisfies our QA controls
  *
- * @author csr
- * @since Dec 19, 2008
  */
 
 

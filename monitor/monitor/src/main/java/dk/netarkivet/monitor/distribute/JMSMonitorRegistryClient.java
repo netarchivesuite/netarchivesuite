@@ -36,6 +36,7 @@ import dk.netarkivet.common.exceptions.NetarkivetException;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.monitor.MonitorSettings;
 import dk.netarkivet.monitor.registry.distribute.RegisterHostMessage;
 
 /**
@@ -55,9 +56,6 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
     /** One minute in milliseconds.
      * Used for control of timer task that sends messages. */
     private static final long MINUTE_IN_MILLISECONDS = 60000L;
-    /** Delay between every reregistering in minutes. */
-    private static final String DEFAULT_REREGISTER_DELAY =
-            "settings.monitor.reregisterDelay";
     /** Zero milliseconds from now.
      * Used for control of timer task that sends messages. */
     private static final long NOW = 0L;
@@ -117,7 +115,7 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
             }
         };
         
-        long reregister_delay = Settings.getLong(DEFAULT_REREGISTER_DELAY);
+        long reregister_delay = Settings.getLong(MonitorSettings.DEFAULT_REREGISTER_DELAY);
         try {
             reregister_delay = Long.parseLong(Settings.get(
                     CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY));
@@ -126,13 +124,13 @@ public class JMSMonitorRegistryClient implements MonitorRegistryClient,
             log.warn("Couldn't parse setting " 
                      + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                      + ". Only numbers are allowed. Using defaultvalue "
-                     + DEFAULT_REREGISTER_DELAY);
+                     + MonitorSettings.DEFAULT_REREGISTER_DELAY);
         }
         catch(NetarkivetException e2) {
             log.warn("Couldn't find setting " 
                     + CommonSettings.MONITOR_REGISTRY_CLIENT_REREGISTERDELAY
                     + ". Using defaultvalue "
-                    + DEFAULT_REREGISTER_DELAY);
+                    + MonitorSettings.DEFAULT_REREGISTER_DELAY);
         }
 
         log.info("Registering this client for monitoring every "

@@ -1,7 +1,7 @@
- /* File:        $Id:  $
- * Revision:    $Revision:  $
- * Author:      $Author:  $
- * Date:        $Date:  $
+ /* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -31,9 +31,6 @@ import dk.netarkivet.harvester.HarvesterSettings;
  *  A factory for HeritrixControllers.
  *
  *
- *
- * @author csr
- * @since Jul 3, 2009
  */
 
 public class HeritrixControllerFactory

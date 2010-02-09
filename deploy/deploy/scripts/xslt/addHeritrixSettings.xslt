@@ -2,8 +2,8 @@
 <!--
  File:        $Id$
  Revision:    $Revision$
- Author:      $Author: lc $
- Date:        $Date: 2007/03/09 15:38:38 $
+ Author:      $Author$
+ Date:        $Date$
 
  The Netarchive Suite - Software to harvest and preserve websites
  Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

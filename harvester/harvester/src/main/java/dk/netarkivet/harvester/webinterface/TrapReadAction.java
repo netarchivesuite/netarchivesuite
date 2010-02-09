@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -39,8 +39,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
 /**
  * Class to read and return a global crawler trap list to a web request.
  *
- * @author csr
- * @since Jan 13, 2010
  */
 
 public class TrapReadAction extends TrapAction {
@@ -55,14 +53,14 @@ public class TrapReadAction extends TrapAction {
         GlobalCrawlerTrapList trapList = dao.read(trapId);
         response.setHeader("Content-Type", contentType);
         if (contentType.startsWith("binary")) {
-            response.setHeader("Content-Disposition", "Attachment; filename=" +
-                                                      trapList.getName());
+            response.setHeader("Content-Disposition", "Attachment; filename="
+                                                      +  trapList.getName());
         }
         OutputStream out = null;
         try {
             out = response.getOutputStream();
-            for (String trap:trapList.getTraps()) {
-                out.write((trap+"\n").getBytes());
+            for (String trap : trapList.getTraps()) {
+                out.write((trap + "\n").getBytes());
             }
             out.close();
         } catch (IOException e) {

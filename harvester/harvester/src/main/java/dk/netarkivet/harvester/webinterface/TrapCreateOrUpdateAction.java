@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -49,8 +49,6 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  * a global crawler trap list. The choice of which action to carry out is
  * determined by whether the TRAP_ID is specified in the request.
  *
- * @author csr
- * @since Jan 13, 2010
  */
 
 public class TrapCreateOrUpdateAction extends TrapAction {

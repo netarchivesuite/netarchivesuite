@@ -4,7 +4,7 @@
         <xs:documentation xml:lang="en"> Schema for heritrix settings.
         Crawl job order files are instances of this schema.
 
-        $Id: heritrix_settings.xsd,v 1.1 2006/01/26 16:46:11 svc Exp $ 
+        $Id$ 
         </xs:documentation>
     </xs:annotation>
 

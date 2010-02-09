@@ -1,7 +1,7 @@
-/*$Id: TestInfo.java 307 2008-03-20 15:31:57Z svc $
- * $Revision: 307 $
- * $Date: 2008-03-20 16:31:57 +0100 (Thu, 20 Mar 2008) $
- * $Author: svc $
+/*$Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

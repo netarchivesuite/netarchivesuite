@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -32,8 +32,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * A Data Access Object for managing persistent collections of global crawler
  * traps.
  *
- * @author csr
- * @since Nov 25, 2009
  */
 
 public abstract class GlobalCrawlerTrapListDAO {
@@ -42,20 +40,20 @@ public abstract class GlobalCrawlerTrapListDAO {
 
     /**
      * Get all active crawler traps.
-     * @return
+     * @return a list of all active crawler traps.
      */
     public abstract List<GlobalCrawlerTrapList> getAllActive();
 
     /**
      * Get all inactive crawler traps.
-     * @return
+     * @return a list of all inactive crawler traps.
      */
     public abstract List<GlobalCrawlerTrapList> getAllInActive();
 
     /**
      * Get a merged list (without duplicates) of all currently-active crawler
      * trap expressions.
-     * @return
+     * @return a list os all active crawler trap expressions.
      */
     public abstract List<String> getAllActiveTrapExpressions();
 
@@ -72,11 +70,28 @@ public abstract class GlobalCrawlerTrapListDAO {
     public abstract int create(GlobalCrawlerTrapList trapList) throws
                                                                ArgumentNotValid;
 
+    /**
+     * Deletes a crawler trap list from the database
+     * @param id the id of the list to be deleted
+     * @throws UnknownID if the argument doesn not correspond to a known trap list.
+     */
     public abstract void delete(int id) throws UnknownID;
 
-
+    /**
+     * Updates a given global crawler trap list.
+     * @param trapList the trap list to update
+     * @throws UnknownID if the id of the trapList argument does not correspond
+     * to an existing trap list in the database.
+     */
     public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
 
+    /**
+     * Get a traplist from the database.
+     * @param id  the id of the traplist to be read.
+     * @return the trap list.
+     * @throws UnknownID if the id does not correspond to a known traplist in
+     * the database.
+     */
     public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
     
 

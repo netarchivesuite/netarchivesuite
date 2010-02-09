@@ -1,7 +1,7 @@
- /* $Id: JMSConnectionTester.java 109 2007-10-26 13:45:43Z kfc $
- * $Date: 2007-10-26 15:45:43 +0200 (Fri, 26 Oct 2007) $
- * $Revision: 109 $
- * $Author: kfc $
+ /* $Id$
+ * $Date$
+ * $Revision$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

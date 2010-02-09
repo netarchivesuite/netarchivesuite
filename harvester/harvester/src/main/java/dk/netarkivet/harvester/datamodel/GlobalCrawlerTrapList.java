@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
  *
@@ -37,8 +37,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * Class representing one or more global crawler traps, modelled as a list
  * of regular expressions. 
  *
- * @author csr
- * @since Nov 25, 2009
  */
 
 public class GlobalCrawlerTrapList {
@@ -50,21 +48,31 @@ public class GlobalCrawlerTrapList {
 
     /**
      * The list of traps. Each item is a regular expression matching url's to
-     * be avoided. In the database, (id, trap) is a primary key so we model
+     * be avoided. In the database, (id, trap) is a primary key for the table
+     * global_crawler_trap_expressions so we model
      * the traps as a Set to avoid possible duplicates.
      */
     Set<String> traps;
 
+    /**
+     * Get the name of the list.
+     * @return  the name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name of the list.
+     * @param name the name.
+     */
     public void setName(String name) {
+        ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         this.name = name;
     }
 
     /**
-     * A unique name by which this list is identified
+     * A unique name by which this list is identified.
      */
     String name;
 
@@ -134,6 +142,7 @@ public class GlobalCrawlerTrapList {
      * @param is  The input stream from which to read.
      */
     public void setTrapsFromInputStream(InputStream is) {
+        ArgumentNotValid.checkNotNull(is, "is");
         traps.clear();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
@@ -146,34 +155,68 @@ public class GlobalCrawlerTrapList {
         }
     }
 
+    /**
+     * Gte the id of this list.
+     * @return the id.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Set the id of this list.
+     * @param id the id.
+     */
     protected void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Get the trap expressions for this list.
+     * @return the trap expressions.
+     */
     public Set<String> getTraps() {
         return traps;
     }
 
+    /**
+     * Set the trap expressions for this list.
+     * @param traps the trap expressions.
+     */
     public void setTraps(Set<String> traps) {
+        ArgumentNotValid.checkNotNull(traps, "traps");
         this.traps = traps;
     }
 
+    /**
+     * Get the description of this list.
+     * @return the description.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Set the description of this list
+     * @param description the description.
+     */
     public void setDescription(String description) {
+        ArgumentNotValid.checkNotNull(description, "description");
         this.description = description;
     }
 
+    /**
+     * Retruns true if this list is active.
+     * @return the activity state of the list.
+     */
     public boolean isActive() {
         return isActive;
     }
 
+    /**
+     * Set the activity state of the list.
+     * @param active the activity state.
+     */
     public void setActive(boolean active) {
         isActive = active;
     }

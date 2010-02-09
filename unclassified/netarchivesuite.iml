@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/classes" />
     <output-test url="file://$MODULE_DIR$/classes" />
@@ -13,11 +18,18 @@
       <sourceFolder url="file://$MODULE_DIR$/webpages/QA" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/webpages/Status" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/docs/apidocs" />
-      <excludeFolder url="file://$MODULE_DIR$/tests/dk/netarkivet/harvester/datamodel/data/working" />
-      <excludeFolder url="file://$MODULE_DIR$/tests/dk/netarkivet/harvester/harvesting/distribute/data/working" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jetty-dependencies/jsp-api-2.1-glassfish-9.1.1.B60.25.p2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -133,6 +145,15 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$MODULE_DIR$/tests/lib/mockobjects-jdk1.4-0.09.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$MODULE_DIR$/tests/lib/mockobjects-jdk1.4-j2ee1.3-0.09.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -143,15 +164,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/tests/lib/mockobjects-core-0.09.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/tests/lib/mockobjects-jdk1.4-0.09.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -448,15 +460,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/jasper-runtime-tomcat-4.1.30.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/heritrix/lib/commons-net-1.4.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -475,7 +478,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/jasper-compiler-tomcat-4.1.30.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jetty-6.1.22.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -583,17 +586,52 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/jetty-dependencies" />
+          <root url="jar://$MODULE_DIR$/lib/commons-fileupload-1.2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/lib/jetty-dependencies" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jetty-6.1.22.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jetty-dependencies/jetty-util-6.1.22.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jetty-dependencies/servlet-api-2.5-20081211.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-net-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/jasper-compiler-tomcat-4.1.30.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/jasper-runtime-tomcat-4.1.30.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

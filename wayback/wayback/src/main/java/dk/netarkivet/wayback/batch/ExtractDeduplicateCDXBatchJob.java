@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
@@ -31,8 +31,6 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
  * This batch batch job takes deduplication records from a crawl log in a
  * metadata arcfile and converts them to cdx records for use in wayback.
  *
- * @author csr
- * @since Aug 28, 2009
  */
 
 public class ExtractDeduplicateCDXBatchJob extends ARCBatchJob {

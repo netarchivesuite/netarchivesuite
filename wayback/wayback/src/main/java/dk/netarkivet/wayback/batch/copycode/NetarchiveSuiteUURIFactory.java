@@ -43,8 +43,6 @@ import org.archive.util.TextUtils;
  * omitting calls to read system properties. It can therefore be used in batch
  * jobs without violating our security permissions.
  * 
- * @author csr
- * @since Jul 9, 2009
  */
 
 public class NetarchiveSuiteUURIFactory extends UURI {

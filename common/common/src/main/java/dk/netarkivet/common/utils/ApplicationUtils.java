@@ -169,7 +169,7 @@ public abstract class ApplicationUtils {
             log.trace("Factory method invoked.");
         } catch (Throwable e) {
             logExceptionAndPrint("Could not start class " + appName, e);
-            System.exit(EXCEPTION_WHILE_INSTANTIATING);
+            System.exit(EXCEPTION_WHILE_INSTANTIATING);       
         }
         // Add the shutdown hook
         try {

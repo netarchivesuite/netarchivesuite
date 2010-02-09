@@ -1,7 +1,7 @@
-/*$Id: DeployTesterSuite.java 470 2008-08-20 16:08:30Z svc $
-* $Revision: 470 $
-* $Date: 2008-08-20 18:08:30 +0200 (Wed, 20 Aug 2008) $
-* $Author: svc $
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

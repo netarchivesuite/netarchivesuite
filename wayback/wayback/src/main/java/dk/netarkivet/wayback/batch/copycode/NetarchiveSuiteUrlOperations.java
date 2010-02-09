@@ -35,8 +35,6 @@ import org.apache.commons.httpclient.URIException;
  * org.archive.wayback.util.url.UrlOperations when we have an execution
  * environment which allows the reading of system properties
  * 
- * @author csr
- * @since Jul 10, 2009
  */
 
 public class NetarchiveSuiteUrlOperations {

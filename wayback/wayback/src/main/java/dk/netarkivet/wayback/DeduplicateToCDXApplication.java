@@ -1,7 +1,7 @@
-/* File:        $Id: License.txt,v $
- * Revision:    $Revision: 1.4 $
- * Author:      $Author: csr $
- * Date:        $Date: 2005/04/11 16:29:16 $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
@@ -34,8 +34,6 @@ import dk.netarkivet.wayback.batch.DeduplicateToCDXAdapter;
  * A simple command line application to generate cdx files from local
  * crawl-log files.
  *
- * @author csr
- * @since Sep 1, 2009
  */
 
 public class DeduplicateToCDXApplication {

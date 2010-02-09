@@ -36,8 +36,6 @@ import dk.netarkivet.wayback.batch.ExtractWaybackCDXBatchJob;
 /**
  * csr forgot to comment this!
  *
- * @author csr
- * @since Jul 6, 2009
  */
 
 public class ExtractWaybackCDXBatchJobTester extends TestCase {
