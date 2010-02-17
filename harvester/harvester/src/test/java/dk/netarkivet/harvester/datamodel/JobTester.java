@@ -136,6 +136,12 @@ public class JobTester extends DataModelTestCase {
         		"No warnings should be generated. The logfile is: "
         		+ FileUtils.readFile(TestInfo.LOG_FILE),
         		TestInfo.LOG_FILE, "WARNING");
+        // TODO This fails currently, because four warnings occur in the logfile because of implementation 
+        // of FR 1116 Global crawlertraps: 
+        //17-Feb-2010 11:54:15 dk.netarkivet.common.utils.DBUtils getTableVersion
+        //WARNING: Unknown table 'global_crawler_trap_expressions'
+        //17-Feb-2010 11:54:15 dk.netarkivet.common.utils.DBUtils getTableVersion
+        //WARNING: Unknown table 'global_crawler_trap_lists'
     }
 
     public void testAddConfigurationMinCountObjects() {
