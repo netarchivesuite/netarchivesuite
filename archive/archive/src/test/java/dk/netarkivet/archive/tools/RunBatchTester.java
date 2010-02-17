@@ -322,8 +322,8 @@ public class RunBatchTester extends TestCase {
      */
     public void testArgumentsChecksumReplica() {
         String expectedErrorMessage = "Can only send a batchjob to a "
-            + "bitarchive replica, and '" + TestInfo.BATCH_CS_REPLICA_NAME + "' is the " 
-            + "replica '" + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME) + "'";
+            + "bitarchive replica, and '" + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME) 
+            + "' is of the type '" + Replica.getReplicaFromName(TestInfo.BATCH_CS_REPLICA_NAME).getType() + "'";
         String[] args = new String[]{"-J" + TestInfo.BATCH_TEST_JAR_FILE.getAbsolutePath(),
                 "-N" + TestInfo.BATCH_TEST_JAR_GOOD_CLASS, "-B" + TestInfo.BATCH_CS_REPLICA_NAME};
         try {
