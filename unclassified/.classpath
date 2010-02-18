@@ -46,5 +46,7 @@
 	<classpathentry kind="lib" path="lib/heritrix-dependencies/je-3.3.75.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-dependencies/jsp-2.1-glassfish-9.1.1.B60.25.p2.jar"/>
+	<classpathentry kind="lib" path="tests/lib/httpunit-dependencies/nekohtml-0.9.4.jar"/>
+	<classpathentry kind="lib" path="tests/lib/httpunit-dependencies/xercesImpl.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
