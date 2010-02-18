@@ -35,9 +35,10 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
+import dk.netarkivet.archive.arcrepositoryadmin.Admin;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
@@ -86,7 +87,7 @@ public class ArcRepository implements CleanupIF {
     /**
      * The administration data associated with the arcrepository.
      */
-    private UpdateableAdminData ad;
+    private Admin ad;
 
     /**
      * The class which listens to messages sent to this instance of
@@ -134,7 +135,8 @@ public class ArcRepository implements CleanupIF {
      */
     private ArcRepository() throws IOFailure, IllegalState {
         //UpdateableAdminData Throws IOFailure
-        this.ad = UpdateableAdminData.getUpdateableInstance(); 
+//        this.ad = UpdateableAdminData.getUpdateableInstance();
+        this.ad = AdminFactory.getInstance();
         this.arcReposhandler = new ArcRepositoryServer(this);
 
         initialiseReplicaClients();
@@ -456,8 +458,8 @@ public class ArcRepository implements CleanupIF {
         for (Replica rep : connectedReplicas.keySet()) {
             try {
                 // retrieve the replica channel and check upload status.
-                String repChannel = rep.getIdentificationChannel().getName();
-                if (ad.getState(arcFileName, repChannel)
+                String repChannelName = rep.getIdentificationChannel().getName();
+                if (ad.getState(arcFileName, repChannelName)
                         == ReplicaStoreState.UPLOAD_STARTED) {
                     return false;
                 }
@@ -1055,14 +1057,11 @@ public class ArcRepository implements CleanupIF {
         }
 
         // checksum ok - try to remove the file
-        log.warn("Requesting remove of file '" + msg.getArcfileName()
-                 + "' with checksum '" + msg.getCheckSum()
-                 + "' from: '" + msg.getReplicaId() + "'");
-        NotificationsFactory.getInstance().errorEvent(
-                "Requesting remove of file '"
-                 + msg.getArcfileName()
-                 + "' with checksum '" + msg.getCheckSum()
-                 + "' from: '" + msg.getReplicaId() + "'");
+        String errMsg = "Requesting remove of file '" + msg.getArcfileName() 
+                + "' with checksum '" + msg.getCheckSum() + "' from: '" 
+                + msg.getReplicaId() + "'";
+        log.warn(errMsg);
+        NotificationsFactory.getInstance().errorEvent(errMsg);
         ReplicaClient rc = getReplicaClientFromReplicaId(msg
                 .getReplicaId());
         rc.removeAndGetFile(msg);

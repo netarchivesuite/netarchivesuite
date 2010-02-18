@@ -24,6 +24,8 @@ package dk.netarkivet.archive.arcrepository;
 
 import java.io.File;
 
+import dk.netarkivet.archive.arcrepositoryadmin.Admin;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -70,7 +72,7 @@ public class UploadWaiting {
     }
 
     private static boolean hasAllCompleted(String arcFile) {
-        UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
+        Admin ad = AdminFactory.getInstance();
 
         if (ad.hasReplyInfo(arcFile)) {
             return false;

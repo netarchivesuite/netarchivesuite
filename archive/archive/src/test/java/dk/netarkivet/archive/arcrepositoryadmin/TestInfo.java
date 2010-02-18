@@ -78,4 +78,11 @@ public class TestInfo {
 
     static final String[] files = {"some.arc", "are.arc", "equal.arc",
                                    "other.arc", "files.arc"};
+    
+    /** The directory containing the database for DatabaseBasedActiveBitPreservationTester*/
+    public static final File DATABASE_DIR = new File(TEST_DIR, "adminDB");
+    /** The complete database URL for the DatabaseBasedActiveBitPreservationTester. */
+    public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getPath();
+
+    public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");
 }

@@ -127,7 +127,7 @@ public class FileBasedActiveBitPreservation
      * @throws ArgumentNotValid If the list of filenames is null or contains 
      * a null.
      */
-    public Map<String, FilePreservationState> getFilePreservationStateMap(
+    public Map<String, PreservationState> getPreservationStateMap(
             String... filenames) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         // check, that the files are not empty strings
@@ -167,8 +167,8 @@ public class FileBasedActiveBitPreservation
         
         // filepreservationStates: map ([filename] -> [filepreservationstate])
         // This is the datastructure returned from this method
-        Map<String, FilePreservationState> filepreservationStates 
-            = new HashMap<String, FilePreservationState>();
+        Map<String, PreservationState> filepreservationStates 
+            = new HashMap<String, PreservationState>();
         
         // Phase 1: Add null FilePreservationState entries for the files
         // absent from admindata. 
@@ -209,10 +209,10 @@ public class FileBasedActiveBitPreservation
      * @return the FilePreservationState for the given file. This will be null,
      * if the filename is not found in admin data.
      */
-    public FilePreservationState getFilePreservationState(String filename) {
+    public PreservationState getPreservationState(String filename) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        Map<String, FilePreservationState> filepreservationStates
-            = getFilePreservationStateMap(filename);
+        Map<String, PreservationState> filepreservationStates
+            = getPreservationStateMap(filename);
         
         return filepreservationStates.get(filename);
     }
@@ -730,13 +730,13 @@ public class FileBasedActiveBitPreservation
         // preservationStates: map [filename]->[filepreservationstate]
         // Initialized here to contain an entry for each filename in vargargs
         // 'filenames'.
-        Map<String, FilePreservationState> preservationStates
-            =  getFilePreservationStateMap(filenames);
+        Map<String, PreservationState> preservationStates
+            =  getPreservationStateMap(filenames);
         
         // For each given filename, try to reestablish it on
         // Replica 'replica'
         for (String fn: filenames) {
-            FilePreservationState fps = preservationStates.get(fn);
+            PreservationState fps = preservationStates.get(fn);
             try {
                 if (fps == null) {
                     throw new IllegalState("No state known about '" + fn + "'");
@@ -744,7 +744,7 @@ public class FileBasedActiveBitPreservation
                 if (!fps.isAdminDataOk()) {
                     setAdminDataFailed(fn, replica);
                     admin.synchronize();
-                    fps = getFilePreservationState(fn);
+                    fps = getPreservationState(fn);
                     if (fps == null) {
                         throw new IllegalState("No state known about '"
                                 + fn + "'");
@@ -780,7 +780,7 @@ public class FileBasedActiveBitPreservation
      * @throws IOFailure On trouble updating the file.
      */
     private void reestablishMissingFile(String fileName, Replica damagedReplica,
-            FilePreservationState fps) throws IOFailure {
+            PreservationState fps) throws IOFailure {
         log.debug("Reestablishing missing file '" + fileName
                   + "' in replica '" + damagedReplica + "'.");
         if (!satisfiesMissingFileConditions(fps, damagedReplica, fileName)) {
@@ -833,7 +833,7 @@ public class FileBasedActiveBitPreservation
      * @param fileName the name of the file being considered.
      * @return true if all conditions are true, false otherwise.
      */
-    private boolean satisfiesMissingFileConditions(FilePreservationState state,
+    private boolean satisfiesMissingFileConditions(PreservationState state,
             Replica damagedReplica, String fileName) {
         // condition 1
         if (!state.isAdminDataOk()) {
@@ -917,9 +917,9 @@ public class FileBasedActiveBitPreservation
     private void correctArchiveEntry(Replica replica, String filename, 
             String checksum, String credentials) {
         // get the preservation state.
-        Map<String, FilePreservationState> preservationStates
-                =  getFilePreservationStateMap(filename);
-        FilePreservationState fps = preservationStates.get(filename);
+        Map<String, PreservationState> preservationStates
+                =  getPreservationStateMap(filename);
+        PreservationState fps = preservationStates.get(filename);
 
         // Use the preservation state to find a reference archive (bitarchive).
         Replica referenceArchive = fps.getReferenceBitarchive();
@@ -994,8 +994,8 @@ public class FileBasedActiveBitPreservation
             throws PermissionDenied, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         admin.synchronize();
-        FilePreservationState fps 
-            = getFilePreservationState(filename);
+        PreservationState fps 
+            = getPreservationState(filename);
         String checksum = fps.getReferenceCheckSum();
         if (checksum == null || checksum.isEmpty()) {
             throw new PermissionDenied("No correct checksum for '"

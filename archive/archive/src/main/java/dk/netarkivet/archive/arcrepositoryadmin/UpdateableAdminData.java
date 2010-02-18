@@ -37,7 +37,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 
-
 /**
  * Class for accessing and manipulating the administrative data for
  * the ArcRepository.
@@ -54,7 +53,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * the admindata file is migrated to the new version.
  *
  */
-public class UpdateableAdminData extends AdminData {
+public class UpdateableAdminData extends AdminData implements Admin {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());
 
@@ -122,7 +121,6 @@ public class UpdateableAdminData extends AdminData {
             write(filename);
         }
     }
-
 
     /**
      * Records the replyInfo (StoreMessage object) so that it can be retrieved
@@ -218,7 +216,6 @@ public class UpdateableAdminData extends AdminData {
         storeEntries.get(arcfileName).setChecksum(checkSum);
         write(); // Write everything to persistent storage
     }
-
 
     /**
      * Write all the admin data to file.

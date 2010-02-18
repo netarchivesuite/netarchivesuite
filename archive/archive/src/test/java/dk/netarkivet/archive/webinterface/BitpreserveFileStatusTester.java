@@ -37,6 +37,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
+import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -132,7 +133,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupGetParameterMap(args);
         request.setupGetParameterNames(
                 new Vector<String>(args.keySet()).elements());
-        Map<String, FilePreservationState> status =
+        Map<String, PreservationState> status =
                 BitpreserveFileState.processMissingRequest(getDummyPageContext(
                         defaultLocale, request),
                                                            new StringBuilder());

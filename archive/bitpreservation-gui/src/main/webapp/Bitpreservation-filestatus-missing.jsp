@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
 dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory,
 dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
+dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState,
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
 dk.netarkivet.archive.webinterface.BitpreserveFileState,
 dk.netarkivet.archive.webinterface.Constants,
@@ -40,7 +41,7 @@ dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exce
     HTMLUtils.setUTF8(request);
 
     StringBuilder res = new StringBuilder();
-    java.util.Map<String, FilePreservationState> fileInfo;
+    java.util.Map<String, PreservationState> fileInfo;
     try {
         fileInfo = BitpreserveFileState.processMissingRequest(pageContext,
                                                                res);
@@ -122,7 +123,7 @@ dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exce
 	            %>
 	            <tr><td>
 	                <%
-	            FilePreservationState fs = fileInfo.get(filename);
+	            PreservationState fs = fileInfo.get(filename);
 	            if (fs == null) {
 	                %>
 	                <fmt:message key="no.info.on.file.0">

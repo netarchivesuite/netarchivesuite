@@ -39,5 +39,25 @@ public enum ReplicaStoreState {
      * verified by a checksumJob. */
     UPLOAD_COMPLETED, 
     /** Upload to the replica archive has failed. */
-    UPLOAD_FAILED;
+    UPLOAD_FAILED,
+    /** If it is unknown whether a file has been successfully uploaded to a 
+     * replica or not. Used in the database. */
+    UNKNOWN_UPLOAD_STATE;
+    
+    public static ReplicaStoreState fromOrdinal(int i) {
+        if(i == 0) {
+            return UPLOAD_STARTED;
+        } 
+        if(i == 1) {
+            return DATA_UPLOADED;
+        } 
+        if(i == 2) {
+            return UPLOAD_COMPLETED;
+        }
+        if(i == 3) {
+            return UPLOAD_FAILED;
+        }
+        // anything else is unknown.
+        return UNKNOWN_UPLOAD_STATE;
+    }
 }

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                  dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation,
                  dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory,
                  dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation,
+                 dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState,
                  dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
                  dk.netarkivet.archive.webinterface.BitpreserveFileState,
                  dk.netarkivet.archive.webinterface.Constants,
@@ -39,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     HTMLUtils.setUTF8(request);
     // Process checksumrequest. Any errors found while processing the files are added to res.
     StringBuilder res = new StringBuilder();
-    FilePreservationState fs;
+    PreservationState fs;
     try {
         fs = BitpreserveFileState.processChecksumRequest(res, pageContext);
     } catch (ForwardedToErrorPage e) {

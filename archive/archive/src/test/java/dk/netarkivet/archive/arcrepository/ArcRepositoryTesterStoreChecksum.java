@@ -72,11 +72,6 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
     		"NetarchiveSuite-store1.arc", 
     		"NetarchiveSuite-store2.arc"};
 
-
-    /* The bitarchive servers we need to communicate with. */
-    BitarchiveServer archiveServer1;
-    BitarchiveServer archiveServer2;
-
     ArcRepository arcRepos;
 
     ReloadSettings rs = new ReloadSettings();
@@ -191,6 +186,7 @@ public class ArcRepositoryTesterStoreChecksum extends TestCase {
             msg = new StoreMessage(Channels.getError(), file);
             arcRepos.store(msg.getRemoteFile(), msg);
             UploadWaiting.waitForUpload(file, this);
+            fail("Should throw an PermissionDenied here!");
         } catch (dk.netarkivet.common.exceptions.PermissionDenied e) {
             String refTableSum = UpdateableAdminData.getUpdateableInstance()
             	.getCheckSum(file.getName());

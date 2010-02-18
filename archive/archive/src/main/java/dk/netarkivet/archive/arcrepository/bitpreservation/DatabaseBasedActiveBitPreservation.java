@@ -26,19 +26,21 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.io.File;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaFileInfo;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
@@ -447,23 +449,25 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param filename The name of the file for whom the FilePreservationState
      * should be retrieved.
      * @return The FilePreservationState for the file.
-     * @throws NotImplementedException This method has not yet been implemented.
-     * This is required to be implemented by the webserver, before B.2.2b can 
-     * be considered finished.
      * @throws ArgumentNotValid If the filename does not have a valid name.
      */
     @Override
-    public FilePreservationState getFilePreservationState(String filename) 
-            throws NotImplementedException, ArgumentNotValid {
+    public PreservationState getPreservationState(String filename) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         
-        // TODO requires changing the FilePreservationState ->
-        // should not use admin.data
-
-        // How to handle FilePreservationState ??
-        // Make new!
-
-        throw new NotImplementedException("TODO: Implement me!");
+        // Initialize the list of replicafileinfos, with one entry per replica.
+        List<ReplicaFileInfo> rfis = new ArrayList<ReplicaFileInfo>(
+                Replica.getKnown().size());
+        
+        // retrieve each entry for the file, and put it into the list.
+        for(Replica replica : Replica.getKnown()) {
+            rfis.add(cache.getReplicaFileInfo(filename, replica));
+        }
+        
+        // use filename and replicafileinfos to make the resulting
+        // DatabasePreservationState. 
+        return new DatabasePreservationState(filename, rfis);
     }
 
     /**
@@ -472,19 +476,23 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param filenames The list of filenames whose FilePreservationState should
      * be retrieved.
      * @return A mapping between the filenames and their FilePreservationState.
-     * @throws NotImplementedException Since it has not yet been implemented.
-     * This is required to be implemented by the webserver, before B.2.2b can 
-     * be considered finished.
      * @throws ArgumentNotValid If the filenames are invalid.
      */
     @Override
-    public Map<String, FilePreservationState> getFilePreservationStateMap(
-            String... filenames) throws ArgumentNotValid, 
-            NotImplementedException {
+    public Map<String, PreservationState> getPreservationStateMap(
+            String... filenames) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         
-        // TODO Auto-generated method stub
-        throw new NotImplementedException("TODO: Implement me!");
+        // make the resulting map.
+        Map<String, PreservationState> res = 
+            new HashMap<String, PreservationState>();
+        
+        // retrieve the preservation states and put them into the map.
+        for(String file : filenames) {
+            res.put(file, getPreservationState(file));
+        }
+        
+        return res;
     }
 
     /**

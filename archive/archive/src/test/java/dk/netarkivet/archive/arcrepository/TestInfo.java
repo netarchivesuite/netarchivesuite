@@ -41,5 +41,9 @@ class TestInfo {
     static final File TMP_FILE = new File(WORKING_DIR, "temp");
     static final File LOG_FILE = new File("tests/testlogs/netarkivtest.log");
     public static final long SHORT_TIMEOUT = 1000;
+    
+    
+    static final File ORIGINAL_DATABASE_DIR = new File(DATA_DIR, "database");
+    static final File DATABASE_DIR = new File(WORKING_DIR, "database");
 }
 

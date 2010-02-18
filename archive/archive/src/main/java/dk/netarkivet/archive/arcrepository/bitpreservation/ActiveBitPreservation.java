@@ -47,7 +47,7 @@ public interface ActiveBitPreservation {
      *  The preservationstates in the map will be null for all filenames,
      *  that are not found in admin data.
      */
-    Map<String, FilePreservationState> getFilePreservationStateMap(
+    Map<String, PreservationState> getPreservationStateMap(
             String... filenames);
 
     /**
@@ -58,7 +58,7 @@ public interface ActiveBitPreservation {
      * @return the FilePreservationState for the given file. This will be null,
      * if the filename is not found in admin data.
      */
-    FilePreservationState getFilePreservationState(String filename);
+    PreservationState getPreservationState(String filename);
     
     // Check state for bitarchives
 

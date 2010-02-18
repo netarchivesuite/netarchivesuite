@@ -530,7 +530,7 @@ public abstract class AdminData {
      *
      * @param replica the object representing the BA
      * @param state the state to look for, e.g.
-     *  BitArchiveStoreState.STATE_COMPLETED
+     *  ReplicaStoreState.STATE_COMPLETED
      * @return the set of files in the repository with the given state
      */
     public Set<String> getAllFileNames(Replica replica,

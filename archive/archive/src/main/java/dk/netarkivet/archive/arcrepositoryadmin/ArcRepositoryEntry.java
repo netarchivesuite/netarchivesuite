@@ -138,7 +138,6 @@ public class ArcRepositoryEntry {
         }
 
         // Scenario 3: If there are information from more than one bitarchive
-
         ArchiveStoreState ass = storeStates.get(bitarchiveNames[0]);
         Date lastChanged = ass.getLastChanged();
         boolean failState = false;
@@ -165,13 +164,12 @@ public class ArcRepositoryEntry {
             return new ArchiveStoreState(ReplicaStoreState.UPLOAD_FAILED,
                     lastChanged);
         }
+        
         // Scenario 3B:
         //   B. else, find the lowest state of the N bitarchives:
         //     return this state together with the the latest timestamp
-
         return new ArchiveStoreState(lowestStoreState, lastChanged);
     }
-
 
     /**
      * Set the StoreState for a specific bitarchive
@@ -196,7 +194,6 @@ public class ArcRepositoryEntry {
         ArchiveStoreState ass = new ArchiveStoreState(state, lastchanged);
         storeStates.put(baId, ass);
     }
-
 
     /**
      * Get the StoreState for this entry for a given bitarchive or null if none.

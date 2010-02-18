@@ -39,6 +39,8 @@ import org.archive.io.arc.ARCRecord;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
+import dk.netarkivet.archive.arcrepositoryadmin.DBConnect;
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
@@ -86,7 +88,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         jmsConnection.setUp();
         rf.setUp();
 
-        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE,
+        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);
         Settings.set(CommonSettings.ARC_REPOSITORY_CLIENT,
                      MockupArcRepositoryClient.class.getName());
@@ -98,7 +100,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         if(first) {
             first = false;
             clearDatabase(DBConnect.getDBConnection(Settings.get(
-                    ArchiveSettings.URL_ARCREPOSITORY_BITPRESERVATION_DATABASE)));
+                    ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE)));
         }
     }
     
@@ -111,8 +113,6 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
             dbabp.close();
         }
         
-//        MockupArcRepositoryClient.instance = null;
-
         rf.tearDown();
         mtf.tearDown();
         jmsConnection.tearDown();
@@ -178,7 +178,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      */
     public void testChangedFiles() throws Exception {
 	// initialise the database. Clean database and put new intries.
-	ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
+	ReplicaCacheDatabase.getInstance();
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
 	dbabp.findMissingFiles(THREE);

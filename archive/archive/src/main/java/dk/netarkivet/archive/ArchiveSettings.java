@@ -142,20 +142,20 @@ public class ArchiveSettings {
             = "settings.archive.bitpreservation.baseDir";
     
     /**
-     * <b>settings.archive.bitpreservation.database.url</b>: <br>
+     * <b>settings.archive.admin.database.url</b>: <br>
      * Setting for giving the URL to the database used by the 
      * DatabaseBasedActiveBitPreservation class.
      */
-    public static String URL_ARCREPOSITORY_BITPRESERVATION_DATABASE
-            = "settings.archive.bitpreservation.database.url";
+    public static String URL_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.url";
     
     /**
      * <b>settings.archive.bitpreservation.database.class</b>: <br>
      * Setting for which class is used for handling the database for the
      * DatabaseBasedActiveBitPreservation class.
      */
-    public static String CLASS_ARCREPOSITORY_BITPRESERVATION_DATABASE
-            = "settings.archive.bitpreservation.database.class";
+    public static String CLASS_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.class";
     
     /**
      * <b>settings.archive.bitpreservation.class</b>: <br>
@@ -169,14 +169,20 @@ public class ArchiveSettings {
      * <b>settings.archive.checksum.baseDir</b>: <br>
      * The directory for the checksum file.
      */
-    public static String CHECKSUM_BASEDIR = 
-        "settings.archive.checksum.baseDir";
+    public static String CHECKSUM_BASEDIR 
+            = "settings.archive.checksum.baseDir";
     
     /**
      * <b>settings.archive.checksum.minSpaceLeft</b>: <br>
      * The path to the settings for the minimum amount of space left for the 
      * checksum archive to receive new upload messages. 
      */
-    public static String CHECKSUM_MIN_SPACE_LEFT = 
-        "settings.archive.checksum.minSpaceLeft";
+    public static String CHECKSUM_MIN_SPACE_LEFT 
+            = "settings.archive.checksum.minSpaceLeft";
+    
+    /**
+     * <b>settings.archive.admin.class</b>
+     * The path to the settings for the adminstration instance class.
+     */
+    public static String ADMIN_CLASS = "settings.archive.admin.class";
 }

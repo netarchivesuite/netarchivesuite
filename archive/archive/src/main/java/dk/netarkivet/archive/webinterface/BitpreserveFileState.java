@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
+import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
@@ -123,7 +124,7 @@ public class BitpreserveFileState {
      * @throws ForwardedToErrorPage if the commands have the wrong number of
      *                              arguments.
      */
-    public static Map<String, FilePreservationState>
+    public static Map<String, PreservationState>
     processMissingRequest(PageContext context, StringBuilder res) {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(res, "StringBuilder res");
@@ -173,13 +174,13 @@ public class BitpreserveFileState {
         // preservationstates for all files retrieved from the
         // parameter Constants.GET_INFO_COMMAND.
         // This map is an empty map, if this parameter is undefined. 
-        Map<String, FilePreservationState> infoMap;
+        Map<String, PreservationState> infoMap;
         // Do this at the end so that the info reflects the current state.
         if (params.containsKey(Constants.GET_INFO_COMMAND)) {
             String[] getInfos = params.get(Constants.GET_INFO_COMMAND);
-            infoMap = preserve.getFilePreservationStateMap(getInfos);
+            infoMap = preserve.getPreservationStateMap(getInfos);
         } else {
-            infoMap = new HashMap<String, FilePreservationState>();
+            infoMap = new HashMap<String, PreservationState>();
         }
 
         return infoMap;
@@ -238,7 +239,7 @@ public class BitpreserveFileState {
      * @return The file preservation state for a file, if a filename is given
      * in the request. Null otherwise.
      */
-    public static FilePreservationState processChecksumRequest(
+    public static PreservationState processChecksumRequest(
             StringBuilder res, PageContext context) {
         ArgumentNotValid.checkNotNull(res, "StringBuilder res");
         ArgumentNotValid.checkNotNull(context, "PageContext context");
@@ -326,7 +327,7 @@ public class BitpreserveFileState {
             }
         }
         
-        return preserve.getFilePreservationState(filename);
+        return preserve.getPreservationState(filename);
     }
 
     /**
@@ -521,7 +522,7 @@ public class BitpreserveFileState {
      *
      * @throws IOException On trouble printing to a stream.
      */
-    public static void printFileState(JspWriter out, FilePreservationState fs,
+    public static void printFileState(JspWriter out, PreservationState fs,
             Locale locale) throws IOException {
         ArgumentNotValid.checkNotNull(out, "JspWriter out");
         ArgumentNotValid.checkNotNull(fs, "FilePreservationState fs");
@@ -554,9 +555,7 @@ public class BitpreserveFileState {
      * @throws IOException on trouble printing the state.
      */
     private static void printFileStateForAdminData(JspWriter out,
-                                                    FilePreservationState fs,
-                                                    Locale locale)
-            throws IOException {
+            PreservationState fs, Locale locale) throws IOException {
         out.print(HTMLUtils.makeTableRow(
                 HTMLUtils.makeTableElement(I18N.getString(locale,
                                                           "admin.data")),
@@ -574,9 +573,9 @@ public class BitpreserveFileState {
      *
      * @throws IOException
      */
-    private static void printFileStateForBitarchive(
-            JspWriter out, Replica baReplica,
-            FilePreservationState fs, Locale locale) throws IOException {
+    private static void printFileStateForBitarchive(JspWriter out, 
+            Replica baReplica, PreservationState fs, Locale locale) 
+            throws IOException {
         log.debug("Printing filestate for bitarchive '"
                 +  baReplica.getName() + "'");
         out.print(HTMLUtils.makeTableRow(

@@ -26,7 +26,9 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.sql.Date;
 import java.util.List;
 
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaFileInfo;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.CleanupIF;
 
 /**
@@ -148,6 +150,17 @@ public interface BitPreservationDAO extends CleanupIF {
      * as corrupt.
      */
     void updateChecksumStatus();
+    
+    /**
+     * Method for retrieving the entry in the replicafileinfo table for a
+     * given file and replica.
+     * 
+     * @param filename The name of the file for the entry.
+     * @param replica The replica of the entry. 
+     * @return The replicafileinfo entry corresponding to the given filename 
+     * and replica.
+     */
+    ReplicaFileInfo getReplicaFileInfo(String filename, Replica replica);
     
     /**
      * Method for cleaning up when done.

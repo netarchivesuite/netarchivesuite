@@ -328,15 +328,15 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         // Ensure that the admin data are read from the file
         AdminData.getUpdateableInstance();
         abp = FileBasedActiveBitPreservation.getInstance();
-        FilePreservationState fps
-                = abp.getFilePreservationState(TestInfo.FILE_IN_ADMIN_DATA);
+        FilePreservationState fps = (FilePreservationState) 
+                abp.getPreservationState(TestInfo.FILE_IN_ADMIN_DATA);
         assertNotNull("Should get FilePreservationStatus for existing file",
                 fps);
 
         assertEquals("Should get FPS for correct file",
                 TestInfo.FILE_IN_ADMIN_DATA, fps.getFilename());
 
-        fps = abp.getFilePreservationState(TestInfo.FILE_NOT_IN_ADMIN_DATA);
+        fps = (FilePreservationState) abp.getPreservationState(TestInfo.FILE_NOT_IN_ADMIN_DATA);
         assertNull("Should get null for non-existing file", fps);
     }
 
@@ -492,9 +492,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         results.put(ONE, "foobar##md5-1");
         results.put(TWO, "foobar##md5-2");
         results.put(THREE, "foobar##md5-3");
-        FilePreservationState fps 
-            = FileBasedActiveBitPreservation.getInstance()
-            .getFilePreservationState("foobar");
+        FilePreservationState fps = (FilePreservationState) 
+                FileBasedActiveBitPreservation.getInstance().getPreservationState("foobar");
         assertFalse("Should have received result non-null result for ONE",
                 fps.getBitarchiveChecksum(ONE) == null);
         assertEquals("Should have expected size for ONE",
@@ -520,8 +519,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         results.clear();
         results.put(ONE, " ");
 
-        fps = FileBasedActiveBitPreservation.getInstance()
-            .getFilePreservationState("foobar");
+        fps = (FilePreservationState) FileBasedActiveBitPreservation
+                .getInstance().getPreservationState("foobar");
         
         assertFalse("Should have received result non-null result for ONE",
                 fps.getBitarchiveChecksum(ONE) == null);
@@ -540,8 +539,8 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         results.clear();
         results.put(ONE, "foobar#klaf");
         results.put(TWO, "foobarf##klaff");
-        fps = FileBasedActiveBitPreservation.getInstance()
-            .getFilePreservationState("foobar");
+        fps = (FilePreservationState) FileBasedActiveBitPreservation
+                .getInstance().getPreservationState("foobar");
         assertEquals("Should have expected size for ONE",
                 0, fps.getBitarchiveChecksum(ONE).size());
         assertEquals("Should have expected size for TWO",

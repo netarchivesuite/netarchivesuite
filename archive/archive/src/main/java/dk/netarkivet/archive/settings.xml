@@ -56,11 +56,17 @@
         </checksum>
         <bitpreservation>
             <baseDir>bitpreservation</baseDir>
+            <!-- Alternatively DatabaseBasedActiveBitPreservation. -->
             <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation</class>
-            <database>
-                <class>dk.netarkivet.archive.arcrepository.bitpreservation.DerbyEmbeddedSpecifics</class>
-                <url>jdbc:derby:bitpreservationdb</url>
-            </database>
         </bitpreservation>
+        <admin>
+            <class>dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData</class>
+            <database>
+                <!-- This database cannot be embedded. -->
+                <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+                <!-- Default settings for the derby external database. -->
+                <url>jdbc:derby://localhost:1527/admindb</url>
+            </database>
+        </admin>
     </archive>
 </settings>

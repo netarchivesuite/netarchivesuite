@@ -71,4 +71,10 @@ public class TestInfo {
     static final File CACHE_1_FILE = new File(CACHE_TEMP_DIR, "cache_file_1");
     static final File CACHE_OUTPUT_DIR = new File(WORKING_DIR, "outCache");
     static final File CACHE_ZIP_FILE = new File(CACHE_OUTPUT_DIR, "cache_file_1.gz");
+    
+    static final File DATABASE_DIR = new File(WORKING_DIR, "database");
+    static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getPath();
+    static final File DATABASE_ADMIN_DATA_1 = new File(WORKING_DIR, "admin.data1");
+    static final File DATABASE_ADMIN_DATA_2 = new File(WORKING_DIR, "admin.data2");
+    static final File DATABASE_ADMIN_DATA_FALSE = new File(WORKING_DIR, "false.error");
 }

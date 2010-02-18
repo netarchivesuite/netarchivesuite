@@ -43,7 +43,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * <br>1) admin information for the file for each bitarchive and<br>
  * <br>2) the actual upload status
  */
-public class FilePreservationState {
+public class FilePreservationState implements PreservationState {
     /** The log.*/
     private static final Log log = LogFactory.getLog(
             FilePreservationState.class);
@@ -184,7 +184,7 @@ public class FilePreservationState {
      * @param bitarchive the bitarchive to check
      * @return true if the file is missing from the bitarchive
      */
-    protected boolean fileIsMissing(Replica bitarchive) {
+    public boolean fileIsMissing(Replica bitarchive) {
         return getBitarchiveChecksum(bitarchive).size() == 0;
     }
 
