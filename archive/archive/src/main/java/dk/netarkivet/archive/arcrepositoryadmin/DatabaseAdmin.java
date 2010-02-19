@@ -119,13 +119,14 @@ public class DatabaseAdmin implements Admin {
      * the empty string.
      */
     @Override
-    public ReplicaStoreState getState(String filename, String repChannelName) 
-            throws ArgumentNotValid {
+    public ReplicaStoreState getState(String filename, 
+            String replicaChannelName) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        ArgumentNotValid.checkNotNullOrEmpty(repChannelName, "String repId");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
+                "String replicaChannelName");
         
         Replica rep = Channels.retrieveReplicaFromIdentifierChannel(
-                repChannelName);
+                replicaChannelName);
         
         // retrieve the ReplicaStoreState from the database.
         return database.getReplicaStoreState(filename, rep.getId());

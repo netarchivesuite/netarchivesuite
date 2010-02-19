@@ -279,7 +279,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * 
      * See the correctMessages Map.
      * 
-     * @param The RemoteAndGetFileMessage.
+     * @param msg The RemoteAndGetFileMessage.
      * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
      */
     public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
@@ -326,7 +326,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * 
      * See the correctMessages Map.
      * 
-     * @param The reply of the UploadMessage.
+     * @param msg The reply of the UploadMessage.
      * @throws ArgumentNotValid If the UploadMessage is null.  
      */
     public void visit(UploadMessage msg) throws ArgumentNotValid {

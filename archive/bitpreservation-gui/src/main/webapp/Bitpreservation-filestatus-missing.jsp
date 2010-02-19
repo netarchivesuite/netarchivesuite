@@ -29,7 +29,10 @@ dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState,
 dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState,
 dk.netarkivet.archive.webinterface.BitpreserveFileState,
 dk.netarkivet.archive.webinterface.Constants,
-dk.netarkivet.common.distribute.arcrepository.Replica, dk.netarkivet.common.exceptions.IllegalState, dk.netarkivet.common.utils.I18n, dk.netarkivet.common.webinterface.HTMLUtils"
+dk.netarkivet.common.distribute.arcrepository.Replica, 
+dk.netarkivet.common.exceptions.IllegalState, 
+dk.netarkivet.common.utils.I18n, 
+dk.netarkivet.common.webinterface.HTMLUtils"
          pageEncoding="UTF-8"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=dk.netarkivet.common.webinterface.HTMLUtils.getLocale(request)%>"

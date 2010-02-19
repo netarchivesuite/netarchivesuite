@@ -29,10 +29,10 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 
 public interface PreservationState {
 
-    /** Get the checksum of this file in a specific bitarchive.
+    /** Get the checksum of this file in a specific replica.
     *
-    * @param bitarchive The bitarchive to get the checksum from.
-    * @return The file's checksum, if it is present in the bitarchive, or
+    * @param replica The replica to get the checksum from.
+    * @return The file's checksum, if it is present in the replica, or
     * "" if it either is absent or an error occurred.
     */
     List<String> getBitarchiveChecksum(Replica replica);

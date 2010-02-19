@@ -62,17 +62,23 @@ public class DatabasePreservationState implements PreservationState {
     
     /** Get the checksum of this file in a specific bitarchive.
     *
-    * @param bitarchive The bitarchive to get the checksum from.
+    * @param replica The replica to get the checksum from.
     * @return The file's checksum, if it is present in the bitarchive, or
     * "" if it either is absent or an error occurred.
     */
     public List<String> getBitarchiveChecksum(Replica replica) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        
+        // return empty list if the file is missing from replica.
+        if(entries.get(replica).filelistStatus == FileListStatus.MISSING) {
+            return new ArrayList<String>(0);
+        }
+        
         // initialize resulting array.
         List<String> res = new ArrayList<String>(1);
         // retrieve checksum for replica, and put into array.
-        res.add(entries.get(replica).checksum);
+        res.add(getUniqueChecksum(replica));
 
         return res;
     }
@@ -169,6 +175,11 @@ public class DatabasePreservationState implements PreservationState {
    public String getUniqueChecksum(Replica replica) throws ArgumentNotValid {
        ArgumentNotValid.checkNotNull(replica, "Replica replica");
        
+       // return "" if the file is missing.
+       if(entries.get(replica).filelistStatus == FileListStatus.MISSING) {
+           return "";
+       }
+       
        return entries.get(replica).checksum;
    }
 
@@ -264,8 +275,8 @@ public class DatabasePreservationState implements PreservationState {
     * majority checksum
     */
    public boolean isAdminCheckSumOk() {
-       // No admin data => no checksum => not ok checksum.
-       return false;
+       // The database is always OK.
+       return true;
    }
    
    /** Returns a human-readable representation of this object.  Do not depend

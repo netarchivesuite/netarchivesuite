@@ -576,7 +576,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET filelist_status = ?, "
-                    + "filelist_checkdatetime = ? "
+                    + "filelist_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
             // init.
@@ -586,7 +586,9 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // complete the SQL statement.
             statement = DBUtils.prepareStatement(dbConnection, sql,
-                    FileListStatus.MISSING.ordinal(), now, replicafileinfoId);
+                    FileListStatus.MISSING.ordinal(), now, 
+                    ReplicaStoreState.UPLOAD_FAILED.ordinal(),
+                    replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
@@ -612,7 +614,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
-                    + "checksum_checkdatetime = ? "
+                    + "checksum_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
             // init.
@@ -622,7 +624,9 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // complete the SQL statement.
             statement = DBUtils.prepareStatement(dbConnection, sql,
-                    ChecksumStatus.CORRUPT.ordinal(), now, replicafileinfoId);
+                    ChecksumStatus.CORRUPT.ordinal(), now, 
+                    ReplicaStoreState.UPLOAD_FAILED.ordinal(),
+                    replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
@@ -1311,7 +1315,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param filename The name of the file in the filetable.
      * @param replicaId The id of the replica.
-     * @return The ReplicaStoreState for the specified entry.
+     * @param state The ReplicaStoreState for the specified entry.
      * @throws ArgumentNotValid If the replicaId or the filename are eihter 
      * null or the empty string. Or if the ReplicaStoreState is null.
      */
@@ -1504,7 +1508,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * the specified UploadStatus.
      *   
      * @param replicaId The id of the replica which contain the files.
-     * @param us The UploadStatus for the wanted files.
+     * @param state The ReplicaStoreState for the wanted files.
      * @return The list of filenames for the entries in the replica which has
      * the specified UploadStatus.
      * @throws ArgumentNotValid If the UploadStatus is null or if the replicaId
