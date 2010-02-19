@@ -91,6 +91,7 @@ public abstract class Machine {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
+     * @param bpdbFileName The name of the bitpreservation database file.
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
@@ -334,7 +335,7 @@ public abstract class Machine {
      * @throws IOFailure If an error occurred during the creationg of the 
      * log property file.
      */
-    protected void createLogPropertyFiles(File directory) {
+    protected void createLogPropertyFiles(File directory) throws IOFailure {
         // make log property file for every application
         for(Application app : applications) {
             // make file

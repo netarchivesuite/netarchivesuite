@@ -55,6 +55,7 @@ public class LinuxMachine extends Machine {
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
      * @param dbFile The name of the database file.
+     * @param bpdbFile The name of the bitpreservation file.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 

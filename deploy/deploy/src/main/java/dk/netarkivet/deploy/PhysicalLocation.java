@@ -78,7 +78,8 @@ public class PhysicalLocation {
      * @param netarchiveSuiteSource The name of the NetarchiveSuite file.
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
-     * @param dbFile The name of the database.
+     * @param dbFile The harvest definition database.
+     * @param bpdbFile The bitpreservation database. 
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, logProp, securityPolicy; or if the

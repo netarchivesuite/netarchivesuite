@@ -519,35 +519,35 @@ public final class DeployApplication {
         /** The command line.*/
         private CommandLine cmd;
         /** Whether the options has an argument.*/
-        private static final boolean hasArg = true;
+        private static final boolean HAR_ARG = true;
         /**
          * Initialise options by setting legal parameters for batch jobs.
          */
         ArgumentParameters() {
             options.addOption(Constants.ARG_CONFIG_FILE, 
-                    hasArg, "Config file.");
+                    HAR_ARG, "Config file.");
             options.addOption(Constants.ARG_NETARCHIVE_SUITE_FILE, 
-                    hasArg, "The NetarchiveSuite package file.");
+                    HAR_ARG, "The NetarchiveSuite package file.");
             options.addOption(Constants.ARG_SECURITY_FILE, 
-                    hasArg, "Security property file.");
+                    HAR_ARG, "Security property file.");
             options.addOption(Constants.ARG_LOG_PROPERTY_FILE, 
-                    hasArg, "Log property file.");
+                    HAR_ARG, "Log property file.");
             options.addOption(Constants.ARG_OUTPUT_DIRECTORY, 
-                    hasArg, "[OPTIONAL] output directory.");
+                    HAR_ARG, "[OPTIONAL] output directory.");
             options.addOption(Constants.ARG_DATABASE_FILE, 
-                    hasArg, "[OPTIONAL] Database file.");
+                    HAR_ARG, "[OPTIONAL] Database file.");
             options.addOption(Constants.ARG_TEST, 
-                    hasArg, "[OPTIONAL] Tests arguments (offset for http port, "
+                    HAR_ARG, "[OPTIONAL] Tests arguments (offset for http port, "
                     + "http port, environment name, mail receiver).");
             options.addOption(Constants.ARG_RESET,
-                    hasArg, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
+                    HAR_ARG, "[OPTIONAL] Reset temp directory ('y' or 'yes'"
                     + "means reset, anything else means do not reset."
                     + " Different from 'y', 'yes', 'n' or 'no' gives"
                     + " an error message.");
             options.addOption(Constants.ARG_EVALUATE, true, "[OPTIONAL] "
                     + "Evaluate the config file.");
             options.addOption(Constants.ARG_BP_DB,
-                    hasArg, "The bitpreservation database file");
+                    HAR_ARG, "The bitpreservation database file");
         }
 
         /**

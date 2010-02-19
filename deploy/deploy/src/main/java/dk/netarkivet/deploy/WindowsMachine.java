@@ -53,7 +53,8 @@ public class WindowsMachine extends Machine {
      * machine directory.
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
-     * @param dbFile The name of the database file.
+     * @param dbFile The harvest definition database file.
+     * @param bpdbFile The bitpreservation database.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public WindowsMachine(Element e, XmlStructure parentSettings, 
