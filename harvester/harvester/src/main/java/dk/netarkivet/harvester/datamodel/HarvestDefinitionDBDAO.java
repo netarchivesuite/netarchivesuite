@@ -1128,8 +1128,8 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
     
     /** Get a sorted list of all domainnames of a HarvestDefinition.
     *
-    * @param harvestName of HarvestDefintion
-    * @return List of all domains of the HarvestDefintion.
+    * @param harvestName of HarvestDefinition
+    * @return List of all domains of the HarvestDefinition.
     */
     public List<String> getListOfDomainsOfHarvestDefinition(
             String harvestName) {
@@ -1138,7 +1138,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    "SELECT do.name"
+                    "SELECT DISTINCT do.name "
                     +" FROM     domains do,"
                     +"          configurations co,"
                     +"          harvest_configs haco,"
@@ -1167,9 +1167,9 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
 
     /** Get a sorted list of all seeds of a Domain in a HarvestDefinition.
     *
-    * @param harvestName of HarvestDefintion
+    * @param harvestName of HarvestDefinition
     * @param domainName of Domain
-    * @return List of all seeds of the Domain in the HarvestDefintion.
+    * @return List of all seeds of the Domain in the HarvestDefinition.
     */
     public List<String> getListOfSeedsOfDomainOfHarvestDefinition(
             String harvestName, String domainName) {
