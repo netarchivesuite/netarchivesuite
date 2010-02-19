@@ -25,7 +25,6 @@ package dk.netarkivet.harvester.datamodel;
 import java.util.List;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 
 /**

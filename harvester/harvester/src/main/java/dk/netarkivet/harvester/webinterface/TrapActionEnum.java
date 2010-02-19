@@ -24,7 +24,6 @@ package dk.netarkivet.harvester.webinterface;
 
 import javax.servlet.jsp.PageContext;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.I18n;
 
 /**
