@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.tools;
@@ -41,8 +42,12 @@ import dk.netarkivet.common.utils.FileUtils;
  * Usage: java dk.netarkivet.archive.tools.Upload file1 [file2 ...]
  *
  */
-
 public class Upload {
+    /**
+     * Private constructor, to prevent instantiation of this tool.
+     */
+    private Upload() { }
+    
     /**
      * Main method, uploads given arc files to the ArcRepository.
      * If some file does not exist or is not an arc file, the methods
@@ -69,8 +74,12 @@ public class Upload {
             for (File f : files) {
                 System.out.println("Uploading file '" + f + "'...");
                 boolean success = uploadSingleFile(arcrep, f);
-                System.out.println("Uploading file '" + f + "' "
-                        + (success ? "succeeded" : "failed"));
+                if(success) {
+                    System.out.println("Uploading file '" + f + "' succeeded");
+                } else {
+                    System.out.println("Uploading file '" + f + "' failed");
+
+                }
             }
             System.out.println(
                     "All files processed, closing connection to ArcRepository");

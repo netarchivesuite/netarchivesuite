@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -63,10 +64,8 @@ public class DerbyEmbeddedSpecifics extends DerbySpecifics {
             log.warn("Shut down Derby embedded database w/o expected warning");
         } catch (SQLException e) {
             log.info("Embedded Derby database has been shut down");
-            log.debug("Shutdown down derby gave (as expected) an exception" +
-                      "\n" +
-                      ExceptionUtils.getSQLExceptionCause(e),
-                    e);
+            log.debug("Shutdown down derby gave (as expected) an exception" 
+                    + "\n" + ExceptionUtils.getSQLExceptionCause(e), e);
         }
     }
 

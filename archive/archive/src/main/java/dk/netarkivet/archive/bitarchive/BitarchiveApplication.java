@@ -1,7 +1,7 @@
-/* File:                $Id$
- * Revision:            $Revision$
- * Date:                $Date$
- * Author:              $Author$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Date:     $Date$
+ * Author:   $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -31,6 +31,11 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  *
  */
 public final class BitarchiveApplication {
+    /**
+     * Constructor.
+     */
+    private BitarchiveApplication() {}
+    
    /**
     * Runs the BitarchiveApplication. Settings are read from
     * config files

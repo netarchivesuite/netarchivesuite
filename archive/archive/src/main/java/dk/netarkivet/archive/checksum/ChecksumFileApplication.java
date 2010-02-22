@@ -29,7 +29,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 /**
  * This class is used to start the checksum file application.
  */
-public class ChecksumFileApplication {
+public final class ChecksumFileApplication {
     /**
      * Private constructor. Prevents instantiation of this class.
      */

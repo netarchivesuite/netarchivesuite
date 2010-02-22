@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -43,7 +44,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  * TODO Maybe don't have the store state info for fully completed stores, or
  * else use a slimmer map for it.
  */
-
 public class ArcRepositoryEntry {
 
     /**
@@ -90,6 +90,7 @@ public class ArcRepositoryEntry {
      */
     private static final String GENERAL_DELIMITER = " ";
 
+    /** The log.*/
     private Log log = LogFactory.getLog(ArcRepositoryEntry.class.getName());
 
     /** Create a new entry with given checksum and replyinfo.
@@ -262,7 +263,7 @@ public class ArcRepositoryEntry {
         o.print(GENERAL_DELIMITER + getGeneralStoreState().toString());
 
         for (Map.Entry<String, ArchiveStoreState> entry 
-        	: storeStates.entrySet()) {
+                : storeStates.entrySet()) {
             o.print(ENTRY_COMPONENT_SEPARATOR_STRING + entry.getKey()
                     + GENERAL_DELIMITER + entry.getValue());
         }

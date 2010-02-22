@@ -39,17 +39,16 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 /**
  * Proxy for remote bitarchive. Establishes a JMS connection to the remote
  * bitarchive.
  */
-public class BitarchiveClient implements ReplicaClient {
+public final class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
     /** The log.*/
-    protected static final Log log = LogFactory.getLog(BitarchiveClient.class);
+    protected static Log log = LogFactory.getLog(BitarchiveClient.class);
 
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
@@ -87,15 +86,15 @@ public class BitarchiveClient implements ReplicaClient {
     /**
      * Factory that establish the connection to the server.
      * 
-     * @param all_ba_in topic to all bitarchives
-     * @param any_ba_in queue to one of the bitarchives
-     * @param the_bamon_in queue to the bitarchive monitor
+     * @param allBaIn topic to all bitarchives
+     * @param anyBaIn queue to one of the bitarchives
+     * @param theBamonIn queue to the bitarchive monitor
      * @return A BitarchiveClient
      * @throws IOFailure If there is a problem making the connection.
      */
-    public static BitarchiveClient getInstance(ChannelID all_ba_in,
-            ChannelID any_ba_in, ChannelID the_bamon_in) throws IOFailure {
-        return new BitarchiveClient(all_ba_in, any_ba_in, the_bamon_in);
+    public static BitarchiveClient getInstance(ChannelID allBaIn,
+            ChannelID anyBaIn, ChannelID theBamonIn) throws IOFailure {
+        return new BitarchiveClient(allBaIn, anyBaIn, theBamonIn);
     }
 
     /**
@@ -260,7 +259,7 @@ public class BitarchiveClient implements ReplicaClient {
      * 
      * @param msg The GetAllChecksumMessage, which will be sent through the jms
      * connection to the checksum archive.
-     * @throws ArgumentnotValid If the GetAllChecksumsMessage is null.
+     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
     public void getAllChecksums(GetAllChecksumsMessage msg) 
             throws ArgumentNotValid {

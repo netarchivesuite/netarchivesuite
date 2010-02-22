@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:    $Id$
+ * Revision:$Revision$
+ * Author:  $Author$
+ * Date:    $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -48,10 +49,12 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      * CDX reading if there are entries not in CDX, so we hang onto this
      * until the reading of the crawl.log catches up. */
     protected CDXRecord lastRecord;
-    private Log log = LogFactory.getLog(CDXOriginCrawlLogIterator.class.getName());
-    /** The constant prefixed checksums in newer versions of Heritrix indicating the
-     * digest method.  The deduplicator currently doesn't use the equivalent
-     * prefix, so we need to strip it off (see bug #1004).
+    /** The log. */
+    private Log log = LogFactory.getLog(
+            CDXOriginCrawlLogIterator.class.getName());
+    /** The constant prefixed checksums in newer versions of Heritrix 
+     * indicating the digest method.  The deduplicator currently doesn't use 
+     * the equivalent prefix, so we need to strip it off (see bug #1004).
      */
     private static final String SHA1_PREFIX = "sha1:";
 
@@ -88,7 +91,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
      * not determine an appropriate origin.
      * @throws IOFailure if there is an error reading the files.
      */
-    protected CrawlDataItem parseLine(String line) {
+    protected CrawlDataItem parseLine(String line) throws IOFailure {
         CrawlDataItem item;
         log.trace("Processing crawl-log line: " + line);
         try {
@@ -137,7 +140,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                 try {
                     String record = reader.readLine();
                     if (record == null) {
-                        break;// EOF, nothing to do
+                        break; // EOF, nothing to do
                     }
                     if  (record.length() == 0) {
                         continue; // skip empty lines
@@ -145,8 +148,8 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                     try {
                         lastRecord = new CDXRecord(record);
                     } catch (ArgumentNotValid e) {
-                        log.debug("Skipping over bad CDX line '" +
-                                record + "'", e);
+                        log.debug("Skipping over bad CDX line '" 
+                                + record + "'", e);
                         continue;
                     }
                     log.trace("lastrecord is '" + record + "'");
@@ -155,15 +158,20 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
                 }
             }
             if (foundRecord == null) {
-            	log.trace("No matching CDX for URL '" + item.getURL()
-            			+ "'. Last CDX was for URL '"
-                        + (lastRecord == null ? "(none)" : lastRecord.getURL()) 
-                        + "'");
+                if(lastRecord == null) {
+                    log.trace("No matchin CDX for URL '" + item.getURL() 
+                            + "'. No last CDX was found.");
+                } else {
+                    log.trace("No matching CDX for URL '" + item.getURL()
+                            + "'. Last CDX was for URL '" + lastRecord.getURL()
+                            + "'");
+                }
+                
                 return null;
             }
 
             String origin = foundRecord.getArcfile()
-                    + "," + foundRecord.getOffset();
+            + "," + foundRecord.getOffset();
             item.setOrigin(origin);
             log.trace("URL '" +  item.getURL() + "' combined with origin '"
                     +  origin + "'.");

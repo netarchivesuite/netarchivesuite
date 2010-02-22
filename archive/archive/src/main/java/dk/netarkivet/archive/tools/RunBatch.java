@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.tools;
@@ -55,26 +56,29 @@ import org.apache.commons.cli.*;
  *  java dk.netarkivet.archive.tools.RunBatch 
  *       with arguments as defined in local class BatchParameters 
  *
- * where -J<jarfile> is a file containing all the classes needed by a BatchJob
- *       -C<classfile> is a file containing a FileBatchJob implementation
- *       -R<regexp> is a regular expression that will be matched against
- *              file names in the archive, by default .*
- *       -B<replica> is the name of the bitarchive replica this should be run
- *               on, by default taken from settings.
- *       -O<outputfile> is a file where the output from the batch job will be
- *              written.  By default, it goes to stdout.
- *       -E<errorFile> is a file where the errors from the batch job will be
- *              written. By default, it goes to stderr.
- *       -N<className> is the name of the primary class to be loaded when doing
- *              a LoadableJarBatchJob       
+ * where:
+ * <br/>-J&lt;jarfile&gt; is a file containing all the classes needed by a 
+ * BatchJob
+ * <br/>-C&lt;classfile&gt; is a file containing a FileBatchJob implementation
+ * <br/>-R&lt;regexp&gt; is a regular expression that will be matched against
+ * file names in the archive, by default .*
+ * <br/>-B&lt;replica&gt; is the name of the bitarchive replica this should be 
+ * run on, by default taken from settings.
+ * <br/>-O&lt;outputfile&lt; is a file where the output from the batch job will be
+ * written.  By default, it goes to stdout.
+ * <br/>-E&lt;errorFile&gt; is a file where the errors from the batch job will be
+ * written. By default, it goes to stderr.
+ * <br/>-N&lt;className&gt; is the name of the primary class to be loaded when doing
+ * a LoadableJarBatchJob
+ * <p/>
  * Examples:
- *
+ * <p/>
  * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ 
  *                          -R10-*.arc -BReplicaOne -Omimes
- * 
+ * <p/>
  * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ 
  *                          -R10-*.arc -BReplicaOne -Omimes
- *        
+ * <p/>
  * Note that you probably want to set the application instance id setting
  * ({@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than
  * its default value to avoid clashing with other channel listeners.
@@ -142,25 +146,25 @@ public class RunBatch extends ToolRunnerBase {
         private enum FileType {OTHER, JAR, CLASS};
         
         /** File suffix denoting FileType.CLASS. */
-        private final String CLASS_FILE_SUFFIX = ".class";
+        private static final String CLASS_FILE_SUFFIX = ".class";
         
         /** File suffix denoting FileType.JAR. */
-        private final String JAR_FILE_SUFFIX = ".jar";
+        private static final String JAR_FILE_SUFFIX = ".jar";
         
         /** The jarfile option key. */
-        private static String JARFILE_OPTION_KEY = "J";
+        private static final String JARFILE_OPTION_KEY = "J";
         /** The classfile option key. */
-        private static String CLASSFILE_OPTION_KEY = "C";
+        private static final String CLASSFILE_OPTION_KEY = "C";
         /** The regexp option key. */
-        private static String REGEXP_OPTION_KEY = "R";
+        private static final String REGEXP_OPTION_KEY = "R";
         /** The replica option key. */
-        private static String REPLICA_OPTION_KEY = "B";
+        private static final String REPLICA_OPTION_KEY = "B";
         /** The outputfile option key. */
-        private static String OUTPUTFILE_OPTION_KEY = "O";
+        private static final String OUTPUTFILE_OPTION_KEY = "O";
         /** The errorfile option key. */
-        private static String ERRORFILE_OPTION_KEY = "E";
+        private static final String ERRORFILE_OPTION_KEY = "E";
         /** The classname option key. */
-        private static String CLASSNAME_OPTION_KEY = "N";
+        private static final String CLASSNAME_OPTION_KEY = "N";
 
         /** To contain parameters defined by options to batchjob. */
         private BatchParameters parms = new BatchParameters();
@@ -228,9 +232,11 @@ public class RunBatch extends ToolRunnerBase {
             /**
              * Options object for parameters.
              */
-            Options options = new Options();
+            protected Options options = new Options();
+            /** The parser.*/
             private CommandLineParser parser = new PosixParser();
-            CommandLine cmd;
+            /** The command line. */
+            protected CommandLine cmd;
             //HelpFormatter only prints directly, thus this is not used at
             //the moment. Instead the method usage is implemented
             // in the listArguments() method.
@@ -240,7 +246,7 @@ public class RunBatch extends ToolRunnerBase {
              * Initialize options by setting legal parameters for batch jobs.
              * Note that all our options has arguments.
              */
-            BatchParameters() {
+            public BatchParameters() {
                 final boolean hasArg = true;
                 options.addOption(CLASSFILE_OPTION_KEY, hasArg,
                         "Class file to be run");
@@ -270,7 +276,13 @@ public class RunBatch extends ToolRunnerBase {
                                 + "(default is stderr)");
             }
             
-            String parseParameters(String[] args) {
+            /**
+             * Method for parsing the arguments.
+             * 
+             * @param args The arguments.
+             * @return The empty string, or an error message.
+             */
+            public String parseParameters(String[] args) {
                 try {
                     // parse the command line arguments
                     cmd = parser.parse(options, args);
@@ -281,7 +293,12 @@ public class RunBatch extends ToolRunnerBase {
                 return "";
             }
             
-            String listArguments() {
+            /**
+             * Method for retrieving the arguments of this instance.
+             * 
+             * @return The list of arguments, ready to be printed to system out.
+             */
+            public String listArguments() {
                 String s = "\nwith arguments:\n";
                 // add options
                 for (Object o: options.getOptions()) {

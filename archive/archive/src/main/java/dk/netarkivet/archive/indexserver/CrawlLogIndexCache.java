@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -88,26 +89,26 @@ public abstract class CrawlLogIndexCache extends
     /** Prepare data for combining.  This class overrides prepareCombine to
      * make sure that CDX data is available.
      *
-     * @param IDs Set of IDs that will be combined.
+     * @param ids Set of IDs that will be combined.
      * @return Map of ID->File of data to combine for the IDs where we could
      * find data.
      */
-    protected Map<Long, File> prepareCombine(Set<Long> IDs) {
+    protected Map<Long, File> prepareCombine(Set<Long> ids) {
         log.info("Starting to generate " + getCacheDir().getName()
-                 + " for jobs: " + IDs);
-        Map<Long, File> returnMap = super.prepareCombine(IDs);
+                 + " for jobs: " + ids);
+        Map<Long, File> returnMap = super.prepareCombine(ids);
         Set<Long> missing = new HashSet<Long>();
-        for (Long ID : returnMap.keySet()) {
-            Long cached = cdxcache.cache(ID);
+        for (Long id : returnMap.keySet()) {
+            Long cached = cdxcache.cache(id);
             if (cached == null) {
-                missing.add(ID);
+                missing.add(id);
             }
         }
         if (!missing.isEmpty()) {
             log.info("Data not found for jobs: " +  missing);
         }
-        for (Long ID : missing) {
-            returnMap.remove(ID);
+        for (Long id : missing) {
+            returnMap.remove(id);
         }
         return returnMap;
     }
@@ -158,11 +159,11 @@ public abstract class CrawlLogIndexCache extends
     /** Ingest a single crawl.log file using the corresponding CDX file to find
      * offsets.
      *
-     * @param ID ID of a job to ingest.
+     * @param id ID of a job to ingest.
      * @param file The file containing the jobs crawl.log data.
      * @param indexer The indexer to add to.
      */
-    private void indexFile(Long ID, File file, DigestIndexer indexer) {
+    private void indexFile(Long id, File file, DigestIndexer indexer) {
         // variable 'blacklist' set to true results in docs matching the
         // mimefilter being ignored.
         boolean blacklist = useBlacklist;
@@ -173,7 +174,7 @@ public abstract class CrawlLogIndexCache extends
         File tmpCrawlLog = null;
         BufferedReader cdxBuffer = null;
         try {
-            cdxFile = getSortedCDX(ID);
+            cdxFile = getSortedCDX(id);
             cdxBuffer = new BufferedReader(new FileReader(cdxFile));
             tmpCrawlLog = getSortedCrawlLog(file);
             crawlLogIterator = new CDXOriginCrawlLogIterator(
@@ -181,7 +182,7 @@ public abstract class CrawlLogIndexCache extends
             indexer.writeToIndex(
                     crawlLogIterator, mimefilter, blacklist, "ERROR", verbose);
         } catch (IOException e) {
-            throw new IOFailure("Fatal error indexing " + ID, e);
+            throw new IOFailure("Fatal error indexing " + id, e);
         } finally {
             try {
                 if (crawlLogIterator != null) {

@@ -54,7 +54,9 @@ import dk.netarkivet.common.utils.Settings;
  * a corresponding visit method on BitarchiveClient.
  */
 public class ArcRepositoryServer extends ArchiveMessageHandler {
+    /** The log.*/
     private final Log log = LogFactory.getLog(getClass());
+    /** The ArcRepository connected to this server.*/
     private final ArcRepository ar;
 
     /**
@@ -164,11 +166,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Note that this circumvents the ArcRepository entirely and that the
      * reply goes directly back to whoever set the message.
      *
-     * @param msg the batch message to be resend
-     * 
+     * @param msg the batch message to be resend.
      * @throws ArgumentNotValid if parameters are null
      */
-    public void visit(BatchMessage msg) {
+    public void visit(BatchMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(ar, "ar");
         ArgumentNotValid.checkNotNull(msg, "msg");
 
@@ -215,7 +216,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * @param msg the message to be processed by the get command.
      * @throws ArgumentNotValid If one of the arguments are null.
      */
-    public void visit(GetFileMessage msg) {
+    public void visit(GetFileMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "msg");
 
         try {
@@ -236,7 +237,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * @param msg The message to be processed.
      * @throws ArgumentNotValid If the argument is null.
      */
-    public void visit(GetAllFilenamesMessage msg) {
+    public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "msg");
         
         try {
@@ -333,6 +334,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Removes the ArcRepositoryMessageHandler as listener.
      */
     public void close() {
-        JMSConnectionFactory.getInstance().removeListener(Channels.getTheRepos(), this);
+        JMSConnectionFactory.getInstance().removeListener(
+                Channels.getTheRepos(), this);
     }
 }

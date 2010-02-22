@@ -81,7 +81,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * The logger used by this class.
      */
-    private static final Log log = LogFactory.getLog(FileChecksumArchive.class);
+    private static Log log = LogFactory.getLog(FileChecksumArchive.class);
     
     /**
      * The current instance of this class.
@@ -673,6 +673,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * 
      * @param filename The name of the file whose record should be removed.
      * @param correctFile The file that should replace the current entry
+     * @return A file containing the removed entry.
      * @throws ArgumentNotValid If one of the arguments are not valid.
      * @throws IOFailure If the entry cannot be corrected. Either the bad entry
      * cannot be stored, or the new checksum file cannot be created. Or if a 

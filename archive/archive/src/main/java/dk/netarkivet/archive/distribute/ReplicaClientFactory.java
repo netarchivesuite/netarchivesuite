@@ -34,7 +34,7 @@ import dk.netarkivet.common.distribute.Channels;
 /**
  * This contains a method for retrieving all the replica clients at once.
  */
-public class ReplicaClientFactory {
+public final class ReplicaClientFactory {
     /**
      * Private constructor. Prevents instantiation of this class.
      */

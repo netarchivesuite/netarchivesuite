@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -45,7 +46,6 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.ApplicationUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -54,22 +54,26 @@ import dk.netarkivet.common.utils.Settings;
  * Class for accessing and manipulating the administrative data for
  * the ArcRepository.
  * In the current implementation, it consists of a file with a number of lines
- * of the form: <filename> <checksum> <state> <timestamp-for-last-state-change>
- *     [,<bitarchive> <storestatus> <timestamp-for-last-state-change>]*
+ * of the form: <filename/> <checksum/> <state/> 
+ * <timestamp-for-last-state-change/> [,<bitarchive/> <storestatus/> 
+ * <timestamp-for-last-state-change/>]*
  *
  * This abstract class is overridden to give either a read/write or a readonly
  * version of this class.
- *
  */
 public abstract class AdminData {
+    /** The log.*/
     private Log log = LogFactory.getLog(AdminData.class.getName());
 
     /** Admindata version.
-     * VersionNumber is the current version
-     * oldVersionNumber is the earlier but still valid version
+     * VersionNumber is the current version.
      */
-    protected static final String versionNumber = "0.4";
-    private static final String oldVersionNumber = "0.3";
+    protected static final String VERSION_NUMBER = "0.4";
+    /**
+     * Admindata version.
+     * oldVersionNumber is the earlier but still valid version.
+     */
+    private static final String OLD_VERSION_NUMBER = "0.3";
     /**
      * Map containing a mapping from arcfilename to ArcRepositoryEntry.
      */
@@ -77,7 +81,7 @@ public abstract class AdminData {
             = new HashMap<String, ArcRepositoryEntry>();
     /**
      * General delimiter.
-     * TODO: add constants class where these constants are placed
+     * TODO add constants class where these constants are placed.
      */
     private static final String GENERAL_DELIMITER = " ";
 
@@ -95,15 +99,15 @@ public abstract class AdminData {
     protected List<String> knownBitArchives = new ArrayList<String>();
 
     /** The File object for the admin data file. */
-    final File adminDataFile;
+    protected final File adminDataFile;
 
-    /** Common constructor for admin data. Reads current admin data from admin
+    /** 
+     * Common constructor for admin data. Reads current admin data from admin
      * data file.
-     * @throws PermissionDenied if admin data directory is not accessible
      */
     protected AdminData() {
-        this.adminDir
-                = new File(Settings.get(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
+        this.adminDir = new File(Settings.get(
+                ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN));
         ApplicationUtils.dirMustExist(adminDir);
 
         adminDataFile = new File(adminDir, AdminData.ADMIN_FILE_NAME);
@@ -186,7 +190,7 @@ public abstract class AdminData {
     public boolean hasState(String arcfileName, String replicaChannelName) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
-        	"String replicaChannelName");
+                "String replicaChannelName");
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
         if (entry == null) {
             log.warn("No entry found in storeEntries for arcfilename: "
@@ -205,10 +209,10 @@ public abstract class AdminData {
      * @throws UnknownID When no record exists.
      */
     public ReplicaStoreState getState(String arcfileName, 
-	    String replicaChannelName) throws UnknownID {
+            String replicaChannelName) throws UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "String arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(replicaChannelName, 
-        	"String replicaChannelName");
+        "String replicaChannelName");
         if (!hasState(arcfileName, replicaChannelName)) {
             throw new UnknownID("No store state recorded for '"
                     + arcfileName + "' in '" + replicaChannelName + "'");
@@ -223,8 +227,11 @@ public abstract class AdminData {
      * @return checksum the latest registered reference checksum or null,
      *         if no reference checksum is available
      * @throws UnknownID if the file is not registered
+     * @throws ArgumentNotValid If the arcFileName is either null or the empty
+     * string. 
      */
-    public String getCheckSum(String arcfileName) {
+    public String getCheckSum(String arcfileName) throws ArgumentNotValid, 
+            UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         if (!hasEntry(arcfileName)) {
             throw new UnknownID("Don't know anything about file '"
@@ -238,7 +245,7 @@ public abstract class AdminData {
      * the it is converted to the new version and written to disk.
      * @throws IOFailure on trouble reading from file
      */
-    protected void read() {
+    protected void read() throws IOFailure {
         try {
             BufferedReader reader = null;
             try {
@@ -249,23 +256,23 @@ public abstract class AdminData {
                 *  - !dataVersion.equals(versionNumber)) && validOldVersion
                 *  The latter applies if the data file was empty.
                 */
-                String dataVersion = oldVersionNumber;
+                String dataVersion = OLD_VERSION_NUMBER;
 
                 boolean validOldVersion = false;
                 String tempVersion = reader.readLine();
                 if (tempVersion != null) {
                     dataVersion = tempVersion;
                 }
-                if (dataVersion.equals(oldVersionNumber)) {
-                    log.debug("admindata version: " + oldVersionNumber);
+                if (dataVersion.equals(OLD_VERSION_NUMBER)) {
+                    log.debug("admindata version: " + OLD_VERSION_NUMBER);
                     validOldVersion = true;
                 }
-                if (!dataVersion.equals(versionNumber) && !validOldVersion) {
+                if (!dataVersion.equals(VERSION_NUMBER) && !validOldVersion) {
                     throw new IOFailure("Invalid version" + dataVersion);
                 }
                 //Now read the data file, depending on version.
-                if (dataVersion.equals(versionNumber)) {
-                    log.debug("admindata version: " + versionNumber);
+                if (dataVersion.equals(VERSION_NUMBER)) {
+                    log.debug("admindata version: " + VERSION_NUMBER);
                     readCurrentVersion(reader);
                 } else {
                     readValidOldVersion(reader);
@@ -284,7 +291,7 @@ public abstract class AdminData {
 
     /** Read the valid old version (0.3) of the admin data.
      * The valid old version contains lines of the format
-     * <filename> <checksum> [<bitarchive> <storestatus>]*
+     * <filename/> <checksum/> [<bitarchive/> <storestatus/>]*
      * The same filename may occur multiple times, but must always
      * have the same checksum.  This indicates updates of the storestatus
      * for the file.  Updates to checksum happen only during 'correct'
@@ -323,12 +330,15 @@ public abstract class AdminData {
                                     + " admin data for known file '" + filename
                                     + "': Old=" + getCheckSum(filename)
                                     + " New=" + checksum);
-                            valid = false; // this means, that the existing entry is removed from admin.data
+                            // this means, that the existing entry is removed 
+                            // from admin.data
+                            valid = false; 
                         }
                     } else {
                         StoreMessage replyInfo = null;
                         storeEntries.put(filename,
-                                new ArcRepositoryEntry(filename, checksum, replyInfo));
+                                new ArcRepositoryEntry(filename, checksum, 
+                                        replyInfo));
                     }
                 } else { //parts.length == 1
                     if (hasEntry(filename)) {
@@ -384,8 +394,8 @@ public abstract class AdminData {
     /**
       * Read the current version (0.4) of the admin data.
       * The current version contains lines of the format
-      * <filename> <checksum> <state> <timestamp-for-last-state-change>
-       [,<bitarchive> <storestatus> <timestamp-for-last-state-change>]*
+      * <filename/> <checksum/> <state/> <timestamp-for-last-state-change/>
+       [,<bitarchive/> <storestatus/> <timestamp-for-last-state-change/>]*
       *
       * The same filename may occur multiple times, but must always
       * have the same checksum.  This indicates updates of the storestatus
@@ -403,11 +413,30 @@ public abstract class AdminData {
       * in question is removed from admin.data
       *
       * @param reader The stream to read the input from.
-      * @throws ArgumentNotValid If reader is null
+      * @throws ArgumentNotValid If reader is null.
+      * @throws IOFailure If an error occurred with access to the admin.data.
       */
-
-    private void readCurrentVersion(BufferedReader reader){
+    private void readCurrentVersion(BufferedReader reader) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(reader, "reader");
+        
+        // The expected number of elements in first part of a line.
+        final int FIRST_PART_LENGTH = 4;
+        
+        // indices for the different parts in the first line.
+        final int INDEX_FIRST_PART_FILENAME = 0;
+        final int INDEX_FIRST_PART_CHECKSUM = 0;
+        final int INDEX_FIRST_PART_STATE = 0;
+        final int INDEX_FIRST_PART_TIMESTAMP = 0;
+        
+        // The expected number of elements in the other parts of the line.
+        final int OTHER_PARTS_LENGTH = 3;
+        
+        // The indices for the different parts in the other lines.
+        final int INDEX_OTHER_PARTS_REPLICA = 0;
+        final int INDEX_OTHER_PARTS_STATE = 1;
+        final int INDEX_OTHER_PARTS_TIMESTAMP = 2;
+        
         String s;
         try {
             while ((s = reader.readLine()) != null) {
@@ -418,15 +447,15 @@ public abstract class AdminData {
                     s.split(ArcRepositoryEntry.
                             ENTRY_COMPONENT_SEPARATOR_STRING);
 
-                // parts[0] should now contain the
-                // <filename> <checksum> <state> <timestamp-for-last-state-change>
+                // parts[0] should now contain the <filename> <checksum> 
+                // <state> <timestamp-for-last-state-change>
 
                 //For i=0,1.. : parts[1+i] contains the state-information
                 // for the file on our bitarchives.
 
                 String[] firstparts = parts[0].split(GENERAL_DELIMITER);
 
-                if (firstparts.length != 4) {
+                if (firstparts.length != FIRST_PART_LENGTH) {
                     String logMessage =
                         "Corrupt admin data file:  One of the components "
                         + "'<filename> <checksum> <state> "
@@ -441,10 +470,10 @@ public abstract class AdminData {
                  * Parse the different components of filename> <checksum>
                  * <state> <timestamp-for-last-state-change>
                  */
-                String filename = firstparts[0];
-                String checksumString = firstparts[1];
-                String stateString = firstparts[2];
-                String timestampString = firstparts[3];
+                String filename = firstparts[INDEX_FIRST_PART_FILENAME];
+                String checksumString = firstparts[INDEX_FIRST_PART_CHECKSUM];
+                String stateString = firstparts[INDEX_FIRST_PART_STATE];
+                String timestampString = firstparts[INDEX_FIRST_PART_TIMESTAMP];
                 log.trace("Found (filename, checksum, state, timestamp): "
                         + filename + "," + checksumString + " , "
                         + stateString + " , " + timestampString);
@@ -482,18 +511,22 @@ public abstract class AdminData {
                 ArcRepositoryEntry entry = getEntry(filename);
                 for (int i = 1; i < parts.length; i++) {
                     String[] bitparts =  parts[i].split(GENERAL_DELIMITER);
-                    if (bitparts.length != 3) {
+                    if (bitparts.length != OTHER_PARTS_LENGTH) {
                         final String message =
-                            "Line incomplete. Expected 3 elements: <bitarchive>"
-                            + "<storestatus> <timestamp-for-last-state-change>."
+                            "Line incomplete. Expected 3 elements:"
+                            + "<bitarchive> <storestatus> "
+                            + "<timestamp-for-last-state-change>."
                             + " Found only " + bitparts.length
                             + " elements in line: " + s;
                         log.warn(message);
 
                     } else {
-                        String bitarchiveString = bitparts[0];
-                        String storestatusString = bitparts[1];
-                        timestampString = bitparts[2];
+                        String bitarchiveString = 
+                            bitparts[INDEX_OTHER_PARTS_REPLICA];
+                        String storestatusString = 
+                            bitparts[INDEX_OTHER_PARTS_STATE];
+                        timestampString = 
+                            bitparts[INDEX_OTHER_PARTS_TIMESTAMP];
                         state = ReplicaStoreState.valueOf(storestatusString);
                         tempLong = Long.parseLong(timestampString);
                         timestampAsDate = new Date(tempLong);
@@ -517,7 +550,7 @@ public abstract class AdminData {
      */
     public Set<String> getAllFileNames() {
         Set<String> knownFiles = new HashSet<String>();
-        for (Map.Entry<String,ArcRepositoryEntry> entry
+        for (Map.Entry<String, ArcRepositoryEntry> entry
                 : storeEntries.entrySet()) {
             knownFiles.add(entry.getKey());
         }
@@ -539,7 +572,7 @@ public abstract class AdminData {
         ArgumentNotValid.checkNotNull(state, "BitArchiveStoreState state");
         String replicaKey = replica.getIdentificationChannel().getName();
         Set<String> completedFiles = new HashSet<String>();
-        for (Map.Entry<String,ArcRepositoryEntry> entry
+        for (Map.Entry<String, ArcRepositoryEntry> entry
                 : storeEntries.entrySet()) {
             if (entry.getValue().getStoreState(replicaKey) == state) {
                 completedFiles.add(entry.getKey());

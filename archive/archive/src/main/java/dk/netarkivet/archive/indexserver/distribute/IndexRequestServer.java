@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.indexserver.distribute;
 
@@ -81,9 +82,9 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @return The index request server.
      */
     public static IndexRequestServer getInstance() {
-	if (instance == null) {
-	    instance = new IndexRequestServer();
-	}
+        if (instance == null) {
+            instance = new IndexRequestServer();
+        }
 
         return instance;
     }
@@ -127,7 +128,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @param irMsg A message requesting an index.
      * @throws ArgumentNotValid on null parameter
      */
-    public void visit(final IndexRequestMessage irMsg) {
+    public void visit(final IndexRequestMessage irMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(irMsg, "IndexRequestMessage irMsg");
 
         //Start a new thread to handle the actual request.
@@ -191,12 +192,11 @@ public class IndexRequestServer extends ArchiveMessageHandler
         } finally {
             String state = "failed";
             if (irMsg.isOk()) {
-        	state = "successful";
+                state = "successful";
             }
             log.info("Sending " + state 
-        	    + " reply for IndexRequestMessage"
-            		//"with ID='"
-                    //+ irMsg.getReplyOfId()
+                    + " reply for IndexRequestMessage"
+                    //"with ID='" + irMsg.getReplyOfId()
                     + " back to sender '"
                     + irMsg.getReplyTo() + "'."); 
             JMSConnectionFactory.getInstance().reply(irMsg);
@@ -212,7 +212,8 @@ public class IndexRequestServer extends ArchiveMessageHandler
      * @throws UnknownID If the index request type is of a form that is unknown
      * to the server.
      */
-    private void checkMessage(final IndexRequestMessage irMsg) {
+    private void checkMessage(final IndexRequestMessage irMsg) 
+            throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkTrue(irMsg.isOk(), "Message was not OK");
         ArgumentNotValid.checkNotNull(irMsg.getRequestType(),
                 "RequestType type");

@@ -65,20 +65,22 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class JMSArcRepositoryClient extends Synchronizer implements
                                                          ArcRepositoryClient {
-
     /** The default place in classpath where the settings file can be found. */
     private static String DEFAULT_SETTINGS_CLASSPATH
             = "dk/netarkivet/archive/arcrepository/distribute/"
                 +"JMSArcRepositoryClientSettings.xml";
 
     /*
-    * The static initialiser is called when the class is loaded.
-    * It will add default values for all settings defined in this class, by
-    * loading them from a settings.xml file in classpath.
-    */
+     * The static initialiser is called when the class is loaded.
+     * It will add default values for all settings defined in this class, by
+     * loading them from a settings.xml file in classpath.
+     */
     static {
         Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
     }
+    
+    /** The amount of milliseconds in a second. 1000. */
+    private static final int MILLISECONDS_PER_SECOND = 1000;
 
     /** the one and only JMSArcRepositoryClient instance. */
     private static JMSArcRepositoryClient instance;
@@ -192,11 +194,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg,
                                                                getTimeout);
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply received after " + (timePassed / 1000) + " seconds");
+        log.debug("Reply received after " + (timePassed / 
+                MILLISECONDS_PER_SECOND) + " seconds");
         if (replyNetMsg == null) {
             log.info("Request for record(" + arcfile + ":" + index
                      + ") timed out after "
-                     + (getTimeout / 1000)
+                     + (getTimeout / MILLISECONDS_PER_SECOND)
                      + " seconds. Returning null BitarchiveRecord");
             return null;
         }
@@ -359,12 +362,11 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *                  and the finish() method will be called afterwards.  The
      *                  process() method will be called with each File entry.
      * @param replicaId The id of the archive to execute the job on
-     *
      * @return A local batch status
-     *
      * @throws IOFailure if no results can be read at all
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId) {
+    public BatchStatus batch(FileBatchJob job, String replicaId) 
+            throws IOFailure{
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
 
@@ -428,8 +430,6 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *
      * @param filename The file for which admin data should be updated.
      * @param checksum The new checksum for the file
-     *
-     * @throws IOFailure If the reply to the request update timed out.
      */
     public void updateAdminChecksum(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
@@ -465,7 +465,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveId,
-                                 String checksum, String credentials) {
+            String checksum, String credentials) throws IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "filename");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveId, "bitarchiveName");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
@@ -515,7 +515,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @throws IOFailure If the reply is not of type GetAllChecksumsMessage
      * or if the file could not properly be retrieved from the reply message
      * or if the message timed out.
-     * @throws ArgumentNotvalid If the replicaId is null or empty. 
+     * @throws ArgumentNotValid If the replicaId is null or empty. 
      * @see dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage
      */
     public File getAllChecksums(String replicaId) throws IOFailure, 
@@ -533,11 +533,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed / 
+                MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all checksum timed out after "
-                     + (getTimeout / 1000) + " seconds.");
+                    + (getTimeout / MILLISECONDS_PER_SECOND) + " seconds.");
         }
         // convert to the correct type of message.
         GetAllChecksumsMessage replyCSMsg;
@@ -574,7 +575,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * replica. A null is returned if the message timeout.
      * @throws IOFailure If the reply is not of type GetAllFilenamesMessage
      * or if the file could not properly be retrieved from the reply message
-     * @throws ArgumentNotvalid If the replicaId is null or empty. 
+     * @throws ArgumentNotValid If the replicaId is null or empty. 
      * @see dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage
      */
     public File getAllFilenames(String replicaId) throws ArgumentNotValid, 
@@ -592,11 +593,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed / 
+                MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all filenames timed out after "
-                     + (getTimeout / 1000) + " seconds.");
+                    + (getTimeout / MILLISECONDS_PER_SECOND) + " seconds.");
         }
         // convert to the correct type of message.
         GetAllFilenamesMessage replyCSMsg;
@@ -633,7 +635,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @return The checksum of the file in the replica. 
      * @throws IOFailure If the reply is not of type GetChecksumMessage. Or if
      * the message timed out.
-     * @throws ArgumentNotvalid If either the replicaId of the filename 
+     * @throws ArgumentNotValid If either the replicaId of the filename 
      * is null or empty. 
      */
     public String getChecksum(String replicaId, String filename) throws 
@@ -651,11 +653,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                                                                getTimeout);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 1000) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed / 
+                MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for checksum timed out after "
-                     + (getTimeout / 1000) + " seconds.");
+                    + (getTimeout / MILLISECONDS_PER_SECOND) + " seconds.");
         }
         
         // convert to the expected type of message.

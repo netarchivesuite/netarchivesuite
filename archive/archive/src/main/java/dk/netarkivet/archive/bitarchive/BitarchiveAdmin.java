@@ -78,8 +78,8 @@ public class BitarchiveAdmin {
      * Creates a new BitarchiveAdmin object for an existing bit archive.
      * Reads the directories to use from settings.
      *
-     * @throws ArgumentNotValid If the settings for minSpaceLeft is non-positive 
-     * or the setting for minSpaceRequired is negative. 
+     * @throws ArgumentNotValid If the settings for minSpaceLeft is 
+     * non-positive or the setting for minSpaceRequired is negative. 
      * @throws PermissionDenied If any of the directories cannot be created or
      * are not writeable.
      */

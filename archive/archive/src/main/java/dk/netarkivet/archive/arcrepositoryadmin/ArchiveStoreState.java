@@ -1,7 +1,7 @@
-/* File:             $Id$
-* Revision:         $Revision$
-* Author:           $Author$
-* Date:             $Date$
+/* File:     $Id$
+* Revision:  $Revision$
+* Author:    $Author$
+* Date:      $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
 * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
 *
 * You should have received a copy of the GNU Lesser General Public
 * License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+*  USA
 */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
@@ -66,29 +67,30 @@ public class ArchiveStoreState {
     }
 
     /**
-     * Sets the current BitarchiveStoreState.
-     * @param storestate the BitarchiveStoreState
-     * @param lastchanged the lastchanged
+     * Sets the current ReplicaStoreState.
+     * @param state The ReplicaStoreState.
+     * @param lastDate The lastchanged date.
      */
-    public void setState(ReplicaStoreState storestate, Date lastchanged) {
-        ArgumentNotValid.checkNotNull(storestate, 
-            "BitArchiveStoreState storestate");
-        ArgumentNotValid.checkNotNull(lastchanged, 
-            "Date lastchanged");
+    public void setState(ReplicaStoreState state, Date lastDate) {
+        ArgumentNotValid.checkNotNull(state, 
+            "ReplicaStoreState state");
+        ArgumentNotValid.checkNotNull(lastDate, 
+            "Date lastDate");
     
-        this.storestate = storestate;
-        this.lastchanged = lastchanged;
+        this.storestate = state;
+        this.lastchanged = lastDate;
     }
 
     /**
-     * Sets the current BitarchiveStoreState.
+     * Sets the current ReplicaStoreState.
      * As a sideeffect lastchanged is set to NOW.
-     * @param storestate the BitarchiveStoreState
+     * 
+     * @param state the ReplicaStoreState.
      */
-    public void setState(ReplicaStoreState storestate) {
-        ArgumentNotValid.checkNotNull(storestate, 
-                "BitArchiveStoreState storestate");
-        this.storestate = storestate;
+    public void setState(ReplicaStoreState state) {
+        ArgumentNotValid.checkNotNull(state, 
+                "ReplicaStoreState state");
+        this.storestate = state;
         this.lastchanged = new Date();
     }
 
@@ -101,10 +103,14 @@ public class ArchiveStoreState {
 
     }
 
+    /**
+     * Creates an string representation of this instance.
+     * 
+     * @return The string representation of this instance.
+     */
     public String toString() {
         String stringRepresentation = getState() + " "
         + getLastChanged().getTime();
         return stringRepresentation;
     }
-
 }

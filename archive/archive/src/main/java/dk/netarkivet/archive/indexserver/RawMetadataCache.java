@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -76,20 +77,20 @@ public class RawMetadataCache extends FileBasedCache<Long>
      * @param prefix A prefix that will be used to distinguish this cache's
      * files from other caches'.  It will be used for creating a directory,
      * so it must not contain characters not legal in directory names.
-     * @param URLMatcher A pattern for matching URLs of the desired entries.
+     * @param urlMatcher A pattern for matching URLs of the desired entries.
      * If null, a .* pattern will be used.
      * @param mimeMatcher A pattern for matching mime-types of the desired
      * entries.  If null, a .* pattern will be used.
      */
-    public RawMetadataCache(String prefix, Pattern URLMatcher,
+    public RawMetadataCache(String prefix, Pattern urlMatcher,
                             Pattern mimeMatcher) {
         super(prefix);
         this.prefix = prefix;
-        Pattern URLMatcher1;
-        if (URLMatcher != null) {
-            URLMatcher1 = URLMatcher;
+        Pattern urlMatcher1;
+        if (urlMatcher != null) {
+            urlMatcher1 = urlMatcher;
         } else {
-            URLMatcher1 = MATCH_ALL_PATTERN;
+            urlMatcher1 = MATCH_ALL_PATTERN;
         }
         Pattern mimeMatcher1;
         if (mimeMatcher != null) {
@@ -98,9 +99,9 @@ public class RawMetadataCache extends FileBasedCache<Long>
             mimeMatcher1 = MATCH_ALL_PATTERN;
         }
         log.info("Metadata cache for '" + prefix + "' is fetching"
-                 + " metadata with urls matching '" + URLMatcher1.toString()
+                 + " metadata with urls matching '" + urlMatcher1.toString()
                  + "' and mimetype matching '" + mimeMatcher1 + "'");
-        job = new GetMetadataARCBatchJob(URLMatcher1, mimeMatcher1);
+        job = new GetMetadataARCBatchJob(urlMatcher1, mimeMatcher1);
     }
 
     /** Get the file potentially containing (cached) data for a single job.
@@ -118,19 +119,19 @@ public class RawMetadataCache extends FileBasedCache<Long>
     /** Actually cache data for the given ID.
      *
      * @see FileBasedCache#cacheData(Object)
-     * @param ID A job ID to cache data for.
+     * @param id A job ID to cache data for.
      * @return A File containing the data.  This file will be the same as
      * getCacheFile(ID);
      */
-    protected Long cacheData(Long ID) {
+    protected Long cacheData(Long id) {
         final String replicaUsed = Settings.get(CommonSettings.USE_REPLICA_ID);
         log.debug("Extract using a batchjob of type '"
                 + job.getClass().getName()
                 + "' cachedata from files matching '"
-                + ID + Constants.METADATA_FILE_PATTERN_SUFFIX
+                + id + Constants.METADATA_FILE_PATTERN_SUFFIX
                 + "' on replica '" 
                 + replicaUsed + "'");
-        job.processOnlyFilesMatching(ID
+        job.processOnlyFilesMatching(id
                 + Constants.METADATA_FILE_PATTERN_SUFFIX);
         BatchStatus b = arcrep.batch(job, replicaUsed);
         
@@ -139,13 +140,13 @@ public class RawMetadataCache extends FileBasedCache<Long>
         // successfully processed.
         if (b.hasResultFile()
                 && b.getNoOfFilesProcessed() > b.getFilesFailed().size()) {
-            File cacheFileName = getCacheFile(ID);
+            File cacheFileName = getCacheFile(id);
             b.copyResults(cacheFileName);
-            log.debug("Cached data for job '" + ID
+            log.debug("Cached data for job '" + id
                     + "' for '" + prefix + "'");
-            return ID;
+            return id;
         } else {
-            log.debug("No data found for job '" + ID
+            log.debug("No data found for job '" + id
                     + "' for '" + prefix + "'");
             return null;
         }
@@ -153,14 +154,21 @@ public class RawMetadataCache extends FileBasedCache<Long>
 
     /** A batch job that extracts metadata. */
     private static class GetMetadataARCBatchJob extends ARCBatchJob {
-        private final Pattern URLMatcher;
+        /** The pattern for matching the urls.*/
+        private final Pattern urlMatcher;
+        /** The pattern for the mimetype matcher.*/
         private final Pattern mimeMatcher;
 
         /**
-         * TODO: Javadoc.
+         * Constructor.
+         * 
+         * @param urlMatcher A pattern for matching URLs of the desired entries.
+         * If null, a .* pattern will be used.
+         * @param mimeMatcher A pattern for matching mime-types of the desired
+         * entries.  If null, a .* pattern will be used.
          */
-        public GetMetadataARCBatchJob(Pattern URLMatcher, Pattern mimeMatcher) {
-            this.URLMatcher = URLMatcher;
+        public GetMetadataARCBatchJob(Pattern urlMatcher, Pattern mimeMatcher) {
+            this.urlMatcher = urlMatcher;
             this.mimeMatcher = mimeMatcher;
             /**
             * one week in miliseconds.
@@ -169,16 +177,19 @@ public class RawMetadataCache extends FileBasedCache<Long>
         }
 
         /**
-         * TODO: Javadoc.
+         * Initialize method. Run before the arc-records are being processed.
+         * @param os The output stream to print any pre-processing data.
          */
-        public void initialize(OutputStream os) {
-        }
+        public void initialize(OutputStream os) { }
 
         /**
-         * TODO: Javadoc.
+         * The method for processing the arc-records.
+         * 
+         * @param sar The arc-record to process.
+         * @param os The output stream to write the results of the processing.
          */
         public void processRecord(ARCRecord sar, OutputStream os) {
-            if (URLMatcher.matcher(sar.getMetaData().getUrl()).matches()
+            if (urlMatcher.matcher(sar.getMetaData().getUrl()).matches()
                     && mimeMatcher.matcher(
                             sar.getMetaData().getMimetype()).matches()) {
                 try {
@@ -204,17 +215,21 @@ public class RawMetadataCache extends FileBasedCache<Long>
         }
 
         /**
-         * TODO: Javadoc.
+         * Method for post-processing the data.
+         * 
+         * @param os The output stream to write the results of the 
+         * post-processing data.
          */
-        public void finish(OutputStream os) {
-        }
+        public void finish(OutputStream os) { }
         
         /**
          * Humanly readable description of this instance.
+         * 
+         * @return The human readable description of this instance.
          */
         public String toString() {
             return getClass().getName() + ", with arguments: URLMatcher= " 
-            + URLMatcher + ", mimeMatcher = " + mimeMatcher;
+            + urlMatcher + ", mimeMatcher = " + mimeMatcher;
         }
     }
 }

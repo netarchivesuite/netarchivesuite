@@ -39,7 +39,6 @@ import dk.netarkivet.archive.arcrepository.distribute.ArcRepositoryServer;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
-import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
@@ -439,8 +438,8 @@ public class ArcRepository implements CleanupIF {
                     return true;
                 }
             } catch (UnknownID e) {
-                log.warn("Non-fatal error. One replica does not have a upload "
-                        + "status for the file '" + arcFileName + "'.", e);
+                log.warn("Non-fatal error. One replica does not have a upload"
+                        + " status for the file '" + arcFileName + "'.", e);
                 return true;
             }
         }
@@ -458,7 +457,8 @@ public class ArcRepository implements CleanupIF {
         for (Replica rep : connectedReplicas.keySet()) {
             try {
                 // retrieve the replica channel and check upload status.
-                String repChannelName = rep.getIdentificationChannel().getName();
+                String repChannelName = 
+                    rep.getIdentificationChannel().getName();
                 if (ad.getState(arcFileName, repChannelName)
                         == ReplicaStoreState.UPLOAD_STARTED) {
                     return false;

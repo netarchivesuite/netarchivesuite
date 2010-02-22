@@ -33,25 +33,25 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
  */
 public class ReplicaFileInfo {
     /** The guid. Unique identification key.*/
-    public long guid;
+    private long guid;
     /** The replicaId. The identification of the replica.*/
-    public String replicaId;
+    private String replicaId;
     /** The id of the file in the file table.*/
-    public long fileId;
+    private long fileId;
     /** The id of the segment in the segment.*/
-    public long segmentId;
+    private long segmentId;
     /** The checksum of the file in the segment within the replica.*/
-    public String checksum;
+    private String checksum;
     /** The uploadstatus.*/
-    public ReplicaStoreState uploadStatus;
+    private ReplicaStoreState uploadStatus;
     /** The filelist status.*/
-    public FileListStatus filelistStatus;
+    private FileListStatus filelistStatus;
     /** The checksum status.*/
-    public ChecksumStatus checksumStatus;
+    private ChecksumStatus checksumStatus;
     /** The date for the last filelist update of the entry.*/
-    public Date filelistCheckdatetime;
+    private Date filelistCheckdatetime;
     /** The date for the last checksum update of the entry.*/ 
-    public Date checksumCheckdatetime;
+    private Date checksumCheckdatetime;
     
     /**
      * Constructor.
@@ -91,5 +91,85 @@ public class ReplicaFileInfo {
         return guid + ":" + replicaId + ":" + fileId + ":" + segmentId + ":"
                 + checksum + ":" + uploadStatus + ":" + filelistStatus + ":"
                 + filelistCheckdatetime + ":" + checksumCheckdatetime;
+    }
+    
+    /**
+     * Retrieves the guid.
+     * @return The guid.
+     */
+    public long getGuid() {
+        return guid;
+    }
+    
+    /**
+     * Retrieves the replicaId.
+     * @return The replicaId.
+     */
+    public String getReplicaId() {
+        return replicaId;
+    }
+
+    /**
+     * Retrieves the fileId.
+     * @return The fileId.
+     */
+    public long getFileId() {
+        return fileId;
+    }
+    
+    /**
+     * Retrieves the segmentId.
+     * @return The segmentId.
+     */
+    public long getSegmentId() {
+        return segmentId;
+    }
+
+    /**
+     * Retrieves the checksum.
+     * @return The checksum.
+     */
+    public String getChecksum() {
+        return checksum;
+    }
+
+    /**
+     * Retrieves the uploadState.
+     * @return The uploadState.
+     */
+    public ReplicaStoreState getUploadState() {
+        return uploadStatus;
+    }
+
+    /**
+     * Retrieves the filelistStatus.
+     * @return The filelistStatus.
+     */
+    public FileListStatus getFileListState() {
+        return filelistStatus;
+    }
+    
+    /**
+     * Retrieves the checksumStatus.
+     * @return The checksumStatus.
+     */
+    public ChecksumStatus getChecksumState() {
+        return checksumStatus;
+    }
+
+    /**
+     * Retrieves the filelistCheckdatetime.
+     * @return The filelistCheckdatetime.
+     */
+    public Date getFileListDate() {
+        return filelistCheckdatetime;
+    }
+    
+    /**
+     * Retrieves the checksumCheckDatetime.
+     * @return The checksumCheckDateTime.
+     */
+    public Date getChecksumCheckdatetime() {
+        return checksumCheckdatetime;
     }
 }

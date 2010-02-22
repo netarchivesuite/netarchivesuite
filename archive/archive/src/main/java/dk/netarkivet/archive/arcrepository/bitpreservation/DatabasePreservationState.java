@@ -15,7 +15,6 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaType;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * This class contains the preservation data based on the database data
@@ -24,10 +23,11 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  */
 public class DatabasePreservationState implements PreservationState {
     /** The log.*/
-    private static final Log log = LogFactory.getLog(
-            FilePreservationState.class);
+    private Log log = LogFactory.getLog(DatabasePreservationState.class);
+    
     /**
-     * The map containing all the entries for the 
+     * The map containing all the entries for in the replicafileinfo table in 
+     * the database and the replica they correspond to.
      */
     private Map<Replica, ReplicaFileInfo> entries = new HashMap<Replica, 
             ReplicaFileInfo>();
@@ -55,7 +55,7 @@ public class DatabasePreservationState implements PreservationState {
         
         // retrieve the replica, and put it into the map along the fileinfo.
         for(ReplicaFileInfo rfi : rfis) {
-            Replica rep = Replica.getReplicaFromId(rfi.replicaId);
+            Replica rep = Replica.getReplicaFromId(rfi.getReplicaId());
             entries.put(rep, rfi);
         }
     }
@@ -65,13 +65,14 @@ public class DatabasePreservationState implements PreservationState {
     * @param replica The replica to get the checksum from.
     * @return The file's checksum, if it is present in the bitarchive, or
     * "" if it either is absent or an error occurred.
+    * @throws ArgumentNotValid If the replica is null.
     */
     public List<String> getBitarchiveChecksum(Replica replica) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
         // return empty list if the file is missing from replica.
-        if(entries.get(replica).filelistStatus == FileListStatus.MISSING) {
+        if(entries.get(replica).getFileListState() == FileListStatus.MISSING) {
             return new ArrayList<String>(0);
         }
         
@@ -104,7 +105,7 @@ public class DatabasePreservationState implements PreservationState {
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
-        return entries.get(replica).uploadStatus.toString();
+        return entries.get(replica).getUploadState().toString();
     }
 
     /**
@@ -151,8 +152,9 @@ public class DatabasePreservationState implements PreservationState {
     public Replica getReferenceBitarchive() {
         for(Map.Entry<Replica, ReplicaFileInfo> entry : entries.entrySet()) {
             // Check whether it is a bitarchive with OK checksum.
-            if(entry.getKey().getType() == ReplicaType.BITARCHIVE && 
-                    entry.getValue().checksumStatus == ChecksumStatus.OK) {
+            if(entry.getKey().getType() == ReplicaType.BITARCHIVE 
+                    && entry.getValue().getChecksumState() 
+                    == ChecksumStatus.OK) {
                 log.debug("Found refe");
                 return entry.getKey();
             }
@@ -176,11 +178,11 @@ public class DatabasePreservationState implements PreservationState {
        ArgumentNotValid.checkNotNull(replica, "Replica replica");
        
        // return "" if the file is missing.
-       if(entries.get(replica).filelistStatus == FileListStatus.MISSING) {
+       if(entries.get(replica).getFileListState() == FileListStatus.MISSING) {
            return "";
        }
        
-       return entries.get(replica).checksum;
+       return entries.get(replica).getChecksum();
    }
 
    /**
@@ -194,7 +196,7 @@ public class DatabasePreservationState implements PreservationState {
        ArgumentNotValid.checkNotNull(replica, "Replica replica");
        
        // TODO Is it missing if the status is unknown?
-       return entries.get(replica).filelistStatus == FileListStatus.MISSING;
+       return entries.get(replica).getFileListState() == FileListStatus.MISSING;
    }
    
    /**
@@ -215,7 +217,7 @@ public class DatabasePreservationState implements PreservationState {
        
        // Insert all the checksum of all the entries into the map.
        for(ReplicaFileInfo rfi : entries.values()) {
-           String checksum = rfi.checksum;
+           String checksum = rfi.getChecksum();
            
            if(checksumCount.containsKey(checksum)) {
                // retrieve the count and add one
@@ -234,8 +236,8 @@ public class DatabasePreservationState implements PreservationState {
        int largest = -1;
        String res = "NO CHECKSUMS!";
        boolean unique = false;
-       for(Map.Entry<String, Integer> checksumEntry : 
-                   checksumCount.entrySet()) {
+       for(Map.Entry<String, Integer> checksumEntry 
+               : checksumCount.entrySet()) {
            // check whether this has the highest count.
            if(checksumEntry.getValue().intValue() > largest) {
                unique = true;

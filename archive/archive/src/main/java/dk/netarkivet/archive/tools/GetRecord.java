@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.tools;
@@ -65,18 +66,26 @@ public class GetRecord extends ToolRunnerBase {
         instance.runTheTool(argv);
     }
 
+    /**
+     * Method for creating the simple command line tool.
+     * 
+     * @return The commandline tool for GetRecord.
+     */
     protected SimpleCmdlineTool makeMyTool() {
         return new GetRecordTool();
     }
 
+    /**
+     * Command line tool for running this tool.
+     */
     private static class GetRecordTool implements SimpleCmdlineTool {
         /**
-         * This instance is declared outside of run method to ensure reliable teardown
-         * in case of exceptions during execution.
+         * This instance is declared outside of run method to ensure reliable 
+         * teardown in case of exceptions during execution.
          */
         private ViewerArcRepositoryClient arcrep;
 
-        /**
+        /**     
          * Accept only exactly 2 parameters.
          *
          * @param args the arguments
@@ -99,8 +108,8 @@ public class GetRecord extends ToolRunnerBase {
 
         /**
          * Ensure reliable execution of the ArcRepositoryClient.close() method.
-         * Remember to check if arcrep was actually created. Also reliably clean up
-         * JMSConnection.
+         * Remember to check if arcrep was actually created. Also reliably 
+         * clean up JMSConnection.
          */
         public void tearDown() {
             if (arcrep != null) {
@@ -110,10 +119,10 @@ public class GetRecord extends ToolRunnerBase {
         }
 
         /**
-         * Perform the actual work. Procure the necessary information to run the
-         * ARCArchiveAccess from command line parameters and system settings, and
-         * perform the write. Creating and closing the ArcRepositoryClient (arcrep) is
-         * done in setup and teardown methods.
+         * Perform the actual work. Procure the necessary information to run 
+         * the ARCArchiveAccess from command line parameters and system 
+         * settings, and perform the write. Creating and closing the 
+         * ArcRepositoryClient (arcrep) is done in setup and teardown methods.
          *
          * @param args the arguments
          */
@@ -132,8 +141,8 @@ public class GetRecord extends ToolRunnerBase {
                 processRecord(is);
             } catch (NetarkivetException e) {
                 throw new IOFailure(
-                        "NetarkivetException while performing ARCArchiveAccess.lookup",
-                        e);
+                        "NetarkivetException while performing "
+                        + "ARCArchiveAccess.lookup", e);
             } catch (URISyntaxException e) {
                 throw new IOFailure("URI has illegal syntax", e);
             }
@@ -159,8 +168,8 @@ public class GetRecord extends ToolRunnerBase {
                 }
             } catch (IOException e) {
                 throw new IOFailure(
-                        "Internal error: Could not read InputStream from repository",
-                        e);
+                        "Internal error: Could not read InputStream from "
+                        + "repository", e);
             }
         }
 

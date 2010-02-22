@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -129,7 +130,8 @@ public interface Admin {
      * 
      * @return A set of the names for all the known file.
      */
-    public Set<String> getAllFileNames();
+    Set<String> getAllFileNames();
+    
     /**
      * Retrieves a set with the name of the files with a specific 
      * ReplicaStoreState in a specific replica.
@@ -139,7 +141,7 @@ public interface Admin {
      * @return A set with the names of the files with a specific 
      * ReplicaStoreState in a specific replica.
      */
-    public Set<String> getAllFileNames(Replica rep, ReplicaStoreState state);
+    Set<String> getAllFileNames(Replica rep, ReplicaStoreState state);
     
     /**
      * Close and cleanup of this class.

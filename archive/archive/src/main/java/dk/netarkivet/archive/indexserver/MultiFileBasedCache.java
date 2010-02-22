@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -34,8 +35,8 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  * Implements generating a filename from this.
  *
+ * @param &lt;T&gt; The cache type, must extend java.lang.Comparable.
  */
-
 public abstract class MultiFileBasedCache<T extends Comparable<T>>
         extends FileBasedCache<Set<T>> {
 
@@ -54,13 +55,13 @@ public abstract class MultiFileBasedCache<T extends Comparable<T>>
     /** Get the filename for the file containing the combined data for a
      * set of IDs.
      *
-     * @param IDs A set of IDs to generate a filename for
+     * @param ids A set of IDs to generate a filename for
      * @return A filename that uniquely identifies this set of IDs within
      * the cache.  It is considered acceptable to have collisions at a
      * likelihood the order of 1/2^128 (i.e. use MD5 to abbreviate long lists).
      */
-    public File getCacheFile(Set<T> IDs) {
-        String fileName = FileUtils.generateFileNameFromSet(IDs, "-cache");
+    public File getCacheFile(Set<T> ids) {
+        String fileName = FileUtils.generateFileNameFromSet(ids, "-cache");
         return new File(getCacheDir(), fileName);
     }
 }

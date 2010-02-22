@@ -27,14 +27,17 @@ import java.util.List;
 
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 
+/**
+ * The interface for the preservations states used by the web applications.
+ */
 public interface PreservationState {
-
-    /** Get the checksum of this file in a specific replica.
-    *
-    * @param replica The replica to get the checksum from.
-    * @return The file's checksum, if it is present in the replica, or
-    * "" if it either is absent or an error occurred.
-    */
+    /** 
+     * Get the checksum of this file in a specific replica.
+     *
+     * @param replica The replica to get the checksum from.
+     * @return The file's checksum, if it is present in the replica, or
+     * "" if it either is absent or an error occurred.
+     */
     List<String> getBitarchiveChecksum(Replica replica);
     
     /** Get the MD5 checksum stored in the admin data.

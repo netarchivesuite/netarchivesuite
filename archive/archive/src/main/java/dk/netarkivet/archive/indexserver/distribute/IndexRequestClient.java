@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.indexserver.distribute;
 
@@ -60,8 +61,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         implements JobIndexCache {
     
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH
-            = "dk/netarkivet/archive/indexserver/distribute/IndexRequestClientSettings.xml";
+    private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/archive/"
+        + "indexserver/distribute/IndexRequestClientSettings.xml";
 
     /*
      * The static initialiser is called when the class is loaded.
@@ -133,7 +134,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @return The singleton instance dedicated to this type of index requests.
      * @throws ArgumentNotValid if type is null.
      */
-    public synchronized static IndexRequestClient getInstance(RequestType type) {
+    public static synchronized IndexRequestClient getInstance(RequestType type)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(type, "RequestType type");
         IndexRequestClient client = clients.get(type);
         if (client == null) {
@@ -146,7 +148,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     /**
      * This method makes sure the actual caching of underlying data is done
      * using the index server. It will convert calls into an IndexRequestMessage
-     * which is sent to the server. The Set<Long> of found jobs, and the side
+     * which is sent to the server. The Set&lt;Long&gt; of found jobs, and the side
      * effect of caching the index, is done using this communication with the
      * server.  The resulting files will be unzipped into the cache dir.
      *
@@ -156,14 +158,14 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @param jobSet The set of job IDs.
      * @return The set of found job IDs.
      * @throws ArgumentNotValid on null argument; or on wrong parameters in
-     *                          replied message.
-     * @throws IOFailure        on trouble in communication or invalid reply
-     *                          types.
-     * @throws IllegalState     if message is not OK.
+     * replied message.
+     * @throws IOFailure on trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK.
      * @see FileBasedCache#cache
      * @see FileBasedCache#getIndex
      */
-    protected Set<Long> cacheData(Set<Long> jobSet) {
+    protected Set<Long> cacheData(Set<Long> jobSet) throws IOFailure, 
+            IllegalState {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
 
         log.info("Requesting an index of type '" + this.requestType
@@ -214,7 +216,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * be placed in.  This directory will be created and filled atomically.
      * @throws IOFailure If errors occur during unzipping, e.g. disk full.
      */
-    private void gunzipToDir(List<RemoteFile> files, File toDir) {
+    private void gunzipToDir(List<RemoteFile> files, File toDir) 
+            throws IOFailure {
         File tmpDir = FileUtils.createUniqueTempDir(
                 toDir.getParentFile(), toDir.getName());
         try {
@@ -247,8 +250,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @param destFile A place to put the unzipped file.
      * @throws IOFailure on any I/O error, e.g. disk full
      */
-    private void unzipAndDeleteRemoteFile(RemoteFile remoteFile,
-                                          File destFile) {
+    private void unzipAndDeleteRemoteFile(RemoteFile remoteFile, File destFile)
+            throws IOFailure {
         File tmpFile = null;
         try {
             // We cannot unzip directly from a stream, so we make a temp file.
@@ -288,11 +291,11 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @param jobSet The requested set of jobs
      * @param msg The message received
      * @throws ArgumentNotValid On wrong parameters in replied message.
-     * @throws IOFailure        on trouble in communication or invalid reply
-     *                          types.
-     * @throws IllegalState     if message is not OK.
+     * @throws IOFailure on trouble in communication or invalid reply types.
+     * @throws IllegalState if message is not OK.
      */
-    private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) {
+    private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) 
+            throws IllegalState, IOFailure {
         //Read and check reply
         if (msg == null) {
             throw new IOFailure("Timeout waiting for reply of index request "

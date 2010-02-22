@@ -28,7 +28,6 @@ import java.util.List;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaFileInfo;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.CleanupIF;
 
 /**

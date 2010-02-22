@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -46,10 +47,12 @@ import dk.netarkivet.common.utils.Settings;
  * A generic cache that stores items in files.  This abstract superclass handles
  * placement of the cache directory and adding/getting files using the
  * subclasses' methods for generating filenames.
+ * 
+ * @param &lt;I&gt; The type of case. 
  */
 public abstract class FileBasedCache<I> {
     /** Cache directory. */
-    File cacheDir;
+    protected File cacheDir;
     /** Logger. */
     private Log log = LogFactory.getLog(getClass().getName());
 
@@ -184,21 +187,21 @@ public abstract class FileBasedCache<I> {
      * Implementations of FileBasedCache may override this to perform the
      * caching more efficiently, if caching overhead per file is large.
      *
-     * @param IDs List of IDs that uniquely identify a set of items within the
+     * @param ids List of IDs that uniquely identify a set of items within the
      *            cache.
      *
      * @return A map from ID to the files containing cached data for those IDs.
      *         If caching failed, even partially, for an ID, the entry for the
      *         ID doesn't exist.
      */
-    public Map<I, File> get(Set<I> IDs) {
-        ArgumentNotValid.checkNotNull(IDs, "IDs");
-        Map<I, File> result = new HashMap<I, File>(IDs.size());
-        for (I ID : IDs) {
-            if (ID.equals(cache(ID))) {
-                result.put(ID, getCacheFile(ID));
+    public Map<I, File> get(Set<I> ids) {
+        ArgumentNotValid.checkNotNull(ids, "Set<I> ids");
+        Map<I, File> result = new HashMap<I, File>(ids.size());
+        for (I id : ids) {
+            if (id.equals(cache(id))) {
+                result.put(id, getCacheFile(id));
             } else {
-                result.put(ID, null);
+                result.put(id, null);
             }
         }
         return result;

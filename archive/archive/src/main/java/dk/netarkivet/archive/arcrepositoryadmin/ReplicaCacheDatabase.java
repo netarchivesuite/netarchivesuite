@@ -1,4 +1,3 @@
-
 /* File:        $Id$
  * Revision:    $Revision$
  * Author:      $Author$
@@ -58,10 +57,13 @@ import dk.netarkivet.common.utils.Settings;
  * Method for storing the bitpreservation cache in a database.
  * 
  * This method uses the 'admin.data' file for retrieving the upload status.
+ * 
+ * TODO this file is extremely large (more than 2000 lines) and should be 
+ * shortened.
  */
-public class ReplicaCacheDatabase implements BitPreservationDAO {
+public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** The log.*/
-    protected static final Log log
+    protected static Log log 
             = LogFactory.getLog(ReplicaCacheDatabase.class.getName());
 
     /** The current instance.*/
@@ -124,7 +126,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // If unknown replica ids are found, then throw exception.
         if (repIds.size() > 0) {
-            throw new IllegalState ("The database contain ID of the following "
+            throw new IllegalState("The database contain ID of the following "
                     + "replicas, which has not defined in the settings: "
                     + repIds);
         }
@@ -919,7 +921,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         // non-empty checksum into the result list.
         for (long rfiGuid : rfiGuids) {
             ReplicaFileInfo rfi = getReplicaFileInfo(rfiGuid);
-            if (rfi.checksum != null && !rfi.checksum.isEmpty()) {
+            if (rfi.getChecksum() != null && !rfi.getChecksum().isEmpty()) {
                 result.add(rfi);
             }
         }
@@ -932,7 +934,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param replicafileinfoGuid The guid to update.
      * @param checksum The new checksum for the entry.
-     * @param status The status for the upload.
+     * @param state The state for the upload.
      * @throws IOFailure If an error occurs in the database connection. 
      */
     private void updateReplicaFileInfo(long replicafileinfoGuid, 
@@ -979,11 +981,12 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replicafileinfoGuid The guid to update.
      * @param checksum The new checksum for the entry.
      * @param date The date for the update.
-     * @param status The status for the upload.
+     * @param state The status for the upload.
      * @throws IOFailure If an error occurs in the connection to the database.
      */
     private void updateReplicaFileInfo(long replicafileinfoGuid, 
-            String checksum, Date date, ReplicaStoreState state) throws IOFailure {
+            String checksum, Date date, ReplicaStoreState state) 
+            throws IOFailure {
         try {
             String sql = "UPDATE replicafileinfo SET checksum = ?, "
                 + "upload_status = ?, filelist_status = ?, "
@@ -1029,7 +1032,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param repId The id of the replica.
      * @return The upload status of the corresponding replicafileinfo entry.
      */
-    private ReplicaStoreState retrieveUploadStatus(long fileGuid, String repId) {
+    private ReplicaStoreState retrieveUploadStatus(long fileGuid, 
+            String repId) {
         // sql query for retrieval of upload status for a specific entry. 
         String sql = "SELECT upload_status FROM replicafileinfo WHERE "
             + "file_id = ? AND replica_id = ?";
@@ -1116,7 +1120,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         // unique checksums.
         Set<String> hs = new HashSet<String>(rfis.size());
         for (ReplicaFileInfo rfi : rfis) {
-            hs.add(rfi.checksum);
+            hs.add(rfi.getChecksum());
         }
 
         // if at most one unique checksum is found, then no irregularities
@@ -1128,7 +1132,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             // Tell all the replicafileinfo entries that their checksum
             // is ok
             for (ReplicaFileInfo rfi : rfis) {
-                updateReplicaFileInfoChecksumOk(rfi.guid);
+                updateReplicaFileInfoChecksumOk(rfi.getGuid());
             }
 
             // go to next entry in the file table.
@@ -1140,7 +1144,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
         String[] uniqueCs = hs.toArray(new String[hs.size()]);
         for (ReplicaFileInfo rfi : rfis) {
             for (int i = 0; i < hs.size(); i++) {
-                if (rfi.checksum.equals(uniqueCs[i])) {
+                if (rfi.getChecksum().equals(uniqueCs[i])) {
                     csCount[i]++;
                 }
             }
@@ -1169,10 +1173,10 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             // does not have the chosen checksum.
             // Set the others replciafileinfo entries to OK.
             for (ReplicaFileInfo rfi : rfis) {
-                if (!rfi.checksum.equals(uniqueCs[index])) {
-                    updateReplicaFileInfoChecksumCorrupt(rfi.guid);
+                if (!rfi.getChecksum().equals(uniqueCs[index])) {
+                    updateReplicaFileInfoChecksumCorrupt(rfi.getGuid());
                 } else {
-                    updateReplicaFileInfoChecksumOk(rfi.guid);
+                    updateReplicaFileInfoChecksumOk(rfi.getGuid());
                 }
             }
         } else {
@@ -1187,7 +1191,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // set all replicafileinfo entries to unknown
             for (ReplicaFileInfo rfi : rfis) {
-                updateReplicaFileInfoChecksumUnknown(rfi.guid);
+                updateReplicaFileInfoChecksumUnknown(rfi.getGuid());
             }
         }
     }
@@ -1380,15 +1384,16 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             for(Replica rep : Replica.getKnown()) {
                 // Ensure that the file has not been completely uploaded to a 
                 // replica.
-                ReplicaStoreState us = retrieveUploadStatus(fileId, rep.getId());
+                ReplicaStoreState us = retrieveUploadStatus(fileId, 
+                        rep.getId());
                 
                 if(us == ReplicaStoreState.UPLOAD_COMPLETED) {
                     throw new IllegalState("The file has already been "
                             + "completely uploaded to the replica: " + rep);
                 }
                 
-                // make sure that it has not been attempted uploaded with another 
-                // checksum
+                // make sure that it has not been attempted uploaded with 
+                // another checksum
                 String entryCs = retrieveChecksumForReplicaFileInfoEntry(
                         fileId, rep.getId());
                 
@@ -1428,7 +1433,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * string. Or if the replica or the status is null.
      */
     public void changeStateOfReplicafileinfo(String filename, Replica replica, 
-            ReplicaStoreState state) {
+            ReplicaStoreState state) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNull(replica, "Replica rep");
         ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
@@ -1452,8 +1457,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             statement.executeUpdate();
             dbConnection.commit();
         } catch (SQLException e) {
-            throw new IllegalState("Cannot update status and checksum of " +
-            		"a replicafileinfo in the database.", e);
+            throw new IllegalState("Cannot update status and checksum of " 
+                    + "a replicafileinfo in the database.", e);
         }
     }
     
@@ -1469,9 +1474,11 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param state The new ReplicaStoreState for the entry.
      * @throws ArgumentNotValid If the filename or the checksum is either null 
      * or the empty string. Or if the replica or the status is null.
+     * @throws IllegalState If an sql exception is thrown.
      */
     public void changeStateOfReplicafileinfo(String filename, String checksum, 
-            Replica replica, ReplicaStoreState state) {
+            Replica replica, ReplicaStoreState state) throws ArgumentNotValid, 
+            IllegalState {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(replica, "Replica rep");
@@ -1498,8 +1505,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             statement.executeUpdate();
             dbConnection.commit();
         } catch (SQLException e) {
-            throw new IllegalState("Cannot update status and checksum of " +
-                        "a replicafileinfo in the database.", e);
+            throw new IllegalState("Cannot update status and checksum of " 
+                    + "a replicafileinfo in the database.", e);
         }
     }
 
@@ -2056,6 +2063,8 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
      * @return Whether the line was valid.
      */
     public boolean insertAdminEntry(String line) {
+        final int LENGTH_FIRST_PART = 4;
+        final int LENGTH_OTHER_PARTS = 3;
         try {
             // split into parts. First contains 
             String[] split = line.split(" , ");
@@ -2064,7 +2073,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             String[] entryData = split[0].split(" ");
             
             // Check if enough elements
-            if(entryData.length < 4) {
+            if(entryData.length < LENGTH_FIRST_PART) {
                 log.info("Bad line in Admin.data: " + line);
                 return false;
             }
@@ -2088,7 +2097,7 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
                 String[] repInfo = split[i].split(" ");
                 
                 // check if correct size
-                if(repInfo.length < 3) {
+                if(repInfo.length < LENGTH_OTHER_PARTS) {
                     log.info("Bad replica information '" + split[i] 
                             + "' in line '" + line + "'");
                     continue;
@@ -2261,10 +2270,11 @@ public class ReplicaCacheDatabase implements BitPreservationDAO {
             // Print
             System.out.println(rfiGUID + " \t" + replicaId + "\t" + fileId
                     + "\t" + checksum + "\t"
-                    + ReplicaStoreState.fromOrdinal(uploadStatus).name() + "  \t"
-                    + FileListStatus.fromOrdinal(filelistStatus).name() + "\t"
-                    + ChecksumStatus.fromOrdinal(checksumStatus).name() + "\t"
-                    + filelistCheckdatetime + "\t" + checksumCheckdatetime);
+                    + ReplicaStoreState.fromOrdinal(uploadStatus).name() 
+                    + "  \t" + FileListStatus.fromOrdinal(filelistStatus).name()
+                    + "\t" + ChecksumStatus.fromOrdinal(checksumStatus).name() 
+                    + "\t" + filelistCheckdatetime + "\t" 
+                    + checksumCheckdatetime);
         }
         System.out.println();
     }

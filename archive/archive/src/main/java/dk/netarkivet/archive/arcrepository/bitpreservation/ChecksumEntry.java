@@ -103,22 +103,33 @@ public class ChecksumEntry extends Object {
      */
     public boolean equals(Object obj) {
         if (this == obj)
+        {
             return true;
+        }
         if (obj == null)
+        {
             return false;
+        }
         if (getClass() != obj.getClass())
+        {
             return false;
+        }
         ChecksumEntry other = (ChecksumEntry) obj;
         if (checksum == null) {
             if (other.checksum != null)
+            {
                 return false;
-        } else if (!checksum.equals(other.checksum))
+            }
+        } else if (!checksum.equals(other.checksum)) {
             return false;
+        }
         if (filename == null) {
-            if (other.filename != null)
+            if (other.filename != null) {
                 return false;
-        } else if (!filename.equals(other.filename))
+            }
+        } else if (!filename.equals(other.filename)) {
             return false;
+        }       
         return true;
     }
 

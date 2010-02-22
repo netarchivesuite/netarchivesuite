@@ -1,7 +1,8 @@
-/* File:             $Id$
- * Revision:         $Revision$
- * Author:           $Author$
- * Date:             $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
+ * 
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
  *
@@ -17,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
@@ -67,7 +69,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @throws IOFailure if there is trouble reading or creating
      * the admin data file
      */
-    private UpdateableAdminData() throws IOFailure {
+    private UpdateableAdminData() throws IOFailure, PermissionDenied {
         super();
         if (!adminDataFile.exists()) {
             log.info("Creating new admin data file "
@@ -139,7 +141,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
                     + "' for unregistered file '" + arcfileName + "'");
         }
         ArcRepositoryEntry entry = storeEntries.get(arcfileName);
-        entry.setReplyInfo(replyInfo); //TODO: Should this be persisted
+        entry.setReplyInfo(replyInfo); //TODO Should this be persisted
     }
 
     /**
@@ -174,8 +176,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @throws ArgumentNotValid If the arguments are null or empty
      */
     public void setState(String arcfileName, String bitarchiveID,
-                         ReplicaStoreState state)
-            throws UnknownID {
+            ReplicaStoreState state) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID, "bitarchiveID");
         ArgumentNotValid.checkNotNull(state, "state");
@@ -187,7 +188,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
             throw new UnknownID(message);
         }
 
-        // TODO: What is this good for?
+        // TODO What is this good for?
         // Only used by the toString() method.
         if (!knownBitArchives.contains(bitarchiveID)) {
             knownBitArchives.add(bitarchiveID);
@@ -202,8 +203,11 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param checkSum
      *      The generated (MD5) checksum to be stored in reference table
      * @throws UnknownID if the file is not already registered.
+     * @throws ArgumentNotValid If the arcfileName or the checksum is either 
+     * null or the empty string.
      */
-    public void setCheckSum(String arcfileName, String checkSum) {
+    public void setCheckSum(String arcfileName, String checkSum) 
+            throws ArgumentNotValid, UnknownID {
         ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
         ArgumentNotValid.checkNotNullOrEmpty(checkSum, "checkSum");
         if (!hasEntry(arcfileName)) {
@@ -230,7 +234,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * entire new file is written.
      * @throws IOFailure on trouble writing to file
      */
-    private void write() {
+    private void write() throws IOFailure {
         // First write admindata to a temporary file.
         final File adminDataStore = adminDataFile;
         final File tmpDataStore =
@@ -241,7 +245,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
         try {
             final FileWriter out = new FileWriter(tmpDataStore);
             writer = new PrintWriter(out);
-            writer.println(versionNumber);
+            writer.println(VERSION_NUMBER);
             for (Map.Entry<String, ArcRepositoryEntry> entry
                     : storeEntries.entrySet()) {
                 final String arcfilename = entry.getKey();
@@ -279,11 +283,9 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * @param arcfilename  the filename which entry is to be written
      * @param arcrepentry The data kept for this arcfile
      * @throws ArgumentNotValid if arcrepentry.getFilename() != arcfilename
-     * @throws PermissionDenied
      */
     private void write(PrintWriter writer, String arcfilename,
-            final ArcRepositoryEntry arcrepentry)
-        throws PermissionDenied {
+            final ArcRepositoryEntry arcrepentry) throws ArgumentNotValid {
         ArgumentNotValid.checkTrue(
                 arcrepentry.getFilename().equals(arcfilename),
                 "arcrepentry.getFilename() is not equal to arcfilename (!!)");
@@ -296,9 +298,9 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * This will append the data to the end of the file.
      * @param filename the name of the file which entry is to written
      *  to admin data file
-     *  @throws PermissionDenied (does it?)
+     *  @throws IOFailure If an exception occurs when accessing the file.
      */
-    private void write(String filename) throws PermissionDenied {
+    private void write(String filename) throws IOFailure {
         ArcRepositoryEntry entry = storeEntries.get(filename);
         File adminDataStore = adminDataFile;
         PrintWriter writer = null;

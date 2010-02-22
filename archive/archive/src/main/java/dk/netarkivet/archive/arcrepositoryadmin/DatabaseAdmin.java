@@ -1,7 +1,7 @@
-/* File:        $Id: AdminData.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision:    $Revision: 1042 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:     $Id: AdminData.java 1042 2009-09-30 18:12:50Z kfc $
+ * Revision: $Revision: 1042 $
+ * Author:   $Author: kfc $
+ * Date:     $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepositoryadmin;
 
@@ -46,7 +47,7 @@ public class DatabaseAdmin implements Admin {
     /** The current instance of this class, to avoid multiple instantiations.*/
     private static DatabaseAdmin instance;
     /** Administration of store messages. */
-    Map<String, StoreMessage> storeEntries = 
+    private Map<String, StoreMessage> storeEntries = 
         new HashMap<String, StoreMessage>();
     
     /**

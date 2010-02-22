@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -31,7 +32,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -122,7 +122,7 @@ public class CDXIndexCache extends CombiningMultiFileBasedCache<Long>
         File workFile = new File(file.getAbsolutePath() + WORK_SUFFIX);
         workFile.deleteOnExit();
         try {
-            ProcessUtils.runProcess(new String[] { "LANG=C"} ,
+            ProcessUtils.runProcess(new String[] {"LANG=C"} ,
                     "sort", file.getAbsolutePath(),
                     "-o", workFile.getAbsolutePath());
             workFile.renameTo(file);

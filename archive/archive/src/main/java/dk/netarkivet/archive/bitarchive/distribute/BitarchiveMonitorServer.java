@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Date:        $Date$
- * Revision:    $Revision$
- * Author:      $Author$
+/* File:     $Id$
+ * Date:     $Date$
+ * Revision: $Revision$
+ * Author:   $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -81,8 +81,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     /**
      * Logger.
      */
-    private static final Log log
-            = LogFactory.getLog(BitarchiveMonitorServer.class);
+    private static Log log = LogFactory.getLog(BitarchiveMonitorServer.class);
 
     /**
      * The jms connection used.
@@ -296,9 +295,9 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
         // has also failed, and should be returned as a fail.
         if(!msg.isOk()) {
-            String errMsg = "The RemoveAndGetFileMessage has returned the error: '"
-                + msg.getErrMsg() + "'. Reply to CorrectMessage with "
-                + "the same error.";
+            String errMsg = "The RemoveAndGetFileMessage has returned the "
+                + "error: '" + msg.getErrMsg() + "'. Reply to CorrectMessage "
+                + "with the same error.";
             log.warn(errMsg);
             cm.setNotOk(errMsg);
             con.reply(cm);

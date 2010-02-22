@@ -53,8 +53,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     /**
      * The logger used by this class.
      */
-    private static final Log log 
-            = LogFactory.getLog(ChecksumFileServer.class);
+    private static Log log = LogFactory.getLog(ChecksumFileServer.class);
     
     /**
      * The instance of this server.
@@ -248,7 +247,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             
             // check that the current checksum is incorrect as supposed.
             if(!currentCs.equals(incorrectCs)) {
-                throw new IllegalState("Wrong checksum for the entry for file '" 
+                throw new IllegalState("Wrong checksum for the entry for file '"
                         + filename + "' has the checksum '" + currentCs + "', "
                         + "though it was supposed to have the checksum '" 
                         + incorrectCs + "'.");

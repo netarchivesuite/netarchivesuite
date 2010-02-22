@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.indexserver.distribute;
 
@@ -46,6 +47,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * the reply.
  */
 public class IndexRequestMessage extends ArchiveMessage {
+    /** The log.*/
     private transient Log log
             = LogFactory.getLog(IndexRequestMessage.class.getName());
     /**
@@ -83,10 +85,11 @@ public class IndexRequestMessage extends ArchiveMessage {
      * channel, replyto is always this index client.
      *
      * @param requestType Type of index requested.
-     * @param jobSet      Jobs for which the index is requested.
+     * @param jobSet Jobs for which the index is requested.
      * @throws ArgumentNotValid if wither argument is null.
      */
-    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet) {
+    public IndexRequestMessage(RequestType requestType, Set<Long> jobSet) 
+            throws ArgumentNotValid {
         super(Channels.getTheIndexServer(), Channels.getThisIndexClient());
         ArgumentNotValid.checkNotNull(requestType, "RequestType requestType");
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> jobSet");
@@ -143,7 +146,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @param foundJobs The set of jobs for which the index is found
      * @throws ArgumentNotValid on null argument
      */
-    public void setFoundJobs(Set<Long> foundJobs) {
+    public void setFoundJobs(Set<Long> foundJobs) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(foundJobs, "Set<Long> foundJobs");
         //Note: Copy the set, since the received set may not be serializable.
         this.foundJobs = new HashSet<Long>(foundJobs);
@@ -155,7 +158,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @return index of requested jobs.
      * @throws IllegalState if this message is a multiFile message.
      */
-    public RemoteFile getResultFile() {
+    public RemoteFile getResultFile() throws IllegalState {
         if (resultFiles != null) {
             if (isIndexIsStoredInDirectory()) {
                 throw new IllegalState("This message carries multiple result "
@@ -173,7 +176,7 @@ public class IndexRequestMessage extends ArchiveMessage {
      * co-dependent files.
      * @throws IllegalState if this message is not a multiFile message.
      */
-    public List<RemoteFile> getResultFiles() {
+    public List<RemoteFile> getResultFiles() throws IllegalState {
         if (resultFiles != null) {
             if (!isIndexIsStoredInDirectory()) {
                 throw new IllegalState("This message carries a single result "
@@ -193,7 +196,8 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @throws ArgumentNotValid on null argument.
      * @throws IllegalState if the result file has already been set.
      */
-    public void setResultFile(RemoteFile resultFile) {
+    public void setResultFile(RemoteFile resultFile) throws IllegalState, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFile, "RemoteFile resultFile");
         if (this.resultFiles != null) {
             throw new IllegalState(this + " already has result files "
@@ -211,7 +215,8 @@ public class IndexRequestMessage extends ArchiveMessage {
      * @throws ArgumentNotValid on null argument or null element in list.
      * @throws IllegalState if the result files have already been set.
      * */
-    public void setResultFiles(List<RemoteFile> resultFiles) {
+    public void setResultFiles(List<RemoteFile> resultFiles) 
+            throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(resultFiles,
                 "List<RemoteFile> resultFiles");
         for (RemoteFile rf : resultFiles) {

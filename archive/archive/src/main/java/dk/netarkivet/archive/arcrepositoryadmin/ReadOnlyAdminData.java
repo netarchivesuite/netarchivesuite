@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -42,14 +43,14 @@ import dk.netarkivet.common.exceptions.IllegalState;
  * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires
  *    an expensive stat() call before every action, costly when iterating.
  */
-
 public class ReadOnlyAdminData extends AdminData {
-    Log log = LogFactory.getLog(getClass().getName());
+    /** The log.*/
+    private Log log = LogFactory.getLog(getClass().getName());
     
     /** The time the underlying file (adminDataFile) was last read in.
      * If 0, we have never read admin data (the file doesn't exist).
      */
-    long lastModified = 0;
+    protected long lastModified = 0;
 
     /**
      * @see AdminData#AdminData()

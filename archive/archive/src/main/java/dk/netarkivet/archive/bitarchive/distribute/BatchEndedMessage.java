@@ -69,7 +69,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      *
      * @param to the channel to which this message is to be sent (must be a
      * BAMON channel)
-     * @param BA_ApplicationId Identifier for the machine sending this message,
+     * @param BAapplicationId Identifier for the machine sending this message,
      * usually containing the IP address and http port number
      * @param originatingBatchMsgId the Id field from the original batch message
      * @param rf he remote file reference containing the output of the batch
@@ -77,16 +77,17 @@ public class BatchEndedMessage extends ArchiveMessage {
      * @throws ArgumentNotValid If the BA_ApplicationId or the 
      * originatingBatchMsgId are null or empty, or if the channel 'to' is null.
      */
-    public BatchEndedMessage(ChannelID to, String BA_ApplicationId,
-            String originatingBatchMsgId, RemoteFile rf) {
+    public BatchEndedMessage(ChannelID to, String baAppId,
+            String originatingBatchMsgId, RemoteFile rf) 
+            throws ArgumentNotValid {
         super(to, Channels.getError());
         ArgumentNotValid.checkNotNull(to, "to");
-        ArgumentNotValid.checkNotNullOrEmpty(BA_ApplicationId,
-                "BA_ApplicationId");
+        ArgumentNotValid.checkNotNullOrEmpty(baAppId,
+                "baAppId");
         ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
                 "originatingBatchMsgId");
 
-        this.baApplicationId = BA_ApplicationId;
+        this.baApplicationId = baAppId;
         this.originatingBatchMsgId = originatingBatchMsgId;
         this.rf = rf;
     }

@@ -1,7 +1,7 @@
-/* File:        $Id: RunBatch.java 1215 2010-01-19 12:31:49Z jolf $
- * Revision:    $Revision: 1215 $
- * Author:      $Author: jolf $
- * Date:        $Date: 2010-01-19 13:31:49 +0100 (Tue, 19 Jan 2010) $
+/* File:     $Id: RunBatch.java 1215 2010-01-19 12:31:49Z jolf $
+ * Revision: $Revision: 1215 $
+ * Author:   $Author: jolf $
+ * Date:     $Date: 2010-01-19 13:31:49 +0100 (Tue, 19 Jan 2010) $
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.tools;
 
@@ -38,6 +39,8 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
     /**
      * Main method. 
      * Instantiates the tool and runs it.
+     * 
+     * @param argv The list of arguments.
      */
     public static void main(String[] argv) {
         ReestablishAdminDatabase instance = new ReestablishAdminDatabase();
@@ -63,7 +66,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         /** The admin data file to convert into the database.*/
         private File adminFile;
         /** The default name of the admin data file, if none is given.*/
-        private final String DEFAULT_ADMIN_DATA = "admin.data";
+        private static final String DEFAULT_ADMIN_DATA = "admin.data";
         /** The 'last modified' date for the admin.data file.*/
         private Date fileDate;
         
@@ -150,7 +153,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
          * Retrieves the admin data file and the last modified date for this
          * file.
          * 
-         * @param The arguments for the tool.
+         * @param args The arguments for the tool.
          */
         @Override
         public void setUp(String... args) {

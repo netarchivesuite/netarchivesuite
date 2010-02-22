@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,23 +18,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.utils.DBUtils;
-import dk.netarkivet.common.utils.ExceptionUtils;
-import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
  * Derby-specific implementation of DB methods.
@@ -42,5 +33,5 @@ import dk.netarkivet.common.utils.NotificationsFactory;
  */
 public abstract class DerbySpecifics extends DBSpecifics {
     /** The log.*/
-    Log log = LogFactory.getLog(DerbySpecifics.class);
+    protected Log log = LogFactory.getLog(DerbySpecifics.class);
 }

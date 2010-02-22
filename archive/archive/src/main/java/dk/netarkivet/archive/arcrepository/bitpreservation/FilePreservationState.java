@@ -45,8 +45,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
  */
 public class FilePreservationState implements PreservationState {
     /** The log.*/
-    private static final Log log = LogFactory.getLog(
-            FilePreservationState.class);
+    private Log log = LogFactory.getLog(FilePreservationState.class);
 
     /** the name of the preserved file. */
     private String filename;

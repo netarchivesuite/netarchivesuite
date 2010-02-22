@@ -63,8 +63,7 @@ import dk.netarkivet.common.utils.StringUtils;
 public class FileBasedActiveBitPreservation
         implements ActiveBitPreservation, CleanupIF {
     /** The class log. */
-    private static final Log log
-            = LogFactory.getLog(FileBasedActiveBitPreservation.class);
+    private Log log = LogFactory.getLog(FileBasedActiveBitPreservation.class);
 
     /**
      * When replacing a broken file, the broken file is downloaded and stored in
@@ -72,6 +71,14 @@ public class FileBasedActiveBitPreservation
      * It can then be inspected at your leisure.
      */
     private static final String REMOVED_FILES = "bitpreservation";
+    
+    /**
+     * The maximum size of logged collections. 
+     * This is used either when a subcollection is extracted, or when objects
+     * are concatenated.
+     * Default value = 10. 
+     */
+    private static final int MAX_LIST_SIZE = 10;
 
     /**
      * This should be updated at the entrance of each major use block, to ensure
@@ -161,7 +168,7 @@ public class FileBasedActiveBitPreservation
                     + " files are unknown to admindata: "
                     + StringUtils.conjoin(",", 
                             new ArrayList<String>(missingInAdmindata).subList(0,
-                            Math.min(missingInAdmindata.size(), 10))
+                            Math.min(missingInAdmindata.size(), MAX_LIST_SIZE))
                             ));
         }
         
@@ -246,7 +253,7 @@ public class FileBasedActiveBitPreservation
             Map<String, List<String>> checksums = getChecksums(rep, filenames);
             log.debug("Adding checksums for replica '"
                       + rep + "' for filenames: "
-                      + StringUtils.conjoin(",", filenames, 10));
+                      + StringUtils.conjoin(",", filenames, MAX_LIST_SIZE));
             
             for (String filename : filenames) {
                 // Update 'checksummaps' datastructure with the checksums
@@ -403,7 +410,8 @@ public class FileBasedActiveBitPreservation
         if (extraFilesInAdminData.size() > 0) {
             log.warn("The " + extraFilesInAdminData.size() + " files '"
                      + new ArrayList<String>(extraFilesInAdminData).subList(0,
-                             Math.min(extraFilesInAdminData.size(), 10))
+                             Math.min(extraFilesInAdminData.size(), 
+                                     MAX_LIST_SIZE))
                      + "' are not present in the replica listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
@@ -421,7 +429,7 @@ public class FileBasedActiveBitPreservation
         if (extraFilesInRep.size() > 0) {
             log.warn("The " + extraFilesInRep.size() + " files '"
                      + new ArrayList<String>(extraFilesInRep).subList(0,
-                             Math.min(extraFilesInRep.size(), 10))
+                             Math.min(extraFilesInRep.size(), MAX_LIST_SIZE))
                      + "' have been found in the replica listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "' though they are not known by the "
@@ -554,7 +562,7 @@ public class FileBasedActiveBitPreservation
         if (wrongChecksums.size() > 0) {
             log.warn("The " + wrongChecksums.size() + " files '"
                      + new ArrayList<String>(wrongChecksums).subList(0,
-                             Math.min(wrongChecksums.size(), 10))
+                             Math.min(wrongChecksums.size(), MAX_LIST_SIZE))
                      + "' have wrong checksum in the bitarchive listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");
@@ -562,7 +570,7 @@ public class FileBasedActiveBitPreservation
         if (wrongStates.size() > 0) {
             log.warn("The " + wrongStates.size() + " files '"
                      + new ArrayList<String>(wrongStates).subList(0,
-                             Math.min(wrongStates.size(), 10))
+                             Math.min(wrongStates.size(), MAX_LIST_SIZE))
                      + "' have wrong states in the bitarchive listing in '"
                      + WorkFiles.getPreservationDir(replica)
                     .getAbsolutePath() + "'");

@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -45,14 +46,12 @@ import dk.netarkivet.common.utils.Settings;
  * The statements to create the tables are in
  * scripts/sql/createBitpreservationDB.sql
  */
-
-public class DBConnect {
-
+public final class DBConnect {
     /** The pool of connections.*/
     private static Map<Thread, Connection> connectionPool
             = new WeakHashMap<Thread, Connection>();
     /** The log.*/
-    private static final Log log = LogFactory.getLog(DBConnect.class);
+    private static Log log = LogFactory.getLog(DBConnect.class);
 
     /**
      * Private constructor to prevent instantiation of this class.
@@ -63,12 +62,17 @@ public class DBConnect {
      * Get a connection to our database. If a connection is already registered 
      * to the current thread, checks that it is valid, and if not renews it. 
      * Assumes that AutoCommit is true.
-     * @return a connection to our database
+     * @param dbUrl The url to the database.
+     * @return a connection to our database.
      * @throws IOFailure if we cannot connect to the database (or find the
      * driver).
+     * @throws ArgumentNotValid If the dbUrl is either null or the empty string.
      */
-    public static Connection getDBConnection(String dbUrl) throws IOFailure {
-        try {	
+    public static Connection getDBConnection(String dbUrl) throws IOFailure, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(dbUrl, "String dbUrl");
+        
+        try {
             int validityCheckTimeout = Settings.getInt(
                     CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
 

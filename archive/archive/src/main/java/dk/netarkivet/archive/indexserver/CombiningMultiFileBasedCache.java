@@ -1,4 +1,4 @@
-/* File:        $Id$
+/* File: $Id$
  * Revision:    $Revision$
  * Author:      $Author$
  * Date:        $Date$
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -40,14 +41,15 @@ import dk.netarkivet.common.utils.FileUtils;
  * It handles the possibility of some of the files in the underlying cache
  * not being available by telling which files are available rather than by
  * sending an incomplete file.
- *
+ * 
+ * @param <T> A comparable instance. Inheriting the 
+ * java.lang.Comparable interface.
  */
-
 public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>
         extends MultiFileBasedCache<T> {
 
     /** The raw data cache that this cache gets data from. */
-    FileBasedCache<T> rawcache;
+    protected FileBasedCache<T> rawcache;
 
     /** Constructor for a CombiningMultiFileBasedCache.
      *

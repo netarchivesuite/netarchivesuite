@@ -29,7 +29,7 @@ import dk.netarkivet.common.utils.ApplicationUtils;
  * This class is used to start the ArcRepository application.
  *
  */
-public class ArcRepositoryApplication {
+public final class ArcRepositoryApplication {
 
     /**
      * Constructor. Private to ensure that this utility class cannot be 

@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.arcrepositoryadmin;
@@ -67,8 +68,8 @@ public class DerbyServerSpecifics extends DerbySpecifics {
                 + "a file and not a directory.");
         ArgumentNotValid.checkNotNull(c, "Connection c");
         log.warn("Attempt to backup the database to directory '" 
-                + backupDir.getAbsolutePath() + "'. ignored. " 
-                + "Backup of your external Derby database should be done by your SysOp");
+                + backupDir.getAbsolutePath() + "'. ignored. Backup of your "
+                + "external Derby database should be done by your SysOp");
     }
 
     /** Get the name of the JDBC driver class that handles interfacing

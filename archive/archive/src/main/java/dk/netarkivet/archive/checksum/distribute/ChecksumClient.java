@@ -51,7 +51,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  */
 public class ChecksumClient implements ReplicaClient {
     /** The log.*/
-    protected static final Log log = LogFactory.getLog(ChecksumClient.class);
+    protected static Log log = LogFactory.getLog(ChecksumClient.class);
 
     /** The instance.*/
     private static ChecksumClient instance;
@@ -135,7 +135,8 @@ public class ChecksumClient implements ReplicaClient {
         jmsCon.resend(msg, theChecksumChannel);
 
         // log message.
-        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() + "'.");
+        log.debug("Resending GetAllFilenamesMessage: '" + msg.toString() 
+                + "'.");
     }
 
     /**
@@ -143,7 +144,7 @@ public class ChecksumClient implements ReplicaClient {
      * 
      * @param msg The GetAllChecksumMessage, which will be sent through the jms
      * connection to the checksum archive.
-     * @throws ArgumentnotValid If the GetAllChecksumsMessage is null.
+     * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
     public void getAllChecksums(GetAllChecksumsMessage msg) 
             throws ArgumentNotValid {

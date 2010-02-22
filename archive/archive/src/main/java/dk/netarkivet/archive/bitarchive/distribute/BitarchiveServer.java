@@ -82,7 +82,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
     /**
      * The logger used by this class.
      */
-    private static final Log log
+    private static Log log
             = LogFactory.getLog(BitarchiveServer.class.getName());
 
     /**

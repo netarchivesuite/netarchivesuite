@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.webinterface;
@@ -39,7 +40,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ActiveBitPreservationFactory;
-import dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState;
 import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
@@ -60,6 +60,11 @@ public class BitpreserveFileState {
     private static Log log = LogFactory.getLog(BitpreserveFileState.class);
 
     /**
+     * Private constructor to avoid instantiation of this class.
+     */
+    private BitpreserveFileState() { }
+    
+    /**
      * Extract the name of the bitarchive
      * (parameter Constants.BITARCHIVE_NAME_PARAM) and whether to update missing
      * files (parameter Constants.FIND_MISSING_FILES_PARAM) or checksums
@@ -70,8 +75,10 @@ public class BitpreserveFileState {
      * @param context the current JSP context
      *
      * @throws ForwardedToErrorPage if an unknown bitarchive is posted.
+     * @throws ArgumentNotValid If the context is null.
      */
-    public static void processUpdateRequest(PageContext context) {
+    public static void processUpdateRequest(PageContext context) 
+            throws ArgumentNotValid, ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();
         String bitarchiveName
@@ -106,10 +113,11 @@ public class BitpreserveFileState {
     /**
      * Processes a missingFiles request.
      *
-     * Parameters of the form Constants.ADD_COMMAND=<bitarchive>##<filename>
+     * Parameters of the form 
+     * Constants.ADD_COMMAND=&lt;bitarchive&gt;##&lt;filename&gt;
      * causes the file to be added to that bitarchive, if it is missing.
      *
-     * Parameters of the form Constants.GET_INFO_COMMAND=<filename> causes
+     * Parameters of the form Constants.GET_INFO_COMMAND=&lt;filename&gt; causes
      * checksums to be computed for the file in all bitarchives and the
      * information to be shown in the next update (notice that this information
      * disappears when the page is next reloaded).
@@ -120,12 +128,13 @@ public class BitpreserveFileState {
      *                page.
      *
      * @return A map of info gathered for files as requested.
-     *
+     * @throws ArgumentNotValid If the context or res is null.
      * @throws ForwardedToErrorPage if the commands have the wrong number of
      *                              arguments.
      */
-    public static Map<String, PreservationState>
-    processMissingRequest(PageContext context, StringBuilder res) {
+    public static Map<String, PreservationState> processMissingRequest(
+            PageContext context, StringBuilder res) throws ArgumentNotValid, 
+            ForwardedToErrorPage {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ArgumentNotValid.checkNotNull(res, "StringBuilder res");
         Map<String, String[]> params = context.getRequest().getParameterMap();
@@ -136,7 +145,8 @@ public class BitpreserveFileState {
             List<String> names = new ArrayList<String>();
             HTMLUtils.forwardOnIllegalParameter(
                     context, Constants.BITARCHIVE_NAME_PARAM,
-                    StringUtils.conjoin( ", ", names.toArray(Replica.getKnownNames()))
+                    StringUtils.conjoin(", ", names.toArray(
+                            Replica.getKnownNames()))
             );
         }
         ActiveBitPreservation preserve
@@ -146,8 +156,8 @@ public class BitpreserveFileState {
             String[] adds = params.get(Constants.ADD_COMMAND);
             for (String s : adds) {
                 String[] parts = s.split(Constants.STRING_FILENAME_SEPARATOR);
-                checkArgs(context, parts, Constants.ADD_COMMAND, "bitarchive name",
-                          "filename");
+                checkArgs(context, parts, Constants.ADD_COMMAND, 
+                        "bitarchive name", "filename");
                 final Replica ba = Replica.getReplicaFromName(parts[0]);
                 final String filename = parts[1];
                 try {
@@ -159,9 +169,8 @@ public class BitpreserveFileState {
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l,
-                            "errormsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
-                            filename, ba));
+                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            + ".at.1.failed", filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
                     res.append("<br/>");
@@ -199,19 +208,17 @@ public class BitpreserveFileState {
      *                              arguments.
      */
     private static void checkArgs(PageContext context, String[] parts,
-                                  String cmd, String... argnames) {
+            String cmd, String... argnames) throws ForwardedToErrorPage {
         if (argnames.length != parts.length) {
             HTMLUtils.forwardWithErrorMessage(
-                    context, I18N,
-                    "errormsg;argument.mismatch.command.needs.arguments.0.but.got.1",
+                    context, I18N, "errormsg;argument.mismatch.command.needs"
+                    + ".arguments.0.but.got.1",
                     Arrays.asList(argnames),
                     Arrays.asList(parts));
 
-            throw new ForwardedToErrorPage("Command " + cmd
-                                           + " needs arguments "
-                                           + Arrays.asList(argnames)
-                                           + ", but got '"
-                                           + Arrays.asList(parts) + "'");
+            throw new ForwardedToErrorPage("Command " + cmd 
+                    + " needs arguments " + Arrays.asList(argnames) 
+                    + ", but got '" + Arrays.asList(parts) + "'");
         }
     }
 
@@ -238,6 +245,7 @@ public class BitpreserveFileState {
      *
      * @return The file preservation state for a file, if a filename is given
      * in the request. Null otherwise.
+     * @throws ArgumentNotValid If the context or res is null.
      */
     public static PreservationState processChecksumRequest(
             StringBuilder res, PageContext context) {
@@ -245,11 +253,10 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();
         Locale l = context.getResponse().getLocale();
-        HTMLUtils.forwardOnMissingParameter(context,
-                                            Constants.BITARCHIVE_NAME_PARAM);
+        HTMLUtils.forwardOnMissingParameter(context, 
+                Constants.BITARCHIVE_NAME_PARAM);
         HTMLUtils.forwardOnIllegalParameter(context,
-                                            Constants.BITARCHIVE_NAME_PARAM,
-                                            Replica.getKnownNames());
+                Constants.BITARCHIVE_NAME_PARAM, Replica.getKnownNames());
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
@@ -263,9 +270,8 @@ public class BitpreserveFileState {
         // Parameter validation. Get filename. Complain about missing filename
         // if we are trying to do actions.
         if (filename == null) { // param "file" not set - no action to take
-            if (fixadminchecksum != null ||
-                credentials != null ||
-                checksum != null) {
+            if (fixadminchecksum != null || credentials != null 
+                    || checksum != null) {
                 // Only if an action was intended do we complain about
                 // a missing file.
                 res.append(I18N.getString(
@@ -314,9 +320,8 @@ public class BitpreserveFileState {
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l,
-                            "errormsg;attempt.at.restoring.0.in.bitarchive.at.1.failed",
-                            filename, bitarchive));
+                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            + ".at.1.failed", filename, bitarchive));
                     res.append("<br/>");
                     res.append(e.getMessage());
                     res.append("<br/>");
@@ -530,9 +535,9 @@ public class BitpreserveFileState {
 
         //Table headers for info table
         out.println("<table>");
-        out.print(HTMLUtils.makeTableRow(
-        		HTMLUtils.makeTableHeader(I18N.getString(locale, "replica")),
-                HTMLUtils.makeTableHeader(I18N.getString(locale, "admin.state")),
+        out.print(HTMLUtils.makeTableRow(HTMLUtils.makeTableHeader(
+                I18N.getString(locale, "replica")), HTMLUtils.makeTableHeader(
+                        I18N.getString(locale, "admin.state")),
                 HTMLUtils.makeTableHeader(I18N.getString(locale, "checksum"))));
 
         //Admin data info
@@ -571,7 +576,7 @@ public class BitpreserveFileState {
      * @param fs     The file preservation state for that file.
      * @param locale Locale of the labels.
      *
-     * @throws IOException
+     * @throws IOException If an problem occurs when writing to the JspWriter.
      */
     private static void printFileStateForBitarchive(JspWriter out, 
             Replica baReplica, PreservationState fs, Locale locale) 
@@ -580,7 +585,8 @@ public class BitpreserveFileState {
                 +  baReplica.getName() + "'");
         out.print(HTMLUtils.makeTableRow(
                 HTMLUtils.makeTableElement(baReplica.getName()),
-                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(baReplica)),
+                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(
+                        baReplica)),
                 HTMLUtils.makeTableElement(presentChecksum(
                     fs.getBitarchiveChecksum(baReplica), locale))));
     }

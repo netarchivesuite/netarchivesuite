@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.archive.indexserver;
@@ -36,18 +37,18 @@ public interface RawDataCache {
      * we could not find any such data.  The data can be found in the file
      * specified by getCacheFile(ID), if this call is successfull.
      *
-     * @param ID The job ID to look for data for.
+     * @param id The job ID to look for data for.
      * @return The data found, or null on failure.
      */
-    public Long cache(Long ID);
+    Long cache(Long id);
 
     /** Get the raw data files for a set of job IDs.  This is commonly a
      *  convenience wrapper around cache(Long) and getCacheFile(Long), but may
      *  reduce overhead.
      *
-     * @param IDs Set of job IDs to get data for.
+     * @param ids Set of job IDs to get data for.
      * @return Map of ID to file containing data for that ID, or to null
      * if data could not be found.
      */
-    public Map<Long, File> get(Set<Long> IDs);
+    Map<Long, File> get(Set<Long> ids);
 }

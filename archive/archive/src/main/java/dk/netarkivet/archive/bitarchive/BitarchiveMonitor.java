@@ -95,7 +95,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
     /**
      * Logger for this class.
      */
-    private static final Log log = LogFactory.getLog(BitarchiveMonitor.class);
+    private static Log log = LogFactory.getLog(BitarchiveMonitor.class);
 
     /**
      * Initialises the bitarchive monitor. During this, the acceptable delay
@@ -109,12 +109,17 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
                  + acceptableSignOfLifeDelay + " milliseconds.");
     }
     
-    public synchronized static BitarchiveMonitor getInstance() {
+    /**
+     * Method for retrieving the current instance.
+     * If no instance has been instantiated, then a new one will be created.
+     * 
+     * @return The current instance of the BitarchiveMonitor.
+     */
+    public static synchronized BitarchiveMonitor getInstance() {
         if(instance == null) {
             instance = new BitarchiveMonitor();
         }
         return instance;
-//        return new BitarchiveMonitor();
     }
 
     /**
@@ -359,7 +364,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         private BatchJobStatus(String originalRequestID, 
                 ChannelID originalRequestReplyTo, String bitarchiveBatchID,
                 Set<String> missingRespondents, long timeout) 
-                throws ArgumentNotValid {
+                throws IOFailure {
             this.originalRequestID = originalRequestID;
             this.originalRequestReplyTo = originalRequestReplyTo;
             this.bitarchiveBatchID = bitarchiveBatchID;
