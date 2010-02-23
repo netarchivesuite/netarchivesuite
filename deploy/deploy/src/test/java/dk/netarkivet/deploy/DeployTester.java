@@ -27,7 +27,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.deploy.Constants;
 import dk.netarkivet.deploy.DeployApplication;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
@@ -67,6 +69,15 @@ public class DeployTester extends TestCase {
         pse.tearDown();
         pss.tearDown();
         rs.tearDown();
+    }
+    
+    /**
+     * Ensures, that the constructor is as a utility class. 
+     */
+    public void testConstructors() {
+        ReflectUtils.testUtilityConstructor(DeployApplication.class);
+        ReflectUtils.testUtilityConstructor(Constants.class);
+        ReflectUtils.testUtilityConstructor(ScriptConstants.class);
     }
 
     /**

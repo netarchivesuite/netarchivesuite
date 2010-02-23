@@ -27,6 +27,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import dk.netarkivet.deploy.BuildCompleteSettings;
+
+import junit.framework.Assert;;
+
+
 /**
  * Methods that help in doing common reflection tasks
  *
@@ -78,5 +83,36 @@ public class ReflectUtils {
         Constructor<T> con = c.getDeclaredConstructor(args);
         con.setAccessible(true);
         return con;
+    }
+    
+    /**
+     * Method for testing the constructor of a utility class (the constructor 
+     * should be private).
+     */
+    public static void testUtilityConstructor(Class c) {
+        Constructor<BuildCompleteSettings>[] constructors = c.getConstructors();
+        
+        Assert.assertEquals("There should be no public constructors.", 
+                0, constructors.length);
+        
+        constructors = c.getDeclaredConstructors();
+        Assert.assertEquals("There should be one constructor.", 1, constructors.length);
+        
+        for(Constructor<BuildCompleteSettings> con : constructors) {
+            Assert.assertFalse("The constructor should not be accessible.", 
+                    con.isAccessible());
+            
+            con.setAccessible(true);
+            Assert.assertTrue("The constructor should now be accessible.", 
+                    con.isAccessible());
+            
+            try {
+                Object instance = con.newInstance(null);
+                Assert.assertNotNull("It should be possible to instatiate now.", instance);
+            } catch (Throwable e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
+        }
     }
 }

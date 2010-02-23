@@ -1,7 +1,11 @@
 package dk.netarkivet.deploy;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import junit.framework.TestCase;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
@@ -60,5 +64,12 @@ public class CompleteSettingsTester extends TestCase{
             // give error if exception caught.
             assertEquals(e.getMessage(), -1, 0);
         }
+    }
+    
+    /**
+     * Method for testing the constructor of the CompleteSettings class.
+     */
+    public void testConstructor() {
+        ReflectUtils.testUtilityConstructor(BuildCompleteSettings.class);
     }
 }
