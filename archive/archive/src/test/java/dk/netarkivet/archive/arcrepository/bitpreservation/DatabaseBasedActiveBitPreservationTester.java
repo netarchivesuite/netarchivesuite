@@ -27,11 +27,15 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import org.archive.io.arc.ARCReaderFactory;
@@ -181,11 +185,27 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	ReplicaCacheDatabase.getInstance();
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+	Date date = dbabp.getDateForMissingFiles(THREE);
+	assertTrue("The date for last missing files check should be less than 30 min, but was: " 
+	        + (Calendar.getInstance().getTimeInMillis() - date.getTime()), 
+	        Calendar.getInstance().getTimeInMillis() - date.getTime() < 1000*60*30);
 	dbabp.findMissingFiles(THREE);
 	
+        
 	// get checksum from all the first time.
+	Date beforeUpdate = new Date(Calendar.getInstance().getTimeInMillis());
+	
 	dbabp.findChangedFiles(ONE);
 
+        date = dbabp.getDateForChangedFiles(ONE);
+        assertTrue("The date for last changed files check for replica THREE after "
+                + beforeUpdate.getTime() + " but was " + date.getTime(), 
+                date.getTime() > beforeUpdate.getTime());
+        assertTrue("The date for last changed files check for replica THREE before now "
+                + Calendar.getInstance().getTimeInMillis() + " but was " + date.getTime(), 
+                date.getTime() < Calendar.getInstance().getTimeInMillis());
+        
+       
 	assertEquals("Replica '" + THREE + "' should have 2 corrupted files", 
 		2, dbabp.getNumberOfChangedFiles(THREE));
 	assertEquals("Replica '" + THREE + "' should have corrupted the files "
@@ -199,8 +219,91 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	
 	dbabp.replaceChangedFile(THREE, "integrity2.ARC", "XX", 
 		"b3bb49b72718b89950f8b861d2e0e2ca");
-	    
+	
+	Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(
+	        new String[]{"integrity11.ARC"});
+	
+	assertEquals("The map should only contain a single element",
+	        1, presMap.size());
+	
+	PreservationState pres = presMap.get("integrity11.ARC");
+	assertNotNull("The preservation state should not be null.", pres);
+
+	assertEquals("It should be upload completely, but not registret yet", 
+	        ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminBitarchiveState(THREE));
+	
+	dbabp.findChangedFiles(THREE);
+	
+	pres = dbabp.getPreservationState("integrity11.ARC");
+        assertEquals("It should be now be registreret as upload completely.", 
+                ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminBitarchiveState(THREE));
+        
+
+        try {
+            dbabp.uploadMissingFiles(THREE, "integrity7.ARC");
+            fail("It should not be allowed to upload a file, which is missing everywhere.");
+        } catch (IOFailure e) {
+            // expected.
+        }
+
+        // make replica THREE be missing 2 files (integrity11.ARC and integrity12.ARC)
+        List<String> filelist = new ArrayList<String>();
+        filelist.add("integrity1.ARC");
+        filelist.add("integrity7.ARC");
+        filelist.add("integrity2.ARC");
+        ReplicaCacheDatabase.getInstance().addFileListInformation(filelist, THREE);
+        
+        String misFiles = dbabp.getMissingFiles(THREE).toString();
+        assertTrue("integrity11.ARC should be missing", 
+                misFiles.contains("integrity11.ARC"));
+        assertTrue("integrity12.ARC should be missing", 
+                misFiles.contains("integrity12.ARC"));
+        
+        // reupload the missing files.
+        dbabp.uploadMissingFiles(THREE, "integrity11.ARC", "integrity12.ARC");
+        
+        dbabp.findMissingFiles(THREE);
+        
+        misFiles = dbabp.getMissingFiles(THREE).toString();
+        assertFalse("integrity11.ARC should not be missing anymore", 
+                misFiles.contains("integrity11.ARC"));
+        assertFalse("integrity12.ARC should not be missing anymore", 
+                misFiles.contains("integrity12.ARC"));
+
     }
+    
+    public void testFails() {
+        dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+        
+        try {
+            dbabp.changeStateForAdminData("ONE");
+            fail("This should not be allowed");
+        } catch (Throwable e) {
+            // expected
+        }
+        
+        try {
+            dbabp.getMissingFilesForAdminData();
+            fail("This should not be allowed");
+        } catch (Throwable e) {
+            // expected
+        }
+
+        try {
+            dbabp.getChangedFilesForAdminData();
+            fail("This should not be allowed");
+        } catch (Throwable e) {
+            // expected
+        }
+
+        try {
+            dbabp.addMissingFilesToAdminData("ONE");
+            fail("This should not be allowed");
+        } catch (Throwable e) {
+            // expected
+        }
+
+   }
     
     private void clearDatabase(Connection con) throws SQLException {
 	    // clear the database.
@@ -249,33 +352,6 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	return res;
     }
     
-/*
-    private void initChecksumReplica() {
-	try {
-	    FileWriter fw = new FileWriter(TestInfo.CHECKSUM_FILE);
-
-	    StringBuilder fileContent = new StringBuilder(); 
-	    fileContent.append(ChecksumJob.makeLine("integrity1.ARC",
-	    "708afc1b7aebc12f7e65ecf1be054d23"));
-	    fileContent.append("\n");
-	    fileContent.append(ChecksumJob.makeLine("integrity7.ARC",
-	    "44ddf7a30f7fabb838e43a8505f927c2"));
-	    fileContent.append("\n");
-	    fileContent.append(ChecksumJob.makeLine("integrity11.ARC",
-	    "4236be8e67e0c10da2902764ff4b954a"));
-	    fileContent.append("\n");
-	    fileContent.append(ChecksumJob.makeLine("integrity12.ARC",
-	    "4236be8e67e0c10da2902764ff4b954a"));
-	    fileContent.append("\n");
-
-	    fw.append(fileContent.toString());
-	    fw.flush();
-	    fw.close();
-	} catch (IOException e) {
-	    throw new IOFailure("Cannot initialise checksum file", e);
-	}
-    }
-*/
     public static class MockupArcRepositoryClient implements ArcRepositoryClient {
         private static MockupArcRepositoryClient instance;
         private BitarchiveRecord overrideGet;

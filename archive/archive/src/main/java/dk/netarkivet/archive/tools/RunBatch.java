@@ -452,18 +452,14 @@ public class RunBatch extends ToolRunnerBase {
             
             //Check output file argument
             String oFile = parms.cmd.getOptionValue(OUTPUTFILE_OPTION_KEY);
-            if (oFile != null) {
-                if (!checkWriteFile(oFile, "Output file")) {
-                    return false;
-                }
+            if (oFile != null && !checkWriteFile(oFile, "Output file")) {
+                return false;
             }
 
             //Check output file argument
             String eFile = parms.cmd.getOptionValue(ERRORFILE_OPTION_KEY);
-            if (eFile != null) {
-                if (!checkWriteFile(eFile, "Error file")) {
-                    return false;
-                }
+            if (eFile != null && !checkWriteFile(eFile, "Error file")) {
+                return false;
             }
             
             return true;

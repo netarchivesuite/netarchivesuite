@@ -102,23 +102,6 @@ public final class DatabaseBasedActiveBitPreservation implements
     }
     
     /**
-     * This is a method to recreate the database, if it somehow has been lost.
-     * It just calls all the replicas and retrieves the checksum for each 
-     * replica in the ChecksumEntry form, which contain both the checksum and 
-     * the filenames. Thus the names of all the files within any replica should
-     * be retrieved, along with at least one checksum.
-     * These checksum results should then be put into the database.
-     */
-    public void rebuildDatabase() {
-        // go through all replicas to retrieve the checksum content of
-        // their content.
-        for (Replica replica : Replica.getKnown()) {
-            List<ChecksumEntry> checksumOutput = getChecksumList(replica);
-            cache.addChecksumInformation(checksumOutput, replica);
-        }
-    }
-
-    /**
      * Method for retrieving the filelist from a specific replica.
      * A GetAllFilenamesMessage is sent to the specific replica.
      * 

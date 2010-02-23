@@ -116,17 +116,4 @@ public class FileListJob extends FileBatchJob {
                 + noOfFilesProcessed
                 + "\nFiles  failed = " + filesFailedCount);
     }
-
-    /**
-     * Method for retrieving the list of filenames from the resulting output
-     * file of a FileListJob.
-     * 
-     * @param outputFile The resulting file from a FileListJob.
-     * @return The list of filenames within the file.
-     */
-    public static List<String> extractListFromOutputFile(File outputFile) {
-        ArgumentNotValid.checkNotNull(outputFile, "File outputFile");
-
-        return FileUtils.readListFromFile(outputFile);
-    }
 }

@@ -299,36 +299,6 @@ public enum WorkFiles {
     }
 
     /**
-     * Method for counting the number of lines in a workingfile for a specific
-     * replica.
-     * 
-     * @param rep The replica for the working file.
-     * @param fileType the type of working file.
-     * @return The number of lines within the working file.
-     */
-    public static long getLineCount(Replica rep, WorkFiles fileType) {
-        ArgumentNotValid.checkNotNull(rep, "Replica rep");
-        ArgumentNotValid.checkNotNull(fileType, "WorkFiles fileType");
-        return FileUtils.countLines(getFile(rep, fileType));
-    }
-
-    /**
-     * Method for removing a specific line from a workingfile for a specific
-     * replica.
-     * 
-     * @param rep The replica for the working file.
-     * @param fileType The type of working file.
-     * @param line The line to remove from the working file.
-     */
-    public static void removeLine(Replica rep, WorkFiles fileType, 
-            String line) {
-        ArgumentNotValid.checkNotNull(rep, "Replica rep");
-        ArgumentNotValid.checkNotNull(fileType, "WorkFiles fileType");
-        ArgumentNotValid.checkNotNullOrEmpty(line, "String line");
-        FileUtils.removeLineFromFile(line, getFile(rep, fileType));
-    }
-
-    /**
      * Method for retrieving the lines of a working file for a specific 
      * replica.
      * 

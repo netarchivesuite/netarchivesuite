@@ -34,7 +34,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.indexserver.FileBasedCache;
 import dk.netarkivet.archive.indexserver.MultiFileBasedCache;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -161,8 +160,8 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * replied message.
      * @throws IOFailure on trouble in communication or invalid reply types.
      * @throws IllegalState if message is not OK.
-     * @see FileBasedCache#cache
-     * @see FileBasedCache#getIndex
+     * @see dk.netarkivet.archive.indexserver.FileBasedCache#cache
+     * @see dk.netarkivet.archive.indexserver.FileBasedCache#getIndex
      */
     protected Set<Long> cacheData(Set<Long> jobSet) throws IOFailure, 
             IllegalState {
