@@ -40,7 +40,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * The administrator class for the ArcRepository when dealing with an database
  * instead of a file (alternative to AdminData).
  */
-public class DatabaseAdmin implements Admin {
+public final class DatabaseAdmin implements Admin {
 
     /** The access interface to the administration database.*/
     private ReplicaCacheDatabase database;

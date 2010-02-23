@@ -2063,8 +2063,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @return Whether the line was valid.
      */
     public boolean insertAdminEntry(String line) {
-        final int LENGTH_FIRST_PART = 4;
-        final int LENGTH_OTHER_PARTS = 3;
+        final int lengthFirstPart = 4;
+        final int lengthOtherParts = 3;
         try {
             // split into parts. First contains 
             String[] split = line.split(" , ");
@@ -2073,7 +2073,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             String[] entryData = split[0].split(" ");
             
             // Check if enough elements
-            if(entryData.length < LENGTH_FIRST_PART) {
+            if(entryData.length < lengthFirstPart) {
                 log.info("Bad line in Admin.data: " + line);
                 return false;
             }
@@ -2097,7 +2097,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 String[] repInfo = split[i].split(" ");
                 
                 // check if correct size
-                if(repInfo.length < LENGTH_OTHER_PARTS) {
+                if(repInfo.length < lengthOtherParts) {
                     log.info("Bad replica information '" + split[i] 
                             + "' in line '" + line + "'");
                     continue;

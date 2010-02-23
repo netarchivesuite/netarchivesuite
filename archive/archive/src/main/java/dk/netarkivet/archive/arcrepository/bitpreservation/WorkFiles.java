@@ -18,7 +18,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 package dk.netarkivet.archive.arcrepository.bitpreservation;
 
@@ -62,8 +63,8 @@ public enum WorkFiles {
      */
     MISSING_FILES_BA, 
     /** 
-     * The MISSING_FILES_ADMINDATA is the workfile for the list of missing files 
-     * for the admin data. 
+     * The MISSING_FILES_ADMINDATA is the workfile for the list of 
+     * missing files for the admin data. 
      */
     MISSING_FILES_ADMINDATA, 
     /** WRONG_FILES. Files with wrong checksum??? .*/
@@ -133,6 +134,7 @@ public enum WorkFiles {
      */
     private static String getFileName(WorkFiles fileType) 
             throws IllegalState {
+        // check the filetype
         switch (fileType) {
             case MISSING_FILES_BA: return MISSING_FILES_BA_FILENAME;
             case MISSING_FILES_ADMINDATA: 
@@ -146,8 +148,9 @@ public enum WorkFiles {
             case FILES_ON_REFERENCE_BA:
             case FILES_ON_BA:
             case CHECKSUMS_ON_BA: return FILE_LISTING_FILENAME;
+            default: 
+                throw new IllegalState("Impossible workfile type " + fileType);
         }
-        throw new IllegalState("Impossible workfile type " + fileType);
     }
 
     /** 
@@ -161,6 +164,7 @@ public enum WorkFiles {
      */
     private static File getDir(Replica rep, WorkFiles fileType) 
             throws IllegalState {
+        // check the type
         switch (fileType) {
             case MISSING_FILES_BA:
             case MISSING_FILES_ADMINDATA:
@@ -169,7 +173,8 @@ public enum WorkFiles {
             case WRONG_FILES:
                 return makeRelativeDir(rep, WRONGFILESDIR);
             case FILES_ON_BA:
-                return getFilelistOutputDir(makeRelativeDir(rep, MISSING_FILES_DIR));
+                return getFilelistOutputDir(makeRelativeDir(rep, 
+                        MISSING_FILES_DIR));
             case FILES_ON_REFERENCE_BA:
                 return getFilelistOutputDir(makeRelativeDir(rep, BA_LIST_DIR));
             case INSERT_IN_ADMIN:
@@ -179,8 +184,9 @@ public enum WorkFiles {
                 return makeRelativeDir(rep, ACTION_LIST_DIR);
             case CHECKSUMS_ON_BA:
                 return getFilelistOutputDir(makeRelativeDir(rep, CHECKSUM_DIR));
+            default: 
+                throw new IllegalState("Impossible workfile type " + fileType);
         }
-        throw new IllegalState("Impossible workfile type " + fileType);
     }
 
     /** Get the directory that file listings are to live in, creating it if

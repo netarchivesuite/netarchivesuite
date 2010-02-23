@@ -66,7 +66,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 public class JMSArcRepositoryClient extends Synchronizer implements
                                                          ArcRepositoryClient {
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH
+    private static String defaultSettingsClasspath
             = "dk/netarkivet/archive/arcrepository/distribute/"
                 +"JMSArcRepositoryClientSettings.xml";
 
@@ -76,7 +76,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * loading them from a settings.xml file in classpath.
      */
     static {
-        Settings.addDefaultClasspathSettings(DEFAULT_SETTINGS_CLASSPATH);
+        Settings.addDefaultClasspathSettings(defaultSettingsClasspath);
     }
     
     /** The amount of milliseconds in a second. 1000. */
@@ -117,7 +117,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * for the number of times to try sending a store message before failing,
      * including the first attempt.
      */
-    public final static String ARCREPOSITORY_STORE_RETRIES
+    public static final String ARCREPOSITORY_STORE_RETRIES
             = "settings.common.arcrepositoryClient.storeRetries";
 
     /**
@@ -194,8 +194,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(requestGetMsg,
                                                                getTimeout);
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply received after " + (timePassed / 
-                MILLISECONDS_PER_SECOND) + " seconds");
+        log.debug("Reply received after " + (timePassed 
+                / MILLISECONDS_PER_SECOND) + " seconds");
         if (replyNetMsg == null) {
             log.info("Request for record(" + arcfile + ":" + index
                      + ") timed out after "
@@ -465,7 +465,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * {@link JMSArcRepositoryClient#ARCREPOSITORY_STORE_TIMEOUT}.
      */
     public File removeAndGetFile(String fileName, String bitarchiveId,
-            String checksum, String credentials) throws IOFailure {
+            String checksum, String credentials) throws IOFailure, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(fileName, "filename");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveId, "bitarchiveName");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
@@ -533,8 +534,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 
-                MILLISECONDS_PER_SECOND) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed 
+                / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all checksum timed out after "
@@ -593,8 +594,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 
-                MILLISECONDS_PER_SECOND) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed 
+                / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for all filenames timed out after "
@@ -653,8 +654,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                                                                getTimeout);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed / 
-                MILLISECONDS_PER_SECOND) + " seconds.");
+        log.debug("Reply recieved after " + (timePassed 
+                / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
             throw new IOFailure("Request for checksum timed out after "

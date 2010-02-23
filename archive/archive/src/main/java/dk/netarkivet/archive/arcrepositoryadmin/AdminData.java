@@ -421,21 +421,21 @@ public abstract class AdminData {
         ArgumentNotValid.checkNotNull(reader, "reader");
         
         // The expected number of elements in first part of a line.
-        final int FIRST_PART_LENGTH = 4;
+        final int firstPartLength = 4;
         
         // indices for the different parts in the first line.
-        final int INDEX_FIRST_PART_FILENAME = 0;
-        final int INDEX_FIRST_PART_CHECKSUM = 0;
-        final int INDEX_FIRST_PART_STATE = 0;
-        final int INDEX_FIRST_PART_TIMESTAMP = 0;
+        final int indexFirstPartFilename = 0;
+        final int indexFirstPartChecksum = 0;
+        final int indexFirstPartState = 0;
+        final int indexFirstPartTimestamp = 0;
         
         // The expected number of elements in the other parts of the line.
-        final int OTHER_PARTS_LENGTH = 3;
+        final int otherPartsLength = 3;
         
         // The indices for the different parts in the other lines.
-        final int INDEX_OTHER_PARTS_REPLICA = 0;
-        final int INDEX_OTHER_PARTS_STATE = 1;
-        final int INDEX_OTHER_PARTS_TIMESTAMP = 2;
+        final int indexOtherPartsReplica = 0;
+        final int indexOtherPartsState = 1;
+        final int indexOtherPartsTimestamp = 2;
         
         String s;
         try {
@@ -455,7 +455,7 @@ public abstract class AdminData {
 
                 String[] firstparts = parts[0].split(GENERAL_DELIMITER);
 
-                if (firstparts.length != FIRST_PART_LENGTH) {
+                if (firstparts.length != firstPartLength) {
                     String logMessage =
                         "Corrupt admin data file:  One of the components "
                         + "'<filename> <checksum> <state> "
@@ -470,10 +470,10 @@ public abstract class AdminData {
                  * Parse the different components of filename> <checksum>
                  * <state> <timestamp-for-last-state-change>
                  */
-                String filename = firstparts[INDEX_FIRST_PART_FILENAME];
-                String checksumString = firstparts[INDEX_FIRST_PART_CHECKSUM];
-                String stateString = firstparts[INDEX_FIRST_PART_STATE];
-                String timestampString = firstparts[INDEX_FIRST_PART_TIMESTAMP];
+                String filename = firstparts[indexFirstPartFilename];
+                String checksumString = firstparts[indexFirstPartChecksum];
+                String stateString = firstparts[indexFirstPartState];
+                String timestampString = firstparts[indexFirstPartTimestamp];
                 log.trace("Found (filename, checksum, state, timestamp): "
                         + filename + "," + checksumString + " , "
                         + stateString + " , " + timestampString);
@@ -486,7 +486,8 @@ public abstract class AdminData {
                 // Check, if we already have entry for this filename
                 if (hasEntry(filename)) { 
 
-                    // check, if 'checksum' equals checksum-value in existing entry
+                    // check, if 'checksum' equals checksum-value in 
+                    // existing entry
                     if (!checksumString.equals(getCheckSum(filename))) {
                         log.warn("Wrong checksum encountered in admin data"
                                 + " for known file '" + filename
@@ -511,7 +512,7 @@ public abstract class AdminData {
                 ArcRepositoryEntry entry = getEntry(filename);
                 for (int i = 1; i < parts.length; i++) {
                     String[] bitparts =  parts[i].split(GENERAL_DELIMITER);
-                    if (bitparts.length != OTHER_PARTS_LENGTH) {
+                    if (bitparts.length != otherPartsLength) {
                         final String message =
                             "Line incomplete. Expected 3 elements:"
                             + "<bitarchive> <storestatus> "
@@ -522,11 +523,11 @@ public abstract class AdminData {
 
                     } else {
                         String bitarchiveString = 
-                            bitparts[INDEX_OTHER_PARTS_REPLICA];
+                            bitparts[indexOtherPartsReplica];
                         String storestatusString = 
-                            bitparts[INDEX_OTHER_PARTS_STATE];
+                            bitparts[indexOtherPartsState];
                         timestampString = 
-                            bitparts[INDEX_OTHER_PARTS_TIMESTAMP];
+                            bitparts[indexOtherPartsTimestamp];
                         state = ReplicaStoreState.valueOf(storestatusString);
                         tempLong = Long.parseLong(timestampString);
                         timestampAsDate = new Date(tempLong);

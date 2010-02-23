@@ -102,22 +102,18 @@ public class ChecksumEntry extends Object {
      * it has either different filename or different checksum.
      */
     public boolean equals(Object obj) {
-        if (this == obj)
-        {
+        if (this == obj) {
             return true;
         }
-        if (obj == null)
-        {
+        if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         ChecksumEntry other = (ChecksumEntry) obj;
         if (checksum == null) {
-            if (other.checksum != null)
-            {
+            if (other.checksum != null) {
                 return false;
             }
         } else if (!checksum.equals(other.checksum)) {
