@@ -209,17 +209,13 @@ public class ArcRepository implements CleanupIF {
         if (theBamons.length != allBas.length
                 || theBamons.length != anyBas.length) {
 
-            StringBuilder values = new StringBuilder(
-                    "Inconsistent data found in "
-                            + "construction of ArcRepository: \n");
-            values.append("\nALL_BAs: ");
-            values.append(Arrays.toString(allBas));
-            values.append("\nANY_BAs: ");
-            values.append(Arrays.toString(anyBas));
-            values.append("\nTHE_BAMONs: ");
-            values.append(Arrays.toString(theBamons));
+            String values = 
+                "Inconsistent data found in construction of ArcRepository: \n"
+                + "\nALL_BAs: " + Arrays.toString(allBas)
+                + "\nANY_BAs: " + Arrays.toString(anyBas)
+                + "\nTHE_BAMONs: " + Arrays.toString(theBamons);
 
-            throw new IllegalState(values.toString());
+            throw new IllegalState(values);
         }
     }
 

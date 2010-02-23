@@ -30,6 +30,7 @@ import java.util.List;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
+import dk.netarkivet.archive.checksum.ChecksumFileApplication;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -42,9 +43,12 @@ import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.GenericMessageListener;
-import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 import junit.framework.TestCase;
@@ -152,6 +156,8 @@ public class FileChecksumServerTester extends TestCase {
         GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(theCs, 
         	arcReposQ, "THREE");
         JMSConnectionMockupMQ.updateMsgID(gacMsg, "getallchecksums1");
+        assertEquals("The GetAllChecksumsMessage should have replica id THREE", 
+                "THREE", gacMsg.getReplicaId());
         cfs.visit(gacMsg);
         conn.waitForConcurrentTasksToFinish();
         // retrieve the results
@@ -162,8 +168,10 @@ public class FileChecksumServerTester extends TestCase {
         
         // Retrieve all file names
         GetAllFilenamesMessage afnMsg = new GetAllFilenamesMessage(theCs, 
-        	arcReposQ, Replica.getReplicaFromId("ONE").getId());
+        	arcReposQ, "THREE");
         JMSConnectionMockupMQ.updateMsgID(afnMsg, "allfilenames1");
+        assertEquals("The GetAllFilenamesMessage should have replica id THREE", 
+                "THREE", afnMsg.getReplicaId());
         cfs.visit(afnMsg);
         conn.waitForConcurrentTasksToFinish();
   
@@ -204,6 +212,8 @@ public class FileChecksumServerTester extends TestCase {
         // archive.
         csMsg = new GetChecksumMessage(theCs, arcReposQ, testFile.getName(), "THREE");
         JMSConnectionMockupMQ.updateMsgID(csMsg, "cs1");
+        assertEquals("The GetChecksumMessage should have replica id THREE", 
+                "THREE", csMsg.getReplicaId());
         cfs.visit(csMsg);
         conn.waitForConcurrentTasksToFinish();
         
@@ -227,6 +237,8 @@ public class FileChecksumServerTester extends TestCase {
         // Check that a valid message will go through.
         corMsg = new CorrectMessage(theCs, arcReposQ, TestInfo.UPLOADFILE_1_CHECKSUM, corFile, "THREE", "examplecredentials");
         JMSConnectionMockupMQ.updateMsgID(corMsg, "correct1");
+        assertEquals("The CorrectMessage should have replica id THREE", 
+                "THREE", corMsg.getReplicaId());
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();
         
@@ -251,7 +263,15 @@ public class FileChecksumServerTester extends TestCase {
         cfs.visit(corMsg);
         conn.waitForConcurrentTasksToFinish();
         
-        assertFalse("The this correct message should not be OK.", corMsg.isOk());
+        assertFalse("The this correct message should not be OK.", 
+                corMsg.isOk());
+        
+        // test missing functions.
+        assertTrue("The application id should contain the local IP '" 
+                + SystemUtils.getLocalIP() + "' but was '"+ cfs.getAppId() + "'", 
+                cfs.getAppId().contains(SystemUtils.getLocalIP()));
+        
+        cfs.close();
     }
 
     public void testNoInitialFile() throws IOException {
@@ -323,5 +343,30 @@ public class FileChecksumServerTester extends TestCase {
 	assertEquals("Wrong file name retrieved.", 
 		TestInfo.UPLOADMESSAGE_TESTFILE_1.getName(), filenames.get(0));
     }
-/* */
+    
+    /**
+     * Ensure, that the application dies if given the wrong input.
+     */
+    public void testApplication() {
+        ReflectUtils.testUtilityConstructor(ChecksumFileApplication.class);
+
+        PreventSystemExit pse = new PreventSystemExit();
+        PreserveStdStreams pss = new PreserveStdStreams(true);
+        pse.setUp();
+        pss.setUp();
+        
+        try {
+            ChecksumFileApplication.main(new String[]{"ERROR"});
+            fail("It should throw an exception ");
+        } catch (SecurityException e) {
+            // expected !
+        }
+
+        pss.tearDown();
+        pse.tearDown();
+        
+        assertEquals("Should give exit code 1", 1, pse.getExitValue());
+        assertTrue("Should tell that no arguments are expected.", 
+                pss.getOut().contains("This application takes no arguments"));
+    }
 }

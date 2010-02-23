@@ -25,6 +25,7 @@ package dk.netarkivet.archive.checksum;
 import java.io.File;
 import java.util.List;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
@@ -35,7 +36,6 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
 /**
  * Tester class for the FileChecksumArchive.
@@ -100,8 +100,12 @@ public class FileChecksumArchiveTester extends TestCase {
      */
     public void testContent() throws Exception {
         RemoteFile arcfile1 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_1, false, false, false);
+        assertFalse("The archive should not already contain TEST1.arc", 
+                fca.hasEntry("TEST1.arc"));
         fca.upload(arcfile1, "TEST1.arc");
         RemoteFile arcfile2 = RemoteFileFactory.getInstance(TestInfo.UPLOAD_FILE_2, false, false, false);
+        assertFalse("The archive should not already contain TEST2.arc", 
+                fca.hasEntry("TEST2.arc"));
         fca.upload(arcfile2, "TEST2.arc");
         List<String> filenames = FileUtils.readListFromFile(fca.getAllFilenames());
 

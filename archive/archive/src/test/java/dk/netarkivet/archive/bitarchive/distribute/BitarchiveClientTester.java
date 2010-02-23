@@ -33,6 +33,11 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
+import dk.netarkivet.archive.checksum.distribute.TestInfo;
 import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -117,7 +122,7 @@ public class BitarchiveClientTester extends TestCase {
         Settings.set(CommonSettings.DIR_COMMONTEMPDIR, SERVER_DIR.getAbsolutePath());
         bas = BitarchiveServer.getInstance();
         bam = BitarchiveMonitorServer.getInstance();
- 		}
+    }
 
     /**
      * After test is done, remove the "archive".
@@ -443,6 +448,59 @@ public class BitarchiveClientTester extends TestCase {
 
         return res;
     }
+    
+    public void testNewMessages() {
+        // check GetChecksum through function
+        NetarkivetMessage msg = bac.getChecksum(Channels.getError(), "filename.arc");
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("One GetChecksumMessage expected to be sent.", 1, handler.getChecksumMsg.size());
+        assertEquals("The received message should be one returned by the function", 
+                msg, handler.getChecksumMsg.get(0));
+
+        // check GetChecksum through message
+        GetChecksumMessage csMsg = new GetChecksumMessage(Channels.getTheBamon(),
+                Channels.getError(), "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
+        bac.getChecksum(csMsg);
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
+        assertEquals("The received message should be one returned by the function", 
+                csMsg, handler.getChecksumMsg.get(1));
+        
+        // check GetAllChecksums through message
+        GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheBamon(),
+                Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
+        bac.getAllChecksums(gcsMsg);
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("One GetAllChecksumsMessage expected to be sent.", 1, handler.checksumsMsg.size());
+        assertEquals("The received message should be one returned by the function", 
+                gcsMsg, handler.checksumsMsg.get(0));
+        
+        // check GetAllFilenames through message
+        GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheBamon(),
+                Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
+        bac.getAllFilenames(gfsMsg);
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("One GetAllFilenamesMessage expected to be sent.", 1, handler.filenamesMsg.size());
+        assertEquals("The received message should be one returned by the function", 
+                gfsMsg, handler.filenamesMsg.get(0));
+
+        // check Correct through message
+        CorrectMessage corMsg = new CorrectMessage(Channels.getTheBamon(),
+                Channels.getError(), "badChecksum", 
+                RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true),
+                Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
+        bac.correct(corMsg);
+        con.waitForConcurrentTasksToFinish();
+        
+        assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());
+        assertEquals("The received message should be one returned by the function", 
+                corMsg, handler.correctMsg.get(0));
+
+    }
 
     /* Receive and check messages */
     public class MessageTestHandler extends ArchiveMessageHandler {
@@ -453,6 +511,14 @@ public class BitarchiveClientTester extends TestCase {
                 = new ArrayList<BatchReplyMessage>();
         public List<GetFileMessage> getfileMsg
                 = new ArrayList<GetFileMessage>();
+        public List<GetAllFilenamesMessage> filenamesMsg 
+                = new ArrayList<GetAllFilenamesMessage>();
+        public List<GetAllChecksumsMessage> checksumsMsg 
+                = new ArrayList<GetAllChecksumsMessage>();
+        public List<GetChecksumMessage> getChecksumMsg 
+                = new ArrayList<GetChecksumMessage>();
+        public List<CorrectMessage> correctMsg
+                = new ArrayList<CorrectMessage>();
 
         public MessageTestHandler() {
             //System.out.println("MessageTestHandler initiated!");
@@ -477,6 +543,22 @@ public class BitarchiveClientTester extends TestCase {
         public void visit(BatchReplyMessage msg) {
             // System.out.println("Got batch reply msg " + msg);
             batchReplyMsg.add(msg);
+        }
+        
+        public void visit(GetAllFilenamesMessage msg) {
+            filenamesMsg.add(msg);
+        }
+
+        public void visit(GetAllChecksumsMessage msg) {
+            checksumsMsg.add(msg);
+        }
+
+        public void visit(GetChecksumMessage msg) {
+            getChecksumMsg.add(msg);
+        }
+
+        public void visit(CorrectMessage msg) {
+            correctMsg.add(msg);
         }
 
         synchronized public int getTotalCount() {

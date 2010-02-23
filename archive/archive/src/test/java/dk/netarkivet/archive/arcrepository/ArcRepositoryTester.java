@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
+import dk.netarkivet.archive.checksum.ChecksumFileApplication;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -46,15 +46,17 @@ import dk.netarkivet.common.distribute.StringRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class ArcRepositoryTester extends TestCase {
@@ -363,4 +365,31 @@ public class ArcRepositoryTester extends TestCase {
         testOnBatchReply();
 
     }
+    
+    /**
+     * Ensure, that the application dies if given the wrong input.
+     */
+    public void testApplication() {
+        ReflectUtils.testUtilityConstructor(ArcRepositoryApplication.class);
+
+        PreventSystemExit pse = new PreventSystemExit();
+        PreserveStdStreams pss = new PreserveStdStreams(true);
+        pse.setUp();
+        pss.setUp();
+        
+        try {
+            ArcRepositoryApplication.main(new String[]{"ERROR"});
+            fail("It should throw an exception ");
+        } catch (SecurityException e) {
+            // expected !
+        }
+
+        pss.tearDown();
+        pse.tearDown();
+        
+        assertEquals("Should give exit code 1", 1, pse.getExitValue());
+        assertTrue("Should tell that no arguments are expected.", 
+                pss.getOut().contains("This application takes no arguments"));
+    }
+
 }

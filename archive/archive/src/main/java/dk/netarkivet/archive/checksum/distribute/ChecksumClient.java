@@ -53,9 +53,6 @@ public class ChecksumClient implements ReplicaClient {
     /** The log.*/
     protected static Log log = LogFactory.getLog(ChecksumClient.class);
 
-    /** The instance.*/
-    private static ChecksumClient instance;
-
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;
 
@@ -83,12 +80,10 @@ public class ChecksumClient implements ReplicaClient {
     }
 
     /**
-     * The method for retrieving the invoked the instance. If not invoked yet,
-     * then invoke.
+     * The method for invoking an instance of this class.
      * 
-     * @param theCRin
-     * The channel for contacting the checksum archive.
-     * @return The instance.
+     * @param theCRin The channel for contacting the checksum archive.
+     * @return A new instance.
      * @throws IOFailure If there is a problem with the connection.
      * @throws ArgumentNotValid If the checksum replica channel is null.
      */
@@ -98,10 +93,7 @@ public class ChecksumClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(theCRin, "ChannelID theCRin");
 
         // Create instance if not created already.
-        if (instance == null) {
-            instance = new ChecksumClient(theCRin);
-        }
-        return instance;
+        return new ChecksumClient(theCRin);
     }
 
     /**
@@ -291,8 +283,8 @@ public class ChecksumClient implements ReplicaClient {
     public void get(GetMessage msg) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         
-        String errMsg = "The GetMessage '" + msg 
-                + "' cannot be sent to checksum" + " replica.";
+        String errMsg = "A checksum replica cannot handle a GetMessage such "
+            + "as '" + msg + "'";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -312,8 +304,8 @@ public class ChecksumClient implements ReplicaClient {
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(gfm, "GetFileMessage gfm");
         
-        String errMsg = "The GetFileMessage '" + gfm + "' cannot be sent to "
-                + "checksum replica.";
+        String errMsg = "A checksum replica cannot handle a GetFileMessage "
+            + "such as '" + gfm + "'.";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -333,8 +325,8 @@ public class ChecksumClient implements ReplicaClient {
             throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
         
-        String errMsg = "The RemoveAndGetFileMessage '" + msg + "' cannot be "
-                + "handled by a checksum replica.";
+        String errMsg = "A checksum replica cannot handle a "
+            + "RemoveAndGetFileMessage such as '" + msg + "'.";
         log.error(errMsg);
         throw new IllegalState(errMsg);
     }
@@ -343,8 +335,7 @@ public class ChecksumClient implements ReplicaClient {
      * Method for closing this instance.
      */
     public void close() {
-        if (instance != null) {
-            instance = null;
-        }
+        log.debug("The ChecksumClient for replica '" + replicaId 
+                + "' has been shut down.");
     }
 }
