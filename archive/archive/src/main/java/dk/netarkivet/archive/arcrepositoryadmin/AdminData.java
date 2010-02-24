@@ -425,9 +425,9 @@ public abstract class AdminData {
         
         // indices for the different parts in the first line.
         final int indexFirstPartFilename = 0;
-        final int indexFirstPartChecksum = 0;
-        final int indexFirstPartState = 0;
-        final int indexFirstPartTimestamp = 0;
+        final int indexFirstPartChecksum = 1;
+        final int indexFirstPartState = 2;
+        final int indexFirstPartTimestamp = 3;
         
         // The expected number of elements in the other parts of the line.
         final int otherPartsLength = 3;

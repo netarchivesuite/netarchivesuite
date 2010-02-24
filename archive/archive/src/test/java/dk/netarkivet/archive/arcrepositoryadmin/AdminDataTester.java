@@ -81,7 +81,7 @@ public class AdminDataTester extends TestCase {
         TestFileUtils.copyDirectoryNonCVS(TestInfo.NON_EMPTY_ADMIN_DATA_DIR_ORIG,
                 TestInfo.NON_EMPTY_ADMIN_DATA_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, TestInfo.TEST_DIR.getAbsolutePath());
-        myFile = "<arcfileNameForTests>";
+        myFile = "arcfileNameForTests";
         FileInputStream fis = new FileInputStream("tests/dk/netarkivet/testlog.prop");
         LogManager.getLogManager().readConfiguration(fis);
         LogUtils.flushLogs(UpdateableAdminData.class.getName());
@@ -196,7 +196,7 @@ public class AdminDataTester extends TestCase {
      * @throws IOException
      */
     public void testPersistence() throws IOException {
-        ad = UpdateableAdminData.getUpdateableInstance();
+        ad = UpdateableAdminData.getInstance();
         StoreMessage myReplyInfo
                 = new StoreMessage(Channels.getError(),
                                    File.createTempFile("dummy", "dummy"));
@@ -205,7 +205,7 @@ public class AdminDataTester extends TestCase {
         String myBA = "TestIDofbitarchive";
         ad.setState(myFile, myBA, ReplicaStoreState.UPLOAD_STARTED);
         ad.close();
-        ad = UpdateableAdminData.getUpdateableInstance();
+        ad = UpdateableAdminData.getInstance();
         assertFalse("replyInfos should not be persistent",
                 ad.hasReplyInfo(myFile));
         try {

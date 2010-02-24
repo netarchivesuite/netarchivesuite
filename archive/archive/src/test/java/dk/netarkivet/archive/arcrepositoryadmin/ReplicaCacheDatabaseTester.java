@@ -59,6 +59,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         rs.setUp();
         mtf.setUp();
         ChannelsTester.resetChannels();
+        DBConnect.cleanup();
         Settings.set(ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
@@ -77,6 +78,8 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     public void testAll() throws Exception {
         Date beforeTest = new Date(Calendar.getInstance().getTimeInMillis());
 
+        assertTrue("The database should be empty to begin with.", cache.isEmpty());
+        
         // try handling output from ChecksumJob.
         File csFile = makeTemporaryChecksumFile1();
         cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile), 
@@ -130,6 +133,9 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
         // check that all files are unknown for the uninitialised replica.
         long files = FileUtils.countLines(csFile);
+        System.out.println(cache.getMissingFilesInLastUpdate(
+                Replica.getReplicaFromId("THREE")));
+        System.out.println(FileUtils.readListFromFile(csFile));
         assertEquals("All the files for replica 'THREE' should be missing.",
                 files, cache.getNumberOfMissingFilesInLastUpdate(
                         Replica.getReplicaFromId("THREE")));
@@ -255,7 +261,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         assertEquals("The checksum for file 'TEST5' should be fdsafdas0123", "fdsafdas0123", cache.getChecksum("TEST5"));
 
         // print content
-        cache.print();
+        //cache.print();
     }
     
     private File makeTemporaryFilelistFile() throws Exception {

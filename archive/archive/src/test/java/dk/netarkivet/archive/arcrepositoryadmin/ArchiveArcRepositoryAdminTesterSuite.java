@@ -46,7 +46,7 @@ public class ArchiveArcRepositoryAdminTesterSuite
         suite.addTestSuite(AdminDataTester.class);
         suite.addTestSuite(ReadOnlyAdminDataTester.class);
         suite.addTestSuite(ReplicaCacheDatabaseTester.class);
-        suite.addTestSuite(DatabaseAdmin.class);
+        suite.addTestSuite(DatabaseAdminTester.class);
     }
 
     public static void main(String args[])

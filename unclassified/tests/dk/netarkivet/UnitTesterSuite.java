@@ -34,6 +34,7 @@ import dk.netarkivet.archive.arcrepositoryadmin.ArchiveArcRepositoryAdminTesterS
 import dk.netarkivet.archive.bitarchive.ArchiveBitarchiveTesterSuite;
 import dk.netarkivet.archive.bitarchive.distribute.ArchiveBitarchiveDistributeTesterSuite;
 import dk.netarkivet.archive.checksum.ArchiveChecksumTesterSuite;
+import dk.netarkivet.archive.checksum.distribute.ArchiveChecksumDistributeTesterSuite;
 import dk.netarkivet.archive.distribute.ArchiveDistributeTesterSuite;
 import dk.netarkivet.archive.indexserver.ArchiveIndexServerTesterSuite;
 import dk.netarkivet.archive.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
@@ -85,6 +86,7 @@ public class UnitTesterSuite {
         ArchiveBitarchiveTesterSuite.addToSuite(suite);
         ArchiveBitarchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveChecksumTesterSuite.addToSuite(suite);
+        ArchiveChecksumDistributeTesterSuite.addToSuite(suite);
         ArchiveDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexServerTesterSuite.addToSuite(suite);

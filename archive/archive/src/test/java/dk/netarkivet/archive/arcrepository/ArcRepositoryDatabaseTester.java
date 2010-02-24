@@ -4,44 +4,33 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.LogManager;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.ArcRepositoryTesterGet.DummyGetFileMessageReplyServer;
-import dk.netarkivet.archive.arcrepository.ArcRepositoryTesterGet.DummyRemoveAndGetFileMessageReplyServer;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
-import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
-import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
-import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
-import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
+import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveClient;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveMonitorServer;
 import dk.netarkivet.archive.bitarchive.distribute.BitarchiveServer;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.RemoveAndGetFileMessage;
-import dk.netarkivet.archive.bitarchive.distribute.UploadMessage;
 import dk.netarkivet.archive.checksum.distribute.ChecksumClient;
-import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
@@ -50,11 +39,6 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
-import dk.netarkivet.common.distribute.NetarkivetMessage;
-import dk.netarkivet.common.distribute.NullRemoteFile;
-import dk.netarkivet.common.distribute.RemoteFile;
-import dk.netarkivet.common.distribute.RemoteFileFactory;
-import dk.netarkivet.common.distribute.StringRemoteFile;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
@@ -69,18 +53,15 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
-import dk.netarkivet.testutils.GenericMessageListener;
 import dk.netarkivet.testutils.LogUtils;
-import dk.netarkivet.testutils.MessageAsserts;
-import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
-import junit.framework.TestCase;
 
 public class ArcRepositoryDatabaseTester extends TestCase {
     /** A repeatedly used reflected method, used across method calls. */
@@ -149,17 +130,19 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
 
     public void setUp() throws Exception {
-        ChannelsTester.resetChannels();
-        JMSConnectionMockupMQ.clearTestQueues();
-
         super.setUp();
         rf.setUp();
         rs.setUp();
+        ChannelsTester.resetChannels();
+        JMSConnectionMockupMQ.clearTestQueues();
+
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
                      TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                PrintNotifications.class.getName());
         
         // Database admin test.
         FileUtils.copyDirectory(TestInfo.ORIGINAL_DATABASE_DIR, 
@@ -170,7 +153,6 @@ public class ArcRepositoryDatabaseTester extends TestCase {
                 dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class.getName());
         
         // Batch
-        FileUtils.removeRecursively(WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS_DIR, WORKING_DIR);
         Settings.set(CommonSettings.REMOTE_FILE_CLASS,
                      "dk.netarkivet.common.distribute.TestRemoteFile");
@@ -195,6 +177,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         bam_server.close();
         arClient.close();
         archiveServer1.close();
+        ReplicaCacheDatabase.getInstance().cleanup();
         FileUtils.removeRecursively(WORKING_DIR);
         
         ArcRepository.getInstance().close();

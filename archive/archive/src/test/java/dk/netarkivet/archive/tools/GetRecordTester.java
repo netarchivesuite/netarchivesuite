@@ -38,6 +38,7 @@ import org.archive.io.arc.ARCRecordMetaData;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
+import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.testutils.TestMessageListener;
@@ -60,6 +61,7 @@ public class GetRecordTester extends TestCase {
     TestMessageListener listener;
 
     public void setUp(){
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         mjms.setUp();
         listener = new GetListener(
                 TestInfo.TEST_ENTRY_FILENAME,

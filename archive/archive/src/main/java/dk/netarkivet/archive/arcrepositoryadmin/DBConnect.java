@@ -104,4 +104,11 @@ public final class DBConnect {
             throw new IOFailure(message, e);
         }
     }
+    
+    /**
+     * Clears the pool of connections.
+     */
+    public static void cleanup() {
+        connectionPool.clear();
+    }
 }
