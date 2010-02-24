@@ -253,8 +253,6 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();
         Locale l = context.getResponse().getLocale();
-        HTMLUtils.forwardOnMissingParameter(context, 
-                Constants.BITARCHIVE_NAME_PARAM);
         HTMLUtils.forwardOnIllegalParameter(context,
                 Constants.BITARCHIVE_NAME_PARAM, Replica.getKnownNames());
         String bitarchiveName
