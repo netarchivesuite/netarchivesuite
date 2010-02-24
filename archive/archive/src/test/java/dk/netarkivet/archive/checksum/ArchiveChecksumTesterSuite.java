@@ -22,6 +22,7 @@
  */
 package dk.netarkivet.archive.checksum;
 
+import dk.netarkivet.archive.checksum.distribute.ChecksumClientTester;
 import dk.netarkivet.archive.checksum.distribute.FileChecksumServerTester;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -45,6 +46,7 @@ public class ArchiveChecksumTesterSuite {
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(FileChecksumArchiveTester.class);
         suite.addTestSuite(FileChecksumServerTester.class);
+        suite.addTestSuite(ChecksumClientTester.class);
     }
 
     public static void main(String args[]) {

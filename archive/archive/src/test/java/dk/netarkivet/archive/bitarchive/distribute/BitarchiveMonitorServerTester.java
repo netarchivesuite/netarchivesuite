@@ -22,10 +22,6 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,11 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
+import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
 import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
@@ -74,6 +75,8 @@ import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestMessageListener;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -1178,4 +1181,31 @@ public class BitarchiveMonitorServerTester extends TestCase {
             }
         }
     } // end class TestMessageListener
+    
+    /**
+     * Ensure, that the application dies if given the wrong input.
+     */
+    public void testApplication() {
+        ReflectUtils.testUtilityConstructor(BitarchiveMonitorApplication.class);
+
+        PreventSystemExit pse = new PreventSystemExit();
+        PreserveStdStreams pss = new PreserveStdStreams(true);
+        pse.setUp();
+        pss.setUp();
+        
+        try {
+            BitarchiveMonitorApplication.main(new String[]{"ERROR"});
+            fail("It should throw an exception ");
+        } catch (SecurityException e) {
+            // expected !
+        }
+
+        pss.tearDown();
+        pse.tearDown();
+        
+        assertEquals("Should give exit code 1", 1, pse.getExitValue());
+        assertTrue("Should tell that no arguments are expected.", 
+                pss.getOut().contains("This application takes no arguments"));
+    }
+
 }

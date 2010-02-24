@@ -22,8 +22,6 @@
 
 package dk.netarkivet.archive.bitarchive.distribute;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,10 +32,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.LogManager;
 
-import junit.framework.TestCase;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 
+import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.bitarchive.BitarchiveApplication;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -51,12 +52,14 @@ import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.MessageAsserts;
+import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
+import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
+import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -676,6 +679,32 @@ public class BitarchiveServerTester extends TestCase {
             NetarkivetMessage naMsg = JMSConnection.unpack(message);
             messagesReceived.add(naMsg);
         }
+    }
+    
+    /**
+     * Ensure, that the application dies if given the wrong input.
+     */
+    public void testApplication() {
+        ReflectUtils.testUtilityConstructor(BitarchiveApplication.class);
+
+        PreventSystemExit pse = new PreventSystemExit();
+        PreserveStdStreams pss = new PreserveStdStreams(true);
+        pse.setUp();
+        pss.setUp();
+        
+        try {
+            BitarchiveApplication.main(new String[]{"ERROR"});
+            fail("It should throw an exception ");
+        } catch (SecurityException e) {
+            // expected !
+        }
+
+        pss.tearDown();
+        pse.tearDown();
+        
+        assertEquals("Should give exit code 1", 1, pse.getExitValue());
+        assertTrue("Should tell that no arguments are expected.", 
+                pss.getOut().contains("This application takes no arguments"));
     }
 
 }

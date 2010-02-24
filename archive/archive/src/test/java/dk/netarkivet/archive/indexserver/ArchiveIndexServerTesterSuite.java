@@ -54,6 +54,7 @@ public class ArchiveIndexServerTesterSuite {
         suite.addTestSuite(DedupCrawlLogIndexCacheTester.class);
         suite.addTestSuite(MultiFileBasedCacheTester.class);
         suite.addTestSuite(RawMetadataCacheTester.class);
+        suite.addTestSuite(IndexServerTester.class);
     }
 
     public static void main(String args[]) {

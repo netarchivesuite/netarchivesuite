@@ -47,6 +47,7 @@ public class ArchiveDistributeTesterSuite {
      */
     public static void addToSuite(TestSuite suite) {
         suite.addTestSuite(ArchiveMessageHandlerTester.class);
+        suite.addTestSuite(ReplicaClientFactoryTester.class);
     }
 
     public static void main(String args[]) {
