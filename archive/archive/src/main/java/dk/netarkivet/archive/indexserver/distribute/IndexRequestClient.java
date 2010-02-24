@@ -60,7 +60,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
         implements JobIndexCache {
     
     /** The default place in classpath where the settings file can be found. */
-    private static String DEFAULT_SETTINGS_CLASSPATH = "dk/netarkivet/archive/"
+    private static String defaultSettingsClasspath = "dk/netarkivet/archive/"
         + "indexserver/distribute/IndexRequestClientSettings.xml";
 
     /*
@@ -70,7 +70,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      */
     static {
         Settings.addDefaultClasspathSettings(
-                DEFAULT_SETTINGS_CLASSPATH
+                defaultSettingsClasspath
         );
     }
     
@@ -147,9 +147,9 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
     /**
      * This method makes sure the actual caching of underlying data is done
      * using the index server. It will convert calls into an IndexRequestMessage
-     * which is sent to the server. The Set&lt;Long&gt; of found jobs, and the side
-     * effect of caching the index, is done using this communication with the
-     * server.  The resulting files will be unzipped into the cache dir.
+     * which is sent to the server. The Set&lt;Long&gt; of found jobs, and 
+     * the side effect of caching the index, is done using this communication 
+     * with the server. The resulting files will be unzipped into the cache dir.
      *
      * This method should not be called directly! Instead call cache() or
      * getIndex().
@@ -164,7 +164,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @see dk.netarkivet.archive.indexserver.FileBasedCache#getIndex
      */
     protected Set<Long> cacheData(Set<Long> jobSet) throws IOFailure, 
-            IllegalState {
+            IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jobSet, "Set<Long> id");
 
         log.info("Requesting an index of type '" + this.requestType
@@ -294,7 +294,7 @@ public class IndexRequestClient extends MultiFileBasedCache<Long>
      * @throws IllegalState if message is not OK.
      */
     private void checkMessageValid(Set<Long> jobSet, NetarkivetMessage msg) 
-            throws IllegalState, IOFailure {
+            throws IllegalState, IOFailure, ArgumentNotValid {
         //Read and check reply
         if (msg == null) {
             throw new IOFailure("Timeout waiting for reply of index request "

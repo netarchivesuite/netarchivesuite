@@ -35,7 +35,7 @@ import dk.netarkivet.common.utils.FileUtils;
  *
  * Implements generating a filename from this.
  *
- * @param &lt;T&gt; The cache type, must extend java.lang.Comparable.
+ * @param <T> The cache type, must extend java.lang.Comparable.
  */
 public abstract class MultiFileBasedCache<T extends Comparable<T>>
         extends FileBasedCache<Set<T>> {

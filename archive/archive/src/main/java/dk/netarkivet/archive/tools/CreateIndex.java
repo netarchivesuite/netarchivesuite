@@ -48,12 +48,16 @@ import dk.netarkivet.common.distribute.indexserver.JobIndexCache;
  *
  */
 public class CreateIndex {
+    /** 
+     * Private constructor to avoid instantiation of this class.
+     */
+    private CreateIndex() { }
 
     /** Option for selecting the type of index required. */
-    private static String INDEXTYPE_OPTION = "t";
+    private static final String INDEXTYPE_OPTION = "t";
 
     /** Option for selecting the jobids to be used in the index. */
-    private static String JOBIDS_OPTION = "l";
+    private static final String JOBIDS_OPTION = "l";
 
     /**
      * The main method that does the parsing of the commandline, and makes the

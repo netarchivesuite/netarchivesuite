@@ -32,6 +32,13 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -47,7 +54,6 @@ import dk.netarkivet.common.utils.batch.LoadableFileBatchJob;
 import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
-import org.apache.commons.cli.*;
 
 /**
  * A command-line tool to run batch jobs in the bitarchive.
@@ -64,12 +70,12 @@ import org.apache.commons.cli.*;
  * file names in the archive, by default .*
  * <br/>-B&lt;replica&gt; is the name of the bitarchive replica this should be 
  * run on, by default taken from settings.
- * <br/>-O&lt;outputfile&lt; is a file where the output from the batch job will be
- * written.  By default, it goes to stdout.
- * <br/>-E&lt;errorFile&gt; is a file where the errors from the batch job will be
- * written. By default, it goes to stderr.
- * <br/>-N&lt;className&gt; is the name of the primary class to be loaded when doing
- * a LoadableJarBatchJob
+ * <br/>-O&lt;outputfile&lt; is a file where the output from the batch job 
+ * will be written.  By default, it goes to stdout.
+ * <br/>-E&lt;errorFile&gt; is a file where the errors from the batch job 
+ * will be written. By default, it goes to stderr.
+ * <br/>-N&lt;className&gt; is the name of the primary class to be loaded 
+ * when doing a LoadableJarBatchJob
  * <p/>
  * Examples:
  * <p/>

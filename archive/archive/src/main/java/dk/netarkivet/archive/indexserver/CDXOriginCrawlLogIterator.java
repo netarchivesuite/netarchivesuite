@@ -102,8 +102,9 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
         }
 
         // Hack that works around bug #1004: sha1: prefix not accounted for
-        if (item != null && item.getContentDigest() != null && 
-                item.getContentDigest().toLowerCase().startsWith(SHA1_PREFIX)) {
+        if (item != null && item.getContentDigest() != null 
+                && item.getContentDigest().toLowerCase().startsWith(
+                        SHA1_PREFIX)) {
             item.setContentDigest(item.getContentDigest().substring(
                     SHA1_PREFIX.length()));
         }

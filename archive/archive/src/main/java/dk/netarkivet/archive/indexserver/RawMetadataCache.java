@@ -193,23 +193,21 @@ public class RawMetadataCache extends FileBasedCache<Long>
                     && mimeMatcher.matcher(
                             sar.getMetaData().getMimetype()).matches()) {
                 try {
-                    try {                        
                         byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
                         int bytesRead;
                         while ((bytesRead = sar.read(buf)) != -1) {
                             os.write(buf, 0, bytesRead);
                         }
-                    } finally {
-                        //TODO Should we close ARCRecord here???
-                        //if (is != null) {
-                        //    is.close();
-                        //}
-                    }
                 } catch (IOException e) {
                     String message = "Error writing body of ARC entry '"
                             + sar.getMetaData().getArcFile() + "' offset '"
                             + sar.getMetaData().getOffset() + "'";
                     throw new IOFailure(message, e);
+  //              } finally {
+                    //TODO Should we close ARCRecord here???
+                    //if (is != null) {
+                    //    is.close();
+                    //}
                 }
             }
         }

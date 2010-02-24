@@ -248,7 +248,7 @@ public class BitpreserveFileState {
      * @throws ArgumentNotValid If the context or res is null.
      */
     public static PreservationState processChecksumRequest(
-            StringBuilder res, PageContext context) {
+            StringBuilder res, PageContext context) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(res, "StringBuilder res");
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();

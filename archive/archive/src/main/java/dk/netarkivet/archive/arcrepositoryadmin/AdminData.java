@@ -417,7 +417,7 @@ public abstract class AdminData {
       * @throws IOFailure If an error occurred with access to the admin.data.
       */
     private void readCurrentVersion(BufferedReader reader) 
-            throws ArgumentNotValid {
+            throws ArgumentNotValid, IOFailure {
         ArgumentNotValid.checkNotNull(reader, "reader");
         
         // The expected number of elements in first part of a line.

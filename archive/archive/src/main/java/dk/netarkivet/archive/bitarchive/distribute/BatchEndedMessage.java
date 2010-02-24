@@ -69,7 +69,7 @@ public class BatchEndedMessage extends ArchiveMessage {
      *
      * @param to the channel to which this message is to be sent (must be a
      * BAMON channel)
-     * @param BAapplicationId Identifier for the machine sending this message,
+     * @param baAppId Identifier for the machine sending this message,
      * usually containing the IP address and http port number
      * @param originatingBatchMsgId the Id field from the original batch message
      * @param rf he remote file reference containing the output of the batch
