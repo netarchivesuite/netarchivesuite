@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.arcrepositoryadmin.BitPreservationDAO;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaFileInfo;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;

@@ -21,12 +21,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
  *  USA
  */
-package dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.archive.arcrepositoryadmin;
 
 import java.sql.Date;
 import java.util.List;
 
-import dk.netarkivet.archive.arcrepositoryadmin.ReplicaFileInfo;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.CleanupIF;
 
