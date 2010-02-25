@@ -28,14 +28,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
+import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
+import dk.netarkivet.archive.arcrepositoryadmin.Admin;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry;
 import dk.netarkivet.archive.arcrepositoryadmin.UpdateableAdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
-import dk.netarkivet.archive.checksum.ChecksumFileApplication;
 import dk.netarkivet.archive.distribute.ReplicaClient;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
@@ -43,11 +46,13 @@ import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.StringRemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
@@ -78,6 +83,8 @@ public class ArcRepositoryTester extends TestCase {
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
                      TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                RememberNotifications.class.getName());
     }
 
     public void tearDown() throws Exception {
@@ -255,6 +262,7 @@ public class ArcRepositoryTester extends TestCase {
      *
      * @throws Exception if exception is thrown
      */
+    @SuppressWarnings("unchecked")
     public void testOnBatchReply() throws Exception {
         ArcRepository a = ArcRepository.getInstance();
         UpdateableAdminData ad = UpdateableAdminData.getUpdateableInstance();
@@ -361,9 +369,53 @@ public class ArcRepositoryTester extends TestCase {
         ArcRepository.getInstance().cleanup();
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
 
-//	testChecksumCalls();
         testOnBatchReply();
-
+    }
+    
+    public void testAdminMessages() {
+        ArcRepository arc = ArcRepository.getInstance();
+        Admin admin = AdminData.getUpdateableInstance();
+        
+        assertEquals("The admin data should be empty.", 
+                0, admin.getAllFileNames().size());
+        admin.addEntry("filename", null, "checksum");
+        assertEquals("The admin data should have one file.",
+                1, admin.getAllFileNames().size());
+        assertEquals("The admin data should not have any UPLOAD_COMPLETED files for replica ONE",
+                0, admin.getAllFileNames(Replica.getReplicaFromId("ONE"), 
+                        ReplicaStoreState.UPLOAD_COMPLETED).size());
+        
+        AdminDataMessage msg = new AdminDataMessage("filename", "ONE", ReplicaStoreState.UPLOAD_COMPLETED);
+        arc.updateAdminData(msg);
+        
+        assertEquals("The admin data should now have one UPLOAD_COMPLETED files for replica ONE",
+                1, admin.getAllFileNames(Replica.getReplicaFromId("ONE"), 
+                        ReplicaStoreState.UPLOAD_COMPLETED).size());
+        List<String> res = new ArrayList<String>();
+        res.add("filename");
+        assertEquals("The admin data should have the files 'filename' as UPLOAD_COMPLETE for replica ONE",
+                res.toString(), admin.getAllFileNames(Replica.getReplicaFromId("ONE"), 
+                        ReplicaStoreState.UPLOAD_COMPLETED).toString());
+        
+        msg = new AdminDataMessage("filename", "TWO", ReplicaStoreState.UPLOAD_FAILED);
+        arc.updateAdminData(msg);
+        
+        assertEquals("The admin data should have no UPLOAD_COMPLETED files for replica TWO",
+                0, admin.getAllFileNames(Replica.getReplicaFromId("TWO"), 
+                        ReplicaStoreState.UPLOAD_COMPLETED).size());
+        assertEquals("The admin data should have one UPLOAD_FAILED files for replica TWO",
+                1, admin.getAllFileNames(Replica.getReplicaFromId("TWO"), 
+                        ReplicaStoreState.UPLOAD_FAILED).size());
+        
+        // check for changing the checksum.
+        assertEquals("Should give the first assigned checksum.", 
+                "checksum", admin.getCheckSum("filename"));
+        
+        msg = new AdminDataMessage("filename", "muskcehc");
+        arc.updateAdminData(msg);
+        
+        assertEquals("Should give the first assigned checksum.", 
+                "muskcehc", admin.getCheckSum("filename"));
     }
     
     /**

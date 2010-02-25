@@ -99,7 +99,8 @@ public class ArcRepositoryEntry {
      * @param md5sum The checksum for this entry
      * @param replyInfo The one-use-only reply info chunk
      */
-    ArcRepositoryEntry(String filename, String md5sum, StoreMessage replyInfo) {
+    public ArcRepositoryEntry(String filename, String md5sum, 
+            StoreMessage replyInfo) {
         this.filename = filename;
         this.md5sum = md5sum;
         this.replyInfo = replyInfo;

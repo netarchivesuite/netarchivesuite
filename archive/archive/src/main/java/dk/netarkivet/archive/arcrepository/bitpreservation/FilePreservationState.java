@@ -235,7 +235,7 @@ public class FilePreservationState implements PreservationState {
      */
     public String getUniqueChecksum(Replica r) {
         ArgumentNotValid.checkNotNull(r, "Replica r");
-        List<String> checksums = bitarchive2checksum.get(r);
+        List<String> checksums = getBitarchiveChecksum(r);
         String checksum = null;
         for (String s : checksums) {
             if (checksum != null && !checksum.equals(s)) {
