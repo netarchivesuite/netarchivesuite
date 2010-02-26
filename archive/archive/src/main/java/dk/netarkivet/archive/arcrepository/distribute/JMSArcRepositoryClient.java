@@ -697,7 +697,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @throws ArgumentNotValid If the replicaId, the checksum or the 
      * credentials are either null or empty, or if file is null.
      */
-    public void correct(String replicaId, String checksum, File file,
+    public File correct(String replicaId, String checksum, File file,
             String credentials) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
@@ -724,9 +724,12 @@ public class JMSArcRepositoryClient extends Synchronizer implements
             File destFile = new File(FileUtils.getTempDir(), 
                     removedFile.getName());
             removedFile.copyTo(destFile);
+            return destFile;
         } catch(Throwable e) {
-            log.warn("Problems occured during retrieval of file removed from "
-                    + "archive.", e);
+            String errMsg = "Problems occured during retrieval of file "
+                + "removed from archive.";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 }

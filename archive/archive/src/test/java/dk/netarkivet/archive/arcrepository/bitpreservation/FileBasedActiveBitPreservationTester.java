@@ -775,7 +775,7 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
             return null;
 	}
 
-	public void correct(String replicaId, String checksum, 
+	public File correct(String replicaId, String checksum, 
 		File file, String credentials) {
 	    // TODO: something!
 	        throw new NotImplementedException("TODO: ME!");

@@ -170,6 +170,6 @@ public interface PreservationArcRepositoryClient  {
      * @param credentials The password for allowing to remove a file entry in
      * the archive. 
      */
-    void correct(String replicaId, String checksum, File file, 
+    File correct(String replicaId, String checksum, File file, 
 	    String credentials);
 }

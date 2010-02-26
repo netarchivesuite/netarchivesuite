@@ -39,14 +39,22 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import junit.framework.TestListener;
+
 import org.archive.io.arc.ARCConstants;
 import org.archive.io.arc.ARCRecord;
 import org.archive.io.arc.ARCRecordMetaData;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
+import dk.netarkivet.archive.arcrepository.bitpreservation.TestInfo;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetMessage;
+import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllChecksumsMessage;
+import dk.netarkivet.archive.checksum.distribute.GetAllFilenamesMessage;
+import dk.netarkivet.archive.checksum.distribute.GetChecksumMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -56,6 +64,7 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.NullRemoteFile;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.Synchronizer;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
@@ -64,6 +73,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.distribute.arcrepository.HarvesterArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -73,6 +83,7 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
+import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -95,24 +106,32 @@ public class JMSArcRepositoryClientTester extends TestCase {
     private static final File ARCDIR = new File(WORKING, "local_files");
     private static final File ARCFILE =
             new File(ARCDIR, "Upload2.ARC");
+    
+    private static final File ALL_CHECKSUM_FILE = 
+        new File(WORKING, "all.checksum");
+    private static final File ALL_FILENAME_FILE = 
+        new File(WORKING, "all.filename");
+    private static final File SEND_CORRECT_FILE =
+        new File(WORKING, "send.correct");
+    private static final File RES_CORRECT_FILE =
+        new File(WORKING, "res.correct");
 
 
     JMSArcRepositoryClient arc;
     private JMSArcRepositoryClient arcrepos;
-    private UseTestRemoteFile utrf = new UseTestRemoteFile();
+    UseTestRemoteFile utrf = new UseTestRemoteFile();
     ReloadSettings rs = new ReloadSettings();
 
     protected void setUp() throws Exception {
         rs.setUp();
+        utrf.setUp();
         FileUtils.removeRecursively(WORKING);
         TestFileUtils.copyDirectoryNonCVS(ORIGINALS, WORKING);
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
-        utrf.setUp();
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                      RememberNotifications.class.getName());
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
-        arc
-                = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
+        arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
 
     }
 
@@ -569,6 +588,287 @@ public class JMSArcRepositoryClientTester extends TestCase {
         CollectionAsserts.assertListEquals(
                 "Should have no remaining files after exception",
                 new ArrayList<RemoteFile>(TestRemoteFile.remainingFiles()));
+    }
+    
+    public void testUpdateAdminData1() throws InterruptedException {
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                arc.updateAdminData("filename", "ONE", ReplicaStoreState.DATA_UPLOADED);
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of AdminDataMessage but was '"
+                + msg.getClass() + "'", msg instanceof AdminDataMessage);
+        AdminDataMessage adm = (AdminDataMessage) msg;
+        assertFalse("It should not be a change checksum admin data message", 
+                adm.isChangeChecksum());
+        assertTrue("It should be a change store state admin data message", 
+                adm.isChangeStoreState());
+    }
+    
+    public void testUpdateAdminData2() throws InterruptedException {
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                arc.updateAdminChecksum("filename", "checksum");
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of AdminDataMessage but was '"
+                + msg.getClass() + "'", msg instanceof AdminDataMessage);
+        AdminDataMessage adm = (AdminDataMessage) msg;
+        assertTrue("It should be a change checksum admin data message", 
+                adm.isChangeChecksum());
+        assertFalse("It should not be a change store state admin data message", 
+                adm.isChangeStoreState());
+    }
+    
+    /**
+     * Check whether it handles a get all checksums call correctly.
+     */
+    public void testAllChecksums() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        final File result = new File(WORKING, "all.checksum");
+        result.createNewFile();
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                File res = arc.getAllChecksums("ONE");
+                FileUtils.moveFile(res, result);
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // retrieve the message
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of GetAllChecksumsMessage but was '"
+                + msg.getClass() + "'", msg instanceof GetAllChecksumsMessage);
+        GetAllChecksumsMessage gacm = (GetAllChecksumsMessage) msg;
+        // give a file to the message and reply 
+        //gacm.setFile(ARCFILE);
+        Field rf = ReflectUtils.getPrivateField(GetAllChecksumsMessage.class, "rf");
+        rf.set(gacm, RemoteFileFactory.getCopyfileInstance(ALL_CHECKSUM_FILE));
+        jmsCon.reply(gacm);
+        
+        synchronized (this) {
+            wait(250);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // check whether result is the same.
+        String expected = FileUtils.readFile(ALL_CHECKSUM_FILE);
+        String received = FileUtils.readFile(result);
+        
+        assertNotNull("Expected should not be null", expected);
+        assertFalse("Expected should not be an empty string.", expected.isEmpty());
+        assertNotNull("Received should not be null", received);
+        assertFalse("Received should not be an empty string.", received.isEmpty());
+        
+        assertEquals("Expected and received should have the same content.", 
+                expected, received);
+    }
+
+    /**
+     * Check whether it handles a get all filenames call correctly.
+     */
+    public void testAllFilenames() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        final File result = new File(WORKING, "all.filename");
+        result.createNewFile();
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                File res = arc.getAllFilenames("ONE");
+                FileUtils.moveFile(res, result);
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // retrieve the message
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of GetAllFilenamesMessage but was '"
+                + msg.getClass() + "'", msg instanceof GetAllFilenamesMessage);
+        GetAllFilenamesMessage gafm = (GetAllFilenamesMessage) msg;
+        // give a file to the message and reply 
+        //gacm.setFile(ARCFILE);
+        Field rf = ReflectUtils.getPrivateField(GetAllFilenamesMessage.class, "remoteFile");
+        rf.set(gafm, RemoteFileFactory.getCopyfileInstance(ALL_FILENAME_FILE));
+        jmsCon.reply(gafm);
+        
+        synchronized (this) {
+            wait(250);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // check whether result is the same.
+        String expected = FileUtils.readFile(ALL_FILENAME_FILE);
+        String received = FileUtils.readFile(result);
+        
+        assertNotNull("Expected should not be null", expected);
+        assertFalse("Expected should not be an empty string.", expected.isEmpty());
+        assertNotNull("Received should not be null", received);
+        assertFalse("Received should not be an empty string.", received.isEmpty());
+        
+        assertEquals("Expected and received should have the same content.", 
+                expected, received);
+    }
+
+    public void testGetChecksum() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        final File result = new File(WORKING, "get.checksum");
+        result.createNewFile();
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                String res = arc.getChecksum("ONE", "filename");
+                FileUtils.writeBinaryFile(result, res.getBytes());
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // retrieve the message
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of GetChecksumMessage but was '"
+                + msg.getClass() + "'", msg instanceof GetChecksumMessage);
+        GetChecksumMessage gcm = (GetChecksumMessage) msg;
+        // give a file to the message and reply 
+        assertEquals("Unexpected filename", "filename", gcm.getArcfileName());
+        gcm.setChecksum("checksum");
+        jmsCon.reply(gcm);
+        
+        synchronized (this) {
+            wait(250);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        String res = FileUtils.readFile(result);
+        assertNotNull("The result should not be null", res);
+        assertFalse("The result should have content", res.isEmpty());
+        
+        assertEquals("Unexpected checksum sent back", "checksum", res);
+    }
+
+
+    public void testCorrect() throws InterruptedException, IOException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        final File result = new File(WORKING, "correct.file");
+        result.createNewFile();
+        JMSConnectionMockupMQ jmsCon = 
+            (JMSConnectionMockupMQ) JMSConnectionMockupMQ.getInstance();
+        
+        GenericMessageListener listener = new GenericMessageListener();
+        jmsCon.setListener(Channels.getTheRepos(), listener);
+        
+        Thread runner = new Thread() {
+            public void run() {
+                File res = arc.correct("ONE", "checksum", SEND_CORRECT_FILE, 
+                        "credentials");
+                FileUtils.copyFile(res, result);
+            }
+        };
+        runner.start();
+        
+        synchronized (this) {
+            wait(50);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        // retrieve the message
+        assertEquals("Expected 1 message on TheRepos queue", 
+                1, listener.messagesReceived.size());
+        NetarkivetMessage msg = listener.messagesReceived.remove(0);
+        assertTrue("Expected type of CorrectMessage but was '"
+                + msg.getClass() + "'", msg instanceof CorrectMessage);
+        CorrectMessage cm = (CorrectMessage) msg;
+        // give a file to the message and reply 
+        assertEquals("Unexpected filename", SEND_CORRECT_FILE.getName(), 
+                cm.getArcfileName());
+        assertEquals("unexpected credentials.", 
+                "credentials", cm.getCredentials());
+
+        File correctFile = new File(FileUtils.getTempDir(), "correct.file");
+        cm.getData(correctFile);
+        String cfContent = FileUtils.readFile(correctFile);
+        String cfExpected = FileUtils.readFile(SEND_CORRECT_FILE);
+        
+        assertEquals("The correct message should have the expected content", 
+                cfExpected, cfContent);
+        
+        cm.setRemovedFile(RemoteFileFactory.getCopyfileInstance(RES_CORRECT_FILE));
+        jmsCon.reply(cm);
+        
+        synchronized (this) {
+            wait(250);
+        }
+        jmsCon.waitForConcurrentTasksToFinish();
+        
+        String res = FileUtils.readFile(result);
+        String expected = FileUtils.readFile(RES_CORRECT_FILE);
+        assertNotNull("The result should not be null", res);
+        assertFalse("The result should have content", res.isEmpty());
+
+        assertEquals("Unexpected removed file content", expected, res);
     }
 
     private static class DummyBatchMessageReplyServer

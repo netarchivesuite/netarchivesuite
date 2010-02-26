@@ -349,7 +349,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     @Override
-    public void correct(String replicaId, String checksum, File file, 
+    public File correct(String replicaId, String checksum, File file, 
 	    String credentials) {
 	throw new NotImplementedException("TODO: Implement me!");
     }

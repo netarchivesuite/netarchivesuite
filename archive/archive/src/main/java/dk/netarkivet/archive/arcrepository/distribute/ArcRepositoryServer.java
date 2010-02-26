@@ -138,8 +138,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Will log errors, but otherwise ignore.
      *
      * @param msg a UploadMessage
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void visit(UploadMessage msg) {
+    public void visit(UploadMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         try {
             ar.onUpload(msg);
         } catch (Throwable t) {
@@ -152,8 +154,11 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Will log errors, but otherwise ignore.
      *
      * @param msg a BatchReplyMessage
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void visit(BatchReplyMessage msg) {
+    public void visit(BatchReplyMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "BatchReplyMessage msg");
+        
         try {
             ar.onBatchReply(msg);
         } catch (Throwable t) {
@@ -171,7 +176,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      */
     public void visit(BatchMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(ar, "ar");
-        ArgumentNotValid.checkNotNull(msg, "msg");
+        ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
 
         try {
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
@@ -180,7 +185,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
             BatchReplyMessage replyMessage = new BatchReplyMessage(
-                    msg.getReplyTo(), Channels.getError(), msg.getID(),
+                    msg.getReplyTo(), Channels.getTheRepos(), msg.getID(),
                     0, Collections.<File>emptyList(), null);
             replyMessage.setNotOk(t);
             JMSConnectionFactory.getInstance().send(replyMessage);
@@ -193,9 +198,10 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * reply goes directly back to whoever sent the message.
      *
      * @param msg the message to be processed by the get command.
+     * @throws ArgumentNotValid If the message is null.
      */
-    public void visit(GetMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+    public void visit(GetMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
 
         try {
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
@@ -217,7 +223,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * @throws ArgumentNotValid If one of the arguments are null.
      */
     public void visit(GetFileMessage msg) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+        ArgumentNotValid.checkNotNull(msg, "GetFileMessage msg");
 
         try {
             ReplicaClient rc =
@@ -238,7 +244,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * @throws ArgumentNotValid If the argument is null.
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+        ArgumentNotValid.checkNotNull(msg, "GetAllFilenames msg");
         
         try {
             // retrieve the checksum client
@@ -281,7 +287,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * @param msg The GetChecksumMessage message.
      */
     public void visit(GetChecksumMessage msg) {
-        ArgumentNotValid.checkNotNull(msg, "msg");
+        ArgumentNotValid.checkNotNull(msg, "GetChecksum msg");
         
         log.info("Recieved GetChecksumMessage '" + msg + "'.");
         

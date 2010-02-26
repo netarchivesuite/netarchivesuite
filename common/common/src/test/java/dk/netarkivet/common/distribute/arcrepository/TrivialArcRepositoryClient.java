@@ -253,7 +253,7 @@ public class TrivialArcRepositoryClient implements ArcRepositoryClient {
         throw new NotImplementedException("TODO: Implement me!");
     }
 
-    public void correct(String replicaId, String checksum, File file,
+    public File correct(String replicaId, String checksum, File file,
                         String credentials) {
         // TODO Auto-generated method stub
         throw new NotImplementedException("TODO: Implement me!");

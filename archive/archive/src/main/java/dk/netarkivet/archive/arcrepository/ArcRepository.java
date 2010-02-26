@@ -132,9 +132,8 @@ public class ArcRepository implements CleanupIF {
      * @throws IllegalState
      *             if inconsistent channel info is given in settings.
      */
-    private ArcRepository() throws IOFailure, IllegalState {
+    protected ArcRepository() throws IOFailure, IllegalState {
         //UpdateableAdminData Throws IOFailure
-//        this.ad = UpdateableAdminData.getUpdateableInstance();
         this.ad = AdminFactory.getInstance();
         this.arcReposhandler = new ArcRepositoryServer(this);
 
