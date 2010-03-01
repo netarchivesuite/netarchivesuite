@@ -23,11 +23,15 @@
  */
 package dk.netarkivet.archive.tools;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
 import dk.netarkivet.common.utils.FileUtils;
@@ -134,14 +138,35 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
          */
         @Override
         public void run(String... args) {
-            List<String> lines = FileUtils.readListFromFile(adminFile);
-            
-            // insert every line. Bad lines are printed instead.
-            for(String line : lines) {
-                if(!rcd.insertAdminEntry(line)) {
-                    System.err.println("Bad line: ");
-                    System.err.println(line);
+            // read and handle each line individually.
+            BufferedReader in = null;
+            try {
+                try {
+                    in = new BufferedReader(new FileReader(adminFile));
+                    String line = in.readLine();
+                    if(!line.contains("0.4")) {
+                        System.err.println("The first line in Admin.data "
+                                + "tells the version. Expected 0.4, but got: "
+                                + line);
+                    } else {
+                        System.out.println("Admin.data version: " + line);
+                    }
+                    while ((line = in.readLine()) != null) {
+                        if(!rcd.insertAdminEntry(line)) {
+                            // bad lines
+                            System.err.println("Bad line: ");
+                            System.err.println(line);
+                        }
+                    }
+                } finally {
+                    if (in != null) {
+                        in.close();
+                    }
                 }
+            } catch (IOException e) {
+                String msg = "An error occured during reading the admin data "
+                    + "file " + adminFile.getAbsolutePath();
+                throw new IOFailure(msg, e);
             }
             
             // update the filelist and checksumlist dates for the replicas.
