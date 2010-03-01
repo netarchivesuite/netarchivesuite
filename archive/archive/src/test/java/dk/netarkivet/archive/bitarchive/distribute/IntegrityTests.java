@@ -351,15 +351,15 @@ public class IntegrityTests extends TestCase {
 
         for (int i = 0; i < LARGE_MESSAGE_COUNT; ++i) {
             bac.get(FILENAME_TO_GET, 0);
-            bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+            bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                      true)); // only first upload will succeed
             BatchMessage bMsg = new BatchMessage(THE_BAMON, Channels.getThisReposClient(), new TestBatchJobRuns(),
                                                  Settings.get(
                                                          CommonSettings.USE_REPLICA_ID));
-            bac.batch(bMsg);
+            bac.sendBatchJob(bMsg);
             RemoveAndGetFileMessage rMsg = new RemoveAndGetFileMessage(Channels.getTheRepos(), 
                     Channels.getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
-            bac.removeAndGetFile(rMsg);
+            bac.sendRemoveAndGetFileMessage(rMsg);
         }
 
         while (Thread.activeCount() > beforeCount) {

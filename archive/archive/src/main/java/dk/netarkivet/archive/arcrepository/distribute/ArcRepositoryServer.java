@@ -181,7 +181,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         try {
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
-            rc.batch(msg);
+            rc.sendBatchJob(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle batch request", t);
             BatchReplyMessage replyMessage = new BatchReplyMessage(
@@ -206,7 +206,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         try {
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                 Settings.get(CommonSettings.USE_REPLICA_ID));
-            rc.get(msg);
+            rc.sendGetMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get request", t);
             msg.setNotOk(t);
@@ -228,7 +228,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         try {
             ReplicaClient rc =
                 ar.getReplicaClientFromReplicaId(msg.getReplicaId());
-            rc.getFile(msg);
+            rc.sendGetFileMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle get file request", t);
             msg.setNotOk(t);
@@ -250,7 +250,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             // retrieve the checksum client
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
-            rc.getAllFilenames(msg);
+            rc.sendGetAllFilenamesMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle GetAllFileMessage: " + msg, t);
             msg.setNotOk(t);
@@ -271,7 +271,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             // retrieve the checksum client
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
-            rc.getAllChecksums(msg);
+            rc.sendGetAllChecksumsMessage(msg);
         } catch (Throwable t) {
             log.warn("Failed to handle GetAllFileMessage: " + msg, t);
             msg.setNotOk(t);
@@ -303,7 +303,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
             try {
                 ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                         msg.getReplicaId());
-                rc.getChecksum(msg);
+                rc.sendGetChecksumMessage(msg);
             } catch (Throwable e) {
                 log.warn("Failed to handle GetChecksumMessage.", e);
                 msg.setNotOk(e);
@@ -328,7 +328,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
         try {
             ReplicaClient rc = ar.getReplicaClientFromReplicaId(
                     msg.getReplicaId());
-            rc.correct(msg);
+            rc.sendCorrectMessage(msg);
         } catch (Throwable e) {
             log.warn("Could not handle Correct message properly.", e);
             msg.setNotOk(e);

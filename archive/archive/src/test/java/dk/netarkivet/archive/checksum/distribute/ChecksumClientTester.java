@@ -97,7 +97,7 @@ public class ChecksumClientTester extends TestCase {
             BatchMessage bm = new BatchMessage(Channels.getTheCR(),
                     new ChecksumJob(),
                     Settings.get(CommonSettings.USE_REPLICA_ID));
-            cc.batch(bm);
+            cc.sendBatchJob(bm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
             assertTrue("The error should say that it is impossible to send "
@@ -107,7 +107,7 @@ public class ChecksumClientTester extends TestCase {
         
         // Test batch through batch function.
         try {
-            cc.batch(Channels.getTheCR(), new ChecksumJob());
+            cc.sendBatchJob(Channels.getTheCR(), new ChecksumJob());
             fail("This should not be allowed.");
         } catch (IllegalState e) {
             assertTrue("The error should say that it is impossible to send "
@@ -119,7 +119,7 @@ public class ChecksumClientTester extends TestCase {
         try {
             GetMessage gm = new GetMessage(Channels.getTheCR(), Channels.getError(),
                     "filename.arc", 0);
-            cc.get(gm);
+            cc.sendGetMessage(gm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
             assertTrue("The error should say that it is impossible to send "
@@ -131,7 +131,7 @@ public class ChecksumClientTester extends TestCase {
         try {
             GetFileMessage gfm = new GetFileMessage(Channels.getTheCR(), Channels.getError(),
                     "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
-            cc.getFile(gfm);
+            cc.sendGetFileMessage(gfm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
             assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", 
@@ -143,7 +143,7 @@ public class ChecksumClientTester extends TestCase {
             RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(Channels.getTheCR(), Channels.getError(),
                     "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID),
                     "checksum", "credentials");
-            cc.removeAndGetFile(ragfm);
+            cc.sendRemoveAndGetFileMessage(ragfm);
             fail("This should not be allowed.");
         } catch (IllegalState e) {
             assertTrue("The erro should say that it is impossible to send GetFileMessages to a checksum replica", 
@@ -158,13 +158,13 @@ public class ChecksumClientTester extends TestCase {
                 cc.getType(), ReplicaType.CHECKSUM);
         
         // check upload
-        cc.upload(RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true));
+        cc.sendUploadMessage(RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true));
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One upload message expected to be sent.", 1, handler.uploadMsg.size());
 
         // check GetChecksum through function
-        NetarkivetMessage msg = cc.getChecksum(Channels.getError(), "filename.arc");
+        NetarkivetMessage msg = cc.sendGetChecksumMessage(Channels.getError(), "filename.arc");
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One GetChecksumMessage expected to be sent.", 1, handler.getChecksumMsg.size());
@@ -174,7 +174,7 @@ public class ChecksumClientTester extends TestCase {
         // check GetChecksum through message
         GetChecksumMessage csMsg = new GetChecksumMessage(Channels.getTheCR(),
                 Channels.getError(), "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
-        cc.getChecksum(csMsg);
+        cc.sendGetChecksumMessage(csMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
@@ -184,7 +184,7 @@ public class ChecksumClientTester extends TestCase {
         // check GetAllChecksums through message
         GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheCR(),
                 Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
-        cc.getAllChecksums(gcsMsg);
+        cc.sendGetAllChecksumsMessage(gcsMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One GetAllChecksumsMessage expected to be sent.", 1, handler.checksumsMsg.size());
@@ -194,7 +194,7 @@ public class ChecksumClientTester extends TestCase {
         // check GetAllFilenames through message
         GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheCR(),
                 Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
-        cc.getAllFilenames(gfsMsg);
+        cc.sendGetAllFilenamesMessage(gfsMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One GetAllFilenamesMessage expected to be sent.", 1, handler.filenamesMsg.size());
@@ -206,7 +206,7 @@ public class ChecksumClientTester extends TestCase {
                 Channels.getError(), "badChecksum", 
                 RemoteFileFactory.getInstance(TestInfo.UPLOADMESSAGE_TESTFILE_1, true, false, true),
                 Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
-        cc.correct(corMsg);
+        cc.sendCorrectMessage(corMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());

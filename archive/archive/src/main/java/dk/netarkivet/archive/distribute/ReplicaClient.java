@@ -49,7 +49,7 @@ public interface ReplicaClient {
      * @param msg The batch message to sent to the replica.
      * @return The batch message which has been sent.
      */
-    BatchMessage batch(BatchMessage msg);
+    BatchMessage sendBatchJob(BatchMessage msg);
     
     /**
      * Method for sending batch message and retrieving the results.
@@ -59,7 +59,7 @@ public interface ReplicaClient {
      * @param job The batchjob to execute on the replica.
      * @return The message which has been sent.
      */
-    BatchMessage batch(ChannelID replyChannel, FileBatchJob job);
+    BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job);
     
     /**
      * The message for retrieving a record from a arc-file in the replica.
@@ -67,7 +67,7 @@ public interface ReplicaClient {
      * 
      * @param msg The message for retrieving the record in a arc-file.
      */
-    void get(GetMessage msg);
+    void sendGetMessage(GetMessage msg);
     
     /**
      * The message for retrieving an entire file from the replica.
@@ -75,14 +75,14 @@ public interface ReplicaClient {
      * 
      * @param msg The message for retrieving the file. 
      */
-    void getFile(GetFileMessage msg);
+    void sendGetFileMessage(GetFileMessage msg);
     
     /**
      * Message for deleting and retrieving a file from a archive.
      *  
      * @param msg The message for retrieving the file. 
      */
-    void removeAndGetFile(RemoveAndGetFileMessage msg);
+    void sendRemoveAndGetFileMessage(RemoveAndGetFileMessage msg);
     
     /**
      * Uploads a file to the replica archive.
@@ -90,7 +90,7 @@ public interface ReplicaClient {
      * 
      * @param rf The remote file
      */
-    void upload(RemoteFile rf);
+    void sendUploadMessage(RemoteFile rf);
    
     /**
      * Retrieves the checksum for a specific arc file.
@@ -98,7 +98,7 @@ public interface ReplicaClient {
      * 
      * @param msg The GetChecksumMessage to be send to the replica.
      */
-    void getChecksum(GetChecksumMessage msg);
+    void sendGetChecksumMessage(GetChecksumMessage msg);
     
     /**
      * Retrieves the checksum for a specific file.
@@ -108,7 +108,7 @@ public interface ReplicaClient {
      * @param filename The name of the file to retrieve the checksum from.
      * @return The message, after it has been sent.
      */
-    GetChecksumMessage getChecksum(ChannelID replyChannel, 
+    GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, 
             String filename);
     
     /**
@@ -116,7 +116,7 @@ public interface ReplicaClient {
      * 
      * @param msg The GetAllFilenamesMessage to sent to the replica. 
      */
-    void getAllFilenames(GetAllFilenamesMessage msg);
+    void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg);
     
     /**
      * Retrieves the checksum for all the arc files in the replica archive.
@@ -126,7 +126,15 @@ public interface ReplicaClient {
      * 
      * @param msg The message for retrieving all the checksums.
      */
-    void getAllChecksums(GetAllChecksumsMessage msg);
+    void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg);
+    
+    /**
+     * For correcting an erroneous entry in the archive. The message is sent
+     * the replica for correcting the 'bad' entry.
+     * 
+     * @param msg The correct message to correct the bad entry in the archive.
+     */
+    void sendCorrectMessage(CorrectMessage msg);
     
     /**
      * For retrieving the type of archive.
@@ -135,14 +143,6 @@ public interface ReplicaClient {
      * @return The type of archive.
      */
     ReplicaType getType();
-    
-    /**
-     * For correcting an erroneous entry in the archive. The message is sent
-     * the replica for correcting the 'bad' entry.
-     * 
-     * @param msg The correct message to correct the bad entry in the archive.
-     */
-    void correct(CorrectMessage msg);
     
     /**
      * Close the replica client.

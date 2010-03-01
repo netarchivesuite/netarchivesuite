@@ -163,14 +163,14 @@ public class BitarchiveClientTester extends TestCase {
      */
     public void testInvalidParams() {
         try {
-            bac.upload(null);
+            bac.sendUploadMessage(null);
             fail("null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
         }
 
         try {
-            bac.batch(null);
+            bac.sendBatchJob(null);
             fail("null not a valid argument");
         } catch (ArgumentNotValid e) {
             // expected
@@ -198,7 +198,7 @@ public class BitarchiveClientTester extends TestCase {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
 
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
 
 
@@ -218,14 +218,14 @@ public class BitarchiveClientTester extends TestCase {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
 
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
         con.waitForConcurrentTasksToFinish();
         GetFileMessage msg = new GetFileMessage(ALL_BA,
                                                 Channels.getTheRepos(),
                                                 ARC_FILE_NAME,
                                                 "ONE");
-        bac.getFile(msg);
+        bac.sendGetFileMessage(msg);
 
         con.waitForConcurrentTasksToFinish();
 
@@ -258,9 +258,9 @@ public class BitarchiveClientTester extends TestCase {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());        
         
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
 
         con.waitForConcurrentTasksToFinish();
@@ -293,7 +293,7 @@ public class BitarchiveClientTester extends TestCase {
         assertTrue("File to upload must exist: " + ARC_FILE_NAME,
                    FILE_TO_UPLOAD.exists());
 
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
         con.waitForConcurrentTasksToFinish();
 
@@ -339,7 +339,7 @@ public class BitarchiveClientTester extends TestCase {
                                              new TestBatchJobRuns(),
                                              Settings.get(
                                                      CommonSettings.USE_REPLICA_ID));
-        bac.batch(bMsg);
+        bac.sendBatchJob(bMsg);
         verifyBatchWentWell();
     }
 
@@ -352,13 +352,13 @@ public class BitarchiveClientTester extends TestCase {
         FileBatchJob job = new TestBatchJobRuns();
         //Variable rf is initialized in the setup() method.
         try {
-            bac.batch(null, job);
+            bac.sendBatchJob(null, job);
             fail();
         } catch (ArgumentNotValid e) {
             //Expected
         }
         try {
-            bac.batch(chan, null);
+            bac.sendBatchJob(chan, null);
             fail();
         } catch (ArgumentNotValid e) {
             //Expected
@@ -375,7 +375,7 @@ public class BitarchiveClientTester extends TestCase {
         ChannelID chan = Channels.getTheRepos();
         FileBatchJob job = new TestBatchJobRuns();
         //Variable rf is initialized in the setup() method.
-        bac.batch(chan, job);
+        bac.sendBatchJob(chan, job);
         verifyBatchWentWell();
     }
 
@@ -384,7 +384,7 @@ public class BitarchiveClientTester extends TestCase {
      * operation to finish.
      */
     private void uploadInPreparationOfBatchTest() {
-        bac.upload(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
+        bac.sendUploadMessage(RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false,
                                                  true));
         con.waitForConcurrentTasksToFinish();
     }
@@ -459,7 +459,7 @@ public class BitarchiveClientTester extends TestCase {
         assertEquals("The handler should be the only one listening to the queue TheBamon", 
                 1, con.getListeners(Channels.getTheBamon()).size());
         // check GetChecksum through function
-        NetarkivetMessage msg = bac.getChecksum(Channels.getError(), "filename.arc");
+        NetarkivetMessage msg = bac.sendGetChecksumMessage(Channels.getError(), "filename.arc");
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One GetChecksumMessage expected to be sent.", 1, handler.getChecksumMsg.size());
@@ -469,7 +469,7 @@ public class BitarchiveClientTester extends TestCase {
         // check GetChecksum through message
         GetChecksumMessage csMsg = new GetChecksumMessage(Channels.getTheBamon(),
                 Channels.getError(), "filename.arc", Settings.get(CommonSettings.USE_REPLICA_ID));
-        bac.getChecksum(csMsg);
+        bac.sendGetChecksumMessage(csMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("Another GetChecksumMessage expected to be sent.", 2, handler.getChecksumMsg.size());
@@ -479,7 +479,7 @@ public class BitarchiveClientTester extends TestCase {
         // check GetAllChecksums through message
         GetAllChecksumsMessage gcsMsg = new GetAllChecksumsMessage(Channels.getTheBamon(),
                 Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
-        bac.getAllChecksums(gcsMsg);
+        bac.sendGetAllChecksumsMessage(gcsMsg);
         con.waitForConcurrentTasksToFinish();
 
         assertEquals("One GetAllChecksumsMessage expected to be sent.", 1, handler.checksumsMsg.size());
@@ -489,7 +489,7 @@ public class BitarchiveClientTester extends TestCase {
         // check GetAllFilenames through message
         GetAllFilenamesMessage gfsMsg = new GetAllFilenamesMessage(Channels.getTheBamon(),
                 Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
-        bac.getAllFilenames(gfsMsg);
+        bac.sendGetAllFilenamesMessage(gfsMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One GetAllFilenamesMessage expected to be sent.", 1, handler.filenamesMsg.size());
@@ -501,7 +501,7 @@ public class BitarchiveClientTester extends TestCase {
                 Channels.getError(), "badChecksum", 
                 RemoteFileFactory.getInstance(FILE_TO_UPLOAD, true, false, true),
                 Settings.get(CommonSettings.USE_REPLICA_ID), "credentials");
-        bac.correct(corMsg);
+        bac.sendCorrectMessage(corMsg);
         con.waitForConcurrentTasksToFinish();
         
         assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());

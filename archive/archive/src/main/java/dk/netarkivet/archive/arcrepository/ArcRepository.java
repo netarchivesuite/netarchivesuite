@@ -290,7 +290,7 @@ public class ArcRepository implements CleanupIF {
             // New upload
             ad.setState(filename, replicaChannelId,
                     ReplicaStoreState.UPLOAD_STARTED);
-            replicaClient.upload(rf);
+            replicaClient.sendUploadMessage(rf);
         } else {
             // Recovery from old upload
             ReplicaStoreState storeState = ad.getState(filename,
@@ -330,7 +330,7 @@ public class ArcRepository implements CleanupIF {
         NetarkivetMessage msg;
         
         // Retrieve the checksum of the file.
-        msg = replicaClient.getChecksum(Channels.getTheRepos(), filename);
+        msg = replicaClient.sendGetChecksumMessage(Channels.getTheRepos(), filename);
 
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job message submitted for file '" + filename 
@@ -881,7 +881,7 @@ public class ArcRepository implements CleanupIF {
                         Replica rep = 
                             Channels.retrieveReplicaFromIdentifierChannel(
                                 replicaChannelName);
-                        connectedReplicas.get(rep).upload(rf);
+                        connectedReplicas.get(rep).sendUploadMessage(rf);
                         incRetry(replicaChannelName, arcFileName);
                         return;
                     } //else logning was done allready above
@@ -1059,7 +1059,7 @@ public class ArcRepository implements CleanupIF {
         NotificationsFactory.getInstance().errorEvent(errMsg);
         ReplicaClient rc = getReplicaClientFromReplicaId(msg
                 .getReplicaId());
-        rc.removeAndGetFile(msg);
+        rc.sendRemoveAndGetFileMessage(msg);
     }
 
     /**

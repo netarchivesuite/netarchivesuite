@@ -103,7 +103,7 @@ public class ChecksumClient implements ReplicaClient {
      * @param msg The CorrectMessage to send to the replica.
      * @throws ArgumentNotValid If the CorrectMessage is null.
      */
-    public void correct(CorrectMessage msg) throws ArgumentNotValid {
+    public void sendCorrectMessage(CorrectMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "CorrectMessage msg");
         
         // send the message to the archive.
@@ -120,7 +120,7 @@ public class ChecksumClient implements ReplicaClient {
      * jms connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllFilenamesMessage is null.
      */
-    public void getAllFilenames(GetAllFilenamesMessage msg) 
+    public void sendGetAllFilenamesMessage(GetAllFilenamesMessage msg) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
         // send the message to the archive.
@@ -138,7 +138,7 @@ public class ChecksumClient implements ReplicaClient {
      * connection to the checksum archive.
      * @throws ArgumentNotValid If the GetAllChecksumsMessage is null.
      */
-    public void getAllChecksums(GetAllChecksumsMessage msg) 
+    public void sendGetAllChecksumsMessage(GetAllChecksumsMessage msg) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllChecksumsMessage msg");
         // send the message to the archive.
@@ -155,7 +155,7 @@ public class ChecksumClient implements ReplicaClient {
      * @param msg The GetChecksumMessage which will be sent to the checksum
      * archive though the jms connection.
      */
-    public void getChecksum(GetChecksumMessage msg) {
+    public void sendGetChecksumMessage(GetChecksumMessage msg) {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 
@@ -176,7 +176,7 @@ public class ChecksumClient implements ReplicaClient {
      * @throws ArgumentNotValid If the reply channel is null or if the filename
      * is either null or the empty string.
      */
-    public GetChecksumMessage getChecksum(ChannelID replyChannel, 
+    public GetChecksumMessage sendGetChecksumMessage(ChannelID replyChannel, 
             String filename) throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
@@ -210,7 +210,7 @@ public class ChecksumClient implements ReplicaClient {
      * @param rf The file to upload to the archive.
      * @throws ArgumentNotValid If the remote file is null.
      */
-    public void upload(RemoteFile rf) throws ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf) throws ArgumentNotValid {
         // validate arguments.
         ArgumentNotValid.checkNotNull(rf, "RemoteFile rf");
 
@@ -236,7 +236,7 @@ public class ChecksumClient implements ReplicaClient {
      * a checksum replica.
      * @throws ArgumentNotValid If the channel or the batchjob is null.
      */
-    public BatchMessage batch(ChannelID replyChannel, FileBatchJob job) 
+    public BatchMessage sendBatchJob(ChannelID replyChannel, FileBatchJob job) 
             throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replyChannel, "ChannelID replyChannel");
         ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
@@ -260,7 +260,7 @@ public class ChecksumClient implements ReplicaClient {
      * a checksum replica.
      * @throws ArgumentNotValid If the message is null.
      */
-    public BatchMessage batch(BatchMessage msg) throws IllegalState, 
+    public BatchMessage sendBatchJob(BatchMessage msg) throws IllegalState, 
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
         
@@ -280,7 +280,7 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void get(GetMessage msg) throws IllegalState, ArgumentNotValid {
+    public void sendGetMessage(GetMessage msg) throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         
         String errMsg = "A checksum replica cannot handle a GetMessage such "
@@ -300,7 +300,7 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void getFile(GetFileMessage gfm) throws IllegalState, 
+    public void sendGetFileMessage(GetFileMessage gfm) throws IllegalState, 
             ArgumentNotValid {
         ArgumentNotValid.checkNotNull(gfm, "GetFileMessage gfm");
         
@@ -321,7 +321,7 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void removeAndGetFile(RemoveAndGetFileMessage msg) 
+    public void sendRemoveAndGetFileMessage(RemoveAndGetFileMessage msg) 
             throws IllegalState, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
         
