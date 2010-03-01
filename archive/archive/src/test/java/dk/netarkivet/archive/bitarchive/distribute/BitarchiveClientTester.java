@@ -42,6 +42,7 @@ import dk.netarkivet.archive.distribute.ArchiveMessageHandler;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
@@ -108,6 +109,8 @@ public class BitarchiveClientTester extends TestCase {
     public void setUp() {
         rs.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
+        ChannelsTester.resetChannels();
         
         rf.setUp();
 
@@ -450,6 +453,11 @@ public class BitarchiveClientTester extends TestCase {
     }
     
     public void testNewMessages() {
+        // make sure, that the listener 'handler' is the only one on the TheBamon queue
+        BitarchiveMonitorServer.getInstance().close();
+        con.setListener(Channels.getTheBamon(), handler);
+        assertEquals("The handler should be the only one listening to the queue TheBamon", 
+                1, con.getListeners(Channels.getTheBamon()).size());
         // check GetChecksum through function
         NetarkivetMessage msg = bac.getChecksum(Channels.getError(), "filename.arc");
         con.waitForConcurrentTasksToFinish();
@@ -473,7 +481,7 @@ public class BitarchiveClientTester extends TestCase {
                 Channels.getError(), Settings.get(CommonSettings.USE_REPLICA_ID));
         bac.getAllChecksums(gcsMsg);
         con.waitForConcurrentTasksToFinish();
-        
+
         assertEquals("One GetAllChecksumsMessage expected to be sent.", 1, handler.checksumsMsg.size());
         assertEquals("The received message should be one returned by the function", 
                 gcsMsg, handler.checksumsMsg.get(0));
@@ -499,7 +507,6 @@ public class BitarchiveClientTester extends TestCase {
         assertEquals("One CorrectMessage expected to be sent.", 1, handler.correctMsg.size());
         assertEquals("The received message should be one returned by the function", 
                 corMsg, handler.correctMsg.get(0));
-
     }
 
     /* Receive and check messages */

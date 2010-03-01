@@ -26,7 +26,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester;
 import dk.netarkivet.common.webinterface.HTMLUtilsTester;
 import dk.netarkivet.common.webinterface.SiteSectionTester;
 
@@ -42,7 +41,6 @@ public class HarvesterWebinterfaceTesterSuite {
     }
 
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(BitpreserveFileStatusTester.class);
         suite.addTestSuite(DomainDefinitionTester.class);
         suite.addTestSuite(EventHarvestTester.class);
         // Not quite working with JSP compilation yet

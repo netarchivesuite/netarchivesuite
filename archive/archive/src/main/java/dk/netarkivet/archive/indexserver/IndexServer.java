@@ -84,5 +84,6 @@ public class IndexServer implements CleanupIF{
      */
     public void cleanup() {
         remoteServer.close();
+        instance = null;
     }
 }

@@ -34,6 +34,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.ArcRepository;
 import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.bitarchive.distribute.BatchMessage;
 import dk.netarkivet.archive.bitarchive.distribute.BatchReplyMessage;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
@@ -123,13 +124,14 @@ public class ArcRepositoryServerTester extends TestCase {
         FileUtils.createDir(ALOG_DIR);
 
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, 
-                ALOG_DIR .getAbsolutePath());
+                ALOG_DIR.getAbsolutePath());
         con = JMSConnectionFactory.getInstance();
         dummyServer = new JMSConnectionTester.DummyServer();
         con.setListener(Channels.getError(), dummyServer);
     }
 
     protected void tearDown() throws Exception {
+        AdminData.getUpdateableInstance().close();
         FileUtils.removeRecursively(WORKING_DIR);
         con.removeListener(Channels.getError(), dummyServer);
         rf.tearDown();
@@ -325,10 +327,14 @@ public class ArcRepositoryServerTester extends TestCase {
                 .getInstance();
         TestMessageListener listener = new TestMessageListener();
         testCon.setListener(Channels.getAllBa(), listener);
-        new ArcRepositoryServer(ArcRepository.getInstance()).visit(msg);
+        ArcRepositoryServer arc = 
+            new ArcRepositoryServer(ArcRepository.getInstance());
+        arc.visit(msg);
         testCon.waitForConcurrentTasksToFinish();
         assertEquals("Message should have been sent to the bitarchive queue",
                      1, listener.getNumReceived());
+        
+        arc.close();
     }
 
     public void testVisitBadMessages() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InterruptedException {

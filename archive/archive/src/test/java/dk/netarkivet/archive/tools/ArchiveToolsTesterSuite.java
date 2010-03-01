@@ -46,10 +46,10 @@ public class ArchiveToolsTesterSuite {
      * Add the tests here.
      */
     public static void addToSuite(TestSuite suite) {
-        suite.addTestSuite(GetRecordTester.class);
-        suite.addTestSuite(UploadTester.class);
-        suite.addTestSuite(RunBatchTester.class);
         suite.addTestSuite(CreateIndexTester.class);
+        suite.addTestSuite(GetRecordTester.class);
+        suite.addTestSuite(RunBatchTester.class);
+        suite.addTestSuite(UploadTester.class);
     }
 
     public static void main(String args[]) {

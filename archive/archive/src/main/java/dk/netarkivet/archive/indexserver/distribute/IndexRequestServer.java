@@ -234,6 +234,7 @@ public class IndexRequestServer extends ArchiveMessageHandler
     public void cleanup() {
         JMSConnection conn = JMSConnectionFactory.getInstance();
         conn.removeListener(Channels.getTheIndexServer(), this);
+        handlers.clear();
 
         if (instance != null) {
             instance = null;

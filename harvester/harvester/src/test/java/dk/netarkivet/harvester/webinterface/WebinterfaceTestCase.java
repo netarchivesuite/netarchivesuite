@@ -571,7 +571,7 @@ public class WebinterfaceTestCase extends TestCase {
         }
     }
 
-    public PageContext getDummyPageContext(final Locale l,
+    public static PageContext getDummyPageContext(final Locale l,
                                            final ServletRequest request) {
         return new PageContext() {
             public void initialize(Servlet servlet,

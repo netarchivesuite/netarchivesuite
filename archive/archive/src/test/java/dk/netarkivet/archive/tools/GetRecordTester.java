@@ -54,7 +54,7 @@ import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 public class GetRecordTester extends TestCase {
     private static String CONTENT = "This is a test message";
     private PreventSystemExit pse = new PreventSystemExit();
-    private PreserveStdStreams pss = new PreserveStdStreams();
+    private PreserveStdStreams pss = new PreserveStdStreams(true);
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.DATA_DIR,
             TestInfo.WORKING_DIR);
     private MockupJMS mjms = new MockupJMS();
@@ -62,6 +62,7 @@ public class GetRecordTester extends TestCase {
 
     public void setUp(){
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.clearTestQueues();
         mjms.setUp();
         listener = new GetListener(
                 TestInfo.TEST_ENTRY_FILENAME,
@@ -82,18 +83,17 @@ public class GetRecordTester extends TestCase {
     }
 
     public void testMain() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
         try {
             GetRecord.main(new String[]{
                     TestInfo.INDEX_DIR.getAbsolutePath(),
                     TestInfo.TEST_ENTRY_URI});
+            fail("Should system exit");
         } catch (SecurityException e) {
             assertEquals("Should have exited normally",
                          0, pse.getExitValue());
         }
         System.out.flush();
-        String returnedContent = new String(baos.toByteArray());
+        String returnedContent = pss.getOut();
         assertEquals("Should return content unchanged, but was: "
                 + returnedContent, CONTENT, returnedContent);
     }

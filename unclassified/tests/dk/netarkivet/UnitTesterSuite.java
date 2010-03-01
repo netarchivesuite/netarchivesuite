@@ -39,6 +39,7 @@ import dk.netarkivet.archive.distribute.ArchiveDistributeTesterSuite;
 import dk.netarkivet.archive.indexserver.ArchiveIndexServerTesterSuite;
 import dk.netarkivet.archive.indexserver.distribute.ArchiveIndexserverDistributeTesterSuite;
 import dk.netarkivet.archive.tools.ArchiveToolsTesterSuite;
+import dk.netarkivet.archive.webinterface.ArchiveWebinterfaceTesterSuite;
 import dk.netarkivet.common.CommonsTesterSuite;
 import dk.netarkivet.common.distribute.CommonDistributeTesterSuite;
 import dk.netarkivet.common.distribute.arcrepository.CommonDistributeArcrepositoryTesterSuite;
@@ -91,6 +92,7 @@ public class UnitTesterSuite {
         ArchiveIndexserverDistributeTesterSuite.addToSuite(suite);
         ArchiveIndexServerTesterSuite.addToSuite(suite);
         ArchiveToolsTesterSuite.addToSuite(suite);
+        ArchiveWebinterfaceTesterSuite.addToSuite(suite);
         
         /* 
          * Testersuites for the common module 
@@ -108,7 +110,7 @@ public class UnitTesterSuite {
         CommonToolsTesterSuite.addToSuite(suite);
         
         /* 
-         * Testersuites for the viewerproxy module 
+         * Testersuites for the deploy module 
          */
         DeployTesterSuite.addToSuite(suite);
         
@@ -124,7 +126,9 @@ public class UnitTesterSuite {
         HarvesterToolsTesterSuite.addToSuite(suite);
         HarvesterWebinterfaceTesterSuite.addToSuite(suite);
         
-        /* Testersuites for the monitor module */
+        /* 
+         * Testersuites for the monitor module 
+         */
         MonitorTesterSuite.addToSuite(suite);
         MonitorLoggingTesterSuite.addToSuite(suite);
         MonitorJMXTesterSuite.addToSuite(suite);

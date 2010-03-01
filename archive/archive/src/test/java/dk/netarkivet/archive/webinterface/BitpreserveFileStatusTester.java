@@ -35,6 +35,8 @@ import java.util.Vector;
 
 import javax.servlet.jsp.JspWriter;
 
+import junit.framework.TestCase;
+
 import com.mockobjects.servlet.MockHttpServletRequest;
 import com.mockobjects.servlet.MockJspWriter;
 
@@ -47,14 +49,14 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.harvester.webinterface.TestInfo;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
+import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /** Unittest for the class dk.netarkivet.archive.webinterface.BitpreserveFileState. */
-public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
+public class BitpreserveFileStatusTester extends TestCase {
     private static final String GET_INFO_METHOD = "getFilePreservationStatus";
     private static final String ADD_METHOD = "reestablishMissingFile";
     private static final String ADD_COMMAND
@@ -73,15 +75,16 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
     private static final String DATE_CHANGED_FILES = "getDateForChangedFiles";
 
     ReloadSettings rs = new ReloadSettings();
-
-    public BitpreserveFileStatusTester(String s) {
-        super(s);
-    }
-
+    MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
 
     public void setUp() throws Exception {
         rs.setUp();
+        mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        
+        Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN, 
+                TestInfo.WORKING_DIR.getAbsolutePath());
+
 
         if (!Replica.isKnownReplicaId("TWO") || !Replica.isKnownReplicaId(
                 "ONE")) {
@@ -97,6 +100,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
 
     public void tearDown() throws Exception {
         AdminData.getUpdateableInstance().close();
+        mtf.tearDown();
         rs.tearDown();
         super.tearDown();
     }
@@ -146,7 +150,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupGetParameterNames(
                 new Vector<String>(args.keySet()).elements());
         Map<String, PreservationState> status =
-                BitpreserveFileState.processMissingRequest(getDummyPageContext(
+                BitpreserveFileState.processMissingRequest(
+                        WebinterfaceTestCase.getDummyPageContext(
                         defaultLocale, request),
                                                            new StringBuilder());
         assertEquals("Should have one call to reestablish",
@@ -167,7 +172,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
                                           replicaID1).getName()});
         request.setupGetParameterMap(args);
         status = BitpreserveFileState.processMissingRequest(
-                getDummyPageContext(defaultLocale, request), new StringBuilder()
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request), new StringBuilder()
         );
         assertEquals("Should have no call to restablish",
                      0, mockabp.getCallCount(ADD_METHOD));
@@ -210,8 +215,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         args.put(GET_INFO_COMMAND,
                  new String[]{filename1, filename2, filename1});
         request.setupGetParameterMap(args);
-        status = BitpreserveFileState.processMissingRequest(getDummyPageContext(
-                defaultLocale, request),
+        status = BitpreserveFileState.processMissingRequest(
+                WebinterfaceTestCase.getDummyPageContext(defaultLocale, request),
                                                             new StringBuilder()
         );
         assertEquals("Should have two calls to restablish",
@@ -263,7 +268,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
                 (String[]) null);
         
-        BitpreserveFileState.processUpdateRequest(getDummyPageContext(l, request));
+        BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
         
         assertFalse("No calls to Find Missing Files expected", 
                 mockabp.calls.containsKey(FIND_MISSING_FILES));
@@ -280,7 +285,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
                 (String[]) null);
         
-        BitpreserveFileState.processUpdateRequest(getDummyPageContext(l, request));
+        BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
         
         assertTrue("One calls to Find Missing Files expected", 
                 mockabp.calls.containsKey(FIND_MISSING_FILES));
@@ -297,7 +302,7 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
                 new String[]{"1"});
         
-        BitpreserveFileState.processUpdateRequest(getDummyPageContext(l, request));
+        BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
         
         assertFalse("No calls to Find Missing Files expected", 
                 mockabp.calls.containsKey(FIND_MISSING_FILES));
@@ -314,7 +319,8 @@ public class BitpreserveFileStatusTester extends WebinterfaceTestCase {
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
                 new String[]{"1"});
         
-        BitpreserveFileState.processUpdateRequest(getDummyPageContext(l, request));
+        BitpreserveFileState.processUpdateRequest(
+                WebinterfaceTestCase.getDummyPageContext(l, request));
         
         assertTrue("One calls to Find Missing Files expected", 
                 mockabp.calls.containsKey(FIND_MISSING_FILES));
