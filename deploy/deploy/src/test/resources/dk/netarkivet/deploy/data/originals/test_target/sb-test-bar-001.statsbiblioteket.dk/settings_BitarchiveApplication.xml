@@ -20,7 +20,7 @@
                 <passwordFile>./jmxremote.password</passwordFile>
                 <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
-            <port>8110</port><rmiPort>8210</rmiPort></jmx>
+            <port>8150</port><rmiPort>8250</rmiPort></jmx>
             <indexClient>
                 <indexRequestTimeout>43200000</indexRequestTimeout> 
             </indexClient>

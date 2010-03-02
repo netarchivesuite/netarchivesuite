@@ -170,6 +170,9 @@ public final class Constants {
     /** The path to the heritrix jmxPort from beyond settings.*/
     static final String[] COMPLETE_HARVEST_HETRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
+    /** The path to the archive database port leaf from beyond settings.*/
+    static final String[] COMPLETE_ARCHIVE_DATABASE_PORT =
+        ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE.split("[.]");
     /** The path to the heritrix jmxPort from the settings branch.*/
     static final String[] SETTINGS_HARVEST_HETRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT
@@ -268,6 +271,10 @@ public final class Constants {
      * heritrix gui port.
      */
     static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    /** The offset for the digit to replace during test of the
+     * port in the archive database url.
+     */
+    static final int TEST_OFFSET_ARCHIVE_DB_URL_PORT = 2;
     /** The index of the offset part of the test argument.*/ 
     static final int TEST_ARGUMENT_OFFSET_INDEX = 0;
     /** The index of the http part of the test argument.*/ 

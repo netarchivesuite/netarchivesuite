@@ -84,5 +84,5 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
     public static final String ARGUMENT_EVALUATE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_EVALUATE;
-    public static final String ARGUMENT_TEST_ARG = "1000,1001,test,test@kb.dk";
+    public static final String ARGUMENT_TEST_ARG = "1000,1005,test,test@kb.dk";
 }

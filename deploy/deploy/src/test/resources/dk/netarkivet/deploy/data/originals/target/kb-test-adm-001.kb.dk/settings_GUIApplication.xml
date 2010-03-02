@@ -70,7 +70,14 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        </archive>
+        <admin>
+                        <database>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8010</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin></archive>
         <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>

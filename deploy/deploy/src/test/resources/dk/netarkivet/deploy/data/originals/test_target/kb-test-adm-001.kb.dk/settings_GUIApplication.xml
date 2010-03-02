@@ -20,7 +20,7 @@
                 <passwordFile>./jmxremote.password</passwordFile>
                 <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
-            <port>8110</port><rmiPort>8210</rmiPort></jmx>
+            <port>8150</port><rmiPort>8250</rmiPort></jmx>
             <indexClient>
                 <indexRequestTimeout>43200000</indexRequestTimeout> 
             </indexClient>
@@ -54,7 +54,7 @@
                     <receiver>test@kb.dk</receiver> 
                     <sender>test@kb-prod-udv-001.kb.dk</sender>
                 </notifications><useReplicaId>KB</useReplicaId><thisPhysicalLocation>K</thisPhysicalLocation><http>
-                            <port>1001</port>
+                            <port>1005</port>
                         </http><applicationName>dk.netarkivet.common.webinterface.GUIApplication</applicationName></common>
 
         <monitor>
@@ -70,7 +70,14 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        </archive>
+        <admin>
+                        <database>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8050</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin></archive>
         <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>

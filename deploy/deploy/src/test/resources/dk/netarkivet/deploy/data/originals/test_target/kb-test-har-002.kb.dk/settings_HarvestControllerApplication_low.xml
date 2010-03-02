@@ -20,7 +20,7 @@
                 <passwordFile>./jmxremote.password</passwordFile>
                 <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
-            <port>8110</port><rmiPort>8210</rmiPort></jmx>
+            <port>8150</port><rmiPort>8250</rmiPort></jmx>
             <indexClient>
                 <indexRequestTimeout>43200000</indexRequestTimeout> 
             </indexClient>
@@ -75,9 +75,9 @@
                         <harvesting>
                             <queuePriority>LOWPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8590</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8591</jmxPort>
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>

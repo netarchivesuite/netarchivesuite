@@ -20,7 +20,7 @@
                 <passwordFile>./jmxremote.password</passwordFile>
                 <accessFile>conf/access.privileges</accessFile>
                 <timeout>120</timeout>
-            <port>8113</port><rmiPort>8213</rmiPort></jmx>
+            <port>8153</port><rmiPort>8253</rmiPort></jmx>
             <indexClient>
                 <indexRequestTimeout>43200000</indexRequestTimeout> 
             </indexClient>
@@ -68,7 +68,14 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        </archive>
+        <admin>
+                        <database>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8050</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin></archive>
         <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>
