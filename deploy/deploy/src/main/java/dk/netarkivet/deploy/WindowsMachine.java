@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * A WindowsMachine is the instance of the abstract machine class, which runs 
@@ -1371,6 +1372,40 @@ public class WindowsMachine extends Machine {
             // log error and throw a IOFailure.
             log.trace(Constants.MSG_ERROR_WAIT_FILE, e);
             throw new IOFailure(Constants.MSG_ERROR_WAIT_FILE, e);
+        }
+    }
+    
+    /**
+     * Creates a script for starting the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    @Override
+    protected void createArchiveDatabaseStartScript(File dir) {
+        
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+    }
+
+    /**
+     * Creates a script for killing the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    @Override
+    protected void createArchiveDatabaseKillScript(File dir) {
+        
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
         }
     }
 }

@@ -187,9 +187,11 @@ public abstract class Machine {
         // Create kill scripts
         createApplicationKillScripts(machineDirectory);
         createOSLocalKillAllScript(machineDirectory);
+        createArchiveDatabaseKillScript(machineDirectory);
         // create start scripts
         createApplicationStartScripts(machineDirectory);
         createOSLocalStartAllScript(machineDirectory);
+        createArchiveDatabaseStartScript(machineDirectory);
         // create restart script
         createRestartScript(machineDirectory);
         // copy the security policy file
@@ -867,6 +869,24 @@ public abstract class Machine {
      * @param dir The directory where the script will be placed.
      */
     protected abstract void createRestartScript(File dir);
+    
+    /**
+     * Creates a script for starting the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createArchiveDatabaseStartScript(File dir);
+
+    /**
+     * Creates a script for killing the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * @param dir The directory where the script will be placed.
+     */
+    protected abstract void createArchiveDatabaseKillScript(File dir);
 
     /**
      * Changes the file directory path to the format used in the security 

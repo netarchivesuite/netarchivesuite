@@ -71,6 +71,18 @@ public final class ScriptConstants {
     /** Djava.security.policy=\"\".*/
     static final String OPTION_SECIRITY_POLICY_WIN = OPTION_SECIRITY_POLICY 
             + "\"\"";
+    /** lib/db/derbynet.jar:lib/db/derby.jar .*/
+    static final String DERBY_ACCESS_CLASSPATH = 
+        "lib/db/derbynet.jar:lib/db/derby.jar";
+    /** org.apache.derby.drda.NetworkServerControl .*/
+    static final String DERBY_ACCESS_METHOD = 
+        "org.apache.derby.drda.NetworkServerControl";
+    /** start .*/
+    static final String DERBY_COMMAND_START =
+        "start";
+    /** shutdown .*/
+    static final String DERBY_COMMAND_KILL =
+        "shutdown";
 
     /** The message when database is trying to overwrite a non-empty dir.*/
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
@@ -98,6 +110,8 @@ public final class ScriptConstants {
     static final String LINUX_USER_400 = "chmod 400";
     /** Linux sent output to dev/null.*/
     static final String LINUX_DEV_NULL = "< /dev/null >";
+    /** & .*/
+    static final String LINUX_RUN_BACKGROUND = " &";
     /** 2>&1 &.*/
     static final String LINUX_ERROR_MESSAGE_TO_1 = "2>&1 &"; 
     /** /etc/profile.*/
@@ -273,6 +287,12 @@ public final class ScriptConstants {
     /** echo Unzipping archive database.*/
     static final String ECHO_UNZIPPING_ARCHIVE_DATABASE = 
         "echo Unzipping archive database";
+    /** echo Starting external database.*/
+    static final String ECHO_START_EXTERNAL_DATABASE = 
+        "echo Starting external database.";
+    /** echo Killing external database.*/
+    static final String ECHO_KILL_EXTERNAL_DATABASE = 
+        "echo Killing external database.";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/

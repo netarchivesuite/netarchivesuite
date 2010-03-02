@@ -272,6 +272,7 @@ public class LinuxMachine extends Machine {
      * This function creates the script to kill all applications on this 
      * machine.
      * The scripts calls all the kill script for each application. 
+     * It also runs the script for killing any external database.
      * 
      * pseudo code:
      * - echo Killing all applications at machine: mac
@@ -318,6 +319,9 @@ public class LinuxMachine extends Machine {
                             + appScript);
                     killPrinter.println(ScriptConstants.FI);
                 }
+                
+                // kill the database, if any, after the applications
+                killPrinter.print(callKillArchiveDatabase());
             } finally {
                 // close script
                 killPrinter.close();
@@ -333,6 +337,7 @@ public class LinuxMachine extends Machine {
      * This function creates the script to start all applications on this 
      * machine.
      * The scripts calls all the start script for each application. 
+     * It also runs the script for starting any external database.
      * 
      * pseudo code:
      * - echo Starting all applications at machine: mac
@@ -360,12 +365,16 @@ public class LinuxMachine extends Machine {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
             try {
+                // start the database, if any, before the applications.
+                startPrinter.print(callStartArchiveDatabase());
+                
                 startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
                         + Constants.COLON + Constants.SPACE 
                         + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
                 startPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE
                         + getConfDirPath());
+                
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
@@ -1175,5 +1184,203 @@ public class LinuxMachine extends Machine {
             log.trace(Constants.MSG_ERROR_RESTART_FILE, e);
             throw new IOFailure(Constants.MSG_ERROR_RESTART_FILE, e);
         }
+    }
+    
+    /**
+     * Creates a script for starting the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * <br/> &gt; #!/bin/bash
+     * <br/> &gt; cd InstallDir
+     * <br/> &gt; export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar 
+     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl start &
+     * 
+     * @param dir The directory where the script will be placed.
+     * @throws IOFailure If the script cannot be written.
+     */
+    @Override
+    protected void createArchiveDatabaseStartScript(File dir) throws IOFailure {
+        
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+
+        try {
+            // initialise the script file.
+            File startArcDBScript = new File(dir, 
+                    Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension);
+            
+            // make print writer for writing to file
+            PrintWriter startDBPrint = new PrintWriter(startArcDBScript);
+            try {
+                // - #!/bin/bash
+                startDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+                // - cd InstallDir
+                startDBPrint.print(ScriptConstants.CD + Constants.SPACE);
+                startDBPrint.println(getInstallDirPath());
+                // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
+                //$CLASSPATH 
+                startDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
+                startDBPrint.print(Constants.SEMICOLON);
+                startDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
+                // - java org.apache.derby.drda.NetworkServerControl start
+                startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                startDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.DERBY_COMMAND_START);
+                startDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);
+            } finally {
+                // close file
+                startDBPrint.close();
+            }
+        } catch (IOException e) {
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_DB_START_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_DB_START_FILE, e);
+        }
+    }
+    
+    /**
+     * Method for generating the command for running the 
+     * external_database_start script. This should be called before the 
+     * application on the machines have been started.
+     * 
+     * <br/> &gt; echo Starting external database
+     * <br/> &gt; if [ -e ./start_external_database.sh ]; then
+     * <br/> &gt;     ./start_external_database.sh
+     * <br/> &gt; fi
+     * 
+     * @return The command for running external_database_start script.
+     */
+    protected String callStartArchiveDatabase() {
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return "";
+        }
+        
+        // Constructing filename
+        String appScript = Constants.DOT + Constants.SLASH
+                + Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension;
+
+        StringBuilder res = new StringBuilder();
+        // echo Starting external database
+        res.append(ScriptConstants.ECHO_START_EXTERNAL_DATABASE);
+        res.append(Constants.NEWLINE);
+        // if [ -e ./start_external_database.sh ]; then
+        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        res.append(Constants.NEWLINE);
+        //    ./start_external_database.sh
+        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(Constants.NEWLINE);
+        // fi
+        res.append(ScriptConstants.FI + Constants.NEWLINE);        
+        
+        return res.toString();
+    }
+
+    /**
+     * Creates a script for killing the archive database on a given machine.
+     * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
+     * is defined on the machine level.
+     * 
+     * <br/> &gt; #!/bin/bash
+     * <br/> &gt; cd InstallDir
+     * <br/> &gt; export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar 
+     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl shutdown
+     * 
+     * @param dir The directory where the script will be placed.
+     * @throws IOFailure If the script cannot be created.
+     */
+    @Override
+    protected void createArchiveDatabaseKillScript(File dir) throws IOFailure {
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return;
+        }
+        
+        try {
+            // initialise the script file.
+            File killArcDBScript = new File(dir, 
+                    Constants.SCRIPT_NAME_ARC_DB_KILL + scriptExtension);
+            
+            // make print writer for writing to file
+            PrintWriter killDBPrint = new PrintWriter(killArcDBScript);
+            try {
+                // - #!/bin/bash
+                killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+                // - cd InstallDir
+                killDBPrint.print(ScriptConstants.CD + Constants.SPACE);
+                killDBPrint.println(getInstallDirPath());
+                // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
+                //$CLASSPATH 
+                killDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
+                killDBPrint.print(Constants.SEMICOLON);
+                killDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
+                // - java org.apache.derby.drda.NetworkServerControl shutdown
+                killDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                killDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(ScriptConstants.DERBY_COMMAND_KILL);
+                killDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);
+            } finally {
+                // close file
+                killDBPrint.close();
+            }
+        } catch (IOException e) {
+            // Log the error and throw an IOFailure.
+            log.trace(Constants.MSG_ERROR_DB_KILL_FILE, e);
+            throw new IOFailure(Constants.MSG_ERROR_DB_KILL_FILE, e);
+        }
+    }
+    
+    
+    /**
+     * Method for generating the command for running the 
+     * external_database_kill script. This should be called when the 
+     * application on the machines have been killed.
+     * 
+     * <br/> &gt; echo Killing external database
+     * <br/> &gt; if [ -e ./kill_external_database.sh ]; then
+     * <br/> &gt;     ./kill_external_database.sh
+     * <br/> &gt; fi
+     * 
+     * @return The command for running external_database_kill script.
+     */
+    protected String callKillArchiveDatabase() {
+        // Ignore if no archive database directory has been defined.
+        String dbDir = machineParameters.getArchiveDatabaseDirValue();
+        if(dbDir.isEmpty()) {
+            return "";
+        }
+
+        // Constructing filename
+        String appScript = Constants.DOT + Constants.SLASH
+                + Constants.SCRIPT_NAME_ARC_DB_KILL + scriptExtension;
+
+        StringBuilder res = new StringBuilder();
+        // echo Killing external database
+        res.append(ScriptConstants.ECHO_KILL_EXTERNAL_DATABASE);
+        res.append(Constants.NEWLINE);
+        // if [ -e ./kill_external_database.sh ]; then
+        res.append(ScriptConstants.LINUX_IF_EXIST + Constants.SPACE);
+        res.append(appScript + Constants.SPACE + ScriptConstants.LINUX_THEN);
+        res.append(Constants.NEWLINE);
+        //    ./kill_external_database.sh
+        res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(Constants.NEWLINE);
+        // fi
+        res.append(ScriptConstants.FI + Constants.NEWLINE);        
+        
+        return res.toString();
     }
 }

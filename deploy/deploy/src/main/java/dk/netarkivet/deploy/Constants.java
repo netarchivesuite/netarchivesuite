@@ -340,6 +340,10 @@ public final class Constants {
     static final String SCRIPT_NAME_START_ALL = "startall";
     /** The name of the restart all application script. 'restart'.*/
     static final String SCRIPT_NAME_RESTART = "restart";
+    /** The name of the archive database start script.*/
+    static final String SCRIPT_NAME_ARC_DB_START = "start_external_database";
+    /** The name of the archive database kill script.*/
+    static final String SCRIPT_NAME_ARC_DB_KILL = "kill_external_database";
     /** The name of the wait script for windows. 'wait'.*/
     static final String SCRIPT_NAME_WAIT = "wait";
     /** Prefix for the application kill script. 'kill_' .*/
@@ -539,6 +543,12 @@ public final class Constants {
     /** The error message when the restart script cannot be written.*/
     public static final String MSG_ERROR_RESTART_FILE =
         "Problems creating local restart script.";
+    /** The error message when the db-start script cannot be written.*/
+    public static final String MSG_ERROR_DB_START_FILE =
+        "Problems creating the local external_database_start script.";
+    /** The error message when the db-kill script cannot be written.*/
+    public static final String MSG_ERROR_DB_KILL_FILE =
+        "Problems creating the local external_database_kill script.";
     /** The warning when more than one jmxremote.access or jmxremote.password 
      * file path is defined.*/
     public static final String MSG_WARN_TOO_MANY_JMXREMOTE_FILE_PATHS = 
