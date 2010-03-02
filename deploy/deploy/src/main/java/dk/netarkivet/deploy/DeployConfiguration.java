@@ -58,8 +58,8 @@ public class DeployConfiguration {
     private File outputDir;
     /** The name of the database.*/
     private File databaseFileName;
-    /** The name of the bitpreservation database.*/
-    private File bpDatabaseFileName;
+    /** The name of the archive database.*/
+    private File arcDatabaseFileName;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -72,7 +72,7 @@ public class DeployConfiguration {
      * @param logPropFileName Name of the log property file.
      * @param outputDirName Directory for the output.
      * @param dbFileName Name of the database.
-     * @param bpdbFileName The name of the database.
+     * @param arcdbFileName The name of the archive database.
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments is null:
      * deployConfigFileName netarchiveSuiteFileName, secPolicyFileName,
@@ -81,7 +81,7 @@ public class DeployConfiguration {
     public DeployConfiguration(File deployConfigFileName, 
             File netarchiveSuiteFileName,  File secPolicyFileName, 
             File logPropFileName, String outputDirName, File dbFileName, 
-            File bpdbFileName, boolean resetDir) throws ArgumentNotValid {
+            File arcdbFileName, boolean resetDir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(
                 deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(
@@ -96,7 +96,7 @@ public class DeployConfiguration {
         secPolicyFile = secPolicyFileName;
         logPropFile = logPropFileName;
         databaseFileName = dbFileName;
-        bpDatabaseFileName = bpdbFileName;
+        arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
 
         // get configuration tree, settings and parameters
@@ -144,7 +144,7 @@ public class DeployConfiguration {
         for(Element elem : physList) {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
                     netarchiveSuiteFile.getName(), logPropFile, 
-                    secPolicyFile, databaseFileName, bpDatabaseFileName, 
+                    secPolicyFile, databaseFileName, arcDatabaseFileName, 
                     resetDirectory));
         }
     }

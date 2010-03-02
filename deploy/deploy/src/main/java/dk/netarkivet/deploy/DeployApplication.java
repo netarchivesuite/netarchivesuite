@@ -69,8 +69,8 @@ public final class DeployApplication {
     private static File dbFile;
     /** The arguments for resetting tempDir.*/
     private static boolean resetDirectory;
-    /** The bitpreservation database file.*/
-    private static File bpdbFile;
+    /** The archive database file.*/
+    private static File arcDbFile;
 
     /**
      * Run the new deploy.
@@ -82,12 +82,12 @@ public final class DeployApplication {
      * -S  The security policy file (ends with .policy).
      * -L  The logging property file (ends with .prop).
      * -O  [OPTIONAL] The output directory
-     * -D  [OPTIONAL] The database
+     * -D  [OPTIONAL] The harvest definition database
      * -T  [OPTIONAL] The test arguments (httpportoffset, port, 
      *                                    environmentName, mailReceiver)
      * -R  [OPTIONAL] For resetting the tempDir (takes arguments 'y' or 'yes')
      * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
-     * -B  [OPTIONAL] For bitpreservation database.
+     * -A  [OPTIONAL] For archive database.
      */
     public static void main(String[] args) {
         try {
@@ -149,9 +149,9 @@ public final class DeployApplication {
             // Retrieving the evaluate argument
             String evaluateArgument = ap.getCommandLine().getOptionValue(
                     Constants.ARG_EVALUATE);
-            // Retrieve the bitpreservation database filename.
-            String bpdbFileName = ap.getCommandLine().getOptionValue(
-                    Constants.ARG_BP_DB);
+            // Retrieve the archive database filename.
+            String arcDbFileName = ap.getCommandLine().getOptionValue(
+                    Constants.ARG_ARC_DB);
 
             // check deployConfigFileName and retrieve the corresponding file
             initConfigFile(deployConfigFileName);
@@ -177,8 +177,8 @@ public final class DeployApplication {
             // evaluates the config file
             initEvaluate(evaluateArgument);
             
-            // check the bitpreservation database
-            initBitPreservationDatabase(bpdbFileName);
+            // check the archive database
+            initArchiveDatabase(arcDbFileName);
             
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(
@@ -188,7 +188,7 @@ public final class DeployApplication {
                     logPropFile,
                     outputDir,
                     dbFile,
-                    bpdbFile,
+                    arcDbFile,
                     resetDirectory); 
 
             // Write the scripts, directories and everything
@@ -418,16 +418,16 @@ public final class DeployApplication {
     }
     
     /**
-     * Checks the argument for the bitpreservation database.
+     * Checks the argument for the archive database.
      * 
-     * @param bpdbFileName The path to the bitpreservation database.
+     * @param arcDbFileName The path to the archive database.
      */
-    public static void initBitPreservationDatabase(String bpdbFileName) {
-        bpdbFile = null;
+    public static void initArchiveDatabase(String arcDbFileName) {
+        arcDbFile = null;
         // check the extension on the database, if it is given as argument 
-        if(bpdbFileName != null) {
-            if(!bpdbFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
-                    && !bpdbFileName.endsWith(
+        if(arcDbFileName != null) {
+            if(!arcDbFileName.endsWith(Constants.EXTENSION_JAR_FILES) 
+                    && !arcDbFileName.endsWith(
                             Constants.EXTENSION_ZIP_FILES)) {
                 System.err.print(
                         Constants.MSG_ERROR_BPDB_EXTENSION);
@@ -436,14 +436,14 @@ public final class DeployApplication {
             }
             
             // get the file
-            bpdbFile = new File(bpdbFileName);
+            arcDbFile = new File(arcDbFileName);
             // check whether the database file exists.
-            if(!bpdbFile.isFile()) {
+            if(!arcDbFile.isFile()) {
                 System.err.print(
                             Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
                 System.out.println();
                 System.out.println("Couldn't find file: " 
-                        + bpdbFile.getAbsolutePath());
+                        + arcDbFile.getAbsolutePath());
                 System.exit(1);
             }
         }
@@ -546,8 +546,8 @@ public final class DeployApplication {
                     + " an error message.");
             options.addOption(Constants.ARG_EVALUATE, 
                     HAS_ARG, "[OPTIONAL] Evaluate the config file.");
-            options.addOption(Constants.ARG_BP_DB,
-                    HAS_ARG, "[OPTIONAL] The bitpreservation database file");
+            options.addOption(Constants.ARG_ARC_DB,
+                    HAS_ARG, "[OPTIONAL] The archive database file");
         }
 
         /**

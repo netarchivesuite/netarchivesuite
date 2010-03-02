@@ -262,15 +262,17 @@ public final class ScriptConstants {
     static final String ECHO_APP_ALREADY_RUNNING = 
         "    echo Application already running.";
     /** echo Copying database.*/
-    static final String ECHO_COPYING_DATABASE = "echo Copying database";
-    /** echo Copying bitpreservation database.*/
-    static final String ECHO_COPYING_BP_DATABASE = 
-        "echo Copying bitpreservation database";
-    /** echo Unzipping database.*/
-    static final String ECHO_UNZIPPING_DATABASE = "echo Unzipping database";
-    /** echo Unzipping bitpreservation database.*/
-    static final String ECHO_UNZIPPING_BP_DATABASE = 
-        "echo Unzipping bitpreservation database";
+    static final String ECHO_COPYING_DATABASE = 
+        "echo Copying harvest definition database";
+    /** echo Copying archive database.*/
+    static final String ECHO_COPYING_ARCHIVE_DATABASE = 
+        "echo Copying archive database";
+    /** echo Unzipping harvest definition database.*/
+    static final String ECHO_UNZIPPING_DATABASE = 
+        "echo Unzipping harvest definition database";
+    /** echo Unzipping archive database.*/
+    static final String ECHO_UNZIPPING_ARCHIVE_DATABASE = 
+        "echo Unzipping archive database";
     
     // VB script
     /** Set WshShell= CreateObject(\"WScript.Shell\").*/

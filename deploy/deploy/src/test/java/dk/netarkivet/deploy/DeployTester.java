@@ -49,7 +49,7 @@ public class DeployTester extends TestCase {
     private String nullzipName = TestInfo.FILE_NETATCHIVE_SUITE.getPath();
     private String output_dir = TestInfo.TMPDIR.getPath();
     private String databaseName = TestInfo.FILE_DATABASE.getPath();
-    private String bpDatabaseName = TestInfo.FILE_BP_DATABASE.getPath();
+    private String arcDatabaseName = TestInfo.FILE_BP_DATABASE.getPath();
     
     public void setUp() {
         rs.setUp();
@@ -167,7 +167,7 @@ public class DeployTester extends TestCase {
         	TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
         	TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                 TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
-                TestInfo.ARGUMENT_BP_DATABASE_FILE + bpDatabaseName
+                TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + arcDatabaseName
                 };
         pss.tearDown();
         DeployApplication.main(args);
@@ -420,7 +420,7 @@ public class DeployTester extends TestCase {
                 TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
                 TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
                 TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
-                TestInfo.ARGUMENT_BP_DATABASE_FILE + "database.ERROR"
+                TestInfo.ARGUMENT_ARCHIVE_DATABASE_FILE + "database.ERROR"
         };
         DeployApplication.main(args);
 

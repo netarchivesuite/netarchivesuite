@@ -71,8 +71,8 @@ public abstract class Machine {
     protected File inheritedSecurityPolicyFile;
     /** The inherited database file name.*/
     protected File databaseFile;
-    /** The inherited bitpreservation file name.*/
-    protected File bpDatabaseFile;
+    /** The inherited archive database file name.*/
+    protected File arcDatabaseFile;
     /** The directory for this machine.*/
     protected File machineDirectory;
     /** Whether the temp dir should be cleaned.*/
@@ -91,7 +91,7 @@ public abstract class Machine {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
-     * @param bpdbFileName The name of the bitpreservation database file.
+     * @param bpdbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
@@ -117,7 +117,7 @@ public abstract class Machine {
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFile = dbFileName;
-        bpDatabaseFile = bpdbFileName;
+        arcDatabaseFile = bpdbFileName;
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
@@ -804,20 +804,20 @@ public abstract class Machine {
     protected abstract String osInstallDatabase();
     
     /**
-     * Checks if a specific directory for the bitpreservation database is given 
-     * in the settings, and thus if the bitpreservation database should be 
+     * Checks if a specific directory for the archive database is given 
+     * in the settings, and thus if the archive database should be 
      * installed on this machine.
      * 
      * If not specific database is given as deploy argument 
      * (bitpresevationDatabaseFileName = null) then use the default in the 
      * NetarchiveSuite.zip package.
-     * Else send the new bitpreservation database to the standard database 
+     * Else send the new archive database to the standard database 
      * location, and extract it to the given location.
      * 
-     * @return The script for installing the bitpreservation database 
+     * @return The script for installing the archive database 
      * (if needed).
      */
-    protected abstract String osInstallBitPreservationDatabase();
+    protected abstract String osInstallArchiveDatabase();
     
     /**
      * This functions makes the script for creating the new directories.

@@ -54,15 +54,15 @@ public class WindowsMachine extends Machine {
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
      * @param dbFile The harvest definition database file.
-     * @param bpdbFile The bitpreservation database.
+     * @param arcdbFile The archive database.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public WindowsMachine(Element e, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
                 File logProp, File securityPolicy, File dbFile,
-                File bpdbFile, boolean resetDir) {
+                File arcdbFile, boolean resetDir) {
         super(e, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, bpdbFile, resetDir);
+                logProp, securityPolicy, dbFile, arcdbFile, resetDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_WINDOWS;
@@ -234,8 +234,8 @@ public class WindowsMachine extends Machine {
         res.append(Constants.NEWLINE);
         // APPLY DATABASE!
         res.append(osInstallDatabase());
-        // APPLY BITPRESERVATION DATABASE!
-        res.append(osInstallBitPreservationDatabase());
+        // APPLY ARCHIVE DATABASE!
+        res.append(osInstallArchiveDatabase());
         // HANDLE JMXREMOTE PASSWORD AND ACCESS FILE.
         res.append(getJMXremoteFilesCommand());
         // END OF SCRIPT
@@ -848,23 +848,24 @@ public class WindowsMachine extends Machine {
     /**
      * THIS HAS NOT BEEN IMPLEMENTED FOR WINDOWS YET - ONLY LINUX!
      * 
-     * Checks if a specific directory for the bitpreservation database is given 
-     * in the settings, and thus if the bitpreservation database should be 
+     * Checks if a specific directory for the archive database is given 
+     * in the settings, and thus if the archive database should be 
      * installed on this machine.
      * 
-     * If not specific database is given (bitpresevationDatabaseFileName = null)
+     * If not specific database is given (archiveDatabaseFileName = null)
      * then use the default in the NetarchiveSuite.zip package.
-     * Else send the new bitpreservation database to the standard database 
+     * Else send the new archive database to the standard database 
      * location, and extract it to the given location.
      * 
-     * @return The script for installing the bitpreservation database 
+     * @return The script for installing the archive database 
      * (if needed).
      */
+
     @Override
-    protected String osInstallBitPreservationDatabase() {
+    protected String osInstallArchiveDatabase() {
         String bpDatabaseDir = 
-            machineParameters.getBitPreservationDatabaseDirValue();
-        // Do not install if no proper bitpreservation database directory.
+            machineParameters.getArchiveDatabaseDirValue();
+        // Do not install if no proper archive database directory.
         if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
             return Constants.EMPTY;
         }

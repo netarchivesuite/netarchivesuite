@@ -62,8 +62,8 @@ public class PhysicalLocation {
     private File securityPolicyFile;
     /** The inherited database file name.*/
     private File databaseFile;
-    /** The inherited bitpreservation database file name.*/
-    private File bpDatabaseFile;
+    /** The inherited archive database file name.*/
+    private File arcDatabaseFile;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
 
@@ -79,7 +79,7 @@ public class PhysicalLocation {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFile The harvest definition database.
-     * @param bpdbFile The bitpreservation database. 
+     * @param arcdbFile The archive database. 
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, logProp, securityPolicy; or if the
@@ -87,7 +87,7 @@ public class PhysicalLocation {
      */
     public PhysicalLocation(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource, File logProp,
-            File securityPolicy, File dbFile, File bpdbFile, boolean resetDir) 
+            File securityPolicy, File dbFile, File arcdbFile, boolean resetDir) 
             throws ArgumentNotValid {
         // test if valid arguments
         ArgumentNotValid.checkNotNull(subTreeRoot, 
@@ -108,7 +108,7 @@ public class PhysicalLocation {
         logPropFile = logProp;
         securityPolicyFile = securityPolicy;
         databaseFile = dbFile;
-        bpDatabaseFile = bpdbFile;
+        arcDatabaseFile = arcdbFile;
         resetDirectory = resetDir;
         
         // retrieve the specific settings for this instance 
@@ -168,12 +168,12 @@ public class PhysicalLocation {
                     Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE)) {
                 machines.add(new WindowsMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFile, bpDatabaseFile, 
+                        securityPolicyFile, databaseFile, arcDatabaseFile, 
                         resetDirectory));
             } else {
                 machines.add(new LinuxMachine(e, settings, machineParameters,
                         netarchiveSuiteFileName, logPropFile, 
-                        securityPolicyFile, databaseFile, bpDatabaseFile,
+                        securityPolicyFile, databaseFile, arcDatabaseFile,
                         resetDirectory));
             }
         }

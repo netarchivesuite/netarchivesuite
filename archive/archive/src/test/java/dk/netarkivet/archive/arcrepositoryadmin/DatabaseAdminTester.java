@@ -36,10 +36,19 @@ public class DatabaseAdminTester extends TestCase {
         
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
 
-        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE,
+        // define the settings for accessing the database
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS,
                 PrintNotifications.class.getName());
+
     }
     
     public void tearDown() {

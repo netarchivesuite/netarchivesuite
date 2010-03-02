@@ -78,8 +78,8 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_OUTPUT_DIRECTORY;
     public static final String ARGUMENT_DATABASE_FILE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_DATABASE_FILE;
-    public static final String ARGUMENT_BP_DATABASE_FILE = 
-        Constants.ARG_INIT_ARG + Constants.ARG_BP_DB;
+    public static final String ARGUMENT_ARCHIVE_DATABASE_FILE = 
+        Constants.ARG_INIT_ARG + Constants.ARG_ARC_DB;
     public static final String ARGUMENT_TEST = 
 	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
     public static final String ARGUMENT_EVALUATE = 

@@ -142,15 +142,60 @@ public class ArchiveSettings {
             = "settings.archive.bitpreservation.baseDir";
     
     /**
-     * <b>settings.archive.admin.database.url</b>: <br>
-     * Setting for giving the URL to the database used by the 
-     * DatabaseBasedActiveBitPreservation class.
+     * <b>settings.archive.admin.class</b>
+     * The path to the settings for the adminstration instance class.
      */
-    public static String URL_ARCREPOSITORY_ADMIN_DATABASE
-            = "settings.archive.admin.database.url";
+    public static String ADMIN_CLASS = "settings.archive.admin.class";
     
     /**
-     * <b>settings.archive.bitpreservation.database.class</b>: <br>
+     * <b>settings.archive.admin.database.baseUrl</b>: <br>
+     * Setting for giving the base URL to the database used by the 
+     * ReplicaCacheDatabase class. It has the default value: 'jdbc:derby'.
+     * Do not retrieve this directly, use in stead the function 
+     * dk.netarkivet.archive.arcrepositoryadmin.DBConnect.getArchiveUrl().
+     * 
+     * If a specific url is wanted, and not constructed from the 4 different
+     * parts, just assign the entire URL to this setting and set the other
+     * settings to the empty string.
+     */
+    public static String BASEURL_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.baseUrl";
+
+    /**
+     * <b>settings.archive.admin.database.machine</b>: <br>
+     * Setting for giving the machine of the external database used by the 
+     * ReplicaCacheDatabase class. It is default: 'localhost'.
+     * If this is empty, then it will be ignored.
+     * Do not retrieve this directly, use in stead the function 
+     * dk.netarkivet.archive.arcrepositoryadmin.DBConnect.getArchiveUrl().
+     */
+    public static String MACHINE_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.machine";
+
+    /**
+     * <b>settings.archive.admin.database.port</b>: <br>
+     * Setting for giving the port of the external database used by the 
+     * ReplicaCacheDatabase class. It is default: '1527'.
+     * If this is empty, then it will be ignored.
+     * Do not retrieve this directly, use in stead the function 
+     * dk.netarkivet.archive.arcrepositoryadmin.DBConnect.getArchiveUrl().
+     */
+    public static String PORT_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.port";
+
+    /**
+     * <b>settings.archive.admin.database.dir</b>: <br>
+     * Setting for giving the machine of the external database used by the 
+     * ReplicaCacheDatabase class. It is default: 'admindb'.
+     * If this is empty, then it will be ignored.
+     * Do not retrieve this directly, use in stead the function 
+     * dk.netarkivet.archive.arcrepositoryadmin.DBConnect.getArchiveUrl().
+     */
+    public static String DIR_ARCREPOSITORY_ADMIN_DATABASE
+            = "settings.archive.admin.database.dir";
+
+    /**
+     * <b>settings.archive.admin.database.class</b>: <br>
      * Setting for which class is used for handling the database for the
      * DatabaseBasedActiveBitPreservation class.
      */
@@ -179,10 +224,4 @@ public class ArchiveSettings {
      */
     public static String CHECKSUM_MIN_SPACE_LEFT 
             = "settings.archive.checksum.minSpaceLeft";
-    
-    /**
-     * <b>settings.archive.admin.class</b>
-     * The path to the settings for the adminstration instance class.
-     */
-    public static String ADMIN_CLASS = "settings.archive.admin.class";
 }

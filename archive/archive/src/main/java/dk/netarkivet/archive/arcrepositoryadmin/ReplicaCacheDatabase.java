@@ -76,8 +76,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private ReplicaCacheDatabase() {
         // Initialise the database based on settings.
-        dbConnection = DBConnect.getDBConnection(Settings.get(
-                ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE));
+        dbConnection = DBConnect.getDBConnection(DBConnect.getArchiveUrl());
 
         // initialise the database.
         initialiseDB();

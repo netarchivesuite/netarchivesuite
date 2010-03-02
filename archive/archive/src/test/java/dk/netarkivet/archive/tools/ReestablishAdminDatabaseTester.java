@@ -23,8 +23,15 @@ public class ReestablishAdminDatabaseTester extends TestCase {
         pss.setUp();
         pse.setUp();
         
-        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE, 
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, 
                 TestInfo.DATABASE_URL);
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+
     }
     
     public void tearDown() {

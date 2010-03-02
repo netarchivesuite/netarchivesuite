@@ -49,8 +49,8 @@ public class Parameters {
     private Element machineUserName;
     /** The directory for the database.*/
     private Element databaseDir;
-    /** The directory for the bitpreservation database.*/
-    private Element bpDatabaseDir;
+    /** The directory for the archive database.*/
+    private Element arcDatabaseDir;
 
     /**
      * Constructor.
@@ -69,8 +69,8 @@ public class Parameters {
         machineUserName = root.getChild(
                 Constants.DEPLOY_MACHINE_USER_NAME);
         databaseDir = root.getChild(Constants.DEPLOY_DATABASE_DIR);
-        bpDatabaseDir = root.getChild(
-                Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR);
+        arcDatabaseDir = root.getChild(
+                Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
     }
 
     /**
@@ -100,13 +100,13 @@ public class Parameters {
         if(parent.machineUserName != null) {
             machineUserName = parent.machineUserName.createCopy();
         } 
-        // copy parent database dir (if any)
+        // copy parent harvest database dir (if any)
         if(parent.databaseDir != null) {
             databaseDir = parent.databaseDir.createCopy();
         }
-        // copy the parent bitpreservation database dir (if any)
-        if(parent.bpDatabaseDir != null) {
-            bpDatabaseDir = parent.bpDatabaseDir.createCopy();
+        // copy the parent archive database dir (if any)
+        if(parent.arcDatabaseDir != null) {
+            arcDatabaseDir = parent.arcDatabaseDir.createCopy();
         }
     }
 
@@ -163,15 +163,15 @@ public class Parameters {
                         + " but " + tmp.size() + " received.");
             }
         }
-        // check if root contains a bitpreservation database dir to overwrite 
+        // check if root contains a archive database dir to overwrite 
         // inherited ones.
-        tmp = root.elements(Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR);
+        tmp = root.elements(Constants.DEPLOY_ARCHIVE_DATABASE_DIR);
         if(tmp.size() > 0) {
-            bpDatabaseDir = tmp.get(0);
+            arcDatabaseDir = tmp.get(0);
             // log if more than one database directory.
             if(tmp.size() > 1) {
                 System.out.println("Maximum 1 value expected at: "
-                        + Constants.DEPLOY_BITPRESERVATION_DATABASE_DIR
+                        + Constants.DEPLOY_ARCHIVE_DATABASE_DIR
                         + " but " + tmp.size() + " received.");
             }
         }
@@ -221,14 +221,14 @@ public class Parameters {
     }
     
     /**
-     * For retrieving the directory for the bitpreservation database.
+     * For retrieving the directory for the archive database.
      * 
-     * @return The bitpreservation database install directory element, or 
+     * @return The archive database install directory element, or 
      * empty string if install dir is null.
      */
-    public String getBitPreservationDatabaseDirValue() {
-        if(bpDatabaseDir != null) {
-            return bpDatabaseDir.getText();
+    public String getArchiveDatabaseDirValue() {
+        if(arcDatabaseDir != null) {
+            return arcDatabaseDir.getText();
         } else {
             return "";
         }

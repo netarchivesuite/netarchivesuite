@@ -147,8 +147,15 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         // Database admin test.
         FileUtils.copyDirectory(TestInfo.ORIGINAL_DATABASE_DIR, 
                 TestInfo.WORKING_DIR);
-        Settings.set(ArchiveSettings.URL_ARCREPOSITORY_ADMIN_DATABASE, 
+        Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, 
                 "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+        Settings.set(ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE,
+                "");
+
         Settings.set(ArchiveSettings.ADMIN_CLASS, 
                 dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin.class.getName());
         

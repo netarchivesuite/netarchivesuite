@@ -33,6 +33,7 @@ import java.util.WeakHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -103,6 +104,45 @@ public final class DBConnect {
             log.warn(message, e);
             throw new IOFailure(message, e);
         }
+    }
+    
+    /**
+     * Method for retrieving the url for the archive database.
+     * This url will be constructed from the base-url, the machine, 
+     * the port and the directory.
+     * 
+     * @return The url for the external archive database.
+     */
+    public static String getArchiveUrl() {
+        StringBuilder res = new StringBuilder();
+        res.append(Settings.get(
+                ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE));
+
+        // append the machine part of the url, if it exists.
+        String tmp = Settings.get(
+                ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE);
+        if(!tmp.isEmpty()) {
+            res.append("://");
+            res.append(tmp);
+        }
+        
+        // append the machine part of the url, if it exists.
+        tmp = Settings.get(
+                ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE);
+        if(!tmp.isEmpty()) {
+            res.append(":");
+            res.append(tmp);
+        }
+
+        // append the machine part of the url, if it exists.
+        tmp = Settings.get(
+                ArchiveSettings.DIR_ARCREPOSITORY_ADMIN_DATABASE);
+        if(!tmp.isEmpty()) {
+            res.append("/");
+            res.append(tmp);
+        }
+
+        return res.toString();
     }
     
     /**

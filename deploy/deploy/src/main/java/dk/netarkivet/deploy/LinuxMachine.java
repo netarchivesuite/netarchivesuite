@@ -55,15 +55,15 @@ public class LinuxMachine extends Machine {
      * @param securityPolicy The security policy file, to be copied into
      * machine directory.
      * @param dbFile The name of the database file.
-     * @param bpdbFile The name of the bitpreservation file.
+     * @param arcdbFile The name of the archive file.
      * @param resetDir Whether the temporary directory should be reset.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFile,
-            File bpdbFile, boolean resetDir) {
+            File arcdbFile, boolean resetDir) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, bpdbFile, resetDir);
+                logProp, securityPolicy, dbFile, arcdbFile, resetDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
@@ -169,8 +169,8 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
         // APPLY DATABASE!
         res.append(osInstallDatabase());
-        // APPLY BITPRESERVATION DATABASE!
-        res.append(osInstallBitPreservationDatabase());
+        // APPLY ARCHIVE DATABASE!
+        res.append(osInstallArchiveDatabase());
         // echo make scripts executable
         res.append(ScriptConstants.ECHO_MAKE_EXECUTABLE);
         res.append(Constants.NEWLINE);
@@ -707,23 +707,23 @@ public class LinuxMachine extends Machine {
     }
     
     /**
-     * Checks if a specific directory for the bitpreservation database is given 
-     * in the settings, and thus if the bitpreservation database should be 
+     * Checks if a specific directory for the archive database is given 
+     * in the settings, and thus if the archive database should be 
      * installed on this machine.
      * 
-     * If not specific database is given (bitpresevationDatabaseFileName = null)
+     * If not specific database is given (archiveDatabaseFileName = null)
      * then use the default in the NetarchiveSuite.zip package.
-     * Else send the new bitpreservation database to the standard database 
+     * Else send the new archive database to the standard database 
      * location, and extract it to the given location.
      * 
-     * @return The script for installing the bitpreservation database 
+     * @return The script for installing the archive database 
      * (if needed).
      */
     @Override
-    protected String osInstallBitPreservationDatabase() {
+    protected String osInstallArchiveDatabase() {
         String bpDatabaseDir = 
-            machineParameters.getBitPreservationDatabaseDirValue();
-        // Do not install if no proper bitpreservation database directory.
+            machineParameters.getArchiveDatabaseDirValue();
+        // Do not install if no proper archive database directory.
         if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
             return Constants.EMPTY;
         }
@@ -732,23 +732,23 @@ public class LinuxMachine extends Machine {
         StringBuilder res = new StringBuilder();
 
         // copy to final destination if database argument.
-        if(bpDatabaseFile != null) {
+        if(arcDatabaseFile != null) {
             // echo Copying database
-            res.append(ScriptConstants.ECHO_COPYING_BP_DATABASE);
+            res.append(ScriptConstants.ECHO_COPYING_ARCHIVE_DATABASE);
             res.append(Constants.NEWLINE);
             // scp database.jar user@machine:dbDir/bpdb
             res.append(ScriptConstants.SCP + Constants.SPACE);
-            res.append(bpDatabaseFile.getPath());
+            res.append(arcDatabaseFile.getPath());
             res.append(Constants.SPACE);
             res.append(machineUserLogin());
             res.append(Constants.COLON);
             res.append(getInstallDirPath());
             res.append(Constants.SLASH);
-            res.append(Constants.BP_DATABASE_BASE_PATH);
+            res.append(Constants.ARCHIVE_DATABASE_BASE_PATH);
             res.append(Constants.NEWLINE);
         }
         // unzip database.
-        res.append(ScriptConstants.ECHO_UNZIPPING_BP_DATABASE);
+        res.append(ScriptConstants.ECHO_UNZIPPING_ARCHIVE_DATABASE);
         res.append(Constants.NEWLINE);
         // ssh user@machine "
         // cd dir; if [ -d bpDatabaseDir ]; then echo ; 
@@ -770,7 +770,7 @@ public class LinuxMachine extends Machine {
         res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.ELSE
                 + Constants.SPACE + ScriptConstants.LINUX_UNZIP_COMMAND
                 + Constants.SPACE);
-        res.append(Constants.BP_DATABASE_BASE_PATH);
+        res.append(Constants.ARCHIVE_DATABASE_BASE_PATH);
         res.append(Constants.SPACE + ScriptConstants.SCRIPT_DIR 
                 + Constants.SPACE);
         res.append(bpDatabaseDir);

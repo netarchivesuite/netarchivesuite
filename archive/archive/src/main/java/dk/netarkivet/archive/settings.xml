@@ -64,8 +64,11 @@
             <database>
                 <!-- This database cannot be embedded. -->
                 <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
-                <!-- Default settings for the derby external database. -->
-                <url>jdbc:derby://localhost:1527/admindb</url>
+                <!-- The url is default: jbdc:derby://localhost:1527/admindb -->
+                <baseUrl>jdbc:derby</baseUrl>
+                <machine>localhost</machine>
+                <port>1527</port>
+                <dir>admindb</dir>
             </database>
         </admin>
     </archive>

@@ -12,9 +12,9 @@ ssh test@kb-test-adm-001.kb.dk " cd ~; if [ -e /home/test/test/conf/jmxremote.pa
 ssh test@kb-test-adm-001.kb.dk " cd ~; if [ -e /home/test/test/conf/jmxremote.access ]; then chmod u+rwx /home/test/test/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r kb-test-adm-001.kb.dk/* test@kb-test-adm-001.kb.dk:/home/test/test/conf/
-echo Copying database
+echo Copying harvest definition database
 scp tests/dk/netarkivet/deploy/data/working/database.jar test@kb-test-adm-001.kb.dk:/home/test/test/harvestdefinitionbasedir/fullhddb.jar
-echo Unzipping database
+echo Unzipping harvest definition database
 ssh test@kb-test-adm-001.kb.dk "cd /home/test/test; if [ -d harvestDatabase ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/fullhddb.jar -d harvestDatabase; fi; exit; "
 echo make scripts executable
 ssh test@kb-test-adm-001.kb.dk "chmod 700 /home/test/test/conf/*.sh "
