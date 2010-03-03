@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -49,6 +50,7 @@ import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.distribute.TestRemoteFile;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -658,27 +660,30 @@ public class BitarchiveServerTester extends TestCase {
 
         assertEquals("Should have no remote files left on the server",
                      0, TestRemoteFile.remainingFiles().size());
-    }
 
-    /**
-     * A generic message listener class which just stores a list of all
-     * messages it receives.
-     */
-    public static class GenericMessageListener implements MessageListener {
-        /**
-         * List of messages received.
-         */
-        public ArrayList<NetarkivetMessage> messagesReceived =
-                new ArrayList<NetarkivetMessage>();
-
-        /**
-         * Handle the message.
-         * @param message the given message
-         */
-        public void onMessage(Message message) {
-            NetarkivetMessage naMsg = JMSConnection.unpack(message);
-            messagesReceived.add(naMsg);
+        assertTrue("The message should refer to the current replica id.", 
+                m4.getReplicaId().contains(Settings.get(CommonSettings.USE_REPLICA_ID)));
+        m4.clearBuffer();
+        m4.accept(bas);
+        try {
+            m4.getData();
+            fail("This should throw an IOFailure, since the data has just been removed.");
+        } catch (IOFailure e) {
+            // expected
         }
+        
+    }
+    
+    public void testHeartBeatSender() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        BitarchiveServer bas = BitarchiveServer.getInstance();
+        
+        Field hbs = ReflectUtils.getPrivateField(BitarchiveServer.class, "heartBeatSender");
+        
+        // ensure, that a HeartBeatSender is created.
+        assertNotNull("The HeartBeatSender should not be null.", hbs.get(bas));
+        // ensure, that the HeartBeatSender refers to the BitarchiveServer in the text.
+        assertTrue("The HeartBeatSender should refer to the bitarchive server in the text", 
+                hbs.get(bas).toString().contains(bas.toString()));
     }
     
     /**
@@ -707,4 +712,24 @@ public class BitarchiveServerTester extends TestCase {
                 pss.getOut().contains("This application takes no arguments"));
     }
 
+    /**
+     * A generic message listener class which just stores a list of all
+     * messages it receives.
+     */
+    public static class GenericMessageListener implements MessageListener {
+        /**
+         * List of messages received.
+         */
+        public ArrayList<NetarkivetMessage> messagesReceived =
+                new ArrayList<NetarkivetMessage>();
+
+        /**
+         * Handle the message.
+         * @param message the given message
+         */
+        public void onMessage(Message message) {
+            NetarkivetMessage naMsg = JMSConnection.unpack(message);
+            messagesReceived.add(naMsg);
+        }
+    }
 }
