@@ -116,6 +116,12 @@ public class GetFileMessageTester extends TestCase {
         assertTrue("Should not have deleted remote file on error",
                 origFile.exists());
 
+        Field remoteFile = ReflectUtils.getPrivateField(GetFileMessage.class, "remoteFile");
+        assertNotNull("The message should contain a remote file", remoteFile.get(message));
+        message.clearBuffer();
+        assertNull("The message should now contain a null instead of the remote file", 
+                remoteFile.get(message));
+        
 
     }
 }
