@@ -135,7 +135,7 @@ public final class ScriptConstants {
     /** "    kill -9 $PIDS".*/
     static final String KILL_9_PIDS = "    kill -9 $PIDS";
     /** "    export CLASSPATH=".*/
-    static final String EXPORT_CLASSPATH = "    export CLASSPATH=";
+    static final String EXPORT_CLASSPATH = "export CLASSPATH=";
     /** to.*/
     static final String TO = "to";
     /** if.*/
@@ -222,6 +222,8 @@ public final class ScriptConstants {
     static final String JMXREMOTE_MONITOR_PRIVILEGES = "readonly";
     /** readonly - for the controlRole.*/
     static final String JMXREMOTE_HERITRIX_PRIVELEGES = "readwrite";
+    /** The argument for the port for the external database: -p. */
+    static final String DATABASE_PORT_ARGUMENT = "-p";
     
     
     // echos

@@ -173,6 +173,10 @@ public final class Constants {
     /** The path to the archive database port leaf from beyond settings.*/
     static final String[] COMPLETE_ARCHIVE_DATABASE_PORT =
         ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE.split("[.]");
+    /** The path to the archive database port leaf from settings.*/
+    static final String[] SETTINGS_ARCHIVE_DATABASE_PORT =
+        ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE
+        .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the heritrix jmxPort from the settings branch.*/
     static final String[] SETTINGS_HARVEST_HETRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT

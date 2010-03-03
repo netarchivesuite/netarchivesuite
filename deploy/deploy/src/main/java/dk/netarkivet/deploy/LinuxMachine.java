@@ -574,7 +574,8 @@ public class LinuxMachine extends Machine {
                     // else
                     appPrint.println(ScriptConstants.ELSE);
                     //     export CLASSPATH = cp;
-                    appPrint.println(ScriptConstants.EXPORT_CLASSPATH
+                    appPrint.println(ScriptConstants.MULTI_SPACE_2
+                            + ScriptConstants.EXPORT_CLASSPATH
                             + osGetClassPath(app)
                             + ScriptConstants.VALUE_OF_CLASSPATH 
                             + Constants.SEMICOLON);
@@ -1213,6 +1214,10 @@ public class LinuxMachine extends Machine {
             File startArcDBScript = new File(dir, 
                     Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension);
             
+            // retrieve the port
+            String port = settings.getLeafValue(
+                    Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
+            
             // make print writer for writing to file
             PrintWriter startDBPrint = new PrintWriter(startArcDBScript);
             try {
@@ -1224,13 +1229,20 @@ public class LinuxMachine extends Machine {
                 // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
                 //$CLASSPATH 
                 startDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
-                startDBPrint.print(Constants.SEMICOLON);
+                startDBPrint.print(Constants.COLON);
                 startDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
-                // - java org.apache.derby.drda.NetworkServerControl start
+                // - java org.apache.derby.drda.NetworkServerControl 
+                // [-p PORT] start
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
                 startDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                // insert the PORT if any specified.
+                if(port != null && !port.isEmpty()) {
+                    startDBPrint.print(Constants.SPACE);
+                    startDBPrint.print(ScriptConstants.DATABASE_PORT_ARGUMENT);
+                    startDBPrint.print(Constants.SPACE);
+                    startDBPrint.print(port);
+                } 
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.DERBY_COMMAND_START);
                 startDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);
@@ -1293,7 +1305,11 @@ public class LinuxMachine extends Machine {
      * <br/> &gt; #!/bin/bash
      * <br/> &gt; cd InstallDir
      * <br/> &gt; export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar 
-     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl shutdown
+     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl 
+     * -p 'PORT' shutdown
+     * 
+     * <br/>
+     * where 'PORT' is in the setting: settings.archive.admin.database.port
      * 
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be created.
@@ -1311,6 +1327,10 @@ public class LinuxMachine extends Machine {
             File killArcDBScript = new File(dir, 
                     Constants.SCRIPT_NAME_ARC_DB_KILL + scriptExtension);
             
+            // retrieve the port for the database.
+            String port = settings.getLeafValue(
+                    Constants.SETTINGS_ARCHIVE_DATABASE_PORT);
+            
             // make print writer for writing to file
             PrintWriter killDBPrint = new PrintWriter(killArcDBScript);
             try {
@@ -1322,13 +1342,20 @@ public class LinuxMachine extends Machine {
                 // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
                 //$CLASSPATH 
                 killDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                killDBPrint.print(Constants.SPACE);
                 killDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
-                killDBPrint.print(Constants.SEMICOLON);
+                killDBPrint.print(Constants.COLON);
                 killDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
-                // - java org.apache.derby.drda.NetworkServerControl shutdown
+                // - java org.apache.derby.drda.NetworkServerControl 
+                // [-p 'PORT'] shutdown
                 killDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
                 killDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
+                // insert the PORT if any specified.
+                if(port != null && !port.isEmpty()) {
+                    killDBPrint.print(Constants.SPACE);
+                    killDBPrint.print(ScriptConstants.DATABASE_PORT_ARGUMENT);
+                    killDBPrint.print(Constants.SPACE);
+                    killDBPrint.print(port);
+                }
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.print(ScriptConstants.DERBY_COMMAND_KILL);
                 killDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);

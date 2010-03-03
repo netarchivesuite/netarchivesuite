@@ -67,7 +67,16 @@
             <arcrepository>
                 <baseDir>.</baseDir>            
             </arcrepository>
-        </archive>
+        <admin>
+                        <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
+                        <database>
+                            <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8119</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin></archive>
         <!-- viewerproxy.baseDir is set below -->            
         <!-- harvester.harvesting.serverDir is set below -->            
     </settings>

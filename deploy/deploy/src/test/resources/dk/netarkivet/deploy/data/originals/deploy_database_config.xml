@@ -164,6 +164,21 @@
             <deployInstallDir>/home/test</deployInstallDir>
             <deployDatabaseDir>harvestDatabase</deployDatabaseDir>
             <deployArchiveDatabaseDir>bitpreservationdb</deployArchiveDatabaseDir>
+            <settings>
+                <archive>
+                    <admin>
+                        <class>dk.netarkivet.archive.arcrepositoryadmin.DatabaseAdmin</class>
+                        <database>
+                            <class>dk.netarkivet.archive.arcrepositoryadmin.DerbyServerSpecifics</class>
+                            <baseUrl>jdbc:derby</baseUrl>
+                            <machine>localhost</machine>
+                            <port>8119</port>
+                            <dir>adminDB</dir>
+                        </database>
+                    </admin>
+                </archive>
+            </settings>
+
             <applicationName name="dk.netarkivet.common.webinterface.GUIApplication">
                 <deployClassPath>lib/dk.netarkivet.harvester.jar</deployClassPath>
                 <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
