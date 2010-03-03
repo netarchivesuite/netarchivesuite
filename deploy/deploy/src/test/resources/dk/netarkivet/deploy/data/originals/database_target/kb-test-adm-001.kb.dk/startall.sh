@@ -1,10 +1,11 @@
-echo Starting external database.
-if [ -e ./start_external_database.sh ]; then
-      ./start_external_database.sh
-fi
-echo Starting all applications on: 'kb-test-adm-001.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
+echo Starting external database.
+if [ -e ./start_external_database.sh ]; then
+      ./start_external_database.sh &
+      sleep 5
+fi
+echo Starting all applications on: 'kb-test-adm-001.kb.dk'
 if [ -e ./start_GUIApplication.sh ]; then 
       ./start_GUIApplication.sh
 fi

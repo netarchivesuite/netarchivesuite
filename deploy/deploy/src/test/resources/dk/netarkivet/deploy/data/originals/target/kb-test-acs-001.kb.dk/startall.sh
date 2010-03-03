@@ -1,6 +1,6 @@
-echo Starting all applications on: 'kb-test-acs-001.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
+echo Starting all applications on: 'kb-test-acs-001.kb.dk'
 if [ -e ./start_IndexServerApplication.sh ]; then 
       ./start_IndexServerApplication.sh
 fi

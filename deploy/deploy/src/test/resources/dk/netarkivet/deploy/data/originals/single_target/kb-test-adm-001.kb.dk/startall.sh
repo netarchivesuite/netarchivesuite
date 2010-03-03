@@ -1,6 +1,6 @@
-echo Starting all applications on: 'kb-test-adm-001.kb.dk'
 #!/bin/bash
 cd /home/test/TEST/conf/
+echo Starting all applications on: 'kb-test-adm-001.kb.dk'
 if [ -e ./start_GUIApplication.sh ]; then 
       ./start_GUIApplication.sh
 fi

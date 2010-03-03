@@ -365,16 +365,17 @@ public class LinuxMachine extends Machine {
             // Initialise script
             PrintWriter startPrinter = new PrintWriter(startAllScript);
             try {
-                // start the database, if any, before the applications.
-                startPrinter.print(callStartArchiveDatabase());
-                
-                startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
-                        + Constants.COLON + Constants.SPACE 
-                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
                 startPrinter.println(ScriptConstants.BIN_BASH_COMMENT);
                 startPrinter.println(ScriptConstants.CD + Constants.SPACE
                         + getConfDirPath());
-                
+
+                // start the database, if any, before the applications.
+                startPrinter.print(callStartArchiveDatabase());
+
+                startPrinter.println(ScriptConstants.ECHO_START_ALL_APPS
+                        + Constants.COLON + Constants.SPACE 
+                        + Constants.APOSTROPHE + name + Constants.APOSTROPHE);
+
                 // insert path to kill script for all applications
                 for(Application app : applications) {
                     // make name of file
@@ -1194,8 +1195,9 @@ public class LinuxMachine extends Machine {
      * 
      * <br/> &gt; #!/bin/bash
      * <br/> &gt; cd InstallDir
-     * <br/> &gt; export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar 
-     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl start &
+     * <br/> &gt; java -cp 'DB-CLASSPATH' 
+     * org.apache.derby.drda.NetworkServerControl start < /dev/null > 
+     * start_external_database.log 2>&1 &
      * 
      * @param dir The directory where the script will be placed.
      * @throws IOFailure If the script cannot be written.
@@ -1226,15 +1228,12 @@ public class LinuxMachine extends Machine {
                 // - cd InstallDir
                 startDBPrint.print(ScriptConstants.CD + Constants.SPACE);
                 startDBPrint.println(getInstallDirPath());
-                // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
-                //$CLASSPATH 
-                startDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                startDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
-                startDBPrint.print(Constants.COLON);
-                startDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
-                // - java org.apache.derby.drda.NetworkServerControl 
-                // [-p PORT] start
+                // - java -cp 'DB-CLASSPATH' 
+                // org.apache.derby.drda.NetworkServerControl start  
+                // < /dev/null > start_external_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                startDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
+                startDBPrint.print(Constants.SPACE + getDbClasspaths());
                 startDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
                 // insert the PORT if any specified.
                 if(port != null && !port.isEmpty()) {
@@ -1245,7 +1244,13 @@ public class LinuxMachine extends Machine {
                 } 
                 startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.DERBY_COMMAND_START);
-                startDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.print(Constants.SCRIPT_NAME_ARC_DB_START);
+                startDBPrint.print(Constants.EXTENSION_LOG_FILES);
+                startDBPrint.print(Constants.SPACE);
+                startDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
             } finally {
                 // close file
                 startDBPrint.close();
@@ -1264,7 +1269,8 @@ public class LinuxMachine extends Machine {
      * 
      * <br/> &gt; echo Starting external database
      * <br/> &gt; if [ -e ./start_external_database.sh ]; then
-     * <br/> &gt;     ./start_external_database.sh
+     * <br/> &gt;     ./start_external_database.sh &
+     * <br/> &gt;     sleep 5
      * <br/> &gt; fi
      * 
      * @return The command for running external_database_start script.
@@ -1279,7 +1285,7 @@ public class LinuxMachine extends Machine {
         // Constructing filename
         String appScript = Constants.DOT + Constants.SLASH
                 + Constants.SCRIPT_NAME_ARC_DB_START + scriptExtension;
-
+        
         StringBuilder res = new StringBuilder();
         // echo Starting external database
         res.append(ScriptConstants.ECHO_START_EXTERNAL_DATABASE);
@@ -1290,10 +1296,13 @@ public class LinuxMachine extends Machine {
         res.append(Constants.NEWLINE);
         //    ./start_external_database.sh
         res.append(ScriptConstants.MULTI_SPACE + appScript);
+        res.append(ScriptConstants.LINUX_RUN_BACKGROUND + Constants.NEWLINE);
+        //    sleep 5
+        res.append(ScriptConstants.MULTI_SPACE + ScriptConstants.SLEEP_5);
         res.append(Constants.NEWLINE);
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
-        
+
         return res.toString();
     }
 
@@ -1304,9 +1313,9 @@ public class LinuxMachine extends Machine {
      * 
      * <br/> &gt; #!/bin/bash
      * <br/> &gt; cd InstallDir
-     * <br/> &gt; export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar 
-     * <br/> &gt; java org.apache.derby.drda.NetworkServerControl 
-     * -p 'PORT' shutdown
+     * <br/> &gt; java -cp 'DB-CLASSPATH' 
+     * org.apache.derby.drda.NetworkServerControl shutdown < /dev/null >> 
+     * start_external_database.log 2>&1 &
      * 
      * <br/>
      * where 'PORT' is in the setting: settings.archive.admin.database.port
@@ -1336,18 +1345,16 @@ public class LinuxMachine extends Machine {
             try {
                 // - #!/bin/bash
                 killDBPrint.println(ScriptConstants.BIN_BASH_COMMENT);
+
                 // - cd InstallDir
                 killDBPrint.print(ScriptConstants.CD + Constants.SPACE);
                 killDBPrint.println(getInstallDirPath());
-                // - export CLASSPATH=lib/db/derby.jar:lib/db/derbynet.jar:
-                //$CLASSPATH 
-                killDBPrint.print(ScriptConstants.EXPORT_CLASSPATH);
-                killDBPrint.print(ScriptConstants.DERBY_ACCESS_CLASSPATH);
-                killDBPrint.print(Constants.COLON);
-                killDBPrint.println(ScriptConstants.VALUE_OF_CLASSPATH);
-                // - java org.apache.derby.drda.NetworkServerControl 
-                // [-p 'PORT'] shutdown
+                // - java -cp 'DB-CLASSPATH' 
+                // org.apache.derby.drda.NetworkServerControl shutdown  
+                // < /dev/null >> start_external_database.log 2>&1 &
                 killDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                killDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
+                killDBPrint.print(Constants.SPACE + getDbClasspaths());
                 killDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
                 // insert the PORT if any specified.
                 if(port != null && !port.isEmpty()) {
@@ -1355,10 +1362,17 @@ public class LinuxMachine extends Machine {
                     killDBPrint.print(ScriptConstants.DATABASE_PORT_ARGUMENT);
                     killDBPrint.print(Constants.SPACE);
                     killDBPrint.print(port);
-                }
+                } 
                 killDBPrint.print(Constants.SPACE);
                 killDBPrint.print(ScriptConstants.DERBY_COMMAND_KILL);
-                killDBPrint.println(ScriptConstants.LINUX_RUN_BACKGROUND);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(ScriptConstants.LINUX_DEV_NULL);
+                killDBPrint.print(Constants.GREATER_THAN);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.print(Constants.SCRIPT_NAME_ARC_DB_START);
+                killDBPrint.print(Constants.EXTENSION_LOG_FILES);
+                killDBPrint.print(Constants.SPACE);
+                killDBPrint.println(ScriptConstants.LINUX_ERROR_MESSAGE_TO_1);
             } finally {
                 // close file
                 killDBPrint.close();
@@ -1408,6 +1422,27 @@ public class LinuxMachine extends Machine {
         // fi
         res.append(ScriptConstants.FI + Constants.NEWLINE);        
         
+        return res.toString();
+    }
+    
+    /**
+     * Method for combining the classpaths for the database access. <br/>
+     * E.g. /home/test/NAS/lib/db/derby.jar:/home/test/NAS/lib/db/derbynet.jar
+     * 
+     * @return The combined classpaths for accessing the database.
+     */
+    private String getDbClasspaths() {
+        StringBuilder res = new StringBuilder();
+        
+        for(int i = 0; i < ScriptConstants.DERBY_ACCESS_CLASSPATH.length; i++) {
+            // ignore colon at the first classpath.
+            if(i != 0) {
+                res.append(Constants.COLON);
+            }
+            res.append(getInstallDirPath() + Constants.SLASH);
+            res.append(ScriptConstants.DERBY_ACCESS_CLASSPATH[i]);
+        }
+        res.append(Constants.SPACE);
         return res.toString();
     }
 }

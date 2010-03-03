@@ -72,8 +72,8 @@ public final class ScriptConstants {
     static final String OPTION_SECIRITY_POLICY_WIN = OPTION_SECIRITY_POLICY 
             + "\"\"";
     /** lib/db/derbynet.jar:lib/db/derby.jar .*/
-    static final String DERBY_ACCESS_CLASSPATH = 
-        "lib/db/derbynet.jar:lib/db/derby.jar";
+    static final String[] DERBY_ACCESS_CLASSPATH = 
+        new String[]{"lib/db/derbynet.jar", "lib/db/derby.jar"};
     /** org.apache.derby.drda.NetworkServerControl .*/
     static final String DERBY_ACCESS_METHOD = 
         "org.apache.derby.drda.NetworkServerControl";
@@ -182,6 +182,8 @@ public final class ScriptConstants {
     static final String LINUX_N_THEN = "] ; then";
     /** java.*/
     static final String JAVA = "java";
+    /** -cp.*/
+    static final String JAVA_CLASSPATH = "-cp";
     /** rd. (windows for remove dir).*/
     static final String RD = "rd";
     /** not.*/
