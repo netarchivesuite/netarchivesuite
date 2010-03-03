@@ -26,6 +26,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestArcRepositoryClient;
@@ -60,6 +61,12 @@ public class RawMetadataCacheTester extends CacheTestCase {
                 "test1-42-cache", cache.getCacheFile(42L).getName());
         assertEquals("Should get dirname for cache files based on prefix",
                 "test1", cache.getCacheFile(42L).getParentFile().getName());
+        
+        // check that the matchers of the batchjob have the correct settings.
+        Field job = ReflectUtils.getPrivateField(RawMetadataCache.class, "job");
+        ARCBatchJob a = (ARCBatchJob) job.get(cache);
+        assertTrue("The batchjob should tell which arguments they have.", 
+                a.toString().contains(" with arguments: URLMatcher = .*, mimeMatcher = .*"));
     }
 
     public void testGetCacheDir() throws Exception {
