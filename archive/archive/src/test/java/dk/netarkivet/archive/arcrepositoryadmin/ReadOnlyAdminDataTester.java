@@ -54,7 +54,7 @@ public class ReadOnlyAdminDataTester extends TestCase {
     }
 
     public void testSynchronize() throws Exception {
-        ReadOnlyAdminData ad = AdminData.getReadOnlyInstance();
+        ReadOnlyAdminData ad = ReadOnlyAdminData.getInstance();
 
         try {
             ad.synchronize();
