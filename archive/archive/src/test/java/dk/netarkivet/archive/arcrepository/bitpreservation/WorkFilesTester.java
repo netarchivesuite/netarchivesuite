@@ -25,10 +25,12 @@ package dk.netarkivet.archive.arcrepository.bitpreservation;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.testutils.CollectionAsserts;
@@ -117,5 +119,11 @@ public class WorkFilesTester extends TestCase {
         sortedFileGen = WorkFiles.getSortedFile(f);
         assertEquals("Should have no contents",
                 empty, FileUtils.readListFromFile(sortedFileGen));
+        
+        // test date for non-existing file.
+        assertEquals("The file should have the date 'Thu Jan 01 01:00:00 CET 1970', but had: "
+                + WorkFiles.getLastUpdate(Replica.getReplicaFromId("THREE"), WorkFiles.FILES_ON_BA), 
+                new Date(0L).getTime(), WorkFiles.getLastUpdate(Replica.getReplicaFromId("ONE"), 
+                WorkFiles.FILES_ON_BA).getTime());
     }
 }
