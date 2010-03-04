@@ -45,5 +45,6 @@ class TestInfo {
     
     static final File ORIGINAL_DATABASE_DIR = new File(DATA_DIR, "database");
     static final File DATABASE_DIR = new File(WORKING_DIR, "database");
+    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "bpdb.jar");
 }
 

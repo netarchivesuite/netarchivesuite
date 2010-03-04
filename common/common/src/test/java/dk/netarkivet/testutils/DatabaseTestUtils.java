@@ -101,6 +101,57 @@ public class DatabaseTestUtils {
             return (Connection)m.invoke(null);
             */
     }
+    
+    /** Get access to the database stored in the given file.  This will start
+     * a new transaction that will be rolled back with dropDatabase.
+     * Only one connection can be taken at a time.
+     *
+     * @param jarfile A file that contains a test database.
+     * @param dbUnzipDir
+     * @return a connection to the database stored in the given file
+     * @throws SQLException
+     * @throws IOException
+     * @throws IllegalAccessException
+     */
+    public static Connection takeDatabase(File jarfile, File dbUnzipDir)
+            throws SQLException, IOException, IllegalAccessException
+    {
+        //String dbname = jarfile.getName().substring(0, jarfile.getName().lastIndexOf('.'));
+
+        FileUtils.removeRecursively(dbUnzipDir);
+        ZipUtils.unzip(jarfile, dbUnzipDir);
+        // Absolute or relative path should work according to
+        // http://incubator.apache.org/derby/docs/ref/rrefjdbc37352.html
+
+        final String dbfile = dbUnzipDir.getPath();
+        try {
+            Field f = DBConnect.class.getDeclaredField("connectionPool");
+            f.setAccessible(true);
+            connectionPool = (WeakHashMap<Thread,Connection>) f.get(null);
+        } catch (NoSuchFieldException e) {
+            throw new PermissionDenied("Can't get connectionPool field", e);
+        }
+        // Make sure we're using the right DB in DBConnect
+
+        /* Set DB name */
+        try {
+            String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
+            Class.forName(driverName).newInstance();
+        } catch (Exception e) {
+            throw new IOFailure("Can't register driver", e);
+        }
+        dburi = "jdbc:derby:" + dbfile;
+        return DriverManager.getConnection(dburi);
+            /*
+            Field f = DBConnect.class.getDeclaredField("dbname");
+            f.setAccessible(true);
+            f.set(null, Settings.get(Settings.HARVESTDEFINITION_BASEDIR) + "/fullhddb"
+                    + ";restoreFrom=" + new File(extractDir, dbname).getAbsolutePath());
+            Method m = DBConnect.class.getDeclaredMethod("getDB", new Class[0]);
+            m.setAccessible(true);
+            return (Connection)m.invoke(null);
+            */
+    }
 
     /** Get a connection to the given sample harvest definition database
      * and fool the HD DB connect class into thinking it should use that one.

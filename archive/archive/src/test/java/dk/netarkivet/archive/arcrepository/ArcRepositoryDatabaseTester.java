@@ -56,6 +56,7 @@ import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ClassAsserts;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -137,6 +138,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         JMSConnectionMockupMQ.clearTestQueues();
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        // Database admin test.
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,
@@ -144,9 +147,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 PrintNotifications.class.getName());
         
-        // Database admin test.
-        FileUtils.copyDirectory(TestInfo.ORIGINAL_DATABASE_DIR, 
-                TestInfo.WORKING_DIR);
+        
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE, 
                 "jdbc:derby:" + TestInfo.WORKING_DIR.getAbsolutePath());
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,
@@ -176,8 +177,9 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         testFiles = new File(BITARCHIVE_DIR, "filedir").listFiles(
                 FileUtils.ARCS_FILTER);
-    }
 
+    }
+    
     public void tearDown() throws Exception {
         // BATCH
         arcRepos.close(); //Close down ArcRepository controller
