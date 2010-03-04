@@ -1,30 +1,35 @@
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ * USA
+ */
 package dk.netarkivet.common.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/* $ ID: InputStreamUtils.java Jun 15, 2009 2:53:35 PM hbk $
-* $ Revision: $
-* $ Date: Jun 15, 2009 2:53:35 PM $ 
-* $ @auther hbk $
-* The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU Lesser General Public
-* License as published by the Free Software Foundation; either
-* version 2.1 of the License, or (at your option) any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this library; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+/**
+ * This class provides various utilities for inputstreams.
+ */
 public class InputStreamUtils {
     
     /** Read a line of bytes from an InputStream.  Useful when an InputStream
@@ -68,7 +73,7 @@ public class InputStreamUtils {
         int counter = 0;
         while ((ch = inputStream.read()) >= 0) {
             buf.write(ch);
-            counter ++;
+            counter++;
             if (ch == '\n') {
                 break;
             }
