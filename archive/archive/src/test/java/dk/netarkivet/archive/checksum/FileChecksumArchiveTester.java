@@ -23,6 +23,8 @@
 package dk.netarkivet.archive.checksum;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -183,5 +185,43 @@ public class FileChecksumArchiveTester extends TestCase {
                 wrongEntryContent.contains("TEST1.arc" + "##" + TestInfo.TEST1_CHECKSUM));
         assertTrue("The old checksums should be store here.",
                 wrongEntryContent.contains("TEST2.arc" + "##" + TestInfo.TEST2_CHECKSUM));
+    }
+    
+    /**
+     * Checks how the archive handles it, when there is an admin.data file.
+     * @throws IOException 
+     */
+    public void testAdminData() throws IOException {
+        FileChecksumArchive.getInstance().cleanup();
+        // PRINT THE ADMIN FILE
+        File adminFile = new File("admin.data");
+        adminFile.delete();
+        adminFile.createNewFile();
+        FileWriter fw = new FileWriter(adminFile);
+        // print version
+        fw.append("0.4" + "\n");
+        // print content.
+        fw.append("TEST1.arc checksum1 UPLOAD_STARTED 0" + "\n");
+        fw.append("TEST2.arc checksum2 UPLOAD_FAILED 1" + "\n");
+        fw.append("TEST3.arc checksum3 UPLOAD_COMPLETED 2" + "\n");
+        fw.append("TEST4.arc checksum4 UPLOAD_COMPLETED 3" + "\n");
+        
+        fw.flush();
+        fw.close();
+        
+        try {
+            FileChecksumArchive fca = FileChecksumArchive.getInstance();
+
+            assertFalse("TEST1.arc is not complete and should not be in archive", 
+                    fca.hasEntry("TEST1.arc"));
+            assertFalse("TEST2.arc is not complete and should not be in archive", 
+                    fca.hasEntry("TEST2.arc"));
+            assertEquals("Unexpected checksum for TEST3.arc", 
+                    "checksum3", fca.getChecksum("TEST3.arc"));
+            assertEquals("Unexpected checksum for TEST4.arc", 
+                    "checksum4", fca.getChecksum("TEST4.arc"));
+        } finally {
+            adminFile.delete();
+        }
     }
 }

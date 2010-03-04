@@ -23,7 +23,9 @@
  */
 package dk.netarkivet.archive.checksum;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
+import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -56,7 +59,10 @@ import dk.netarkivet.common.utils.Settings;
  * <b>'filename' + ## + 'checksum'</b> <br>
  * The lines are not sorted.
  * 
- * TODO synchronize the memory archive with the file archive.
+ * TODO
+ * If no file exists when the class is instantiated then it will be created,
+ * and if an 'admin.data' file exists, then it will be loaded and put into the
+ * archive file.
  */
 public final class FileChecksumArchive extends ChecksumArchive {
     /**
@@ -112,7 +118,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     /**
      * This map consists of the archive loaded into the memory. It is faster to 
      * use a memory archive than the the checksum file, though all entries must
-     * exist both in the file and the memory.   
+     * exist both in the file and the memory.
+     * 
+     * Map<Filename, Checksum>!
      */
     private Map<String, String> checksumArchive = Collections.synchronizedMap(
             new HashMap<String, String>());
@@ -259,6 +267,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
             // memory.
             loadFile();
         }
+        
+        // If the archive is new or otherwise empty, then try to load admin.data
+        if(checksumArchive.isEmpty()) {
+            loadAdminData();
+        }
     }
     
     /**
@@ -316,6 +329,76 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // retrieve the 'last modified' from the checksum file.
         lastModifiedChecksumFile = checksumFile.lastModified();
+    }
+    
+    /**
+     * This function is made for the converting the checksum part of 
+     * admin.data to an actual checksum replica. 
+     */
+    private void loadAdminData() {
+        log.debug("Empty archive, trying to load an admin.data file");
+        
+        File adminFile = new File("admin.data");
+        
+        if(!adminFile.exists() || !adminFile.isFile()) {
+            log.info("No admin.data file found, starts with empty archive");
+            return;
+        }
+        
+        // line length;
+        final int lineLength = 4; 
+        
+        BufferedReader in = null;
+        try {
+            try {
+                in = new BufferedReader(new FileReader(adminFile));
+                String line = in.readLine();
+                if(line == null) {
+                    return;
+                }
+                if(!line.contains("0.4")) {
+                    System.err.println("The first line in Admin.data "
+                            + "tells the version. Expected 0.4, but got: "
+                            + line + ". Continues any way.");
+                } else {
+                    System.out.println("Admin.data version: " + line);
+                }
+                
+                // go through the lines, parse them and put them in the archive.
+                while ((line = in.readLine()) != null) {
+                    // Retrieve the basic entry data.  
+                    String[] entryData = line.split(" ");
+                    
+                    // Check if enough elements
+                    if(entryData.length < lineLength) {
+                        log.info("bad line in admin data: " + line);
+                        continue;
+                    }
+                    
+                    String filename = entryData[0];
+                    String checksum = entryData[1];
+                    String uploadState = entryData[2];
+                    
+                    if(uploadState.equals(
+                            ReplicaStoreState.UPLOAD_COMPLETED.toString())) {
+                        checksumArchive.put(filename, checksum);
+                        appendEntryToFile(filename, checksum);
+                    } else {
+                        log.debug("AdminData line ignored: " + line);
+                    }
+                }
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+            }
+        } catch (IOException e) {
+                String msg = "An error occured during reading the admin data "
+                    + "file " + adminFile.getAbsolutePath();
+                throw new IOFailure(msg, e);
+        }
+        
+        log.info("Finished loading admin data.");
     }
     
     /**
@@ -841,5 +924,8 @@ public final class FileChecksumArchive extends ChecksumArchive {
     public void cleanup() {
         checksumFile = null;
         instance = null;
+        if(checksumArchive != null) {
+            checksumArchive.clear();
+        }
     }
 }
