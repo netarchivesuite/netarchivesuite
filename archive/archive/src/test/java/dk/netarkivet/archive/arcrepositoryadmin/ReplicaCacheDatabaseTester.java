@@ -267,8 +267,21 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
         assertEquals("The checksum for file 'TEST5' should be fdsafdas0123", "fdsafdas0123", cache.getChecksum("TEST5"));
 
-        // print content
-        //cache.print();
+        // check content 
+        String content = cache.retrieveAsText();
+        
+        for(String filename : cache.retrieveAllFilenames()) {
+            assertTrue("The filename '" + filename + "' should be in the content", 
+                    content.contains(filename));
+        }
+        
+        for(Replica rep : Replica.getKnown()) {
+            assertEquals("Unexpected filelist status", FileListStatus.NO_FILELIST_STATUS,
+                    cache.retrieveFileListStatus("TEST5", rep));
+        }
+        
+        // cleanup afterwards.
+        cache.cleanup();
     }
     
     private File makeTemporaryFilelistFile() throws Exception {

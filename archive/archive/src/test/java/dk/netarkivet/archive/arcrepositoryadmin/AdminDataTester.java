@@ -362,6 +362,12 @@ public class AdminDataTester extends TestCase {
         ad = UpdateableAdminData.getUpdateableInstance();
         FileAsserts.assertFileNumberOfLines("AdminData should be reduced after "
                 + "making a new AdminData", datafile, 3);
+        
+        // Check that the admin data is still aware of the files.
+        assertTrue("Should have the first test filename: " + TestInfo.files[0], 
+                ad.toString().contains(TestInfo.files[0]));
+        assertTrue("Should have the first test filename: " + TestInfo.files[1], 
+                ad.toString().contains(TestInfo.files[1]));
     }
 
     /** Test that a valid file can be read, and that an invalid file

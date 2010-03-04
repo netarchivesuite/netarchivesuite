@@ -201,7 +201,6 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
          */
         @Override
         public void tearDown() {
-            rcd.print();
             rcd.cleanup();
         }
     }

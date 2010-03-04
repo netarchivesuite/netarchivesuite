@@ -1280,7 +1280,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT filename FROM file";
 
         // Perform the update.
-        return DBUtils.selectStringList(dbConnection, sql, (Object[]) null);
+        return DBUtils.selectStringList(dbConnection, sql, new Object[]{});
     }
     
     /**
@@ -2161,16 +2161,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * Method to print all the tables in the database.
      * FIXME This is only used during implementation. Kill me afterwards!
      */
-    public void print() {
+    public String retrieveAsText() {
+        StringBuilder res = new StringBuilder();
         String sql = "";
 
         // Go through the replica table
         List<String> reps = retrieveIdsFromReplicaTable();
-        System.out.println("Replica table: " + reps.size());
-        System.out.println("GUID \trepId \trepName \trepType \tfileupdate "
-                + "\tchecksumupdated");
-        System.out.println("------------------------------------------------"
-                + "------------");
+        res.append("Replica table: " + reps.size() + "\n");
+        res.append("GUID \trepId \trepName \trepType \tfileupdate "
+                + "\tchecksumupdated" + "\n");
+        res.append("------------------------------------------------"
+                + "------------\n");
         for (String repId : reps) {
             // retrieve the replica_name
             sql = "SELECT replica_guid FROM replica WHERE replica_id = ?";
@@ -2193,17 +2194,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     sql, repId);
 
             // Print
-            System.out.println(repGUID + "\t" + repId + "\t" + repName + "\t"
+            res.append(repGUID + "\t" + repId + "\t" + repName + "\t"
                     + ReplicaType.fromOrdinal(repType).name() + "\t"
-                    + filelistUpdated + "\t" + checksumUpdated);
+                    + filelistUpdated + "\t" + checksumUpdated + "\n");
         }
-        System.out.println();
+        res.append("\n");
 
         // Go through the file table
         List<String> fileIds = retrieveIdsFromFileTable();
-        System.out.println("File table : " + fileIds.size());
-        System.out.println("fileId \tfilename");
-        System.out.println("--------------------");
+        res.append("File table : " + fileIds.size() + "\n");
+        res.append("fileId \tfilename" + "\n");
+        res.append("--------------------" + "\n");
         for (String fileId : fileIds) {
             // retrieve the file_name
             sql = "SELECT filename FROM file WHERE file_id = ?";
@@ -2211,18 +2212,18 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     fileId);
 
             // Print
-            System.out.println(fileId + " \t " + fileName);
+            res.append(fileId + " \t " + fileName + "\n");
         }
-        System.out.println();
+        res.append("\n");
 
         // Go through the replicafileinfo table
         List<String> rfiIds = retrieveIdsFromReplicaFileInfoTable();
-        System.out.println("ReplicaFileInfo table : " + rfiIds.size());
-        System.out.println("GUID \trepId \tfileId \tchecksum \t"
+        res.append("ReplicaFileInfo table : " + rfiIds.size() + "\n");
+        res.append("GUID \trepId \tfileId \tchecksum \t"
                 + "us \t\tfls \tcss \tfilelistCheckdate \t"
-                + "checksumCheckdate");
-        System.out.println("------------------------------------------------"
-                + "---------------------------------------------------------");
+                + "checksumCheckdate" + "\n");
+        res.append("---------------------------------------------------------"
+                + "------------------------------------------------" + "\n");
         for (String rfiGUID : rfiIds) {
             // retrieve the replica_id
             sql = "SELECT replica_id FROM replicafileinfo WHERE "
@@ -2266,15 +2267,17 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                     dbConnection, sql, rfiGUID);
 
             // Print
-            System.out.println(rfiGUID + " \t" + replicaId + "\t" + fileId
+            res.append(rfiGUID + " \t" + replicaId + "\t" + fileId
                     + "\t" + checksum + "\t"
                     + ReplicaStoreState.fromOrdinal(uploadStatus).name() 
                     + "  \t" + FileListStatus.fromOrdinal(filelistStatus).name()
                     + "\t" + ChecksumStatus.fromOrdinal(checksumStatus).name() 
                     + "\t" + filelistCheckdatetime + "\t" 
-                    + checksumCheckdatetime);
+                    + checksumCheckdatetime + "\n");
         }
-        System.out.println();
+        res.append("\n");
+        
+        return res.toString();
     }
 
     /**

@@ -226,7 +226,7 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * @return The human readable description of this instance.
          */
         public String toString() {
-            return getClass().getName() + ", with arguments: URLMatcher= " 
+            return getClass().getName() + ", with arguments: URLMatcher = " 
             + urlMatcher + ", mimeMatcher = " + mimeMatcher;
         }
     }
