@@ -39,7 +39,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -50,7 +49,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
-import dk.netarkivet.common.utils.Settings;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -1398,8 +1396,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 // throw an exception if the registered checksum differs.
                 if(entryCs != null && !checksum.equals(entryCs)) {
                     throw new IllegalState("The file '" + filename + "' with "
-                            + "checksum '" + checksum + "' has attempted being "
-                            + "uploaded with the checksum '" + entryCs + "'");
+                            + "checksum '" + entryCs + "' has attempted being "
+                            + "uploaded with the checksum '" + checksum + "'");
                 }
             }
         } else {

@@ -28,13 +28,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Date;
-import java.util.List;
 
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
 import dk.netarkivet.common.tools.ToolRunnerBase;
-import dk.netarkivet.common.utils.FileUtils;
 
 /**
  * Method for reestablishing the admin database from a 'admin.data' file. 
@@ -147,7 +145,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                     if(!line.contains("0.4")) {
                         System.err.println("The first line in Admin.data "
                                 + "tells the version. Expected 0.4, but got: "
-                                + line);
+                                + line + ". Continues any way.");
                     } else {
                         System.out.println("Admin.data version: " + line);
                     }

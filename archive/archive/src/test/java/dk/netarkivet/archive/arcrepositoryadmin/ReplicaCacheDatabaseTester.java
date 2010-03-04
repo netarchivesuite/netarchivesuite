@@ -41,6 +41,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
@@ -254,11 +255,30 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         assertTrue("The list of names should contain TEST2", names.contains("TEST2"));
 
         cache.insertNewFileForUpload("TEST5", "asdfasdf0123");
+        try {
+            cache.insertNewFileForUpload("TEST5", "01234567890");
+            fail("It should not be allowed to reupload a file with another checksum.");
+        } catch (IllegalState e) {
+            // expected
+            assertTrue("It should say, the checksum is wrong, but said: " + e.getMessage(), 
+                    e.getMessage().contains("The file 'TEST5' with checksum 'asdfasdf0123'" 
+                            + " has attempted being uploaded with the checksum '" + "01234567890" + "'"));
+        }
 
         cache.changeStateOfReplicafileinfo("TEST5", "asdffdas0123", Replica.getReplicaFromId("TWO"), 
                 ReplicaStoreState.UPLOAD_COMPLETED);
         cache.changeStateOfReplicafileinfo("TEST5", "fdsafdas0123", Replica.getReplicaFromId("THREE"), 
                 ReplicaStoreState.UPLOAD_COMPLETED);
+        
+        try {
+            cache.insertNewFileForUpload("TEST5", "asdfasdf0123");
+            fail("It should not be allowed to reupload a file when it has been completed.");
+        } catch (IllegalState e) {
+            // expected
+            assertTrue("It should say, the it has already been completely uploaded,, but said: " + e.getMessage(), 
+                    e.getMessage().contains("The file has already been "
+                            + "completely uploaded to the replica: "));
+        }
 
         assertNull("No common checksum should be found for file TEST5", cache.getChecksum("TEST5"));
 
