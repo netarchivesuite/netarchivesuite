@@ -64,8 +64,7 @@ public class FileChecksumServerTester extends TestCase {
     protected void setUp() {
 	rs.setUp();
 	utrf.setUp();
-	ChannelsTester.resetChannels();
-	JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
+        JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // ??
 
 	FileUtils.copyDirectory(TestInfo.ORIGINAL_DIR, TestInfo.WORK_DIR);
@@ -75,6 +74,8 @@ public class FileChecksumServerTester extends TestCase {
         Settings.set(ArchiveSettings.CHECKSUM_BASEDIR, TestInfo.CHECKSUM_FILE.getParentFile().getAbsolutePath());
         Settings.set(CommonSettings.USE_REPLICA_ID, "THREE");
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, RememberNotifications.class.getName());
+
+        ChannelsTester.resetChannels();
 
         // Create/recreate the checksum.md5 file
         try {

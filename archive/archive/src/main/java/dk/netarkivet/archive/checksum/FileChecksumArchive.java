@@ -357,11 +357,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
                     return;
                 }
                 if(!line.contains("0.4")) {
-                    System.err.println("The first line in Admin.data "
+                    log.warn("The first line in Admin.data "
                             + "tells the version. Expected 0.4, but got: "
                             + line + ". Continues any way.");
                 } else {
-                    System.out.println("Admin.data version: " + line);
+                    log.debug("Admin.data version: " + line);
                 }
                 
                 // go through the lines, parse them and put them in the archive.
