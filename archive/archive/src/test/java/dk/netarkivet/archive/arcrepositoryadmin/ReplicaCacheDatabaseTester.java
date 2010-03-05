@@ -45,6 +45,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -56,11 +57,15 @@ public class ReplicaCacheDatabaseTester extends TestCase {
     private MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR,
             TestInfo.TEST_DIR);
     
-    public void setUp() {
+    public void setUp() throws Exception {
         rs.setUp();
         mtf.setUp();
         ChannelsTester.resetChannels();
         DBConnect.cleanup();
+        
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+                TestInfo.DATABASE_DIR);
+
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,

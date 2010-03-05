@@ -139,7 +139,8 @@ public class ArcRepositoryDatabaseTester extends TestCase {
 
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         // Database admin test.
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, TestInfo.WORKING_DIR);
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+                TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(
                 TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         Settings.set(ArchiveSettings.DIRS_ARCREPOSITORY_ADMIN,

@@ -63,6 +63,7 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.ClassAsserts;
+import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -91,6 +92,10 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         mtf.setUp();
         jmsConnection.setUp();
         rf.setUp();
+        
+        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
+                TestInfo.DATABASE_DIR);
+
 
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);

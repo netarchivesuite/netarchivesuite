@@ -83,6 +83,10 @@ public class TestInfo {
     public static final File DATABASE_DIR = new File(TEST_DIR, "adminDB");
     /** The complete database URL for the DatabaseBasedActiveBitPreservationTester. */
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getAbsolutePath();
+    
+    /** The file for the archive database.*/
+    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "bpdb.jar");
+
 
     public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");
 }
