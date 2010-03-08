@@ -40,6 +40,7 @@ import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.FileUtils;
@@ -257,6 +258,13 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             correctFile = File.createTempFile("correct", filename, 
                     FileUtils.getTempDir());
             msg.getData(correctFile);
+            
+            // Log and notify
+            String warning = "The record for file '" + filename 
+                    + "' is being corrected at '" 
+                    + Settings.get(CommonSettings.USE_REPLICA_ID) + "'"; 
+            log.warn(warning);
+            NotificationsFactory.getInstance().errorEvent(warning);
             
             // put the file into the archive.
             File badFile = cs.correct(filename, correctFile);

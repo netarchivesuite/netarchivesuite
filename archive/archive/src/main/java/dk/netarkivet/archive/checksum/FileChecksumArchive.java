@@ -48,6 +48,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -791,18 +792,18 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // retrieve the checksum
         String currentChecksum = checksumArchive.get(filename);
         
-        // Make entry in the wrongEntryFile.
-        String badEntry = ChecksumJob.makeLine(filename, 
-                currentChecksum);
-        appendWrongRecordToWrongEntryFile(badEntry);
-        
-        // Calculate the new checksum and correct the entry.
+        // Calculate the new checksum and verify that it is different.
         String newChecksum = calculateChecksum(correctFile);
         if(newChecksum.equals(currentChecksum)) {
             // This should never occur.
             throw new IllegalState("The checksum of the old 'bad' entry is "
                     + " the same as the checksum of the new correcting entry");
         }
+        
+        // Make entry in the wrongEntryFile.
+        String badEntry = ChecksumJob.makeLine(filename, 
+                currentChecksum);
+        appendWrongRecordToWrongEntryFile(badEntry);
         
         // Correct the bad entry, by changing the value to the newChecksum.'
         // Since the checksumArchive is a hashmap, then putting an existing 
