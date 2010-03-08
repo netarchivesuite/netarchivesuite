@@ -59,7 +59,6 @@ import dk.netarkivet.common.utils.Settings;
  * <b>'filename' + ## + 'checksum'</b> <br>
  * The lines are not sorted.
  * 
- * TODO
  * If no file exists when the class is instantiated then it will be created,
  * and if an 'admin.data' file exists, then it will be loaded and put into the
  * archive file.
@@ -347,6 +346,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
         
         // line length;
         final int lineLength = 4; 
+        boolean recreate = false;
         
         BufferedReader in = null;
         try {
@@ -381,6 +381,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
                     
                     if(uploadState.equals(
                             ReplicaStoreState.UPLOAD_COMPLETED.toString())) {
+                        if(checksumArchive.containsKey(filename)) {
+                            recreate = true;
+                        }
                         checksumArchive.put(filename, checksum);
                         appendEntryToFile(filename, checksum);
                     } else {
@@ -396,6 +399,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 String msg = "An error occured during reading the admin data "
                     + "file " + adminFile.getAbsolutePath();
                 throw new IOFailure(msg, e);
+        }
+        
+        // If a entry have been written twice, then recreate the archive file.
+        if(recreate) {
+            recreateArchiveFile();
         }
         
         log.info("Finished loading admin data.");

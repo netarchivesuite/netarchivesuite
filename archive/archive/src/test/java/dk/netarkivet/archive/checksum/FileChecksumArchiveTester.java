@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
@@ -205,6 +207,7 @@ public class FileChecksumArchiveTester extends TestCase {
         fw.append("TEST2.arc checksum2 UPLOAD_FAILED 1" + "\n");
         fw.append("TEST3.arc checksum3 UPLOAD_COMPLETED 2" + "\n");
         fw.append("TEST4.arc checksum4 UPLOAD_COMPLETED 3" + "\n");
+        fw.append("TEST3.arc checksum3 UPLOAD_COMPLETED 4" + "\n");
         
         fw.flush();
         fw.close();
@@ -220,6 +223,13 @@ public class FileChecksumArchiveTester extends TestCase {
                     "checksum3", fca.getChecksum("TEST3.arc"));
             assertEquals("Unexpected checksum for TEST4.arc", 
                     "checksum4", fca.getChecksum("TEST4.arc"));
+            
+            String archiveFile = FileUtils.readFile(fca.getArchiveAsFile());
+            
+            Matcher match = Pattern.compile("TEST3.arc").matcher(archiveFile);
+            assertTrue("TEST3.arc should be found the first time", match.find());
+            assertFalse("TEST3.arc should not be found the second time", 
+                    match.find(match.end()));
         } finally {
             adminFile.delete();
         }
