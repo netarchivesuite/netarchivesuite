@@ -39,6 +39,7 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -338,24 +339,127 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
         return null;
     }
 
+    /**
+     * Method for retrieving the checksums of all the files of the replica.
+     * 
+     * @param replicaId Inherited dummy argument.
+     * @return A file containing the names and checksum of all the files in
+     * the system.
+     * @throws ArgumentNotValid If the replicaId is either null or the empty
+     * string.
+     * @throws IOFailure If an unexpected IOException is caught.
+     */
     @Override
-    public File getAllChecksums(String replicaId) {
-	throw new NotImplementedException("TODO: Implement me!");
+    public File getAllChecksums(String replicaId) throws IOFailure, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        
+        try {
+            List<String> checksums = new ArrayList<String>();
+            // go through the different storageDirs and find files and checksums.
+            for(File dir : storageDirs) {
+                // go through all file and calculate the checksum
+                for(File entry : dir.listFiles()) {
+                    String checksum = MD5.generateMD5onFile(entry);
+                    String filename = entry.getName();
+
+                    checksums.add(ChecksumJob.makeLine(filename, checksum));
+                }
+            }
+
+            // create a file with the results.
+            File res = File.createTempFile("all", "checksums", 
+                    FileUtils.getTempDir());
+            FileUtils.writeCollectionToFile(res, checksums);
+            return res;
+        } catch (IOException e) {
+            throw new IOFailure("Received unexpected IOFailure: ", e);
+        }
     }
 
+    /**
+     * Method for retrieving all the filenames of the replica.
+     * 
+     * @param replicaId Inherited dummy argument.
+     * @return A file containing the names of all the files.
+     * @throws ArgumentNotValid If the replicaId is either null or empty.
+     * @throws IOFailure If an IOException is caught.
+     */
     @Override
-    public File getAllFilenames(String replicaId) {
-	throw new NotImplementedException("TODO: Implement me!");
+    public File getAllFilenames(String replicaId) throws IOFailure, 
+            ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        
+        List<String> filenames = new ArrayList<String>();
+        // go through the different storageDirs and put the name of the files
+        // into the resulting list of filenames.
+        for(File dir : storageDirs) {
+            for(String name : dir.list()) {
+                filenames.add(name);
+            }
+        }
+        
+        try {
+            File res = File.createTempFile("all", "filenames", 
+                    FileUtils.getTempDir());
+            FileUtils.writeCollectionToFile(res, filenames);
+            return res;
+        } catch (IOException e) {
+            throw new IOFailure("Received unexpected IOFailure: ", e);
+        }
     }
 
+    /**
+     * Method for correcting a bad entry.
+     * Calls 'removeAndGetFile' followed by 'store'.
+     *  
+     * @param replicaId Inherited dummy argument.
+     * @param checksum The checksum of the bad entry.
+     * @param file The new file to replace the bad entry.
+     * @param credentials The 'password' to allow changing the archive.
+     * @return The bad entry file.
+     * @throws ArgumentNotValid If one of the arguments are null, or if a string
+     * is empty.
+     */
     @Override
     public File correct(String replicaId, String checksum, File file, 
 	    String credentials) {
-	throw new NotImplementedException("TODO: Implement me!");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
+        ArgumentNotValid.checkNotNull(file, "File file");
+        ArgumentNotValid.checkNotNullOrEmpty(credentials, "String credentials");
+        
+        // remove bad file.
+        File res = removeAndGetFile(file.getName(), replicaId, 
+                checksum, credentials);
+        // store good new file.
+        store(file);
+        // return bad file.
+        return res;
     }
 
+    /**
+     * Method for finding the checksum of a file.
+     * 
+     * @param replicaId Inherited dummy variable.
+     * @param filename The name of the file to calculate the checksum.
+     * @return The checksum of the file, or the empty string if the file was 
+     * not found or an error occured.
+     * @throws ArgumentNotValid If the replicaId or the filename is either
+     * null or the empty string.
+     */
     @Override
-    public String getChecksum(String replicaId, String filename) {
-        throw new NotImplementedException("TODO: Implement me!");
+    public String getChecksum(String replicaId, String filename) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        
+        try {
+            return MD5.generateMD5onFile(findFile(filename));
+        } catch (IOException e) {
+            log.warn("Unexpected error when generating MD5 on file '" 
+                    + filename + "'. The empty string returned", e);
+            return "";
+        }
     }
 }

@@ -25,12 +25,17 @@ package dk.netarkivet.common.distribute.arcrepository;
 import java.io.File;
 import java.io.IOException;
 
+import com.sun.messaging.jmq.util.MD5;
+
 import junit.framework.TestCase;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -55,7 +60,8 @@ public class LocalArcRepositoryClientTester extends TestCase {
         rs.setUp();
         utrf.setUp();
 
-        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, TestInfo.WORKING_DIR.getAbsolutePath());
+        Settings.set(CommonSettings.DIR_COMMONTEMPDIR, 
+                TestInfo.WORKING_DIR.getAbsolutePath());
         mtf.setUp();
     }
 
@@ -171,6 +177,41 @@ public class LocalArcRepositoryClientTester extends TestCase {
         
         BitarchiveRecord bar = arcrep.get(testArcName, 0); 
         assertNotNull(bar);
+    }
+    
+    public void testNewFunctions() throws IOException {
+        Settings.set(
+                "settings.common.arcrepositoryClient.fileDir", 
+                TestInfo.WORKING_DIR.getAbsolutePath() + "/bitarchive2/filedir");
+        Settings.set("settings.archive.bitarchive.thisCredentials",
+                "credentials");
+        ArcRepositoryClient arcrep = new LocalArcRepositoryClient();
+
         
+        File res = arcrep.getAllFilenames("ONE");
+        String content = FileUtils.readFile(res);
+        assertTrue("Should contain test1.arc", content.contains("test1.arc"));
+        assertTrue("Should contain test2.arc", content.contains("test2.arc"));
+        assertTrue("Should contain test3.arc", content.contains("test3.arc"));
+        
+        res = arcrep.getAllChecksums("ONE");
+        
+        for(String line : FileUtils.readListFromFile(res)) {
+            KeyValuePair<String, String> checksumLine = ChecksumJob.parseLine(line);
+            assertEquals("Unexpected checksum for file '" + checksumLine.getKey() + "'", 
+                    checksumLine.getValue(), arcrep.getChecksum("ONE", checksumLine.getKey()));
+        }
+        
+        String csTest1 = arcrep.getChecksum("ONE", "test1.arc");
+        
+        // test correct.
+        File test1 = new File(FileUtils.getTempDir(), "test1.arc");
+        FileUtils.copyFile(res, test1);
+        File badTest1 = arcrep.correct("ONE", csTest1, test1, "credentials");
+        
+        assertNotSame("The checksum of test1.arc should have changed.", 
+                csTest1, arcrep.getChecksum("ONE", "test1.arc"));
+        assertEquals("test1.arc should have old checksum.", csTest1, 
+                dk.netarkivet.common.utils.MD5.generateMD5onFile(badTest1));
     }
 }
