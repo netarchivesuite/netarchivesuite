@@ -44,6 +44,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
@@ -424,12 +425,25 @@ public class JobDBDAO extends JobDAO {
             
             statement.close();
             // IDs should match up in a natural join
-            statement = dbconnection.prepareStatement(
-                    "SELECT domains.name, configurations.name "
-                    + "FROM domains, configurations, job_configs "
-                    + "WHERE job_configs.job_id = ?"
-                    + "  AND job_configs.config_id = configurations.config_id"
-                    + "  AND domains.domain_id = configurations.domain_id");
+            // The following if-block is an attempt to fix Bug 1856, an
+            // unexplained derby deadlock, by making this statement a dirty
+            // read.
+            if (Settings.get(CommonSettings.DB_SPECIFICS_CLASS).contains("Derby")) {
+                statement = dbconnection.prepareStatement(
+                        "SELECT domains.name, configurations.name "
+                        + "FROM domains, configurations, job_configs "
+                        + "WHERE job_configs.job_id = ?"
+                        + "  AND job_configs.config_id = configurations.config_id"
+                        + "  AND domains.domain_id = configurations.domain_id"
+                        + " WITH UR");
+            } else {
+                statement = dbconnection.prepareStatement(
+                        "SELECT domains.name, configurations.name "
+                        + "FROM domains, configurations, job_configs "
+                        + "WHERE job_configs.job_id = ?"
+                        + "  AND job_configs.config_id = configurations.config_id"
+                        + "  AND domains.domain_id = configurations.domain_id"); 
+            }
             statement.setLong(1, jobID);
             result = statement.executeQuery();
             Map<String, String> configurationMap 
