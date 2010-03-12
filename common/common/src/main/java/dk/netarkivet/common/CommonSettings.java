@@ -231,6 +231,13 @@ public class CommonSettings {
      * in settings for each top level domain */
     public static String TLDS = "settings.common.topLevelDomains.tld";
 
+    /**
+     * If DB_SPECIFICS_CLASS contains this string then a Derby database is in
+     * use.
+     */
+    public static String DB_IS_DERBY_IF_CONTAINS = "Derby";
+
+
     // TODO Currently only used by harvestscheduler - move to harvester
     // settings?
     /** 

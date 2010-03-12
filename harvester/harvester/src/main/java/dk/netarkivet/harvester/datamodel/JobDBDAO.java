@@ -428,21 +428,18 @@ public class JobDBDAO extends JobDAO {
             // The following if-block is an attempt to fix Bug 1856, an
             // unexplained derby deadlock, by making this statement a dirty
             // read.
-            if (Settings.get(CommonSettings.DB_SPECIFICS_CLASS).contains("Derby")) {
-                statement = dbconnection.prepareStatement(
-                        "SELECT domains.name, configurations.name "
-                        + "FROM domains, configurations, job_configs "
-                        + "WHERE job_configs.job_id = ?"
-                        + "  AND job_configs.config_id = configurations.config_id"
-                        + "  AND domains.domain_id = configurations.domain_id"
+            String domainStatement =
+                    "SELECT domains.name, configurations.name "
+                    + "FROM domains, configurations, job_configs "
+                    + "WHERE job_configs.job_id = ?"
+                    + "  AND job_configs.config_id = configurations.config_id"
+                    + "  AND domains.domain_id = configurations.domain_id";
+            if (Settings.get(CommonSettings.DB_SPECIFICS_CLASS).
+                    contains(CommonSettings.DB_IS_DERBY_IF_CONTAINS)) {
+                statement = dbconnection.prepareStatement(domainStatement
                         + " WITH UR");
             } else {
-                statement = dbconnection.prepareStatement(
-                        "SELECT domains.name, configurations.name "
-                        + "FROM domains, configurations, job_configs "
-                        + "WHERE job_configs.job_id = ?"
-                        + "  AND job_configs.config_id = configurations.config_id"
-                        + "  AND domains.domain_id = configurations.domain_id"); 
+                statement = dbconnection.prepareStatement(domainStatement); 
             }
             statement.setLong(1, jobID);
             result = statement.executeQuery();
