@@ -30,9 +30,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <property name="releasetestdir" value="${user.home}/tmp_releasetest"/>
     <property name="depcheckdir" value="${user.home}/tmp_dependencycheck"/>
     <property name="jarclasspath" value="
-    db/derby-10.4.2.0.jar
-    db/derbyclient-10.4.2.0.jar
-    db/derbytools-10.4.2.0.jar
+    db/derby-10.5.3.0.jar
+    db/derbyclient-10.5.3.0.jar
+    db/derbytools-10.5.3.0.jar
     commons-cli-1.0.jar	
     commons-fileupload-1.2.1.jar
     commons-io-1.4.jar	
@@ -71,9 +71,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
         <pathelement path="${classdir}"/>
         <fileset dir="lib">
             <patternset id="jars.path.set">
-                <include name="db/derby-10.4.2.0.jar"/>
-            	<include name="db/derbyclient-10.4.2.0.jar"/>
-            	<include name="db/derbytools-10.4.2.0.jar"/>
+                <include name="db/derby-10.5.3.0.jar"/>
+            	<include name="db/derbyclient-10.5.3.0.jar"/>
+            	<include name="db/derbytools-10.5.3.0.jar"/>
             	<include name="commons-cli-1.0.jar"/>
                 <include name="commons-fileupload-1.2.1.jar"/>
                 <include name="commons-net-2.0.jar"/>
@@ -139,7 +139,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="clean" 
-            description="Remove all compiled code and generated wars andjars">
+            description="Remove all compiled code and generated wars and jars">
         <delete dir="${classdir}/dk"/>
         <delete verbose="false">
            <fileset dir="lib">
@@ -316,8 +316,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
      <!-- Make a copy of the necessary derby-classes without the version information
             so we can launch derby as a server. 
       -->
-     <copy file="lib/db/derby-10.4.2.0.jar" toFile="lib/db/derby.jar"/>
-     <copy file="lib/db/derbynet-10.4.2.0.jar" toFile="lib/db/derbynet.jar"/> 
+     <copy file="lib/db/derby-10.5.3.0.jar" toFile="lib/db/derby.jar"/>
+     <copy file="lib/db/derbynet-10.5.3.0.jar" toFile="lib/db/derbynet.jar"/> 
      <zip basedir="." destfile="NetarchiveSuite.zip">
             <include name="docs/apidocs/**"/>
             <include name="conf/**"/>

@@ -252,6 +252,12 @@ public class CommonSettings {
             = "settings.common.database.class";
 
     /**
+     * If DB_SPECIFICS_CLASS contains this string then a Derby database is in
+     * use.
+     */
+    public static String DB_IS_DERBY_IF_CONTAINS = "Derby";
+
+    /**
      * <b>settings.common.database.url</b>: <br>
      * The URL to use to connect to the database specified in the 
      * DB_SPECIFICS_CLASS setting.
