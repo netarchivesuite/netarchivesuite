@@ -1,0 +1,57 @@
+<%--
+File:        $Id$
+Revision:    $Revision$
+Author:      $Author$
+Date:        $Date$
+
+ Copyright Det Kongelige Bibliotek og Statsbiblioteket, Danmark
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ --%><%
+    String elementId = "edit_element_" + trapIdString;
+    String editLinkId = "edit_link_" + trapIdString;
+    String hideLinkId = "hide_link_" + trapIdString;
+%>
+<a id="<%=editLinkId%>" onclick="show_block('<%=elementId%>');show_inline('<%=hideLinkId%>');hide('<%=editLinkId%>');"><fmt:message key="edit"/> </a>
+<a id="<%=hideLinkId%>" style="display:none;" onclick="hide('<%=elementId%>');hide('<%=hideLinkId%>');show_inline('<%=editLinkId%>');"><fmt:message key="hide"/> </a>
+<div id="<%=elementId%>" style="display:none;">
+    <form method="post" action="./Definitions-edit-global-crawler-traps.jsp"
+          enctype="multipart/form-data">
+        <%
+
+            if (trapIdString != null) {
+        %>
+        <input name="<%=Constants.TRAP_ID%>" value="<%=trapIdString%>" type="hidden" />
+        <%
+            }
+        %>
+        <fmt:message key="crawlertrap.name"/>&nbsp;<input name="<%=Constants.TRAP_NAME%>" value="<%=trapName%>"/><br/>
+        <fmt:message key="crawlertrap.active"/>&nbsp;<input type="radio" name="<%=Constants.TRAP_IS_ACTIVE%>" value="true" checked="checked"/>
+        <fmt:message key="crawlertrap.inactive"/>&nbsp;<input type="radio" name="<%=Constants.TRAP_IS_ACTIVE%>" value="false"/> <br/>
+        <fmt:message key="crawlertrap.description"/>&nbsp;<textarea cols="60" rows="8" name="<%=Constants.TRAP_DESCRIPTION%>"><%=trapDescription%></textarea><br/>
+        <fmt:message key="crawlertrap.filetoupload"/>&nbsp;<input type="file" name="<%=Constants.TRAP_FILENAME%>" size="<%=Constants.UPLOAD_FILE_FIELD_WIDTH%>"/>
+        <%
+            if (trapIdString == null) {
+        %>
+        <input type="submit" name="upload" value=<fmt:message key="crawlertrap.create"/> />
+        <%
+        } else {
+        %>
+        <input type="submit" name="upload" value=<fmt:message key="crawlertrap.update" /> />
+        <%
+            }
+        %>
+    </form>
+</div>

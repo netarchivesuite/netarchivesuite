@@ -1,0 +1,13 @@
+L+ /home/test/TEST2/harvester_8081/4_1140687099617/logs/crawl.log
+L+ /home/test/TEST2/harvester_8081/4_1140687099617/logs/runtime-errors.log
+L+ /home/test/TEST2/harvester_8081/4_1140687099617/logs/local-errors.log
+L+ /home/test/TEST2/harvester_8081/4_1140687099617/logs/uri-errors.log
+L+ /home/test/TEST2/harvester_8081/4_1140687099617/logs/progress-statistics.log
+C+ /home/test/TEST2/harvester_8081/4_1140687099617/order.xml
+C+ /home/test/TEST2/harvester_8081/4_1140687099617/seeds.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/hosts-report.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/mimetype-report.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/responsecode-report.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/seeds-report.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/crawl-report.txt
+R+ /home/test/TEST2/harvester_8081/4_1140687099617/processors-report.txt

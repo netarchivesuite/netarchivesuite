@@ -1,0 +1,157 @@
+<!--
+$Id$
+$Revision$
+$Date$
+$Author$
+
+The Netarchive Suite - Software to harvest and preserve websites
+Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!--
+This build file contains a target for building a deployable webapp warfile
+containing wayback with the netarchivesuite plugin. The target "warfile" takes
+the warfile distributed with wayback and customises it by
+i) unpacking it
+ii) replacing the spring configuration files with customised versions
+iii) adding necessary jarfiles from netarchivesuite and dependencies
+iv) adding a suitable settings.xml file.
+v) repacking the warfile as ROOT.war for deployment
+-->
+<project>
+    <import file="build.xml" />
+
+    <property name="wayback.conf.root" value="conf/wayback"/>
+
+    <!--
+    Path to the Wayback webapp as downloaded from
+    http://sourceforge.net/project/showfiles.php?group_id=118427.
+    TODO: wget this file
+    -->
+    <property name="wayback.dist.war"
+              value="wayback/lib/wayback-webapp-1.4.2.war" />
+
+    <!--
+    Path to a directory containing spring-framework config files to override
+    the defaults supplied with Wayback.
+    The directory may also include a custom web.xml file.
+    -->
+    <property name="wayback.conf.dir" value="${wayback.conf.root}" />
+
+    <!--
+    A NetarchiveSuite settings file to be used by the NetarchiveSuite-Wayback
+    plugin. This file should contain any custom settings for the common and
+    wayback modules, specifically the connection information for the
+    ArcRepository client to be
+    used.
+    -->
+    <property name="wayback.settings.file"
+              value="${wayback.conf.root}/settings.xml"/>
+
+    <!--
+    A NetarchiveSuite specific wayback.xml file, for running a local copy
+    of NetarchiveSuite-Wayback.
+    -->
+    <property name="wayback.wayback.xml.file"
+              value="${wayback.conf.root}/wayback.xml" />
+
+    <!--
+    A NetarchiveSuite specific CDXCollection.xml file, for running a local
+    copy of NetarchiveSuite-Wayback.
+    -->
+    <property name="wayback.cdxcollection.xml.file"
+              value="${wayback.conf.root}/CDXCollection.xml" />
+    <!--
+    The name of the war-file to be generated. Note that for proxy-mode access
+    to wayback it must be deployed in the ROOT context. One way of doing this
+    it to name the warfile ROOT.war.
+    -->
+    <property name="wayback.war.name" value="ROOT.war"/>
+
+    <property name="wayback.tempdir" value="wayback_tmp"/>
+
+     <target name="show_properties">
+           <echoproperties/>
+     </target>
+
+    <!--
+    Generate the fully functional warfile ready for deployment.
+    -->
+    <target name="warfile"
+            depends="checkFile, jarfiles, unpack_warfile, copy_files, repack_warfile">
+    </target>
+
+    <target name="checkFile">
+        <available file="${wayback.dist.war}" property="isFileAvail" />
+        <fail unless="isFileAvail"
+              message="Wayback is not currently included with Netarchivesuite! Download it from http://sourceforge.net/project/showfiles.php?group_id=118427 and move the wayback war file to ${wayback.dist.war}." 
+                />
+    </target>
+
+    <target name="warfile.nocompile"
+            depends="unpack_warfile, copy_files, repack_warfile" />
+
+    <target name="unpack_warfile">
+        <delete dir="${wayback.tempdir}"/>
+        <unzip src="${wayback.dist.war}" dest="${wayback.tempdir}"/>
+    </target>
+
+    <target name="copy_files">
+        <copy todir="${wayback.tempdir}/WEB-INF">
+            <fileset dir="${wayback.conf.dir}">
+                <include name="*.xml" />
+            </fileset>
+        </copy>
+        <copy todir="${wayback.tempdir}/WEB-INF/lib" flatten="yes">
+            <fileset dir="lib">
+                <include name="**/*.jar" />
+                <!--This next line ensures that we use the appropriate wayback
+                core for the webapp, and not the one we compiled our module
+                against. -->
+                <exclude name="wayback-core*.jar" />
+                <!--
+                The following excludes are all libraries which are either not
+                needed for wayback or are already included with wayback with at
+                least as high a version number as that used in netarchive suite
+                -->
+                <exclude name="dk.netarkivet.deploy.jar" />
+                <exclude name="dk.netarkivet.harvester.jar" />
+                <exclude name="dk.netarkivet.viewerproxy.jar" />
+                <exclude name="dk.netarkivet.monitor.jar" />
+                <exclude name="heritrix*/**.jar" />
+                <exclude name="**/je-*.jar" />
+                <exclude name="**/jericho*.jar" />
+                <exclude name="**/jetty-*.jar" />
+                <exclude name="**/itext-*.jar" />
+                <exclude name="**/junit-*.jar" />
+                <exclude name="**/libidn-*.jar" />
+                <exclude name="**/poi-*.jar" />
+            </fileset>
+        </copy>
+        <copy file="${wayback.settings.file}"
+              tofile="${wayback.tempdir}/WEB-INF/conf/settings.xml" />
+        <copy file="${wayback.wayback.xml.file}"
+              tofile="${wayback.tempdir}/WEB-INF/" />
+        <copy file="${wayback.cdxcollection.xml.file}"
+              tofile="${wayback.tempdir}/WEB-INF/" />
+    </target>
+
+    <target name="repack_warfile">
+        <war basedir="${wayback.tempdir}" destfile="${wayback.war.name}" />
+    </target>
+
+</project>
+

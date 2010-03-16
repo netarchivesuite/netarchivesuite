@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+-->
+<!-- 
+	This file contains the default settings used by the harvester module.
+
+	For documentation of the individual settings, please refer to the
+	javadoc for dk.netarkivet.harvester.HarvesterSettings.java
+-->
+<settings>
+    <harvester>
+        <datamodel>
+            <domain>
+                <defaultSeedlist>defaultseeds</defaultSeedlist>
+                <defaultConfig>defaultconfig</defaultConfig>
+                <defaultOrderxml>default_orderxml</defaultOrderxml>
+                <defaultMaxrate>100</defaultMaxrate>
+                <defaultMaxbytes>1000000000</defaultMaxbytes>
+                <defaultMaxobjects>-1</defaultMaxobjects>
+                <!-- Used when creating ids for new jobs after a admin 
+                database restore. -->
+                <nextJobId>0</nextJobId>
+            </domain>
+        </datamodel>
+        <scheduler>
+            <errorFactorPrevResult>10</errorFactorPrevResult>
+            <errorFactorBestGuess>2</errorFactorBestGuess>
+            <expectedAverageBytesPerObject>38000</expectedAverageBytesPerObject>
+            <maxDomainSize>5000</maxDomainSize>
+            <jobs> <!-- One Job corresponds to a Heritrix run -->
+                <maxRelativeSizeDifference>100</maxRelativeSizeDifference>
+                <minAbsoluteSizeDifference>2000</minAbsoluteSizeDifference>
+                <maxTotalSize>2000000</maxTotalSize>
+            </jobs>
+            <configChunkSize>10000</configChunkSize>
+            <splitByObjectLimit>false</splitByObjectLimit>
+            <!-- one week in seconds  - time before jobs terminate -->
+            <jobtimeouttime>604800</jobtimeouttime>
+        </scheduler>
+        <harvesting>
+            <serverDir>server</serverDir>
+            <!-- Default is 400000000 bytes (~400 Mbytes). -->
+            <minSpaceLeft>400000000</minSpaceLeft>
+            <oldjobsDir>oldjobs</oldjobsDir>
+            <queuePriority>HIGHPRIORITY</queuePriority>
+            <heritrix>
+                <!-- 30 minutes -->
+                <inactivityTimeout>1800</inactivityTimeout>
+                <!-- 30 minutes -->
+                <noresponseTimeout>1800</noresponseTimeout>
+                <adminName>admin</adminName>
+                <adminPassword>adminPassword</adminPassword>
+                <guiPort>8090</guiPort>
+                <jmxPort>8091</jmxPort>
+                <jmxUsername>controlRole</jmxUsername>
+                <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
+                <heapSize>1598M</heapSize>
+                <javaOpts></javaOpts>                
+            </heritrix>
+            <heritrixController>
+                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+            </heritrixController>
+            <deduplication>
+                <enabled>true</enabled>
+            </deduplication>
+            <metadata>
+                <heritrixFilePattern>.*(\.xml|\.txt|\.log|\.out)</heritrixFilePattern>
+                <reportFilePattern>.*-report.txt</reportFilePattern>
+                <logFilePattern>.*(\.log|\.out)</logFilePattern>
+            </metadata>
+        </harvesting>
+    </harvester>
+</settings>

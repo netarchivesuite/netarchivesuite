@@ -1,0 +1,80 @@
+/*
+ * File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
+ *
+ * The Netarchive Suite - Software to harvest and preserve websites
+ * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ * USA
+ */
+ 
+/**
+ * This is a template for the security policy file.
+ * The following variables should be replaced 
+ * (and is automatically replaced by deploy):
+ * T E M P D I R and R O L E.
+ * The file directories should granted read-only access at the end of the file. 
+ */
+grant codeBase "file:lib/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:${java.home}/-" {
+  permission java.security.AllPermission;
+};
+
+grant principal javax.management.remote.JMXPrincipal "ROLE" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:lib/heritrix/lib/-" {
+  permission java.security.AllPermission;
+};
+
+/* Each web site section requires an AllPermission for the JSP compilation to
+ * work, but we don't want to give AllPermission to all of commontempdir, lest
+ * third-party classes get that permission, too. */
+grant codeBase "file:TEMPDIR/Status/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:TEMPDIR/QA/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:TEMPDIR/History/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:TEMPDIR/HarvestDefinition/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+grant codeBase "file:TEMPDIR/BitPreservation/jsp/-" {
+  permission java.security.AllPermission;
+};
+
+/* This allows third-party batch classes and their libraries to read the 
+ * system properties and NetarchiveSuite settings.
+ */
+grant {
+  permission java.util.PropertyPermission "*", "read";
+};
+
+/* Directories in the bitarchives should be added below.
+ */

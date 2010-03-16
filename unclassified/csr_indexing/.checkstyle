@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fileset-config file-format-version="1.2.0" simple-config="true">
+    <local-check-config name="NetarchiveSuite_Checks" location="NetarchiveSuite_checks.xml" type="external" description="">
+        <property name="checkstyle.localeCountry" value="dk"/>
+        <property name="checkstyle.cache.file" value="checkstyleCache"/>
+        <additional-data name="protect-config-file" value="false"/>
+    </local-check-config>
+    <fileset name="all" enabled="true" check-config-name="NetarchiveSuite_Checks" local="true">
+        <file-match-pattern match-pattern="." include-pattern="true"/>
+    </fileset>
+    <filter name="FileTypesFilter" enabled="true">
+        <filter-data value="java"/>
+        <filter-data value="properties"/>
+        <filter-data value="Translations_en.properties"/>
+    </filter>
+    <filter name="FilesFromPackage" enabled="true">
+        <filter-data value="tests"/>
+        <filter-data value="src/dk/netarkivet/archive/Translations_en.properties"/>
+    </filter>
+</fileset-config>
