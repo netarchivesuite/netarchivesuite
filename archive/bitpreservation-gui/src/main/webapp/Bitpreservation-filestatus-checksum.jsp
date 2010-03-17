@@ -113,7 +113,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                    name="<%=Constants.FILENAME_PARAM%>">
             <%
             if (fs.isAdminCheckSumOk()) {
-                List<String> checksum = fs.getBitarchiveChecksum(bitarchive);
+                List<String> checksum = fs.getReplicaChecksum(bitarchive);
                 // Check that at most one checksum were returned from 
                 // replica 'bitarchive' for this file, and that this checksum 
                 // is NOT equal to the one stored in admin data.

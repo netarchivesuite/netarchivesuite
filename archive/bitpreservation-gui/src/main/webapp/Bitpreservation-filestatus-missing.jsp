@@ -137,7 +137,7 @@ dk.netarkivet.common.webinterface.HTMLUtils"
 	                // Print information about the file
 	                BitpreserveFileState.printFileState(out, fs, response.getLocale());
 	                // If the file is indeed missing
-	                if (fs.getBitarchiveChecksum(bitarchive).isEmpty()) {
+	                if (fs.getReplicaChecksum(bitarchive).isEmpty()) {
 	                    // Give opportunity to reupload the file.
 	                    %></td><td><%
 	                    out.println(BitpreserveFileState.makeCheckbox(
