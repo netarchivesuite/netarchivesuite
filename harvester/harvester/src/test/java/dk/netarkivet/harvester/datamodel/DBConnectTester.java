@@ -25,6 +25,7 @@ package dk.netarkivet.harvester.datamodel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -255,18 +256,21 @@ public class DBConnectTester extends DataModelTestCase {
 
 
     public void testCreateTable() throws SQLException {
+        deleteTableIfExists("dummy");    
         String[] stmts = {
                 "CREATE TABLE dummy (id INT)"
         };
         DBConnect.updateTable("dummy", 1, stmts);
         Connection con = DBConnect.getDBConnection();
         PreparedStatement s = con.prepareStatement("SELECT id FROM dummy");
-        ResultSet rs = s.executeQuery();
+        s.executeQuery();
         assertEquals("Newly created table should have version number 1", 1,
                      DBUtils.getTableVersion(con, "dummy"));
     }
 
-     public void testCreateAndUpdateTable() throws SQLException {
+    public void testCreateAndUpdateTable() throws SQLException {
+        deleteTableIfExists("dummy");
+        
         String[] stmts = {
                 "CREATE TABLE dummy (id INT)"
         };
@@ -274,11 +278,11 @@ public class DBConnectTester extends DataModelTestCase {
         String[] stmts2 = {
                 "ALTER TABLE dummy ADD new_field INT"
         };
-         DBConnect.updateTable("dummy", 2, stmts2);
-         Connection con = DBConnect.getDBConnection();
+        DBConnect.updateTable("dummy", 2, stmts2);
+        Connection con = DBConnect.getDBConnection();
         PreparedStatement s = con.prepareStatement("SELECT id, new_field FROM "
                                                    + "dummy");
-        ResultSet rs = s.executeQuery();
+        s.executeQuery();
         assertEquals("Update table should have version number 2", 2,
                      DBUtils.getTableVersion(con, "dummy"));
     }
@@ -316,9 +320,6 @@ public class DBConnectTester extends DataModelTestCase {
     	s.execute();
     }
 
-
-
-
     private void dropTestTable() throws SQLException {
     	//  drop table "DBConnectTester" used for testing set*Max methods
     	Connection c = DBConnect.getDBConnection();
@@ -329,15 +330,39 @@ public class DBConnectTester extends DataModelTestCase {
     
     private String retrieveStoredString(int id) {
 		return 
-			DBUtils.selectStringValue(DBConnect.getDBConnection(),
-                                      "SELECT orderxml from DBConnectTester where id=?",
-                                      id);
+			DBUtils.selectStringValue(
+			        DBConnect.getDBConnection(),
+                    "SELECT orderxml from DBConnectTester where id=?",
+                    id);
 	}
     
     private String retrieveStoredClob(int id) {
 		return 
-			DBUtils.selectStringValue(DBConnect.getDBConnection(),
-                                      "SELECT orderxmldoc from DBConnectTester where id=?",
-                                      id);
+			DBUtils.selectStringValue(
+			        DBConnect.getDBConnection(),
+                    "SELECT orderxmldoc from DBConnectTester where id=?",
+                    id);
 	}
+    
+    /**
+     * Delete the given table from the table if it exists. 
+     * Furthermore delete the given table from table 'schemaversions' 
+     * @param tablename a given table that we want to have deleted
+     * @throws SQLException 
+     */
+    private void deleteTableIfExists(String tablename) throws SQLException {    
+        Connection con = DBConnect.getDBConnection();
+        DatabaseMetaData metadata = con.getMetaData();
+        ResultSet rs = metadata.getTables(null, null, tablename.toUpperCase(), null);
+        if (rs.next()) { 
+            // A table with the given tablename exists in the database
+            // So delete it!!
+            PreparedStatement s = con.prepareStatement("DROP TABLE " + tablename);
+            s.execute();
+            // delete tablename from schemaversions
+            s = con.prepareStatement("DELETE FROM schemaversions WHERE tablename=?");
+            s.setString(1, tablename);
+            s.execute();
+        }
+    }
 }
