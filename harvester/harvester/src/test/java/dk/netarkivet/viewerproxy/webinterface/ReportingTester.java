@@ -5,7 +5,7 @@
 * Date:     $Date$
 *
 * The Netarchive Suite - Software to harvest and preserve websites
-* Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Lesser General Public
