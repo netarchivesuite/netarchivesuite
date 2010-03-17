@@ -5,5 +5,25 @@
                  dk.netarkivet.wayback.batch.copycode.NetarchiveSuiteAggressiveUrlCanonicalizer
              </classname>
          </urlcanonicalizer>
+        <hibernate>
+            <c3p0>
+                <acquire_increment>1</acquire_increment>
+                <idle_test_period>100</idle_test_period>
+                <max_size>100</max_size>
+                <max_statements>100</max_statements>
+                <min_size>10</min_size>
+                <timeout>100</timeout>
+            </c3p0>
+            <connection_url>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connection_url>
+            <db_driver_class>org.apache.derby.jdbc.ClientDriver</db_driver_class>
+            <use_reflection_optimizer>false</use_reflection_optimizer>
+            <transaction_factory>org.hibernate.transaction.JDBCTransactionFactory</transaction_factory>
+            <dialect>org.hibernate.dialect.DerbyDialect</dialect>
+            <show_sql>true</show_sql>
+            <format_sql>true</format_sql>
+            <hbm2ddl_auto>create-drop</hbm2ddl_auto>
+            <user></user>
+            <password></password>
+        </hibernate>
     </wayback>
 </settings>

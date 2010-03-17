@@ -51,4 +51,43 @@ public class WaybackSettings {
      */
     public static String URL_CANONICALIZER_CLASSNAME = 
             "settings.wayback.urlcanonicalizer.classname";
+
+
+    /**
+     * There now follows a list of hibernate-related properties.
+     */
+
+    public static String C3P0_ACQUIRE_INCREMENT =
+            "settings.wayback.hibernate.c3p0.acquire_increment";
+    public static String C3P0_IDLE_PERIOD =
+            "settings.wayback.hibernate.c3p0.idle_test_period";
+    public static String  C3P0_MAX_SIZE =
+            "settings.wayback.hibernate.c3p0.max_size";
+    public static String C3P0_MAX_STATEMENTS =
+             "settings.wayback.hibernate.c3p0.max_statements";
+    public static String C3P0_MIN_SIZE =
+             "settings.wayback.hibernate.c3p0.min_size";
+    public static String C3P0_TIMEOUT =
+             "settings.wayback.hibernate.c3p0.timeout";
+    public static String HIBERNATE_DB_URL =
+            "settings.wayback.hibernate.connection_url";
+    public static String HIBERNATE_DB_DRIVER =
+            "settings.wayback.hibernate.db_driver_class";
+    public static String HIBERNATE_REFLECTION_OPTIMIZER =
+            "settings.wayback.hibernate.use_reflection_optimizer";
+    public static String HIBERNATE_TRANSACTION_FACTORY =
+            "settings.wayback.hibernate.transaction_factory";
+    public static String HIBERNATE_DIALECT =
+            "settings.wayback.hibernate.dialect";
+    public static String HIBERNATE_SHOW_SQL =
+            "settings.wayback.hibernate.show_sql";
+    public static String HIBERNATE_FORMAT_SQL =
+            "settings.wayback.hibernate.format_sql";
+    public static String HIBERNATE_HBM2DDL_AUTO =
+            "settings.wayback.hibernate.hbm2ddl_auto";
+    public static String HIBERNATE_USERNAME =
+            "settings.wayback.hibernate.user";
+    public static String HIBERNATE_PASSWORD =
+            "settings.wayback.hibernate.password";
+
 }
