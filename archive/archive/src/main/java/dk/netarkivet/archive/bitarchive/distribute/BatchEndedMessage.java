@@ -81,11 +81,10 @@ public class BatchEndedMessage extends ArchiveMessage {
             String originatingBatchMsgId, RemoteFile rf) 
             throws ArgumentNotValid {
         super(to, Channels.getError());
-        ArgumentNotValid.checkNotNull(to, "to");
-        ArgumentNotValid.checkNotNullOrEmpty(baAppId,
-                "baAppId");
+        ArgumentNotValid.checkNotNull(to, "ChannelID to");
+        ArgumentNotValid.checkNotNullOrEmpty(baAppId, "String baAppId");
         ArgumentNotValid.checkNotNullOrEmpty(originatingBatchMsgId,
-                "originatingBatchMsgId");
+                "String originatingBatchMsgId");
 
         this.baApplicationId = baAppId;
         this.originatingBatchMsgId = originatingBatchMsgId;

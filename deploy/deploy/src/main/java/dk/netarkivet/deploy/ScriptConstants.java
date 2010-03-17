@@ -67,22 +67,21 @@ public final class ScriptConstants {
     /** Djava.security.manager.*/
     static final String OPTION_SECURITY_MANAGER = "Djava.security.manager";
     /** Djava.security.policy=.*/
-    static final String OPTION_SECIRITY_POLICY = "Djava.security.policy=";
+    static final String OPTION_SECURITY_POLICY = "Djava.security.policy=";
     /** Djava.security.policy=\"\".*/
-    static final String OPTION_SECIRITY_POLICY_WIN = OPTION_SECIRITY_POLICY 
+    static final String OPTION_SECURITY_POLICY_WIN = OPTION_SECURITY_POLICY 
             + "\"\"";
-    /** lib/db/derbynet.jar:lib/db/derby.jar .*/
+    /** Array of classpaths for libraries used to access the database. 
+     * Currently: lib/db/derbynet.jar and lib/db/derby.jar .*/
     static final String[] DERBY_ACCESS_CLASSPATH = 
         new String[]{"lib/db/derbynet.jar", "lib/db/derby.jar"};
     /** org.apache.derby.drda.NetworkServerControl .*/
     static final String DERBY_ACCESS_METHOD = 
         "org.apache.derby.drda.NetworkServerControl";
     /** start .*/
-    static final String DERBY_COMMAND_START =
-        "start";
+    static final String DERBY_COMMAND_START = "start";
     /** shutdown .*/
-    static final String DERBY_COMMAND_KILL =
-        "shutdown";
+    static final String DERBY_COMMAND_KILL = "shutdown";
 
     /** The message when database is trying to overwrite a non-empty dir.*/
     static final String DATABASE_ERROR_PROMPT_DIR_NOT_EMPTY = 
@@ -115,7 +114,7 @@ public final class ScriptConstants {
     /** 2>&1 &.*/
     static final String LINUX_ERROR_MESSAGE_TO_1 = "2>&1 &"; 
     /** /etc/profile.*/
-    static final String ECT_PROFILE = "/etc/profile";
+    static final String ETC_PROFILE = "/etc/profile";
     /** The linux command for sleeping. sleep.*/
     static final String SLEEP = "sleep";
     /** sleep 5.*/
@@ -223,7 +222,7 @@ public final class ScriptConstants {
     /** readonly - for the monitorRole.*/
     static final String JMXREMOTE_MONITOR_PRIVILEGES = "readonly";
     /** readonly - for the controlRole.*/
-    static final String JMXREMOTE_HERITRIX_PRIVELEGES = "readwrite";
+    static final String JMXREMOTE_HERITRIX_PRIVILEGES = "readwrite";
     /** The argument for the port for the external database: -p. */
     static final String DATABASE_PORT_ARGUMENT = "-p";
     
@@ -349,11 +348,11 @@ public final class ScriptConstants {
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid If the login is null. 
+     * @throws ArgumentNotValid If the login is null or the empty string. 
      */
     public static String writeKillMachineHeader(String login) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(login, "String login");
+        ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
         return "echo KILLING MACHINE: " + login + NEWLINE;
     }
     
@@ -362,11 +361,11 @@ public final class ScriptConstants {
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid If the login is null.
+     * @throws ArgumentNotValid If the login is null or the empty string.
      */
     public static String writeStartMachineHeader(String login) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(login, "String login");
+        ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
         return "echo STARTING MACHINE: " + login + NEWLINE;
     }
     
@@ -375,11 +374,11 @@ public final class ScriptConstants {
      * 
      * @param login The login to the machine (username@machinename)
      * @return The echo header for killing a machine.
-     * @throws ArgumentNotValid If the login is null.
+     * @throws ArgumentNotValid If the login is null or the empty string.
      */
     public static String writeInstallMachineHeader(String login) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(login, "String login");
+        ArgumentNotValid.checkNotNullOrEmpty(login, "String login");
         return "echo INSTALLING TO MACHINE: " + login + NEWLINE;
     }
     
@@ -391,11 +390,11 @@ public final class ScriptConstants {
      *   
      * @param path The directory path to change to appropriate format.
      * @return The formatted path.
-     * @throws ArgumentNotValid If the path is null.
+     * @throws ArgumentNotValid If the path is null or the empty string.
      */
     public static String doubleBackslashes(String path) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(path, "String path");
+        ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
         return path.replaceAll("[\\\\]", "\\\\\\\\");
     }
     
@@ -407,11 +406,11 @@ public final class ScriptConstants {
      *   
      * @param path The directory path to change to appropriate format.
      * @return The formatted path.
-     * @throws ArgumentNotValid If the path is null.
+     * @throws ArgumentNotValid If the path is null or the empty string.
      */
     public static String replaceWindowsDirSeparators(String path) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(path, "String path");
+        ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
         return path.replaceAll("[/]", "\\\\\\\\");
     }
     
@@ -422,11 +421,11 @@ public final class ScriptConstants {
      * the correct directory separator: '${/}', instead of '/' or '\\' for 
      * Windows and Linux respectively.
      * @return The permission string.
-     * @throws ArgumentNotValid If the dir is null.
+     * @throws ArgumentNotValid If the dir is null or the empty string.
      */
     public static String writeSecurityPolicyDirPermission(String dir) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(dir, "String dir");
+        ArgumentNotValid.checkNotNullOrEmpty(dir, "String dir");
         return "  permission java.io.FilePermission \"" + dir + "-\", \"read\""
                + ";" + "\n";
     }
@@ -440,13 +439,14 @@ public final class ScriptConstants {
      * @param path The path to the directory of the settings file (conf-dir).
      * @param id The identification of the application (name + instanceId).
      * @return The script for getting the list of running application.
-     * @throws ArgumentNotValid If the totalName, the path or the id is null.
+     * @throws ArgumentNotValid If the totalName, the path or the id is either
+     * null or the empty string.
      */
     public static String getLinuxPIDS(String totalName, String path, 
             String id) throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(totalName, "String totalName");
-        ArgumentNotValid.checkNotNull(path, "String path");
-        ArgumentNotValid.checkNotNull(id, "String id");
+        ArgumentNotValid.checkNotNullOrEmpty(totalName, "String totalName");
+        ArgumentNotValid.checkNotNullOrEmpty(path, "String path");
+        ArgumentNotValid.checkNotNullOrEmpty(id, "String id");
         return "PIDS=$(ps -wwfe | grep " + totalName + " | grep -v grep | grep "
         + path + "settings_" + id + ".xml" + " | awk \"{print \\$2}\")";
     }

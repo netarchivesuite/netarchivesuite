@@ -208,6 +208,8 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
      *
      * If this is the last bitarchive we were missing replies from, notify
      * observers with the batch status for this job.
+     * 
+     * TODO why are the 'exceptions' argument not used?
      *
      * @param bitarchiveBatchID The ID of the batch job sent on to the bit 
      * archives.
@@ -229,12 +231,11 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
             List<FileBatchJob.ExceptionOccurrence> exceptions) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveBatchID,
-                                             "String bitarchiveBatchID");
+                "String bitarchiveBatchID");
         ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID,
-                                             "String bitarchiveID");
+                "String bitarchiveID");
         ArgumentNotValid.checkNotNegative(noOfFilesProcessed, 
                 "int noOfFilesProcessed");
-        // TODO should we validate exceptions ?
        
         BatchJobStatus bjs = runningBatchJobs.get(bitarchiveBatchID);
         if (bjs == null) {
@@ -309,7 +310,7 @@ public class BitarchiveMonitor extends Observable implements CleanupIF {
         public final ChannelID originalRequestReplyTo;
         
         /**
-         * set containing the bitarchives that were live when we sent the
+         * set containing the bitarchives that were alive when we sent the
          * job, but haven't answered yet.
          */
         public final Set<String> missingRespondents;

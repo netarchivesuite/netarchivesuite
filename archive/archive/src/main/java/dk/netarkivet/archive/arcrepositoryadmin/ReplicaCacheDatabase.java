@@ -122,9 +122,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // If unknown replica ids are found, then throw exception.
         if (repIds.size() > 0) {
-            throw new IllegalState("The database contain ID of the following "
-                    + "replicas, which has not defined in the settings: "
-                    + repIds);
+            throw new IllegalState("The database contain identifiers for the "
+                    + "following replicas, which has not defined in the "
+                    + "settings: " + repIds);
         }
     }
     
@@ -324,6 +324,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * An error is thrown if no such file_id is found in the file table, and if 
      * more than one instance with the given name is found, then a warning
      * is issued.
+     * If more than one is found, then it is logged and only the first is 
+     * returned.
      * 
      * @param filename The entry in the filename list where the corresponding
      * file_id should be found.
@@ -345,7 +347,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         default:
             log.warn("Only one entry in the file table with the name '"
                     + filename + "' was expected, but " + files.size()
-                    + " was found.");
+                    + " was found. The first element is returned.");
             return files.get(0);
         }
     }
@@ -375,7 +377,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             return result.get(0);
         default:
             log.warn("More than one replicafileinfo with the file id '"
-                    + fileId + "' from replica '" + replicaId + "': " + result);
+                    + fileId + "' from replica '" + replicaId + "': " + result
+                    + ". The first result returned.");
             return result.get(0);
         }
     }
@@ -853,43 +856,23 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private ReplicaFileInfo getReplicaFileInfo(long replicaFileInfoGuid) {
         // retrieve all
-        String sql = "SELECT * FROM replicafileinfo WHERE replicafileinfo_guid "
-                + "= ?";
+        String sql = "SELECT replicafileinfo_guid, replica_id, file_id, "
+            + "segment_id, checksum, upload_status, filelist_status, "
+            + "checksum_status, filelist_checkdatetime, checksum_checkdatetime "
+            + "FROM replicafileinfo WHERE replicafileinfo_guid = ?";
 
         PreparedStatement s = null;
 
         try {
-            s = DBUtils
-                    .prepareStatement(dbConnection, sql, replicaFileInfoGuid);
+            s = DBUtils.prepareStatement(dbConnection, sql, 
+                    replicaFileInfoGuid);
             ResultSet res = s.executeQuery();
             res.next();
-            int guidCol = res.findColumn("replicafileinfo_guid");
-            int repIdCol = res.findColumn("replica_id");
-            int fileIdCol = res.findColumn("file_id");
-            int segIdCol = res.findColumn("segment_id");
-            int csCol = res.findColumn("checksum");
-            int usCol = res.findColumn("upload_status");
-            int fsCol = res.findColumn("filelist_status");
-            int cssCol = res.findColumn("checksum_status");
-            int fDateCol = res.findColumn("filelist_checkdatetime");
-            int cDateCol = res.findColumn("checksum_checkdatetime");
 
-            // TODO change to: 
-            // "SELECT replicafileinfo_guid, replica_id, file_id, segment_id, 
-            // checksum, upload_status, filelist_status, checksum_status, 
-            // filelist_checkdatetime, checksum_checkdatetime FROM 
-            // replicafileinfo WHERE replicafileinfo_guid = ?", 
-            // replicaFileInfoGuid
-            //
-            // return new Replica(res.getLong(1), res.getString(2), 
-            // res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
-            // res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
-
-            return new ReplicaFileInfo(res.getLong(guidCol), res
-                    .getString(repIdCol), res.getLong(fileIdCol), res
-                    .getLong(segIdCol), res.getString(csCol),
-                    res.getInt(usCol), res.getInt(fsCol), res.getInt(cssCol),
-                    res.getDate(fDateCol), res.getDate(cDateCol));
+            // return the corresponding replica file info.
+            return new ReplicaFileInfo(res.getLong(1), res.getString(2), 
+             res.getLong(3), res.getLong(4), res.getString(5), res.getInt(6),
+             res.getInt(7), res.getInt(8), res.getDate(9), res.getDate(10));
         } catch (SQLException e) {
             final String message = "SQL error while selecting ResultsSet "
                     + "by executing statement '" + sql + "'.";
@@ -1383,7 +1366,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 ReplicaStoreState us = retrieveUploadStatus(fileId, 
                         rep.getId());
                 
-                if(us == ReplicaStoreState.UPLOAD_COMPLETED) {
+                if(us.equals(ReplicaStoreState.UPLOAD_COMPLETED)) {
                     throw new IllegalState("The file has already been "
                             + "completely uploaded to the replica: " + rep);
                 }
@@ -1769,10 +1752,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @return The date of the last missing files update for the replica.
      * A null is returned if no last missing files update has been performed.
      * @throws ArgumentNotValid If the replica is null.
+     * @throws IllegalArgumentException If the Date of the Timestamp cannot be
+     * instanciated.
      */
     @Override
     public Date getDateOfLastMissingFilesUpdate(Replica replica) throws 
-            ArgumentNotValid {
+            ArgumentNotValid, IllegalArgumentException {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         // sql for retrieving thie replicafileinfo_guid.
         String sql = "SELECT filelist_updated FROM replica WHERE "
@@ -1800,10 +1785,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @return The date for the last checksum update. A null is returned if no
      * wrong files update has been performed for this replica.
      * @throws ArgumentNotValid If the replica is null.
+     * @throws IllegalArgumentException If the Date of the Timestamp cannot be
+     * instanciated.
      */
     @Override
     public Date getDateOfLastWrongFilesUpdate(Replica replica) throws 
-            ArgumentNotValid {
+            ArgumentNotValid, IllegalArgumentException {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         
         // The SQL statement for retrieving the date for last updating of
@@ -1986,7 +1973,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             }
         }
 
-        // Notify the administator about that no proper bitarche was found. 
+        // Notify the administator about that no proper bitarchive was found. 
         NotificationsFactory.getInstance().errorEvent("No bitarchive replica "
                 + "was found which contains the file '" + filename + "'.");
 
@@ -2057,8 +2044,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param line The line to insert into the database.
      * @return Whether the line was valid.
+     * @throws ArgumentNotValid If the line is null. If it is empty, then it is
+     * logged.
      */
-    public boolean insertAdminEntry(String line) {
+    public boolean insertAdminEntry(String line) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(line, "String line");
+        
         final int lengthFirstPart = 4;
         final int lengthOtherParts = 3;
         try {
@@ -2076,8 +2067,6 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             
             String filename = entryData[0];
             String checksum = entryData[1];
-//            String uploadState = entryData[2];
-//            String date = entryData[3];
             
             long fileId = retrieveIdForFile(filename);
             
@@ -2128,8 +2117,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param date The new date for the checksumlist and filelist for all the 
      * replicas.
+     * @throws ArgumentNotValid If the date is null.
      */
-    public void setAdminDate(Date date) {
+    public void setAdminDate(Date date) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(date, "Date date");
+        
         // set the date for the replicas.
         for(Replica rep : Replica.getKnown()) {
             setFilelistDateForReplica(rep, date);
@@ -2157,7 +2149,6 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     
     /**
      * Method to print all the tables in the database.
-     * FIXME This is only used during implementation. Kill me afterwards!
      */
     public String retrieveAsText() {
         StringBuilder res = new StringBuilder();

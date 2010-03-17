@@ -26,6 +26,9 @@ package dk.netarkivet.common.distribute.arcrepository;
  * This class encapsulates the different upload states, while storing a file
  * in the archive of a replica .
  * Used by the classes ArcRepository, AdminData, and ArcRepositoryEntry.
+ * 
+ * TODO Needs localisation.
+ * 
  * @see dk.netarkivet.archive.arcrepository.ArcRepository
  * @see dk.netarkivet.archive.arcrepositoryadmin.AdminData
  * @see dk.netarkivet.archive.arcrepositoryadmin.ArcRepositoryEntry

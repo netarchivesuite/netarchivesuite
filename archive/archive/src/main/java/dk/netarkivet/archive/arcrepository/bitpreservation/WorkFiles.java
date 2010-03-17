@@ -251,7 +251,7 @@ public enum WorkFiles {
         return sortedOutput;
     }
 
-    /* public interfaces below here */
+    /* public interfaces below here. */
     /**
      * Method for writing the list of files to a work file.
      * 

@@ -103,7 +103,7 @@ public class UpdateableAdminData extends AdminData implements Admin {
     }
 
     /**
-     * Add new entry to the ddmin data, and persist it to disk,
+     * Add new entry to the admin data, and persist it to disk,
      * if persistNow set to true.
      * @param filename  A filename
      * @param replyInfo A replyInfo for this entry (may be null)
@@ -128,96 +128,96 @@ public class UpdateableAdminData extends AdminData implements Admin {
      * Records the replyInfo (StoreMessage object) so that it can be retrieved
      * using the given file name.
      *
-     * @param arcfileName An arc file that someone is trying to store.
+     * @param fileName An arc file that someone is trying to store.
      * @param replyInfo   A StoreMessage object related to this filename.
-     * @throws UnknownID if no info has been registered for arcfilename
+     * @throws UnknownID if no info has been registered for the filename.
      */
-    public void setReplyInfo(String arcfileName, StoreMessage replyInfo)
+    public void setReplyInfo(String fileName, StoreMessage replyInfo)
             throws UnknownID {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
         ArgumentNotValid.checkNotNull(replyInfo, "replyInfo");
-        if (!hasEntry(arcfileName)) {
+        if (!hasEntry(fileName)) {
             throw new UnknownID("Cannot set replyinfo '" + replyInfo
-                    + "' for unregistered file '" + arcfileName + "'");
+                    + "' for unregistered file '" + fileName + "'");
         }
-        ArcRepositoryEntry entry = storeEntries.get(arcfileName);
+        ArcRepositoryEntry entry = storeEntries.get(fileName);
         entry.setReplyInfo(replyInfo); //TODO Should this be persisted
     }
 
     /**
      * Removes the replyInfo associated with arcfileName.
      *
-     * @param arcfileName A file that we are trying to store.
+     * @param fileName A file that we are trying to store.
      * @return the replyInfo associated with arcfileName.
-     * @throws UnknownID If the arcfilename is not known.
+     * @throws UnknownID If the filename is not known.
      *         or no replyInfo is associated with arcfileName.
      */
-    public StoreMessage removeReplyInfo(String arcfileName)
+    public StoreMessage removeReplyInfo(String fileName)
             throws UnknownID {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        if (!hasEntry(arcfileName)) {
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
+        if (!hasEntry(fileName)) {
             throw new UnknownID("Cannot get reply info for unregistered file '"
-                    + arcfileName + "'");
+                    + fileName + "'");
         }
-        if (!hasReplyInfo(arcfileName)) {
-            throw new UnknownID("replyInfo not set for " + arcfileName);
+        if (!hasReplyInfo(fileName)) {
+            throw new UnknownID("replyInfo not set for " + fileName);
         }
-        ArcRepositoryEntry entry = storeEntries.get(arcfileName);
+        ArcRepositoryEntry entry = storeEntries.get(fileName);
         return entry.getAndRemoveReplyInfo();
     }
 
     /**
      * Sets the store state for the given file on the given bitarchive.
      *
-     * @param arcfileName  A file that is being stored.
-     * @param bitarchiveID A bitarchive.
+     * @param fileName  A file that is being stored.
+     * @param replicaID A bitarchive.
      * @param state        The state of upload of arcfileName on bitarchiveID.
-     * @throws UnknownID If the arcfile does not have a store entry.
+     * @throws UnknownID If the file does not have a store entry.
      * @throws ArgumentNotValid If the arguments are null or empty
      */
-    public void setState(String arcfileName, String bitarchiveID,
+    public void setState(String fileName, String replicaID,
             ReplicaStoreState state) throws UnknownID, ArgumentNotValid {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(bitarchiveID, "bitarchiveID");
-        ArgumentNotValid.checkNotNull(state, "state");
-        if (!hasEntry(arcfileName)) {
-            final String message = "Unregistered file '" + arcfileName
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaID, "String replicaID");
+        ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
+        if (!hasEntry(fileName)) {
+            final String message = "Unregistered file '" + fileName
                                 + "' cannot be set to state " + state + " in '"
-                                + bitarchiveID + "'";
+                                + replicaID + "'";
             log.warn(message);
             throw new UnknownID(message);
         }
 
         // TODO What is this good for?
         // Only used by the toString() method.
-        if (!knownBitArchives.contains(bitarchiveID)) {
-            knownBitArchives.add(bitarchiveID);
+        if (!knownBitArchives.contains(replicaID)) {
+            knownBitArchives.add(replicaID);
         }
-        storeEntries.get(arcfileName).setStoreState(bitarchiveID, state);
-        write(arcfileName); // Add entry for arcfileName in persistent storage.
+        storeEntries.get(fileName).setStoreState(replicaID, state);
+        write(fileName); // Add entry for arcfileName in persistent storage.
     }
 
     /**
      * Set/update the checksum for a given arcfileName in the admindata.
-     * @param arcfileName   Unique name of file for which to store checksum
+     * @param fileName   Unique name of file for which to store checksum
      * @param checkSum
      *      The generated (MD5) checksum to be stored in reference table
      * @throws UnknownID if the file is not already registered.
      * @throws ArgumentNotValid If the arcfileName or the checksum is either 
      * null or the empty string.
      */
-    public void setCheckSum(String arcfileName, String checkSum) 
+    public void setCheckSum(String fileName, String checkSum) 
             throws ArgumentNotValid, UnknownID {
-        ArgumentNotValid.checkNotNullOrEmpty(arcfileName, "arcfileName");
-        ArgumentNotValid.checkNotNullOrEmpty(checkSum, "checkSum");
-        if (!hasEntry(arcfileName)) {
+        ArgumentNotValid.checkNotNullOrEmpty(fileName, "String fileName");
+        ArgumentNotValid.checkNotNullOrEmpty(checkSum, "String checkSum");
+        if (!hasEntry(fileName)) {
             throw new UnknownID("Cannot change checksum for unregistered file '"
-                    + arcfileName + "'");
+                    + fileName + "'");
         }
-        log.trace("Changing checksum for " + arcfileName
-                + " from " + getCheckSum(arcfileName)
+        log.trace("Changing checksum for " + fileName
+                + " from " + getCheckSum(fileName)
                 + " to " + checkSum);
-        storeEntries.get(arcfileName).setChecksum(checkSum);
+        storeEntries.get(fileName).setChecksum(checkSum);
         write(); // Write everything to persistent storage
     }
 

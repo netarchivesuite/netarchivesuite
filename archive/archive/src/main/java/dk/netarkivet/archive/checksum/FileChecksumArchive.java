@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -47,8 +48,8 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 
 /**
@@ -120,7 +121,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      * use a memory archive than the the checksum file, though all entries must
      * exist both in the file and the memory.
      * 
-     * Map<Filename, Checksum>!
+     * Map(file -> checksum).
      */
     private Map<String, String> checksumArchive = Collections.synchronizedMap(
             new HashMap<String, String>());
@@ -137,7 +138,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
      *  
      * @return The current instance of this class.
      */
-    public static FileChecksumArchive getInstance() {
+    public static synchronized FileChecksumArchive getInstance() {
         if(instance == null) {
             instance = new FileChecksumArchive();
         }
@@ -305,9 +306,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
         // go through all entries and extract their filename and checksum.
         for(String record : entries) {
             try {
+                KeyValuePair<String, String> entry = 
+                    ChecksumJob.parseLine(record);
                 // extract the filename and checksum
-                filename = extractFilename(record);
-                checksum = extractChecksum(record);
+                filename = entry.getKey();
+                checksum = entry.getValue();
                 // If their are extracted correct, then they will be put 
                 // into the archive.
                 checksumArchive.put(filename, checksum);
@@ -333,7 +336,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
     
     /**
      * This function is made for the converting the checksum part of 
-     * admin.data to an actual checksum replica. 
+     * admin.data to an actual checksum replica.
+     * If no usable admin.data file is found, then we start with an empty 
+     * archive. 
      */
     private void loadAdminData() {
         log.debug("Empty archive, trying to load an admin.data file");
@@ -341,7 +346,11 @@ public final class FileChecksumArchive extends ChecksumArchive {
         File adminFile = new File("admin.data");
         
         if(!adminFile.exists() || !adminFile.isFile()) {
-            log.info("No admin.data file found, starts with empty archive");
+            log.info("No admin.data file found, starts with empty archive.");
+            return;
+        }
+        if(!adminFile.canRead()) {
+            log.warn("Cannot read admin.data. Starts with empty archive.");
             return;
         }
         
@@ -357,10 +366,10 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 if(line == null) {
                     return;
                 }
-                if(!line.contains("0.4")) {
-                    log.warn("The first line in Admin.data "
-                            + "tells the version. Expected 0.4, but got: "
-                            + line + ". Continues any way.");
+                if(!line.contains(AdminData.VERSION_NUMBER)) {
+                    log.warn("The first line in Admin.data tells the version. "
+                            + "Expected '" + AdminData.VERSION_NUMBER 
+                            + "', but got: " + line + ". Continues any way.");
                 } else {
                     log.debug("Admin.data version: " + line);
                 }
@@ -397,7 +406,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
                 }
             }
         } catch (IOException e) {
-                String msg = "An error occured during reading the admin data "
+                String msg = "An error occurred during reading the admin data "
                     + "file " + adminFile.getAbsolutePath();
                 throw new IOFailure(msg, e);
         }
@@ -528,52 +537,6 @@ public final class FileChecksumArchive extends ChecksumArchive {
     }
 
     /**
-     * Method for extracting the filename of a record. 
-     * 
-     * @param record The record from which the filename should be extracted.
-     * @return The filename of a record.
-     * @throws IllegalState If the record cannot be parsed. 
-     */
-    private String extractFilename(String record) throws IllegalState {
-        // A record is : filename##checksum,
-        // thus the split gives the array: [filename, checksum]
-        // and the first element in the array is thus the filename.
-        String[] split = record.split(CHECKSUM_SEPARATOR);
-        // handle the case when a entry has the wrong format. 
-        if(split.length < 2) {
-            String errMsg = "The record [" + record + "] cannot be parsed into"
-                    + " a filename part and a checksum part.";
-            log.warn(errMsg);
-            throw new IllegalState(errMsg);
-        }
-        
-        return split[0];
-    }
-    
-    /**
-     * Method for extracting the checksum of a record. 
-     * 
-     * @param record The record from which the checksum should be extracted.
-     * @return The checksum of a record.
-     * @throws IllegalState If the record cannot be parsed.
-     */
-    private String extractChecksum(String record) throws IllegalState {
-        // A record is : filename##checksum,
-        // thus the split gives the array: [filename, checksum]
-        // and the second element in the array is thus the checksum.
-        String[] split = record.split(CHECKSUM_SEPARATOR);
-        // handle the case when a entry has the wrong format. 
-        if(split.length < 2) {
-            String errMsg = "The record [" + record + "] cannot be parsed into"
-                    + " a filename part and a checksum part.";
-            log.warn(errMsg);
-            throw new IllegalState(errMsg);
-        }
-        
-        return split[1];
-    }
-    
-    /**
      * Appending an checksum archive entry to the checksum file.
      * The record string is created and appended to the file.
      *  
@@ -602,7 +565,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
                     fwrite.close();
                 }
             } catch(IOException e) {
-                throw new IOFailure("An error occured while appending an entry"
+                throw new IOFailure("An error occurred while appending an entry"
                         + " to the archive file.", e);
             }
             
@@ -642,29 +605,29 @@ public final class FileChecksumArchive extends ChecksumArchive {
     }
 
     /**
-     * The method for uploading an arcFile to the archive.
+     * The method for uploading a file to the archive.
      * 
      * TODO use file instead of remoteFile. Now the remoteFile is not 
      * automatically cleaned up afterwards.
      * 
-     * @param arcfile The remote file containing the arcFile to upload.
+     * @param file The remote file containing the file to be uploaded.
      * @param filename The name of the arcFile.
      * @throws ArgumentNotValid If the RemoteFile is null or if the filename
      * is not valid.
      * @throws IllegalState If the file already within the archive but with a 
      * different checksum.
      */
-    public void upload(RemoteFile arcfile, String filename) throws  
+    public void upload(RemoteFile file, String filename) throws  
             ArgumentNotValid, IllegalState {
         // Validate arguments.
-        ArgumentNotValid.checkNotNull(arcfile, "RemoteFile arcfile");
+        ArgumentNotValid.checkNotNull(file, "RemoteFile file");
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
 
         // synchronize the memory.
         synchronizeWithFile();
 
         // calculate the checksum
-        String checksum = calculateChecksum(arcfile.getInputStream());
+        String checksum = calculateChecksum(file.getInputStream());
         
         // check if file already exist in archive.
         if(checksumArchive.containsKey(filename)) {

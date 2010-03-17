@@ -1,7 +1,7 @@
-/* File:     $Id: RunBatch.java 1215 2010-01-19 12:31:49Z jolf $
- * Revision: $Revision: 1215 $
- * Author:   $Author: jolf $
- * Date:     $Date: 2010-01-19 13:31:49 +0100 (Tue, 19 Jan 2010) $
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Date;
 
+import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
 import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.tools.SimpleCmdlineTool;
@@ -142,7 +143,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                 try {
                     in = new BufferedReader(new FileReader(adminFile));
                     String line = in.readLine();
-                    if(!line.contains("0.4")) {
+                    if(!line.contains(AdminData.VERSION_NUMBER)) {
                         System.err.println("The first line in Admin.data "
                                 + "tells the version. Expected 0.4, but got: "
                                 + line + ". Continues any way.");
@@ -162,7 +163,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                     }
                 }
             } catch (IOException e) {
-                String msg = "An error occured during reading the admin data "
+                String msg = "An error occurred during reading the admin data "
                     + "file " + adminFile.getAbsolutePath();
                 throw new IOFailure(msg, e);
             }

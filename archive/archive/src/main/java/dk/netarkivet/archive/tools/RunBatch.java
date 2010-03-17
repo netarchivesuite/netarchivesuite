@@ -243,10 +243,6 @@ public class RunBatch extends ToolRunnerBase {
             private CommandLineParser parser = new PosixParser();
             /** The command line. */
             protected CommandLine cmd;
-            //HelpFormatter only prints directly, thus this is not used at
-            //the moment. Instead the method usage is implemented
-            // in the listArguments() method.
-            // TODO Use the HelpFormatter class to print out Usage information.
             
             /**
              * Initialize options by setting legal parameters for batch jobs.

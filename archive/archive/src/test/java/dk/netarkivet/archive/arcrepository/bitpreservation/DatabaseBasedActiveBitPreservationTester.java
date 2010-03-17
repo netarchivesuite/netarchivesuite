@@ -242,13 +242,13 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	assertNotNull("The preservation state should not be null.", pres);
 
 	assertEquals("It should be upload completely, but not registret yet", 
-	        ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminBitarchiveState(THREE));
+	        ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminReplicaState(THREE));
 	
 	dbabp.findChangedFiles(THREE);
 	
 	pres = dbabp.getPreservationState("integrity11.ARC");
         assertEquals("It should be now be registreret as upload completely.", 
-                ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminBitarchiveState(THREE));
+                ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminReplicaState(THREE));
         
 
         try {

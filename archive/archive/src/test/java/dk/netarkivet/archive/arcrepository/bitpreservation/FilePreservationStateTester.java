@@ -87,11 +87,11 @@ public class FilePreservationStateTester extends TestCase {
     
         // check function getBitarchiveChecksum
         assertEquals("Replica ONE should contain 1 checksum value", 
-                "[checksum]", fps.getBitarchiveChecksum(r1).toString());
+                "[checksum]", fps.getReplicaChecksum(r1).toString());
         assertEquals("Replica TWO should contain 1 checksum value", 
-                "[checksum]", fps.getBitarchiveChecksum(r2).toString());
+                "[checksum]", fps.getReplicaChecksum(r2).toString());
         assertEquals("Replica THREE should contain 1 checksum value", 
-                "[muskcehc]", fps.getBitarchiveChecksum(r3).toString());
+                "[muskcehc]", fps.getReplicaChecksum(r3).toString());
         
         // check function getAdminDataChecksum
         assertEquals("The admin data should have the common checksum", 
@@ -100,13 +100,13 @@ public class FilePreservationStateTester extends TestCase {
         // check function getAdminBitarchiveState
         assertEquals("Replica ONE should have UPLOAD_COMPLETED", 
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(),
-                fps.getAdminBitarchiveState(r1));
+                fps.getAdminReplicaState(r1));
         assertEquals("Replica TWO should have UPLOAD_COMPLETED", 
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(),
-                fps.getAdminBitarchiveState(r2));
+                fps.getAdminReplicaState(r2));
         assertEquals("Replica THREE should have UPLOAD_FAILED", 
                 ReplicaStoreState.UPLOAD_FAILED.toString(),
-                fps.getAdminBitarchiveState(r3));
+                fps.getAdminReplicaState(r3));
         
         // check function isAdminDataOk
         assertFalse("Admin data should not be ok", fps.isAdminDataOk());
@@ -194,11 +194,11 @@ public class FilePreservationStateTester extends TestCase {
         
         // getBitarchiveChecksum
         assertEquals("Replica TWO should not have any checksums, thus expected empty list.", 
-                Collections.emptyList(), fps.getBitarchiveChecksum(r2));
+                Collections.emptyList(), fps.getReplicaChecksum(r2));
         
         // getAdminBitarchiveState
         assertEquals("Replica TWO should not have a state", 
-                "No state", fps.getAdminBitarchiveState(r2));
+                "No state", fps.getAdminReplicaState(r2));
         
         // isAdminDataOk
         assertFalse("AdminData should not be ok", 

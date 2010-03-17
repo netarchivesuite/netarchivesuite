@@ -165,10 +165,10 @@ public final class Constants {
     static final String[] COMPLETE_JMX_RMIPORT_PATH =
         CommonSettings.JMX_RMI_PORT.split("[.]");
     /** The path to the heritrix guiPort from beyond settings.*/
-    static final String[] COMPLETE_HARVEST_HETRIX_GUI_PORT_PATH = 
+    static final String[] COMPLETE_HARVEST_HERITRIX_GUI_PORT_PATH = 
         HarvesterSettings.HERITRIX_GUI_PORT.split("[.]");
     /** The path to the heritrix jmxPort from beyond settings.*/
-    static final String[] COMPLETE_HARVEST_HETRIX_JMX_PORT =
+    static final String[] COMPLETE_HARVEST_HERITRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT.split("[.]");
     /** The path to the archive database port leaf from beyond settings.*/
     static final String[] COMPLETE_ARCHIVE_DATABASE_PORT =
@@ -178,7 +178,7 @@ public final class Constants {
         ArchiveSettings.PORT_ARCREPOSITORY_ADMIN_DATABASE
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the heritrix jmxPort from the settings branch.*/
-    static final String[] SETTINGS_HARVEST_HETRIX_JMX_PORT =
+    static final String[] SETTINGS_HARVEST_HERITRIX_JMX_PORT =
         HarvesterSettings.HERITRIX_JMX_PORT
         .replace(CommonSettings.SETTINGS + ".", "").split("[.]");
     /** The path to the tempDir leaf from settings.*/
@@ -322,7 +322,7 @@ public final class Constants {
      * The name of the archive database in the database base dir above.
      * This is the default name of the archive database.
      */
-    static final String ARCHIVE_DATABASE_BASE_FILE = "bpdb.jar";
+    static final String ARCHIVE_DATABASE_BASE_FILE = "archivedb.jar";
     /** 
      * The path to the base archive database (the one above combined 
      * with the base database dir).
@@ -515,7 +515,7 @@ public final class Constants {
         "Database file must have extension '.jar' or '.zip'";
     /** The error message for wrong archive database extension.*/
     public static final String MSG_ERROR_BPDB_EXTENSION = 
-        "Bitpreservation database file must have extension '.jar' or '.zip'";
+        "Archive database file must have extension '.jar' or '.zip'";
     /** The error message when test wrong number of test arguments.*/
     public static final String MSG_ERROR_TEST_ARGUMENTS = 
         "There have to be " + TEST_ARGUMENTS_REQUIRED + " test arguments.";
@@ -570,11 +570,11 @@ public final class Constants {
      * 
      * @param scope The name of the XML-scope to have the start created.
      * @return The beginning of the XML-scope.
-     * @throws ArgumentNotValid If the scope is null.
+     * @throws ArgumentNotValid If the scope is null or empty.
      */
     public static String changeToXMLBeginScope(String scope) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(scope, "String scope");
+        ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
         return LESS_THAN + scope + GREATER_THAN;
     }
 
@@ -583,11 +583,11 @@ public final class Constants {
      * 
      * @param scope The name of the XML-scope to have the end created.
      * @return The ending of the XML-scope.
-     * @throws ArgumentNotValid If the scope is null.
+     * @throws ArgumentNotValid If the scope is null or empty.
      */
     public static String changeToXMLEndScope(String scope) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(scope, "String scope");
+        ArgumentNotValid.checkNotNullOrEmpty(scope, "String scope");
         return LESS_THAN + SLASH + scope + GREATER_THAN;
     }
     
@@ -597,11 +597,11 @@ public final class Constants {
      * 
      * @param name The environment name to validate.
      * @return Whether the environment name is valid.
-     * @throws ArgumentNotValid If the name is null.
+     * @throws ArgumentNotValid If the name is null or empty.
      */
     public static boolean validEnvironmentName(String name) 
             throws ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(name, "String name");
+        ArgumentNotValid.checkNotNullOrEmpty(name, "String name");
         return Pattern.matches(VALID_REGEX_ENVIRONMENT_NAME, name);
     }
 }

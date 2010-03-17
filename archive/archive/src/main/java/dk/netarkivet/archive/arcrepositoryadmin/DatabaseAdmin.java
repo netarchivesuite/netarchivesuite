@@ -1,7 +1,7 @@
-/* File:     $Id: AdminData.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision: $Revision: 1042 $
- * Author:   $Author: kfc $
- * Date:     $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -64,7 +64,7 @@ public final class DatabaseAdmin implements Admin {
      * 
      * @return The current instance of this class.
      */
-    public static DatabaseAdmin getInstance() {
+    public static synchronized DatabaseAdmin getInstance() {
         if(instance == null) {
             instance = new DatabaseAdmin();
         }
@@ -114,7 +114,7 @@ public final class DatabaseAdmin implements Admin {
      * 
      * @param filename The name of the file for the ReplicaStoreState.
      * @param replicaChannelName The name of the identification channel for 
-     * the replica of for the ReplicaStoreState.
+     * uniquely identifying the replica of for the ReplicaStoreState.
      * @return The ReplicaStoreState of a given file in a specific replica.
      * @throws ArgumentNotValid If the filename or the replica id is null or 
      * the empty string.
@@ -292,8 +292,9 @@ public final class DatabaseAdmin implements Admin {
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         
         // This will not be implemented.
-        throw new IllegalState("It is not possible to change the database "
-                + "through the ArcRepository.");
+        throw new IllegalState("It is not possible to change the checksum of a "
+                + " file in the database! Only the checksum of a specific "
+                + "replicafileinfo.");
     }
 
     /**
@@ -343,8 +344,6 @@ public final class DatabaseAdmin implements Admin {
     public void close() {
         storeEntries.clear();
         database.cleanup();
-        if(instance != null) {
-            instance = null;
-        }
+        instance = null;
     }
 }

@@ -70,12 +70,12 @@ public class ArchiveStoreState {
      * Sets the current ReplicaStoreState.
      * @param state The ReplicaStoreState.
      * @param lastDate The lastchanged date.
+     * @throws ArgumentNotValid If the state or the lastDate is null.
      */
-    public void setState(ReplicaStoreState state, Date lastDate) {
-        ArgumentNotValid.checkNotNull(state, 
-            "ReplicaStoreState state");
-        ArgumentNotValid.checkNotNull(lastDate, 
-            "Date lastDate");
+    public void setState(ReplicaStoreState state, Date lastDate) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
+        ArgumentNotValid.checkNotNull(lastDate, "Date lastDate");
     
         this.storestate = state;
         this.lastchanged = lastDate;
@@ -86,10 +86,10 @@ public class ArchiveStoreState {
      * As a sideeffect lastchanged is set to NOW.
      * 
      * @param state the ReplicaStoreState.
+     * @throws ArgumentNotValid If the state is null.
      */
-    public void setState(ReplicaStoreState state) {
-        ArgumentNotValid.checkNotNull(state, 
-                "ReplicaStoreState state");
+    public void setState(ReplicaStoreState state) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(state, "ReplicaStoreState state");
         this.storestate = state;
         this.lastchanged = new Date();
     }

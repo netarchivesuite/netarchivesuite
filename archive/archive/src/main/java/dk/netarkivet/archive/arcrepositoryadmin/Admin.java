@@ -1,7 +1,7 @@
-/* File:        $Id: AdminData.java 1042 2009-09-30 18:12:50Z kfc $
- * Revision:    $Revision: 1042 $
- * Author:      $Author: kfc $
- * Date:        $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -43,6 +43,7 @@ public interface Admin {
      * @return Whether the entry exists. 
      */
     boolean hasEntry(String filename);
+
     /**
      * Method for adding an entry for administration.
      * 
@@ -59,6 +60,7 @@ public interface Admin {
      * @return The checksum of the file.
      */
     String getCheckSum(String filename);
+    
     /**
      * Sets the checksum of a given file.
      * TODO Should it really be possible to change the checksum through 
@@ -66,6 +68,8 @@ public interface Admin {
      *  
      * @param filename The name of the file to have the checksum changed. 
      * @param checksum The new checksum for the file.
+     * @deprecated It should not be change the checksum through Admin. Only by
+     * voting through the bitpreservation interface should it be possible.
      */
     void setCheckSum(String filename, String checksum);
     
@@ -77,6 +81,7 @@ public interface Admin {
      * @return Whether the StoreMessage of the file exists.
      */
     boolean hasReplyInfo(String filename);
+    
     /**
      * Assign a StoreMessage to a specific file.
      * 
@@ -84,6 +89,7 @@ public interface Admin {
      * @param msg The StoreMessage to be assigned to a file.
      */
     void setReplyInfo(String filename, StoreMessage msg);
+    
     /**
      * Retrieves the StoreMessage of a specific file.
      * 
@@ -102,10 +108,10 @@ public interface Admin {
      * @return The ReplicaStoreState of a given file in a specific replica.
      */
     ReplicaStoreState getState(String filename, String replicaChannelName);
+    
     /**
      * Determines whether a given file in a specific replica has a valid 
      * store state.
-     * TODO find out which states are acceptable!
      *  
      * @param filename The name of the file for the ReplicaStoreState.
      * @param repChannelId The identification channel of the replica for the 
@@ -114,6 +120,7 @@ public interface Admin {
      * state.
      */
     boolean hasState(String filename, String repChannelId);
+
     /**
      * Sets the store state of an entry to a specific value.
      * 

@@ -37,7 +37,7 @@ public class TestInfo {
     /** Subdir to use for working copy. */
     public static final File WORKING_DIR = new File(TEST_DIR, "working");
     /** The file for the archive database.*/
-    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "bpdb.jar");
+    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "archivedb.jar");
 
 
     /** A directory with valid bitarchive files. */

@@ -42,12 +42,12 @@ public class DerbyServerSpecifics extends DerbySpecifics {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
-     * is ignored.
-     *
-     * Will log a warning on errors, but otherwise ignore them.
+     * Inherited function. We do not shut down external derby databases, only 
+     * the embedded ones.
      */
     public void shutdownDatabase() {
+        log.warn("The external database will not be shut down from within "
+                + "the code.");
     }
 
     /**

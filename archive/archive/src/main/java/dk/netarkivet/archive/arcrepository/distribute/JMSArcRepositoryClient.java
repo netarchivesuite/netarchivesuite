@@ -534,7 +534,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed 
+        log.debug("Reply received after " + (timePassed 
                 / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
@@ -594,7 +594,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed 
+        log.debug("Reply received after " + (timePassed 
                 / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {
@@ -654,7 +654,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
                                                                getTimeout);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
-        log.debug("Reply recieved after " + (timePassed 
+        log.debug("Reply received after " + (timePassed 
                 / MILLISECONDS_PER_SECOND) + " seconds.");
         // check whether the output was valid.
         if (replyNetMsg == null) {

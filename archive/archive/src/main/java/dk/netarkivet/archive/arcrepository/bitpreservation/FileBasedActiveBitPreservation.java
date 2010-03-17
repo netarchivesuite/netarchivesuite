@@ -959,7 +959,6 @@ public class FileBasedActiveBitPreservation
      */
     public Iterable<String> getMissingFilesForAdminData() 
             throws NotImplementedException {
-        //TODO implement method
         throw new NotImplementedException("Not to be implemented");
     }
 
@@ -972,7 +971,6 @@ public class FileBasedActiveBitPreservation
      */
     public Iterable<String> getChangedFilesForAdminData() 
             throws NotImplementedException {
-        //TODO implement method
         throw new NotImplementedException("Not to be implemented");
     }
 

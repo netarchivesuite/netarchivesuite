@@ -111,7 +111,7 @@ public final class DBConnect {
      * This url will be constructed from the base-url, the machine, 
      * the port and the directory.
      * 
-     * @return The url for the external archive database.
+     * @return The url for the archive database.
      */
     public static String getArchiveUrl() {
         StringBuilder res = new StringBuilder();

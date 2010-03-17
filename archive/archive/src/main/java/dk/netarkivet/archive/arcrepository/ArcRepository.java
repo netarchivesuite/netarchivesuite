@@ -207,14 +207,10 @@ public class ArcRepository implements CleanupIF {
 
         if (theBamons.length != allBas.length
                 || theBamons.length != anyBas.length) {
-
-            String values = 
-                "Inconsistent data found in construction of ArcRepository: \n"
-                + "\nALL_BAs: " + Arrays.toString(allBas)
-                + "\nANY_BAs: " + Arrays.toString(anyBas)
-                + "\nTHE_BAMONs: " + Arrays.toString(theBamons);
-
-            throw new IllegalState(values);
+            throw new IllegalState("Inconsistent data found in construction of "
+                    + "ArcRepository: \n\nALL_BAs: " + Arrays.toString(allBas)
+                    + "\nANY_BAs: " + Arrays.toString(anyBas)
+                    + "\nTHE_BAMONs: " + Arrays.toString(theBamons));
         }
     }
 
@@ -1041,18 +1037,18 @@ public class ArcRepository implements CleanupIF {
      */
     public void removeAndGetFile(RemoveAndGetFileMessage msg) {
         // Prevent removal of files with correct checksum
-        if (ad.hasEntry(msg.getArcfileName())) {
-            String refchecksum = ad.getCheckSum(msg.getArcfileName());
+        if (ad.hasEntry(msg.getFileName())) {
+            String refchecksum = ad.getCheckSum(msg.getFileName());
             if (msg.getCheckSum().equals(refchecksum)) {
                 throw new ArgumentNotValid(
                        "Attempting to remove file with correct checksum. File="
-                                + msg.getArcfileName() + "; with checksum:"
+                                + msg.getFileName() + "; with checksum:"
                                 + msg.getCheckSum() + ";");
             }
         }
 
         // checksum ok - try to remove the file
-        String errMsg = "Requesting remove of file '" + msg.getArcfileName() 
+        String errMsg = "Requesting remove of file '" + msg.getFileName() 
                 + "' with checksum '" + msg.getCheckSum() + "' from: '" 
                 + msg.getReplicaId() + "'";
         log.warn(errMsg);

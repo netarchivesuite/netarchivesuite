@@ -202,7 +202,7 @@ public class LinuxMachine extends Machine {
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
-                + Constants.SPACE + ScriptConstants.ECT_PROFILE 
+                + Constants.SPACE + ScriptConstants.ETC_PROFILE 
                 + Constants.SEMICOLON + Constants.SPACE);
         res.append(getConfDirPath());
         res.append(Constants.SCRIPT_NAME_KILL_ALL);
@@ -232,7 +232,7 @@ public class LinuxMachine extends Machine {
         res.append(ScriptConstants.SSH + Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.SPACE + Constants.QUOTE_MARK + Constants.DOT
-                + Constants.SPACE + ScriptConstants.ECT_PROFILE 
+                + Constants.SPACE + ScriptConstants.ETC_PROFILE 
                 + Constants.SEMICOLON + Constants.SPACE);
         res.append(getConfDirPath());
         res.append(Constants.SCRIPT_NAME_START_ALL);
@@ -471,7 +471,7 @@ public class LinuxMachine extends Machine {
                     // If the application contains a heritrix instance,
                     // then make script for killing the heritrix process.
                     String[] heritrixJmxPort = app.getSettingsValues(
-                            Constants.SETTINGS_HARVEST_HETRIX_JMX_PORT);
+                            Constants.SETTINGS_HARVEST_HERITRIX_JMX_PORT);
                     if(heritrixJmxPort != null && heritrixJmxPort.length > 0) {
                         // log if more than one jmx port defined for heritrix.
                         if(heritrixJmxPort.length > 1) {
@@ -599,7 +599,7 @@ public class LinuxMachine extends Machine {
                             + Constants.SPACE + Constants.DASH 
                             + ScriptConstants.OPTION_SECURITY_MANAGER
                             + Constants.SPACE + Constants.DASH 
-                            + ScriptConstants.OPTION_SECIRITY_POLICY
+                            + ScriptConstants.OPTION_SECURITY_POLICY
                             + getConfDirPath() 
                             + Constants.SECURITY_POLICY_FILE_NAME 
                             + Constants.SPACE + app.getTotalName()
@@ -1310,6 +1310,9 @@ public class LinuxMachine extends Machine {
      * Creates a script for killing the archive database on a given machine.
      * This is only created if the &lt;globalArchiveDatabaseDir&gt; parameter
      * is defined on the machine level.
+     * 
+     * The output is appended to the log, thus the '>>' instead of the standard
+     * '>' when redirecting the output.
      * 
      * <br/> &gt; #!/bin/bash
      * <br/> &gt; cd InstallDir

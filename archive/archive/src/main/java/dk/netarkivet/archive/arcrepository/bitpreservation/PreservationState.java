@@ -1,7 +1,7 @@
-/* File:        $Id: FilePreservationState.java 1192 2009-12-16 11:26:10Z jolf $
- * Revision:    $Revision: 1192 $
- * Author:      $Author: jolf $
- * Date:        $Date: 2009-12-16 12:26:10 +0100 (Wed, 16 Dec 2009) $
+/* File:        $Id$
+ * Revision:    $Revision$
+ * Author:      $Author$
+ * Date:        $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -38,7 +38,7 @@ public interface PreservationState {
      * @return The file's checksum, if it is present in the replica, or
      * "" if it either is absent or an error occurred.
      */
-    List<String> getBitarchiveChecksum(Replica replica);
+    List<String> getReplicaChecksum(Replica replica);
     
     /** Get the MD5 checksum stored in the admin data.
     *
@@ -53,7 +53,7 @@ public interface PreservationState {
      * @param replica The replica to get status for
      * @return Status that the admin data knows for this file in the bitarchive.
      */
-    String getAdminBitarchiveState(Replica replica);
+    String getAdminReplicaState(Replica replica);
 
     /**
      * Check if the admin data reflect the actual status of the archive.

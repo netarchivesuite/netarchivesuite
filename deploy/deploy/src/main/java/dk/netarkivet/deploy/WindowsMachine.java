@@ -30,7 +30,6 @@ import java.io.PrintWriter;
 import org.dom4j.Element;
 
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 
 /**
  * A WindowsMachine is the instance of the abstract machine class, which runs 
@@ -43,7 +42,7 @@ public class WindowsMachine extends Machine {
      * Starts by initializing the parent abstract class, then sets the 
      * operating system dependent variables.
      * 
-     * @param e The XML root element.
+     * @param root The XML root element.
      * @param parentSettings The Settings to be inherited from the 
      * PhysicalLocation, where this machine is placed.
      * @param param The machine parameters to be inherited from the 
@@ -58,11 +57,11 @@ public class WindowsMachine extends Machine {
      * @param arcdbFile The archive database.
      * @param resetDir Whether the temporary directory should be reset.
      */
-    public WindowsMachine(Element e, XmlStructure parentSettings, 
+    public WindowsMachine(Element root, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
                 File logProp, File securityPolicy, File dbFile,
                 File arcdbFile, boolean resetDir) {
-        super(e, parentSettings, param, netarchiveSuiteSource,
+        super(root, parentSettings, param, netarchiveSuiteSource,
                 logProp, securityPolicy, dbFile, arcdbFile, resetDir);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_WINDOWS_ATTRIBUTE;
@@ -781,7 +780,7 @@ public class WindowsMachine extends Machine {
                         + Constants.SPACE + Constants.DASH
                         + ScriptConstants.OPTION_SECURITY_MANAGER
                         + Constants.SPACE + Constants.DASH
-                        + ScriptConstants.OPTION_SECIRITY_POLICY_WIN
+                        + ScriptConstants.OPTION_SECURITY_POLICY_WIN
                         + ScriptConstants.doubleBackslashes(getConfDirPath())
                         + Constants.SECURITY_POLICY_FILE_NAME
                         + Constants.QUOTE_MARK + Constants.QUOTE_MARK
@@ -866,6 +865,7 @@ public class WindowsMachine extends Machine {
     protected String osInstallArchiveDatabase() {
         String bpDatabaseDir = 
             machineParameters.getArchiveDatabaseDirValue();
+        
         // Do not install if no proper archive database directory.
         if(bpDatabaseDir == null || bpDatabaseDir.isEmpty()) {
             return Constants.EMPTY;

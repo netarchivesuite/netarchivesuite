@@ -159,8 +159,11 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * bitarchive monitor.
      *
      * @param inbMsg The message received
+     * @throws ArgumentNotValid If the BatchMessage is null.
      */
-    public void visit(BatchMessage inbMsg) {
+    public void visit(BatchMessage inbMsg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(inbMsg, "BatchMessage inbMsg");
+        
         log.info("Received BatchMessage\n" + inbMsg.toString());
         try {
             BatchMessage outbMsg =
@@ -189,8 +192,11 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * will notify us if the batch job is now done.
      *
      * @param beMsg The BatchEndedMessage to be handled.
+     * @throws ArgumentNotValid If the BatchEndedMessage is null.
      */
     public void visit(final BatchEndedMessage beMsg) {
+        ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
+        
         log.info("Received batch ended from bitarchive '"
                  + beMsg.getBitarchiveID() + "': " + beMsg);
         bamon.signOfLife(beMsg.getBitarchiveID());
@@ -224,8 +230,11 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * Registers a sign of life from a bitarchive.
      *
      * @param hbMsg the message that represents the sign of life
+     * @throws ArgumentNotValid If the HeartBeatMessage is null.
      */
-    public void visit(HeartBeatMessage hbMsg) {
+    public void visit(HeartBeatMessage hbMsg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(hbMsg, "HeartBeatMessage hbMsg");
+        
         try {
             bamon.signOfLife(hbMsg.getBitarchiveID());
         } catch (Exception e) {

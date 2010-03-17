@@ -42,7 +42,7 @@ import dk.netarkivet.common.utils.FileUtils;
  */
 public class RemoveAndGetFileMessage extends ArchiveMessage {
     /**  The file to retrieve. */
-    private String arcfileName;
+    private String fileName;
     /** The actual data. */
     private RemoteFile remoteFile;
     /** This replica id. */
@@ -58,16 +58,16 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * Constructor.
      * @param to Where to send the message.
      * @param replyTo Where the reply of the message should be sent.
-     * @param arcfileName The name of the file to remove and retrieve.
+     * @param fileName The name of the file to remove and retrieve.
      * @param replicaId The id of the replica to sent it to.
      * @param checksum The checksum of the bad file to remove and retrieve.
      * @param credentials The right credentials for the operation.
      */
     public RemoveAndGetFileMessage(ChannelID to, ChannelID replyTo, 
-            String arcfileName, String replicaId, String checksum, 
+            String fileName, String replicaId, String checksum, 
             String credentials) {
         super(to, replyTo);
-        this.arcfileName = arcfileName;
+        this.fileName = fileName;
         this.replicaId = replicaId;
         this.checksum = checksum;
         this.credentials = credentials;
@@ -135,8 +135,8 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * Get name of the file to retrieve.
      * @return file name
      */
-    public String getArcfileName() {
-        return arcfileName;
+    public String getFileName() {
+        return fileName;
     }
 
     /**
@@ -179,7 +179,7 @@ public class RemoveAndGetFileMessage extends ArchiveMessage {
      * @see dk.netarkivet.common.distribute.NetarkivetMessage#toString()
      */
     public String toString() {
-        return super.toString() + " Arcfile: " + arcfileName;
+        return super.toString() + " file: " + fileName;
     }
 
 }

@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.Settings;
  * placement of the cache directory and adding/getting files using the
  * subclasses' methods for generating filenames.
  * 
- * @param <I> The type of case. 
+ * @param <I> The type of cache. 
  */
 public abstract class FileBasedCache<I> {
     /** Cache directory. */

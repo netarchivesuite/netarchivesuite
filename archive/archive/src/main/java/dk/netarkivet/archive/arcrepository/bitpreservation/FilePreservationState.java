@@ -40,7 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 /**
  * This class collects the available bit preservation information for a file.
  * <br>This information is the following:
- * <br>1) admin information for the file for each bitarchive and<br>
+ * <br>1) admin information for the file for each replica and<br>
  * <br>2) the actual upload status
  */
 public class FilePreservationState implements PreservationState {
@@ -53,11 +53,11 @@ public class FilePreservationState implements PreservationState {
     /** the information as seen by the ArcRepository. */
     private ArcRepositoryEntry adminStatus;
 
-    /** the checksums of the file in the individual bitarchives.
+    /** the checksums of the file in the individual replica.
      * Normally, there will only be one entry in the list, but it must also
-     * handle the case where multiple copies exist in a bitarchive.
+     * handle the case where multiple copies exist in a replica.
      */
-    private Map<Replica, List<String>> bitarchive2checksum;
+    private Map<Replica, List<String>> replica2checksum;
 
     /**
      * Create new instance of the preservation status for a file.
@@ -65,30 +65,32 @@ public class FilePreservationState implements PreservationState {
      * @param filename The filename to get status for
      * @param admindata The admin data for the file
      * @param checksumMap The map with the checksums for this file in 
-     *  all bitarchives
+     *  all replicas
      * @throws ArgumentNotValid if filename is null or empty string, 
      *  or if admindata is null.
      */
     FilePreservationState(String filename, ArcRepositoryEntry admindata,
             Map<Replica, List<String>> checksumMap) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
-        ArgumentNotValid.checkNotNull(admindata,
-                "ArcRepositoryEntry admindata");
+        ArgumentNotValid.checkNotNull(admindata, "ArcRepositoryEntry "
+                + "admindata");
+        ArgumentNotValid.checkNotNull(checksumMap, "Map<Replica, List<String>>"
+                + " checksumMap");
         this.filename = filename;
         adminStatus = admindata;
-        bitarchive2checksum = checksumMap;
+        replica2checksum = checksumMap;
     }
 
-    /** Get the checksum of this file in a specific bitarchive.
+    /** Get the checksum of this file in a specific replica.
      *
-     * @param bitarchive The bitarchive to get the checksum from.
-     * @return The file's checksum, if it is present in the bitarchive, or
+     * @param replica The replica to get the checksum from.
+     * @return The file's checksum, if it is present in the replica, or
      * "" if it either is absent or an error occurred.
      */
-    public List<String> getBitarchiveChecksum(Replica bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
-        if (bitarchive2checksum.containsKey(bitarchive)) {
-            return bitarchive2checksum.get(bitarchive);
+    public List<String> getReplicaChecksum(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        if (replica2checksum.containsKey(replica)) {
+            return replica2checksum.get(replica);
         } else {
             return Collections.emptyList();
         }
@@ -102,16 +104,15 @@ public class FilePreservationState implements PreservationState {
         return adminStatus.getChecksum();
     }
 
-    /** Get the status of the file in a bitarchive, according to the admin data.
+    /** Get the status of the file in a replica, according to the admin data.
      * This returns the status as a string for presentation purposes only.
-     * TODO Needs localisation.
      *
-     * @param bitarchive The bitarchive to get status for
-     * @return Status that the admin data knows for this file in the bitarchive.
+     * @param replica The replica to get status for
+     * @return Status that the admin data knows for this file in the replica.
      */
-    public String getAdminBitarchiveState(Replica bitarchive) {
-        ArgumentNotValid.checkNotNull(bitarchive, "Replica bitarchive");
-        ReplicaStoreState state = getAdminBitarchiveStoreState(bitarchive);
+    public String getAdminReplicaState(Replica replica) {
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        ReplicaStoreState state = getAdminBitarchiveStoreState(replica);
         if (state != null) {
             return state.toString();
         } else {
@@ -119,42 +120,42 @@ public class FilePreservationState implements PreservationState {
         }
     }
 
-    /** Get the status of the file in a bitarchive, according to the admin data.
+    /** Get the status of the file in a replica, according to the admin data.
      *
-     * @param bitarchive The bitarchive to get status for
-     * @return Status that the admin data knows for this file in the bitarchive.
+     * @param replica The replica to get status for
+     * @return Status that the admin data knows for this file in the replica.
      */
-    private ReplicaStoreState getAdminBitarchiveStoreState(
-            Replica bitarchive) {
-        String bamonname = bitarchive.getIdentificationChannel().getName();
+    private ReplicaStoreState getAdminBitarchiveStoreState(Replica 
+            replica) {
+        String bamonname = replica.getIdentificationChannel().getName();
         return adminStatus.getStoreState(bamonname);
     }
 
     /**
      * Check if the admin data reflect the actual status of the archive.
      *
-     * Admin State checking: For each bitarchive the admin state is
-     * compared to the checksum received from the bitarchive.
+     * Admin State checking: For each replica the admin state is
+     * compared to the checksum received from the replica.
      *
-     * If no checksum is received from the bitarchive the valid admin states
+     * If no checksum is received from the replica the valid admin states
      * are UPLOAD_STARTED and UPLOAD_FAILED.
-     * If a checksum is received from the bitarchive the valid admin state is
+     * If a checksum is received from the replica the valid admin state is
      * UPLOAD_COMPLETED
      * Admin checksum checking: The admin checksum must match the majority of
      * reported checksums.
      *
      * Notice that a valid Admin data record does NOT imply that everything is
-     * ok. Specifically a file may be missing from a bitarchive, or the checksum
-     * of a file in a bitarchive may be wrong.
+     * ok. Specifically a file may be missing from a replica, or the checksum
+     * of a file in a replica may be wrong.
      *
-     * @return true, if admin data match the state of the bitarchives, false
+     * @return true, if admin data match the state of the replicas, false
      * otherwise
      */
     public boolean isAdminDataOk() {
         // Check the bitarchive states against the admin information
         for (Replica r : Replica.getKnown()) {
             ReplicaStoreState adminstate = getAdminBitarchiveStoreState(r);
-            List<String> checksum = getBitarchiveChecksum(r);
+            List<String> checksum = getReplicaChecksum(r);
 
             // If we find an error, return false, otherwise go on to the rest.
             if (checksum.size() == 0) {
@@ -178,27 +179,26 @@ public class FilePreservationState implements PreservationState {
     }
 
     /**
-     * Check if the file is missing from a bitarchive.
+     * Check if the file is missing from a replica.
      *
-     * @param bitarchive the bitarchive to check
-     * @return true if the file is missing from the bitarchive
+     * @param replica the replica to check.
+     * @return true if the file is missing from the replica.
      */
-    public boolean fileIsMissing(Replica bitarchive) {
-        return getBitarchiveChecksum(bitarchive).size() == 0;
+    public boolean fileIsMissing(Replica replica) {
+        return getReplicaChecksum(replica).size() == 0;
     }
 
     /**
-     * Returns a reference to a bitarchive that contains a version of the file
-     * with the correct checksum.
+     * Returns a reference to a bitarchive replica that contains a version of 
+     * the file with the correct checksum.
      *
      * The correct checksum is defined as the checksum that the majority of the
-     * bitarchives and admin data agree upon.
+     * replicas and admin data agree upon.
      *
-     * If no bitarchive exists with a correct version of the file null is
-     * returned.
+     * If no bitarchive replica exists with a correct version of the file 
+     * null is returned.
      *
-     * @return the name of the reference bitarchive
-     *  or null if no reference exists
+     * @return the name of the reference replica or null if no reference exists.
      */
     public Replica getReferenceBitarchive() {
         String referenceCheckSum = getReferenceCheckSum();
@@ -225,17 +225,16 @@ public class FilePreservationState implements PreservationState {
         return null;
     }
 
-    /** Get a checksum that the whole bitarchive agrees upon, or else "".
+    /** Get a checksum that the whole replica agrees upon, or else "".
      *
      * @param r A replica to get checksum for this file from
      * @return The checksum for this file in the replica, if all machines
      * that have that file agree, otherwise "".  If no checksums are found,
      * also returns "".
-     *
      */
     public String getUniqueChecksum(Replica r) {
         ArgumentNotValid.checkNotNull(r, "Replica r");
-        List<String> checksums = getBitarchiveChecksum(r);
+        List<String> checksums = getReplicaChecksum(r);
         String checksum = null;
         for (String s : checksums) {
             if (checksum != null && !checksum.equals(s)) {
@@ -253,7 +252,7 @@ public class FilePreservationState implements PreservationState {
 
     /**
      * Retrieve checksum that the majority of checksum references
-     * (bitarchives+admin) agree upon.
+     * (replicas+admin) agree upon.
      *
      * @return the reference checksum or "" if no majority exists
      */

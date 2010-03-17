@@ -85,7 +85,7 @@ public class TestInfo {
     public static final String DATABASE_URL = "jdbc:derby:" + DATABASE_DIR.getAbsolutePath();
     
     /** The file for the archive database.*/
-    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "bpdb.jar");
+    static final File DATABASE_FILE = new File("harvestdefinitionbasedir", "archivedb.jar");
 
 
     public static final File TEST_FILE_1 = new File(TEST_DIR, "test1.arc");

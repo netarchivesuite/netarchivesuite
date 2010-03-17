@@ -17,9 +17,9 @@ scp tests/dk/netarkivet/deploy/data/working/database.jar test@kb-test-adm-001.kb
 echo Unzipping harvest definition database
 ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d harvestDatabase ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/fullhddb.jar -d harvestDatabase; fi; exit; "
 echo Copying archive database
-scp tests/dk/netarkivet/deploy/data/working/bpdb.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/harvestdefinitionbasedir/bpdb.jar
+scp tests/dk/netarkivet/deploy/data/working/bpdb.jar test@kb-test-adm-001.kb.dk:/home/test/TEST/harvestdefinitionbasedir/archivedb.jar
 echo Unzipping archive database
-ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d bitpreservationdb ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/bpdb.jar -d bitpreservationdb; fi; exit; "
+ssh test@kb-test-adm-001.kb.dk "cd /home/test/TEST; if [ -d bitpreservationdb ]; then echo The database directory already exists. Thus database not reset.; else unzip -q -o harvestdefinitionbasedir/archivedb.jar -d bitpreservationdb; fi; exit; "
 echo make scripts executable
 ssh test@kb-test-adm-001.kb.dk "chmod 700 /home/test/TEST/conf/*.sh "
 echo make password and access files readonly

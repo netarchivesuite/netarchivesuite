@@ -170,7 +170,7 @@ public final class BitarchiveClient implements ReplicaClient {
     public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
-        log.debug("\nSending upload message\n" + up.toString());
+        log.debug("Sending upload message\n" + up.toString());
         jmsCon.send(up);
     }
 

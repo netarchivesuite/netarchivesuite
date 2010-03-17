@@ -196,7 +196,6 @@ public class IndexRequestServer extends ArchiveMessageHandler
             }
             log.info("Sending " + state 
                     + " reply for IndexRequestMessage"
-                    //"with ID='" + irMsg.getReplyOfId()
                     + " back to sender '"
                     + irMsg.getReplyTo() + "'."); 
             JMSConnectionFactory.getInstance().reply(irMsg);

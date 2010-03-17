@@ -83,7 +83,8 @@ public class BitpreserveFileState {
         ServletRequest request = context.getRequest();
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
-        if (bitarchiveName == null) { // parameter BITARCHIVE_NAME_PARAM not set
+        if (bitarchiveName == null) { 
+            log.info("No replica name found in request.");
             return;
         }
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
@@ -583,10 +584,10 @@ public class BitpreserveFileState {
                 +  baReplica.getName() + "'");
         out.print(HTMLUtils.makeTableRow(
                 HTMLUtils.makeTableElement(baReplica.getName()),
-                HTMLUtils.makeTableElement(fs.getAdminBitarchiveState(
+                HTMLUtils.makeTableElement(fs.getAdminReplicaState(
                         baReplica)),
                 HTMLUtils.makeTableElement(presentChecksum(
-                    fs.getBitarchiveChecksum(baReplica), locale))));
+                    fs.getReplicaChecksum(baReplica), locale))));
     }
 
     /**

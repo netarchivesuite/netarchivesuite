@@ -420,10 +420,11 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      * @return The bad entry file.
      * @throws ArgumentNotValid If one of the arguments are null, or if a string
      * is empty.
+     * @throws PermissionDenied If the credentials or checksum are invalid. 
      */
     @Override
     public File correct(String replicaId, String checksum, File file, 
-	    String credentials) {
+	    String credentials) throws ArgumentNotValid, PermissionDenied {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "String checksum");
         ArgumentNotValid.checkNotNull(file, "File file");

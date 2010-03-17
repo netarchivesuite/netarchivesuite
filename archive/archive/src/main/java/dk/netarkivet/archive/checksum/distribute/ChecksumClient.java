@@ -92,7 +92,8 @@ public class ChecksumClient implements ReplicaClient {
         // validate arguments
         ArgumentNotValid.checkNotNull(theCRin, "ChannelID theCRin");
 
-        // Create instance if not created already.
+        // Create a new instance (no static instance, since it would prevent
+        // multi checksum replica clients).
         return new ChecksumClient(theCRin);
     }
 

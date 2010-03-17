@@ -495,25 +495,25 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         FilePreservationState fps = (FilePreservationState) 
                 FileBasedActiveBitPreservation.getInstance().getPreservationState("foobar");
         assertFalse("Should have received result non-null result for ONE",
-                fps.getBitarchiveChecksum(ONE) == null);
+                fps.getReplicaChecksum(ONE) == null);
         assertEquals("Should have expected size for ONE",
-                1, fps.getBitarchiveChecksum(ONE).size());
+                1, fps.getReplicaChecksum(ONE).size());
         assertEquals("Should have expected value for ONE",
-                "md5-1", fps.getBitarchiveChecksum(ONE).get(0));
+                "md5-1", fps.getReplicaChecksum(ONE).get(0));
         
         assertFalse("Should have received result non-null result for TWO",
-                fps.getBitarchiveChecksum(TWO) == null);
+                fps.getReplicaChecksum(TWO) == null);
         assertEquals("Should have expected size for TWO",
-                1, fps.getBitarchiveChecksum(TWO).size());
+                1, fps.getReplicaChecksum(TWO).size());
         assertEquals("Should have expected value for TWO",
-                "md5-2", fps.getBitarchiveChecksum(TWO).get(0));
+                "md5-2", fps.getReplicaChecksum(TWO).get(0));
         
         assertFalse("Should have received result non-null result for THREE",
-                fps.getBitarchiveChecksum(THREE) == null);
+                fps.getReplicaChecksum(THREE) == null);
         assertEquals("Should have expected size for THREE",
-                1, fps.getBitarchiveChecksum(THREE).size());
+                1, fps.getReplicaChecksum(THREE).size());
         assertEquals("Should have expected value for THREE",
-                "md5-3", fps.getBitarchiveChecksum(THREE).get(0));
+                "md5-3", fps.getReplicaChecksum(THREE).get(0));
 
         // Test fewer checksums
         results.clear();
@@ -523,11 +523,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
                 .getInstance().getPreservationState("foobar");
         
         assertFalse("Should have received result non-null result for ONE",
-                fps.getBitarchiveChecksum(ONE) == null);
+                fps.getReplicaChecksum(ONE) == null);
         assertEquals("Should have expected size for ONE",
-                0, fps.getBitarchiveChecksum(ONE).size());
+                0, fps.getReplicaChecksum(ONE).size());
         assertEquals("Should have expected size for TWO",
-                0, fps.getBitarchiveChecksum(TWO).size());
+                0, fps.getReplicaChecksum(TWO).size());
 
         LogUtils.flushLogs(getClass().getName());
         FileAsserts.assertFileNotContains("Should have no warning about ONE",
@@ -542,11 +542,11 @@ public class FileBasedActiveBitPreservationTester extends TestCase {
         fps = (FilePreservationState) FileBasedActiveBitPreservation
                 .getInstance().getPreservationState("foobar");
         assertEquals("Should have expected size for ONE",
-                0, fps.getBitarchiveChecksum(ONE).size());
+                0, fps.getReplicaChecksum(ONE).size());
         assertEquals("Should have expected size for TWO",
-                0, fps.getBitarchiveChecksum(TWO).size());
+                0, fps.getReplicaChecksum(TWO).size());
         assertEquals("Should have expected size for THREE",
-                0, fps.getBitarchiveChecksum(THREE).size());
+                0, fps.getReplicaChecksum(THREE).size());
         LogUtils.flushLogs(getClass().getName());
         
         FileAsserts.assertFileContains("Should have warning about ONE in logfile: "

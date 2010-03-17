@@ -70,11 +70,11 @@ public class DatabasePreservationStateTester extends TestCase {
         
         // check function getBitarchiveChecksum
         assertEquals("The checksum for replica ONE should be 'checksum'", 
-                "checksum", dps.getBitarchiveChecksum(r1).get(0));
+                "checksum", dps.getReplicaChecksum(r1).get(0));
         assertEquals("The checksum for replica TWO should be 'checksum'", 
-                "checksum", dps.getBitarchiveChecksum(r2).get(0));
+                "checksum", dps.getReplicaChecksum(r2).get(0));
         assertEquals("Replica THREE is missing the file, and thus no checksum", 
-                0, dps.getBitarchiveChecksum(r3).size());
+                0, dps.getReplicaChecksum(r3).size());
         
         // check function getAdminChecksum
         assertEquals("No admin data for database preservation state, thus no checksum", 
@@ -83,13 +83,13 @@ public class DatabasePreservationStateTester extends TestCase {
         // check function getAdminBitarchiveState
         assertEquals("Replica ONE should have state UPLOAD_COMPLETE", 
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(), 
-                dps.getAdminBitarchiveState(r1));
+                dps.getAdminReplicaState(r1));
         assertEquals("Replica TWO should have state UPLOAD_COMPLETE", 
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(), 
-                dps.getAdminBitarchiveState(r2));
+                dps.getAdminReplicaState(r2));
         assertEquals("Replica THREE should have state UPLOAD_FAILED", 
                 ReplicaStoreState.UPLOAD_FAILED.toString(), 
-                dps.getAdminBitarchiveState(r3));
+                dps.getAdminReplicaState(r3));
         
         // check function isAdminDataOk
         assertTrue("The admin data should be ok, since it does not exist.",

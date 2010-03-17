@@ -218,7 +218,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * TODO set a time limit for last date to update. This has to be a variable
      * in settings, which should have the default '0', meaning no time limit.
      * If more time has passed than acceptable, then a new checksum job should
-     * be run.
+     * be run. This has to do with assignment B.2.4 - Bitpreservation scheduler.
      */
     private void initChecksumStatusUpdate() {
         // go through all replicas.
@@ -433,7 +433,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param filename The name of the file for whom the FilePreservationState
      * should be retrieved.
      * @return The FilePreservationState for the file.
-     * @throws ArgumentNotValid If the filename does not have a valid name.
+     * @throws ArgumentNotValid If the filename is null or the empty string.
      */
     @Override
     public PreservationState getPreservationState(String filename) 
@@ -460,7 +460,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param filenames The list of filenames whose FilePreservationState should
      * be retrieved.
      * @return A mapping between the filenames and their FilePreservationState.
-     * @throws ArgumentNotValid If the filenames are invalid.
+     * @throws ArgumentNotValid If the list of filenames are null.
      */
     @Override
     public Map<String, PreservationState> getPreservationStateMap(

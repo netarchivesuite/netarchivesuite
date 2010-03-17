@@ -91,7 +91,7 @@ public abstract class Machine {
      * @param logProp The logging property file.
      * @param securityPolicy The security policy file.
      * @param dbFileName The name of the database file.
-     * @param bpdbFileName The name of the archive database file.
+     * @param archiveDbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
@@ -100,7 +100,7 @@ public abstract class Machine {
     public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFileName,
-            File bpdbFileName, boolean resetDir) throws ArgumentNotValid {
+            File archiveDbFileName, boolean resetDir) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
@@ -117,7 +117,7 @@ public abstract class Machine {
         inheritedLogPropFile = logProp;
         inheritedSecurityPolicyFile = securityPolicy;
         databaseFile = dbFileName;
-        arcDatabaseFile = bpdbFileName;
+        arcDatabaseFile = archiveDbFileName;
         resetTempDir = resetDir;
 
         // retrieve the specific settings for this instance 
@@ -678,7 +678,7 @@ public abstract class Machine {
         if(usernames.size() > 0) {
             res.append(usernames.get(0));
             res.append(Constants.SPACE);
-            res.append(ScriptConstants.JMXREMOTE_HERITRIX_PRIVELEGES);
+            res.append(ScriptConstants.JMXREMOTE_HERITRIX_PRIVILEGES);
             res.append(Constants.NEWLINE);
         }
         return res.toString();

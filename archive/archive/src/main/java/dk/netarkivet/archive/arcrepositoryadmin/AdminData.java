@@ -68,7 +68,7 @@ public abstract class AdminData {
     /** Admindata version.
      * VersionNumber is the current version.
      */
-    protected static final String VERSION_NUMBER = "0.4";
+    public static final String VERSION_NUMBER = "0.4";
     /**
      * Admindata version.
      * oldVersionNumber is the earlier but still valid version.

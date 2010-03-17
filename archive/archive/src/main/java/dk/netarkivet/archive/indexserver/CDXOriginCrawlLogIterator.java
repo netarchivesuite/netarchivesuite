@@ -159,7 +159,7 @@ public class CDXOriginCrawlLogIterator extends CrawlLogIterator {
             }
             if (foundRecord == null) {
                 if(lastRecord == null) {
-                    log.trace("No matchin CDX for URL '" + item.getURL() 
+                    log.trace("No matching CDX for URL '" + item.getURL() 
                             + "'. No last CDX was found.");
                 } else {
                     log.trace("No matching CDX for URL '" + item.getURL()

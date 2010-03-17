@@ -178,6 +178,8 @@ public class RawMetadataCache extends FileBasedCache<Long>
 
         /**
          * Initialize method. Run before the arc-records are being processed.
+         * Currently does nothing.
+         * 
          * @param os The output stream to print any pre-processing data.
          */
         public void initialize(OutputStream os) { }
@@ -187,8 +189,11 @@ public class RawMetadataCache extends FileBasedCache<Long>
          * 
          * @param sar The arc-record to process.
          * @param os The output stream to write the results of the processing.
+         * @throws IOFailure In an IOException is caught during handling of 
+         * the arc record.
          */
-        public void processRecord(ARCRecord sar, OutputStream os) {
+        public void processRecord(ARCRecord sar, OutputStream os) 
+                throws IOFailure {
             if (urlMatcher.matcher(sar.getMetaData().getUrl()).matches()
                     && mimeMatcher.matcher(
                             sar.getMetaData().getMimetype()).matches()) {
@@ -203,17 +208,13 @@ public class RawMetadataCache extends FileBasedCache<Long>
                             + sar.getMetaData().getArcFile() + "' offset '"
                             + sar.getMetaData().getOffset() + "'";
                     throw new IOFailure(message, e);
-  //              } finally {
-                    //TODO Should we close ARCRecord here???
-                    //if (is != null) {
-                    //    is.close();
-                    //}
                 }
             }
         }
 
         /**
          * Method for post-processing the data.
+         * Currently does nothing.
          * 
          * @param os The output stream to write the results of the 
          * post-processing data.

@@ -234,9 +234,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * arcfile is not found on this bitarchive machine, nothing happens.
      *
      * @param msg a container for upload request
+     * @throws ArgumentNotValid If the message is null.
      */
     @Override
-    public void visit(GetMessage msg) {
+    public void visit(GetMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         BitarchiveRecord bar;
         log.trace("Processing getMessage(" + msg.getArcFile() + ":"
                 + msg.getIndex() + ").");
@@ -264,9 +266,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * This may be a very time consuming process and is a blocking call.
      *
      * @param msg a container for upload request
+     * @throws ArgumentNotValid If the message is null.
      */
     @Override
-    public void visit(UploadMessage msg) {
+    public void visit(UploadMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
         // TODO Implement a thread-safe solution on resource level rather than
         // message processor level.
         try {
@@ -314,18 +318,20 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * - the file has the correct checksum
      * - the supplied credentials are correct
      * @param msg a container for remove request
+     * @throws ArgumentNotValid If the RemoveAndGetFileMessage is null.
      */
     @Override
-    public void visit(RemoveAndGetFileMessage msg) {
-        String mesg = "Request to move file '" + msg.getArcfileName()
+    public void visit(RemoveAndGetFileMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "RemoveAndGetFileMessage msg");
+        String mesg = "Request to move file '" + msg.getFileName()
                       + "' with checksum '" + msg.getCheckSum() + "' to attic";
         log.warn(mesg);
         NotificationsFactory.getInstance().errorEvent(mesg);
 
-        File foundFile = ba.getFile(msg.getArcfileName());
+        File foundFile = ba.getFile(msg.getFileName());
         // Only send an reply if the file was found
         if (foundFile == null) {
-            log.warn("Remove: '" + msg.getArcfileName() + "' not found");
+            log.warn("Remove: '" + msg.getFileName() + "' not found");
             return;
         }
 
@@ -370,7 +376,7 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
             }
             msg.setFile(moveTo);
 
-            log.warn("Removed file '" + msg.getArcfileName()
+            log.warn("Removed file '" + msg.getFileName()
                         + "' with checksum '"
                     + msg.getCheckSum() + "'");
         } catch (Exception e) {
@@ -388,9 +394,11 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * Process a batch job and send the result back to the client.
      *
      * @param msg a container for batch jobs
+     * @throws ArgumentNotValid If the BatchMessage is null.
      */
     @Override
-    public void visit(final BatchMessage msg) {
+    public void visit(final BatchMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "BatchMessage msg");
         Thread batchThread = new Thread("Batch-" + msg.getID()) {
             @Override
             public void run() {
@@ -440,9 +448,12 @@ public class BitarchiveServer extends ArchiveMessageHandler implements
      * Process a getFile request and send the result back to the client.
      *
      * @param msg a container for a getfile request
+     * @throws ArgumentNotValid If the GetFileMessage is null.
      */
     @Override
-    public void visit(GetFileMessage msg) {
+    public void visit(GetFileMessage msg) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(msg, "GetFileMessage msg");
+        
         try {
             File foundFile = ba.getFile(msg.getArcfileName());
             // Only send an reply if the file was found

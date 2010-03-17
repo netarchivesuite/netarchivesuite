@@ -26,6 +26,7 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 import java.sql.Date;
 
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
  * This is a container for the ReplicaFileInfo table in the bitpreservation 
@@ -66,10 +67,17 @@ public class ReplicaFileInfo {
      * @param css The checksumstatus.
      * @param fDate The date for the last filelist update.
      * @param cDate The date for the last checksum update.
+     * @throws ArgumenNotValid If gId or fId is negative, the rId is either
+     * null or the empty string. The other variables are not validated, since
+     * they are allowed to be null (e.g. the dates before they are updated). 
      */
     public ReplicaFileInfo(long gId, String rId, long fId, long sId, String cs,
-            int us, int fs, int css, Date fDate, Date cDate) {
-        // validate ?
+            int us, int fs, int css, Date fDate, Date cDate) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNegative(gId, "long gId");
+        ArgumentNotValid.checkNotNullOrEmpty(rId, "String rId");
+        ArgumentNotValid.checkNotNegative(fId, "long fId");
+        
         this.guid = gId;
         this.replicaId = rId;
         this.fileId = fId;
@@ -153,7 +161,7 @@ public class ReplicaFileInfo {
      * Retrieves the checksumStatus.
      * @return The checksumStatus.
      */
-    public ChecksumStatus getChecksumState() {
+    public ChecksumStatus getChecksumStatus() {
         return checksumStatus;
     }
 
@@ -161,7 +169,7 @@ public class ReplicaFileInfo {
      * Retrieves the filelistCheckdatetime.
      * @return The filelistCheckdatetime.
      */
-    public Date getFileListDate() {
+    public Date getFileListCheckDateTime() {
         return filelistCheckdatetime;
     }
     

@@ -42,7 +42,7 @@ import dk.netarkivet.common.utils.FileUtils;
  * not being available by telling which files are available rather than by
  * sending an incomplete file.
  * 
- * @param <T> A comparable instance. Inheriting the 
+ * @param <T> A comparable instance. Must inherit the 
  * java.lang.Comparable interface.
  */
 public abstract class CombiningMultiFileBasedCache<T extends Comparable<T>>

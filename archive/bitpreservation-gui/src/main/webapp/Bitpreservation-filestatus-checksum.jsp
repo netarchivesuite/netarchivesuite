@@ -122,9 +122,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                    // Remove file action
                     %>
                     <fmt:message key="insert.password"/>
-                    <input type="password" name="<%=Constants.CREDENTIALS_PARAM%>">
-                    <input type="hidden" value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" name="<%=Constants.CHECKSUM_PARAM%>">
-                    <input type="submit" value="<fmt:message key="replace.file.in.bitarchive.0"><fmt:param><%=bitarchive%></fmt:param></fmt:message>">
+                    <input type="password" 
+                        name="<%=Constants.CREDENTIALS_PARAM%>">
+                    <input type="hidden" 
+                        value="<%=HTMLUtils.escapeHtmlValues(checksum.get(0))%>" 
+                        name="<%=Constants.CHECKSUM_PARAM%>">
+                    <input type="submit" 
+                        value="<fmt:message key="replace.file.in.bitarchive.0">
+                        <fmt:param><%=bitarchive%></fmt:param></fmt:message>">
                     <%
                     // Either (1) no checksums or more than one checksum were returned from location 'bitarchive' for this file
                     // Or (2) the checksum returned is equal to the one stored in admin data

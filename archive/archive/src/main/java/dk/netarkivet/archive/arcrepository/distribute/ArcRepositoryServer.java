@@ -238,7 +238,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     
     /**
      * For retrieving all the filenames from a replica.
-     * TODO This only works for ChecksumReplicas.
      * 
      * @param msg The message to be processed.
      * @throws ArgumentNotValid If the argument is null.
@@ -252,7 +251,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
                     msg.getReplicaId());
             rc.sendGetAllFilenamesMessage(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllFileMessage: " + msg, t);
+            log.warn("Failed to handle GetAllFilenamesMessage: " + msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
@@ -273,7 +272,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
                     msg.getReplicaId());
             rc.sendGetAllChecksumsMessage(msg);
         } catch (Throwable t) {
-            log.warn("Failed to handle GetAllFileMessage: " + msg, t);
+            log.warn("Failed to handle GetAllChecksumsMessage: " + msg, t);
             msg.setNotOk(t);
             JMSConnectionFactory.getInstance().reply(msg);
         }
@@ -289,7 +288,7 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
     public void visit(GetChecksumMessage msg) {
         ArgumentNotValid.checkNotNull(msg, "GetChecksum msg");
         
-        log.info("Recieved GetChecksumMessage '" + msg + "'.");
+        log.info("Received GetChecksumMessage '" + msg + "'.");
         
         // If it is a reply, then handle by arc-repository. 
         // Otherwise send further.
@@ -316,7 +315,6 @@ public class ArcRepositoryServer extends ArchiveMessageHandler {
      * Method for handling CorrectMessages. This message is just sent along to
      * the corresponding replica archive, where the 'bad' entry will be 
      * corrected (made backup of and then replaced).
-     * TODO This currently only works for checksum replicas.
      * 
      * @param msg The message for correcting a bad entry in an archive.
      * @throws ArgumentNotValid If the CorrectMessage is null.

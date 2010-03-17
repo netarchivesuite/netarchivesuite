@@ -26,8 +26,8 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 
 /**
- * The status for the upload.
- * This is to be used by the DatabaseBasedActiveBitPreservation.
+ * The status for the file list updates.
+ * This is used by the DatabaseBasedActiveBitPreservation.
  */
 public enum FileListStatus {
     /** If the status has not been defined. This is the initial value.*/
@@ -39,8 +39,8 @@ public enum FileListStatus {
     
     /**
      * Method to retrieve the FileListStatus based on an integer.
-     *
-     * @param status A certain integer for the upload status
+     *  
+     * @param status A specific integer for the upload status
      * @return The UploadStatus related to the certain integer
      * @throws ArgumentNotValid If argument rt does not correspond
      * to a UploadStatus.

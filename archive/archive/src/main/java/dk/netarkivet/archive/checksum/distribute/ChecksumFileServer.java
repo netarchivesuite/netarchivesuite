@@ -67,6 +67,11 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     protected ChecksumArchive cs;
         
     /**
+     * The character to separate the applicationInstanceId and the IP address.
+     */
+    public static final String APPLICATION_ID_SEPARATOR = "_";
+    
+    /**
      * Returns the unique instance of this class.
      * 
      * The server creates an instance of the checksum it creates access to and
@@ -158,7 +163,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
             String applicationInstanceId = Settings
                     .get(CommonSettings.APPLICATION_INSTANCE_ID);
             if (!applicationInstanceId.isEmpty()) {
-                id += "_" + applicationInstanceId;
+                id += APPLICATION_ID_SEPARATOR + applicationInstanceId;
             }
         } catch (UnknownID e) {
             // Ignore the fact, that there is no APPLICATION_INSTANCE_ID in
@@ -177,7 +182,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(UploadMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "UploadMessage msg");
-        log.debug("Receving upload message: " + msg.toString());
+        log.debug("Receiving upload message: " + msg.toString());
         try {
             try {
                 // retrieve the data file.
@@ -297,7 +302,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     public void visit(GetChecksumMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
         
-        log.debug("Recieving get checksum message: " + msg.toString());
+        log.debug("Receiving get checksum message: " + msg.toString());
         try {
             // get the name of the arc file
             String filename = msg.getArcfileName();
@@ -335,7 +340,7 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
      */
     public void visit(GetAllFilenamesMessage msg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetAllFilenamesMessage msg");
-        log.debug("Receving get all filenames message: " + msg.toString());
+        log.debug("Receiving get all filenames message: " + msg.toString());
 
         try {
             // get all the file names
