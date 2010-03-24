@@ -49,13 +49,11 @@ public class ChecksumJob extends FileBatchJob {
     /** The log.*/
     protected transient Log log = LogFactory.getLog(getClass().getName());
     
-    /** The batch job timeout as a constant.*/
-    private static final long CHECKSUM_JOB_TIME = 
-        15 * Constants.ONE_MIN_IN_MILLIES;
-
     /** The constructor.*/
     public ChecksumJob() {
-        batchJobTimeout = CHECKSUM_JOB_TIME;
+        // Set the batchJobTimeout to -1 so it will be overridden by the 
+        // settings for message timeout.
+        batchJobTimeout = -1;
     }
 
     /**
