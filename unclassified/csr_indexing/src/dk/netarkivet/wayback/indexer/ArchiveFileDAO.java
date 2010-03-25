@@ -23,9 +23,21 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import dk.netarkivet.common.exceptions.NotImplementedException;
+
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
 
     public ArchiveFileDAO() {
         super(ArchiveFile.class);
     }
+
+    /**
+     * Returns true iff this file is found in the object store.
+     * @param filename the name of the file.
+     * @return whether or not the file is already known.
+     */
+    public boolean exists(String filename) {
+        throw new NotImplementedException("Not yet implemented");
+    }
+
 }

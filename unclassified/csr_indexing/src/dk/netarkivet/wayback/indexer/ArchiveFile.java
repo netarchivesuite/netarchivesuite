@@ -34,7 +34,14 @@ import javax.persistence.Entity;
 @Entity
 public class ArchiveFile {
 
+    /**
+     * The name of the file in the arcrepository.
+     */
     private String filename;
+
+    /**
+     * Boolean flag indicating whether the file has been indexed.
+     */
     private boolean isIndexed;
 
     public ArchiveFile() {
