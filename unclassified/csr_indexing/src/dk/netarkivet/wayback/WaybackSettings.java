@@ -89,5 +89,7 @@ public class WaybackSettings {
             "settings.wayback.hibernate.user";
     public static String HIBERNATE_PASSWORD =
             "settings.wayback.hibernate.password";
+    public static String WAYBACK_REPLICA =
+            "settings.wayback.indexer.replicaId";
 
 }

@@ -40,6 +40,9 @@ import junit.framework.TestCase;
 
 public class FileNameHarvesterTester extends TestCase {
 
+    private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
+    private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
+
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -52,22 +55,21 @@ public class FileNameHarvesterTester extends TestCase {
     public void tearDown() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         FileUtils.remove(TestInfo.LOG_FILE);
+        if (oldClient != null) {
+            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
+        }
+        if (oldFileDir != null ) {
+            System.setProperty("settings.common.arcrepositoryClient.fileDir", oldFileDir);
+        }
     }
 
     public void testHarvest() {
         FileNameHarvester.harvest();
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        List<ArchiveFile> files = dao.getSession().createCriteria("from ArchiveFile").list();
+        List<ArchiveFile> files = dao.getSession().createQuery("from ArchiveFile").list();
         assertEquals("There should be two files", 2, files.size());
         FileNameHarvester.harvest();
-        assertEquals("There should still be two files", 2, files.size());
-
-       /* ArcRepositoryClient client = new LocalArcRepositoryClient();
-        FileBatchJob job = new FileListJob();
-        BatchStatus result = client.batch(job, "foobar");
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        result.appendResults(os);
-        String results = os.toString();*/
+        assertEquals("There should still be two files", 2, files.size());      
     }
 
 }

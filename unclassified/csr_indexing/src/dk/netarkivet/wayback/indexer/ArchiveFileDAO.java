@@ -23,6 +23,8 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import org.hibernate.Session;
+
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
@@ -37,7 +39,8 @@ public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
      * @return whether or not the file is already known.
      */
     public boolean exists(String filename) {
-        throw new NotImplementedException("Not yet implemented");
+        Session sess = getSession();
+        return !sess.createQuery("from ArchiveFile where filename='"+filename+"'").list().isEmpty();
     }
 
 }

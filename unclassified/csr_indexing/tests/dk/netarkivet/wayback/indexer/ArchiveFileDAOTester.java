@@ -51,5 +51,15 @@ public class ArchiveFileDAOTester extends TestCase {
         assertEquals("File statoi should be the same", file1.isIndexed(),
                      file2.isIndexed());
     }
+    
+    public void testExists() {
+        ArchiveFile file1 = new ArchiveFile();
+        file1.setFilename("foobar");
+        file1.setIndexed(false);
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        String id = dao.create(file1);
+        assertTrue("File should exist", dao.exists("foobar"));
+        assertFalse("File should not exist", dao.exists("barfoo"));
+    }
 
 }

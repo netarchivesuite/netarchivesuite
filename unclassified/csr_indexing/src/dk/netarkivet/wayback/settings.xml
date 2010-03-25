@@ -25,5 +25,8 @@
             <user></user>
             <password></password>
         </hibernate>
+        <indexer>
+            <replicaId>ONE</replicaId>
+        </indexer>
     </wayback>
 </settings>
