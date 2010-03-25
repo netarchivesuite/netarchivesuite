@@ -25,6 +25,9 @@ package dk.netarkivet.wayback.indexer;
 
 import javax.persistence.Id;
 import javax.persistence.Entity;
+import java.util.Date;
+
+import dk.netarkivet.common.exceptions.NotImplementedException;
 
 
 /**
@@ -44,7 +47,49 @@ public class ArchiveFile {
      */
     private boolean isIndexed;
 
+    /**
+     * The name of the unsorted cdx index file created from the archive file.
+     */
+    private String originalIndexFileName;
+
+    /**
+     * The name of the sorted index file to which entries from this file have
+     * been added.
+     */
+    private String finalIndexFileName;
+
+    /**
+     * The date on which this file was indexed.
+     */
+    private Date indexedDate;
+
     public ArchiveFile() {
+        isIndexed = false;
+        indexedDate = null;
+    }
+
+    public String getOriginalIndexFileName() {
+        return originalIndexFileName;
+    }
+
+    public void setOriginalIndexFileName(String originalIndexFileName) {
+        this.originalIndexFileName = originalIndexFileName;
+    }
+
+    public String getFinalIndexFileName() {
+        return finalIndexFileName;
+    }
+
+    public void setFinalIndexFileName(String finalIndexFileName) {
+        this.finalIndexFileName = finalIndexFileName;
+    }
+
+    public Date getIndexedDate() {
+        return indexedDate;
+    }
+
+    public void setIndexedDate(Date indexedDate) {
+        this.indexedDate = indexedDate;
     }
 
     /**
@@ -67,5 +112,16 @@ public class ArchiveFile {
 
     public void setIndexed(boolean indexed) {
         isIndexed = indexed;
+    }
+
+    /**
+     * Run a batch job to index this file, storing the result locally.
+     * If this method runs successfully, the isIndexed flag will be set to
+     * true and the originalIndexFileName field will be set to the (arbitrary)
+     * name of the file containing the results. The values are persisted to the
+     * datastore.
+     */
+    public void index() {
+          throw new NotImplementedException("Not yet implemented");
     }
 }
