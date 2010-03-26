@@ -57,9 +57,13 @@ public class FileNameHarvesterTester extends TestCase {
         FileUtils.remove(TestInfo.LOG_FILE);
         if (oldClient != null) {
             System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
+        } else {
+            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "");
         }
         if (oldFileDir != null ) {
             System.setProperty("settings.common.arcrepositoryClient.fileDir", oldFileDir);
+        } else {
+            System.setProperty("settings.common.arcrepositoryClient.fileDir", "");
         }
     }
 

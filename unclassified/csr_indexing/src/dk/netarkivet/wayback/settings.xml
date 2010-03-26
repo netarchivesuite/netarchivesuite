@@ -27,6 +27,7 @@
         </hibernate>
         <indexer>
             <replicaId>ONE</replicaId>
+            <tempdir>tempdir</tempdir>
         </indexer>
     </wayback>
 </settings>

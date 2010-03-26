@@ -91,5 +91,7 @@ public class WaybackSettings {
             "settings.wayback.hibernate.password";
     public static String WAYBACK_REPLICA =
             "settings.wayback.indexer.replicaId";
+    public static String WAYBACK_INDEX_TEMPDIR =
+            "settings.wayback.indexer.tempdir";
 
 }
