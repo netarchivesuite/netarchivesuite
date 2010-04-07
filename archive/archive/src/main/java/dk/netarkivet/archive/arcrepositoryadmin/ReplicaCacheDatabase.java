@@ -85,7 +85,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @return The current instance.
      */
-    public static ReplicaCacheDatabase getInstance() {
+    public static synchronized ReplicaCacheDatabase getInstance() {
         if (instance == null) {
             instance = new ReplicaCacheDatabase();
         }
@@ -153,8 +153,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         case 1:
             return true;
         default:
-            throw new IllegalState("Cannot handle " + count + " files "
-                    + "with the name '" + fileid + "'.");
+            throw new IllegalState("Cannot handle " + count 
+                    + " replicafileinfo entries "
+                    + "with the id '" + fileid + "'.");
         }
     }
 
@@ -221,7 +222,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             long fileId = retrieveIdForFile(filename);
             createReplicaFileInfoEntriesInDB(fileId);
         } catch (SQLException e) {
-            throw new IllegalState("Cannot add replica to the database.", e);
+            throw new IllegalState("Cannot add file '" + filename
+                    + "' to the database.", e);
         }
     }
     
@@ -345,7 +347,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             return files.get(0);
             // if more than one file, then log it and return the first found.
         default:
-            log.warn("Only one entry in the file table with the name '"
+            log.warn("Only one entry in the file table for the name '"
                     + filename + "' was expected, but " + files.size()
                     + " was found. The first element is returned.");
             return files.get(0);
@@ -1646,6 +1648,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // If the file does not already exists in the database, create it
             // and retrieve the new ID.
             if (fileid < 0) {
+                log.warn("Inserting the file '" + filename + "' into the "
+                        + "database, again: This should never happen!!!");
                 insertFileIntoDB(filename);
                 fileid = retrieveIdForFile(filename);
             }
