@@ -29,6 +29,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -84,7 +85,9 @@ public class BitpreserveFileState {
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
         if (bitarchiveName == null) { 
-            log.info("No replica name found in request.");
+            log.debug("No replica name found in request, as parameter '"
+                    +  Constants.BITARCHIVE_NAME_PARAM + "' was not set. "
+                    + "Returning without doing anything");
             return;
         }
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
@@ -413,11 +416,13 @@ public class BitpreserveFileState {
             out.print("</a>");
         }
         out.println("<br/>");
-
+        Date lastMissingFilesupdate = activeBitPreservation.getDateForMissingFiles(replica);
+        if (lastMissingFilesupdate == null) {
+            lastMissingFilesupdate = new Date(0);
+        }
         out.println(I18N.getString(
                 locale, "last.update.at.0",
-                activeBitPreservation.getDateForMissingFiles(replica
-                )));
+                lastMissingFilesupdate));
         out.println("<br/>");
 
         out.println("<a href=\"" + Constants.FILESTATUS_PAGE + "?"
@@ -474,9 +479,13 @@ public class BitpreserveFileState {
         out.println("<br/>");
 
         //Time for last update
+        Date lastChangedFilesupdate = bitPreservation.getDateForChangedFiles(
+                replica);
+        if (lastChangedFilesupdate == null) {
+            lastChangedFilesupdate = new Date(0);
+        }
         out.println(I18N.getString(locale, "last.update.at.0",
-                                   bitPreservation.getDateForChangedFiles(
-                                           replica)));
+                lastChangedFilesupdate));
         out.println("<br/>");
 
         //Link for running a new job

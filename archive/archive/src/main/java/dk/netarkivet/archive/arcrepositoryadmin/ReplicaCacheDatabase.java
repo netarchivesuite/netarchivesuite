@@ -1771,6 +1771,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // return null if the field has no be set for this replica.
         if (result == null) {
+            log.warn("The 'filelist_updated' field has not been set, " 
+                    + "as no missing files update has been performed yet.");
             return null;
         } else {
             // Parse the timestamp into a date.
@@ -1806,6 +1808,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // return null if the field has no be set for this replica.
         if (result == null) {
+            log.warn("The 'checksum_updated' field has not been set, " 
+                    + "as no wrong files update has been performed yet.");
             return null;
         } else {
             // Parse the timestamp into a date.
