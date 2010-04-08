@@ -95,7 +95,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * 
      * @return The instance.
      */
-    public static DatabaseBasedActiveBitPreservation getInstance() {
+    public static synchronized DatabaseBasedActiveBitPreservation getInstance() {
         if (instance == null) {
             instance = new DatabaseBasedActiveBitPreservation();
         }
@@ -395,7 +395,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public void findChangedFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findChangedFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
@@ -416,7 +416,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public void findMissingFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findMissingFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
