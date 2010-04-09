@@ -117,6 +117,7 @@ public class BinSearchTester extends TestCase {
         // This is not really a problem, since our CDX files are all in
         // pure ASCII -- domain names are IDNA-encoded, and paths are %XX-
         // encoded.
+        // See Netarchivesuite bug 1913 for this issue.
         if (!TestUtils.runningAs("SUN")) {
             return;
         }

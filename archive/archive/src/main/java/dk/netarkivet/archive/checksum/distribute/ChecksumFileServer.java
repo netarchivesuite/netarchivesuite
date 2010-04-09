@@ -96,7 +96,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
     private ChecksumFileServer() {
         // log that this instance is been invoked.
         log.info("Initialising the ChecksumFileServer.");
-
+        
+        // get the instance of the checksum.
+        cs = FileChecksumArchive.getInstance();
+        
         // initialise the JMSConnection.
         jmsCon = JMSConnectionFactory.getInstance();
 
@@ -105,13 +108,10 @@ public class ChecksumFileServer extends ChecksumArchiveServer {
 
         // Start listening to the channels.
         jmsCon.setListener(theCR, this);
-
+        
         // create the application identifier
         checksumAppId = createAppId();
-
-        // get the instance of the checksum.
-        cs = FileChecksumArchive.getInstance();
-
+ 
         // log that this instance has successfully been invoked.
         log.info("ChecksumFileServer '" + checksumAppId + "' initialised.");
     }

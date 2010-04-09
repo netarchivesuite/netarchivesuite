@@ -36,7 +36,7 @@ public class TestInfo {
 
     static final File CHECKSUM_DIR = new File(WORKING_DIR, "cs");
     
-    static final String TEST1_CHECKSUM = "c06df1852355f3017e480a20116b7376"; 
+    static final String TEST1_CHECKSUM = "8a25cd763176ff41cd042b1d2c2e7061";
     static final String TEST2_CHECKSUM = "d87cc8068fa49f3a4926ce4d1cdf14e1"; 
 
 }

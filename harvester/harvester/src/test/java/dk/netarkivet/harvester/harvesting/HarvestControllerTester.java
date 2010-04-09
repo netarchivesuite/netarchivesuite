@@ -121,7 +121,8 @@ public class HarvestControllerTester extends TestCase {
     }
 
     /** Tests the writeHarvestFiles method.
-     *
+     * FIXME fails when run as part of the UnitTesterSuite.java. See bug 1912.
+     * 
      * @throws Exception
      */
     public void testWriteHarvestFiles() throws Exception {
