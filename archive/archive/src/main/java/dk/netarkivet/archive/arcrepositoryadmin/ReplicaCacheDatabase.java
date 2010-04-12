@@ -1641,24 +1641,25 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // parse the input.
             String filename = entry.getFilename();
             String checksum = entry.getChecksum();
+            
+            // The ID for the file.
+            long fileid = -1;
 
             // If the file is not within DB, then insert it.
             if (!existsFileInDB(filename)) {
                 log.info("Inserting the file '" + filename + "' into the "
                         + "database.");
-                insertFileIntoDB(filename);
+                fileid = insertFileIntoDB(filename);
+            } else {
+                fileid = retrieveIdForFile(filename);
             }
-
-            // Retrieve the ID for the file.
-            long fileid = retrieveIdForFile(filename);
 
             // If the file does not already exists in the database, create it
             // and retrieve the new ID.
             if (fileid < 0) {
                 log.warn("Inserting the file '" + filename + "' into the "
                         + "database, again: This should never happen!!!");
-                insertFileIntoDB(filename);
-                fileid = retrieveIdForFile(filename);
+                fileid = insertFileIntoDB(filename);
             }
 
             // Retrieve the replicafileinfo for the file at the replica.
