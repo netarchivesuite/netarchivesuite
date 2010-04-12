@@ -89,8 +89,12 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
             File checkFile;
             if(args.length < 1) {
                 checkFile = new File(DEFAULT_ADMIN_DATA);
+                System.out.println("Using default admin.data: " 
+                        + checkFile.getAbsolutePath());
             } else {
                 checkFile = new File(args[0]);
+                System.out.println("Using given admin.data: "
+                        + checkFile.getAbsolutePath());
             }
             // Check whether the file exists and is a file (not directory).
             if(!checkFile.isFile()) {
@@ -139,10 +143,13 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
         public void run(String... args) {
             // read and handle each line individually.
             BufferedReader in = null;
+            long badlines = 0;
+            long linesRead = 0;
             try {
                 try {
                     in = new BufferedReader(new FileReader(adminFile));
                     String line = in.readLine();
+                    linesRead++;
                     if(!line.contains(AdminData.VERSION_NUMBER)) {
                         System.err.println("The first line in Admin.data "
                                 + "tells the version. Expected 0.4, but got: "
@@ -151,10 +158,17 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                         System.out.println("Admin.data version: " + line);
                     }
                     while ((line = in.readLine()) != null) {
+                        linesRead++;
                         if(!rcd.insertAdminEntry(line)) {
                             // bad lines
-                            System.err.println("Bad line: ");
+                            badlines++;
+                            System.err.println("Bad line(#" + badlines +"): ");
                             System.err.println(line);
+                        } 
+                        if ((linesRead % 1000) == 0) {
+                            System.out.println("[" + new java.util.Date()
+                                    + "] Processed " 
+                                    + linesRead + " admin data lines");
                         }
                     }
                 } finally {

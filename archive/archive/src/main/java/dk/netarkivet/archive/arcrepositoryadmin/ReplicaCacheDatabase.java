@@ -111,7 +111,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 // if the replica id cannot be removed from the list, then it
                 // does not exist in the database and must be added.
                 log.info("Inserting replica '" + rep.toString()
-                        + "' to database.");
+                        + "' in database.");
                 insertReplicaIntoDB(rep);
             } else {
                 // Otherwise it already exists in the DB.
@@ -200,8 +200,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * 
      * @param filename The filename for the new entry in the file table.
      * @throws IllegalState If the file cannot be inserted into the database.
+     * @return created file_id for the new entry.
      */
-    private void insertFileIntoDB(String filename) throws IllegalState {
+    private long insertFileIntoDB(String filename) throws IllegalState {
+        log.debug("Insert file '" + filename + "' into database");
         try {
             PreparedStatement statement = null;
             dbConnection.setAutoCommit(false);
@@ -221,6 +223,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // Create the replicafileinfo for each replica.
             long fileId = retrieveIdForFile(filename);
             createReplicaFileInfoEntriesInDB(fileId);
+            log.debug("Insert file '" + filename + "' into database completed");
+            return fileId;
         } catch (SQLException e) {
             throw new IllegalState("Cannot add file '" + filename
                     + "' to the database.", e);
@@ -1630,6 +1634,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             throw new IOFailure(msg);
         }
 
+        log.info("Starting processing of " + checksumOutput.size() 
+                + " checksum entries");
+        
         for (ChecksumEntry entry : checksumOutput) {
             // parse the input.
             String filename = entry.getFilename();
@@ -2057,7 +2064,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     public boolean insertAdminEntry(String line) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "String line");
-        
+        log.debug("Insert admin entry begun");
         final int lengthFirstPart = 4;
         final int lengthOtherParts = 3;
         try {
@@ -2081,17 +2088,16 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // If the fileId is -1, then the file is not within the file table.
             // Thus insert it and retrieve the id.
             if(fileId == -1) {
-                insertFileIntoDB(filename);
-                fileId = retrieveIdForFile(filename);
+                fileId = insertFileIntoDB(filename);
             }
-            
+            log.debug("Step 1 completed (file created in database).");
             // go through the replica specifics.
             for(int i = 1; i < split.length; i++) {
                 String[] repInfo = split[i].split(" ");
                 
                 // check if correct size
                 if(repInfo.length < lengthOtherParts) {
-                    log.info("Bad replica information '" + split[i] 
+                    log.warn("Bad replica information '" + split[i] 
                             + "' in line '" + line + "'");
                     continue;
                 }
@@ -2115,7 +2121,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             log.info("Received IllegalState while parsing error.", e);
             return false;
         }
-        
+        log.debug("Insert admin entry finished");
         return true;
     }
     
