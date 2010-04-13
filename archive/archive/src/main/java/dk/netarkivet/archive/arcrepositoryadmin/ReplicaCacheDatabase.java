@@ -916,6 +916,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     
     /**
      * Method for updating an entry in the replicafileinfo table. 
+     * This method does not update the 'checksum_checkdatetime'
+     * and 'filelist_checkdatetime'. 
      * 
      * @param replicafileinfoGuid The guid to update.
      * @param checksum The new checksum for the entry.
@@ -962,7 +964,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     
     /**
      * Method for updating an entry in the replicafileinfo table. 
-     * 
+     * This method updates the 'checksum_checkdatetime'
+     * and 'filelist_checkdatetime' with the given date argument.
+     *  
      * @param replicafileinfoGuid The guid to update.
      * @param checksum The new checksum for the entry.
      * @param date The date for the update.
@@ -1646,7 +1650,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             long fileid = -1;
 
             // If the file is not within DB, then insert it.
-            if (!existsFileInDB(filename)) {
+            if (!existsFileInDB(filename)) { 
                 log.info("Inserting the file '" + filename + "' into the "
                         + "database.");
                 fileid = insertFileIntoDB(filename);
@@ -1724,8 +1728,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 log.info("The file '" + file + "' was not found in the "
                         + "database. Thus creating entry for the file.");
                 // insert the file and retrieve its file_id.
-                insertFileIntoDB(file);
-                fileId = retrieveIdForFile(file);
+                fileId = insertFileIntoDB(file);
             }
 
             // retrieve the replicafileinfo_guid for this entry.
