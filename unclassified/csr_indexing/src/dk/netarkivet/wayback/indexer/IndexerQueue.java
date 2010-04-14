@@ -28,7 +28,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
 
+/**
+ * Singleton class which maintains the basic data structure and methods for
+ * the indexer.
+ */
 public class IndexerQueue {
+
+    /**
+     * The unique instance of this class.
+     */
+    private static IndexerQueue instance;
 
     /**
      * This is the basic underlying datastructure of the indexer - a queue of
@@ -36,7 +45,20 @@ public class IndexerQueue {
      */
     private LinkedBlockingQueue<ArchiveFile> queue;
 
-    public IndexerQueue() {
+    /**
+     * Factory method for obtaining the unique instance of this class.
+     * @return the instance.
+     */
+    public static synchronized IndexerQueue getInstance() {
+        if (instance == null) {
+            return new IndexerQueue();
+        } else {
+            return instance;
+        }
+    }
+
+
+    private IndexerQueue() {
         queue = new LinkedBlockingQueue<ArchiveFile>();
     }
 

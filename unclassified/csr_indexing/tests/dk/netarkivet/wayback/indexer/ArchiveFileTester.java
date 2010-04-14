@@ -36,10 +36,9 @@ import dk.netarkivet.wayback.TestInfo;
 import dk.netarkivet.wayback.WaybackSettings;
 import dk.netarkivet.testutils.TestFileUtils;
 
-public class ArchiveFileTester extends TestCase {
-    private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
+public class ArchiveFileTester extends IndexerTestCase {
+   /* private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
     private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
-    private static File tempdir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR));
 
     public void setUp() {
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
@@ -67,7 +66,7 @@ public class ArchiveFileTester extends TestCase {
             System.setProperty("settings.common.arcrepositoryClient.fileDir", "");
         }
     }
-
+*/
     /**
      * Test indexing on an archive arcfile
      */

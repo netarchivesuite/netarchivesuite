@@ -21,6 +21,11 @@
  */
 package dk.netarkivet.wayback;
 
+import dk.netarkivet.wayback.indexer.ArchiveFileDAOTester;
+import dk.netarkivet.wayback.indexer.ArchiveFileTester;
+import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
+import dk.netarkivet.wayback.indexer.IndexerQueueTester;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -46,7 +51,11 @@ public class WaybackTesterSuite {
      * @param suite The testsuite to be added
      */
     public static void addToSuite(TestSuite suite) {
+        suite.addTestSuite(ArchiveFileTester.class);
+        suite.addTestSuite(ArchiveFileDAOTester.class);
         suite.addTestSuite(ExtractWaybackCDXBatchJobTester.class);
+        suite.addTestSuite(FileNameHarvesterTester.class);
+        suite.addTestSuite(IndexerQueueTester.class);
         suite.addTestSuite(NetarchiveResourceStoreTester.class);
         suite.addTestSuite(UrlCanonicalizerFactoryTester.class);
         suite.addTestSuite(DeduplicateToCDXAdapterTester.class);

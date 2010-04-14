@@ -38,34 +38,8 @@ import dk.netarkivet.wayback.TestInfo;
 
 import junit.framework.TestCase;
 
-public class FileNameHarvesterTester extends TestCase {
+public class FileNameHarvesterTester extends IndexerTestCase {
 
-    private String oldClient = System.getProperty(CommonSettings.ARC_REPOSITORY_CLIENT);
-    private String oldFileDir = System.getProperty("settings.common.arcrepositoryClient.fileDir");
-
-    public void setUp() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
-        System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient");
-        System.setProperty("settings.common.arcrepositoryClient.fileDir", TestInfo.FILE_DIR.getAbsolutePath());
-        assertTrue(ArcRepositoryClientFactory.getPreservationInstance() instanceof LocalArcRepositoryClient);
-    }
-
-
-    public void tearDown() {
-        FileUtils.removeRecursively(TestInfo.WORKING_DIR);
-        FileUtils.remove(TestInfo.LOG_FILE);
-        if (oldClient != null) {
-            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, oldClient);
-        } else {
-            System.setProperty(CommonSettings.ARC_REPOSITORY_CLIENT, "");
-        }
-        if (oldFileDir != null ) {
-            System.setProperty("settings.common.arcrepositoryClient.fileDir", oldFileDir);
-        } else {
-            System.setProperty("settings.common.arcrepositoryClient.fileDir", "");
-        }
-    }
 
     public void testHarvest() {
         FileNameHarvester.harvest();
