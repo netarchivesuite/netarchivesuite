@@ -381,7 +381,7 @@ public final class FileChecksumArchive extends ChecksumArchive {
                     
                     // Check if enough elements
                     if(entryData.length < lineLength) {
-                        log.info("bad line in admin data: " + line);
+                        log.warn("bad line in admin data: " + line);
                         continue;
                     }
                     
@@ -396,8 +396,9 @@ public final class FileChecksumArchive extends ChecksumArchive {
                         }
                         checksumArchive.put(filename, checksum);
                         appendEntryToFile(filename, checksum);
+                        log.debug("AdminData line inserted: " + line);
                     } else {
-                        log.debug("AdminData line ignored: " + line);
+                        log.trace("AdminData line ignored: " + line);
                     }
                 }
             } finally {
