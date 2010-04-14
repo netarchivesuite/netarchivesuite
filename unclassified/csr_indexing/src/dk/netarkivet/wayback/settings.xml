@@ -27,6 +27,7 @@
         </hibernate>
         <indexer>
             <replicaId>ONE</replicaId>
+            <batch_output_dir>batchOutputDir</batch_output_dir>
             <tempdir>tempdir</tempdir>
         </indexer>
     </wayback>

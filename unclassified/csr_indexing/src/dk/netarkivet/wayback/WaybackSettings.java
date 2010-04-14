@@ -93,5 +93,6 @@ public class WaybackSettings {
             "settings.wayback.indexer.replicaId";
     public static String WAYBACK_INDEX_TEMPDIR =
             "settings.wayback.indexer.tempdir";
-
+    public static String WAYBACK_BATCH_OUTPUTDIR =
+            "settings.wayback.indexer.batch_output_dir"; 
 }

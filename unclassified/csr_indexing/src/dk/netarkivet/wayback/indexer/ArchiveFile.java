@@ -26,8 +26,24 @@ package dk.netarkivet.wayback.indexer;
 import javax.persistence.Id;
 import javax.persistence.Entity;
 import java.util.Date;
+import java.util.UUID;
+import java.io.File;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.PreservationArcRepositoryClient;
+import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
+import dk.netarkivet.wayback.batch.ExtractDeduplicateCDXBatchJob;
+import dk.netarkivet.wayback.batch.ExtractWaybackCDXBatchJob;
+import dk.netarkivet.wayback.WaybackSettings;
 
 
 /**
@@ -36,6 +52,8 @@ import dk.netarkivet.common.exceptions.NotImplementedException;
  */
 @Entity
 public class ArchiveFile {
+
+    private static Log log = LogFactory.getLog(ArchiveFile.class);
 
     /**
      * The name of the file in the arcrepository.
@@ -121,7 +139,72 @@ public class ArchiveFile {
      * name of the file containing the results. The values are persisted to the
      * datastore.
      */
-    public void index() {
-          throw new NotImplementedException("Not yet implemented");
+    public void index() throws IllegalState {
+        if (isIndexed) {
+            throw new IllegalState("Attempted to index file '" + filename +
+                                   "' which is already indexed");
+        }
+        //TODO the following code could be replaced by some fancier more general
+        //class with methods for associating particular types of archived files
+        //with particular types of batch processor. e.g. something with
+        // a signature like
+        // List<FileBatchJob> getIndexers(ArchiveFile file)
+        // This more-flexible approach
+        //may be of value when we begin to add warc support.
+        FileBatchJob theJob = null;
+        if (filename.contains("metadata")) {
+            theJob = new ExtractDeduplicateCDXBatchJob();
+        } else {
+            theJob = new ExtractWaybackCDXBatchJob();
+        }
+        theJob.processOnlyFileNamed(filename);                
+        PreservationArcRepositoryClient client =
+                ArcRepositoryClientFactory.getPreservationInstance();
+        BatchStatus batchStatus = client.batch(theJob, Settings.get(
+                WaybackSettings.WAYBACK_REPLICA));
+        if (!batchStatus.getFilesFailed().isEmpty() ||
+            batchStatus.getNoOfFilesProcessed() != 1 ||
+            !batchStatus.getExceptions().isEmpty()) {
+            logBatchError(batchStatus);
+        } else {
+            collectResults(batchStatus);
+        }
     }
+
+    private void collectResults(BatchStatus status) {
+        String outputFilename = UUID.randomUUID().toString();
+        String batchOutputDir =
+                Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
+        final File outDir = new File(batchOutputDir);
+        FileUtils.createDir(outDir);
+        File batchOutputFile =
+                new File(outDir, outputFilename);
+        status.copyResults(batchOutputFile);
+        String tempDir =
+                Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
+        final File tempDirectory = new File(tempDir);
+        FileUtils.createDir(tempDirectory);
+        File tempFile =
+                new File(tempDirectory, outputFilename);
+        batchOutputFile.renameTo(tempFile);
+        originalIndexFileName = outputFilename;
+        isIndexed = true;
+        (new ArchiveFileDAO()).update(this);
+    }
+
+    private void logBatchError(BatchStatus status) {
+        String message = "Error indexing file '" + getFilename() + "\n" +
+                         "Number of files processed: '" +
+                         status.getNoOfFilesProcessed() + "\n" +
+                         "Number of files failed + '" +
+                         status.getFilesFailed().size();
+        if (!status.getExceptions().isEmpty()) {
+            message += "\n Exceptions thrown: " + "\n";
+            for (FileBatchJob.ExceptionOccurrence e: status.getExceptions()) {
+                message += e.toString() + "\n";
+            }
+        }
+        log.error(message);
+    }
+
 }

@@ -67,12 +67,28 @@ public class ArchiveFileTester extends IndexerTestCase {
         }
     }
 */
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        File destDir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR) );
+        FileUtils.removeRecursively(destDir);
+    }
+
+    @Override
+    public void tearDown() {
+        super.tearDown();
+        File destDir = new File(Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR) );
+        FileUtils.removeRecursively(destDir);
+    }
+
     /**
      * Test indexing on an archive arcfile
      */
     public void testIndexerArc() {
         ArchiveFile file = new ArchiveFile();
         file.setFilename("arcfile_withredirects.arc");
+        (new ArchiveFileDAO()).create(file);
         file.index();
         File outputFile = new File(tempdir,
                                    file.getOriginalIndexFileName());
@@ -86,6 +102,7 @@ public class ArchiveFileTester extends IndexerTestCase {
     public void testIndexerMetadata() {
         ArchiveFile file = new ArchiveFile();
         file.setFilename("duplicate.metadata.arc");
+        (new ArchiveFileDAO()).create(file);
         file.index();
         File outputFile = new File(tempdir,
                                    file.getOriginalIndexFileName());
