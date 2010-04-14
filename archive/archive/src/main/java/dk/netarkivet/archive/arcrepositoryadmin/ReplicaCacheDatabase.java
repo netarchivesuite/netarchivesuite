@@ -258,7 +258,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // Make a entry for each replica.
             for (String repId : repIds) {
-                // create if is does not exists already.
+                // create if it does not exists already.
                 if (!existsReplicaFileInfoInDB(fileId, repId)) {
                     // Insert with the known values (no dates).
                     statement = DBUtils.prepareStatement(
@@ -1394,10 +1394,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 }
             }
         } else {
-            insertFileIntoDB(filename);
+            fileId = insertFileIntoDB(filename);
         }
-        
-        fileId = retrieveIdForFile(filename);
         
         for(Replica rep : Replica.getKnown()) {
             // retrieve the guid for the corresponding replicafileinfo entry

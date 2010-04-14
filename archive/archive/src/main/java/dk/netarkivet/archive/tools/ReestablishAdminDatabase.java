@@ -155,7 +155,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                                 + "tells the version. Expected 0.4, but got: "
                                 + line + ". Continues any way.");
                     } else {
-                        System.out.println("Admin.data version: " + line);
+                        System.out.println("Reading admin.data version " + line);
                     }
                     while ((line = in.readLine()) != null) {
                         linesRead++;
@@ -165,7 +165,7 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
                             System.err.println("Bad line(#" + badlines +"): ");
                             System.err.println(line);
                         } 
-                        if ((linesRead % 1000) == 0) {
+                        if ((linesRead % 10000) == 0) {
                             System.out.println("[" + new java.util.Date()
                                     + "] Processed " 
                                     + linesRead + " admin data lines");

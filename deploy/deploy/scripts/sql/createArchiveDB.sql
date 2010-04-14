@@ -33,7 +33,7 @@
 -- updated to enforce consistency and allow automated changes.
 
 
-connect 'jdbc:derby:bitpreservationdb;create=true';
+connect 'jdbc:derby:archivedb;create=true';
 
 --***************************************************************************--
 -- Area: Basics
@@ -114,6 +114,8 @@ create table replicafileinfo (
      checksum_checkdatetime timestamp  -- Last time the checksum status for the file was checked 
      );
      
+create index fileandreplica on replicafileinfo (file_id, replica_id);
+     
 --***************************************************************************--
 -- Area: file
 -- 
@@ -130,6 +132,7 @@ create table file (
      filename varchar(300)  -- the name of the file.
 ); 
 
+create index fileindex on file (filename);
 --***************************************************************************--
 -- Area: segment
 -- 
