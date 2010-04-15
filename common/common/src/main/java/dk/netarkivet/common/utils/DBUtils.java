@@ -44,6 +44,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.harvester.datamodel.DBSpecifics;
 
 /**
  * Various database related utilities.
@@ -600,7 +601,7 @@ public class DBUtils {
     }
 
     /**
-     * Set the CLOB maxlength.
+     * Set a string, possibly truncating it.
      * If contents.length() > maxSize, contents is truncated to contain
      * the first maxSize characters of the contents, and a warning is logged.
      * @param s a prepared statement
@@ -613,8 +614,13 @@ public class DBUtils {
      * parameter marker in the PreparedStatement, or a database access error
      * occurs or this method is called on a closed PreparedStatement
      */
-    public static void setClobMaxLength(PreparedStatement s, int fieldNum,
-            String contents, long maxSize, Object o, String fieldName)
+    public static void setClobMaxLength(
+    		PreparedStatement s, 
+    		int fieldNum,
+            String contents, 
+            long maxSize, 
+            Object o, 
+            String fieldName)
             throws SQLException {
         ArgumentNotValid.checkNotNull(s, "PreparedStatement s");
         if (contents != null) {
@@ -632,11 +638,14 @@ public class DBUtils {
                 }
                 contents = contents.substring(0, (int) maxSize);
             }
-            s.setCharacterStream(fieldNum, new StringReader(contents), contents
-                    .length());
+            s.setCharacterStream(
+            		fieldNum, 
+            		new StringReader(contents), 
+            		contents.length());
             s.setString(fieldNum, contents);
         } else {
-            s.setNull(fieldNum, Types.CLOB);
+        	boolean supportsClob = DBSpecifics.getInstance().supportsClob();
+            s.setNull(fieldNum, supportsClob ? Types.CLOB : Types.VARCHAR);
         }
     }
 

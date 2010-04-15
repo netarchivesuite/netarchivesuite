@@ -57,21 +57,28 @@ import dk.netarkivet.common.utils.StringTree;
  * netarkivet.
  */
 public class HTMLUtils {
+	
     /** Web page title placeholder. */
     private static String TITLE_PLACEHOLDER = "STRING_1";
-    /** Web page header template. */
-    private static String WEBPAGE_HEADER_TEMPLATE = "<!DOCTYPE html "
-            + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
-            + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-            + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
-            + " xml:lang=\"en\" lang=\"en\">\n" 
-            + "<head>\n"
-            + "<meta content=\"text/html; charset=UTF-8\" "
-            + "http-equiv= \"content-type\" />"
-            + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
-            + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
-            + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n"
-            + "<title>" + TITLE_PLACEHOLDER + "</title>\n"
+    
+   private static String  WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
+       + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
+       + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+       + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
+       + " xml:lang=\"en\" lang=\"en\">\n" 
+       + "<head>\n"
+       + "<meta content=\"text/html; charset=UTF-8\" "
+       + "http-equiv= \"content-type\" />"
+       + "<meta http-equiv=\"Expires\" content=\"0\"/>\n"
+       + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
+       + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n";
+   
+   private static String  WEBPAGE_HEADER_AUTOREFRESH =
+	   "<meta http-equiv=\"refresh\" content=\"" 
+	   + TITLE_PLACEHOLDER + "\"/> \n";
+   
+   private static String  WEBPAGE_HEADER_TEMPLATE_BOTTOM = 
+            "<title>" + TITLE_PLACEHOLDER + "</title>\n"
             + "<script type=\"text/javascript\">\n"
             + "<!--\n"
             + "function giveFocus() {\n"
@@ -159,6 +166,27 @@ public class HTMLUtils {
         String title = getTitle(url, locale);
         generateHeader(title, context);
     }
+    
+    /**
+     * Prints the header information for the webpages in the GUI. This includes
+     * the navigation menu, and links for changing the language.
+     * The title of the page is generated internationalised from sitesections.
+     * If you want to specify it, use the overloaded method.
+     * @param context The context of the web page request.
+     * @param refreshInSeconds auto-refresh time in seconds
+     * @throws IOException if an error occurs during writing of output.
+     */
+    public static void generateHeader(
+    		PageContext context,
+    		long refreshInSeconds)
+            throws IOException {
+        ArgumentNotValid.checkNotNull(context, "context");
+        String url = ((HttpServletRequest) context.getRequest())
+                .getRequestURL().toString();
+        Locale locale = context.getResponse().getLocale();
+        String title = getTitle(url, locale);
+        generateHeader(title, refreshInSeconds, context);
+    }
 
     /**
      * Prints the header information for the webpages in the GUI. This includes
@@ -178,7 +206,48 @@ public class HTMLUtils {
         Locale locale = context.getResponse().getLocale();
         title = escapeHtmlValues(title);
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
-        out.print(WEBPAGE_HEADER_TEMPLATE.replace(TITLE_PLACEHOLDER, title));
+        out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
+        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM.replace(
+        		TITLE_PLACEHOLDER, title));
+        // Start the two column / one row table which fills the page
+        out.print("<table id =\"main_table\"><tr>\n");
+        // fill in data in the left column
+        generateNavigationTree(out, url, locale);
+        // The right column contains the active form content for this page
+        out.print("<td valign = \"top\" >\n");
+        // Language links
+        generateLanguageLinks(out);
+    }
+    
+    /**
+     * Prints the header information for the webpages in the GUI. This includes
+     * the navigation menu, and links for changing the language.
+     * @param title An internationalised title of the page.
+     * @param context The context of the web page request.
+     * @param refreshInSeconds auto-refresh time in seconds
+     * @throws IOException if an error occurs during writing to output.
+     */
+    public static void generateHeader(
+    		String title, 
+    		long refreshInSeconds, 
+    		PageContext context)
+            throws IOException {
+        ArgumentNotValid.checkNotNull(title, "title");
+        ArgumentNotValid.checkNotNull(context, "context");
+     
+        JspWriter out = context.getOut();
+        String url = ((HttpServletRequest) context.getRequest())
+                .getRequestURL().toString();
+        Locale locale = context.getResponse().getLocale();
+        title = escapeHtmlValues(title);
+        log.debug("Loaded URL '" + url + "' with title '" + title + "'");
+        out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
+        if (refreshInSeconds > 0) {
+        	out.print(WEBPAGE_HEADER_AUTOREFRESH.replace(
+        			TITLE_PLACEHOLDER, Long.toString(refreshInSeconds)));
+        }
+        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM
+        		.replace(TITLE_PLACEHOLDER, title));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column

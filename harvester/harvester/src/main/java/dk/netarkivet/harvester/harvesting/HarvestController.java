@@ -233,7 +233,8 @@ public class HarvestController {
      */
     public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        HeritrixLauncher hl = HeritrixLauncher.getInstance(files);
+        HeritrixLauncher hl = 
+        	HeritrixLauncherFactory.getInstance(files);
         hl.doCrawl();
     }
 

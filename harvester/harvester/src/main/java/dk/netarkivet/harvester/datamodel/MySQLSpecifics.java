@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 
@@ -208,5 +207,21 @@ public class MySQLSpecifics extends DBSpecifics {
         DBConnect.updateTable("global_crawler_trap_expressions", 1,
                               createStatement);
     }
+    
+    @Override
+	public boolean connectionIsValid(Connection connection, int validityTimeout)
+			throws SQLException {
+		return connection.isValid(validityTimeout);
+	}
+
+	@Override
+	public boolean supportsClob() {
+		return true;
+	}
+
+	@Override
+	public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
+		return "LIMIT " + offset + " " + limit;
+	}
 
 }

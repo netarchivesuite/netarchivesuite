@@ -740,7 +740,7 @@ public class DomainDBDAO extends DomainDAO {
             DBUtils.setComments(s, 2, sl, Constants.MAX_COMMENT_SIZE);
             s.setLong(3, d.getID());
             DBUtils.setClobMaxLength(s, 4, sl.getSeedsAsString(),
-                    Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
+        			Constants.MAX_SEED_LIST_SIZE, sl, "seedlist");
             s.executeUpdate();
             sl.setID(DBUtils.getGeneratedID(s));
         } finally {
@@ -1223,9 +1223,15 @@ public class DomainDBDAO extends DomainDAO {
                 final long seedlistId = res.getLong(1);
                 final String seedlistName = res.getString(2);
                 String seedlistComments = res.getString(3);
-                Clob clob = res.getClob(4);
-                String seedlistContents = clob.getSubString(
-                        1, (int) clob.length());
+                
+                String seedlistContents = "";
+                if (DBSpecifics.getInstance().supportsClob()) {
+                	Clob clob = res.getClob(4);
+                	seedlistContents = 
+                		clob.getSubString(1, (int) clob.length());
+                } else {
+                	seedlistContents = res.getString(4);
+                }
                 final SeedList seedlist =
                         new SeedList(seedlistName, seedlistContents);
                 seedlist.setComments(seedlistComments);

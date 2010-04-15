@@ -37,11 +37,14 @@ public class Constants {
     }
     
     /** Names of various parameters used in the webinterface. */
-    public static final String JOBSTATUS_PARAM = "jobstatusname";
+    public static final String JOBSTATUS_PARAM = 
+    	HarvestStatusQuery.UI_FIELD.JOB_STATUS.name();
     public static final String JOBIDORDER_PARAM = "jobidorder";
     public static final String DOMAIN_SEARCH_PARAM = "domainName";
-    public static final String HARVEST_ID_PARAM = "harvestID";
-    public static final String HARVEST_NUM_PARAM = "harvestNum";
+    public static final String HARVEST_ID_PARAM = 
+    	HarvestStatusQuery.UI_FIELD.HARVEST_ID.name();
+    public static final String HARVEST_NUM_PARAM =
+    	HarvestStatusQuery.UI_FIELD.HARVEST_RUN.name();
     public static final String EDIT_CONFIG_PARAM = "editConfig";
     public static final String DEFAULT_PARAM = "default";
     public static final String EDIT_URLLIST_PARAM = "editUrlList";

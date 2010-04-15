@@ -111,6 +111,10 @@
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
+            
+            <harvestStatus>
+                <defaultPageSize>100</defaultPageSize>
+            </harvestStatus>
         </webinterface>
         <topLevelDomains>
             <tld>ac</tld>

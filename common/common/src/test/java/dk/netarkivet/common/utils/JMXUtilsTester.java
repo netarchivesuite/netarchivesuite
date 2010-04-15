@@ -22,6 +22,9 @@
  */
 package dk.netarkivet.common.utils;
 
+import java.io.IOException;
+import java.util.Set;
+
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -41,12 +44,8 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
 import javax.management.ReflectionException;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
@@ -97,37 +96,6 @@ test any project code
         //JMXConnector conn = JMXUtils.getJMXConnector("localhost", 1234, "user", "pass");
         conn1.close();
         cs.stop();*/
-    }
-
-
-
-    public void testGetAttribute() throws Exception {
-        TestMBeanServerConnection connection = new TestMBeanServerConnection(0);
-        Object ret = connection.getAttribute(JMXUtils.getBeanName("a:aBean=1"), "anAttribute");
-        assertEquals("Should have composed bean/attribute name",
-                     "a:aBean=1:anAttribute", ret);
-
-        Object o = JMXUtils.getAttribute("a:aBean=1", "anAttribute", connection);
-        assertEquals("Should have composed bean/attribute name",
-                     "a:aBean=1:anAttribute", o);
-
-        Date then = new Date();
-        connection.failCount = JMXUtils.getMaxTries() + 1;
-        try {
-            o = JMXUtils.getAttribute("a:aBean=1", "anAttribute", connection);
-            fail("Should time out");
-        } catch (IOFailure e) {
-            //Expected
-        }
-        Date now = new Date();
-        long time = now.getTime()-then.getTime();
-        assertTrue("Should take at least 2^" + JMXUtils.getMaxTries()
-                   + " milliseconds, but was " + time + ", should be "
-                   + Math.pow(2, JMXUtils.getMaxTries()),
-                   time >= Math.pow(2, JMXUtils.getMaxTries()));
-        assertEquals("Should have been called " + JMXUtils.getMaxTries() + " times.",
-                    1,
-                    connection.failCount);
     }
 
     class TestMBeanServerConnection implements MBeanServerConnection {

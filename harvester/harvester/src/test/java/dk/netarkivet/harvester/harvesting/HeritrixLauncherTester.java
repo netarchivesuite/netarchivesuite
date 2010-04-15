@@ -121,7 +121,7 @@ public class HeritrixLauncherTester extends TestCase {
             assertTrue("Indexdir should contain real contents now", files.getIndexDir().listFiles().length > 0);
         }
 
-        return HeritrixLauncher.getInstance(files);
+        return HeritrixLauncherFactory.getInstance(files);
     }
     /**
      * Check that all urls in the given array are listed in the crawl log.
@@ -171,7 +171,7 @@ public class HeritrixLauncherTester extends TestCase {
      */
     public void testStartMissingOrderFile() {
         try {
-            HeritrixLauncher.getInstance(
+        	HeritrixLauncherFactory.getInstance(
                     new HeritrixFiles(mtf.newTmpDir(), 42, 42));
             fail("Expected IOFailure");
         } catch (ArgumentNotValid e) {
@@ -186,7 +186,7 @@ public class HeritrixLauncherTester extends TestCase {
         try {
             HeritrixFiles hf = new HeritrixFiles(TestInfo.WORKING_DIR, 42, 42);
             hf.getSeedsTxtFile().delete();
-            HeritrixLauncher.getInstance(hf);
+            HeritrixLauncherFactory.getInstance(hf);
             fail("Expected FileNotFoundException");
         } catch (ArgumentNotValid e) {
             // This is correct

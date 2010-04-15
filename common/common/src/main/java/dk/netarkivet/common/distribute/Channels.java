@@ -60,6 +60,9 @@ public class Channels {
     private static final String THISINDEXCLIENT_CHANNEL_PREFIX 
         = "THIS_INDEX_CLIENT";
     private static final String MONITOR_CHANNEL_PREFIX = "MONITOR";
+    
+    private static final String HARVEST_MONITOR_CHANNEL_PREFIX = "HARVESTMON";
+    
     private static final String THECR_CHANNEL_PREFIX = "THE_CR";
 
     /** Channel part separator. */
@@ -557,13 +560,28 @@ public class Channels {
     public static ChannelID getTheMonitorServer() {
         return getInstance().THE_MONITOR_SERVER;
     }
-
-    private final ChannelID THE_MONITOR_SERVER = new ChannelID(
+    
+   private final ChannelID THE_MONITOR_SERVER = new ChannelID(
             MONITOR_CHANNEL_PREFIX,
             ChannelID.COMMON,
             ChannelID.NO_IP,
             ChannelID.NO_APPLINST_ID,
             ChannelID.QUEUE);
+   
+   /** Return the queue for the monitor registry.
+   *
+   * @return the <code>ChannelID</code> object for the queue.
+   */
+  public static ChannelID getHarvestMonitorServerChannel() {
+      return getInstance().HARVEST_MONITOR_SERVER;
+  }
+  
+  private final ChannelID HARVEST_MONITOR_SERVER = new ChannelID(
+          HARVEST_MONITOR_CHANNEL_PREFIX,
+          ChannelID.COMMON,
+          ChannelID.NO_IP,
+          ChannelID.NO_APPLINST_ID,
+          ChannelID.QUEUE);
 
     /**
      * Reset the instance to re-read the settings. Only for use in tests.

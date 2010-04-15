@@ -37,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.CommonSettings;
+import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -48,8 +49,10 @@ import dk.netarkivet.harvester.datamodel.Job;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.JobStatus;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.HarvestControllerClient;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 
 /**
@@ -91,6 +94,11 @@ public class HarvestScheduler implements CleanupIF {
      * Listener after responses from submitted Harvest jobs.
      */
     private static HarvestSchedulerMonitorServer hsmon;
+    
+    /**
+     * Listens for CrawlProgressMessage
+     */
+	private static HarvestMonitorServer hpmon;
 
     /**
      * Backup-related fields.
@@ -105,6 +113,7 @@ public class HarvestScheduler implements CleanupIF {
         log.info("Creating HarvestScheduler");
         hcc = HarvestControllerClient.getInstance();
         hsmon = HarvestSchedulerMonitorServer.getInstance();
+        hpmon = HarvestMonitorServer.getInstance();
         backupInitHour = Settings.getInt(CommonSettings.DB_BACKUP_INIT_HOUR);
         if (backupInitHour < 0 || backupInitHour > 23) {
             log.warn("Illegal value for backupHour "
@@ -360,6 +369,13 @@ public class HarvestScheduler implements CleanupIF {
                     }
                 }
                 
+                // Send a message to the harvest monitor that a job is
+                // being processed.
+                JMSConnectionFactory.getInstance().send(
+                		new CrawlProgressMessage(
+                		jobToSubmit.getOrigHarvestDefinitionID(), 
+                		jobToSubmit.getJobID()));
+                
                 hcc.doOneCrawl(jobToSubmit, metadata);
                 log.trace("Job " + jobToSubmit + " sent to harvest queue.");
             } catch (Throwable e) {
@@ -410,6 +426,12 @@ public class HarvestScheduler implements CleanupIF {
             hsmon.cleanup();
         }
         hsmon = null;
+        
+        if (hpmon != null) {
+            hpmon.cleanup();
+        }
+        hpmon = null;
+        
         instance = null;
     }
 

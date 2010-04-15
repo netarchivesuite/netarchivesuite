@@ -25,6 +25,8 @@ package dk.netarkivet.harvester;
 import java.util.regex.Pattern;
 
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.harvesting.controller.BnfHeritrixController;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /** Settings specific to the harvester module of NetarchiveSuite. */
 public class HarvesterSettings {
@@ -234,6 +236,42 @@ public class HarvesterSettings {
      */
     public static String CRAWLER_TIMEOUT_NON_RESPONDING
             = "settings.harvester.harvesting.heritrix.noresponseTimeout";
+    /**
+     * <b>settings.harvester.harvesting.heritrix.monitorCleanInterval</b>:<br>
+     * Time interval in seconds after which the {@link HarvestMonitorServer}
+     * will clean job state data. This is a simple way to avoid detecting 
+     * the end of a job. 
+     */
+    public static String HARVEST_MONITOR_CLEAN_INTERVAL =
+        "settings.harvester.harvesting.heritrix.monitorCleanInterval";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>
+     * Time interval in seconds to wait during a crawl loop in the
+     * harvest controller. Default value is 20 seconds.
+     */
+    public static String CRAWL_LOOP_WAIT_TIME =
+        "settings.harvester.harvesting.heritrix.crawlLoopWaitTime";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.abortIfConnectionLost</b>:<br>
+     * Boolean flag. If set to true, the harvest controller will abort the 
+     * current crawl when the JMX connection is lost. If set to true it will
+     * only log a warning, leaving the crawl operator shutting down harvester 
+     * manually.
+     * Default value is true.
+     * @see BnfHeritrixController
+     */
+    public static String ABORT_IF_CONNECTION_LOST =
+        "settings.harvester.harvesting.heritrix.abortIfConnectionLost";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout</b>:<br>
+     * Maximum time in seconds to wait for Heritrix to generate report files 
+     * once crawling is over. 
+     */
+    public static String WAIT_FOR_REPORT_GENERATION_TIMEOUT =
+        "settings.harvester.harvesting.heritrix.waitForReportGenerationTimeout";
 
     /**
      * <b>settings.harvester.harvesting.heritrix.adminName</b>: <br> The name
@@ -310,6 +348,13 @@ public class HarvesterSettings {
      */
     public static String HERITRIX_CONTROLLER_CLASS =
             "settings.harvester.harvesting.heritrixController.class";
+    
+    /**
+     * <b>settings.harvester.harvesting.heritrixLauncherClass</b>:<br/> The
+     * implementation of the HeritrixLauncher abstract class to be used.
+     */
+    public static String HERITRIX_LAUNCHER_CLASS =
+            "settings.harvester.harvesting.heritrixLauncher.class";
 
     /**
      * <b>settings.harvester.harvesting.deduplication.enabled</b>:<br/> This
@@ -348,5 +393,6 @@ public class HarvesterSettings {
      */
     public static String METADATA_LOG_FILE_PATTERN =
             "settings.harvester.harvesting.metadata.logFilePattern";
+    
 }
 

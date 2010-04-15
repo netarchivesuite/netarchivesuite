@@ -235,6 +235,14 @@ public class CommonSettings {
      * part. */
     public static String SITESECTION_WEBAPPLICATION
             = "settings.common.webinterface.siteSection.webapplication";
+    
+    /**
+     * <b>settings.common.webinterface.harvestStatus.defaultPageSize</b>: <br>
+     * The default number of jobs to show in the harvest status section,
+     * on one result page. 
+     */
+    public static String HARVEST_STATUS_DFT_PAGE_SIZE
+            = "settings.common.webinterface.harvestStatus.defaultPageSize";
 
     /** 
      * <b>settings.common.topLevelDomains.tld</b>: <br>

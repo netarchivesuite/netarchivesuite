@@ -145,22 +145,18 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
            return getAllByActivity(false);
     }
 
-    /**
-     * Statement to select all distinct trap expressions from all active trap
-     * lists.
-     */
-    private static final String SELECT_EXPRS_STMT =
-            "SELECT DISTINCT trap_expression "
-            + "FROM global_crawler_trap_lists, global_crawler_trap_expressions "
-            + "WHERE global_crawler_trap_list_id = crawler_trap_list_id "
-            + "AND isActive = 1" ;
-
     @Override
     public List<String> getAllActiveTrapExpressions() {
         Connection conn = DBConnect.getDBConnection();
         List<String> result = new ArrayList<String>();
         try {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_EXPRS_STMT);
+            PreparedStatement stmt = conn.prepareStatement(
+            		"SELECT DISTINCT trap_expression "
+                    + "FROM global_crawler_trap_lists, " 
+                    + "global_crawler_trap_expressions "
+                    + "WHERE global_crawler_trap_list_id = crawler_trap_list_id "
+                    + "AND isActive = ?");
+            stmt.setBoolean(1, true);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 result.add(rs.getString(1));

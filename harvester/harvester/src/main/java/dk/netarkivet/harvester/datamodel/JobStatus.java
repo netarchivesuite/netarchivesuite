@@ -106,6 +106,21 @@ public enum JobStatus {
                     "Invalid job status '" + status + "'");
         }
     }
+    
+    /** Helper method that gives a proper object from e.g. a DB-stored value.
+    *
+    * @param status a status string
+    * @return the JobStatus related to a string
+    * @throws ArgumentNotValid
+    */
+   public static JobStatus parse(String status) {
+	   for (JobStatus s : values()) {
+		   if (s.name().equals(status)) {
+			   return s;
+		   }
+	   }
+       throw new ArgumentNotValid("Invalid job status '" + status + "'");
+   }
 
     /**
      * Return a localized human-readable string describing this status.

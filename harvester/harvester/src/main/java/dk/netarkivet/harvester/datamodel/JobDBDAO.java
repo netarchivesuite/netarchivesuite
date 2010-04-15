@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,6 +56,9 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.harvester.webinterface.HarvestStatus;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
 
 /**
  * A database-based implementation of the JobDAO class.
@@ -408,10 +412,23 @@ public class JobDBDAO extends JobDAO {
             long forceMaxBytes = result.getLong(5);
             String orderxml = result.getString(6);
             
-            Clob clob = result.getClob(7);
-            Document orderXMLdoc = getOrderXMLdocFromClob(clob);
-            clob = result.getClob(8);
-            String seedlist = clob.getSubString(1, (int) clob.length());
+            Document orderXMLdoc = null;
+            
+            boolean useClobs = DBSpecifics.getInstance().supportsClob();
+            if (useClobs) {
+            	Clob clob = result.getClob(7);
+            	orderXMLdoc = getOrderXMLdocFromClob(clob); 
+            } else {
+            	orderXMLdoc = getOrderXMLdocFromString(result.getString(7));
+            }
+            String seedlist = "";
+            if (useClobs) {
+            	Clob clob = result.getClob(8);
+            	seedlist = clob.getSubString(1, (int) clob.length());
+            } else {
+            	seedlist = result.getString(8);
+            }            
+            
             int harvestNum = result.getInt(9);
             String harvestErrors = result.getString(10);
             String harvestErrorDetails = result.getString(11);
@@ -508,6 +525,26 @@ public class JobDBDAO extends JobDAO {
         } catch (DocumentException e) {
             log.warn("Failed to read the contents of the clob as XML:"
                     +  clob.getSubString(1, (int) clob.length()));
+            throw e;
+        }
+        return doc;
+    }
+    
+    /** Try to extract an orderxmldoc from a given string.
+     * This method is used by the read() method, which catches the
+     * thrown DocumentException.
+     */
+    private Document getOrderXMLdocFromString(String xml) 
+    throws DocumentException {
+        Document doc;
+        try {
+            SAXReader reader = new SAXReader();
+            StringReader in = new StringReader(xml);
+            doc = reader.read(in);
+            in.close();
+        } catch (DocumentException e) {
+            log.warn(
+            		"Failed to read the contents of the string as XML:" +  xml);
             throw e;
         }
         return doc;
@@ -610,7 +647,7 @@ public class JobDBDAO extends JobDAO {
         }
         sqlBuffer.append(" ORDER BY jobs.job_id");
         if (!asc)  { // Assume default is ASCENDING
-            sqlBuffer.append(" " + Constants.DESCENDING_SORT_ORDER);
+            sqlBuffer.append(" " + HarvestStatusQuery.SORT_ORDER.DESC.name());
         }
 
         Connection dbconnection = DBConnect.getDBConnection();
@@ -631,16 +668,6 @@ public class JobDBDAO extends JobDAO {
     }
 
     /**
-     * Get a list of small and immediately usable status information.
-     *
-     * @return List of JobStatusInfo objects for all jobs.
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo() {
-        return getStatusInfo(JobStatus.ALL_STATUS_CODE, true);
-    }
-
-    /**
      * Get a list of small and immediately usable status information for given
      * job status.
      *
@@ -649,97 +676,33 @@ public class JobDBDAO extends JobDAO {
      * @throws ArgumentNotValid for invalid jobStatus
      * @throws IOFailure on trouble getting data from database
      */
+    @Override
     public List<JobStatusInfo> getStatusInfo(JobStatus status) {
         ArgumentNotValid.checkNotNull(status, "status");
         return getStatusInfo(status.ordinal(), true);
     }
 
     /**
-     * Get a list of small and immediately usable status information in given
-     * job id order.
-     *
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return List of JobStatusInfo objects for all jobs with given
-     *         job id order
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo(boolean asc) {
-        return getStatusInfo(JobStatus.ALL_STATUS_CODE, asc);
-    }
-
-    /**
      * Get a list of small and immediately usable status information for given
      * job status and in given job id order.
      *
-     * @param states The states (one or more) asked for.
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return List of JobStatusInfo objects for all jobs with given job status
-     *         and job id order
-     * @throws ArgumentNotValid for invalid jobStatusCode
+     * @param query the user query
      * @throws IOFailure on trouble getting data from database
      */
-    public List<JobStatusInfo> getStatusInfo(boolean asc, JobStatus ...states) {
-        ArgumentNotValid.checkNotNull(states, "states");
-        if (states.length == 0) {
-            return getStatusInfo(asc);
-        } else {
-            Set<Integer> codes = new HashSet<Integer>();
-            for (JobStatus status: states) {
-                codes.add(status.ordinal());
-            }
-            return getStatusInfo(codes, asc);
-        }
-    }
-    
-    /**
-     * Private method to retrieve all JobStatusInfo objects which have 
-     * a JobStatus for which their ordinal value belongs to the codes set.
-     * The list is ordered after JobID, and the sortorder can be either 
-     * ascending or descending.
-     *  @param codes A set of integers representing ordinal values for
-     *              JobStatus objects.
-     * @param asc if true, the sortorder is asscending; otherwise the sortorder
-     * is desscending
-     * @return a list of JobStatusInfo objects.
-     */
-    private List<JobStatusInfo> getStatusInfo(Set<Integer> codes, boolean asc) {
-        StringBuffer sqlBuffer = new StringBuffer(
-                "SELECT jobs.job_id, status, jobs.harvest_id, "
-            + "harvestdefinitions.name, harvest_num, harvest_errors,"
-            + " upload_errors, orderxml, num_configs,"
-            + " submitteddate, startdate, enddate, resubmitted_as_job"
-            + " FROM jobs, harvestdefinitions "
-            + " WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
-        if (!codes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))  {
-            if (codes.size() == 1) {
-                Integer theWantedStatus = codes.iterator().next();
-                sqlBuffer.append(" AND status = ")
-                        .append(theWantedStatus.intValue());
-            } else {
-                Iterator<Integer> it = codes.iterator();
-                Integer nextInt = it.next();
-                StringBuffer res = new StringBuffer("AND (status = " + nextInt);
-                while (it.hasNext()) {
-                    nextInt = it.next();
-                    res.append(" OR status = ").append(nextInt);
-                }
-                res.append(") ");
-                sqlBuffer.append(res);
-            }
-        }
-        sqlBuffer.append(" ORDER BY jobs.job_id");
-        if (!asc)  { // Assume default is ASCENDING
-            sqlBuffer.append(" " + Constants.DESCENDING_SORT_ORDER);
-        }
-        
-        Connection c = DBConnect.getDBConnection();
+    @Override
+    public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
+    	
+    	Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
+        
+        // Obtain total count without limit
+        // NB this will be a performance bottleneck if the table gets big
+        long totalRowsCount = 0;
         try {
-            s = c.prepareStatement(sqlBuffer.toString());
+            s = c.prepareStatement(buildSqlQuery(query, true));
             ResultSet res = s.executeQuery();
-            return makeJobStatusInfoListFromResultset(res);
+            res.next();
+            totalRowsCount = res.getLong(1);
         } catch (SQLException e) {
             String message
                        = "SQL error asking for job status list in database"
@@ -749,23 +712,25 @@ public class JobDBDAO extends JobDAO {
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
+        
+        List<JobStatusInfo> jobs = null;
+        try {
+            s = c.prepareStatement(buildSqlQuery(query, false));
+            ResultSet res = s.executeQuery();
+            jobs = makeJobStatusInfoListFromResultset(res);
+        } catch (SQLException e) {
+            String message
+                       = "SQL error asking for job status list in database"
+                           + "\n"+ ExceptionUtils.getSQLExceptionCause(e);
+            log.warn(message, e);
+            throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(s);
+        }
+    	
+        return new HarvestStatus(totalRowsCount, jobs);
     }
 
-
-    /**
-     * Get a list of small and immediately usable status information for
-     * a given harvest run.
-     *
-     * @param harvestId The ID of the harvest
-     * @param numEvent The harvest run number
-     *
-     * @return List of JobStatusInfo objects for all jobs for a given harvest
-     * ID.
-     * @throws IOFailure on trouble getting data from database
-     */
-    public List<JobStatusInfo> getStatusInfo(long harvestId, long numEvent) {
-        return getStatusInfo(harvestId, numEvent, true, getSetWithAllStates());
-    }
 
     /**
      * Calculate all jobIDs to use for duplication reduction.
@@ -868,7 +833,7 @@ public class JobDBDAO extends JobDAO {
                 + " AND fullharvests.harvest_id=harvestdefinitions.harvest_id"
                 + " AND harvestdefinitions.submitted<currenthd.submitted"
                 + " ORDER BY harvestdefinitions.submitted "
-                + Constants.DESCENDING_SORT_ORDER, firstHarvest);
+                + HarvestStatusQuery.SORT_ORDER.DESC.name(), firstHarvest);
         //Follow the chain of orginating IDs back
         for (Long originatingHarvest = olderHarvest;
              originatingHarvest != null;
@@ -998,8 +963,8 @@ public class JobDBDAO extends JobDAO {
         ArgumentNotValid.checkNotNullOrEmpty(selectedStatusSet, 
                 "selectedStatusSet");
         
-        String ascdescString = (asc)? Constants.ASCENDING_SORT_ORDER
-                    : Constants.DESCENDING_SORT_ORDER;
+        String ascdescString = (asc)? HarvestStatusQuery.SORT_ORDER.ASC.name()
+                    : HarvestStatusQuery.SORT_ORDER.DESC.name();
         StringBuffer statusSortBuffer = new StringBuffer();
         
         boolean selectAllJobStates = (selectedStatusSet.size() 
@@ -1081,4 +1046,99 @@ public class JobDBDAO extends JobDAO {
         }
         return joblist;
     }
+    
+    private String buildSqlQuery(
+    		HarvestStatusQuery query,
+    		boolean count) {
+		
+		StringBuffer sql = new StringBuffer("SELECT");
+		if (count) {
+			sql.append(" count(*)");
+		} else {
+			sql.append(" jobs.job_id, status, jobs.harvest_id,");
+			sql.append(" harvestdefinitions.name, harvest_num,");
+			sql.append(" harvest_errors, upload_errors, orderxml,");
+			sql.append(" num_configs, submitteddate, startdate, enddate,");
+			sql.append(" resubmitted_as_job");
+		}
+		
+		sql.append(" FROM jobs, harvestdefinitions ");
+		sql.append(" WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
+		
+		JobStatus[] jobStatuses = query.getSelectedJobStatuses();
+		if (jobStatuses.length > 0) {
+			if (jobStatuses.length == 1) {
+                int statusOrdinal = jobStatuses[0].ordinal();
+                sql.append(" AND status = ");
+                sql.append(statusOrdinal);
+            } else {
+                sql.append("AND (status = ");
+                sql.append(jobStatuses[0].ordinal());
+                for (int i = 1; i < jobStatuses.length; i++) {
+                    sql.append(" OR status = ");
+                    sql.append(jobStatuses[i].ordinal());
+                }
+                sql.append(")");
+            }
+		}
+		
+		String harvestName = query.getHarvestName();
+		if (! harvestName.isEmpty()) {
+			if (harvestName.indexOf(
+					HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+				// No wildcard, exact match
+				sql.append(" AND harvestdefinitions.name='");
+				sql.append(harvestName);
+				sql.append("'");
+			} else {
+				String harvestNamePattern = harvestName.replaceAll("\\*", "%");
+				sql.append(" AND harvestdefinitions.name LIKE '");
+				sql.append(harvestNamePattern);
+				sql.append("'");
+			}
+		}
+		
+		Long harvestRun = query.getHarvestRunNumber();
+		if (harvestRun != null) {
+			sql.append(" AND jobs.harvest_num = " + harvestRun);
+		}
+		
+		Long harvestId = query.getHarvestId();
+		if (harvestId != null) {
+			sql.append(" AND harvestdefinitions.harvest_id = " + harvestId);
+		}		
+		
+		long startDate = query.getStartDate();
+		if (startDate != HarvestStatusQuery.DATE_NONE) {
+			sql.append(" AND startdate >= '");
+			sql.append(new java.sql.Date(startDate).toString());
+			sql.append("'");
+		}
+		
+		long endDate = query.getEndDate();
+		if (endDate != HarvestStatusQuery.DATE_NONE) {
+			sql.append(" AND enddate <= '");
+			sql.append(new java.sql.Date(endDate).toString());
+			sql.append("'");
+		}
+		
+		if (! count) {
+			sql.append(" ORDER BY jobs.job_id");
+			if (!query.isSortAscending())  {
+				sql.append(" " + SORT_ORDER.DESC.name());
+			} else {
+				sql.append(" " + SORT_ORDER.ASC.name());        	
+			}
+                
+        	long pagesize = query.getPageSize();
+        	if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
+        		sql.append(" " + DBSpecifics.getInstance()
+        				.getOrderByLimitAndOffsetSubClause(
+        						pagesize, 
+        						(query.getStartPageIndex() -1 ) * pagesize));        	
+        	}
+        }
+        
+        return sql.toString();
+	}
 }

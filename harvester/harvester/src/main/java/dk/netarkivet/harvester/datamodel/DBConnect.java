@@ -62,6 +62,8 @@ public class DBConnect {
      * driver).
      */
     public static Connection getDBConnection() {
+    	
+    	DBSpecifics dbSpec = DBSpecifics.getInstance();
 
         try {    		
             int validityCheckTimeout = Settings.getInt(
@@ -69,29 +71,30 @@ public class DBConnect {
 
             Connection connection = connectionPool.get(Thread.currentThread());
             boolean renew = ((connection == null) 
-                    || (! connection.isValid(validityCheckTimeout)));
+                    || (! dbSpec.connectionIsValid(
+                    		connection, validityCheckTimeout)));
 
             if (renew) {  
-                Class.forName(DBSpecifics.getInstance().getDriverClassName());
+                Class.forName(dbSpec.getDriverClassName());
                 connection = DriverManager.getConnection(
                         Settings.get(CommonSettings.DB_URL));
                 connectionPool.put(Thread.currentThread(), connection);
                 log.info("Connected to database using DBurl '"
                         + Settings.get(CommonSettings.DB_URL) 
                         + "'  using driver '"
-                        + DBSpecifics.getInstance().getDriverClassName() + "'");
+                        + dbSpec.getDriverClassName() + "'");
             }
 
             return connection;
         } catch (ClassNotFoundException e) {
             final String message = "Can't find driver '"
-                + DBSpecifics.getInstance().getDriverClassName() + "'";
+                + dbSpec.getDriverClassName() + "'";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
                 + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                + DBSpecifics.getInstance().getDriverClassName() + "'" +
+                + dbSpec.getDriverClassName() + "'" +
                 "\n" +
                 ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);

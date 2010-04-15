@@ -295,5 +295,38 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      * 'global_crawler_trap_expressions'.
      */
     protected abstract void createGlobalCrawlerTrapExpressions();
+    
+    /**
+     * Checks that the connection is valid (i.e. still open on the server side).
+     * This implementation can be overriden if a specific RDBM is not handling
+     * the {@link Connection#isValid(int)} JDBC4 method properly.
+     * @param connection
+     * @param validityTimeout
+     * @return
+     * @throws SQLException 
+     */
+    public abstract boolean connectionIsValid(
+    		Connection connection, 
+    		int validityTimeout) 
+    throws SQLException;
+    
+    /**
+     * Formats the LIMIT sub-clause of an SQL order clause. This sub-clause 
+     * allows to paginate query results and its syntax might be dependant
+     * on the target RDBMS  
+     * @param limit the maximum number of rows to fetch.
+     * @param offset the starting offset in the full query results.
+     * @return
+     */
+    public abstract String getOrderByLimitAndOffsetSubClause(
+    		long limit, 
+    		long offset);
+    
+    /**
+     * Returns true if the target RDBMS supports CLOBs. 
+     * If possible seedlists will be stored as CLOBs.
+     * @return true if CLOBs are supported, false otherwise.
+     */
+    public abstract boolean supportsClob();
 
 }

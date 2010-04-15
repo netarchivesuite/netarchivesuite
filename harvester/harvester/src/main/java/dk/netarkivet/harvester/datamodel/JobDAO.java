@@ -24,13 +24,14 @@ package dk.netarkivet.harvester.datamodel;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.exceptions.PermissionDenied;
 import dk.netarkivet.common.exceptions.UnknownID;
+import dk.netarkivet.harvester.webinterface.HarvestStatus;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 
 /**
  * Interface for creating and accessing jobs in persistent storage.
@@ -167,45 +168,12 @@ public abstract class JobDAO implements Iterable<Job> {
      */
     public abstract Iterator<Long> getAllJobIds();
 
-    /** Return status information for all jobs.
-     *
-     * @return A list of status objects with the pertinent information for
-     * all jobs.
-     */
-    public abstract List<JobStatusInfo> getStatusInfo();
-
-    /** Return status information for all jobs for a given harvest definition.
-     *
-     * @param harvestId The ID of a harvest definition.
-     * @param numEvent The harvest run number
-     * @return A list of status objects with the pertinent information for
-     *         all jobs for a given harvest definition.
-     * @throws IOFailure on trouble in database access
-     */
-    public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
-                                                      long numEvent);
-
-    /** Return status information for all jobs in given job id order.
-     *
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return A list of status objects with the pertinent information for 
-     *         all jobs with given job status.
-     * @throws IOFailure on trouble in database access
-     */
-    public abstract List<JobStatusInfo> getStatusInfo(boolean asc);
-
     /** Return status information for all jobs with given job status.
      *
-     * @param states The states asked for.
-     * @param asc True if result must be given in ascending order, false
-     *        if result must be given in descending order
-     * @return A list of status objects with the pertinent information for 
-     *         all jobs with given job status and in given job id order.
+     * @param query the user query
      * @throws IOFailure on trouble in database access
      */
-    public abstract List<JobStatusInfo> getStatusInfo(boolean asc,
-            JobStatus ... states);
+    public abstract HarvestStatus getStatusInfo(HarvestStatusQuery query);
 
     /** Return status information for all jobs with given job status.
      *
@@ -249,34 +217,5 @@ public abstract class JobDAO implements Iterable<Job> {
      * @throws IllegalState if the job with id jobID is not SUBMITTED or FAILED.
      */
     public abstract long rescheduleJob(long oldJobID);
-
-    /**
-     * Get the list of all jobs ordered by JobID (represented by JobStatusInfo
-     * objects) belonging to a specific harvestdefinition, and a specific 
-     * harvestnumber. Can be ordered in either ascending or descending mode.
-     * @param harvestId The Id of a specific harvestdefinition
-     * @param harvestNum A specific harvestnumber
-     * @param asc Should this list be ordered in ascending mode (true), or
-     *              descending mode (false)
-     * @return the list
-     */
-    public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
-            long harvestNum, boolean asc);
-
-    /**
-     * Get the list of all jobs ordered by JobID (represented by JobStatusInfo
-     * objects) belonging to a specific harvestdefinition, and a specific 
-     * harvestnumber, which have one of the JobStatus in the
-     * selectedJobStatusSet. The list can be ordered in either ascending or
-     * descending mode.
-     * @param harvestId The Id of a specific harvestdefinition
-     * @param harvestNum A specific harvestnumber 
-     * @param asc Should this list be ordered in ascending mode (true), or
-     *              descending mode (false)
-     * @param selectedJobStatusSet The set of chosen Jobstates
-     * @return the list             
-     */
-    public abstract List<JobStatusInfo> getStatusInfo(long harvestId,
-            long harvestNum, boolean asc, Set<JobStatus> selectedJobStatusSet);
     
 }

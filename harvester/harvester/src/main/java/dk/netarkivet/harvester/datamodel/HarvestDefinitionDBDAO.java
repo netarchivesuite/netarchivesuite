@@ -1138,16 +1138,16 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    "SELECT DISTINCT do.name "
-                    +" FROM     domains do,"
-                    +"          configurations co,"
-                    +"          harvest_configs haco,"
-                    +"          harvestdefinitions hd"
-                    +" WHERE    co.domain_id = do.domain_id"
-                    +"          AND haco.config_id = co.config_id"
-                    +"          AND haco.harvest_id = hd.harvest_id"
-                    +"          AND hd.name = ?" 
-                    +" ORDER BY do.name");
+            		"SELECT domains.name"
+                    + " FROM     domains,"
+                    + "          configurations,"
+                    + "          harvest_configs,"
+                    + "          harvestdefinitions"
+                    + " WHERE    configurations.domain_id = domains.domain_id"
+                    + " AND harvest_configs.config_id = configurations.config_id"
+                    + " AND harvest_configs.harvest_id = harvestdefinitions.harvest_id"
+                    + " AND harvestdefinitions.name = ?" 
+                    + " ORDER BY domains.name");
             s.setString(1, harvestName);
             ResultSet res = s.executeQuery();
             List<String> domains = new ArrayList<String>();
@@ -1179,20 +1179,20 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-                    "SELECT sl.seeds"
-                    +" FROM   configurations co,"
-                    +"        harvest_configs haco,"
-                    +"        harvestdefinitions hd,"
-                    +"        seedlists sl,"
-                    +"        config_seedlists cose,"
-                    +"        domains do"
-                    +" WHERE  cose.seedlist_id = sl.seedlist_id"
-                    +"        AND co.config_id = cose.config_id"
-                    +"        AND co.config_id = haco.config_id"
-                    +"        AND haco.harvest_id = hd.harvest_id"
-                    +"        AND co.domain_id = do.domain_id"
-                    +"        AND do.name = ?" 
-                    +"        AND hd.name = ?");
+                    "SELECT seedlists.seeds"
+                    +" FROM   configurations,"
+                    +"        harvest_configs,"
+                    +"        harvestdefinitions,"
+                    +"        seedlists,"
+                    +"        config_seedlists,"
+                    +"        domains"
+                    +" WHERE  config_seedlists.seedlist_id = seedlists.seedlist_id"
+                    +"        AND configurations.config_id = config_seedlists.config_id"
+                    +"        AND configurations.config_id = harvest_configs.config_id"
+                    +"        AND harvest_configs.harvest_id = harvestdefinitions.harvest_id"
+                    +"        AND configurations.domain_id = domains.domain_id"
+                    +"        AND domains.name = ?" 
+                    +"        AND harvestdefinitions.name = ?");
             s.setString(1, domainName);
             s.setString(2, harvestName);
             ResultSet res = s.executeQuery();

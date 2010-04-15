@@ -94,7 +94,36 @@ public abstract class DerbySpecifics extends DBSpecifics {
             DBUtils.closeStatementIfOpen(s);
         }
     }
-    /** Migrates the 'jobs' table from version 3 to version 4
+    
+    /**
+     * Checks that the connection is valid (i.e. still open on the server side).
+     * This implementation can be overriden if a specific RDBM is not handling
+     * the {@link Connection#isValid(int)} JDBC4 method properly.
+     * @param connection
+     * @param validityTimeout
+     * @return
+     * @throws SQLException 
+     */
+    public boolean connectionIsValid(
+    		Connection connection, 
+    		int validityTimeout) 
+    throws SQLException {
+    	return connection.isValid(validityTimeout);
+    }
+    
+    public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
+    	// LIMIT sub-clause not supported by Derby...
+    	// There are rownum commands, but the syntax is different 
+    	// see http://db.apache.org/derby/faq.html#limit
+    	return "";
+    }
+    
+    @Override
+	public boolean supportsClob() {
+		return true;
+	}
+
+	/** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.
      * Furthermore the default value for field num_configs is set to 0.

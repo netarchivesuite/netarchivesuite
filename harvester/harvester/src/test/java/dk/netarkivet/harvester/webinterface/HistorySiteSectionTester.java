@@ -50,7 +50,8 @@ public class HistorySiteSectionTester extends TestCase {
                 "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
                         + "harvestID=" + harvestID 
                         + "&amp;harvestNum=" + harvestRun
-                        + "&amp;jobstatusname=" + HarvestStatus.JOBSTATUS_ALL
+                        + "&amp;jobstatusname=" 
+                        + HarvestStatusQuery.JOBSTATUS_ALL
                         + "\">" + harvestRun + "</a>",
                 HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
         try {

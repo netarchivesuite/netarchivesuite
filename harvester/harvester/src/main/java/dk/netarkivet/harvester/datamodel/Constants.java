@@ -91,11 +91,6 @@ public class Constants {
      */
     public static final long ALIAS_TIMEOUT_IN_MILLISECONDS = 365 * 24 * 60 * 60
                                                              * 1000L;
-    /** Descending sort order. */
-    public static final String DESCENDING_SORT_ORDER = "DESC";
-    /** Ascending sort order. */
-    public static final String ASCENDING_SORT_ORDER = "ASC";
-
     /** Settings used in JobDBDao after admin machine break down. **/
     public static final String NEXT_JOB_ID =
                 "settings.harvester.datamodel.domain.nextJobId";

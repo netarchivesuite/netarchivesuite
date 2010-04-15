@@ -70,6 +70,13 @@
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
+                <!--  5 minutes -->
+                <monitorCleanInterval>300</monitorCleanInterval>
+                <!--  10 minutes -->
+                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+                <!--  20 seconds -->
+                <crawlLoopWaitTime>20</crawlLoopWaitTime>
+                <abortIfConnectionLost>true</abortIfConnectionLost>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
@@ -79,6 +86,9 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts></javaOpts>                
             </heritrix>
+            <heritrixLauncher>
+                <class>dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher</class>
+            </heritrixLauncher>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
             </heritrixController>
