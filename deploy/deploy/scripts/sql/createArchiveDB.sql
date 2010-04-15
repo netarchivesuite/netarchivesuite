@@ -115,6 +115,9 @@ create table replicafileinfo (
      );
      
 create index fileandreplica on replicafileinfo (file_id, replica_id);
+create index replicaandfileliststatus on replicafileinfo (replica_id, filelist_status);
+create index replicaandchecksumstatus on replicafileinfo (replica_id, checksum_status);
+
      
 --***************************************************************************--
 -- Area: file

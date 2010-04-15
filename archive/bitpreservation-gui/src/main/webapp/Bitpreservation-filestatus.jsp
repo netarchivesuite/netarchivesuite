@@ -28,7 +28,8 @@ There are no parameters.
 --%><%@ page import="dk.netarkivet.archive.webinterface.BitpreserveFileState,
          dk.netarkivet.common.distribute.arcrepository.Replica,
          dk.netarkivet.common.utils.I18n,
-         dk.netarkivet.common.webinterface.HTMLUtils"
+         dk.netarkivet.common.webinterface.HTMLUtils,
+         java.util.Collection"
     pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
 %><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
@@ -47,16 +48,18 @@ There are no parameters.
 <h4><fmt:message key="bitarchive.state"/></h4>
 
 <%
-    // For each known bitarchive in the system, print out statistics about
+    Collection<Replica> knownReplicas = Replica.getKnown(); 
+    // For each known replica in the system, print out statistics about
     // missing files
-    for (Replica replica : Replica.getKnown()) {
+    
+    for (Replica replica : knownReplicas) {
         BitpreserveFileState.printMissingFileStateForReplica(out, replica,
                                                           response.getLocale());
     }
 
-    // For each known bitarchive in the system, print out statistics about 
+    // For each known replica in the system, print out statistics about 
     // corrupt files (files with wrong checksums)
-    for (Replica replica : Replica.getKnown()) {
+    for (Replica replica : knownReplicas) {
         BitpreserveFileState.printChecksumErrorStateForReplica(out, replica,
                                                           response.getLocale());
     }

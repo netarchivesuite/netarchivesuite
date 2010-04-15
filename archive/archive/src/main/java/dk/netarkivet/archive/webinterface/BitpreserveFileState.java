@@ -107,9 +107,7 @@ public class BitpreserveFileState {
                 = ActiveBitPreservationFactory.getInstance();
         if (findmissingfiles != null) {
             preserve.findMissingFiles(bitarchive);
-        }
-
-        if (checksum != null) {
+        } else if (checksum != null) {
             preserve.findChangedFiles(bitarchive);
         }
     }
@@ -399,14 +397,14 @@ public class BitpreserveFileState {
                     + HTMLUtils.localiseLong(
                       activeBitPreservation.getNumberOfFiles(replica), locale));
         out.println("<br/>");
+        long numberOfMissingFiles = activeBitPreservation.getNumberOfMissingFiles(replica);
         out.println(I18N.getString(
                 locale,
                 "missing.files")
                     + "&nbsp;"
-                    + HTMLUtils.localiseLong(
-               activeBitPreservation.getNumberOfMissingFiles(replica), locale));
+                    + HTMLUtils.localiseLong(numberOfMissingFiles, locale));
 
-        if (activeBitPreservation.getNumberOfMissingFiles(replica) > 0) {
+        if (numberOfMissingFiles > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_MISSING_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
@@ -461,13 +459,13 @@ public class BitpreserveFileState {
         out.println("<br/>");
 
         //Number of changed files
+        long numberOfChangedFiles = bitPreservation.getNumberOfChangedFiles(replica);
         out.println(I18N.getString(locale, "number.of.files.with.error")
                     + "&nbsp;"
-                    + HTMLUtils.localiseLong(
-                     bitPreservation.getNumberOfChangedFiles(replica), locale));
+                    + HTMLUtils.localiseLong(numberOfChangedFiles, locale));
 
         //Link to fix-page
-        if (bitPreservation.getNumberOfChangedFiles(replica) > 0) {
+        if (numberOfChangedFiles > 0) {
             out.print("&nbsp;<a href=\"" + Constants.FILESTATUS_CHECKSUM_PAGE
                       + "?" + (Constants.BITARCHIVE_NAME_PARAM
                                + "=" + HTMLUtils
