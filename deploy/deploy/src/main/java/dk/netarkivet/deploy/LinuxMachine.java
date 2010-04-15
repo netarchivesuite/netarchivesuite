@@ -1232,6 +1232,8 @@ public class LinuxMachine extends Machine {
                 // org.apache.derby.drda.NetworkServerControl start  
                 // < /dev/null > start_external_database.log 2>&1 &
                 startDBPrint.print(ScriptConstants.JAVA + Constants.SPACE);
+                startDBPrint.print(machineParameters.writeJavaOptions());
+                startDBPrint.print(Constants.SPACE);
                 startDBPrint.print(ScriptConstants.JAVA_CLASSPATH);
                 startDBPrint.print(Constants.SPACE + getDbClasspaths());
                 startDBPrint.print(ScriptConstants.DERBY_ACCESS_METHOD);
