@@ -184,6 +184,9 @@ public class ReestablishAdminDatabase extends ToolRunnerBase {
             
             // update the filelist and checksumlist dates for the replicas.
             rcd.setAdminDate(fileDate);
+            System.out.println("[" + new java.util.Date()
+                    + "] ReestablishAdminDatabase tool finished ingest of file '"
+                    + adminFile.getAbsolutePath() + "'.");
         }
 
         /**

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This page provides information about the state of the bitarchive at every known Replica.
 This page is the entrypoint to correct missing or corrupt data in the bitarchives.
 There are no parameters.
+
 --%><%@ page import="dk.netarkivet.archive.webinterface.BitpreserveFileState,
          dk.netarkivet.common.distribute.arcrepository.Replica,
          dk.netarkivet.common.utils.I18n,
@@ -42,25 +43,8 @@ There are no parameters.
     HTMLUtils.generateHeader(pageContext);
 
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;filestatus"/></h3>
-
-<h4><fmt:message key="bitarchive.state"/></h4>
-
-<%
-    Collection<Replica> knownReplicas = Replica.getKnown(); 
-    // For each known replica in the system, print out statistics about
-    // missing files
-    
-    for (Replica replica : knownReplicas) {
-        BitpreserveFileState.printMissingFileStateForReplica(out, replica,
-                                                          response.getLocale());
-    }
-
-    // For each known replica in the system, print out statistics about 
-    // corrupt files (files with wrong checksums)
-    for (Replica replica : knownReplicas) {
-        BitpreserveFileState.printChecksumErrorStateForReplica(out, replica,
-                                                          response.getLocale());
-    }
+<h3 class="page_heading"><fmt:message key="pagetitle;filestatus-update"/></h3>
+<%=BitpreserveFileState.processUpdateRequest(pageContext)%>
+<%    
     HTMLUtils.generateFooter(out);
 %>

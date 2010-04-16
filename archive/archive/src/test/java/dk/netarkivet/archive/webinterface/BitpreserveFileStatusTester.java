@@ -260,30 +260,13 @@ public class BitpreserveFileStatusTester extends TestCase {
         Locale l = new Locale("da");
         mockabp.calls.clear();
         
-        // Setup to neither run checksum nor find-missing-files.
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
-                new String[]{Replica.getReplicaFromId("ONE").getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_PARAM,
-                (String[]) null);
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
-                (String[]) null);
-        
-        BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
-        
-        assertFalse("No calls to Find Missing Files expected", 
-                mockabp.calls.containsKey(FIND_MISSING_FILES));
-        assertFalse("No calls to Find Checksum expected", 
-                mockabp.calls.containsKey(FIND_CHECKSUM));
-        mockabp.calls.clear();
-        
         // Setup to run find-missing-files
         request = new MockHttpServletRequest();
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                 new String[]{Replica.getReplicaFromId("ONE").getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_PARAM,
-                new String[]{"1"});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
-                (String[]) null);
+        
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.UPDATE_TYPE_PARAM,
+                new String[]{dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_OPTION});
         
         BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
         
@@ -297,10 +280,8 @@ public class BitpreserveFileStatusTester extends TestCase {
         request = new MockHttpServletRequest();
         request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
                 new String[]{Replica.getReplicaFromId("ONE").getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_PARAM,
-                (String[]) null);
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
-                new String[]{"1"});
+        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.UPDATE_TYPE_PARAM,
+                new String[]{dk.netarkivet.archive.webinterface.Constants.CHECKSUM_OPTION});
         
         BitpreserveFileState.processUpdateRequest(WebinterfaceTestCase.getDummyPageContext(l, request));
         
@@ -309,25 +290,7 @@ public class BitpreserveFileStatusTester extends TestCase {
         assertTrue("One calls to Find Checksum expected", 
                 mockabp.calls.containsKey(FIND_CHECKSUM));
         mockabp.calls.clear();
-
-        // Setup to run find-missing-files and find-checksum
-        request = new MockHttpServletRequest();
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.BITARCHIVE_NAME_PARAM,
-                new String[]{Replica.getReplicaFromId("ONE").getName()});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.FIND_MISSING_FILES_PARAM,
-                new String[]{"1"});
-        request.setupAddParameter(dk.netarkivet.archive.webinterface.Constants.CHECKSUM_PARAM,
-                new String[]{"1"});
-        
-        BitpreserveFileState.processUpdateRequest(
-                WebinterfaceTestCase.getDummyPageContext(l, request));
-        
-        assertTrue("One calls to Find Missing Files expected", 
-                mockabp.calls.containsKey(FIND_MISSING_FILES));
-        assertTrue("One calls to Find Checksum expected", 
-                mockabp.calls.containsKey(FIND_CHECKSUM));
-        mockabp.calls.clear();
-    }
+      }
 
     /*
     public void testProcessChecksumRequest() throws NoSuchFieldException, IllegalAccessException {

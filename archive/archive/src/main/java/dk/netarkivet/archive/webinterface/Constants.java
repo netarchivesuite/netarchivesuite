@@ -31,11 +31,18 @@ package dk.netarkivet.archive.webinterface;
 public class Constants {
     /** Parameter name for the bitarchive to perform operation on. */
     public static final String BITARCHIVE_NAME_PARAM = "bitarchive";
-    /** Parameter name for the action of running a batch job for missing files.
+    /** Option for the UPDATE_TYPE_PARAM parameter for the action of running 
+     * a batch job for missing files. */
+    public static final String FIND_MISSING_FILES_OPTION = "findmissingfiles";
+    /** Option for the UPDATE_TYPE_PARAM parameter for the action of 
+     * running a checksum batch job. */
+    public static final String CHECKSUM_OPTION = "checksum";
+    /** 
+     * Parameter used by the BitpreserveFileState.processChecksumRequest
+     * called from Bitpreservation-filestatus-checksum.jsp.
      */
-    public static final String FIND_MISSING_FILES_PARAM = "findmissingfiles";
-    /** Parameter name for the action of running a checksum batch job. */
     public static final String CHECKSUM_PARAM = "checksum";
+    
     /** Parameter name for the file to perform checksum operations on. */
     public static final String FILENAME_PARAM = "file";
     /** Parameter name for request to fix checksum in admin data. */
@@ -43,7 +50,8 @@ public class Constants {
     /** Parameter name for credentials for removing a file with wrong checksum.
      */
     public static final String CREDENTIALS_PARAM = "credentials";
-
+    /** Parameter name to select the type of update required. */
+    public static final String UPDATE_TYPE_PARAM = "type";
     /** BitPreservation main Java server page that contains status information
      * about the bitarchives. */
     public static final String FILESTATUS_PAGE
@@ -55,6 +63,10 @@ public class Constants {
     /** BitPreservation page that checks files in archive for wrong checksum. */
     public static final String FILESTATUS_CHECKSUM_PAGE
             = "Bitpreservation-filestatus-checksum.jsp";
+    /** BitPreservation page that initiates update of the filestatus information. */ 
+    public static final String FILESTATUS_UPDATE_PAGE
+            = "Bitpreservation-filestatus-update.jsp";
+
     /** Maximum number of files to toggle on one go. */
     public static final int MAX_TOGGLE_AMOUNT = 100;
 

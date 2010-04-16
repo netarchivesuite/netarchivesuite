@@ -228,7 +228,9 @@ public final class DatabaseBasedActiveBitPreservation implements
 
             if (csDate == null) {
                 // run a checksum job on the replica.
+                log.info("Starting checksum update for replica " + replica);
                 runChecksum(replica);
+                log.info("Finished the checksum update for replica " + replica);
             }
         }
     }
@@ -398,6 +400,7 @@ public final class DatabaseBasedActiveBitPreservation implements
     public synchronized void findChangedFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
 
         // retrieve updated checksums from the replica.
         runChecksum(replica);
@@ -407,6 +410,7 @@ public final class DatabaseBasedActiveBitPreservation implements
 
         // update to find changes.
         cache.updateChecksumStatus();
+        log.info("Completed findChangedFiles for replica '" +  replica + "'.");
     }
 
     /**
@@ -419,12 +423,14 @@ public final class DatabaseBasedActiveBitPreservation implements
     public synchronized void findMissingFiles(Replica replica) throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
-
+        log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
+ 
         // retrieve the filelist from the replica.
         List<String> filenames = getFilenamesList(replica);
 
         // put them into the database.
         cache.addFileListInformation(filenames, replica);
+        log.info("Completed findMissingFiles for replica '" +  replica + "'.");
     }
 
     /**
@@ -548,7 +554,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         ArgumentNotValid.checkPositive(filenames.length, "Length of argument "
                 + "String... filenames");
-        
+        log.info("UploadMissingFiles initiated of " +  filenames.length + " filenames");
         // make record of files, which is not uploaded correct.
         List<String> filesFailedReestablishment = new ArrayList<String>();
 
@@ -588,6 +594,8 @@ public final class DatabaseBasedActiveBitPreservation implements
                     + filenames.length + " files could not be reestablished: "
                     + filesFailedReestablishment);
         }
+        log.info("UploadMissingFiles completed of "
+                +  filenames.length + " filenames");
     }
 
     /**
@@ -659,7 +667,6 @@ public final class DatabaseBasedActiveBitPreservation implements
         if (closeHook != null) {
             Runtime.getRuntime().removeShutdownHook(closeHook);
         }
-
         cleanup();
     }
     
