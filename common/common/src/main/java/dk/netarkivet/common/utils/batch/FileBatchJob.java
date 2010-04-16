@@ -35,10 +35,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
-import dk.netarkivet.common.CommonSettings;
 
 /**
  * Interface defining a batch job to run on a set of files.
@@ -269,10 +269,18 @@ public abstract class FileBatchJob implements Serializable {
 
     /**
      * Getter for batchJobTimeout.
+     * If the batchjob has not defined a maximum time (thus set the value to -1)
+     * then the default value from settings are used.
+     *  
      * @return timeout in miliseconds.
      */
     public long getBatchJobTimeout() {
-        return batchJobTimeout;
+        if(batchJobTimeout != -1) {
+            return batchJobTimeout;
+        } else {
+            return Long.parseLong(Settings.get(
+                    CommonSettings.BATCH_DEFAULT_TIMEOUT));
+        }
     }
 
     /** Returns true if we have already recorded the maximum number of

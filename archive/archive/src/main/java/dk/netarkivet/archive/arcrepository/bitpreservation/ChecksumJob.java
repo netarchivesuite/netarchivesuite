@@ -52,7 +52,7 @@ public class ChecksumJob extends FileBatchJob {
     /** The constructor.*/
     public ChecksumJob() {
         // Keep the batchJobTimeout at default (-1) so it will be overridden 
-        // by the settings for message timeout.
+        // by the settings for default batch timeout.
     }
 
     /**

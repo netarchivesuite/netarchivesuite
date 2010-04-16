@@ -102,11 +102,19 @@ public class CommonSettings {
             = "settings.common.batch.maxExceptions";
     
     /**
-     * <b>settings.common.batch.timeBetweenLogging</b>: <br>
+     * <b>settings.common.batch.loggingInterval</b>: <br/>
      * The time between logging the status of a batch job.
      */
     public static String BATCH_LOGGING_INTERVAL 
             = "settings.common.batch.loggingInterval";
+    
+    /**
+     * <b>settings.common.batch.defaultBatchTimeout</b>: <br/>
+     * The default timeout for batchjobs. This will be used for batchjobs which
+     * has the batchJobTimeout set to -1 (inherited value from FileBatchJob).
+     */
+    public static String BATCH_DEFAULT_TIMEOUT = 
+        "settings.common.batch.defaultBatchTimeout";
 
     /** 
      * <b>settings.common.monitorregistryClient.class</b>: <br>

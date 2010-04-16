@@ -47,9 +47,10 @@ public class FileListJob extends FileBatchJob {
      */
     protected transient Log log = LogFactory.getLog(getClass().getName());
 
-    /** The constructor. Initializes the time out for this job.*/
+    /** The constructor. */
     public FileListJob() {
-        batchJobTimeout = Constants.ONE_HOUR_IN_MILLIES;
+        // Keep the batchJobTimeout at default (-1) so it will be overridden 
+        // by the settings for default batch timeout.
     }
     
     /**

@@ -529,8 +529,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetAllChecksumsMessage gacMsg = new GetAllChecksumsMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gacMsg, 0);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -589,8 +588,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetAllFilenamesMessage gafMsg = new GetAllFilenamesMessage(Channels
                 .getTheRepos(), replyQ, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gafMsg, 0);
 
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
@@ -650,8 +648,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         // make and send the message to the replica.
         GetChecksumMessage gcsMsg = new GetChecksumMessage(Channels
                 .getTheRepos(), replyQ, filename, replicaId);
-        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gcsMsg,
-                                                               getTimeout);
+        NetarkivetMessage replyNetMsg = sendAndWaitForOneReply(gcsMsg, 0);
         // calculate and log the time spent on handling the message.
         long timePassed = System.currentTimeMillis() - start;
         log.debug("Reply received after " + (timePassed 
@@ -708,7 +705,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
         CorrectMessage correctMsg = new CorrectMessage(Channels.getTheRepos(),
                 replyQ, checksum, rm, replicaId, credentials);
         CorrectMessage responseMessage = (CorrectMessage) 
-                sendAndWaitForOneReply(correctMsg, getTimeout);
+                sendAndWaitForOneReply(correctMsg, 0);
 
         if (responseMessage == null) {
             throw new IOFailure("Correct Message timed out before returning."
