@@ -78,7 +78,8 @@ public class BitpreserveFileState {
      * @throws ForwardedToErrorPage if an unknown bitarchive or update type 
      * is posted, or one of the two required parameters are missing. 
      * @throws ArgumentNotValid If the context is null.
-     * @return an I18N string telling what just 
+     * @return an I18N string telling which type of update has just been 
+     * initiated. 
      */
     public static String processUpdateRequest(PageContext context) 
             throws ArgumentNotValid, ForwardedToErrorPage {
