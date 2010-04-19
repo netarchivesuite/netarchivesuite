@@ -85,12 +85,28 @@ public class BitpreserveFileState {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
         ServletRequest request = context.getRequest();
         
-        HTMLUtils.forwardOnMissingParameter(context,
-                Constants.BITARCHIVE_NAME_PARAM, Constants.UPDATE_TYPE_PARAM);
-        
         String bitarchiveName
                 = request.getParameter(Constants.BITARCHIVE_NAME_PARAM);
+        if (bitarchiveName == null) {
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                    "errormsg;missing.parameter.0",
+                    bitarchiveName);
+            
+            throw new ForwardedToErrorPage("Paremeter '" 
+                    + Constants.BITARCHIVE_NAME_PARAM + "' not set");
+        }
         
+        String updateTypeRequested
+                = request.getParameter(Constants.UPDATE_TYPE_PARAM);
+        if (updateTypeRequested == null) {
+            HTMLUtils.forwardWithErrorMessage(context, I18N,
+                    "errormsg;missing.parameter.0",
+                    updateTypeRequested);
+            
+            throw new ForwardedToErrorPage("Paremeter '" 
+                    + Constants.UPDATE_TYPE_PARAM + "' not set");
+        }
+                
         if (!Replica.isKnownReplicaName(bitarchiveName)) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                                               "errormsg;unknown.bitarchive.0",
@@ -101,28 +117,23 @@ public class BitpreserveFileState {
         
         Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
 
-        String updateTypeRequested
-            = request.getParameter(Constants.UPDATE_TYPE_PARAM);
-
+       
         Locale l = context.getResponse().getLocale();
         String statusmessage = HTMLUtils.escapeHtmlValues(I18N.getString(
                 l, "initiating;update.of.0.for.replica.1",
                 updateTypeRequested, bitarchiveName));        
         if (updateTypeRequested.equalsIgnoreCase(
                 Constants.FIND_MISSING_FILES_OPTION)) {
-            // Start new thread
-            ActiveBitPreservationFactory.getInstance()
-                .findMissingFiles(bitarchive);
+            // Start new thread for findmissing files action.
+            new BitpreservationUpdateThread(bitarchive, 
+                    BitpreservationUpdateType.FINDMISSING).start();
             return statusmessage;
             
         } else if (updateTypeRequested.equalsIgnoreCase(
                 Constants.CHECKSUM_OPTION)) {
-            // Start new thread/process
-            
-            
-            ActiveBitPreservationFactory.getInstance()
-                .findChangedFiles(bitarchive);
-
+            // Start new thread for finding corrupt files action.
+            new BitpreservationUpdateThread(bitarchive, 
+                    BitpreservationUpdateType.CHECKSUM).start();
             return statusmessage;
         } else {
             HTMLUtils.forwardWithErrorMessage(context, I18N,

@@ -230,7 +230,6 @@ public class BitpreserveFileStatusTester extends TestCase {
         assertEquals("Should have info for filename2",
                      null, status.get(filename2));
 
-
 //        Iterator<String> it = mockabp.calls.get(ADD_METHOD).iterator();
 //        while (it.hasNext()) {
 //            System.out.println(it.next());
@@ -252,6 +251,11 @@ public class BitpreserveFileStatusTester extends TestCase {
                 mockabp.calls.get(GET_INFO_METHOD).iterator());
     }
     
+    /**
+     * FIXME fails after new threadbased implementation
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     public void testUpdateRequest() throws NoSuchFieldException, IllegalAccessException {
         MockFileBasedActiveBitPreservation mockabp
                 = new MockFileBasedActiveBitPreservation();
@@ -345,8 +349,8 @@ public class BitpreserveFileStatusTester extends TestCase {
                 fbabp.calls.get(NUM_MISSING_FILES).contains(Replica.getReplicaFromId("ONE").getType().name()));
         assertFalse("Number of missing files should not be called by the Checksum replica.",
                 fbabp.calls.get(NUM_MISSING_FILES).contains(Replica.getReplicaFromId("THREE").getType().name()));
-        assertEquals("Number of missing files should be put into the array 4 times", 
-                4, fbabp.calls.get(NUM_MISSING_FILES).size());
+        assertEquals("Number of missing files should be put into the array 2 times", 
+                2, fbabp.calls.get(NUM_MISSING_FILES).size());
         
         assertTrue("Number of files should be called by replica ONE", 
                 fbabp.calls.get(NUM_FILES).contains("ONE"));
