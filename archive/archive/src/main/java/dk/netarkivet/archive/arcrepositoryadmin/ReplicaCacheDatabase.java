@@ -1685,6 +1685,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // update the checksum updated date for this replica.
         updateChecksumDateForReplica(replica);
         updateFilelistDateForReplica(replica);
+        
+        log.info("Finished processing of " + checksumOutput.size() 
+                + " checksum entries");
     }
 
     /**
@@ -2066,7 +2069,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     public boolean insertAdminEntry(String line) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "String line");
-        log.debug("Insert admin entry begun");
+        log.trace("Insert admin entry begun");
         final int lengthFirstPart = 4;
         final int lengthOtherParts = 3;
         try {
@@ -2078,7 +2081,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             
             // Check if enough elements
             if(entryData.length < lengthFirstPart) {
-                log.info("Bad line in Admin.data: " + line);
+                log.warn("Bad line in Admin.data: " + line);
                 return false;
             }
             
@@ -2092,7 +2095,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             if(fileId == -1) {
                 fileId = insertFileIntoDB(filename);
             }
-            log.debug("Step 1 completed (file created in database).");
+            log.trace("Step 1 completed (file created in database).");
             // go through the replica specifics.
             for(int i = 1; i < split.length; i++) {
                 String[] repInfo = split[i].split(" ");
@@ -2123,7 +2126,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             log.info("Received IllegalState while parsing error.", e);
             return false;
         }
-        log.debug("Insert admin entry finished");
+        log.trace("Insert admin entry finished");
         return true;
     }
     

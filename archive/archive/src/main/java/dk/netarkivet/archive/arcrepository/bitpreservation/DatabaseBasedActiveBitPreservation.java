@@ -95,7 +95,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * 
      * @return The instance.
      */
-    public static synchronized DatabaseBasedActiveBitPreservation getInstance() {
+    public static synchronized DatabaseBasedActiveBitPreservation
+    getInstance() {
         if (instance == null) {
             instance = new DatabaseBasedActiveBitPreservation();
         }

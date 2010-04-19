@@ -43,8 +43,9 @@ There are no parameters.
     HTMLUtils.generateHeader(pageContext);
 
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;filestatus-update"/></h3>
-<%=BitpreserveFileState.processUpdateRequest(pageContext)%>
-<%    
+<h3 class="page_heading"><fmt:message key="pagetitle;filestatus.update"/></h3>
+<h4><%=BitpreserveFileState.processUpdateRequest(pageContext)%></h4>
+<fmt:message key="be.patient.this.operation.can.take.hours"/>
+<%   
     HTMLUtils.generateFooter(out);
 %>
