@@ -53,6 +53,7 @@ import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 
@@ -656,11 +657,28 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
                 throw new IOFailure(errMsg);
             }
             if(output.size() > 1) {
+                // Log that duplicates have been found. 
                 log.warn("The file '" + msg.getArcfileName() 
                         + "' was found " + output.size() + " times in "
                         + "the archive. Using the first found '" 
                         + output.get(0) + "' out of '" + output + "'");
-                // TODO handle if different or at least log the others
+
+                // check if any different values.
+                String firstVal = output.get(0);
+                for(int i=1; i < output.size(); i++) {
+                    if(!output.get(i).equals(firstVal)) {
+                        String errorString = "Replica '" + msg.getReplicaId() 
+                                + "' has unidentical duplicates: '" + firstVal 
+                                + "' and '" + output.get(i) + "'.";
+                        log.error(errorString);
+                        NotificationsFactory.getInstance().errorEvent(
+                                errorString);
+                    } else {
+                        log.debug("Replica '" + msg.getReplicaId() 
+                                + "' has identical duplicates: '"
+                                + firstVal + "'.");
+                    }
+                }
             }
 
             // Extract the filename and checksum of the first result.

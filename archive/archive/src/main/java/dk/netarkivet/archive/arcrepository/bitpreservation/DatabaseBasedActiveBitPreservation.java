@@ -132,10 +132,10 @@ public final class DatabaseBasedActiveBitPreservation implements
      * A GetAllChecksumsMessage is sent to the specific replica.
      * 
      * @param replica The replica to retrieve the checksums from.
-     * @return The checksums in the format of ChecksumEntry.
+     * @return A list of checksumjob results, i.e. a filename##checksum.
      * @throws ArgumentNotValid If the replica is null.
      */
-    private List<ChecksumEntry> getChecksumList(Replica replica)
+    private List<String> getChecksumList(Replica replica)
             throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
@@ -148,7 +148,7 @@ public final class DatabaseBasedActiveBitPreservation implements
                 .getAllChecksums(replica.getId());
         
         // Return the content of the file in a list.
-        return ChecksumEntry.parseChecksumJob(outputFile);
+        return FileUtils.readListFromFile(outputFile);
     }
     
     /**
@@ -245,7 +245,7 @@ public final class DatabaseBasedActiveBitPreservation implements
      */
     private void runChecksum(Replica replica) {
         // Run checksum job upon replica
-        List<ChecksumEntry> checksumEntries = getChecksumList(replica);
+        List<String> checksumEntries = getChecksumList(replica);
 
         // update database with new checksums
         cache.addChecksumInformation(checksumEntries, replica);

@@ -171,8 +171,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
 	// initialise the database. Clean database and put new intries.
 	ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
 	File csFile1 = makeTemporaryChecksumFile1();
-	cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(
-		csFile1), THREE);
+	cache.addChecksumInformation(FileUtils.readListFromFile(csFile1), THREE);
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
 	dbabp.findMissingFiles(TWO);

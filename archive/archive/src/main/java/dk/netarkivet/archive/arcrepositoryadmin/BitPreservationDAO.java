@@ -26,7 +26,6 @@ package dk.netarkivet.archive.arcrepositoryadmin;
 import java.sql.Date;
 import java.util.List;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.CleanupIF;
 
@@ -39,11 +38,11 @@ public interface BitPreservationDAO extends CleanupIF {
      *       in the same form as checksumJobOutput for implementation of
      *       bitArchive replicas
      *       
-     * @param checksumOutput The parsed output of a checksum job or the output
-     * from a GetAllChecksumMessage.
+     * @param checksumOutput The parsed output of a GetAllChecksumMessage as a 
+     * list of ChecksumJob lines, i.e. filename##checksum.
      * @param replica The replica this checksum job is for.
      */
-    void addChecksumInformation(List<ChecksumEntry> checksumOutput, 
+    void addChecksumInformation(List<String> checksumOutput, 
             Replica replica);
     
     /** Given the output of a file list job, add the results to the database.

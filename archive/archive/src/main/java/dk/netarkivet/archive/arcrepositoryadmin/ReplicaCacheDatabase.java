@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
+import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
@@ -48,6 +50,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
+import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
 
 /**
@@ -1620,11 +1623,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * @param replica The replica this checksum job is for.
      */
     @Override
-    public void addChecksumInformation(List<ChecksumEntry> checksumOutput,
+    public void addChecksumInformation(List<String> checksumOutput,
             Replica replica) {
         // validate arguments
         ArgumentNotValid.checkNotNull(checksumOutput,
-                "List<ChecksumEntry> checksumjobOutput");
+                "List<ChecksumEntry> checksumOutput");
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
 
         // Make sure, that the replica exists in the database.
@@ -1639,10 +1642,41 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         log.info("Starting processing of " + checksumOutput.size() 
                 + " checksum entries");
         
-        for (ChecksumEntry entry : checksumOutput) {
+        // Sort for finding duplicates.
+        Collections.sort(checksumOutput);
+        
+        String lastFilename = "";
+        String lastChecksum = "";
+        
+        for (String line : checksumOutput) {
             // parse the input.
-            String filename = entry.getFilename();
-            String checksum = entry.getChecksum();
+            KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
+            String filename = entry.getKey();
+            String checksum = entry.getValue();
+            
+            // check for duplicates
+            if(filename.equals(lastFilename)) {
+                // if different checksums, then
+                if(!checksum.equals(lastChecksum)) {
+                    // log and send notification
+                    String errMsg = "Unidentical duplicates of file '" 
+                        + filename + "' with the checksums '" + lastChecksum
+                        + "' and '" + checksum + "'. First instance used.";
+                    log.error(errMsg);
+                    NotificationsFactory.getInstance().errorEvent(errMsg);
+                } else {
+                    // log about duplicate identical 
+                    log.debug("Duplicates of the file '" + filename + "' found "
+                            + "with the same checksum '" + checksum + "'.");
+                }
+                
+                // avoid overhead of inserting duplicates twice.
+                continue;
+            }
+            
+            // set these value to be the old values in next iteration.
+            lastFilename = filename;
+            lastChecksum = checksum;
             
             // The ID for the file.
             long fileid = -1;
@@ -1720,8 +1754,19 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // retrieve the list of files already known by this cache.
         List<Long> missingReplicaRFIs = retrieveReplicaFileInfoGuidsForReplica(
                 replica.getId());
+        
+        Collections.sort(filelist);
 
+        String lastFileName = "";
         for (String file : filelist) {
+            // handle duplicates.
+            if(file.equals(lastFileName)) {
+                log.warn("There have been found multiple files with the name '" 
+                        + file + "'");
+                continue;
+            }
+            lastFileName = file;
+            
             // retrieve the file_id for the file.
             long fileId = retrieveIdForFile(file);
             // If not found, log and create the file in the database.

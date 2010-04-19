@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 
@@ -142,10 +143,15 @@ public class ChecksumEntry extends Object {
      * Method for changing the resulting file of a checksum job into a list of 
      * ChecksumEntry.
      * 
-     * @param checksumjobOutput The file with the ouput from a checksum job.
+     * @param checksumjobOutput The file with the output from a checksum job.
      * @return The list of the checksum entries.
+     * @throws ArgumentNotValid If the checksumjobOutput is null.
      */
-    public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) {
+    public static List<ChecksumEntry> parseChecksumJob(File checksumjobOutput) 
+            throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNull(checksumjobOutput, 
+                "File checksumjobOutput");
+        
         // make the result list.
         List<ChecksumEntry> res = new ArrayList<ChecksumEntry>();
 

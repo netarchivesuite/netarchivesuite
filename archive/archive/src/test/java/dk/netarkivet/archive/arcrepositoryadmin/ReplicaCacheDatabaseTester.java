@@ -30,13 +30,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
+
 import org.apache.commons.collections.IteratorUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
-import dk.netarkivet.archive.arcrepositoryadmin.ReplicaCacheDatabase;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -44,8 +45,11 @@ import dk.netarkivet.common.distribute.arcrepository.ReplicaStoreState;
 import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
+import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.testutils.FileAsserts;
+import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
@@ -62,6 +66,11 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         mtf.setUp();
         ChannelsTester.resetChannels();
         DBConnect.cleanup();
+        
+        LogManager.getLogManager().readConfiguration();
+        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
+        Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
+                RememberNotifications.class.getName());
         
         DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
                 TestInfo.DATABASE_DIR);
@@ -95,7 +104,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         
         // try handling output from ChecksumJob.
         File csFile = makeTemporaryChecksumFile1();
-        cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile), 
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
                 Replica.getReplicaFromId("ONE"));
 
         // try handling output from FilelistJob.
@@ -167,7 +176,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
                 + misFiles + " == " + allFilenames, misFiles, allFilenames);
 
         // adding the checksum for the other replicas.
-        cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile), 
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
                 Replica.getReplicaFromId("TWO"));
 
         // check that when a replica is given wrong checksums it will be 
@@ -180,7 +189,7 @@ public class ReplicaCacheDatabaseTester extends TestCase {
                 0, cache.getNumberOfFiles(Replica.getReplicaFromId("THREE")));
 
         File csFile2 = makeTemporaryChecksumFile2();
-        cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile2), 
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile2), 
                 Replica.getReplicaFromId("THREE"));
         assertEquals("All the files in Replica 'THREE' has been assigned "
                 + "checksums, but not checksum update has been run yet. "
@@ -226,12 +235,12 @@ public class ReplicaCacheDatabaseTester extends TestCase {
 
         // set replica THREE to having the same checksum as the other two,
         // and update.
-        cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile),
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile),
                 Replica.getReplicaFromId("THREE"));
         cache.updateChecksumStatus();
         // reset the checksums of replica ONE, thus setting the 
         // 'checksum_status' to UNKNOWN.
-        cache.addChecksumInformation(ChecksumEntry.parseChecksumJob(csFile), 
+        cache.addChecksumInformation(FileUtils.readListFromFile(csFile), 
                 Replica.getReplicaFromId("ONE"));
 
         // Check that replica 'TWO' is found with good file.
@@ -304,9 +313,42 @@ public class ReplicaCacheDatabaseTester extends TestCase {
             assertEquals("Unexpected filelist status", FileListStatus.NO_FILELIST_STATUS,
                     cache.retrieveFileListStatus("TEST5", rep));
         }
+
+        // check for duplicates
+        cache.addFileListInformation(FileUtils.readListFromFile(makeTemporaryDuplicateFilelistFile()), 
+                Replica.getReplicaFromId("ONE"));
+        
+        LogUtils.flushLogs(ReplicaCacheDatabase.class.getName());
+        FileAsserts.assertFileContains("Warning about duplicates should be generated. The log file is: "
+                        + FileUtils.readFile(TestInfo.LOG_DIR),
+                        "WARNING: There have been found multiple files with the name 'TEST1'", 
+                        TestInfo.LOG_DIR);
         
         // cleanup afterwards.
         cache.cleanup();
+    }
+    
+    private File makeTemporaryDuplicateFilelistFile() throws Exception {
+        File res = new File(TestInfo.TEST_DIR, "filelist.out");
+        FileWriter fw = new FileWriter(res);
+        
+        StringBuilder fileContent = new StringBuilder();
+        fileContent.append("TEST1");
+        fileContent.append("\n");
+        fileContent.append("TEST2");
+        fileContent.append("\n");
+        fileContent.append("TEST1");
+        fileContent.append("\n");
+        fileContent.append("TEST3");
+        fileContent.append("\n");
+        fileContent.append("TEST1");
+        fileContent.append("\n");
+        
+        fw.append(fileContent.toString());
+        fw.flush();
+        fw.close();
+        
+        return res;
     }
     
     private File makeTemporaryFilelistFile() throws Exception {
