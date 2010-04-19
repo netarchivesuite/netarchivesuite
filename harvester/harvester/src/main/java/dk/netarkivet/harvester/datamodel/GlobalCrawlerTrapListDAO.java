@@ -32,10 +32,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * traps.
  *
  */
-
 public abstract class GlobalCrawlerTrapListDAO {
-
-
 
     /**
      * Get all active crawler traps.
@@ -70,9 +67,10 @@ public abstract class GlobalCrawlerTrapListDAO {
                                                                ArgumentNotValid;
 
     /**
-     * Deletes a crawler trap list from the database
+     * Deletes a crawler trap list from the database.
      * @param id the id of the list to be deleted
-     * @throws UnknownID if the argument doesn not correspond to a known trap list.
+     * @throws UnknownID if the argument doesn not correspond to a known 
+     * trap list.
      */
     public abstract void delete(int id) throws UnknownID;
 
@@ -82,7 +80,8 @@ public abstract class GlobalCrawlerTrapListDAO {
      * @throws UnknownID if the id of the trapList argument does not correspond
      * to an existing trap list in the database.
      */
-    public abstract void update(GlobalCrawlerTrapList trapList) throws UnknownID;
+    public abstract void update(GlobalCrawlerTrapList trapList) 
+    throws UnknownID;
 
     /**
      * Get a traplist from the database.
@@ -92,6 +91,4 @@ public abstract class GlobalCrawlerTrapListDAO {
      * the database.
      */
     public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
-    
-
 }

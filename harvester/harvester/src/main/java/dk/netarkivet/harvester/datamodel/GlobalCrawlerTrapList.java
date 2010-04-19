@@ -117,11 +117,11 @@ public class GlobalCrawlerTrapList {
      * @param description A textual description of this list.
      * @param isActive flag indicating whether this list is isActive.
      * @throws IOFailure if the input stream cannot be found or read.
-     * @throws ArgumentNotValid if the input stream is null or the name is null or
-     * empty.
+     * @throws ArgumentNotValid if the input stream is null or the name is 
+     * null or empty.
      */
-    public GlobalCrawlerTrapList(InputStream is, String name, String description,
-                                 boolean isActive) throws IOFailure,
+    public GlobalCrawlerTrapList(InputStream is, String name, 
+            String description, boolean isActive) throws IOFailure,
                                                           ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
         ArgumentNotValid.checkNotNull(is, "is");
@@ -138,7 +138,7 @@ public class GlobalCrawlerTrapList {
 
     /**
      * A utility method to read the list of traps from an InputStream,
-     * line-by-line
+     * line-by-line.
      * @param is  The input stream from which to read.
      */
     public void setTrapsFromInputStream(InputStream is) {
@@ -197,7 +197,7 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Set the description of this list
+     * Set the description of this list.
      * @param description the description.
      */
     public void setDescription(String description) {

@@ -539,8 +539,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * If http(s) scheme, check scheme specific part begins '//'.
      * @throws URIException
-     * @see http://www.faqs.org/rfcs/rfc1738.html Section 3.1. Common Internet
-     * Scheme Syntax
+     * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common Internet
+     * Scheme Syntax</A>
      */
     protected void checkHttpSchemeSpecificPartSlashPrefix(final URI base,
     		final String scheme, final String schemeSpecificPart)
