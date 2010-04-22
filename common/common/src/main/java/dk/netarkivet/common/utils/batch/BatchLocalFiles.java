@@ -138,7 +138,7 @@ public class BatchLocalFiles {
      */
     private void processFile(FileBatchJob job, final File file,
             OutputStream os) {
-        log.debug("Started processing of file '" +  file.getAbsolutePath()
+        log.trace("Started processing of file '" +  file.getAbsolutePath()
                 + "'.");
         boolean success = false;
         try {
