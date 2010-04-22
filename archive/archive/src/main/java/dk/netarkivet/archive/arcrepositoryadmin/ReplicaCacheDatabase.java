@@ -71,6 +71,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** The connection to the database.*/
     private Connection dbConnection;
     
+    /** max number of database retries. */
+    private final int maxdatabaseRetries = 5;
+    /** max time to wait between retries. */
+    private final int delaybetweenretries = 5*60*1000;
+    
     /**
      * Constructor.
      */
@@ -145,7 +150,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // is within the database.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE file_id = ? "
                 + "AND replica_id = ?";
-        int count = DBUtils.selectIntValue(dbConnection, sql, fileid, 
+        int count = DBUtils.selectIntValue(getDbConnection(), sql, fileid, 
                 replicaID);
 
         // Handle the different cases for count.
@@ -172,12 +177,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      */
     private void insertReplicaIntoDB(Replica rep) throws IllegalState {
         try {
+            Connection connection = getDbConnection();
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
             
             // Make the SQL statement for putting the replica into the database
             // and insert the variables for the entry to the replica table.
-            statement = dbConnection.prepareStatement(
+            statement = connection.prepareStatement(
                     "INSERT INTO replica "
                     + "(replica_id, replica_name, replica_type) "
                     + "VALUES ( ?, ?, ?)");
@@ -187,7 +192,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (SQLException e) {
             throw new IOFailure("Cannot add replica '" + rep 
                     + "'to the database.", e);
@@ -207,12 +212,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private long insertFileIntoDB(String filename) throws IllegalState {
         log.debug("Insert file '" + filename + "' into database");
         try {
+            Connection connection = getDbConnection();
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
             
             // Make the SQL statement for putting the replica into the database
             // and insert the variables for the entry to the replica table.
-            statement = dbConnection.prepareStatement(
+            statement = connection.prepareStatement(
                     "INSERT INTO file "
                     + "(filename) "
                     + "VALUES ( ? )");
@@ -220,7 +225,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
             
             // Create the replicafileinfo for each replica.
             long fileId = retrieveIdForFile(filename);
@@ -256,7 +261,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             List<String> repIds = retrieveIdsFromReplicaTable();
 
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
 
             // Make a entry for each replica.
             for (String repId : repIds) {
@@ -264,7 +269,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 if (!existsReplicaFileInfoInDB(fileId, repId)) {
                     // Insert with the known values (no dates).
                     statement = DBUtils.prepareStatement(
-                            dbConnection,
+                            connection,
                             "INSERT INTO replicafileinfo "
                             + "(file_id, replica_id, filelist_status, "
                             + "checksum_status, upload_status ) VALUES "
@@ -275,7 +280,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
                     // execute the SQL statement
                     statement.executeUpdate();
-                    dbConnection.commit();
+                    connection.commit();
                 }
             }
         } catch (SQLException e) {
@@ -295,7 +300,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT replica_id FROM replica";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringList(dbConnection, sql);
+        return DBUtils.selectStringList(getDbConnection(), sql);
     }
     
     /**
@@ -309,7 +314,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT file_id FROM file";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringList(dbConnection, sql);
+        return DBUtils.selectStringList(getDbConnection(), sql);
     }
     
     /**
@@ -324,7 +329,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo";
 
         // execute the SQL statement and return the results.
-        return DBUtils.selectStringList(dbConnection, sql);
+        return DBUtils.selectStringList(getDbConnection(), sql);
     }
 
     /**
@@ -343,7 +348,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // retrieve the file_id of the entry in the file table with the 
         // filename filename.
         String sql = "SELECT file_id FROM file WHERE filename = ?";
-        List<Long> files = DBUtils.selectLongList(dbConnection, sql, filename);
+        List<Long> files = DBUtils.selectLongList(
+                getDbConnection(), sql, filename);
 
         switch (files.size()) {
         // if no such file within the database, then return negative value.
@@ -374,8 +380,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql for retrieving the replicafileinfo_guid.
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "file_id = ? AND replica_id = ?";
-        List<Long> result = DBUtils.selectLongList(dbConnection, sql, fileId,
-                replicaId);
+        List<Long> result = DBUtils.selectLongList(getDbConnection(), sql, 
+                fileId, replicaId);
 
         // Handle the different cases for count.
         switch (result.size()) {
@@ -403,7 +409,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql for retrieving the replicafileinfo_guids for the replica.
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "replica_id = ?";
-        return DBUtils.selectLongList(dbConnection, sql, replicaId);
+        return DBUtils.selectLongList(getDbConnection(), sql, replicaId);
     }
     
     /**
@@ -417,7 +423,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql for retrieving the replicafileinfo_guids for the fileId.
         String sql = "SELECT replicafileinfo_guid FROM replicafileinfo WHERE "
                 + "file_id = ?";
-        return DBUtils.selectLongList(dbConnection, sql, fileId);
+        return DBUtils.selectLongList(getDbConnection(), sql, fileId);
     }
     
     /**
@@ -428,7 +434,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private List<Long> retrieveAllFileIds() {
         // sql for retrieving all the file_ids in the file table.
         String sql = "SELECT file_id FROM file";
-        return DBUtils.selectLongList(dbConnection, sql);
+        return DBUtils.selectLongList(getDbConnection(), sql);
     }
 
     /**
@@ -441,7 +447,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // The SQL statement for retrieving the replica_type of a replica with
         // the given replica id.
         String sql = "SELECT replica_type FROM replica WHERE replica_id = ?";
-        return DBUtils.selectIntValue(dbConnection, sql, replicaId);
+        return DBUtils.selectIntValue(getDbConnection(), sql, replicaId);
     }
     
     /**
@@ -457,7 +463,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // replicafileinfo table for the given fileId and checksum_status = OK
         String sql = "SELECT replica_id FROM replicafileinfo WHERE "
                 + "file_id = ? AND checksum_status = ?";
-        return DBUtils.selectStringList(dbConnection, sql, fileId,
+        return DBUtils.selectStringList(getDbConnection(), sql, fileId,
                 ChecksumStatus.OK.ordinal());
     }
     
@@ -472,7 +478,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private String retrieveFilenameForFileId(long fileId) {
         // The SQL statement to retrieve the filename for a given file_id
         String sql = "SELECT filename FROM file WHERE file_id = ?";
-        return DBUtils.selectStringValue(dbConnection, sql, fileId);
+        return DBUtils.selectStringValue(getDbConnection(), sql, fileId);
     }
     
     /**
@@ -489,7 +495,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // entry in the replica fileinfo table.
         String sql = "SELECT filelist_status FROM replicafileinfo WHERE "
                 + "replicafileinfo_guid = ?";
-        return DBUtils.selectIntValue(dbConnection, sql, replicafileinfoGuid);
+        return DBUtils.selectIntValue(getDbConnection(), sql, 
+                replicafileinfoGuid);
     }
 
     /**
@@ -517,18 +524,18 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql, checksum,
+            statement = DBUtils.prepareStatement(connection, sql, checksum,
                     ReplicaStoreState.UPLOAD_COMPLETED.ordinal(), 
                     FileListStatus.OK.ordinal(), ChecksumStatus.UNKNOWN
                             .ordinal(), now, now, replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -553,16 +560,16 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql,
+            statement = DBUtils.prepareStatement(connection, sql,
                     FileListStatus.OK.ordinal(), now, replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -590,18 +597,18 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql,
+            statement = DBUtils.prepareStatement(connection, sql,
                     FileListStatus.MISSING.ordinal(), now, 
                     ReplicaStoreState.UPLOAD_FAILED.ordinal(),
                     replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -628,18 +635,18 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql,
+            statement = DBUtils.prepareStatement(connection, sql,
                     ChecksumStatus.CORRUPT.ordinal(), now, 
                     ReplicaStoreState.UPLOAD_FAILED.ordinal(),
                     replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -666,16 +673,16 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql,
+            statement = DBUtils.prepareStatement(connection, sql,
                     ChecksumStatus.UNKNOWN.ordinal(), now, replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -700,16 +707,16 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql,
+            statement = DBUtils.prepareStatement(connection, sql,
                     ChecksumStatus.OK.ordinal(), now, replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Problems updating the replicafileinfo.";
             log.warn(msg);
@@ -730,14 +737,14 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private void updateChecksumDateForReplica(Replica rep) {
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
             String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
-            statement = DBUtils.prepareStatement(dbConnection, sql, now, rep
+            statement = DBUtils.prepareStatement(connection, sql, now, rep
                     .getId());
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Cannot update the checksum_updated for replica '"
                     + rep + "'.";
@@ -759,14 +766,14 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private void updateFilelistDateForReplica(Replica rep) {
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             Date now = new Date(Calendar.getInstance().getTimeInMillis());
             String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
-            statement = DBUtils.prepareStatement(dbConnection, sql, now, rep
+            statement = DBUtils.prepareStatement(connection, sql, now, rep
                     .getId());
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Cannot update the filelist_updated for replica '"
                     + rep + "'.";
@@ -789,13 +796,13 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private void setFilelistDateForReplica(Replica rep, Date date) {
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             String sql = "UPDATE replica SET filelist_updated = ? WHERE "
                     + "replica_id = ?";
-            statement = DBUtils.prepareStatement(dbConnection, sql, date, rep
+            statement = DBUtils.prepareStatement(connection, sql, date, rep
                     .getId());
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Cannot update the filelist_updated for replica '"
                     + rep + "'.";
@@ -818,13 +825,13 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private void setChecksumlistDateForReplica(Replica rep, Date date) {
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             String sql = "UPDATE replica SET checksum_updated = ? WHERE "
                     + "replica_id = ?";
-            statement = DBUtils.prepareStatement(dbConnection, sql, date, rep
+            statement = DBUtils.prepareStatement(connection, sql, date, rep
                     .getId());
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String msg = "Cannot update the filelist_updated for replica '"
                     + rep + "'.";
@@ -842,7 +849,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private boolean existsReplicaInDB(Replica rep) {
         // retrieve the amount of times this replica is within the database.
         String sql = "SELECT COUNT(*) FROM replica WHERE replica_id = ?";
-        int count = DBUtils.selectIntValue(dbConnection, sql, rep.getId());
+        int count = DBUtils.selectIntValue(getDbConnection(), sql, rep.getId());
 
         // Handle the different cases for count.
         switch (count) {
@@ -872,7 +879,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         PreparedStatement s = null;
 
         try {
-            s = DBUtils.prepareStatement(dbConnection, sql, 
+            s = DBUtils.prepareStatement(getDbConnection(), sql, 
                     replicaFileInfoGuid);
             ResultSet res = s.executeQuery();
             res.next();
@@ -935,8 +942,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
-
+            Connection connection = getDbConnection();
+            
             FileListStatus fls;
             ChecksumStatus cs;
 
@@ -952,11 +959,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             }
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql, checksum,
+            statement = DBUtils.prepareStatement(connection, sql, checksum,
                     state.ordinal(), fls.ordinal(), cs.ordinal(), 
                     replicafileinfoGuid);
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String errMsg = "Problems with updating a ReplicaFileInfo";
             log.warn(errMsg);
@@ -986,7 +993,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
 
             FileListStatus fls;
             ChecksumStatus cs;
@@ -1003,11 +1010,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             }
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql, checksum,
+            statement = DBUtils.prepareStatement(connection, sql, checksum,
                     state.ordinal(), fls.ordinal(), cs.ordinal(), date, date, 
                     replicafileinfoGuid);
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (Exception e) {
             String errMsg = "Problems with updating a ReplicaFileInfo";
             log.warn(errMsg);
@@ -1028,7 +1035,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql query for retrieval of upload status for a specific entry. 
         String sql = "SELECT upload_status FROM replicafileinfo WHERE "
             + "file_id = ? AND replica_id = ?";
-        int us = DBUtils.selectIntValue(dbConnection, sql, fileGuid, repId);
+        int us = DBUtils.selectIntValue(getDbConnection(), sql, fileGuid, 
+                repId);
         return ReplicaStoreState.fromOrdinal(us);
     }
     
@@ -1045,7 +1053,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql query for retrieval of checksum value for an specific entry.
         String sql = "SELECT checksum FROM replicafileinfo WHERE file_id = ? "
             + "AND replica_id = ?";
-        return DBUtils.selectStringValue(dbConnection, sql, fileGuid, repId);
+        return DBUtils.selectStringValue(getDbConnection(), sql, fileGuid, 
+                repId);
     }
     
     /**
@@ -1062,7 +1071,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT checksum_status FROM replicafileinfo WHERE "
             + "file_id = ? AND replica_id = ?";
         // retrieve the ordinal for the checksum status.
-        int statusOrdinal = DBUtils.selectIntValue(dbConnection, sql, 
+        int statusOrdinal = DBUtils.selectIntValue(getDbConnection(), sql,
                 fileGuid, repId);
         // return the checksum corresponding to the ordinal.
         return ChecksumStatus.fromOrdinal(statusOrdinal);
@@ -1272,8 +1281,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // make sql query.
         String sql = "SELECT filename FROM file";
 
-        // Perform the update.
-        return DBUtils.selectStringList(dbConnection, sql, new Object[]{});
+        // Perform the select.
+        return DBUtils.selectStringList(getDbConnection(), sql, new Object[]{});
     }
     
     /**
@@ -1298,7 +1307,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT upload_status FROM replicafileinfo WHERE "
             + "file_id = ? AND replica_id = ?";
         // execute the query.
-        int ordinal = DBUtils.selectIntValue(dbConnection, sql, fileId, 
+        int ordinal = DBUtils.selectIntValue(getDbConnection(), sql, fileId, 
                 replicaId);
 
         // return the corresponding ReplicaStoreState.
@@ -1330,15 +1339,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // init statement.
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
 
             // complete the SQL statement.
-            statement = DBUtils.prepareStatement(dbConnection, sql, 
+            statement = DBUtils.prepareStatement(connection, sql, 
                     state.ordinal(), replicaId, fileId);
             
             // execute the update and commit to database.
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (SQLException e) {
             String errMsg = "Problems with updating a ReplicaFileInfo";
             log.warn(errMsg);
@@ -1435,16 +1444,16 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             
-            statement = dbConnection.prepareStatement("UPDATE replicafileinfo "
+            statement = connection.prepareStatement("UPDATE replicafileinfo "
                     + "SET upload_status = ? WHERE replicafileinfo_guid = ?");
             statement.setLong(1, state.ordinal());
             statement.setLong(2, guid);
             
             // Perform the update.
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (SQLException e) {
             throw new IllegalState("Cannot update status and checksum of " 
                     + "a replicafileinfo in the database.", e);
@@ -1481,9 +1490,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         try {
             PreparedStatement statement = null;
-            dbConnection.setAutoCommit(false);
+            Connection connection = getDbConnection();
             
-            statement = dbConnection.prepareStatement("UPDATE replicafileinfo "
+            statement = connection.prepareStatement("UPDATE replicafileinfo "
                     + "SET upload_status = ?, checksum = ? WHERE "
                     + "replicafileinfo_guid = ?");
             statement.setLong(1, state.ordinal());
@@ -1492,7 +1501,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             
             // Perform the update.
             statement.executeUpdate();
-            dbConnection.commit();
+            connection.commit();
         } catch (SQLException e) {
             throw new IllegalState("Cannot update status and checksum of " 
                     + "a replicafileinfo in the database.", e);
@@ -1520,7 +1529,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             + "replica_id = ? AND upload_status = ?";
 
         // Perform the update.
-        return DBUtils.selectStringList(dbConnection, sql, replicaId,
+        return DBUtils.selectStringList(getDbConnection(), sql, replicaId,
                 state.ordinal());
     }
     
@@ -1535,7 +1544,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     public boolean existsFileInDB(String filename) throws IllegalState {
         // retrieve the amount of times this replica is within the database.
         String sql = "SELECT COUNT(*) FROM file WHERE filename = ?";
-        int count = DBUtils.selectIntValue(dbConnection, sql, filename);
+        int count = DBUtils.selectIntValue(getDbConnection(), sql, filename);
 
         // Handle the different cases for count.
         switch (count) {
@@ -1822,8 +1831,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // sql for retrieving thie replicafileinfo_guid.
         String sql = "SELECT filelist_updated FROM replica WHERE "
                 + "replica_id = ?";
-        String result = DBUtils.selectStringValue(dbConnection, sql, replica
-                .getId());
+        String result = DBUtils.selectStringValue(getDbConnection(), sql, 
+                replica.getId());
 
         // return null if the field has no be set for this replica.
         if (result == null) {
@@ -1859,8 +1868,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // checksum for the replica.
         String sql = "SELECT checksum_updated FROM replica WHERE "
                 + "replica_id = ?";
-        String result = DBUtils.selectStringValue(dbConnection, sql, replica
-                .getId());
+        String result = DBUtils.selectStringValue(getDbConnection(), sql, 
+                replica.getId());
 
         // return null if the field has no be set for this replica.
         if (result == null) {
@@ -1894,7 +1903,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // replica.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE replica_id"
                 + " = ? AND filelist_status = ?";
-        return DBUtils.selectLongValue(dbConnection, sql, replica.getId(),
+        return DBUtils.selectLongValue(getDbConnection(), sql, replica.getId(),
                 FileListStatus.MISSING.ordinal());
     }
 
@@ -1919,7 +1928,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
                 + "file ON replicafileinfo.file_id = file.file_id "
                 + "WHERE replica_id = ? AND filelist_status = ?";
-        return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
+        return DBUtils.selectStringList(getDbConnection(), sql, replica.getId(),
                 FileListStatus.MISSING.ordinal());
     }
 
@@ -1942,7 +1951,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // the replicafileinfo table for the given replica.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE replica_id"
                 + " = ? AND checksum_status = ?";
-        return DBUtils.selectLongValue(dbConnection, sql, replica.getId(),
+        return DBUtils.selectLongValue(getDbConnection(), sql, replica.getId(),
                 ChecksumStatus.CORRUPT.ordinal());
     }
 
@@ -1967,7 +1976,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String sql = "SELECT filename FROM replicafileinfo LEFT OUTER JOIN "
                 + "file ON replicafileinfo.file_id = file.file_id "
                 + "WHERE replica_id = ? AND checksum_status = ?";
-        return DBUtils.selectStringList(dbConnection, sql, replica.getId(),
+        return DBUtils.selectStringList(getDbConnection(), sql, replica.getId(),
                 ChecksumStatus.CORRUPT.ordinal());
     }
 
@@ -1993,7 +2002,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // filelist_status set to OK.
         String sql = "SELECT COUNT(*) FROM replicafileinfo WHERE replica_id "
                 + " = ? AND filelist_status = ?";
-        return DBUtils.selectLongValue(dbConnection, sql, replica.getId(),
+        return DBUtils.selectLongValue(getDbConnection(), sql, replica.getId(),
                 FileListStatus.OK.ordinal());
     }
     
@@ -2167,7 +2176,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                         replicaUploadStatus);
             }
         } catch (IllegalState e) {
-            log.info("Received IllegalState while parsing error.", e);
+            log.warn("Received IllegalState exception while parsing.", e);
             return false;
         }
         log.trace("Insert admin entry finished");
@@ -2207,11 +2216,13 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // The SQL statement to retrieve the amount of entries in the
         // file table. No arguments (represented by empty Object array).
         String sql = "SELECT COUNT(*) FROM file";
-        return DBUtils.selectLongValue(dbConnection, sql, new Object[0]) == 0L;
+        return DBUtils.selectLongValue(getDbConnection(), sql, 
+                new Object[0]) == 0L;
     }
     
     /**
      * Method to print all the tables in the database.
+     * @return all the tables as a text string
      */
     public String retrieveAsText() {
         StringBuilder res = new StringBuilder();
@@ -2224,25 +2235,26 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                 + "\tchecksumupdated" + "\n");
         res.append("------------------------------------------------"
                 + "------------\n");
+        Connection connection = getDbConnection();
         for (String repId : reps) {
             // retrieve the replica_name
             sql = "SELECT replica_guid FROM replica WHERE replica_id = ?";
             String repGUID = DBUtils
-                    .selectStringValue(dbConnection, sql, repId);
+                    .selectStringValue(connection, sql, repId);
             // retrieve the replica_name
             sql = "SELECT replica_name FROM replica WHERE replica_id = ?";
             String repName = DBUtils
-                    .selectStringValue(dbConnection, sql, repId);
+                    .selectStringValue(connection, sql, repId);
             // retrieve the replica_type
             sql = "SELECT replica_type FROM replica WHERE replica_id = ?";
-            int repType = DBUtils.selectIntValue(dbConnection, sql, repId);
+            int repType = DBUtils.selectIntValue(connection, sql, repId);
             // retrieve the date for last updated
             sql = "SELECT filelist_updated FROM replica WHERE replica_id = ?";
-            String filelistUpdated = DBUtils.selectStringValue(dbConnection,
+            String filelistUpdated = DBUtils.selectStringValue(connection,
                     sql, repId);
             // retrieve the date for last updated
             sql = "SELECT checksum_updated FROM replica WHERE replica_id = ?";
-            String checksumUpdated = DBUtils.selectStringValue(dbConnection,
+            String checksumUpdated = DBUtils.selectStringValue(connection,
                     sql, repId);
 
             // Print
@@ -2260,7 +2272,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         for (String fileId : fileIds) {
             // retrieve the file_name
             sql = "SELECT filename FROM file WHERE file_id = ?";
-            String fileName = DBUtils.selectStringValue(dbConnection, sql,
+            String fileName = DBUtils.selectStringValue(connection, sql,
                     fileId);
 
             // Print
@@ -2280,43 +2292,43 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // retrieve the replica_id
             sql = "SELECT replica_id FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            String replicaId = DBUtils.selectStringValue(dbConnection, sql,
+            String replicaId = DBUtils.selectStringValue(connection, sql,
                     rfiGUID);
             // retrieve the file_id
             sql = "SELECT file_id FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            String fileId = DBUtils.selectStringValue(dbConnection, sql,
+            String fileId = DBUtils.selectStringValue(connection, sql,
                     rfiGUID);
             // retrieve the checksum
             sql = "SELECT checksum FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            String checksum = DBUtils.selectStringValue(dbConnection, sql,
+            String checksum = DBUtils.selectStringValue(connection, sql,
                     rfiGUID);
             // retrieve the upload_status
             sql = "SELECT upload_status FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            int uploadStatus = DBUtils.selectIntValue(dbConnection, sql,
+            int uploadStatus = DBUtils.selectIntValue(connection, sql,
                     rfiGUID);
             // retrieve the filelist_status
             sql = "SELECT filelist_status FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            int filelistStatus = DBUtils.selectIntValue(dbConnection, sql,
+            int filelistStatus = DBUtils.selectIntValue(connection, sql,
                     rfiGUID);
             // retrieve the checksum_status
             sql = "SELECT checksum_status FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
-            int checksumStatus = DBUtils.selectIntValue(dbConnection, sql,
+            int checksumStatus = DBUtils.selectIntValue(connection, sql,
                     rfiGUID);
             // retrieve the filelist_checkdatetime
             sql = "SELECT filelist_checkdatetime FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
             String filelistCheckdatetime = DBUtils.selectStringValue(
-                    dbConnection, sql, rfiGUID);
+                    connection, sql, rfiGUID);
             // retrieve the checksum_checkdatetime
             sql = "SELECT checksum_checkdatetime FROM replicafileinfo WHERE "
                     + "replicafileinfo_guid = ?";
             String checksumCheckdatetime = DBUtils.selectStringValue(
-                    dbConnection, sql, rfiGUID);
+                    connection, sql, rfiGUID);
 
             // Print
             res.append(rfiGUID + " \t" + replicaId + "\t" + fileId
@@ -2338,5 +2350,60 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     @Override
     public void cleanup() {
         instance = null;
+    }
+    
+    /**
+     * Get the current database connection. Check first, if the connection 
+     * is valid. If the connection is terminated. Try to reestablish the 
+     * connection a number of times before giving up.
+     * @throws IOFailure If the database connection is down and 
+     * we are unable to reestablish the connection.
+     * @return the current database connection.
+     */
+    private synchronized Connection getDbConnection() throws IOFailure {
+        int secondsToWait = 5;
+        try {
+            if (dbConnection.isValid(secondsToWait)) {
+                return this.dbConnection;
+            }
+        } catch (SQLException e) {
+            log.warn(
+                    "Exception thrown while testing the connection to the "
+                    + "database", e);
+        }
+        // The connection is terminated (maybe server is shutdown?)
+        // Try to reestablish the connection a number of times.
+        Connection newConnection = null;
+        boolean establishedConnection = false;
+        int tries = 0;
+        
+        while (!establishedConnection && tries <= maxdatabaseRetries) {
+            tries++;
+            try {
+                newConnection = DBConnect.getDBConnection(
+                        DBConnect.getArchiveUrl());
+                establishedConnection = true;
+                this.dbConnection = newConnection;
+            } catch (IOFailure e) {
+                if (tries == maxdatabaseRetries){
+                    log.warn("Final attempt to reestablish "
+                            + "connection to database failed.", e);
+                    throw new IOFailure(
+                            "Reestablishing of dbconnection failed", e);
+                } else {
+                    log.info("Another attempt to reestablish "
+                            + "connection to database failed. Will try " 
+                            + (maxdatabaseRetries - tries) 
+                            + " more attempt(s) before giving up"
+                            , e);
+                    try {
+                        Thread.sleep(delaybetweenretries);
+                    } catch (InterruptedException e1) {
+                        // ignore this exception
+                    }
+                }
+            }
+        }
+        return this.dbConnection;
     }
 }

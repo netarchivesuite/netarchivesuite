@@ -62,7 +62,7 @@ public final class DBConnect {
     /**
      * Get a connection to our database. If a connection is already registered 
      * to the current thread, checks that it is valid, and if not renews it. 
-     * Assumes that AutoCommit is true.
+     * This sets AutoCommit to false as part of getting a fresh connection.
      * @param dbUrl The url to the database.
      * @return a connection to our database.
      * @throws IOFailure if we cannot connect to the database (or find the
@@ -84,6 +84,7 @@ public final class DBConnect {
             if (renew) {  
                 Class.forName(DBSpecifics.getInstance().getDriverClassName());
                 connection = DriverManager.getConnection(dbUrl);
+                connection.setAutoCommit(false);
                 connectionPool.put(Thread.currentThread(), connection);
                 log.info("Connected to database using DBurl '"
                         + dbUrl + "'  using driver '"
