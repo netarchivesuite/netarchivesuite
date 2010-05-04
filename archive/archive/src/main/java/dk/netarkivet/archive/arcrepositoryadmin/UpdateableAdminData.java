@@ -54,7 +54,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
  * If the admindata file on start-up is the oldversion,
  * the admindata file is migrated to the new version.
  *
+ * @deprecated Use the database instance instead, DatabaseAdmin. 
  */
+@Deprecated
 public class UpdateableAdminData extends AdminData implements Admin {
     /** Logger for this class. */
     private Log log = LogFactory.getLog(getClass().getName());

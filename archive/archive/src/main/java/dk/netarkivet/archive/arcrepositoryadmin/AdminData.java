@@ -60,7 +60,10 @@ import dk.netarkivet.common.utils.Settings;
  *
  * This abstract class is overridden to give either a read/write or a readonly
  * version of this class.
+ * 
+ * @deprecated Use the DatabaseAdmin instead.
  */
+@Deprecated
 public abstract class AdminData {
     /** The log.*/
     private Log log = LogFactory.getLog(AdminData.class.getName());

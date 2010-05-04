@@ -42,7 +42,11 @@ import dk.netarkivet.common.exceptions.IllegalState;
  *    entire file again (millions of lines).<br>
  * 2) Synchronize at every entry point (hasEntry, getState etc) -- this requires
  *    an expensive stat() call before every action, costly when iterating.
+ *    
+ * @deprecated This class is only used by the deprecated class
+ * FileBasedActiveBitPreservation.
  */
+@Deprecated 
 public class ReadOnlyAdminData extends AdminData {
     /** The log.*/
     private Log log = LogFactory.getLog(getClass().getName());

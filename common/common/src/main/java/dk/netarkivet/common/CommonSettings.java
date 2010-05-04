@@ -394,5 +394,21 @@ public class CommonSettings {
      * The class must implement FreeSpaceProvider-Interface.  */
     public static String FREESPACE_PROVIDER_CLASS
             = "settings.common.freespaceprovider.class";
-    
+
+    /**
+     * <b>settings.common.batch.batchjobs.job</b>: <br/>
+     * The list of jobs to be run. Must be the complete path to the batchjob 
+     * classes (e.g. 
+     * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob).
+     * Must inherit FileBatchJob (or a subinterface like LoadableArcBatchJob).
+     */
+    public static String BATCHJOBS_JOB 
+            = "settings.common.batch.batchjobs.job";
+
+    /**
+     * <b>settings.common.batch.baseDir</b>: <br/>
+     * The directory where the resulting files will be placed when running a
+     * batchjob through the GUI interface.
+     */
+    public static String BATCHJOBS_BASEDIR = "settings.common.batch.baseDir";
 }

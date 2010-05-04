@@ -59,7 +59,11 @@ import dk.netarkivet.common.utils.StringUtils;
  * Class handling integrity check of the arcrepository. <p/> This class must
  * run on the same machine as the arcrepository, as it uses the same admin data
  * file (read-only).  However, it still talks JMS with the arcrepository.
+ * 
+ * @deprecated Use the DatabaseBasedActiveBitPreservation instead (define in
+ * the setting: <b>settings.archive.admin.class</b>).
  */
+@Deprecated
 public class FileBasedActiveBitPreservation
         implements ActiveBitPreservation, CleanupIF {
     /** The class log. */

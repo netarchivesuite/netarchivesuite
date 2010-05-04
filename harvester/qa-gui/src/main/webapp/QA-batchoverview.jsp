@@ -1,11 +1,11 @@
 <%--
-File:       $Id$
-Revision:   $Revision$
-Author:     $Author$
-Date:       $Date$
+File:       $Id: QA-status.jsp 1042 2009-09-30 18:12:50Z kfc $
+Revision:   $Revision: 1042 $
+Author:     $Author: kfc $
+Date:       $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
 
 The Netarchive Suite - Software to harvest and preserve websites
-Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 --%><%@page import="dk.netarkivet.common.utils.I18n,
                     dk.netarkivet.common.webinterface.HTMLUtils,
                     dk.netarkivet.common.webinterface.SiteSection, 
+                    dk.netarkivet.common.webinterface.BatchGUI,
                     dk.netarkivet.viewerproxy.Constants"
             pageEncoding="UTF-8"
 %><%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
@@ -35,34 +36,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;qa.status"/></h3>
-<p><fmt:message key="current.viewerproxy.status"/></p>
-<iframe src="QA-getStatus.jsp" width="600"></iframe>
-<p><fmt:message key="helptext;qa.statusbox.explanation"/></p>
-
-<h2><fmt:message key="missing.urls"/></h2>
-<p>
-    <a href="QA-startRecordingURIs.jsp"><fmt:message key="start.collecting.urls"/></a>
-</p>
-<p>
-    <a href="QA-stopRecordingURIs.jsp"><fmt:message key="stop.collecting.urls"/></a>
-</p>
-<p>
-    <a href="QA-clearRecordedURIs.jsp"><fmt:message key="clear.collected.urls"/></a>
-</p>
-<p>
-    <a href="QA-getRecordedURIs.jsp"><fmt:message key="show.collected.urls"/></a>
-</p>
-
-<h2><fmt:message key="browsing.jobs.in.viewerproxy"/></h2>
+<h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob.overview"/></h3>
 <%
-    if (SiteSection.isDeployed("HarvestDefinition")) {
+    BatchGUI.getBatchOverviewPage(pageContext);
 %>
-<p><fmt:message key="use.these.pages.for.viewerproxy.job.selection"/>
-    <br/><a href="/HarvestDefinition/Definitions-selective-harvests.jsp"><fmt:message key="selective.harvest.history"/></a>
-    <br/><a href="/HarvestDefinition/Definitions-snapshot-harvests.jsp"><fmt:message key="snapshot.harvest.history"/></a>
-</p>
 <%
-    }
     HTMLUtils.generateFooter(out);
 %>

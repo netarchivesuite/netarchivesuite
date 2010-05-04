@@ -444,5 +444,14 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId></applicationInstanceId>
+        <batch>
+            <baseDir>batch</baseDir>
+            <batchjobs>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
+                <job>dk.netarkivet.common.utils.batch.UrlSearch</job>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState</job>
+            </batchjobs>
+        </batch>
     </common>
 </settings>
