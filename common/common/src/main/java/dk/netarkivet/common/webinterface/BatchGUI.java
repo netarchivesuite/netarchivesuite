@@ -18,17 +18,23 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 
+ *  USA
  */
 
 package dk.netarkivet.common.webinterface;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -66,11 +72,8 @@ public class BatchGUI {
     private static final I18n I18N = new I18n(
             dk.netarkivet.common.Constants.TRANSLATIONS_BUNDLE);
     
-    /** The url for the batchjob page.*/
-    private static String QA_BATCHJOB_URL = "/QA/QA-batchjob.jsp";
-
     /**
-     * Private Constructor to prevent instatiation of this utility class.
+     * Private Constructor to prevent instantiation of this utility class.
      */
     private BatchGUI() {}
     
@@ -114,11 +117,7 @@ public class BatchGUI {
         out.print("  </tr>\n");
         
         for(int i = 0; i < jobs.length; i++) {
-            if((i/3)%2 == 0) {
-                out.print("  <tr Class=\"row0\">\n");
-            } else {
-                out.print("  <tr Class=\"row1\">\n");
-            }
+            out.print("  <tr Class=\"" + HTMLUtils.getRowClass(i) + "\">\n");
             out.print(getOverviewTableEntry(jobs[i], locale));
             out.print("  </tr>\n");
         }
@@ -156,13 +155,16 @@ public class BatchGUI {
     public static void getPageForClass(PageContext context) throws UnknownID,
             ArgumentNotValid, IllegalState, ForwardedToErrorPage, IOFailure {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
+
+        HTMLUtils.forwardOnEmptyParameter(context, 
+                Constants.BATCHJOB_PARAMETER);
         
         try {
             // Retrieve variables
             ServletRequest request = context.getRequest();
             Locale locale = request.getLocale();
             String className = request.getParameter(
-                    Constants.CONTEXT_CLASS_NAME);
+                    Constants.BATCHJOB_PARAMETER);
             JspWriter out = context.getOut();
 
             // retrieve the batch class and the constructor.
@@ -172,14 +174,72 @@ public class BatchGUI {
                     new Object[]{}) + ": <b>" + c.getName() + "</b><br/>\n");
             out.print(getClassDescription(c, locale));
             out.print(getPreviousRuns(c.getName(), locale));
+            
+            // begin form
+            out.println("<form method=\"post\" action=\""
+                    + Constants.QA_BATCHJOB_EXECUTE + "?" 
+                    + Constants.BATCHJOB_PARAMETER + "=" + className + "\">");
+            
             out.print(getHTMLarguments(c, locale));
             out.print(getReplicaRadioButtons(locale));
             out.print(getRegularExpressionInputBox(locale));
             out.print(getSubmitButton(locale));
+            
+            // end form
+            out.print("</form>");
         } catch (IOException e) {
             String errMsg = "Could not create page with batchjobs.";
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
+        }
+    }
+    
+    /**
+     * Method for executing a batchjob.
+     * 
+     * @param context The page context containing the needed information for 
+     * executing the batchjob.
+     */
+    public static void execute(PageContext context) {
+        try {
+            ServletRequest request = context.getRequest();
+
+            // get parameters
+            String filetype = request.getParameter(
+                    Constants.FILETYPE_PARAMETER);
+            String jobId = request.getParameter(Constants.JOB_ID_PARAMETER);
+            String jobName = request.getParameter(Constants.BATCHJOB_PARAMETER);
+            String repName = request.getParameter(Constants.REPLICA_PARAMETER);
+
+            // get the constructor and instantiate it.
+            Constructor construct = findStringConstructor(
+                    getBatchClass(jobName));
+            FileBatchJob batchjob = (FileBatchJob) 
+            construct.newInstance(new Object[]{});
+
+            // get the regular expression.
+            String regex = jobId + "-";
+            if(filetype.equals(BatchFileType.Metadata.toString())) {
+                regex += Constants.REGEX_METADATA;
+            } else if(filetype.equals(BatchFileType.Content.toString())) {
+                // TODO fix this 'content' regex.
+                regex += Constants.REGEX_CONTENT;
+            } else {
+                regex += Constants.REGEX_ALL;
+            }
+            
+            Replica rep = Replica.getReplicaFromName(repName);
+            
+            new BatchExecuter(batchjob, regex, rep).start();
+            
+            JspWriter out = context.getOut();
+            out.write("Executing batchjob with the following parameters. "
+                    + "<br/>\n");
+            out.write("BatchJob name: " + jobName + "<br/>\n");
+            out.write("Replica: " + rep.getName() + "<br/>\n");
+            out.write("Regular expression: " + regex + "<br/>\n");
+        } catch (Exception e) {
+            throw new IOFailure("Could not instantiate the batchjob.", e);
         }
     }
     
@@ -429,8 +489,9 @@ public class BatchGUI {
         
         for(String filename : filenames) {
             // match and put into set.
-            if(filename.startsWith(batchName) && (filename.endsWith(".err") 
-                    || filename.endsWith(".out"))) {
+            if(filename.startsWith(batchName) 
+                    && (filename.endsWith(Constants.ERROR_FILE_EXTENSION) 
+                    || filename.endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
                 String prefix = filename.split("[.]")[0];
                 prefices.add(prefix);
             }
@@ -445,31 +506,23 @@ public class BatchGUI {
         }
         
         // make header of output 
-        res.append("Number of runs: " + prefices.size() + "<br/>\n");
+        res.append(I18N.getString(locale, "batchpage;Number.of.runs.0", 
+                prefices.size()) + "<br/>\n");
         res.append("<table class=\"selection_table\" cols=\"3\">\n");
         res.append("  <tr>\n");
-        res.append("    <th colspan=\"1\">Started date</th>\n");
-        res.append("    <th colspan=\"1\">Ended date</th>\n");
-        res.append("    <th colspan=\"3\">Output file</th>\n");
-        res.append("    <th colspan=\"3\">Error file</th>\n");
+        res.append("    <th colspan=\"1\">" +I18N.getString(locale, 
+                "batchpage;Started.date", new Object[]{}) + "</th>\n");
+        res.append("    <th colspan=\"1\">" + I18N.getString(locale, 
+                "batchpage;Ended.date", new Object[]{}) + "</th>\n");
+        res.append("    <th colspan=\"3\">" + I18N.getString(locale, 
+                "batchpage;Output.file", new Object[]{}) + "</th>\n");
+        res.append("    <th colspan=\"3\">" + I18N.getString(locale, 
+                "batchpage;Error.file", new Object[]{}) + "</th>\n");
         res.append("  </tr>\n");
         
         int i = 0;
-        boolean row0 = true;
         for(String prefix : prefices) {
-            // use row0?
-            if(i >= 3) {
-                i = 0;
-                row0 = !row0;
-            }
-            i++;
-            
-            // start row
-            if(row0) {
-                res.append("  <tr class=row0>\n");
-            } else {
-                res.append("  <tr class=row1>\n");
-            }
+            res.append("  <tr class=" + HTMLUtils.getRowClass(i++) + ">\n");
             
             File outputFile = new File(batchDir, prefix + ".out");
             File errorFile = new File(batchDir, prefix + ".err");
@@ -477,7 +530,7 @@ public class BatchGUI {
             // Retrieve the timestamp from the file-name.
             String[] split = prefix.split("[-]");
             // default, if no timestamp is found.
-            String timestamp = "Unknown. No valid timestamp.";
+            String timestamp = "";
             if(split.length >= 2) {
                 try {
                     timestamp = new Date(Long.parseLong(split[1])).toString();
@@ -485,6 +538,12 @@ public class BatchGUI {
                     log.warn("Could not parse batchjob result file name: " 
                             + prefix, e);
                 }
+            }
+            
+            // initialise if uninitialised.
+            if(timestamp == null || timestamp.isEmpty()) {
+                timestamp = I18N.getString(locale, 
+                        "batchpage;No.valid.timestamp", new Object[]{});
             }
             
             // insert start-time
@@ -507,39 +566,60 @@ public class BatchGUI {
             
             // insert information about the output file.
             if(!outputFile.exists()) {
-                res.append("    <td>No outputfile</td>\n");
-                res.append("    <td>No outputfile</td>\n");
-                res.append("    <td>No outputfile</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.outputfile", new Object[]{}) 
+                        + "</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.outputfile", new Object[]{}) 
+                        + "</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.outputfile", new Object[]{}) 
+                        + "</td>\n");
             } else {
-                res.append("    <td>" + outputFile.length() + " bytes</td>\n");
-                res.append("    <td>" + FileUtils.countLines(outputFile) 
-                        + " lines</td>\n");
-                res.append("    <td><a href="
-                        + "QA-batchjob-retrieve-resultfile.jsp?filename=" 
-                        + outputFile.getName() 
-                        + ">Download outputFile</a></td>\n");                
+                res.append("    <td>" + outputFile.length() + " "
+                        + I18N.getString(locale, "batchpage;bytes", 
+                                new Object[]{}) + "</td>\n");
+                res.append("    <td>" + FileUtils.countLines(outputFile) + " "
+                        + I18N.getString(locale, "batchpage;lines", 
+                                new Object[]{}) + "</td>\n");
+                res.append("    <td><a href=" 
+                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + "?filename=" + outputFile.getName() + ">"
+                        + I18N.getString(locale, 
+                                "batchpage;Download.outputfile", 
+                                new Object[]{}) + "</a></td>\n");                
             }
             
             // insert information about error file
             if(!errorFile.exists()) {
-                res.append("    <td>No errorfile</td>\n");
-                res.append("    <td>No errorfile</td>\n");
-                res.append("    <td>No errorfile</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.errorfile", new Object[]{}) 
+                        + "</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.errorfile", new Object[]{}) 
+                        + "</td>\n");
+                res.append("    <td>" + I18N.getString(locale, 
+                        "batchpage;No.errorfile", new Object[]{}) 
+                        + "</td>\n");
             } else {
-                res.append("    <td>" + errorFile.length() + " bytes</td>\n");
-                res.append("    <td>" + FileUtils.countLines(errorFile) 
-                        + " lines</td>\n");
-                res.append("    <td><a "
-                + "href=QA-batchjob-retrieve-resultfile.jsp?filename=" 
-                + errorFile.getName() 
-                + ">Download errorFile</a></td>\n");                
+                res.append("    <td>" + errorFile.length() + " "
+                        + I18N.getString(locale, "batchpage;bytes", 
+                                new Object[]{}) + "</td>\n");
+                res.append("    <td>" + FileUtils.countLines(errorFile) + " "
+                        + I18N.getString(locale, "batchpage;lines", 
+                                new Object[]{}) + "</td>\n");
+                res.append("    <td><a href=" 
+                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + "?filename=" + errorFile.getName() + ">"
+                        + I18N.getString(locale, 
+                                "batchpage;Download.errorfile", 
+                                new Object[]{}) + "</a></td>\n");                
             }
-            
             
             // end row 
             res.append("  </tr>\n");
         }
-        res.append("</table>");
+        res.append("</table>\n");
         
         return res.toString();
     }
@@ -639,8 +719,9 @@ public class BatchGUI {
         
         // Make job id input:
         res.append(I18N.getString(locale, "batchpage;Job.ID", new Object[]{})
-                + " &nbsp; &nbsp; &nbsp; <input name=\"JobId\" size=\"25\""
-                + " value=\"1\" /><br/>\n");
+                + " &nbsp; &nbsp; &nbsp; <input name=\"" 
+                + Constants.JOB_ID_PARAMETER + "\" size=\"25\" value=\"1\" "
+                + "/><br/>\n");
         
         // Add metadata option (checked radiobutton)
         res.append("<input type=\"radio\" name=\"filetype\" value=\"" 
@@ -735,46 +816,49 @@ public class BatchGUI {
             // Check whether it is retrievable. (Throws UnknownID if not).
             getBatchClass(batchClassPath);
             
-            String batchName = getJobName(batchClassPath);
+            final String batchName = getJobName(batchClassPath);
             File batchDir = getBatchDir();
-            File outputFile = new File(batchDir, batchName + ".out");
-            File errorFile = new File(batchDir, batchName + ".err");
-
-            long lastRun = -1;
-            if(outputFile.exists() && outputFile.canRead() 
-                    && outputFile.isFile() 
-                    && lastRun < outputFile.lastModified()) {
-                lastRun = outputFile.lastModified();
-            }
-            if(errorFile.exists() && errorFile.canRead() 
-                    && errorFile.isFile() 
-                    && lastRun < errorFile.lastModified()) {
-                lastRun = errorFile.lastModified();
-            }
             
+            // TODO retrieve all the files for the batchjob and take the latest.
+            String timestamp = getLatestTimestamp(batchName);
+            File outputFile = new File(batchDir, batchName + timestamp
+                    + Constants.OUTPUT_FILE_EXTENSION);
+            File errorFile = new File(batchDir, batchName + timestamp
+                    + Constants.ERROR_FILE_EXTENSION);
             
             // write the HTML
-            res.append("    <td><a href=\"" + QA_BATCHJOB_URL + "?" 
-                    + Constants.CONTEXT_CLASS_NAME + "=" + batchClassPath 
+            res.append("    <td><a href=\"" + Constants.QA_BATCHJOB_URL + "?" 
+                    + Constants.BATCHJOB_PARAMETER + "=" + batchClassPath 
                     + "\">" + batchName + "</a></td>\n");
             // add time of last run
-            if(lastRun > 0) {
-                res.append("    <td>" + new Date(lastRun) + "</td>\n");
-            } else {
-                res.append("    <td>" + I18N.getString(locale, 
+            String lastRun = "";
+            if(timestamp.isEmpty()) {
+                lastRun = I18N.getString(locale, 
                         "batchpage;Batchjob.has.never.been.run", 
-                        new Object[]{}) + "</td>\n");
+                        new Object[]{});
+            } else {
+                try {
+                    lastRun = new Date(Long.parseLong(
+                            timestamp.substring(1))).toString();
+                } catch (NumberFormatException e) {
+                    log.warn("Could not parse the timestamp '" + timestamp 
+                            + "'" , e);
+                    lastRun = e.getMessage();
+                }
             }
+            res.append("    <td>" +  lastRun + "</td>\n");
+            
             // add output file references (retrieval and size)
             if(outputFile.exists() && outputFile.isFile() 
                     && outputFile.canRead()) {
-                res.append("    <td>");
-                res.append("<input type=\"submit\" name=\"" + batchName 
-                        + "_output\" value=\"view\" /> ");
-                res.append("<input type=\"submit\" name=\"" + batchName 
-                        + "_output\" value=\"download\" /> ");
-                res.append(" " + outputFile.length() + " bytes");
-                res.append("</td>\n");
+                res.append("    <td><a href=" 
+                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + "?filename=" + outputFile.getName() + ">"
+                        + I18N.getString(locale, 
+                                "batchpage;Download.outputfile", 
+                                new Object[]{}) + "</a> " + outputFile.length() 
+                                + " bytes, " + FileUtils.countLines(outputFile) 
+                                + " lines</td>\n");
             } else {
                 res.append("    <td>" + I18N.getString(locale, 
                         "batchpage;No.output.file", new Object[]{}) 
@@ -783,13 +867,14 @@ public class BatchGUI {
             // add error file references (retrieval and size)
             if(errorFile.exists() && errorFile.isFile() 
                     && errorFile.canRead()) {
-                res.append("    <td>");
-                res.append("<input type=\"submit\" name=\"" + batchName 
-                        + "_error\" value=\"view\" /> ");
-                res.append("<input type=\"submit\" name=\"" + batchName 
-                        + "_error\" value=\"download\" /> ");
-                res.append(" " + errorFile.length() + " bytes");
-                res.append("</td>\n");
+                res.append("    <td><a href=" 
+                        + Constants.QA_RETRIEVE_RESULT_FILES 
+                        + "?filename=" + errorFile.getName() + ">"
+                        + I18N.getString(locale, 
+                                "batchpage;Download.errorfile", 
+                                new Object[]{}) + "</a> " + errorFile.length() 
+                                + " bytes, " + FileUtils.countLines(errorFile) 
+                                + " lines</td>\n");
             } else {
                 res.append("    <td>" + I18N.getString(locale, 
                         "batchpage;No.error.file", new Object[]{}) 
@@ -811,6 +896,34 @@ public class BatchGUI {
         }
         
         return res.toString();
+    }
+    
+    private static String getLatestTimestamp(String batchjobName) {
+        ArgumentNotValid.checkNotNullOrEmpty(batchjobName, 
+                "String batchjobName");
+        
+        File dir = getBatchDir();
+        File[] list = dir.listFiles();
+        List<String> jobTimestamps = new ArrayList<String>();
+        for(File f : list) {
+            if(f.getName().startsWith(batchjobName)) {
+                int dash = f.getName().indexOf("-");
+                int dot = f.getName().lastIndexOf(".");
+                // check whether valid positions.
+                if(dash > 0 && dot > 0 && dot > dash) {
+                    jobTimestamps.add(f.getName().substring(dash, dot));
+                }
+            }
+        }
+        
+        // send empty string back, no valid files exists.
+        if(jobTimestamps.isEmpty()) {
+            return "";
+        }
+        
+        // extract the latest.
+        Collections.sort(jobTimestamps);
+        return jobTimestamps.get(jobTimestamps.size() - 1);
     }
     
     /**
@@ -847,5 +960,5 @@ public class BatchGUI {
         }
 
         return batchDir;
-    }
+    }    
 }

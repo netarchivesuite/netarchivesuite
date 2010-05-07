@@ -449,8 +449,6 @@
             <batchjobs>
                 <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
                 <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
-                <job>dk.netarkivet.common.utils.batch.UrlSearch</job>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FilePreservationState</job>
             </batchjobs>
         </batch>
     </common>

@@ -168,4 +168,37 @@ public class StreamUtils {
             throw new IOFailure(errMsg, e);
         }
     }
+    
+    /**
+     * Reads an input stream and returns it as a string.
+     * 
+     * @param in The input stream.
+     * @return The string content of the input stream in the UTF8-charset.
+     * @throws ArgumentNotValid If the input stream is null.
+     * @throws IOFailure If an IOException is caught while reading the 
+     * inputstream. 
+     */
+    public static String getInputStreamAsString(InputStream in) 
+            throws ArgumentNotValid, IOFailure {
+        ArgumentNotValid.checkNotNull(in, "InputStream in");
+
+        StringBuilder res = new StringBuilder();
+        byte[] buf = new byte[Constants.IO_BUFFER_SIZE];
+        int read = 0;
+        try {
+            try {
+                while ((read = in.read(buf)) != -1) {
+                    res.append(new String(buf, UTF8_CHARSET), 0, read);
+                }
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            String errMsg = "Trouble reading inputstream '" + in + "'";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
+        }
+        
+        return res.toString();
+    }
 }

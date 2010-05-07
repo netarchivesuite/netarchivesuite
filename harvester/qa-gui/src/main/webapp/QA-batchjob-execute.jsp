@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob"/></h3>
 <%
-    BatchGUI.getPageForClass(pageContext);
+    BatchGUI.execute(pageContext);
 %>
 <%
     HTMLUtils.generateFooter(out);

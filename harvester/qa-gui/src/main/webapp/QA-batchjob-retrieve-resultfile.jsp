@@ -60,9 +60,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 "errormsg;batch.result.file.0.is.not.a.file", filename);
         return;
     }
-%><%    
+%><%
     response.setHeader("Content-type", "binary/octet-stream");
-    response.setHeader("Content-Disposition", "Attachment: filename=" 
+    response.setHeader("Content-Disposition", "Attachment; filename=" 
             + filename);
 %><%    
     out.write(FileUtils.readFile(resultFile));
