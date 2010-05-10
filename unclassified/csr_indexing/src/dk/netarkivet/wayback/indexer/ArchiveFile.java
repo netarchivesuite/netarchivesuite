@@ -77,6 +77,12 @@ public class ArchiveFile {
     private String finalIndexFileName;
 
     /**
+     * The number of times an attempt to index this filehas failed
+     */
+    private int indexingFailedAttempts;
+
+
+    /**
      * The date on which this file was indexed.
      */
     private Date indexedDate;
@@ -130,6 +136,14 @@ public class ArchiveFile {
 
     public void setIndexed(boolean indexed) {
         isIndexed = indexed;
+    }
+
+    public int getIndexingFailedAttempts() {
+        return indexingFailedAttempts;
+    }
+
+    public void setIndexingFailedAttempts(int indexingFailedAttempts) {
+        this.indexingFailedAttempts = indexingFailedAttempts;
     }
 
     /**
@@ -205,6 +219,58 @@ public class ArchiveFile {
             }
         }
         log.error(message);
+        indexingFailedAttempts += 1;
+        (new ArchiveFileDAO()).update(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ArchiveFile that = (ArchiveFile) o;
+
+        if (indexingFailedAttempts != that.indexingFailedAttempts) {
+            return false;
+        }
+        if (isIndexed != that.isIndexed) {
+            return false;
+        }
+        if (!filename.equals(that.filename)) {
+            return false;
+        }
+        if (finalIndexFileName != null ? !finalIndexFileName.equals(
+                that.finalIndexFileName) : that.finalIndexFileName != null) {
+            return false;
+        }
+        if (indexedDate != null ? !indexedDate.equals(that.indexedDate)
+                                : that.indexedDate != null) {
+            return false;
+        }
+        if (originalIndexFileName != null ? !originalIndexFileName.equals(
+                that.originalIndexFileName) : that.originalIndexFileName
+                                              != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = filename.hashCode();
+        result = 31 * result + (isIndexed ? 1 : 0);
+        result = 31 * result + (originalIndexFileName != null
+                                ? originalIndexFileName.hashCode() : 0);
+        result = 31 * result + (finalIndexFileName != null
+                                ? finalIndexFileName.hashCode() : 0);
+        result = 31 * result + indexingFailedAttempts;
+        result = 31 * result + (indexedDate != null ? indexedDate.hashCode()
+                                                    : 0);
+        return result;
+    }
 }

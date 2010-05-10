@@ -23,9 +23,15 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import java.util.List;
+
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.wayback.WaybackSettings;
 
 public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
 
@@ -41,6 +47,21 @@ public class ArchiveFileDAO extends GenericHibernateDAO<ArchiveFile, String>{
     public boolean exists(String filename) {
         Session sess = getSession();
         return !sess.createQuery("from ArchiveFile where filename='"+filename+"'").list().isEmpty();
+    }
+
+    /**
+     * Returns a list of all files awaiting indexing, ie all files not yet
+     * indexed and which have not failed indexing more than the maximum number
+     * of allowed times. The list is ordered such that previously failed files
+     * are returned last.
+     * @return
+     */
+    public List<ArchiveFile> getFilesAwaitingIndexing() {
+        int maxFailedAttempts = Settings.getInt
+                (WaybackSettings.WAYBACK_INDEXER_MAXFAILEDATTEMPTS);
+         return getSession().createQuery("FROM ArchiveFile WHERE indexed=false"
+                + " AND indexingFailedAttempts <  " + maxFailedAttempts +
+                " ORDER BY indexingFailedAttempts ASC").list();
     }
 
 }

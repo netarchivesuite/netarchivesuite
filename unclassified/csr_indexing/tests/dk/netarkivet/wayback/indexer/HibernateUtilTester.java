@@ -24,7 +24,7 @@ package dk.netarkivet.wayback.indexer;
 import junit.framework.TestCase;
 import org.hibernate.Session;
 
-public class HibernateUtiltester extends TestCase {
+public class HibernateUtilTester extends TestCase {
 
     /**
      * Tests that we can create an open session.

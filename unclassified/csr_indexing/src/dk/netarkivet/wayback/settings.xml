@@ -29,6 +29,10 @@
             <replicaId>ONE</replicaId>
             <batch_output_dir>batchOutputDir</batch_output_dir>
             <tempdir>tempdir</tempdir>
+            <maxFailedAttempts>3</maxFailedAttempts>
+            <producerDelay>0</producerDelay>
+            <producerInterval>86400000</producerInterval>
+            <consumerThreads>5</consumerThreads>
         </indexer>
     </wayback>
 </settings>

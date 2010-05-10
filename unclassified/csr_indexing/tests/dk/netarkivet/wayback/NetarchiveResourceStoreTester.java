@@ -47,6 +47,7 @@ import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -56,9 +57,10 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.arc.ARCUtils;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.wayback.indexer.IndexerTestCase;
 
 /** Unit test for testNetarchiveResourceStore */
-public class NetarchiveResourceStoreTester extends TestCase {
+public class NetarchiveResourceStoreTester extends IndexerTestCase {
 
     NetarchiveResourceStore netarchiveResourceStore = null;
     CaptureSearchResult metadataResource = null;
@@ -67,22 +69,23 @@ public class NetarchiveResourceStoreTester extends TestCase {
     CaptureSearchResult httpResource = null;
 
     ReloadSettings rs = new ReloadSettings();
-    JMSArcRepositoryClient arc;
+    ArcRepositoryClient arc;
 
     private final String metadataFile = "2-metadata-1.arc";
     private final String uploadFile = "Upload4.ARC";
 
     @Override
     public void setUp() {
-        rs.setUp();
+        super.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
         
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_GET_TIMEOUT, "1000");
+        assertTrue("Should get a mock connection",
+            JMSConnectionFactory.getInstance() instanceof JMSConnectionMockupMQ);
+        arc = (ArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
 
-        arc = (JMSArcRepositoryClient) ArcRepositoryClientFactory.getPreservationInstance();
-        
         netarchiveResourceStore = new NetarchiveResourceStore();
 
         metadataResource = new CaptureSearchResult();
@@ -114,7 +117,7 @@ public class NetarchiveResourceStoreTester extends TestCase {
         } catch(Exception e) {
             //ups
         }
-        rs.tearDown();
+        super.tearDown();
     }
 
     /**

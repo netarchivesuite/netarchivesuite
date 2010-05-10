@@ -21,21 +21,62 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import dk.netarkivet.testutils.ReflectUtils;
+
 import junit.framework.TestCase;
+import org.hibernate.criterion.Restrictions;
 
 public class IndexerQueueTester extends IndexerTestCase {
 
+    @Override
+    public void setUp() {
+        super.setUp();
+        IndexerQueue.resestSingleton();
+    }
+
+    @Override
+    public void tearDown() {
+        super.tearDown();
+        IndexerQueue.resestSingleton();
+    }
+
     public void testProduce()
             throws NoSuchFieldException, IllegalAccessException {
+        FileNameHarvester.harvest();
         IndexerQueue.getInstance().populate();
+        Field queueField = ReflectUtils.getPrivateField(IndexerQueue.class,
+                                                        "queue");
         LinkedBlockingQueue<ArchiveFile> queue =
-                (LinkedBlockingQueue<ArchiveFile>)
-                        IndexerQueue.class.getField("queue").get(null);
-        assertEquals("Queue should have two objects in it", 2, queue.size());
+                (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
+        assertEquals("Queue should have four objects in it", 4, queue.size());
         IndexerQueue.getInstance().populate();
-        assertEquals("Queue should still have two objects in it", 2, queue.size());
+        assertEquals("Queue should still have four objects in it", 4, queue.size());
     }
+
+   /* public void testConsume()
+            throws NoSuchFieldException, IllegalAccessException,
+                   InterruptedException {
+        FileNameHarvester.harvest();
+        IndexerQueue.getInstance().populate();
+       Runnable consumerRunnable = new Runnable() {
+
+            public void run() {
+                IndexerQueue.getInstance().consume();
+            }
+        };
+        (new Thread(consumerRunnable)).start();
+        Thread.sleep(100000L);
+        Field queueField = ReflectUtils.getPrivateField(IndexerQueue.class,
+                                                        "queue");
+        LinkedBlockingQueue<ArchiveFile> queue =
+                (LinkedBlockingQueue<ArchiveFile>) queueField.get(null);
+        assertEquals("DAO should have four indexed files", 4, (new ArchiveFileDAO()).findByCriteria(
+                Restrictions.eq("indexed", true)).size());
+        assertTrue("Queue should be empty now", queue.isEmpty());
+        assertEquals("Should have four files", 4, tempdir.listFiles().length);
+    }*/
 
 }

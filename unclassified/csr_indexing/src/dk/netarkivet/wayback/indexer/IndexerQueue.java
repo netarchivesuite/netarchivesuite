@@ -23,16 +23,21 @@
  */
 package dk.netarkivet.wayback.indexer;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.IllegalState;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Singleton class which maintains the basic data structure and methods for
  * the indexer.
  */
 public class IndexerQueue {
+
+    private static Log log = LogFactory.getLog(IndexerQueue.class);
 
     /**
      * The unique instance of this class.
@@ -43,7 +48,7 @@ public class IndexerQueue {
      * This is the basic underlying datastructure of the indexer - a queue of
      * files waiting to be indexed.
      */
-    private LinkedBlockingQueue<ArchiveFile> queue;
+    private static LinkedBlockingQueue<ArchiveFile> queue;
 
     /**
      * Factory method for obtaining the unique instance of this class.
@@ -51,10 +56,9 @@ public class IndexerQueue {
      */
     public static synchronized IndexerQueue getInstance() {
         if (instance == null) {
-            return new IndexerQueue();
-        } else {
-            return instance;
+            instance = new IndexerQueue();
         }
+        return instance;
     }
 
 
@@ -66,8 +70,15 @@ public class IndexerQueue {
      * Check the database for any new ArchiveFile objects and add them to the
      * queue.
      */
-    public void populate() {
-        throw new NotImplementedException("not yet implemented");
+    public synchronized void populate() {
+        List<ArchiveFile> files = (new ArchiveFileDAO()).getFilesAwaitingIndexing();
+        for (ArchiveFile file: files) {
+            if (!queue.contains(file)) {
+                log.debug("Adding file '" + file.getFilename() + "' to indexing queue.");
+                queue.add(file);
+                log.debug("Files in queue: '" + queue.size() + "'");
+            }
+        }
     }
 
     /**
@@ -77,6 +88,26 @@ public class IndexerQueue {
      * that multiple threads should run this method simultaneously.
      */
     public void consume() {
-        throw new NotImplementedException("not yet implemented");
+        while (true) {
+            ArchiveFile file = null;
+            try {
+                file = queue.take();
+                log.debug("Taken file '" + file.getFilename() + "' from indexing queue.");
+                log.debug("Files in queue: '" + queue.size() + "'");                
+            } catch (InterruptedException e) {
+                String message = "Unexpected interrupt in indexer while waiting "
+                                 + "for new elements";
+                log.error(message, e);
+                throw new IllegalState(message, e);
+            }
+            file.index();
+        }
+    }
+
+    protected static void resestSingleton() {
+        instance = null;
+        if (queue != null) {
+            queue.clear();
+        }
     }
 }

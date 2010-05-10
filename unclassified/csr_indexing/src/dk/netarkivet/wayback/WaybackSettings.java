@@ -91,8 +91,41 @@ public class WaybackSettings {
             "settings.wayback.hibernate.password";
     public static String WAYBACK_REPLICA =
             "settings.wayback.indexer.replicaId";
+
+    /**
+     * The directory to which batch output is written during indexing.
+     */
     public static String WAYBACK_INDEX_TEMPDIR =
             "settings.wayback.indexer.tempdir";
+
+    /**
+     * The directory to which batch output is moved after a batch indexing
+     * job is successfully completed.
+     */
     public static String WAYBACK_BATCH_OUTPUTDIR =
-            "settings.wayback.indexer.batch_output_dir"; 
+            "settings.wayback.indexer.batch_output_dir";
+
+    /**
+     * The maximum number of times an archive file may generate a batch error
+     * during indexing before we give up on it.
+     */
+    public static String WAYBACK_INDEXER_MAXFAILEDATTEMPTS =
+            "settings.wayback.indexer.maxFailedAttempts";
+
+    /**
+     * The delay in milliseconds before the producer thread is started.
+     */
+    public static String WAYBACK_INDEXER_PRODUCER_DELAY =
+            "settings.wayback.indexer.producerDelay";
+    /**
+     * The interval, in milliseconds, between successive runs of the
+     * producer thread.
+     */
+    public static String WAYBACK_INDEXER_PRODUCER_INTERVAL =
+            "settings.wayback.indexer.producerInterval";
+    /**
+     * The number of consumer threads to run.
+     */
+    public static String WAYBACK_INDEXER_CONSUMER_THREADS =
+            "settings.wayback.indexer.consumerThreads";
 }

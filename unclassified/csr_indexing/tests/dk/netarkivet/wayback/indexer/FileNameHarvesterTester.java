@@ -45,9 +45,9 @@ public class FileNameHarvesterTester extends IndexerTestCase {
         FileNameHarvester.harvest();
         ArchiveFileDAO dao = new ArchiveFileDAO();
         List<ArchiveFile> files = dao.getSession().createQuery("from ArchiveFile").list();
-        assertEquals("There should be two files", 2, files.size());
+        assertEquals("There should be four files", 4, files.size());
         FileNameHarvester.harvest();
-        assertEquals("There should still be two files", 2, files.size());      
+        assertEquals("There should still be four files", 4, files.size());      
     }
 
 }

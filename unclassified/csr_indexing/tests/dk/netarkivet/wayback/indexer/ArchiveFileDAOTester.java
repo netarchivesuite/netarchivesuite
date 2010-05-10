@@ -62,4 +62,31 @@ public class ArchiveFileDAOTester extends TestCase {
         assertFalse("File should not exist", dao.exists("barfoo"));
     }
 
+    public void testNotIndexed() {
+        ArchiveFile file1 = new ArchiveFile();
+        file1.setFilename("foobar");
+        file1.setIndexed(false);
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        String id1 = dao.create(file1);
+        ArchiveFile file2 = new ArchiveFile();
+        file2.setFilename("foobarbar");
+        file2.setIndexed(false);
+        file2.setIndexingFailedAttempts(1);
+        String id2 = dao.create(file2);
+        assertEquals("Should have 2 unindexed files", 2, dao.getFilesAwaitingIndexing().size());
+        ArchiveFile file3 = new ArchiveFile();
+        file3.setFilename("foofoobarbar");
+        file3.setIndexed(false);
+        file3.setIndexingFailedAttempts(100);
+        String id3 = dao.create(file3);
+        assertEquals("Should still have 2 unindexed files", 2, 
+                     dao.getFilesAwaitingIndexing().size());
+        assertEquals("Untried file should be returned first",
+                     file1.getFilename(),
+                     dao.getFilesAwaitingIndexing().get(0).getFilename());
+        file1.setIndexed(true);
+        dao.update(file1);
+        assertEquals("Should now have 1 unindexed file1", 1, dao.getFilesAwaitingIndexing().size());
+    }
+
 }
