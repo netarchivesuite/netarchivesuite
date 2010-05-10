@@ -69,9 +69,9 @@ public class BitpreserveFileState {
      * Extract the name of the replica
      * (parameter Constants.BITARCHIVE_NAME_PARAM) and the type of update 
      * requested (parameter Constants.UPDATE_TYPE_PARAM). The latter is set to
-     * to Constants.FIND_MISSING_FILES_OPTION if the request is to update missing
-     * files, or to Constants.CHECKSUM_OPTION if the request is to update the 
-     * checksum information.
+     * to Constants.FIND_MISSING_FILES_OPTION if the request is to update 
+     * missing files, or to Constants.CHECKSUM_OPTION if the request is to 
+     * update the checksum information.
      *
      * @param context the current JSP context
      *
@@ -91,9 +91,9 @@ public class BitpreserveFileState {
         if (bitarchiveName == null) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                     "errormsg;missing.parameter.0",
-                    bitarchiveName);
+                    Constants.BITARCHIVE_NAME_PARAM);
             
-            throw new ForwardedToErrorPage("Paremeter '" 
+            throw new ForwardedToErrorPage("Parameter '" 
                     + Constants.BITARCHIVE_NAME_PARAM + "' not set");
         }
         
@@ -102,9 +102,9 @@ public class BitpreserveFileState {
         if (updateTypeRequested == null) {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                     "errormsg;missing.parameter.0",
-                    updateTypeRequested);
+                    Constants.UPDATE_TYPE_PARAM);
             
-            throw new ForwardedToErrorPage("Paremeter '" 
+            throw new ForwardedToErrorPage("Parameter '" 
                     + Constants.UPDATE_TYPE_PARAM + "' not set");
         }
                 
@@ -112,12 +112,11 @@ public class BitpreserveFileState {
             HTMLUtils.forwardWithErrorMessage(context, I18N,
                                               "errormsg;unknown.bitarchive.0",
                                               bitarchiveName);
-            throw new ForwardedToErrorPage("Unknown bitarchive: "
+            throw new ForwardedToErrorPage("Unknown replica: "
                                            + bitarchiveName);
         }
         
         Replica bitarchive = Replica.getReplicaFromName(bitarchiveName);
-
        
         Locale l = context.getResponse().getLocale();
         String statusmessage = HTMLUtils.escapeHtmlValues(I18N.getString(
@@ -430,7 +429,8 @@ public class BitpreserveFileState {
                     + HTMLUtils.localiseLong(
                       activeBitPreservation.getNumberOfFiles(replica), locale));
         out.println("<br/>");
-        long numberOfMissingFiles = activeBitPreservation.getNumberOfMissingFiles(replica);
+        long numberOfMissingFiles
+            = activeBitPreservation.getNumberOfMissingFiles(replica);
         out.println(I18N.getString(
                 locale,
                 "missing.files")
@@ -447,7 +447,8 @@ public class BitpreserveFileState {
             out.print("</a>");
         }
         out.println("<br/>");
-        Date lastMissingFilesupdate = activeBitPreservation.getDateForMissingFiles(replica);
+        Date lastMissingFilesupdate 
+            = activeBitPreservation.getDateForMissingFiles(replica);
         if (lastMissingFilesupdate == null) {
             lastMissingFilesupdate = new Date(0);
         }
@@ -493,7 +494,8 @@ public class BitpreserveFileState {
         out.println("<br/>");
 
         //Number of changed files
-        long numberOfChangedFiles = bitPreservation.getNumberOfChangedFiles(replica);
+        long numberOfChangedFiles
+            = bitPreservation.getNumberOfChangedFiles(replica);
         out.println(I18N.getString(locale, "number.of.files.with.error")
                     + "&nbsp;"
                     + HTMLUtils.localiseLong(numberOfChangedFiles, locale));
