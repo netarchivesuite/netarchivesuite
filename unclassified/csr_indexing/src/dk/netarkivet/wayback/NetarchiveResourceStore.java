@@ -83,7 +83,7 @@ public class NetarchiveResourceStore implements ResourceStore {
             throws ResourceNotAvailableException {
         long offset;
         String responseCode = null;
-        Map<String, Object> metadata = new HashMap<String, Object>();
+        Map<String, String> metadata = new HashMap<String, String>();
         ARCRecord arcRecord;
         ArchiveRecordHeader header;
 
@@ -121,6 +121,26 @@ public class NetarchiveResourceStore implements ResourceStore {
                     responseCode = m.group(1);
                     logger.debug("Setting response code '" + responseCode + "'");
 
+                } else {
+                     String[] parts = line.split(":", 2);
+                   if (parts.length != 2) {
+                       logger.debug("Malformed header line '" + line + "'");
+                   } else {
+                       String name = parts[0];
+                       String contents = parts[1].trim();
+                       if (contents != null) {
+                           if (name.equals("Content-Length")) {
+                               logger.info("Setting length header to '" + contents + "'");
+                               metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY, contents);
+                           } else if (name.equals("Content-Type")) {
+                               logger.info("Setting Content-Type header to '" + contents + "'");
+                               metadata.put(ARCRecordMetaData.MIMETYPE_FIELD_KEY, contents);
+                           } else if (name.equals("Location")) {
+                               logger.info("Setting redirect Location header to '" + contents + "'");
+                               metadata.put("Location", contents);
+                           }
+                       }
+                   }
                 }
             }
         } catch (IOException e) {
@@ -130,6 +150,11 @@ public class NetarchiveResourceStore implements ResourceStore {
         // fill metedata for ARC record.
         metadata.put(ARCRecordMetaData.URL_FIELD_KEY,
                      captureSearchResult.getUrlKey());
+        //TODO the following is the correct way to set the URL. If we do
+        //things this way then we should be able to get arcrecord to parse
+        //the headers for us.
+       /* metadata.put(ARCRecordMetaData.URL_FIELD_KEY,
+                     captureSearchResult.getOriginalUrl());*/
         try {
             metadata.put(ARCRecordMetaData.IP_HEADER_FIELD_KEY,
                          captureSearchResult.getOriginalHost());
@@ -142,7 +167,7 @@ public class NetarchiveResourceStore implements ResourceStore {
                         captureSearchResult.getMimeType());
         metadata.put(ARCRecordMetaData.VERSION_FIELD_KEY,
                         captureSearchResult.getHttpCode());
-        metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, offset);
+        metadata.put(ARCRecordMetaData.ABSOLUTE_OFFSET_KEY, "" + offset);
         metadata.put(ARCRecordMetaData.LENGTH_FIELD_KEY,
                         ""+bitarchiveRecord.getLength());
         if(responseCode != null) {
@@ -162,6 +187,7 @@ public class NetarchiveResourceStore implements ResourceStore {
             arcRecord = new ARCRecord(is,header, 0,false,false,true);
             int code = arcRecord.getStatusCode();
             logger.debug("ARCRecord created with code '" + code + "'");
+            arcRecord.skipHttpHeader();
         } catch(NullPointerException e) {
             logger.error("Could not create ARCRecord", e);
             throw new ResourceNotAvailableException("ARC record doesn't contain"
@@ -171,13 +197,17 @@ public class NetarchiveResourceStore implements ResourceStore {
             throw new ResourceNotAvailableException(e.getMessage());
         }
         final String statusCode = responseCode;
-
+        final Map<String, String> metadataF = metadata;
         //TODO This the sleaziest thing in this class. Why does the
         //ARCRecord give the wrong status code if we don't override this method?
         Resource resource = new ArcResource(arcRecord, null)  {
             public int getStatusCode() {
                 return Integer.parseInt(statusCode);
             }
+             @Override
+                public Map<String, String> getHttpHeaders() {
+                    return metadataF;
+                }
         };
         logger.info("Returning resouce '" + resource + "'");
         return resource;
