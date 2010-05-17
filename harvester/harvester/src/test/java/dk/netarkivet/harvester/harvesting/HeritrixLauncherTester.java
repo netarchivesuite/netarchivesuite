@@ -750,6 +750,12 @@ public class HeritrixLauncherTester extends TestCase {
         	   return 0L;
            }
 
+        @Override
+        public void finalTasks() {
+            // TODO Auto-generated method stub
+            
+        }
+
 
        }
    };
