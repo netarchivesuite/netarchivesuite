@@ -464,7 +464,7 @@
                 <defaultMaxrate>100</defaultMaxrate>
                 <defaultMaxbytes>1000000000</defaultMaxbytes>
                 <defaultMaxobjects>-1</defaultMaxobjects>
-                <!-- Used when creating ids for new jobs after a admin 
+                <!-- Used when creating ids for new jobs after a admin
                 database restore. -->
                 <nextJobId>0</nextJobId>
             </domain>
@@ -502,7 +502,7 @@
                 <jmxUsername>controlRole</jmxUsername>
                 <jmxPassword>JMX_CONTROL_ROLE_PASSWORD_PLACEHOLDER</jmxPassword>
                 <heapSize>1598M</heapSize>
-                <javaOpts/>                
+                <javaOpts/>
             </heritrix>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>

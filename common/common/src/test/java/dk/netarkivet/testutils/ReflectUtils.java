@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 
 import dk.netarkivet.deploy.BuildCompleteSettings;
 
-import junit.framework.Assert;;
+import junit.framework.Assert;
 
 
 /**

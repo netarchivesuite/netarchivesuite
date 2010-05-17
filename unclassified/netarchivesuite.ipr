@@ -69,6 +69,12 @@
             <emptyLine />
             <package name="" withSubpackages="true" static="false" />
             <emptyLine />
+            <package name="" withSubpackages="true" static="false" />
+            <emptyLine />
+            <package name="" withSubpackages="true" static="false" />
+            <emptyLine />
+            <package name="" withSubpackages="true" static="false" />
+            <emptyLine />
             <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
@@ -214,8 +220,11 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
+    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EclipseEmbeddedCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -389,6 +398,14 @@
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
   </component>
+  <component name="JikesSettings">
+    <option name="JIKES_PATH" value="" />
+    <option name="DEBUGGING_INFO" value="true" />
+    <option name="DEPRECATION" value="true" />
+    <option name="GENERATE_NO_WARNINGS" value="false" />
+    <option name="IS_EMACS_ERRORS_MODE" value="true" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
+  </component>
   <component name="LogConsolePreferences">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -520,7 +537,7 @@
     <option name="projectName" value="netarchivesuite" />
   </component>
   <component name="ProjectKey">
-    <option name="state" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/trunk/netarchivesuite.ipr" />
+    <option name="state" value="https://gforge.statsbiblioteket.dk/svn/netarchivesuite/branches/dev/csr_indexing/netarchivesuite.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>

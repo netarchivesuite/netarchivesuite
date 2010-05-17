@@ -455,6 +455,13 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId/>
+        <batch>
+            <baseDir>batch</baseDir>
+            <batchjobs>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
+            </batchjobs>
+        </batch>
     </common><harvester>
         <datamodel>
             <domain>

@@ -194,7 +194,7 @@ public class JMSConnectionMockupMQ extends JMSConnection {
     }
 
     public static void useJMSConnectionMockupMQ() {
-	JMSConnectionFactory.getInstance().cleanup();
+//	JMSConnectionFactory.getInstance().cleanup();
         Settings.set(CommonSettings.JMS_BROKER_CLASS,
                      "dk.netarkivet.common.distribute.JMSConnectionMockupMQ");
         JMSConnectionMockupMQ.getInstance().cleanup();
