@@ -51,5 +51,6 @@
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-core.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/heritrix-dependencies/commons-lang-2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
