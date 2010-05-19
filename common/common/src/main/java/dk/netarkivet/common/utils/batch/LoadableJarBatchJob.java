@@ -280,4 +280,14 @@ public class LoadableJarBatchJob extends FileBatchJob {
         in.defaultReadObject();
         log = LogFactory.getLog(this.getClass().getName());
     }
+
+    @Override
+    public boolean postProcess(InputStream input, OutputStream output) {
+        ArgumentNotValid.checkNotNull(input, "InputStream input");
+        ArgumentNotValid.checkNotNull(output, "OutputStream output");
+
+        // Let the loaded job handle the post processing. 
+        loadBatchJob();
+        return loadedJob.postProcess(input, output);
+    }
 }

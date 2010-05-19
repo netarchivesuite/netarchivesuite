@@ -143,7 +143,6 @@ public class BatchGUI {
      * 
      * @param context The context of the page. Must contains a class name of 
      * the batchjob.
-     * @return The HTML code for the page for running the batch job.
      * @throws UnknownID If the class cannot be found.
      * @throws ArgumentNotValid If the context is null.
      * @throws IllegalState If the class is not an instance of FileBatchJob.

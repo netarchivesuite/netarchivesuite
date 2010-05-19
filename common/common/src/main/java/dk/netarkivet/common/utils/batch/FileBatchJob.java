@@ -23,6 +23,7 @@
 package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -204,6 +205,23 @@ public abstract class FileBatchJob implements Serializable {
       */
     public List<ExceptionOccurrence> getExceptions() {
             return exceptions;
+    }
+    
+    /**
+     * Processes the concatenated result files.
+     * This is intended to be overridden by batchjobs, who they wants a 
+     * different post-processing process than concatenation.
+     *  
+     * @param input The inputstream to the file containing the concatenated 
+     * results.
+     * @param output The outputstream where the resulting data should be 
+     * written.
+     * @return Whether it actually does any post processing. 
+     * @throws ArgumentNotValid If the concatenated file is null.
+     */
+    public boolean postProcess(InputStream input, OutputStream output) {
+        // Do not post process. Override in inherited classes to post process.
+        return false;
     }
     
     /** Record an exception that occurred during the processFile of this job

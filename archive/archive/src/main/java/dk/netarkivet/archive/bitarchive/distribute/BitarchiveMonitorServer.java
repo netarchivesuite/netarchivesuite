@@ -23,6 +23,9 @@
  */
 package dk.netarkivet.archive.bitarchive.distribute;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,8 +101,15 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * Map for managing the messages, which are made into batchjobs.
      * The String is the ID of the message.
      */
-    private Map<String, NetarkivetMessage> batchConversions = 
-        new HashMap<String, NetarkivetMessage>();
+    private Map<String, NetarkivetMessage> batchConversions 
+            = new HashMap<String, NetarkivetMessage>();
+    
+    /**
+     * Map for containing the batch-message-ids and the batchjobs, for
+     * the result files to be post-processed before returned back. 
+     */
+    private Map<String, FileBatchJob> batchjobs 
+            = new HashMap<String, FileBatchJob>();
     
     /**
      * The map for managing the CorrectMessages. This involves three stages.
@@ -149,7 +159,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         return instance;
     }
 
-
     /**
      * This is the message handling method for BatchMessages.
      *
@@ -180,6 +189,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             }
             bamon.registerBatch(inbMsg.getID(), inbMsg.getReplyTo(),
                         outbMsg.getID(), batchTimeout);
+            batchjobs.put(inbMsg.getID(), inbMsg.getJob());
         } catch (Exception e) {
             log.warn("Trouble while handling batch request '" + inbMsg + "'",
                      e);
@@ -447,6 +457,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             }
             bamon.registerBatch(msg.getID(), msg.getReplyTo(),
                         outbMsg.getID(), batchTimeout);
+            batchjobs.put(msg.getID(), job);
             // Remember that the message is a batch conversion.
             log.info(outbMsg);
 
@@ -518,9 +529,33 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     private void doBatchReply(BitarchiveMonitor.BatchJobStatus bjs) {
         RemoteFile resultsFile = null;
         try {
+            // Post process the file.
+            File postFile = File.createTempFile("post", "batch", 
+                    FileUtils.getTempDir());
+            try {
+                FileBatchJob bj = batchjobs.remove(bjs.originalRequestID);
+                if(bj == null) {
+                    throw new Exception("Only knows: " + batchjobs.keySet());
+                }
+                log.info("Post processing batchjob results for '" 
+                        + bj.getClass().getName() + "' with id '" 
+                        + bjs.originalRequestID + "'");
+                if(bj.postProcess(new FileInputStream(bjs.batchResultFile), 
+                        new FileOutputStream(postFile))) {
+                    log.debug("Post processing finished.");
+                } else {
+                    log.debug("No post processing.");
+                    postFile = bjs.batchResultFile;
+                }
+            } catch (Exception e) {
+                log.warn("Exception caught during post processing batchjob. "
+                        + "", e);
+                postFile = bjs.batchResultFile;
+            }
+            
             //Get remote file for batch  result
             resultsFile = RemoteFileFactory.getMovefileInstance(
-                    bjs.batchResultFile);
+                    postFile);
         } catch (Exception e) {
             log.warn("Make remote file from "
                     + bjs.batchResultFile, e);

@@ -24,6 +24,7 @@ package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -98,6 +99,14 @@ public class LoadableFileBatchJob extends FileBatchJob {
      */
     public void initialize(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
+        loadBatchJob();
+        loadedJob.initialize(os);
+    }
+    
+    /**
+     * Method for initializing the loaded batchjob.
+     */
+    protected void loadBatchJob() {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
         try {
             loadedJob = (FileBatchJob) singleClassLoader
@@ -107,7 +116,6 @@ public class LoadableFileBatchJob extends FileBatchJob {
         } catch (IllegalAccessException e) {
             log.warn("Cannot access loaded job from byte array", e);
         }
-        loadedJob.initialize(os);
     }
 
     /**
@@ -134,5 +142,15 @@ public class LoadableFileBatchJob extends FileBatchJob {
     public void finish(OutputStream os) {
         ArgumentNotValid.checkNotNull(os, "OutputStream os");
         loadedJob.finish(os);
+    }
+    
+    @Override
+    public boolean postProcess(InputStream input, OutputStream output) {
+        ArgumentNotValid.checkNotNull(input, "InputStream input");
+        ArgumentNotValid.checkNotNull(output, "OutputStream output");
+
+        // Let the loaded job handle the post processing. 
+        loadBatchJob();
+        return loadedJob.postProcess(input, output);
     }
 }
