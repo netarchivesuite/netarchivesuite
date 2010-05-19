@@ -43,7 +43,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/heritrix-1.14.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/heritrix-1.14.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -290,7 +290,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix-dependencies/je-3.3.75.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/heritrix-dependencies/je-3.3.82.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -416,7 +416,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/commons-net-1.4.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/commons-net-2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -480,15 +480,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/heritrix/lib/fastutil-5.0.3-heritrix-subset-1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/heritrix/lib/je-3.3.75.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
