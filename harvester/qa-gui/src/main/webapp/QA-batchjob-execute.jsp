@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     // Get the page title from its URL
     HTMLUtils.generateHeader(pageContext);
 %>
-<h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob"/></h3>
+<h3 class="page_heading"><fmt:message key="pagetitle;qa.batchjob.execute"/></h3>
 <%
     BatchGUI.execute(pageContext);
 %>

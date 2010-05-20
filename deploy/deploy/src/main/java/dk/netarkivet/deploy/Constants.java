@@ -502,7 +502,8 @@ public final class Constants {
     public static final String MSG_ERROR_NO_BPDB_FILE_FOUND = 
         "Reference to non-existing archive database file " 
         + "(-D argument).";
-    /** */
+    /** The error message when the folder with the external jar-library-files 
+     * does not exist.*/
     public static final String MSG_ERROR_NO_JAR_FOLDER =
         "Reference to non-existing external jar-folder.";
     /** The error message for wrong deploy-config file extension.*/

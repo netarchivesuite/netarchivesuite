@@ -216,7 +216,8 @@ public abstract class FileBatchJob implements Serializable {
      * results.
      * @param output The outputstream where the resulting data should be 
      * written.
-     * @return Whether it actually does any post processing. 
+     * @return Whether it actually does any post processing.  If false is 
+     * returned then the default concatenated result file is returned.
      * @throws ArgumentNotValid If the concatenated file is null.
      */
     public boolean postProcess(InputStream input, OutputStream output) {

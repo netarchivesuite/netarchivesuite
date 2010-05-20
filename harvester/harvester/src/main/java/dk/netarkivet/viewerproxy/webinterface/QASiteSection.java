@@ -51,6 +51,7 @@ public class QASiteSection extends SiteSection {
                       {"batchjob", "pagetitle;qa.batchjob"},
                       {"batchjob-retrieve", 
                           "pagetitle;qa.batchjob.retrieve.resultfile"},
+                      {"batchjob-execute", "pagetitle;qa.batchjob.execute"},
                       {"getreports", "pagetitle;qa.get.reports"},
                       {"getfiles", "pagetitle;qa.get.files"},
                       {"crawlloglines",

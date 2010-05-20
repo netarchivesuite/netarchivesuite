@@ -53,6 +53,7 @@ import dk.netarkivet.common.distribute.RemoteFile;
 import dk.netarkivet.common.distribute.RemoteFileFactory;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
@@ -533,23 +534,25 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             File postFile = File.createTempFile("post", "batch", 
                     FileUtils.getTempDir());
             try {
+                // retrieve the batchjob
                 FileBatchJob bj = batchjobs.remove(bjs.originalRequestID);
                 if(bj == null) {
-                    throw new Exception("Only knows: " + batchjobs.keySet());
+                    throw new UnknownID("Only knows: " + batchjobs.keySet());
                 }
                 log.info("Post processing batchjob results for '" 
                         + bj.getClass().getName() + "' with id '" 
                         + bjs.originalRequestID + "'");
+                // perform the post process, and handle whether it succeeded.
                 if(bj.postProcess(new FileInputStream(bjs.batchResultFile), 
                         new FileOutputStream(postFile))) {
                     log.debug("Post processing finished.");
                 } else {
-                    log.debug("No post processing.");
+                    log.debug("No post processing. Using concatenated file.");
                     postFile = bjs.batchResultFile;
                 }
             } catch (Exception e) {
                 log.warn("Exception caught during post processing batchjob. "
-                        + "", e);
+                        + "Concatenated file used instead.", e);
                 postFile = bjs.batchResultFile;
             }
             
