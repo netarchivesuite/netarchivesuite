@@ -917,6 +917,7 @@ public class WindowsMachine extends Machine {
         res.append(Constants.SPACE + ScriptConstants.SCP + Constants.SPACE 
                 + ScriptConstants.DASH_R + Constants.SPACE);
         res.append(jarFolder.getPath());
+        res.append(Constants.SLASH + Constants.STAR);
         res.append(Constants.SPACE);
         res.append(machineUserLogin());
         res.append(Constants.COLON + Constants.QUOTE_MARK);
