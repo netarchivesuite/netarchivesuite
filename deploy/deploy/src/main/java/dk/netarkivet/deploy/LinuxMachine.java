@@ -57,13 +57,16 @@ public class LinuxMachine extends Machine {
      * @param dbFile The name of the database file.
      * @param arcdbFile The name of the archive file.
      * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar 
+     * library files.
      */
     public LinuxMachine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFile,
-            File arcdbFile, boolean resetDir) {
+            File arcdbFile, boolean resetDir, File externalJarFolder) {
         super(subTreeRoot, parentSettings, param, netarchiveSuiteSource,
-                logProp, securityPolicy, dbFile, arcdbFile, resetDir);
+                logProp, securityPolicy, dbFile, arcdbFile, resetDir,
+                externalJarFolder);
         // set operating system
         operatingSystem = Constants.OPERATING_SYSTEM_LINUX_ATTRIBUTE;
         scriptExtension = Constants.SCRIPT_EXTENSION_LINUX;
@@ -167,7 +170,9 @@ public class LinuxMachine extends Machine {
         res.append(Constants.COLON);
         res.append(getConfDirPath());
         res.append(Constants.NEWLINE);
-        // APPLY DATABASE!
+        // INSTALL EXTERNAL JAR FILES.
+        res.append(osInstallExternalJarFiles());
+        // APPLY HARVEST DEFINITION DATABASE!
         res.append(osInstallDatabase());
         // APPLY ARCHIVE DATABASE!
         res.append(osInstallArchiveDatabase());
@@ -712,6 +717,43 @@ public class LinuxMachine extends Machine {
         res.append(Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI
                 + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.EXIT
                 + Constants.SEMICOLON + Constants.SPACE + Constants.QUOTE_MARK);
+        res.append(Constants.NEWLINE);
+
+        return res.toString();
+    }
+    
+    /**
+     * This function makes the part of the install script for installing the
+     * external jar files from within the jarFolder.
+     * If the jarFolder is null, then no action will be performed.
+     * 
+     * @return The script for installing the external jar files (if needed).
+     */
+    @Override
+    protected String osInstallExternalJarFiles() {
+        if(jarFolder == null) {
+            return Constants.EMPTY;
+        }
+        
+        StringBuilder res = new StringBuilder();
+        
+        // Comment about copying files.
+        res.append(ScriptConstants.ECHO_INSTALLING_EXTERNAL_JAR_FILES);
+        res.append(Constants.NEWLINE);
+        // if [ -d folder ]; then scp folder machine:installdir/external; fi;
+        res.append(ScriptConstants.LINUX_IF_DIR_EXIST + Constants.SPACE);
+        res.append(jarFolder.getPath());
+        res.append(Constants.SPACE + ScriptConstants.LINUX_THEN 
+                + Constants.SPACE + ScriptConstants.SCP + Constants.SPACE 
+                + ScriptConstants.DASH_R + Constants.SPACE);
+        res.append(jarFolder.getPath());
+        res.append(Constants.SPACE);
+        res.append(machineUserLogin());
+        res.append(Constants.COLON);
+        res.append(getInstallDirPath());
+        res.append(Constants.SLASH + Constants.EXTERNAL_JAR_DIRECTORY 
+                + Constants.SEMICOLON + Constants.SPACE + ScriptConstants.FI 
+                + Constants.SEMICOLON);
         res.append(Constants.NEWLINE);
 
         return res.toString();

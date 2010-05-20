@@ -62,6 +62,8 @@ public class DeployConfiguration {
     private File arcDatabaseFileName;
     /** The optional choice for resetting tempDir.*/
     private boolean resetDirectory;
+    /** The folder containing the external jar library files.*/
+    private File jarFolder;
 
     /**
      * Constructor. Initialise everything.
@@ -74,6 +76,8 @@ public class DeployConfiguration {
      * @param dbFileName Name of the database.
      * @param arcdbFileName The name of the archive database.
      * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar 
+     * library files.
      * @throws ArgumentNotValid If one of the following arguments is null:
      * deployConfigFileName netarchiveSuiteFileName, secPolicyFileName,
      * logPropFileName.
@@ -81,7 +85,8 @@ public class DeployConfiguration {
     public DeployConfiguration(File deployConfigFileName, 
             File netarchiveSuiteFileName,  File secPolicyFileName, 
             File logPropFileName, String outputDirName, File dbFileName, 
-            File arcdbFileName, boolean resetDir) throws ArgumentNotValid {
+            File arcdbFileName, boolean resetDir, File externalJarFolder) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(
                 deployConfigFileName, "No config file");
         ArgumentNotValid.checkNotNull(
@@ -98,6 +103,7 @@ public class DeployConfiguration {
         databaseFileName = dbFileName;
         arcDatabaseFileName = arcdbFileName;
         resetDirectory = resetDir;
+        jarFolder = externalJarFolder;
 
         // get configuration tree, settings and parameters
         config = new XmlStructure(deployConfigFile);
@@ -145,7 +151,7 @@ public class DeployConfiguration {
             physLocs.add(new PhysicalLocation(elem, settings, machineParam,
                     netarchiveSuiteFile.getName(), logPropFile, 
                     secPolicyFile, databaseFileName, arcDatabaseFileName, 
-                    resetDirectory));
+                    resetDirectory, jarFolder));
         }
     }
     

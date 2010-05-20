@@ -71,6 +71,8 @@ public final class DeployApplication {
     private static boolean resetDirectory;
     /** The archive database file.*/
     private static File arcDbFile;
+    /** The folder with the external libraries to be deployed.*/
+    private static File externalJarFolder; 
 
     /**
      * Run the new deploy.
@@ -88,6 +90,8 @@ public final class DeployApplication {
      * -R  [OPTIONAL] For resetting the tempDir (takes arguments 'y' or 'yes')
      * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
      * -A  [OPTIONAL] For archive database.
+     * -J  [OPTIONAL] For deploying with external jar files. Must be the total
+     *                path to the directory containing jar-files.
      */
     public static void main(String[] args) {
         try {
@@ -152,6 +156,9 @@ public final class DeployApplication {
             // Retrieve the archive database filename.
             String arcDbFileName = ap.getCommandLine().getOptionValue(
                     Constants.ARG_ARC_DB);
+            // Retrieves the jar-folder name.
+            String jarFolderName = ap.getCommandLine().getOptionValue(
+                    Constants.ARG_JAR_FOLDER);
 
             // check deployConfigFileName and retrieve the corresponding file
             initConfigFile(deployConfigFileName);
@@ -180,6 +187,9 @@ public final class DeployApplication {
             // check the archive database
             initArchiveDatabase(arcDbFileName);
             
+            // check the external jar-files library folder.
+            initJarFolder(jarFolderName);
+            
             // Make the configuration based on the input data
             deployConfig = new DeployConfiguration(
                     deployConfigFile,
@@ -189,7 +199,8 @@ public final class DeployApplication {
                     outputDir,
                     dbFile,
                     arcDbFile,
-                    resetDirectory); 
+                    resetDirectory,
+                    externalJarFolder); 
 
             // Write the scripts, directories and everything
             deployConfig.write();
@@ -258,7 +269,7 @@ public final class DeployApplication {
         // get the file
         netarchiveSuiteFile = new File(netarchiveSuiteFileName);
         // check whether the NetarchiveSuite file exists.
-        if(!netarchiveSuiteFile.exists()) {
+        if(!netarchiveSuiteFile.isFile()) {
             System.err.print(
                     Constants.MSG_ERROR_NO_NETARCHIVESUITE_FILE_FOUND);
             System.out.println();
@@ -439,11 +450,30 @@ public final class DeployApplication {
             arcDbFile = new File(arcDbFileName);
             // check whether the database file exists.
             if(!arcDbFile.isFile()) {
-                System.err.print(
-                            Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
+                System.err.print(Constants.MSG_ERROR_NO_BPDB_FILE_FOUND);
                 System.out.println();
                 System.out.println("Couldn't find file: " 
                         + arcDbFile.getAbsolutePath());
+                System.exit(1);
+            }
+        }
+    }
+    
+    /**
+     * Checks the argument for the external jar-folder.
+     * 
+     * @param folderName The path to the folder. Global path.
+     */
+    public static void initJarFolder(String folderName) {
+        externalJarFolder = null;
+        if(folderName != null && !folderName.isEmpty()) {
+            externalJarFolder = new File(folderName);
+            
+            if(!externalJarFolder.isDirectory()) {
+                System.err.print(Constants.MSG_ERROR_NO_JAR_FOLDER);
+                System.out.println();
+                System.out.println("Couldn't find directory: " 
+                        + externalJarFolder.getAbsolutePath());
                 System.exit(1);
             }
         }
@@ -548,6 +578,9 @@ public final class DeployApplication {
                     HAS_ARG, "[OPTIONAL] Evaluate the config file.");
             options.addOption(Constants.ARG_ARC_DB,
                     HAS_ARG, "[OPTIONAL] The archive database file");
+            options.addOption(Constants.ARG_JAR_FOLDER, 
+                    HAS_ARG, "[OPTIONAL] Installing the external jar library "
+                    + "files within the given folder.");
         }
 
         /**

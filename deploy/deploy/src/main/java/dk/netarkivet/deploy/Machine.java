@@ -77,6 +77,8 @@ public abstract class Machine {
     protected File machineDirectory;
     /** Whether the temp dir should be cleaned.*/
     protected boolean resetTempDir;
+    /** The folder containing the external jar library files.*/
+    protected File jarFolder;
 
     /**
      * A machine is referring to an actual computer at a physical location, 
@@ -93,6 +95,8 @@ public abstract class Machine {
      * @param dbFileName The name of the database file.
      * @param archiveDbFileName The name of the archive database file.
      * @param resetDir Whether the temporary directory should be reset.
+     * @param externalJarFolder The folder containing the external jar 
+     * library files.
      * @throws ArgumentNotValid If one of the following arguments are null:
      * subTreeRoot, parentSettings, param, netarchiveSuiteSource, logProp,
      * securityPolicy.
@@ -100,7 +104,8 @@ public abstract class Machine {
     public Machine(Element subTreeRoot, XmlStructure parentSettings, 
             Parameters param, String netarchiveSuiteSource,
             File logProp, File securityPolicy, File dbFileName,
-            File archiveDbFileName, boolean resetDir) throws ArgumentNotValid {
+            File archiveDbFileName, boolean resetDir, File externalJarFolder) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(subTreeRoot, "Element subTreeRoot");
         ArgumentNotValid.checkNotNull(parentSettings,
                 "XmlStructure parentSettings");
@@ -119,6 +124,7 @@ public abstract class Machine {
         databaseFile = dbFileName;
         arcDatabaseFile = archiveDbFileName;
         resetTempDir = resetDir;
+        jarFolder = externalJarFolder;
 
         // retrieve the specific settings for this instance 
         Element tmpSet = machineRoot.element(
@@ -820,6 +826,15 @@ public abstract class Machine {
      * (if needed).
      */
     protected abstract String osInstallArchiveDatabase();
+
+    /**
+     * This function makes the part of the install script for installing the
+     * external jar files from within the jarFolder.
+     * If the jarFolder is null, then no action will be performed.
+     * 
+     * @return The script for installing the external jar files (if needed).
+     */
+    protected abstract String osInstallExternalJarFiles();
     
     /**
      * This functions makes the script for creating the new directories.

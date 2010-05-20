@@ -58,6 +58,8 @@ public class TestInfo {
 	    WORKING_DIR, "database.jar");
     public static final File FILE_BP_DATABASE = new File(
             WORKING_DIR, "bpdb.jar");
+    public static final File EXTERNALS_DIR = new File(WORKING_DIR, "externals");
+
 
     // arguments for complete settings
     public static final File COMPLETE_SETTINGS_DIR = new File(
@@ -84,5 +86,7 @@ public class TestInfo {
 	Constants.ARG_INIT_ARG + Constants.ARG_TEST;
     public static final String ARGUMENT_EVALUATE = 
 	Constants.ARG_INIT_ARG + Constants.ARG_EVALUATE;
+    public static final String ARGUMENT_JAR_FOLDER = 
+        Constants.ARG_INIT_ARG + Constants.ARG_JAR_FOLDER;
     public static final String ARGUMENT_TEST_ARG = "1000,1005,test,test@kb.dk";
 }

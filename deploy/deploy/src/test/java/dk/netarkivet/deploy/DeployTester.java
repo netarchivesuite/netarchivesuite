@@ -23,16 +23,12 @@
 package dk.netarkivet.deploy;
 
 import junit.framework.TestCase;
-
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.deploy.Constants;
-import dk.netarkivet.deploy.DeployApplication;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
-import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.PreserveStdStreams;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
+import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 public class DeployTester extends TestCase {
 
@@ -101,7 +97,8 @@ public class DeployTester extends TestCase {
                     TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
                     TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
                     TestInfo.ARGUMENT_DATABASE_FILE + databaseName,
-                    TestInfo.ARGUMENT_EVALUATE + "yes"
+                    TestInfo.ARGUMENT_EVALUATE + "yes",
+                    TestInfo.ARGUMENT_JAR_FOLDER + TestInfo.EXTERNALS_DIR
                     };
         DeployApplication.main(args);
         
@@ -257,7 +254,8 @@ public class DeployTester extends TestCase {
 		TestInfo.ARGUMENT_CONFIG_FILE + "ERROR", 
 		TestInfo.ARGUMENT_SECURITY_FILE + "ERROR", 
                 TestInfo.ARGUMENT_LOG_PROPERTY_FILE + "ERROR",
-		TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR" 
+                TestInfo.ARGUMENT_JAR_FOLDER + "ERROR",
+                TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + "ERROR"
 	};
 	DeployApplication.main(args);
 
@@ -433,7 +431,31 @@ public class DeployTester extends TestCase {
                 + Constants.MSG_ERROR_BPDB_EXTENSION, 
                 pssMsg.startsWith(Constants.MSG_ERROR_BPDB_EXTENSION));
     }
-    
+
+    /**
+     * tests bitpreservation database file argument with wrong extension.
+     */
+    public void testDeployArgumentsExtension7() {
+        String[] args = {
+                TestInfo.ARGUMENT_CONFIG_FILE + itConfXmlName,
+                TestInfo.ARGUMENT_NETARCHIVE_SUITE_FILE + nullzipName,
+                TestInfo.ARGUMENT_SECURITY_FILE + securityPolicyName,
+                TestInfo.ARGUMENT_LOG_PROPERTY_FILE + testLogPropName,
+                TestInfo.ARGUMENT_OUTPUT_DIRECTORY + output_dir,
+                TestInfo.ARGUMENT_JAR_FOLDER+ "/ERROR/er.ror"
+        };
+        DeployApplication.main(args);
+
+        // get message and exit value
+        int pseVal = pse.getExitValue();
+        String pssMsg = pss.getErr();
+
+        assertEquals("Exit value asserted 1.", 1, pseVal);
+        assertTrue("The error message should start with: " 
+                + Constants.MSG_ERROR_NO_JAR_FOLDER, 
+                pssMsg.startsWith(Constants.MSG_ERROR_NO_JAR_FOLDER));
+    }
+
     /**
      * tests when enough arguments are given, but configuration file 
      * is missing.

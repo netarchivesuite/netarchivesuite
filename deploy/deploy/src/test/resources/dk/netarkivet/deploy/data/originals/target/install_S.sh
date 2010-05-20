@@ -12,6 +12,8 @@ ssh netarkiv@sb-test-har-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/
 ssh netarkiv@sb-test-har-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/netarkiv/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r sb-test-har-001.statsbiblioteket.dk/* netarkiv@sb-test-har-001.statsbiblioteket.dk:/home/netarkiv/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals netarkiv@sb-test-har-001.statsbiblioteket.dk:/home/netarkiv/TEST/external; fi;
 echo make scripts executable
 ssh netarkiv@sb-test-har-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
@@ -32,6 +34,8 @@ ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/
 ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/netarkiv/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r sb-test-bar-001.statsbiblioteket.dk/* netarkiv@sb-test-bar-001.statsbiblioteket.dk:/home/netarkiv/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals netarkiv@sb-test-bar-001.statsbiblioteket.dk:/home/netarkiv/TEST/external; fi;
 echo make scripts executable
 ssh netarkiv@sb-test-bar-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
@@ -52,6 +56,8 @@ ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/
 ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk " cd ~; if [ -e /home/netarkiv/TEST/conf/jmxremote.access ]; then chmod u+rwx /home/netarkiv/TEST/conf/jmxremote.access; fi; "
 echo copying settings and scripts
 scp -r sb-test-acs-001.statsbiblioteket.dk/* netarkiv@sb-test-acs-001.statsbiblioteket.dk:/home/netarkiv/TEST/conf/
+echo Installing external jar files.
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then scp -r tests/dk/netarkivet/deploy/data/working/externals netarkiv@sb-test-acs-001.statsbiblioteket.dk:/home/netarkiv/TEST/external; fi;
 echo make scripts executable
 ssh netarkiv@sb-test-acs-001.statsbiblioteket.dk "chmod 700 /home/netarkiv/TEST/conf/*.sh "
 echo make password and access files readonly
