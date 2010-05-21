@@ -422,6 +422,11 @@
             <loggingInterval>30000</loggingInterval>
             <!-- Batchjobs without a specified timeout will get this value (one week) -->
             <defaultBatchTimeout>604800000</defaultBatchTimeout>
+            <baseDir>batch</baseDir>
+            <batchjobs>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
+                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
+            </batchjobs>
         </batch>
         <replicas> <!-- The entire settings for replicas. -->
             <replica>
@@ -444,12 +449,5 @@
         <thisPhysicalLocation>physLocationOne</thisPhysicalLocation>
         <applicationName>NA</applicationName>
         <applicationInstanceId></applicationInstanceId>
-        <batch>
-            <baseDir>batch</baseDir>
-            <batchjobs>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
-            </batchjobs>
-        </batch>
     </common>
 </settings>
