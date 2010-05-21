@@ -41,7 +41,7 @@ if [ $( ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 echo copying settings and scripts
 scp -r kb-test-bar-010.bitarkiv.kb.dk/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:TEST\\conf\\
 echo Installing external jar files.
-if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals ba-test@kb-test-bar-010.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals/* ba-test@kb-test-bar-010.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
 echo make password and access files readonly
 ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
 ssh ba-test@kb-test-bar-010.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
@@ -63,7 +63,7 @@ if [ $( ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk cmd /c if exist TEST\\conf\\j
 echo copying settings and scripts
 scp -r kb-test-bar-011.bitarkiv.kb.dk/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:TEST\\conf\\
 echo Installing external jar files.
-if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals ba-test@kb-test-bar-011.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
+if [ -d tests/dk/netarkivet/deploy/data/working/externals ]; then ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk md "c:\\Documents and Settings\\ba-test\\TEST\\external"; scp -r tests/dk/netarkivet/deploy/data/working/externals/* ba-test@kb-test-bar-011.bitarkiv.kb.dk:"c:\\Documents and Settings\\ba-test\\TEST\\external"; fi;
 echo make password and access files readonly
 ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.access TEST\\conf\\access.privileges"
 ssh ba-test@kb-test-bar-011.bitarkiv.kb.dk "cmd /c move /Y TEST\\conf\\jmxremote.password TEST\\.\\jmxremote.password"
