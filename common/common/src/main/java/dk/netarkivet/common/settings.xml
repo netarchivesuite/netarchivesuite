@@ -424,8 +424,14 @@
             <defaultBatchTimeout>604800000</defaultBatchTimeout>
             <baseDir>batch</baseDir>
             <batchjobs>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
+                    <arcfile></arcfile>
+                </batchjob>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
+                    <arcfile></arcfile>
+                </batchjob>
             </batchjobs>
         </batch>
         <replicas> <!-- The entire settings for replicas. -->

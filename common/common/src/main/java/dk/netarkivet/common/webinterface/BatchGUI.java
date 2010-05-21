@@ -25,8 +25,6 @@
 package dk.netarkivet.common.webinterface;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -59,7 +57,9 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ByteJarLoader;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 
 /**
  * Utility class for creating the web page content for the batchjob pages.
@@ -93,7 +93,7 @@ public class BatchGUI {
         JspWriter out = context.getOut();
         
         // retrive the jobs etc.
-        String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_JOB);
+        String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
         Locale locale = context.getRequest().getLocale();
         
         if(jobs.length == 0) {
@@ -210,11 +210,18 @@ public class BatchGUI {
             String jobName = request.getParameter(Constants.BATCHJOB_PARAMETER);
             String repName = request.getParameter(Constants.REPLICA_PARAMETER);
 
-            // get the constructor and instantiate it.
-            Constructor construct = findStringConstructor(
-                    getBatchClass(jobName));
-            FileBatchJob batchjob = (FileBatchJob) 
-            construct.newInstance(new Object[]{});
+            FileBatchJob batchjob;
+            
+            File arcfile = getArcFile(jobName);
+            if(arcfile == null) {
+                // get the constructor and instantiate it.
+                Constructor construct = findStringConstructor(
+                        getBatchClass(jobName));
+                batchjob = (FileBatchJob) 
+                construct.newInstance(new Object[]{});
+            } else {
+                batchjob = new LoadableJarBatchJob(jobName, arcfile);
+            }
 
             // get the regular expression.
             String regex = jobId + "-";
@@ -256,7 +263,15 @@ public class BatchGUI {
         Class res;
         // validate whether a class with the classname can be found
         try {
-            res = Class.forName(className);
+            File arcfile = getArcFile(className);
+
+            // handle whether internal or loadable batchjob.
+            if(arcfile != null) {
+                ByteJarLoader bjl = new ByteJarLoader(arcfile);
+                res = bjl.findClass(className);
+            } else {
+                res = Class.forName(className);
+            }
         } catch (ClassNotFoundException e) {
             String errMsg = "Cannot find the class '" + className 
             + "' in the classpath. Perhaps bad path or missing library file.";
@@ -814,11 +829,11 @@ public class BatchGUI {
         try {
             // Check whether it is retrievable. (Throws UnknownID if not).
             getBatchClass(batchClassPath);
-            
+
             final String batchName = getJobName(batchClassPath);
             File batchDir = getBatchDir();
             
-            // TODO retrieve all the files for the batchjob and take the latest.
+            // retrieve the latest batchjob results.
             String timestamp = getLatestTimestamp(batchName);
             File outputFile = new File(batchDir, batchName + timestamp
                     + Constants.OUTPUT_FILE_EXTENSION);
@@ -959,5 +974,57 @@ public class BatchGUI {
         }
 
         return batchDir;
-    }    
+    } 
+    
+    /**
+     * Method for retrieving the path to the arcfile corresponding to the 
+     * classpath.
+     * 
+     * @param classpath The classpath to a batchjob.
+     * @return The path to the arc file for the batchjob.
+     * @throws UnknownID If the classpath is not within the settings.
+     */
+    private static String getArcFileForBatchjob(String classpath) {
+        ArgumentNotValid.checkNotNullOrEmpty(classpath, "String classpath");
+        
+        String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
+        String[] arcfiles = Settings.getAll(CommonSettings.BATCHJOBS_ARCFILE);
+
+        // go through the lists to find the arc-file.
+        for(int i = 0; i < jobs.length; i++) {
+            if(jobs[i].equals(classpath)) {
+                return arcfiles[i];
+            }
+        }
+        
+        throw new UnknownID("Unknown or undefined classpath for batchjob: '" 
+                + classpath + "'.");
+    }
+    
+    /**
+     * Method for retrieving and validating the arc-file for a given DOOM!
+     * 
+     * @param path The path to the file.
+     * @return The arc-file at the given path, or if the path is null or the 
+     * empty string, then a null is returned.
+     * @throws IOFailure If the file does not exist, or it is not a valid file.
+     */
+    public static File getArcFile(String classPath) {
+        // retrieve the path to the arc-file.
+        String path = getArcFileForBatchjob(classPath);
+        
+        // If no file, then return null.
+        if(path == null || path.isEmpty()) {
+            return null;
+        }
+        
+        // retrieve file, and ensure that it exists and is a valid file.
+        File res = new File(path);
+        if(!res.isFile()) {
+            throw new IOFailure("The file '" + path + "' does not exist, or "
+                    + "is maybe not a file but a directory.");
+        }
+        
+        return res;
+    }
 }
