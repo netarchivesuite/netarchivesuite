@@ -45,41 +45,71 @@ public class HibernateUtil {
     /** Logger for this class. */
     private static final Log log = LogFactory.getLog(HibernateUtil.class.getName());
 
+    /**
+     * Private constructor as this class is never instantiated.
+     */
     private HibernateUtil() {}
 
+    /**
+     * The session factory from which sessions are obtained. There is no
+     * accessor supplied for this factory as a reference to it can be obtained
+     * if necessary (e.g. during a cleanup operation) from the Session itself. 
+     */
     private static SessionFactory sessionFactory;
 
+    /**
+     * Properties of the hibernate session are loaded from settings.xml. There
+     * is therefore no need for a separate hibernate configuration file.
+     */
     private static void initialiseFactory() {
         if (sessionFactory == null || sessionFactory.isClosed()) {
             try {
                 AnnotationConfiguration config = new AnnotationConfiguration();
                 config.setProperty("connection.provider_class",
                             "org.hibernate.connection.C3P0ConnectionProvider");
-                config.setProperty("c3p0.acquire_increment", Settings.get(WaybackSettings.C3P0_ACQUIRE_INCREMENT));
-                config.setProperty("c3p0.idle_test_period", Settings.get(WaybackSettings.C3P0_IDLE_PERIOD));
-                config.setProperty("c3p0.max_size", Settings.get(WaybackSettings.C3P0_MAX_SIZE));
-                config.setProperty("c3p0.max_statements", Settings.get(WaybackSettings.C3P0_MAX_STATEMENTS));
-                config.setProperty("c3p0.min_size", Settings.get(WaybackSettings.C3P0_MIN_SIZE));
-                config.setProperty("c3p0.timeout", Settings.get(WaybackSettings.C3P0_TIMEOUT));
-                config.setProperty("hibernate.connection.driver_class", Settings.get(WaybackSettings.HIBERNATE_DB_DRIVER));
-                config.setProperty("hibernate.connection.url", Settings.get(WaybackSettings.HIBERNATE_DB_URL));
-                config.setProperty("hibernate.dialect", Settings.get(WaybackSettings.HIBERNATE_DIALECT));
-                config.setProperty("hibernate.format_sql", Settings.get(WaybackSettings.HIBERNATE_FORMAT_SQL));
-                config.setProperty("hibernate.bytecode.use_reflection_optimizer", Settings.get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER));
-                config.setProperty("hibernate.hbm2ddl.auto", Settings.get(WaybackSettings.HIBERNATE_HBM2DDL_AUTO));
-                config.setProperty("hibernate.transaction.factory_class", Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
-                config.setProperty("hibernate.show_sql", Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
+                config.setProperty("c3p0.acquire_increment",
+                         Settings.get(WaybackSettings.C3P0_ACQUIRE_INCREMENT));
+                config.setProperty("c3p0.idle_test_period",
+                               Settings.get(WaybackSettings.C3P0_IDLE_PERIOD));
+                config.setProperty("c3p0.max_size",
+                                   Settings.get(WaybackSettings.C3P0_MAX_SIZE));
+                config.setProperty("c3p0.max_statements",
+                             Settings.get(WaybackSettings.C3P0_MAX_STATEMENTS));
+                config.setProperty("c3p0.min_size",
+                                   Settings.get(WaybackSettings.C3P0_MIN_SIZE));
+                config.setProperty("c3p0.timeout",
+                                   Settings.get(WaybackSettings.C3P0_TIMEOUT));
+                config.setProperty("hibernate.connection.driver_class",
+                             Settings.get(WaybackSettings.HIBERNATE_DB_DRIVER));
+                config.setProperty("hibernate.connection.url",
+                                Settings.get(WaybackSettings.HIBERNATE_DB_URL));
+                config.setProperty("hibernate.dialect",
+                               Settings.get(WaybackSettings.HIBERNATE_DIALECT));
+                config.setProperty("hibernate.format_sql",
+                            Settings.get(WaybackSettings.HIBERNATE_FORMAT_SQL));
+                config.setProperty("hibernate.bytecode.use_reflection_optimizer",
+                  Settings.get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER));
+                config.setProperty("hibernate.hbm2ddl.auto",
+                          Settings.get(WaybackSettings.HIBERNATE_HBM2DDL_AUTO));
+                config.setProperty("hibernate.transaction.factory_class",
+                   Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
+                config.setProperty("hibernate.show_sql",
+                              Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
                 if (!Settings.get(WaybackSettings.HIBERNATE_USERNAME).isEmpty()) {
-                    config.setProperty("hibernate.connection.username", Settings.get(WaybackSettings.HIBERNATE_USERNAME));
+                    config.setProperty("hibernate.connection.username",
+                              Settings.get(WaybackSettings.HIBERNATE_USERNAME));
                 }
                 if (!Settings.get(WaybackSettings.HIBERNATE_PASSWORD).isEmpty()) {
-                    config.setProperty("hibernate.connection.password", Settings.get(WaybackSettings.HIBERNATE_PASSWORD));
+                    config.setProperty("hibernate.connection.password",
+                              Settings.get(WaybackSettings.HIBERNATE_PASSWORD));
                 }
                 config.addAnnotatedClass(ArchiveFile.class);
                 sessionFactory = config.buildSessionFactory();
             } catch (Throwable ex) {
-                log.fatal("Could not connect to hibernate object store - exiting", ex);
-                throw new IllegalStateException("Could not connect to hibernate object store - exiting", ex);
+                log.fatal("Could not connect to hibernate object store - "
+                          + "exiting", ex);
+                throw new IllegalStateException("Could not connect to hibernate "
+                                                + "object store - exiting", ex);
             }
         }
     }
@@ -89,6 +119,13 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
+    /**
+     * Get a hibernate session for communicating with the object store for
+     * the wayback indexer. This method has the side effect of creating and
+     * initialising a SessionFactory object if there is no current open
+     * SessionFactory.
+     * @return
+     */
     public static Session getSession() {
         initialiseFactory();
         return sessionFactory.openSession();

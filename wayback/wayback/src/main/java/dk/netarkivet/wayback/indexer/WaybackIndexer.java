@@ -31,8 +31,11 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
- * The WaybackIndexer starts threads to find new files to be indexed and index
+ * The WaybackIndexer starts threads to find new files to be indexed and indexes
  * them.
  *
  * There is 1 producer thread which runs as a timer thread, for example once a
@@ -45,11 +48,20 @@ import dk.netarkivet.wayback.WaybackSettings;
  */
 public class WaybackIndexer implements CleanupIF {
 
+    /**
+     * The logger for this class.
+     */
+    final static Log log = LogFactory.getLog(WaybackIndexer.class);
+
+    /**
+     * The singleton instance of this class.
+     */
     private static WaybackIndexer instance;
 
     /**
      * Factory method which creates a singleton wayback indexer and sets it
-     * running.
+     * running. It has the side effect of creating the output directories
+     * for the indexer if these do not already exist.
      * @return the indexer.
      */
     public static synchronized WaybackIndexer getInstance() {
@@ -76,10 +88,16 @@ public class WaybackIndexer implements CleanupIF {
         for (int threadNumber = 0; threadNumber < consumerThreads;
              threadNumber++) {
              new Thread("ConsumerThread-" + threadNumber) {
+
                  @Override
                  public void run() {
                      super.run();
+                     log.debug("Started thread '" +
+                               Thread.currentThread().getName() + "'");
                      IndexerQueue.getInstance().consume();
+                     log.debug("Ending thread '" +
+                               Thread.currentThread().getName() + "'");
+
                  }
              }.start();
         }
@@ -87,13 +105,13 @@ public class WaybackIndexer implements CleanupIF {
 
     private static void startProducerThread() {
         Long producerDelay =
-               Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
+            Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
         Long producerInterval =
-           Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
+            Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_INTERVAL);
         TimerTask producerTask = new TimerTask() {
             @Override
             public void run() {
-               FileNameHarvester.harvest();
+                FileNameHarvester.harvest();
                 IndexerQueue.getInstance().populate();
             }
         };

@@ -57,6 +57,10 @@ public class WaybackSettings {
      * There now follows a list of hibernate-related properties.
      */
 
+    /**
+     * c3p0 is the database connection manager used by hibernate. See c3p0
+     * documentation for their meaning.
+     */
     public static String C3P0_ACQUIRE_INCREMENT =
             "settings.wayback.hibernate.c3p0.acquire_increment";
     public static String C3P0_IDLE_PERIOD =
@@ -69,6 +73,10 @@ public class WaybackSettings {
              "settings.wayback.hibernate.c3p0.min_size";
     public static String C3P0_TIMEOUT =
              "settings.wayback.hibernate.c3p0.timeout";
+    /**
+     * These are the hibernate specific properties. See hibernate documentation
+     * for their meaning.
+     */
     public static String HIBERNATE_DB_URL =
             "settings.wayback.hibernate.connection_url";
     public static String HIBERNATE_DB_DRIVER =
@@ -89,6 +97,10 @@ public class WaybackSettings {
             "settings.wayback.hibernate.user";
     public static String HIBERNATE_PASSWORD =
             "settings.wayback.hibernate.password";
+
+    /**
+     * The replica to be used by the wayback indexer.
+     */
     public static String WAYBACK_REPLICA =
             "settings.wayback.indexer.replicaId";
 
@@ -96,14 +108,14 @@ public class WaybackSettings {
      * The directory to which batch output is written during indexing.
      */
     public static String WAYBACK_INDEX_TEMPDIR =
-            "settings.wayback.indexer.tempdir";
+            "settings.wayback.indexer.temp_batch_output_dir";
 
     /**
      * The directory to which batch output is moved after a batch indexing
      * job is successfully completed.
      */
     public static String WAYBACK_BATCH_OUTPUTDIR =
-            "settings.wayback.indexer.batch_output_dir";
+            "settings.wayback.indexer.final_batch_output_dir";
 
     /**
      * The maximum number of times an archive file may generate a batch error
@@ -117,12 +129,14 @@ public class WaybackSettings {
      */
     public static String WAYBACK_INDEXER_PRODUCER_DELAY =
             "settings.wayback.indexer.producerDelay";
+
     /**
      * The interval, in milliseconds, between successive runs of the
      * producer thread.
      */
     public static String WAYBACK_INDEXER_PRODUCER_INTERVAL =
             "settings.wayback.indexer.producerInterval";
+    
     /**
      * The number of consumer threads to run.
      */

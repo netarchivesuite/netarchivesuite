@@ -41,7 +41,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
     private Class<T> type;
 
     /**
-     * Constructore for the class.
+     * Constructor for the class.
      * @param type the type of the persistent entity managed by this class.
      */
     public GenericHibernateDAO(Class<T> type) {
@@ -59,9 +59,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
 
     public T read(PK id) {
         Session sess = getSession();
-        //sess.beginTransaction();
         T result =  (T) sess.get(type, id);
-        //sess.getTransaction().commit();
         sess.close();
         return result;
     }
@@ -97,7 +95,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
     /**
      * Use this inside subclasses as a convenience method to find objects
      * matching a given criterion.
-     * @param criterion the criterion to be matched.
+     * @param criterion the criteria to be matched.
      * @return a list of objects matching the criterion.
      */
     @SuppressWarnings("unchecked")

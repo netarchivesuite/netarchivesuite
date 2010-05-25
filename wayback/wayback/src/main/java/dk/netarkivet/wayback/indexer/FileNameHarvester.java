@@ -38,18 +38,33 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob;
 import dk.netarkivet.wayback.WaybackSettings;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class FileNameHarvester {
 
     /**
-     * This method harvests a list of all the files currechntly in the
+     * Logger for this class.
+     */
+    private static Log log = LogFactory.getLog(FileNameHarvester.class);
+
+    /**
+     * This method harvests a list of all the files currently in the
      * arcrepository and appends any new ones found to the ArchiveFile
      * object store.
+     * TODO there is a possible scaling issue because we get a list of
+     * every file in the archive every time. We could profitably use a more
+     * varied strategy where we retrieve all recent files several times a
+     * day but run a "catch-all" job once in while to read every filename in
+     * case we missed some due to machine outages.
      */
     public static synchronized void harvest() {
         ArchiveFileDAO dao = new ArchiveFileDAO();
-        PreservationArcRepositoryClient client = ArcRepositoryClientFactory.getPreservationInstance();
+        PreservationArcRepositoryClient client = ArcRepositoryClientFactory
+                .getPreservationInstance();
         FileBatchJob job = new FileListJob();
-        BatchStatus status = client.batch(job, Settings.get(WaybackSettings.WAYBACK_REPLICA));
+        BatchStatus status = client.batch(job,
+                                 Settings.get(WaybackSettings.WAYBACK_REPLICA));
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -60,6 +75,8 @@ public class FileNameHarvester {
                     ArchiveFile file = new ArchiveFile();
                     file.setFilename(line.trim());
                     file.setIndexed(false);
+                    log.info("Creating object store entry for '" +
+                             file.getFilename() + "'");
                     dao.create(file);
                 }
             }

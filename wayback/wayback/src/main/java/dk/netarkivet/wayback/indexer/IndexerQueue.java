@@ -37,6 +37,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IndexerQueue {
 
+    /**
+     * The logger for this class.
+     */
     private static Log log = LogFactory.getLog(IndexerQueue.class);
 
     /**
@@ -71,10 +74,12 @@ public class IndexerQueue {
      * queue.
      */
     public synchronized void populate() {
-        List<ArchiveFile> files = (new ArchiveFileDAO()).getFilesAwaitingIndexing();
+        List<ArchiveFile> files = (new ArchiveFileDAO())
+                .getFilesAwaitingIndexing();
         for (ArchiveFile file: files) {
             if (!queue.contains(file)) {
-                log.debug("Adding file '" + file.getFilename() + "' to indexing queue.");
+                log.debug("Adding file '" + file.getFilename() +
+                          "' to indexing queue.");
                 queue.add(file);
                 log.debug("Files in queue: '" + queue.size() + "'");
             }
@@ -92,7 +97,8 @@ public class IndexerQueue {
             ArchiveFile file = null;
             try {
                 file = queue.take();
-                log.debug("Taken file '" + file.getFilename() + "' from indexing queue.");
+                log.debug("Taken file '" + file.getFilename() +
+                          "' from indexing queue.");
                 log.debug("Files in queue: '" + queue.size() + "'");                
             } catch (InterruptedException e) {
                 String message = "Unexpected interrupt in indexer while waiting "
@@ -104,6 +110,9 @@ public class IndexerQueue {
         }
     }
 
+    /**
+     * Convenience method for use in unit tests.
+     */
     protected static void resestSingleton() {
         instance = null;
         if (queue != null) {

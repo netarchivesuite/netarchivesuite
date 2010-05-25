@@ -53,6 +53,9 @@ import dk.netarkivet.wayback.WaybackSettings;
 @Entity
 public class ArchiveFile {
 
+    /**
+     * Logger for this class.
+     */
     private static Log log = LogFactory.getLog(ArchiveFile.class);
 
     /**
@@ -77,7 +80,7 @@ public class ArchiveFile {
     private String finalIndexFileName;
 
     /**
-     * The number of times an attempt to index this filehas failed
+     * The number of times an attempt to index this file has failed.
      */
     private int indexingFailedAttempts;
 
@@ -119,7 +122,7 @@ public class ArchiveFile {
     /**
      * The filename is used as a natural key because it is a fundamental property
      * of the arcrepository that filenames are unique.
-     * @return
+     * @return the filename.
      */
     @Id
     public String getFilename() {
@@ -158,7 +161,7 @@ public class ArchiveFile {
             throw new IllegalState("Attempted to index file '" + filename +
                                    "' which is already indexed");
         }
-        //TODO the following code could be replaced by some fancier more general
+        //TODO the following if-block could be replaced by some fancier more general
         //class with methods for associating particular types of archived files
         //with particular types of batch processor. e.g. something with
         // a signature like
@@ -187,20 +190,20 @@ public class ArchiveFile {
 
     private void collectResults(BatchStatus status) {
         String outputFilename = UUID.randomUUID().toString();
-        String batchOutputDir =
-                Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
-        final File outDir = new File(batchOutputDir);
+        String tempBatchOutputDir =
+                Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
+        final File outDir = new File(tempBatchOutputDir);
         FileUtils.createDir(outDir);
         File batchOutputFile =
                 new File(outDir, outputFilename);
         status.copyResults(batchOutputFile);
-        String tempDir =
-                Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
-        final File tempDirectory = new File(tempDir);
-        FileUtils.createDir(tempDirectory);
-        File tempFile =
-                new File(tempDirectory, outputFilename);
-        batchOutputFile.renameTo(tempFile);
+        String finalBatchOutputDir =
+                Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
+        final File finalDirectory = new File(finalBatchOutputDir);
+        FileUtils.createDir(finalDirectory);
+        File finalFile =
+                new File(finalDirectory, outputFilename);
+        batchOutputFile.renameTo(finalFile);
         originalIndexFileName = outputFilename;
         isIndexed = true;
         (new ArchiveFileDAO()).update(this);

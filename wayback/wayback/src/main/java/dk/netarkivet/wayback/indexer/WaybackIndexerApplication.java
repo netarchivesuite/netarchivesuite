@@ -26,8 +26,8 @@ import dk.netarkivet.common.utils.ApplicationUtils;
 public class WaybackIndexerApplication {
 
     /**
-     * Runs the WaybackIndexer. Settings are read from config files so there are
-     * no arguments.
+     * Runs the WaybackIndexer. Settings are read from config files so the
+     * arguments array should be empty.
      * @param args an empty array.
      */
     public static void main(String[] args) {

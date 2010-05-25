@@ -27,8 +27,8 @@
         </hibernate>
         <indexer>
             <replicaId>ONE</replicaId>
-            <batch_output_dir>batchOutputDir</batch_output_dir>
-            <tempdir>tempdir</tempdir>
+            <final_batch_output_dir>batchOutputDir</final_batch_output_dir>
+            <temp_batch_output_dir>tempdir</temp_batch_output_dir>
             <maxFailedAttempts>3</maxFailedAttempts>
             <producerDelay>0</producerDelay>
             <producerInterval>86400000</producerInterval>

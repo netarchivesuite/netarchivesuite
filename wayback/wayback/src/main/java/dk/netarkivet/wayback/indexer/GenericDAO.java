@@ -33,13 +33,13 @@ import java.io.Serializable;
 public interface GenericDAO<T, PK extends Serializable> {
 
      /** Persist the newInstance object into database
-      * @param newInstance  the object to persiste
+      * @param newInstance  the object to persist.
       * @return the key assigned to the object.
       */
     PK create(T newInstance);
 
     /** Retrieve an object that was previously persisted to the database using
-     *   the indicated id as primary key
+     *   the indicated id as primary key.
      * @param id the key of the object to be retrieved.
      * @return the retrieved object.
      */
@@ -50,7 +50,7 @@ public interface GenericDAO<T, PK extends Serializable> {
      */
     void update(T transientObject);
 
-    /** Remove an object from persistent storage in the database
+    /** Remove an object from persistent storage in the database.
      * @param persistentObject the object to be deleted.
      */
     void delete(T persistentObject);
