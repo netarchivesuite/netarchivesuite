@@ -198,4 +198,13 @@ public class LoadableJarBatchJob extends FileBatchJob {
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }
+    
+    /**
+     * Method for retrieving the name of the loaded class.
+     *  
+     * @return The name of the loaded class.
+     */
+    public String getLoadedJobClass() {
+        return jobClass;
+    }
 }

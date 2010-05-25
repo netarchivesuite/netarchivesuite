@@ -912,7 +912,23 @@ public class BatchGUI {
         return res.toString();
     }
     
-    private static String getLatestTimestamp(String batchjobName) {
+    /**
+     * Method for aquiring the name of the files with the latest timestamp.
+     * Creates a list with all the names of the result-files for the given 
+     * batchjob. The list is sorted and the last (and thus latest) is returned.
+     *  
+     * @param batchjobName The name of the batchjob in question. Is has to be
+     * the name without the path (e.g. 
+     * dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob should
+     * just be ChecksumJob).
+     * @return The name of the files for the given batchjob. The empty string 
+     * is returned if no result files have been found, indicating that the
+     * batchjob has never been run.
+     * @throws ArgumentNotValid If the name of the batchjob is either null
+     * or the empty string.
+     */
+    private static String getLatestTimestamp(String batchjobName) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(batchjobName, 
                 "String batchjobName");
         
@@ -984,9 +1000,8 @@ public class BatchGUI {
      * @return The path to the arc file for the batchjob.
      * @throws UnknownID If the classpath is not within the settings.
      */
-    private static String getArcFileForBatchjob(String classpath) {
-        ArgumentNotValid.checkNotNullOrEmpty(classpath, "String classpath");
-        
+    private static String getArcFileForBatchjob(String classpath) 
+            throws UnknownID {
         String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
         String[] arcfiles = Settings.getAll(CommonSettings.BATCHJOBS_ARCFILE);
 
@@ -1004,12 +1019,17 @@ public class BatchGUI {
     /**
      * Method for retrieving and validating the arc-file for a given DOOM!
      * 
-     * @param path The path to the file.
+     * @param classPath The path to the file.
      * @return The arc-file at the given path, or if the path is null or the 
      * empty string, then a null is returned.
+     * @throws ArgumentNotValid If the classPath argument is null or the empty 
+     * string. 
      * @throws IOFailure If the file does not exist, or it is not a valid file.
      */
-    public static File getArcFile(String classPath) {
+    public static File getArcFile(String classPath) throws ArgumentNotValid, 
+            IOFailure {
+        ArgumentNotValid.checkNotNullOrEmpty(classPath, "String classPath");
+        
         // retrieve the path to the arc-file.
         String path = getArcFileForBatchjob(classPath);
         

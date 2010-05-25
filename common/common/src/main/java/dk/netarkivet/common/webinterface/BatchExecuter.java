@@ -40,6 +40,7 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
+import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 /**
@@ -94,6 +95,15 @@ public class BatchExecuter extends Thread {
         // get the batchjob name without the classpath.
         String jobName = BatchGUI.getJobName(batchJob.getClass().getName());
 
+        // handle if loaded batchjob.
+        if(batchJob.getClass().getName().equals(
+                LoadableJarBatchJob.class.getName())) {
+            LoadableJarBatchJob ljbj = (LoadableJarBatchJob) batchJob;
+            jobName = BatchGUI.getJobName(ljbj.getLoadedJobClass());
+            log.debug("LoadableJarBatchJob is actually the batchjob '"
+                    + jobName + "'.");
+        }
+        
         try {
             // create output and error files. 
             File outputFile = new File(BatchGUI.getBatchDir(), jobName 
