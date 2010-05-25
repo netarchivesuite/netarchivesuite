@@ -1,7 +1,7 @@
-/* File:    $Id: ViewerproxyWebinterfaceTesterSuite.java 1042 2009-09-30 18:12:50Z kfc $
- * Version: $Revision: 1042 $
- * Date:    $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
- * Author:  $Author: kfc $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -64,7 +64,7 @@ import dk.netarkivet.common.utils.batch.LoadableJarBatchJob;
 /**
  * Utility class for creating the web page content for the batchjob pages.
  */
-public class BatchGUI {
+public final class BatchGUI {
     /** The log.*/
     private static Log log = LogFactory.getLog(BatchGUI.class);
 
@@ -392,13 +392,14 @@ public class BatchGUI {
      * 
      * Arguments:<br/>
      * regex (The regular expression for the urls.)<br/>
-     * <input name="arg1" size="50" value=""><br/>
+     * <input name="arg1" size="50" value="" /><br/>
      * mimetype<br/>
-     * <input name="arg2" size="50" value=""><br/>
+     * <input name="arg2" size="50" value="" /><br/>
      * Argument 3 (missing argument metadata)<br/>
-     * <input name="arg3" size="50" value=""><br/>
+     * <input name="arg3" size="50" value="" /><br/>
      * 
      * @param c The class whose constructor should be used.
+     * @param locale The language package.
      * @return The HTML code for the arguments for executing the batchjob.
      */
     @SuppressWarnings("unchecked")
@@ -432,8 +433,8 @@ public class BatchGUI {
             for(int i = 1; i <= params.length; i++) {
                 res.append(I18N.getString(locale, "batchpage;Argument.i", i)
                         + "<br/>\n");
-                res.append("<input name=\"arg" + i + "\" size=\"" + 50 
-                        + "\" value=\"\"><br/>\n");
+                res.append("<input name=\"arg" + i + "\" size=\"" 
+                        + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
             }
         } else {
             int parmIndex = 0;
@@ -447,17 +448,17 @@ public class BatchGUI {
                         res.append(" (" + resource[i].description() + ")");
                     }
                     res.append("<br/>\n");
-                    res.append("<input name=\"arg" + parmIndex + "\" size=\"" + 50 
-                            + "\" value=\"\"><br/>\n");
+                    res.append("<input name=\"arg" + parmIndex + "\" size=\"" 
+                            + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
                 }
             }
             if(parmIndex < params.length) {
                 for(int i = parmIndex + 1; i <= params.length; i++) {
                     res.append(I18N.getString(locale, 
-                            "batchpage;Argument.i.missing.argument.metadata", i)
-                            + "<br/>\n");
-                    res.append("<input name=\"arg" + i + "\" size=\"" + 50 
-                            + "\" value=\"\"><br/>\n");
+                            "batchpage;Argument.i.missing.argument.metadata", 
+                            i) + "<br/>\n");
+                    res.append("<input name=\"arg" + i + "\" size=\"" 
+                            + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
                 }
             }
         }
@@ -601,7 +602,7 @@ public class BatchGUI {
                         + "?filename=" + outputFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.outputfile", 
-                                new Object[]{}) + "</a></td>\n");                
+                                new Object[]{}) + "</a></td>\n");
             }
             
             // insert information about error file
@@ -627,7 +628,7 @@ public class BatchGUI {
                         + "?filename=" + errorFile.getName() + ">"
                         + I18N.getString(locale, 
                                 "batchpage;Download.errorfile", 
-                                new Object[]{}) + "</a></td>\n");                
+                                new Object[]{}) + "</a></td>\n");
             }
             
             // end row 
@@ -719,7 +720,6 @@ public class BatchGUI {
      * <br/>
      * <input type="radio" name="filetype" value="Both" checked />Both<br/>
      * 
-     * @param value The base value for the input box. 
      * @param locale The locale language package.
      * @return The HTML code for creating the regular expression input box.
      */
@@ -796,11 +796,15 @@ public class BatchGUI {
      * &lt;tr&gt;<br/>
      *   &lt;th&gt;ChecksumJob&lt;/th&gt;<br/>
      *   &lt;th&gt;Tue Mar 23 13:56:45 CET 2010&lt;/th&gt;<br/>
-     *   &lt;th&gt;&lt;input type="submit" name="ChecksumJob_output" value="view" /&gt;<br/> 
-     *   &lt;input type="submit" name="ChecksumJob_output" value="download" /&gt;  <br/>
+     *   &lt;th&gt;&lt;input type="submit" name="ChecksumJob_output" 
+     *   value="view" /&gt;<br/> 
+     *   &lt;input type="submit" name="ChecksumJob_output" 
+     *   value="download" /&gt;  <br/>
      *   5 bytes&lt;/th&gt;<br/>
-     *   &lt;th&gt;&lt;input type="submit" name="ChecksumJob_error" value="view" /&gt;<br/> 
-     *   &lt;input type="submit" name="ChecksumJob_error" value="download" /&gt;<br/>
+     *   &lt;th&gt;&lt;input type="submit" name="ChecksumJob_error" 
+     *   value="view" /&gt;<br/> 
+     *   &lt;input type="submit" name="ChecksumJob_error" 
+     *   value="download" /&gt;<br/>
      *   5 bytes&lt;/th&gt;<br/>
      * &lt;/tr&gt;
      * 
@@ -902,7 +906,8 @@ public class BatchGUI {
             
             // clear the string builder.
             res = new StringBuilder();
-            res.append(I18N.getString(locale, "batchpage;Warning.0", errMsg) + "\n");
+            res.append(I18N.getString(locale, "batchpage;Warning.0", 
+                    errMsg) + "\n");
             res.append("    <td>" + batchClassPath + "</td>\n");
             res.append("    <td>" + "--" + "</td>\n");
             res.append("    <td>" + "--" + "</td>\n");

@@ -1,7 +1,7 @@
-/* File:    $Id: ViewerproxyWebinterfaceTesterSuite.java 1042 2009-09-30 18:12:50Z kfc $
- * Version: $Revision: 1042 $
- * Date:    $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
- * Author:  $Author: kfc $
+/* File:    $Id$
+ * Version: $Revision$
+ * Date:    $Date$
+ * Author:  $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -45,7 +45,6 @@ import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
 
 /**
  * Class for execution of a batchjob in a separate thread.
- * 
  */
 public class BatchExecuter extends Thread {
     /** Whether the results should be appended to the file */

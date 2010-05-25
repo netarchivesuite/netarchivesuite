@@ -195,6 +195,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(output, "OutputStream output");
 
         // Let the loaded job handle the post processing. 
+        log.debug("Post-processing in the loaded batchjob.");
         loadBatchJob();
         return loadedJob.postProcess(input, output);
     }

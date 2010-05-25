@@ -80,7 +80,7 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
                     ByteArrayOutputStream out = new ByteArrayOutputStream(
                             (int) entry.getSize());
                     StreamUtils.copyInputStreamToOutputStream(in, out);
-                    log.debug("Entering data for class '" + name + "'");
+                    log.trace("Entering data for class '" + name + "'");
                     binaryData.put(name, out.toByteArray());
                 }
             } catch (IOException e) {
