@@ -557,8 +557,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             }
             
             //Get remote file for batch  result
-            resultsFile = RemoteFileFactory.getMovefileInstance(
-                    postFile);
+            resultsFile = RemoteFileFactory.getMovefileInstance(postFile);
         } catch (Exception e) {
             log.warn("Make remote file from "
                     + bjs.batchResultFile, e);
