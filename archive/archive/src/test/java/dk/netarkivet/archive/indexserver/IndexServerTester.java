@@ -19,14 +19,6 @@ public class IndexServerTester extends TestCase {
         JMSConnectionMockupMQ.clearTestQueues();
     }
 
-//    /**
-//     * Test the basic class.
-//     * TODO IT DOES SOMETHING SO LATER UNIT TESTS DOES NOT WORK 
-//     */
-//    public void testIndexServer() {
-//        IndexServer.getInstance().cleanup();
-//    }
-    
     /**
      * Ensure, that the application dies if given the wrong input.
      */
@@ -51,5 +43,13 @@ public class IndexServerTester extends TestCase {
         assertEquals("Should give exit code 1", 1, pse.getExitValue());
         assertTrue("Should tell that no arguments are expected.", 
                 pss.getOut().contains("This application takes no arguments"));
+    }
+    
+    /**
+     * Test the basic class.
+     * TODO IT DOES SOMETHING SO THE PREVIOUS UNIT TESTS DOES NOT WORK 
+     */
+    public void testIndexServer() {
+        IndexServer.getInstance().cleanup();
     }
 }
