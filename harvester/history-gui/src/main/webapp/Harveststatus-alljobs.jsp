@@ -90,6 +90,7 @@ resubmit - jobID of a job to resubmit.
 
 <script type="text/javascript">
 
+// Resets the search form to default values.
 function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_STATUS.name()%>.selectedIndex = 0;
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name()%>.selectedIndex = 0;	
@@ -101,11 +102,13 @@ function resetForm() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "";
 }
 
+// Displays the next page of results (if available).
 function previousPage() {
 	document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "<%=query.getStartPageIndex() - 1%>";
 	document.filtersForm.submit();
 }
 
+//Displays the previous page of results (if available).
 function nextPage() {
     document.filtersForm.<%=HarvestStatusQuery.UI_FIELD.START_PAGE_INDEX.name()%>.value = "<%=query.getStartPageIndex() + 1%>";
     document.filtersForm.submit();
@@ -410,7 +413,7 @@ function resubmitSelectedJobs() {
         <th><fmt:message key="table.job.uploaderror"/></th>
         <th><fmt:message key="table.job.number.of.domainconfigurations"/></th>
         <% if (generateResubmitForm) { %>
-            <th><input type="checkbox" name="resubmit_all" onchange="resubmitToggleSelection()"/></tr>
+            <th><input type="checkbox" name="resubmit_all" onchange="resubmitToggleSelection()"/></tr></th>
         <% } %>
     <%
         int rowcount = 0;

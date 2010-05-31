@@ -23,7 +23,6 @@
 
 package dk.netarkivet.harvester.datamodel;
 
-import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,6 +55,7 @@ import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FilterIterator;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.harvester.webinterface.HarvestStatus;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.SORT_ORDER;
@@ -419,7 +419,7 @@ public class JobDBDAO extends JobDAO {
             	Clob clob = result.getClob(7);
             	orderXMLdoc = getOrderXMLdocFromClob(clob); 
             } else {
-            	orderXMLdoc = getOrderXMLdocFromString(result.getString(7));
+            	orderXMLdoc = XmlUtils.documentFromString(result.getString(7));
             }
             String seedlist = "";
             if (useClobs) {
@@ -525,26 +525,6 @@ public class JobDBDAO extends JobDAO {
         } catch (DocumentException e) {
             log.warn("Failed to read the contents of the clob as XML:"
                     +  clob.getSubString(1, (int) clob.length()));
-            throw e;
-        }
-        return doc;
-    }
-    
-    /** Try to extract an orderxmldoc from a given string.
-     * This method is used by the read() method, which catches the
-     * thrown DocumentException.
-     */
-    private Document getOrderXMLdocFromString(String xml) 
-    throws DocumentException {
-        Document doc;
-        try {
-            SAXReader reader = new SAXReader();
-            StringReader in = new StringReader(xml);
-            doc = reader.read(in);
-            in.close();
-        } catch (DocumentException e) {
-            log.warn(
-            		"Failed to read the contents of the string as XML:" +  xml);
             throw e;
         }
         return doc;
@@ -1047,6 +1027,12 @@ public class JobDBDAO extends JobDAO {
         return joblist;
     }
     
+    /**
+     * Builds a query to fetch jobs according to selection criteria.
+     * @param query the selection criteria.
+     * @param count build a count query instead of selecting columns.
+     * @return the proper SQL query.
+     */
     private String buildSqlQuery(
     		HarvestStatusQuery query,
     		boolean count) {

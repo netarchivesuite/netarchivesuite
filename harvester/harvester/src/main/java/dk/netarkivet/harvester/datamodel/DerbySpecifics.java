@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -112,10 +111,9 @@ public abstract class DerbySpecifics extends DBSpecifics {
     }
     
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
-    	// LIMIT sub-clause not supported by Derby...
-    	// There are rownum commands, but the syntax is different 
-    	// see http://db.apache.org/derby/faq.html#limit
-    	return "";
+    	// LIMIT sub-clause supported by Derby 10.5.3 
+    	// see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
+    	return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY" ;
     }
     
     @Override

@@ -1,4 +1,5 @@
 //EDITABLE HTML SELECT BOX SCRIPT
+//Source:  http://www.javascriptkit.com/script/script2/editableselect.shtml
 //Author: Teo Cerovski
 //CommentsTo: teoDOTcerovskiATgmailDOTcom
 /*

@@ -1,7 +1,7 @@
--- $Id: netarchivesuite_init.sql 772 2009-12-11 17:55:38Z svc $
--- $Revision: 772 $
--- $Date: 2009-03-19 18:55:38 +0100 (Thu, 19 Mar 2009) $
--- $Author: svc $ 
+-- $Id$
+-- $Revision$
+-- $Date$
+-- $Author$ 
  
 -- PostgreSQL creation scripts
 -- presupposes PostgresSQL 8.3+

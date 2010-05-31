@@ -1,8 +1,8 @@
 <%--
-File:       $Id: scripts.jsp 1042 2009-09-30 18:12:50Z kfc $
-Revision:   $Revision: 1042 $
-Author:     $Author: kfc $
-Date:       $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+File:       $Id$
+Revision:   $Revision$
+Author:     $Author$
+Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
 Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

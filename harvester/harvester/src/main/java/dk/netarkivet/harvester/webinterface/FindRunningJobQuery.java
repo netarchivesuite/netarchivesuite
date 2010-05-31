@@ -1,7 +1,7 @@
-/* File:       $Id: FindRunningJobQuery.java 752 2009-03-05 18:09:21Z svc $
- * Revision:   $Revision: 752 $
- * Author:     $Author: svc $
- * Date:       $Date: 2009-03-05 19:09:21 +0100 (to, 05 mar 2009) $
+/* File:       $Id$
+ * Revision:   $Revision$
+ * Author:     $Author$
+ * Date:       $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2007 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

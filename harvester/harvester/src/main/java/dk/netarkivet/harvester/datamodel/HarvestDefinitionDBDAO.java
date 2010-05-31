@@ -1138,7 +1138,7 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-            		"SELECT domains.name"
+            		"SELECT DISTINCT domains.name"
                     + " FROM     domains,"
                     + "          configurations,"
                     + "          harvest_configs,"

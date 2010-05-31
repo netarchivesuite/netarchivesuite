@@ -221,7 +221,7 @@ public class MySQLSpecifics extends DBSpecifics {
 
 	@Override
 	public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
-		return "LIMIT " + offset + " " + limit;
+		return "LIMIT " + offset + ", " + limit;
 	}
 
 }

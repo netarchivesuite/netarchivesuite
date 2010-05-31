@@ -1,8 +1,8 @@
 <%--
-File:       $Id: Harveststatus-running.jsp 1042 2009-09-30 18:12:50Z kfc $
-Revision:   $Revision: 1042 $
-Author:     $Author: kfc $
-Date:       $Date: 2009-09-30 20:12:50 +0200 (Wed, 30 Sep 2009) $
+File:       $Id$
+Revision:   $Revision$
+Author:     $Author$
+Date:       $Date$
 
 The Netarchive Suite - Software to harvest and preserve websites
 Copyright 2004-2009 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -87,17 +87,18 @@ This page displays a list of running jobs.
 
 <tr class="spacerRowBig"><td colspan="12">&nbsp;</td></tr>
 <tr><th colspan="12">
-    <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href=<%= harvestDetailsLink %>><%=harvestName %></a>
-</th> 
+    <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href=<%=harvestDetailsLink%>><%=harvestName %></a>
+</th>
+</tr> 
 <tr class="spacerRowSmall"><td colspan="12">&nbsp;</td></tr>
 <tr>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.jobId"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.host"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.progress"/></th>
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.elapsedTime"/></th>
-    <%-->th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></td--%>
-    <th class="harvestHeader" colspan="4"><fmt:message key="table.running.jobs.queues"/></td>        
-    <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></td>        
+    <%-->th class="harvestHeader" colspan="5"><fmt:message key="table.running.jobs.queues"/></th--%>
+    <th class="harvestHeader" colspan="4"><fmt:message key="table.running.jobs.queues"/></th>        
+    <th class="harvestHeader" colspan="3"><fmt:message key="table.running.jobs.performance"/></th>        
     <th class="harvestHeader" rowspan="2"><fmt:message key="table.running.jobs.alerts"/></th>
 </tr>
 <tr>
