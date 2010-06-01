@@ -32,6 +32,7 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
+import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
 /**
  * Basic unit tests for the StoreMessage.
@@ -40,15 +41,18 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  */
 public class StoreMessageTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
+    UseTestRemoteFile rm = new UseTestRemoteFile();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS, TestInfo.WORKING);
 
     public void setUp() {
         rs.setUp();
+        rm.setUp();
         mtf.setUp();
         JMSConnectionMockupMQ.useJMSConnectionMockupMQ();
     }
 
     public void tearDown() {
+        rm.tearDown();
         rs.tearDown();
         mtf.tearDown();
     }
