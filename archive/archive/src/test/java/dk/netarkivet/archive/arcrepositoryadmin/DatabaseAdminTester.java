@@ -1,5 +1,7 @@
 package dk.netarkivet.archive.arcrepositoryadmin;
 
+import java.util.Set;
+
 import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.common.CommonSettings;
@@ -118,5 +120,20 @@ public class DatabaseAdminTester extends TestCase {
         } catch (IllegalState e) {
             // expected
         }
+        
+        Set<String> filenames = da.getAllFileNames();
+        assertTrue("Should contain the file '" + TestInfo.TEST_FILE_1.getName() 
+                + "' but was '" + filenames, filenames.contains(TestInfo.TEST_FILE_1.getName()));
+        
+        filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_FAILED);
+        assertTrue("The list of files with state UPLOAD_FAILED for replica "
+                + "THREE should be empty, but it was: " + filenames, 
+                filenames.isEmpty());
+
+        filenames = da.getAllFileNames(THREE, ReplicaStoreState.UPLOAD_COMPLETED);
+        assertTrue("The list of files with state UPLOAD_COMPLETED for replica "
+                + "THREE should contain the file: '" + TestInfo.TEST_FILE_1.getName() 
+                + "', but it contained: " + filenames, 
+                filenames.contains(TestInfo.TEST_FILE_1.getName()));
     }
 }
