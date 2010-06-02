@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.controller;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 

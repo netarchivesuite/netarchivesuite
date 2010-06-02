@@ -29,8 +29,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixController;
-import dk.netarkivet.harvester.harvesting.HeritrixControllerFactory;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 
@@ -81,6 +79,20 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
         return new DefaultHeritrixLauncher(files);
     }
 
+    /**
+     * This method launches heritrix in the following way:</br> 1. copies the
+     * orderfile and the seedsfile to current working directory. </br> 2. sets
+     * up the newly created copy of the orderfile </br> 3. starts the crawler
+     * </br> 4. stops the crawler (Either when heritrix has finished crawling,
+     * or when heritrix is forcefully stopped due to inactivity). </p> The exit
+     * from the while-loop depends on Heritrix calling the crawlEnded() method,
+     * when the crawling is finished. This method is called from the
+     * HarvestControllerServer.onDoOneCrawl() method.
+     *
+     * @throws IOFailure - if the order.xml is invalid if unable to initialize
+     *                   Heritrix CrawlController if Heritrix process
+     *                   interrupted
+     */
 	public void doCrawl() throws IOFailure {
         setupOrderfile();
         heritrixController = 

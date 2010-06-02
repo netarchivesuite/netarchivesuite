@@ -68,7 +68,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncherFactory;
-import dk.netarkivet.harvester.harvesting.JMXHeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LuceneUtils;

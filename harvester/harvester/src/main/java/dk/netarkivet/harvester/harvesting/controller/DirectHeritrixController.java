@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.harvesting;
+package dk.netarkivet.harvester.harvesting.controller;
 
 import javax.management.InvalidAttributeValueException;
 import java.io.File;
@@ -37,6 +37,7 @@ import org.archive.crawler.settings.XMLSettingsHandler;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 
 /** This class encapsulates one full run of Heritrix by grabbing hold of a
  * CrawlController class. It implements the CrawlController interface.

@@ -90,7 +90,7 @@
                 <class>dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher</class>
             </heritrixLauncher>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
             </heritrixController>
             <deduplication>
                 <enabled>true</enabled>

@@ -63,6 +63,7 @@ public abstract class HarvesterMessageHandler
      *
      * @param msg an ObjectMessage
      */
+    @Override
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Message received:\n" + msg.toString());
@@ -92,6 +93,7 @@ public abstract class HarvesterMessageHandler
      * @param msg a CrawlStatusMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(CrawlStatusMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
@@ -103,6 +105,7 @@ public abstract class HarvesterMessageHandler
      * @param msg a DoOneCrawlMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(DoOneCrawlMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);

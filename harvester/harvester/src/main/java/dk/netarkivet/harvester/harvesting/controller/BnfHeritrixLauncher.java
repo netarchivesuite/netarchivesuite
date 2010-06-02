@@ -27,13 +27,18 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
+import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
+import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
 
 /**
- * @author ngiraud
- *
+ * BnF specific Heritrix launcher, that forces the use of 
+ * {@link BnfHeritrixController}. Every turn of the crawl control loop, asks the
+ * Heritrix controller to generate a progress report as a 
+ * {@link CrawlProgressMessage} and then send this message on the JMS bus to
+ * be consulmed by the {@link HarvestMonitorServer} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
 	
@@ -53,7 +58,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * @param files Object encapsulating location of Heritrix crawldir and
      *              configuration files
      *
-     * @return {@link DefaultHeritrixLauncher} object
+     * @return {@link BnfHeritrixLauncher} object
      *
      * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist,
      *                          or argument files is null.
@@ -64,7 +69,19 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
         return new BnfHeritrixLauncher(files);
     }
 
-	public void doCrawl() throws IOFailure {
+    /**
+     * Initializes an Heritrix controller, then launches the Heritrix instance.
+     * Then starts the crawl control loop:
+     * <ol>
+     * <li>Waits the amount of time configured in 
+     * {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.</li>
+     * <li>Obtains carwl progress information as a {@link CrawlProgressMessage}
+     * from the Heritrix controller</li>
+     * <li>Sends the progress message via JMS</li>
+     * <li>If the crawl if reported as finished, end loop.</li>
+     * </ol>
+     */
+    public void doCrawl() throws IOFailure {
     	setupOrderfile();
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
         try {
@@ -101,7 +118,7 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
                          + "\n"
                          + cpm.getProgressStatisticsLegend() + "\n"
                      	 + cpm.getJobStatus().getStatus() 
-                     	 + " " + cpm.getJobStatus().getProgressStatistics());        	
+                     	 + " " + cpm.getJobStatus().getProgressStatistics());
                 
             }
             

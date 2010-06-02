@@ -29,59 +29,26 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.STATUS;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 
 /**
  * This class is a simple bean storing information about a started job.
  */
 public class StartedJobInfo implements Comparable<StartedJobInfo> {
 	
-	/**
-	 * Utility class, formats strings representing durations.
-	 */
-	private static class DurationFormatter {
-		private static final long DAY = 60 * 60 * 24;
-		private static final long HOUR = 60 * 60;
-		private static final long MINUTE = 60;		
-		public static String format(long seconds) {
-			if (seconds > 0L) {
-				long lRest;
-
-				String strDays = lpad(String.valueOf(seconds / DAY)) + "d ";
-				lRest = seconds % DAY;
-				
-				String strHours = lpad(String.valueOf(lRest / HOUR)) + ":";
-				lRest %= HOUR;
-				
-				String strMinutes = lpad(String.valueOf(lRest / MINUTE)) + ":";
-				lRest %= MINUTE;
-				
-				String strSeconds = lpad(String.valueOf(lRest));
-
-				return  strDays + strHours + strMinutes + strSeconds ;
-			
-			} else if (seconds == 0L) {
-				return "0d 00:00:00";
-			} else {
-				return "-1";
-			}
-		}
-	
-	    private static String lpad(String s) {
-	    	return (s.length() == 1 ? "0" + s : s);
-	    }
-	
-	}
-
 	private static final String NOT_AVAILABLE_STRING = "";
 	private static final long NOT_AVAILABLE_NUM = -1L;
 
 	private static final DecimalFormat DECIMAL = new DecimalFormat("###.##");
 
+	/**
+	 * A text format used to parse Heritrix's short frontier report.
+	 */
 	private static final MessageFormat FRONTIER_SHORT_FMT = new MessageFormat(
 			"{0} queues: {1} active ({2} in-process; "
 					+ "{3} ready; {4} snoozed); {5} inactive; "
@@ -93,7 +60,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 	private long jobId;
 	
 	/**
-	 * The owner harvest's name.
+	 * The name of the harvest this job belongs to. 
 	 */
 	private String harvestName;
 	
@@ -164,7 +131,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 	private double processedDocsPerSec;
 	
 	/**
-	 * Number of active Heritrix worker threads
+	 * Number of active Heritrix worker threads.
 	 */
 	private int activeToeCount;
 	
@@ -176,12 +143,12 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 	/**
 	 * Current job status.
 	 */
-	private STATUS status;
+	private CrawlStatus status;
 
 	/**
 	 * Instantiates all readable fields with default values.
-	 * @param harvestId
-	 * @param jobId
+	 * @param harvestId the ID of the harvest
+	 * @param jobId the ID of the job
 	 */
 	protected StartedJobInfo(long harvestId, long jobId) {
 		this.jobId = jobId;
@@ -202,17 +169,26 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 		this.currentProcessedDocsPerSec = NOT_AVAILABLE_NUM;
 		this.processedDocsPerSec = NOT_AVAILABLE_NUM;
 		this.activeToeCount = (int) NOT_AVAILABLE_NUM;
-		this.status = STATUS.PRE_CRAWL;
+		this.status = CrawlStatus.PRE_CRAWL;
 	}
 
+	/**
+	 * @return the job ID.
+	 */
 	public long getJobId() {
 		return jobId;
 	}
 
+	/**
+	 * @return the harvest name.
+	 */
 	public String getHarvestName() {
 		return harvestName;
 	}
 
+	/**
+	 * @return the name of the host on which Heritrix is crawling this job.
+	 */
 	public String getHostName() {
 		if (NOT_AVAILABLE_STRING.equals(hostUrl)) {
 			return NOT_AVAILABLE_STRING;
@@ -224,22 +200,38 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 		}
 	}
 
+	/**
+	 * @return the URL of the Heritrix admin console for the instance 
+	 * crawling this job.
+	 */
 	public String getHostUrl() {
 		return hostUrl;
 	}
 
+	/**
+	 * @return the crawl progress as a percentage.
+	 */
 	public String getProgress() {
 		return DECIMAL.format(progress) + "%";
 	}
 
+	/**
+	 * @return the number of queued files reported by Heritrix.
+	 */
 	public long getQueuedFilesCount() {
 		return queuedFilesCount;
 	}
 
+	/**
+	 * @return the number of queues reported by Heritrix.
+	 */
 	public long getTotalQueuesCount() {
 		return totalQueuesCount;
 	}
 
+	/**
+	 * @return the number of active queues reported by Heritrix.
+	 */
 	public long getActiveQueuesCount() {
 		return activeQueuesCount;
 	}
@@ -248,43 +240,74 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 //		return retiredQueuesCount;
 //	}
 
+	/**
+	 * @return the number of exhausted queues reported by Heritrix.
+	 */
 	public long getExhaustedQueuesCount() {
 		return exhaustedQueuesCount;
 	}
 
+	/**
+	 * @return the formatted duration of the crawl.
+	 */
 	public String getElapsedTime() {
-		return DurationFormatter.format(elapsedSeconds);
+		return StringUtils.formatDuration(elapsedSeconds);
 	}
 
+	/**
+	 * @return the number of alerts raised by Heritrix.
+	 */
 	public long getAlertsCount() {
 		return alertsCount;
 	}
 
+	/**
+	 * @return the number of downloaded URIs reported by Heritrix.
+	 */
 	public long getDownloadedFilesCount() {
 		return downloadedFilesCount;
 	}
 
+	/**
+	 * @return the current download rate in KB/sec reported by Heritrix.
+	 */
 	public String getCurrentProcessedKBPerSec() {
 		return DECIMAL.format(currentProcessedKBPerSec);
 	}
 	
+	/**
+	 * @return the average download rate in KB/sec reported by Heritrix.
+	 */
 	public String getProcessedKBPerSec() {
 		return DECIMAL.format(processedKBPerSec);
 	}
 
+	/**
+	 * @return the current download rate in URI/sec reported by Heritrix.
+	 */
 	public String getCurrentProcessedDocsPerSec() {
 		return DECIMAL.format(currentProcessedDocsPerSec);
 	}
 	
+	/**
+	 * @return the average download rate in URI/sec reported by Heritrix.
+	 */
 	public String getProcessedDocsPerSec() {
 		return DECIMAL.format(processedDocsPerSec);
 	}
 
+	/**
+	 * @return the number of active processor threads reported by Heritrix.
+	 */
 	public int getActiveToeCount() {
 		return activeToeCount;
 	}
 
-	public STATUS getStatus() {
+	/**
+	 * @return the job status
+	 * @see CrawlStatus
+	 */
+	public CrawlStatus getStatus() {
 		return status;
 	}
 
@@ -314,14 +337,19 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 			+ "\n}";
 	}
 	
+	/**
+	 * Updates the members from a {@link CrawlProgressMessage} instance.
+	 * @param msg the {@link CrawlProgressMessage} to process.
+	 */
 	public void update(CrawlProgressMessage msg) {
 		
 		CrawlServiceInfo heritrixInfo = msg.getHeritrixStatus();
 		CrawlServiceJobInfo jobInfo = msg.getJobStatus();
 		
-		STATUS newStatus = msg.getStatus();
+		CrawlStatus newStatus = msg.getStatus();
 		switch (newStatus) {
 			case PRE_CRAWL:
+				// Initialize statistics-variables before starting the crawl.
 				this.activeQueuesCount = 0;
 				this.activeToeCount = 0;
 				this.alertsCount = 0;
@@ -339,9 +367,10 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 				
 			case CRAWLER_ACTIVE:
 			case CRAWLER_PAUSED:
+				// Update statistics for the crawl
 				double discoveredCount = jobInfo.getDiscoveredFilesCount();
 				double downloadedCount = jobInfo.getDownloadedFilesCount();
-				this.progress  = 100 * downloadedCount / discoveredCount;				
+				this.progress  = 100 * downloadedCount / discoveredCount;
 
 				String frontierShortReport = jobInfo.getFrontierShortReport();
 				if (frontierShortReport != null) {
@@ -352,8 +381,8 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 							Long.parseLong((String) params[0]);
 						this.activeQueuesCount = 
 							Long.parseLong((String) params[1]);
-						//						this.retiredQueuesCount = 
-						//						Long.parseLong((String) params[6]);
+						// this.retiredQueuesCount = 
+						// Long.parseLong((String) params[6]);
 						this.exhaustedQueuesCount = 
 							Long.parseLong((String) params[7]);
 					} catch (ParseException e) {
@@ -377,6 +406,7 @@ public class StartedJobInfo implements Comparable<StartedJobInfo> {
 				break;
 
 			case CRAWLING_FINISHED:
+				// Set progress to 100 %, and reset the other values .
 				this.progress = 100;
 				this.hostUrl = "";
 				this.activeQueuesCount = 0;

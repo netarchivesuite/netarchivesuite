@@ -503,7 +503,7 @@
                 <javaOpts/>                
             </heritrix>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
             </heritrixController>
             <deduplication>
                 <enabled>true</enabled>

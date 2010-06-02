@@ -96,7 +96,7 @@ public class HarvestScheduler implements CleanupIF {
     private static HarvestSchedulerMonitorServer hsmon;
     
     /**
-     * Listens for CrawlProgressMessage
+     * Listens for CrawlProgressMessage.
      */
 	private static HarvestMonitorServer hpmon;
 

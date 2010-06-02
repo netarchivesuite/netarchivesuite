@@ -37,7 +37,7 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  * This class wraps information stored in the Heritrix MBeans, CrawlService and 
  * CrawlService.Job, and represent the crawl progress.
  * 
- * Additionnally this object extends {@link HarvesterMessage} so that it can be
+ * Additionally this object extends {@link HarvesterMessage} so that it can be
  * sent on the JMS bus to be processed by {@link HarvestMonitorServer}.
  * 
  *  @see HeritrixLauncher#doCrawl()
@@ -50,7 +50,7 @@ implements Serializable {
 	/**
 	 * The general status of a job in NAS.
 	 */
-	public static enum STATUS {
+	public static enum CrawlStatus {
 		/**
 		 * Initial status of a job: Heritrix has not yet started crawling.
 		 */
@@ -84,7 +84,7 @@ implements Serializable {
 		 */
 		private int alertCount;
 		/**
-		 * Flag is set to true <hen Heritrix is crawling or paused.
+		 * Flag is set to true when Heritrix is crawling or paused.
 		 */
 		private boolean isCrawling;
 		/**
@@ -286,7 +286,7 @@ implements Serializable {
 	/**
 	 * The job's status.
 	 */
-	private STATUS status;
+	private CrawlStatus status;
 	
 	/**
 	 * A legend, fetched only once, for the 
@@ -309,7 +309,8 @@ implements Serializable {
 	 * appropriate getters should be used to do so. 
 	 * @param harvestID the harvest definition ID
 	 * @param jobId the job ID
-	 * @param progressStatisticsLegend 
+	 * @param progressStatisticsLegend the legend of the progress statistics 
+	 * summary string 
 	 * @see {@link CrawlProgressMessage#progressStatisticsLegend}
 	 */
 	public CrawlProgressMessage(
@@ -319,13 +320,14 @@ implements Serializable {
 		super(HarvestMonitorServer.JMS_CHANNEL_ID, Channels.getError());
 		this.harvestID = harvestID;
 		this.jobID = jobId;
-		this.status = STATUS.PRE_CRAWL;
+		this.status = CrawlStatus.PRE_CRAWL;
 		this.progressStatisticsLegend = progressStatisticsLegend;
 	}
 	
 	/**
 	 * Builds an empty message. MBean wrapper values are not set and the 
-	 * appropriate getters should be used to do so. 
+	 * appropriate getters should be used to do so. The progressStatisticsLegend 
+	 * is set to the empty string.
 	 * @param harvestID the harvest definition ID
 	 * @param jobId the job ID
 	 */
@@ -347,11 +349,11 @@ implements Serializable {
 		this.hostUrl = hostUrl;
 	}
 
-	public STATUS getStatus() {
+	public CrawlStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(STATUS status) {
+	public void setStatus(CrawlStatus status) {
 		this.status = status;
 	}
 
@@ -387,7 +389,7 @@ implements Serializable {
      * Heritrix GUI.
      */
     public boolean isPaused() {
-        return STATUS.CRAWLER_PAUSED.equals(status);
+        return CrawlStatus.CRAWLER_PAUSED.equals(status);
     }
     
     /**

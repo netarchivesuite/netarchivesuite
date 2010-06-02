@@ -148,7 +148,7 @@ implements MessageListener {
 	public void visit(CrawlProgressMessage msg) {
 		ArgumentNotValid.checkNotNull(msg, "msg");
 		
-		Long jobId = new Long(msg.getJobID());
+		Long jobId = Long.valueOf(msg.getJobID());
 		
 		JobStatus jobStatus = JobDAO.getInstance().read(jobId).getStatus(); 
 		if (! JobStatus.STARTED.equals(jobStatus)) {
@@ -194,9 +194,13 @@ implements MessageListener {
 		return infoMap;
 	}
 	
+	/**
+	 *  Removes from the list of started jobs any job whose status is not
+	 *  started (finished or erroneous jobs). 
+	 */
 	private void cleanJobInfos() {
 		
-		// Fetch the IDs of started job
+		// Fetch the IDs of started jobs
 		List<JobStatusInfo> startedJobs = 
 			JobDAO.getInstance().getStatusInfo(JobStatus.STARTED);				
 		List<Long> startedJobIds = new ArrayList<Long>();				

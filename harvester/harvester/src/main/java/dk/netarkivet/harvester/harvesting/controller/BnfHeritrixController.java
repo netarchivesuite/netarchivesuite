@@ -22,10 +22,6 @@
  */
 package dk.netarkivet.harvester.harvesting.controller;
 
-/**
- * @author ngiraud
- *
- */
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
@@ -64,6 +60,7 @@ import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
+import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.JMXUtils;
@@ -74,13 +71,12 @@ import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.SystemUtils;
 import dk.netarkivet.common.utils.TimeUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.harvesting.HeritrixController;
 import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 import dk.netarkivet.harvester.harvesting.MetadataFile;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceInfo;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlServiceJobInfo;
-import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.STATUS;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage.CrawlStatus;
 
 /**
  * This implementation of the HeritrixController interface starts Heritrix as a
@@ -100,12 +96,20 @@ public class BnfHeritrixController implements HeritrixController {
 	 * 
 	 * Only operations and attributes used in NAS are listed.
 	 */
-
 	private static enum CrawlServiceAttribute {
+		/** The number of alerts raised by Heritrix. */
 		AlertCount,
+		/** True if Heritrix is currently crawling, false otherwise. */
 		IsCrawling,
+		/** The ID of the job being currently crawled by Heritrix. */
 		CurrentJob;		
 		
+		/**
+		 * Returns the {@link CrawlServiceAttribute} enum value matching 
+		 * the given name. Throws {@link UnknownID} if no match is found.
+		 * @param name the attribute name
+		 * @return the corresponding {@link CrawlServiceAttribute} enum value.
+		 */
 		public static CrawlServiceAttribute fromString(String name) {
 			for (CrawlServiceAttribute att : values()) {
 				if (att.name().equals(name)) {
@@ -117,17 +121,34 @@ public class BnfHeritrixController implements HeritrixController {
 	}
 
 	private static enum CrawlServiceJobAttribute {
+		/** The time in seconds elapsed since the crawl began. */
 		CrawlTime, 
-		CurrentDocRate, 
+		/** The current download rate in URI/s. */
+		CurrentDocRate,
+		/** The current download rate in kB/s. */
 		CurrentKbRate, 
+		/** The number of URIs discovered by Heritrix. */
 		DiscoveredCount, 
+		/** The average download rate in URI/s. */
 		DocRate, 
+		/** The number of URIs downloaded by Heritrix. */
 		DownloadedCount, 
+		/** A string summarizing the Heritrix frontier. */
 		FrontierShortReport, 
+		/** The average download rate in kB/s. */
 		KbRate, 
+		/** The job status (Heritrix status). */
 		Status, 
+		/** The number of active toe threads. */
 		ThreadCount;
 
+		/**
+		 * Returns the {@link CrawlServiceJobAttribute} enum value matching 
+		 * the given name. Throws {@link UnknownID} if no match is found.
+		 * @param name the attribute name
+		 * @return the corresponding {@link CrawlServiceJobAttribute} 
+		 * enum value.
+		 */
 		public static CrawlServiceJobAttribute fromString(String name) {
 			for (CrawlServiceJobAttribute att : values()) {
 				if (att.name().equals(name)) {
@@ -139,16 +160,26 @@ public class BnfHeritrixController implements HeritrixController {
 	}
 
 	private static enum CrawlServiceOperation {
-		addJob, 
+		/** Adds a new job to an Heritrix instance. */
+		addJob,
+		/** Fetches the identifiers of pending jobs. */
 		pendingJobs, 
-		completedJobs, 
+		/** Fetches the identifiers of completed jobs. */
+		completedJobs,
+		/** Shuts down an Heritrix instance. */
 		shutdown, 
+		/** Instructs an Heritrix instance to starts crawling jobs. */
 		startCrawling, 
+		/** Instructs an Heritrix instance to terminate the current job. */
 		terminateCurrentJob;
 	}
 
 	private static enum CrawlServiceJobOperation {
+		/** Fetches the progress statistics string from an Heritrix instance. */
 		progressStatistics, 
+		/** Fetches the progress statistics legend string 
+		 * from an Heritrix instance. 
+		 */
 		progressStatisticsLegend;
 	}
 
@@ -706,7 +737,7 @@ public class BnfHeritrixController implements HeritrixController {
 		
 		boolean crawlIsFinished = cpm.crawlIsFinished();		
 		if (crawlIsFinished) {
-			cpm.setStatus(STATUS.CRAWLING_FINISHED);
+			cpm.setStatus(CrawlStatus.CRAWLING_FINISHED);
 			// No need to go further, CrawlService.Job bean does not exist
 			return cpm;
 		}
@@ -772,9 +803,9 @@ public class BnfHeritrixController implements HeritrixController {
 					String status = (String) value;
 					if (HeritrixStatus.PAUSED.name().equals(status)
 							|| HeritrixStatus.PAUSING.name().equals(status)) {
-						cpm.setStatus(STATUS.CRAWLER_PAUSED);
+						cpm.setStatus(CrawlStatus.CRAWLER_PAUSED);
 					} else {
-						cpm.setStatus(STATUS.CRAWLER_ACTIVE);
+						cpm.setStatus(CrawlStatus.CRAWLER_ACTIVE);
 					}
 				}
 				break;
@@ -926,13 +957,20 @@ public class BnfHeritrixController implements HeritrixController {
 		return Settings.get(HarvesterSettings.HERITRIX_ADMIN_PASSWORD);
 	}
 
+	/** Peridically scans the crawl dir to see if Heritrix has finished 
+	 * generating the crawl reports. The time to wait is bounded by
+	 * {@link HarvesterSettings#WAIT_FOR_REPORT_GENERATION_TIMEOUT}.
+	 * 
+	 * @param crawlDir the crawl directory to scan.
+	 */
 	private void waitForReportGeneration(File crawlDir) {
 
 		// Verify that crawlDir is present and can be read
 		if (!crawlDir.isDirectory() || !crawlDir.canRead()) {
 			String message = "'"
 					+ crawlDir.getAbsolutePath()
-					+ "' does not exist or is not a directory, or can't be read.";
+					+ "' does not exist or is not a directory, " 
+					+ "or can't be read.";
 			log.warn(message);
 			throw new ArgumentNotValid(message);
 		}
@@ -942,8 +980,8 @@ public class BnfHeritrixController implements HeritrixController {
 		long currentTime = System.currentTimeMillis();
 		long waitDeadline = currentTime
 				+ 1000
-				* Settings
-						.getLong(HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
+				* Settings.getLong(
+						HarvesterSettings.WAIT_FOR_REPORT_GENERATION_TIMEOUT);
 		boolean changed = true;
 		while (changed && (currentTime <= waitDeadline)) {
 			try {
@@ -960,6 +998,13 @@ public class BnfHeritrixController implements HeritrixController {
 		}
 	}
 
+	/**
+	 * Scans the crawl directory for files matching the desired crawl reports,
+	 * as defined by {@link MetadataFile#REPORT_FILE_PATTERN}
+	 * @param crawlDir the directory to scan
+	 * @return a map where key are the report filenames, and values their size
+	 * in bytes.
+	 */
 	private HashMap<String, Long> findReports(File crawlDir) {
 		HashMap<String, Long> reportSizes = new HashMap<String, Long>();
 
@@ -979,7 +1024,7 @@ public class BnfHeritrixController implements HeritrixController {
 	}
 
 	/**
-	 * Execute a single command
+	 * Execute a single command.
 	 * 
 	 * @param operation
 	 *            the operation to execute
@@ -1096,7 +1141,15 @@ public class BnfHeritrixController implements HeritrixController {
 				attributes);
 	}
 	
-	
+	/**
+	 * Executes a JMX call (attribute read or single operation) on a given bean.
+	 * @param beanName the MBean name.
+	 * @param isOperation true if the call is an operation, 
+	 * false if it's an attribute read.
+	 * @param names name of operation or name of attributes 
+	 * @param args optional arguments for operations
+	 * @return the object returned by the distant MBean
+	 */
 	private Object jmxCall(
 			String beanName,
 			boolean isOperation,
@@ -1158,6 +1211,9 @@ public class BnfHeritrixController implements HeritrixController {
 		throw new IOFailure(msg, lastException);		
 	}
 
+	/**
+	 * Initializes the JMX connection.
+	 */
 	private void initJMXConnection() {
 		
 		// Initialize the connection to Heritrix' MBeanServer
@@ -1166,6 +1222,9 @@ public class BnfHeritrixController implements HeritrixController {
 				Settings.get(HarvesterSettings.HERITRIX_JMX_PASSWORD));
 	}
 	
+	/**
+	 * Closes the JMX connection.
+	 */
 	private void closeJMXConnection() {
 		// Close the connection to the MBean Server
 		try {
@@ -1218,52 +1277,52 @@ public class BnfHeritrixController implements HeritrixController {
 
 	@Override
 	public boolean atFinish() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public void beginCrawlStop() {
-		throw new IOFailure("Not implemented");		
+		throw new NotImplementedException("Not implemented");		
 	}
 
 	@Override
 	public void cleanup() {
-		throw new IOFailure("Not implemented");		
+		throw new NotImplementedException("Not implemented");		
 	}
 
 	@Override
 	public boolean crawlIsEnded() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public int getActiveToeCount() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public int getCurrentProcessedKBPerSec() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public String getHarvestInformation() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public String getProgressStats() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public long getQueuedUriCount() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 
 	@Override
 	public boolean isPaused() {
-		throw new IOFailure("Not implemented");
+		throw new NotImplementedException("Not implemented");
 	}
 	
 }

@@ -229,4 +229,48 @@ public class StringUtils {
         }
         return resultString;
     }
+    
+    
+    private static final long DAY = 60 * 60 * 24;
+	private static final long HOUR = 60 * 60;
+	private static final long MINUTE = 60;		
+	
+	/**
+	 * Formats a duration in seconds as a string of the form 
+	 * "3d 04:12:56"
+	 * @param seconds a duration in seconds
+	 * @return a formatted string of the form "3d 04:12:56"
+	 */
+	public static String formatDuration(long seconds) {
+		if (seconds > 0L) {
+			long lRest;
+
+			String strDays = 
+				formatDurationLpad(String.valueOf(seconds / DAY)) + "d ";
+			lRest = seconds % DAY;
+			
+			String strHours = 
+				formatDurationLpad(String.valueOf(lRest / HOUR)) + ":";
+			lRest %= HOUR;
+			
+			String strMinutes = 
+				formatDurationLpad(String.valueOf(lRest / MINUTE)) + ":";
+			lRest %= MINUTE;
+			
+			String strSeconds = 
+				formatDurationLpad(String.valueOf(lRest));
+
+			return  strDays + strHours + strMinutes + strSeconds ;
+		
+		} else if (seconds == 0L) {
+			return "0d 00:00:00";
+		} else {
+			return "-1";
+		}
+	}
+
+	private static String formatDurationLpad(final String s) {
+    	return (s.length() == 1 ? "0" + s : s);
+    }
+    
 }

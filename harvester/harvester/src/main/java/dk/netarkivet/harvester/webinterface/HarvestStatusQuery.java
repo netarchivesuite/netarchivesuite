@@ -116,6 +116,13 @@ public class HarvestStatusQuery {
 			return values;
 		}
 		
+		/**
+		 * Extracts the field's value from a servlet request. If the request 
+		 * does not define the paraeter's value, it is set to the default
+		 * value. 
+		 * @param req a servlet request
+		 * @return the field's value
+		 */
 		public String getValue(ServletRequest req) {
 			String value = req.getParameter(name());
 			if (value == null || value.isEmpty()) {

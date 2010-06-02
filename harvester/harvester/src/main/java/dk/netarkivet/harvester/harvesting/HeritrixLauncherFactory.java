@@ -27,8 +27,10 @@ import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- * @author ngiraud
- *
+ * Factory class for instanciating a specific implementation 
+ * of {@link HeritrixLauncher}. The implementation class is defined 
+ * by the setting 
+ * <em>dk.netarkivet.harvester.harvesting.heritrixLauncher.class</em>.
  */
 public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
 	

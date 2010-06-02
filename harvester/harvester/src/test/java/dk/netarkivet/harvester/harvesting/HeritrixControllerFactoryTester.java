@@ -34,6 +34,9 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.LuceneUtils;
 import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixControllerFactory;
+import dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController;
 
 /**
  *
