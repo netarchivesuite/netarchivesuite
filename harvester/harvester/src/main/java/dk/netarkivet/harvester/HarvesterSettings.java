@@ -237,13 +237,13 @@ public class HarvesterSettings {
     public static String CRAWLER_TIMEOUT_NON_RESPONDING
             = "settings.harvester.harvesting.heritrix.noresponseTimeout";
     /**
-     * <b>settings.harvester.harvesting.heritrix.monitorCleanInterval</b>:<br>
+     * <b>settings.harvester.harvesting.heritrix.monitorResetInterval</b>:<br>
      * Time interval in seconds after which the {@link HarvestMonitorServer}
      * will clean job state data. This is a simple way to avoid detecting 
      * the end of a job. 
      */
-    public static String HARVEST_MONITOR_CLEAN_INTERVAL =
-        "settings.harvester.harvesting.heritrix.monitorCleanInterval";
+    public static String HARVEST_MONITOR_RESET_INTERVAL =
+        "settings.harvester.harvesting.heritrix.monitorResetInterval";
     
     /**
      * <b>settings.harvester.harvesting.heritrix.crawlLoopWaitTime</b>:<br>

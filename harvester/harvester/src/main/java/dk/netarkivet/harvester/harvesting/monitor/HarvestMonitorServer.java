@@ -59,7 +59,7 @@ implements MessageListener {
 		boolean alive = true;
 		
 		long cleanInterval = 
-			Settings.getLong(HarvesterSettings.HARVEST_MONITOR_CLEAN_INTERVAL);
+			Settings.getLong(HarvesterSettings.HARVEST_MONITOR_RESET_INTERVAL);
 		
 		@Override
 		public void run() {

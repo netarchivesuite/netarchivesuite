@@ -71,7 +71,7 @@
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
                 <!--  5 minutes -->
-                <monitorCleanInterval>300</monitorCleanInterval>
+                <monitorResetInterval>300</monitorResetInterval>
                 <!--  10 minutes -->
                 <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
                 <!--  20 seconds -->
