@@ -40,34 +40,49 @@ import dk.netarkivet.harvester.webinterface.HarvestStatusQuery.UI_FIELD;
 /**
  * This page provides support for the HarvestStatus pages of the web interface.
  */
-
 public class HarvestStatus {
-	
-	private long fullResultsCount;
-	private List<JobStatusInfo> jobs; 
-	
-	public HarvestStatus(long fullResultsCount, List<JobStatusInfo> jobs) {
-		this.fullResultsCount = fullResultsCount;
-		this.jobs = jobs;
-	}
-	
-	public long getFullResultsCount() {
-		return fullResultsCount;
-	}
+    /** The total number in the full resultset.*/
+    private final long fullResultsCount;
+    
+    /** The list of jobs in this HarvestStatus object. */
+    private final List<JobStatusInfo> jobs;
+    
+    /**
+     * Constructor for the HarvestStatus class.
+     * @param fullResultsCount The total number of entries in the full resultset
+     * @param jobs The list of jobs
+     */
+    public HarvestStatus(long fullResultsCount, List<JobStatusInfo> jobs) {
+        this.fullResultsCount = fullResultsCount;
+        this.jobs = jobs;
+    }
+    
+    /**
+     * @return The total number in the full resultset
+     */
+    public long getFullResultsCount() {
+        return fullResultsCount;
+    }
 
-	public List<JobStatusInfo> getJobStatusInfo() {
-		return jobs;
-	}
+    /**
+     * @return The list of jobs in this HarvestStatus object.
+     */
+    public List<JobStatusInfo> getJobStatusInfo() {
+        return jobs;
+    }
 
-	/**
+    /**
      * Process a request from Harveststatus-alljobs.
-     *
+     * 
      * Will resubmit a job if requested, otherwise do nothing.
-     *
-     * @param context The web context used for processing
-     * @param i18n The resource i18n context.
-     * @throws ForwardedToErrorPage If an error occurs that stops processing
-     * and forwards the user to an error page.
+     * 
+     * @param context
+     *            The web context used for processing
+     * @param i18n
+     *            The resource i18n context.
+     * @throws ForwardedToErrorPage
+     *             If an error occurs that stops processing and forwards the
+     *             user to an error page.
      */
     public static void processRequest(PageContext context, I18n i18n)
             throws ForwardedToErrorPage {
@@ -75,26 +90,33 @@ public class HarvestStatus {
         ArgumentNotValid.checkNotNull(i18n, "I18n i18n");
         
         // Check if it's a multiple resubmit query        
-        String resubmitJobIds = UI_FIELD.RESUBMIT_JOB_IDS.getValue(
-        		context.getRequest());
-		if (! resubmitJobIds.isEmpty()) {
-			String[] ids = resubmitJobIds.split(";");
-			for (String idStr : ids) {
-				resubmitJob(context, i18n, Long.parseLong(idStr));
-			}
-		} else {
-			// Might be a single resubmit
-			Long jobID = HTMLUtils.parseOptionalLong(context,
-					Constants.JOB_RESUBMIT_PARAM, null);
-			if ((jobID != null)) {
-				resubmitJob(context, i18n, jobID);
-			}
-		}
+        String resubmitJobIds = UI_FIELD.RESUBMIT_JOB_IDS.getValue(context
+                .getRequest());
+        if (!resubmitJobIds.isEmpty()) {
+            String[] ids = resubmitJobIds.split(";");
+            for (String idStr : ids) {
+                resubmitJob(context, i18n, Long.parseLong(idStr));
+            }
+        } else {
+            // Might be a single resubmit
+            Long jobID = HTMLUtils.parseOptionalLong(context,
+                    Constants.JOB_RESUBMIT_PARAM, null);
+            if ((jobID != null)) {
+                resubmitJob(context, i18n, jobID);
+            }
+        }
         
     }
     
-    private static void resubmitJob(PageContext context, I18n i18n, Long jobID) {
-    	try {
+    /**
+     * Helpermethod to resubmit a job with a given jobID.
+     * @param context the current pageContext (used in error-handling only)
+     * @param i18n the given internalisation object.
+     * @param jobID The ID for the job that we want to resubmit.
+     */
+    private static void resubmitJob(
+            PageContext context, I18n i18n, Long jobID) {
+        try {
             JobDAO.getInstance().rescheduleJob(jobID);
         } catch (UnknownID e) {
             HTMLUtils.forwardWithErrorMessage(context, i18n,
@@ -119,7 +141,7 @@ public class HarvestStatus {
         ArgumentNotValid.checkNotNegative(harvestID, "harvestID");
         ArgumentNotValid.checkNotNegative(harvestRun, "harvestRun");
         return "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
-        		+ HarvestStatusQuery.UI_FIELD.HARVEST_ID.name() + "="
+                + HarvestStatusQuery.UI_FIELD.HARVEST_ID.name() + "="
                 + harvestID + "&amp;" + Constants.HARVEST_NUM_PARAM
                 + "=" + harvestRun 
                 + "&amp;" + HarvestStatusQuery.UI_FIELD.JOB_STATUS.name() + "="
@@ -132,9 +154,7 @@ public class HarvestStatus {
      * @param query the query with its filters.
      * @return a list of job status info objects
      */
-    public static HarvestStatus getjobStatusList(
-    		HarvestStatusQuery query) {    	
-    	return JobDAO.getInstance().getStatusInfo(query);
+    public static HarvestStatus getjobStatusList(HarvestStatusQuery query) {
+        return JobDAO.getInstance().getStatusInfo(query);
     }
-    
 }

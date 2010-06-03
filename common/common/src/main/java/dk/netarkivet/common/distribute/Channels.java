@@ -498,7 +498,8 @@ public class Channels {
     public static String retrieveReplicaChannelNameFromReplicaId(
             String replicaId) throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
-        return Replica.getReplicaFromId(replicaId).getIdentificationChannel().getName();
+        return Replica.getReplicaFromId(replicaId)
+            .getIdentificationChannel().getName();
     }
     
     /**
@@ -511,7 +512,8 @@ public class Channels {
      * @throws UnknownID If no replica with the given replica id is known.
      * @throws ArgumentNotValid If the replicaId is null or empty.
      */
-    public static ChannelID retrieveReplicaChannelFromReplicaId(String replicaId)
+    public static ChannelID retrieveReplicaChannelFromReplicaId(
+            String replicaId)
             throws UnknownID, ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         return Replica.getReplicaFromId(replicaId).getIdentificationChannel();

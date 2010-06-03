@@ -416,17 +416,17 @@ public class JobDBDAO extends JobDAO {
             
             boolean useClobs = DBSpecifics.getInstance().supportsClob();
             if (useClobs) {
-            	Clob clob = result.getClob(7);
-            	orderXMLdoc = getOrderXMLdocFromClob(clob); 
+                Clob clob = result.getClob(7);
+                orderXMLdoc = getOrderXMLdocFromClob(clob);
             } else {
-            	orderXMLdoc = XmlUtils.documentFromString(result.getString(7));
+                orderXMLdoc = XmlUtils.documentFromString(result.getString(7));
             }
             String seedlist = "";
             if (useClobs) {
-            	Clob clob = result.getClob(8);
-            	seedlist = clob.getSubString(1, (int) clob.length());
+                Clob clob = result.getClob(8);
+                seedlist = clob.getSubString(1, (int) clob.length());
             } else {
-            	seedlist = result.getString(8);
+                seedlist = result.getString(8);
             }            
             
             int harvestNum = result.getInt(9);
@@ -671,8 +671,8 @@ public class JobDBDAO extends JobDAO {
      */
     @Override
     public HarvestStatus getStatusInfo(HarvestStatusQuery query) {
-    	
-    	Connection c = DBConnect.getDBConnection();
+    
+        Connection c = DBConnect.getDBConnection();
         PreparedStatement s = null;
         
         // Obtain total count without limit
@@ -707,7 +707,7 @@ public class JobDBDAO extends JobDAO {
         } finally {
             DBUtils.closeStatementIfOpen(s);
         }
-    	
+    
         return new HarvestStatus(totalRowsCount, jobs);
     }
 
@@ -1033,27 +1033,25 @@ public class JobDBDAO extends JobDAO {
      * @param count build a count query instead of selecting columns.
      * @return the proper SQL query.
      */
-    private String buildSqlQuery(
-    		HarvestStatusQuery query,
-    		boolean count) {
-		
-		StringBuffer sql = new StringBuffer("SELECT");
-		if (count) {
-			sql.append(" count(*)");
-		} else {
-			sql.append(" jobs.job_id, status, jobs.harvest_id,");
-			sql.append(" harvestdefinitions.name, harvest_num,");
-			sql.append(" harvest_errors, upload_errors, orderxml,");
-			sql.append(" num_configs, submitteddate, startdate, enddate,");
-			sql.append(" resubmitted_as_job");
-		}
-		
-		sql.append(" FROM jobs, harvestdefinitions ");
-		sql.append(" WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
-		
-		JobStatus[] jobStatuses = query.getSelectedJobStatuses();
-		if (jobStatuses.length > 0) {
-			if (jobStatuses.length == 1) {
+    private String buildSqlQuery(HarvestStatusQuery query, boolean count) {
+
+        StringBuffer sql = new StringBuffer("SELECT");
+        if (count) {
+            sql.append(" count(*)");
+        } else {
+            sql.append(" jobs.job_id, status, jobs.harvest_id,");
+            sql.append(" harvestdefinitions.name, harvest_num,");
+            sql.append(" harvest_errors, upload_errors, orderxml,");
+            sql.append(" num_configs, submitteddate, startdate, enddate,");
+            sql.append(" resubmitted_as_job");
+        }
+
+        sql.append(" FROM jobs, harvestdefinitions ");
+        sql.append(" WHERE harvestdefinitions.harvest_id = jobs.harvest_id ");
+
+        JobStatus[] jobStatuses = query.getSelectedJobStatuses();
+        if (jobStatuses.length > 0) {
+            if (jobStatuses.length == 1) {
                 int statusOrdinal = jobStatuses[0].ordinal();
                 sql.append(" AND status = ");
                 sql.append(statusOrdinal);
@@ -1066,65 +1064,67 @@ public class JobDBDAO extends JobDAO {
                 }
                 sql.append(")");
             }
-		}
-		
-		String harvestName = query.getHarvestName();
-		if (! harvestName.isEmpty()) {
-			if (harvestName.indexOf(
-					HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
-				// No wildcard, exact match
-				sql.append(" AND harvestdefinitions.name='");
-				sql.append(harvestName);
-				sql.append("'");
-			} else {
-				String harvestNamePattern = harvestName.replaceAll("\\*", "%");
-				sql.append(" AND harvestdefinitions.name LIKE '");
-				sql.append(harvestNamePattern);
-				sql.append("'");
-			}
-		}
-		
-		Long harvestRun = query.getHarvestRunNumber();
-		if (harvestRun != null) {
-			sql.append(" AND jobs.harvest_num = " + harvestRun);
-		}
-		
-		Long harvestId = query.getHarvestId();
-		if (harvestId != null) {
-			sql.append(" AND harvestdefinitions.harvest_id = " + harvestId);
-		}		
-		
-		long startDate = query.getStartDate();
-		if (startDate != HarvestStatusQuery.DATE_NONE) {
-			sql.append(" AND startdate >= '");
-			sql.append(new java.sql.Date(startDate).toString());
-			sql.append("'");
-		}
-		
-		long endDate = query.getEndDate();
-		if (endDate != HarvestStatusQuery.DATE_NONE) {
-			sql.append(" AND enddate <= '");
-			sql.append(new java.sql.Date(endDate).toString());
-			sql.append("'");
-		}
-		
-		if (! count) {
-			sql.append(" ORDER BY jobs.job_id");
-			if (!query.isSortAscending())  {
-				sql.append(" " + SORT_ORDER.DESC.name());
-			} else {
-				sql.append(" " + SORT_ORDER.ASC.name());        	
-			}
-                
-        	long pagesize = query.getPageSize();
-        	if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
-        		sql.append(" " + DBSpecifics.getInstance()
-        				.getOrderByLimitAndOffsetSubClause(
-        						pagesize, 
-        						(query.getStartPageIndex() -1 ) * pagesize));        	
-        	}
         }
-        
+
+        String harvestName = query.getHarvestName();
+        if (!harvestName.isEmpty()) {
+            if (harvestName.indexOf(
+                    HarvestStatusQuery.HARVEST_NAME_WILDCARD) == -1) {
+                // No wildcard, exact match
+                sql.append(" AND harvestdefinitions.name='");
+                sql.append(harvestName);
+                sql.append("'");
+            } else {
+                String harvestNamePattern = harvestName.replaceAll("\\*", "%");
+                sql.append(" AND harvestdefinitions.name LIKE '");
+                sql.append(harvestNamePattern);
+                sql.append("'");
+            }
+        }
+
+        Long harvestRun = query.getHarvestRunNumber();
+        if (harvestRun != null) {
+            sql.append(" AND jobs.harvest_num = " + harvestRun);
+        }
+
+        Long harvestId = query.getHarvestId();
+        if (harvestId != null) {
+            sql.append(" AND harvestdefinitions.harvest_id = " + harvestId);
+        }
+
+        long startDate = query.getStartDate();
+        if (startDate != HarvestStatusQuery.DATE_NONE) {
+            sql.append(" AND startdate >= '");
+            sql.append(new java.sql.Date(startDate).toString());
+            sql.append("'");
+        }
+
+        long endDate = query.getEndDate();
+        if (endDate != HarvestStatusQuery.DATE_NONE) {
+            sql.append(" AND enddate <= '");
+            sql.append(new java.sql.Date(endDate).toString());
+            sql.append("'");
+        }
+
+        if (!count) {
+            sql.append(" ORDER BY jobs.job_id");
+            if (!query.isSortAscending()) {
+                sql.append(" " + SORT_ORDER.DESC.name());
+            } else {
+                sql.append(" " + SORT_ORDER.ASC.name());
+            }
+
+            long pagesize = query.getPageSize();
+            if (pagesize != HarvestStatusQuery.PAGE_SIZE_NONE) {
+                sql.append(" "
+                        + DBSpecifics.getInstance()
+                                .getOrderByLimitAndOffsetSubClause(
+                                        pagesize,
+                                        (query.getStartPageIndex() - 1)
+                                                * pagesize));
+            }
+        }
+
         return sql.toString();
-	}
+    }
 }

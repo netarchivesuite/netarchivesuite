@@ -212,6 +212,9 @@ public class XmlUtils {
     
     /** Parses a given string to produce a {@link org.w3c.dom.Document} 
      * instance.
+     * @param xml Some XML text.
+     * @return a {@link org.w3c.dom.Document} parsed from the given xml. 
+     * @throws DocumentException If unable to parse the given text as XML.
      */
     public static Document documentFromString(String xml) 
     throws DocumentException {
@@ -223,7 +226,8 @@ public class XmlUtils {
             in.close();
         } catch (DocumentException e) {
             log.warn(
-            		"Failed to read the contents of the string as XML:" +  xml);
+                    "Failed to read the contents of the string as XML:" 
+                    +  xml);
             throw e;
         }
         return doc;

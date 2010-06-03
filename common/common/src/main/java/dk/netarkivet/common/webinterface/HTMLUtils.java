@@ -57,11 +57,11 @@ import dk.netarkivet.common.utils.StringTree;
  * netarkivet.
  */
 public class HTMLUtils {
-	
+
     /** Web page title placeholder. */
     private static String TITLE_PLACEHOLDER = "STRING_1";
     
-   private static String  WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
+   private static String WEBPAGE_HEADER_TEMPLATE_TOP = "<!DOCTYPE html "
        + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \n "
        + "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
        + "<html xmlns=\"http://www.w3.org/1999/xhtml\""
@@ -73,11 +73,11 @@ public class HTMLUtils {
        + "<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>\n"
        + "<meta http-equiv=\"Pragma\" content=\"no-cache\"/> \n";
    
-   private static String  WEBPAGE_HEADER_AUTOREFRESH =
-	   "<meta http-equiv=\"refresh\" content=\"" 
-	   + TITLE_PLACEHOLDER + "\"/> \n";
+   private static String WEBPAGE_HEADER_AUTOREFRESH
+       = "<meta http-equiv=\"refresh\" content=\""
+           + TITLE_PLACEHOLDER + "\"/> \n";
    
-   private static String  WEBPAGE_HEADER_TEMPLATE_BOTTOM = 
+   private static String WEBPAGE_HEADER_TEMPLATE_BOTTOM = 
             "<title>" + TITLE_PLACEHOLDER + "</title>\n"
             + "<script type=\"text/javascript\">\n"
             + "<!--\n"
@@ -177,8 +177,7 @@ public class HTMLUtils {
      * @throws IOException if an error occurs during writing of output.
      */
     public static void generateHeader(
-    		PageContext context,
-    		long refreshInSeconds)
+            PageContext context, long refreshInSeconds)
             throws IOException {
         ArgumentNotValid.checkNotNull(context, "context");
         String url = ((HttpServletRequest) context.getRequest())
@@ -208,7 +207,7 @@ public class HTMLUtils {
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
         out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
         out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM.replace(
-        		TITLE_PLACEHOLDER, title));
+                TITLE_PLACEHOLDER, title));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
@@ -227,14 +226,11 @@ public class HTMLUtils {
      * @param refreshInSeconds auto-refresh time in seconds
      * @throws IOException if an error occurs during writing to output.
      */
-    public static void generateHeader(
-    		String title, 
-    		long refreshInSeconds, 
-    		PageContext context)
-            throws IOException {
+    public static void generateHeader(String title, long refreshInSeconds,
+            PageContext context) throws IOException {
         ArgumentNotValid.checkNotNull(title, "title");
         ArgumentNotValid.checkNotNull(context, "context");
-     
+
         JspWriter out = context.getOut();
         String url = ((HttpServletRequest) context.getRequest())
                 .getRequestURL().toString();
@@ -243,11 +239,11 @@ public class HTMLUtils {
         log.debug("Loaded URL '" + url + "' with title '" + title + "'");
         out.print(WEBPAGE_HEADER_TEMPLATE_TOP);
         if (refreshInSeconds > 0) {
-        	out.print(WEBPAGE_HEADER_AUTOREFRESH.replace(
-        			TITLE_PLACEHOLDER, Long.toString(refreshInSeconds)));
+            out.print(WEBPAGE_HEADER_AUTOREFRESH.replace(TITLE_PLACEHOLDER,
+                    Long.toString(refreshInSeconds)));
         }
-        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM
-        		.replace(TITLE_PLACEHOLDER, title));
+        out.print(WEBPAGE_HEADER_TEMPLATE_BOTTOM.replace(TITLE_PLACEHOLDER,
+                title));
         // Start the two column / one row table which fills the page
         out.print("<table id =\"main_table\"><tr>\n");
         // fill in data in the left column
@@ -944,7 +940,8 @@ public class HTMLUtils {
      * in case the string cannot be parsed
      * @return the long value found in the paramValue
      */
-    public static Long parseLong(Locale loc, String paramValue, String parameterName, Long defaultValue) {
+    public static Long parseLong(Locale loc, String paramValue,
+            String parameterName, Long defaultValue) {
         ArgumentNotValid.checkNotNull(loc, "Locale loc");
         ArgumentNotValid.checkNotNullOrEmpty(
                 parameterName, "String parameterName");
@@ -952,7 +949,8 @@ public class HTMLUtils {
         if (paramValue != null && paramValue.trim().length() > 0) {
             paramValue = paramValue.trim();
             try {
-                return NumberFormat.getInstance(loc).parse(paramValue).longValue();
+                return NumberFormat.getInstance(loc)
+                    .parse(paramValue).longValue();
             } catch (ParseException e) {
                 throw new ForwardedToErrorPage("Invalid value " + paramValue
                         + " for integer parameter '" + parameterName + "'", e);

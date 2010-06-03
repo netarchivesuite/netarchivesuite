@@ -36,8 +36,8 @@ import dk.netarkivet.harvester.harvesting.HeritrixLauncher;
  * Default implementation of the crawl control.
  */
 public class DefaultHeritrixLauncher extends HeritrixLauncher {
-	
-	/** The class logger. */
+
+    /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
     
     /** Number of milliseconds in a second. */
@@ -54,13 +54,18 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
             Long.parseLong(Settings.get(
                     HarvesterSettings.INACTIVITY_TIMEOUT_IN_SECS))
             * MILLIS_PER_SECOND;
-    
+    /** The HeritrixController instance used by the HeritrixLauncher. */
     private HeritrixController heritrixController;
-
+ 
+    /**
+     * Constructor for the DefaultHeritrixLauncher.
+     * @param files the Heritrix configuration.
+     * @throws ArgumentNotValid
+     */
     private DefaultHeritrixLauncher(HeritrixFiles files)
-			throws ArgumentNotValid {
-		super(files);
-	}
+            throws ArgumentNotValid {
+        super(files);
+    }
     
     /**
      * Get instance of this class.
@@ -93,11 +98,10 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
      *                   Heritrix CrawlController if Heritrix process
      *                   interrupted
      */
-	public void doCrawl() throws IOFailure {
+    public void doCrawl() throws IOFailure {
         setupOrderfile();
-        heritrixController = 
-        	HeritrixControllerFactory.getDefaultHeritrixController(
-        			getControllerArguments());
+        heritrixController = HeritrixControllerFactory
+                .getDefaultHeritrixController(getControllerArguments());
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
@@ -237,7 +241,5 @@ public class DefaultHeritrixLauncher extends HeritrixLauncher {
                 }
             }
         } // end of while (!crawlIsEnded)
-    }    
-    
-
+    }
 }

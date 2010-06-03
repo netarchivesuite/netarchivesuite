@@ -46,7 +46,6 @@ public abstract class JobDAO implements Iterable<Job> {
     protected JobDAO() {
     }
 
-
     /**
      * Gets the JobDAO singleton.
      *
@@ -172,6 +171,7 @@ public abstract class JobDAO implements Iterable<Job> {
      *
      * @param query the user query
      * @throws IOFailure on trouble in database access
+     * @return A HarvestStatus object corresponding to the given query.
      */
     public abstract HarvestStatus getStatusInfo(HarvestStatusQuery query);
 
@@ -216,6 +216,5 @@ public abstract class JobDAO implements Iterable<Job> {
      * @throws UnknownID if no job exists with id jobID
      * @throws IllegalState if the job with id jobID is not SUBMITTED or FAILED.
      */
-    public abstract long rescheduleJob(long oldJobID);
-    
+    public abstract long rescheduleJob(long oldJobID); 
 }

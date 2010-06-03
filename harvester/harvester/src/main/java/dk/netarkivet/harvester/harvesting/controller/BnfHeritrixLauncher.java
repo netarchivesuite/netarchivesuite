@@ -41,27 +41,29 @@ import dk.netarkivet.harvester.harvesting.monitor.HarvestMonitorServer;
  * be consulmed by the {@link HarvestMonitorServer} instance.
  */
 public class BnfHeritrixLauncher extends HeritrixLauncher {
-	
-	/** The class logger. */
+
+    /** The class logger. */
     final Log log = LogFactory.getLog(getClass());
-	
-	/** The CrawlController used. */
+
+    /** The CrawlController used. */
     private BnfHeritrixController heritrixController;
-	
-	private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
-		super(files);
-	}
-	
-	/**
+
+    private BnfHeritrixLauncher(HeritrixFiles files) throws ArgumentNotValid {
+        super(files);
+    }
+
+    /**
      * Get instance of this class.
-     *
-     * @param files Object encapsulating location of Heritrix crawldir and
-     *              configuration files
-     *
+     * 
+     * @param files
+     *            Object encapsulating location of Heritrix crawldir and
+     *            configuration files
+     * 
      * @return {@link BnfHeritrixLauncher} object
-     *
-     * @throws ArgumentNotValid If either order.xml or seeds.txt does not exist,
-     *                          or argument files is null.
+     * 
+     * @throws ArgumentNotValid
+     *             If either order.xml or seeds.txt does not exist, or argument
+     *             files is null.
      */
     public static BnfHeritrixLauncher getInstance(HeritrixFiles files)
             throws ArgumentNotValid {
@@ -82,58 +84,55 @@ public class BnfHeritrixLauncher extends HeritrixLauncher {
      * </ol>
      */
     public void doCrawl() throws IOFailure {
-    	setupOrderfile();
+        setupOrderfile();
         heritrixController = new BnfHeritrixController(getHeritrixFiles());
         try {
             // Initialize Heritrix settings according to the order.xml
             heritrixController.initialize();
             log.debug("Starting crawl..");
             heritrixController.requestCrawlStart();
-            
+
             while (true) {
-            	
-            	// First we wait the configured amount of time        	
-            	waitSomeTime();
-            	
-            	CrawlProgressMessage cpm;        	
-            	try {
-            		cpm = heritrixController.getCrawlProgress();
-            	} catch (IOFailure iof) {
-            		// Log a warning and retry
-            		log.warn("IOFailure while getting crawl progress", iof);
-            		continue;
-            	}
-            	
-            	getJMSConnection().send(cpm);        	
-            	
-            	if (cpm.crawlIsFinished()) {
-            		// Crawl is over, exit the loop
-            		break;
-            	}
-            	
-            	HeritrixFiles files = getHeritrixFiles();
-            	log.info("Job ID: " + files.getJobID()
-                         + ", Harvest ID: " + files.getHarvestID()
-                         + ", " + cpm.getHostUrl()
-                         + "\n"
-                         + cpm.getProgressStatisticsLegend() + "\n"
-                     	 + cpm.getJobStatus().getStatus() 
-                     	 + " " + cpm.getJobStatus().getProgressStatistics());
-                
+
+                // First we wait the configured amount of time
+                waitSomeTime();
+
+                CrawlProgressMessage cpm;
+                try {
+                    cpm = heritrixController.getCrawlProgress();
+                } catch (IOFailure iof) {
+                    // Log a warning and retry
+                    log.warn("IOFailure while getting crawl progress", iof);
+                    continue;
+                }
+
+                getJMSConnection().send(cpm);
+
+                if (cpm.crawlIsFinished()) {
+                    // Crawl is over, exit the loop
+                    break;
+                }
+
+                HeritrixFiles files = getHeritrixFiles();
+                log.info("Job ID: " + files.getJobID() + ", Harvest ID: "
+                        + files.getHarvestID() + ", " + cpm.getHostUrl() + "\n"
+                        + cpm.getProgressStatisticsLegend() + "\n"
+                        + cpm.getJobStatus().getStatus() + " "
+                        + cpm.getJobStatus().getProgressStatistics());
+
             }
-            
+
         } catch (IOFailure e) {
             log.warn("Error during initialisation of crawl", e);
             throw (e);
         } catch (Exception e) {
             log.warn("Exception during crawl", e);
             throw new RuntimeException("Exception during crawl", e);
-        } finally {        	
-        	if (heritrixController != null) {
+        } finally {
+            if (heritrixController != null) {
                 heritrixController.cleanup(getHeritrixFiles().getCrawlDir());
             }
         }
         log.debug("Heritrix is finished crawling...");
     }
-
 }

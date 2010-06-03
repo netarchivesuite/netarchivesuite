@@ -135,7 +135,7 @@ public class DirectHeritrixController implements HeritrixController {
      * @see HeritrixController#crawlIsEnded()
      */
     public void addCrawlStatusListener(CrawlStatusListener listener) {
-    	ArgumentNotValid.checkNotNull(listener, "listener");
+        ArgumentNotValid.checkNotNull(listener, "listener");
         myController.addCrawlStatusListener(listener);
     }
     /** @see HeritrixController#getQueuedUriCount() */

@@ -182,13 +182,12 @@ public class HeritrixDomainHarvestReportTester extends TestCase {
         File testFile = TestInfo.LONG_REPORT_FILE;
         DomainHarvestReport hr = new HeritrixDomainHarvestReport(testFile,
                                                                  TestInfo.DEFAULT_STOPREASON);
-        Long expectedObjectCount = new Long(2L);
+        Long expectedObjectCount = Long.valueOf(2L);
         Long expectedByteCount = new Long(5500000001L);
         assertEquals("Counts should equal input data", expectedObjectCount,
                      hr.getObjectCount("dom.dk"));
         assertEquals("Counts should equal input data", expectedByteCount,
                      hr.getByteCount("dom.dk"));
-
     }
 
     /**

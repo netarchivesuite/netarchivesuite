@@ -114,13 +114,13 @@ public enum JobStatus {
     * @throws ArgumentNotValid
     */
    public static JobStatus parse(String status) {
-	   for (JobStatus s : values()) {
-		   if (s.name().equals(status)) {
-			   return s;
-		   }
-	   }
-       throw new ArgumentNotValid("Invalid job status '" + status + "'");
-   }
+        for (JobStatus s : values()) {
+            if (s.name().equals(status)) {
+                return s;
+            }
+        }
+        throw new ArgumentNotValid("Invalid job status '" + status + "'");
+    }
 
     /**
      * Return a localized human-readable string describing this status.

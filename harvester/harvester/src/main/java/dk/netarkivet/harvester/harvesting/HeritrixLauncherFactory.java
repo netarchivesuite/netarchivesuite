@@ -33,8 +33,8 @@ import dk.netarkivet.harvester.HarvesterSettings;
  * <em>dk.netarkivet.harvester.harvesting.heritrixLauncher.class</em>.
  */
 public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
-	
-	/**
+
+    /**
      * Returns an instance of the default {@link HeritrixLauncher} 
      * implementation defined by the setting
      * dk.netarkivet.harvester.harvesting.heritrixLauncher.class .
@@ -47,7 +47,7 @@ public class HeritrixLauncherFactory extends SettingsFactory<HeritrixLauncher> {
     public static HeritrixLauncher getInstance(Object ...args) 
     throws ArgumentNotValid {
         return SettingsFactory.getInstance(
-        		HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
+                HarvesterSettings.HERITRIX_LAUNCHER_CLASS, args);
     }
 
 }

@@ -121,8 +121,14 @@ public class HarvestController {
         if (arcRepController != null) {
             arcRepController.close();
         }
+        //instance = null;
+        resetInstance();
+    }
+    
+    private static void resetInstance() {
         instance = null;
     }
+    
 
     /**
      * Writes the files involved with a harvests.

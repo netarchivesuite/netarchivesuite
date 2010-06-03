@@ -98,7 +98,7 @@ public class HarvestScheduler implements CleanupIF {
     /**
      * Listens for CrawlProgressMessage.
      */
-	private static HarvestMonitorServer hpmon;
+    private static HarvestMonitorServer hpmon;
 
     /**
      * Backup-related fields.
@@ -372,9 +372,9 @@ public class HarvestScheduler implements CleanupIF {
                 // Send a message to the harvest monitor that a job is
                 // being processed.
                 JMSConnectionFactory.getInstance().send(
-                		new CrawlProgressMessage(
-                		jobToSubmit.getOrigHarvestDefinitionID(), 
-                		jobToSubmit.getJobID()));
+                        new CrawlProgressMessage(jobToSubmit
+                                .getOrigHarvestDefinitionID(), jobToSubmit
+                                .getJobID()));
                 
                 hcc.doOneCrawl(jobToSubmit, metadata);
                 log.trace("Job " + jobToSubmit + " sent to harvest queue.");

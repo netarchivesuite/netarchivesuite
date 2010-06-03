@@ -58,5 +58,4 @@ public interface HarvesterMessageVisitor {
     * @param msg A received message.
     */
     void visit(CrawlProgressMessage msg);
-
 }

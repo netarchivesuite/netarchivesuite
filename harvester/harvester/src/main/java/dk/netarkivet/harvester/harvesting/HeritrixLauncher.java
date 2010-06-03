@@ -57,12 +57,13 @@ public abstract class HeritrixLauncher {
      * The period to wait in milliseconds before checking if Heritrix has done
      * anything.
      */
-    protected static final int WAIT_PERIOD = 
-    	1000 * Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
+    protected static final int WAIT_PERIOD 
+        = 1000 * Settings.getInt(HarvesterSettings.CRAWL_LOOP_WAIT_TIME);
 
     //Attributes regarding deduplication.
 
-    /** Xpath for the deduplicator index directory node in order.xml documents. */
+    /** Xpath for the deduplicator index directory node in order.xml 
+     * documents. */
     static final String DEDUPLICATOR_INDEX_LOCATION_XPATH
             = HeritrixTemplate.DEDUPLICATOR_XPATH
               + "/string[@name='index-location']";
@@ -81,7 +82,7 @@ public abstract class HeritrixLauncher {
      * The JMS connection used to send {@link CrawlProgressMessage}s.
      */
     private final JMSConnection jmsConnection = 
-    	JMSConnectionFactory.getInstance();
+        JMSConnectionFactory.getInstance();
 
     /** Xpath for the 'disk-path' in the order.xml . */
     private static final String DISK_PATH_XPATH =
@@ -209,37 +210,35 @@ public abstract class HeritrixLauncher {
      * @return an instance of the wrapper class for Heritrix files.
      */
     protected HeritrixFiles getHeritrixFiles() {
-		return files;
-	}
+        return files;
+    }
     
     /**
      * @return the optional arguments used to initialize 
      * the chosen Heritrix controller implementation.
      */
     protected Object[] getControllerArguments() {
-    	return args;
+        return args;
     }
 
     /**
      * @return the JMS connection used to send messages.
      */
-	public JMSConnection getJMSConnection() {
-		return jmsConnection;
-	}
+    public JMSConnection getJMSConnection() {
+        return jmsConnection;
+    }
 
-	/**
+    /**
      * Wait the amount of time configured in 
      * {@link HarvesterSettings#CRAWL_LOOP_WAIT_TIME}.
      */
     protected void waitSomeTime() {
-    	try {
-			synchronized (this) {
-				wait(WAIT_PERIOD);
-			}
-		} catch (InterruptedException e) {
-			log.trace("Waiting thread awoken: " + e.getMessage());
-		}
+        try {
+            synchronized (this) {
+                wait(WAIT_PERIOD);
+            }
+        } catch (InterruptedException e) {
+            log.trace("Waiting thread awoken: " + e.getMessage());
+        }
     }
-    
 }
-

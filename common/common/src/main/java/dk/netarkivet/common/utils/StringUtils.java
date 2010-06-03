@@ -187,11 +187,11 @@ public class StringUtils {
      */
     public static final String repeat(String s, int n) {
         ArgumentNotValid.checkNotNegative(n, "int n");
-        String s1 = "";
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
-            s1 += s;
+            sb.append(s);
         }
-        return s1;
+        return sb.toString();
     }
 
     /**
@@ -220,57 +220,64 @@ public class StringUtils {
      * @param maxLength the maximum length of the string before ellipsing it.
      * @return an ellipsis of orgString.
      */
-    public static String makeEllipsis(String orgString, int maxLength)  {
-    	ArgumentNotValid.checkNotNull(orgString, "String orgString");
-    	String resultString = orgString;
+    public static String makeEllipsis(String orgString, int maxLength) {
+        ArgumentNotValid.checkNotNull(orgString, "String orgString");
+        String resultString = orgString;
         if (orgString.length() > maxLength) {
-        	resultString = orgString.substring(0, maxLength - 1)
-        		+ " ..";
+            resultString = orgString.substring(0, maxLength - 1) + " ..";
         }
         return resultString;
     }
     
-    
+    /** A day in seconds. */
     private static final long DAY = 60 * 60 * 24;
-	private static final long HOUR = 60 * 60;
-	private static final long MINUTE = 60;		
-	
-	/**
-	 * Formats a duration in seconds as a string of the form 
-	 * "3d 04:12:56"
-	 * @param seconds a duration in seconds
-	 * @return a formatted string of the form "3d 04:12:56"
-	 */
-	public static String formatDuration(long seconds) {
-		if (seconds > 0L) {
-			long lRest;
+    /** An hour in seconds. */
+    private static final long HOUR = 60 * 60;
+    /** A minute in seconds. */
+    private static final long MINUTE = 60;
 
-			String strDays = 
-				formatDurationLpad(String.valueOf(seconds / DAY)) + "d ";
-			lRest = seconds % DAY;
-			
-			String strHours = 
-				formatDurationLpad(String.valueOf(lRest / HOUR)) + ":";
-			lRest %= HOUR;
-			
-			String strMinutes = 
-				formatDurationLpad(String.valueOf(lRest / MINUTE)) + ":";
-			lRest %= MINUTE;
-			
-			String strSeconds = 
-				formatDurationLpad(String.valueOf(lRest));
+    /**
+     * Formats a duration in seconds as a string of the form "3d 04:12:56".
+     * 
+     * @param seconds A duration in seconds
+     * @return a formatted string of the form "3d 04:12:56"
+     */
+    public static String formatDuration(long seconds) {
+        if (seconds > 0L) {
+            long lRest;
 
-			return  strDays + strHours + strMinutes + strSeconds ;
-		
-		} else if (seconds == 0L) {
-			return "0d 00:00:00";
-		} else {
-			return "-1";
-		}
-	}
+            String strDays = formatDurationLpad(String.valueOf(seconds / DAY))
+                    + "d ";
+            lRest = seconds % DAY;
 
-	private static String formatDurationLpad(final String s) {
-    	return (s.length() == 1 ? "0" + s : s);
+            String strHours = formatDurationLpad(String.valueOf(lRest / HOUR))
+                    + ":";
+            lRest %= HOUR;
+
+            String strMinutes = formatDurationLpad(String.valueOf(lRest
+                    / MINUTE))
+                    + ":";
+            lRest %= MINUTE;
+
+            String strSeconds = formatDurationLpad(String.valueOf(lRest));
+
+            return strDays + strHours + strMinutes + strSeconds;
+
+        } else if (seconds == 0L) {
+            return "0d 00:00:00";
+        } else {
+            return "-1";
+        }
+    }
+    
+    /**
+     * Leftpad the string with "0", if the string is only one character long.
+     * @param s The given string
+     * @return Return a string leftpadded with a "0" if the string is only one 
+     * character long, Otherwise just return the string.
+     */
+    private static String formatDurationLpad(final String s) {
+        return (s.length() == 1 ? "0" + s : s);
     }
     
 }

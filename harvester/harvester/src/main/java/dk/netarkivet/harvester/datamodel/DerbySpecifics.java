@@ -103,25 +103,23 @@ public abstract class DerbySpecifics extends DBSpecifics {
      * @return
      * @throws SQLException 
      */
-    public boolean connectionIsValid(
-    		Connection connection, 
-    		int validityTimeout) 
-    throws SQLException {
-    	return connection.isValid(validityTimeout);
+    public boolean connectionIsValid(Connection connection, int validityTimeout)
+            throws SQLException {
+        return connection.isValid(validityTimeout);
     }
-    
+    @Override
     public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
-    	// LIMIT sub-clause supported by Derby 10.5.3 
-    	// see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
-    	return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY" ;
+        // LIMIT sub-clause supported by Derby 10.5.3
+        // see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
+        return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
     }
     
     @Override
-	public boolean supportsClob() {
-		return true;
-	}
+    public boolean supportsClob() {
+        return true;
+    }
 
-	/** Migrates the 'jobs' table from version 3 to version 4
+    /** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.
      * Furthermore the default value for field num_configs is set to 0.

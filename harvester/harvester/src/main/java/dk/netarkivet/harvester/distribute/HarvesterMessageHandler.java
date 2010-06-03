@@ -117,11 +117,11 @@ public abstract class HarvesterMessageHandler
      * @param msg a {@link CrawlProgressMessage}
      * @throws PermissionDenied when invoked
      */
-	@Override
-	public void visit(CrawlProgressMessage msg) {
-		ArgumentNotValid.checkNotNull(msg, "msg");
-        deny(msg);		
-	}
+    @Override
+    public void visit(CrawlProgressMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
     
     
 }

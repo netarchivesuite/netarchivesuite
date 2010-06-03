@@ -310,7 +310,8 @@ public class JMXHeritrixController extends AbstractJMXHeritrixController {
         log.debug("Heritrix state: '" + status + "'");
         // Either Pausing or Paused in case of not null
         return status != null
-               && (status.equals(PAUSED_STATUS) || status.equals(PAUSING_STATUS));
+               && (status.equals(PAUSED_STATUS) 
+                       || status.equals(PAUSING_STATUS));
     }
 
     /** Check if the crawl has ended, either because Heritrix finished

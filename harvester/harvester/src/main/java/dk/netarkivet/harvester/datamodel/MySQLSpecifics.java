@@ -197,7 +197,8 @@ public class MySQLSpecifics extends DBSpecifics {
         DBConnect.updateTable("global_crawler_trap_lists", 1, createStatement);
     }
 
-    /** Creates the initial (version 1) of table 'global_crawler_trap_expressions'. */
+    /** Creates the initial (version 1) of 
+     * table 'global_crawler_trap_expressions'. */
     protected void createGlobalCrawlerTrapExpressions() {
         String createStatement = "CREATE TABLE global_crawler_trap_expressions("
                                  + "    id bigint not null AUTO_INCREMENT "
@@ -209,19 +210,19 @@ public class MySQLSpecifics extends DBSpecifics {
     }
     
     @Override
-	public boolean connectionIsValid(Connection connection, int validityTimeout)
-			throws SQLException {
-		return connection.isValid(validityTimeout);
-	}
+    public boolean connectionIsValid(Connection connection, int validityTimeout)
+            throws SQLException {
+        return connection.isValid(validityTimeout);
+    }
 
-	@Override
-	public boolean supportsClob() {
-		return true;
-	}
+    @Override
+    public boolean supportsClob() {
+        return true;
+    }
 
-	@Override
-	public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
-		return "LIMIT " + offset + ", " + limit;
-	}
+    @Override
+    public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
+        return "LIMIT " + offset + ", " + limit;
+    }
 
 }

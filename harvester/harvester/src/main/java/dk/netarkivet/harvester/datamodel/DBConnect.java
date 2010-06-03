@@ -62,41 +62,39 @@ public class DBConnect {
      * driver).
      */
     public static Connection getDBConnection() {
-    	
-    	DBSpecifics dbSpec = DBSpecifics.getInstance();
 
-        try {    		
-            int validityCheckTimeout = Settings.getInt(
-                    CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
+        DBSpecifics dbSpec = DBSpecifics.getInstance();
+
+        try {
+            int validityCheckTimeout = Settings
+                    .getInt(CommonSettings.DB_CONN_VALID_CHECK_TIMEOUT);
 
             Connection connection = connectionPool.get(Thread.currentThread());
-            boolean renew = ((connection == null) 
-                    || (! dbSpec.connectionIsValid(
-                    		connection, validityCheckTimeout)));
+            boolean renew = ((connection == null) || (!dbSpec
+                    .connectionIsValid(connection, validityCheckTimeout)));
 
-            if (renew) {  
+            if (renew) {
                 Class.forName(dbSpec.getDriverClassName());
-                connection = DriverManager.getConnection(
-                        Settings.get(CommonSettings.DB_URL));
+                connection = DriverManager.getConnection(Settings
+                        .get(CommonSettings.DB_URL));
                 connectionPool.put(Thread.currentThread(), connection);
                 log.info("Connected to database using DBurl '"
-                        + Settings.get(CommonSettings.DB_URL) 
-                        + "'  using driver '"
-                        + dbSpec.getDriverClassName() + "'");
+                        + Settings.get(CommonSettings.DB_URL)
+                        + "'  using driver '" + dbSpec.getDriverClassName()
+                        + "'");
             }
 
             return connection;
         } catch (ClassNotFoundException e) {
             final String message = "Can't find driver '"
-                + dbSpec.getDriverClassName() + "'";
+                    + dbSpec.getDriverClassName() + "'";
             log.warn(message, e);
             throw new IOFailure(message, e);
         } catch (SQLException e) {
             final String message = "Can't connect to database with DBurl: '"
-                + Settings.get(CommonSettings.DB_URL) + "' using driver '"
-                + dbSpec.getDriverClassName() + "'" +
-                "\n" +
-                ExceptionUtils.getSQLExceptionCause(e);
+                    + Settings.get(CommonSettings.DB_URL) + "' using driver '"
+                    + dbSpec.getDriverClassName() + "'" + "\n"
+                    + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         }

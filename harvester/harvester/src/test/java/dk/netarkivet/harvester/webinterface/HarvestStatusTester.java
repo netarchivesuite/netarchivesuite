@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.webinterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +61,19 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         super.tearDown();
     }
 
+    /** Simpel unittest for the HarvestStatus constructor and associated getters. */
+    public void testHarvestStatusConstructor() {
+        List<JobStatusInfo> jsiList = new ArrayList<JobStatusInfo>();
+        HarvestStatus hs = new HarvestStatus(42L, jsiList);
+        
+        assertEquals("Should have returned the correct fullresultsCount",
+                42L, hs.getFullResultsCount());
+        assertEquals("Should have returned the same empty list "
+        		+ "of JobstatusInfo objects",
+                jsiList, hs.getJobStatusInfo());
+    }
+    
+    
     public void testProcessRequest() throws Exception {
         
         JobDAO jobDAO = JobDBDAO.getInstance();
@@ -227,13 +241,16 @@ public class HarvestStatusTester extends WebinterfaceTestCase {
         		new String[]{"XX"});
         servletRequest.setParameterMap(parms);
         
+        // FIXME this says that it should forward to error page on wrong order parameters
+        // But it does not!
         try {
         	query = new HarvestStatusQuery(servletRequest);
             fail("Should have forwarded me to an error page on wrong order parameter.");
-        } catch (IllegalArgumentException e) {
-           //Expected
+        //} catch (IllegalArgumentException e) {
+        //   //Expected
+        } catch (ArgumentNotValid e) {
+          //Expected
         }
-
         //check set order parameter
         parms = new HashMap<String, String[]>();
         parms.put(

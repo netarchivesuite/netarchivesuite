@@ -1138,14 +1138,19 @@ public class HarvestDefinitionDBDAO extends HarvestDefinitionDAO {
         PreparedStatement s = null;
         try {
             s = c.prepareStatement(
-            		"SELECT DISTINCT domains.name"
+                    // Note: the DISTINCT below is put in deliberately to fix 
+                    // bug 1878: Seeds for domain is shown twice on page 
+                    // History/Harveststatus-seeds.jsp
+                    "SELECT DISTINCT domains.name"
                     + " FROM     domains,"
                     + "          configurations,"
                     + "          harvest_configs,"
                     + "          harvestdefinitions"
                     + " WHERE    configurations.domain_id = domains.domain_id"
-                    + " AND harvest_configs.config_id = configurations.config_id"
-                    + " AND harvest_configs.harvest_id = harvestdefinitions.harvest_id"
+                    + " AND harvest_configs.config_id = "
+                        + "configurations.config_id"
+                    + " AND harvest_configs.harvest_id = "
+                        + "harvestdefinitions.harvest_id"
                     + " AND harvestdefinitions.name = ?" 
                     + " ORDER BY domains.name");
             s.setString(1, harvestName);

@@ -28,11 +28,8 @@ import dk.netarkivet.common.utils.SettingsFactory;
 import dk.netarkivet.harvester.HarvesterSettings;
 
 /**
- *  A factory for HeritrixControllers.
- *
- *
+ *  A factory class for HeritrixController instances.
  */
-
 public class HeritrixControllerFactory
         extends SettingsFactory<HeritrixController> {
 
@@ -48,9 +45,7 @@ public class HeritrixControllerFactory
      */
     public static HeritrixController
     getDefaultHeritrixController(Object ...args) throws ArgumentNotValid {
-        return SettingsFactory.getInstance(HarvesterSettings.HERITRIX_CONTROLLER_CLASS, args);
+        return SettingsFactory.getInstance(
+                HarvesterSettings.HERITRIX_CONTROLLER_CLASS, args);
     }
-
-    
-
 }
