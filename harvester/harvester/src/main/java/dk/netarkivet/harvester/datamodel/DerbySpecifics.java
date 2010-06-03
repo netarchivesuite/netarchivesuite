@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
-import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
@@ -94,6 +93,32 @@ public abstract class DerbySpecifics extends DBSpecifics {
             DBUtils.closeStatementIfOpen(s);
         }
     }
+    
+    /**
+     * Checks that the connection is valid (i.e. still open on the server side).
+     * This implementation can be overriden if a specific RDBM is not handling
+     * the {@link Connection#isValid(int)} JDBC4 method properly.
+     * @param connection
+     * @param validityTimeout
+     * @return
+     * @throws SQLException 
+     */
+    public boolean connectionIsValid(Connection connection, int validityTimeout)
+            throws SQLException {
+        return connection.isValid(validityTimeout);
+    }
+    @Override
+    public String getOrderByLimitAndOffsetSubClause(long limit, long offset) {
+        // LIMIT sub-clause supported by Derby 10.5.3
+        // see http://db.apache.org/derby/docs/10.5/ref/rrefsqljoffsetfetch.html
+        return "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
+    }
+    
+    @Override
+    public boolean supportsClob() {
+        return true;
+    }
+
     /** Migrates the 'jobs' table from version 3 to version 4
      * consisting of a change of the field forcemaxbytes from int to bigint
      * and setting its default to -1.

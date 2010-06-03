@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,8 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
+import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
 import dk.netarkivet.testutils.TestUtils;
 
 /**
@@ -418,7 +421,8 @@ public class JobDAOTester extends DataModelTestCase {
         HarvestDefinitionDAO.getInstance();
         JobDAO dao = JobDAO.getInstance();
         Job j = dao.read(1L);
-        List<JobStatusInfo> infos = dao.getStatusInfo();
+        List<JobStatusInfo> infos = 
+        	dao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         assertEquals("Should get info on one job", 1, infos.size());
         JobStatusInfo info = infos.get(0);
         checkInfoCorrect(j, info);
@@ -435,7 +439,7 @@ public class JobDAOTester extends DataModelTestCase {
         j2.setActualStart(new Date());
         dao.update(j2);
 
-        infos = dao.getStatusInfo();
+        infos = dao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
         JobStatus statusj = info.getStatus();
@@ -447,7 +451,12 @@ public class JobDAOTester extends DataModelTestCase {
         assertEquals("Status NEW for second job", statusj2, JobStatus.NEW);
         
 
-        infos = dao.getStatusInfo(false);
+        Map<String, String[]> params = new HashMap<String, String[]>();
+        params.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{HarvestStatusQuery.SORT_ORDER.DESC.name()});
+        HarvestStatusQuery query = HarvestStatusTester.getTestQuery(params);
+        infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
         statusj = info.getStatus();
@@ -461,9 +470,19 @@ public class JobDAOTester extends DataModelTestCase {
         
         infos = dao.getStatusInfo(JobStatus.DONE);
         assertEquals("Should get info on one job with status DONE", 1, infos.size());
-        infos = dao.getStatusInfo(true, JobStatus.DONE);
+        
+        params.clear();
+        params.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_STATUS.name(), 
+        		new String[]{JobStatus.DONE.name()});
+        query = HarvestStatusTester.getTestQuery(params);
+        infos = dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Should get info on one job with status DONE (ascending)", 1, infos.size());
-        infos = dao.getStatusInfo(false, JobStatus.DONE);
+        params.put(
+        		HarvestStatusQuery.UI_FIELD.JOB_ID_ORDER.name(), 
+        		new String[]{HarvestStatusQuery.SORT_ORDER.DESC.name()});
+        query = HarvestStatusTester.getTestQuery(params);
+        infos= dao.getStatusInfo(query).getJobStatusInfo();
         assertEquals("Should get info on one job with status DONE (descending)", 1, infos.size());
         infos = dao.getStatusInfo(JobStatus.NEW);
         assertEquals("Should get info on one job with status NEW", 1, infos.size());
@@ -493,18 +512,22 @@ public class JobDAOTester extends DataModelTestCase {
         Job j4 = new Job(43L, dc, JobPriority.HIGHPRIORITY, 0L, -1, 4);
         dao.create(j4);
 
-        List<JobStatusInfo> infos = dao.getStatusInfo(43L, 0);
+        List<JobStatusInfo> infos = dao.getStatusInfo(
+        		new HarvestStatusQuery(43L, 0)).getJobStatusInfo();
         assertEquals("Should get info on no jobs", 0, infos.size());
 
-        infos = dao.getStatusInfo(117L, 23);
+        infos = dao.getStatusInfo(
+        		new HarvestStatusQuery(117L, 23)).getJobStatusInfo();
         assertEquals("Should get info on no jobs", 0, infos.size());
 
-        infos = dao.getStatusInfo(43L, 3);
+        infos = dao.getStatusInfo(
+        		new HarvestStatusQuery(43L, 3)).getJobStatusInfo();
         assertEquals("Should get info on one job", 1, infos.size());
         JobStatusInfo info = infos.get(0);
         checkInfoCorrect(j2, info);
 
-        infos = dao.getStatusInfo(43L, 4);
+        infos = dao.getStatusInfo(
+        		new HarvestStatusQuery(43L, 4)).getJobStatusInfo();
         assertEquals("Should get info on two jobs", 2, infos.size());
         info = infos.get(0);
         checkInfoCorrect(j3, info);

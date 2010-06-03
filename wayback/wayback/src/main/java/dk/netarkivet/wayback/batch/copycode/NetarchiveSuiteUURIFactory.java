@@ -44,7 +44,6 @@ import org.archive.util.TextUtils;
  * jobs without violating our security permissions.
  * 
  */
-
 public class NetarchiveSuiteUURIFactory extends UURI {
     private static final long serialVersionUID = -6146295130382209042L;
 
@@ -57,7 +56,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * The single instance of this factory.
      */
-    private static final NetarchiveSuiteUURIFactory factory = new NetarchiveSuiteUURIFactory();
+    private static final NetarchiveSuiteUURIFactory factory 
+        = new NetarchiveSuiteUURIFactory();
 
     /**
      * RFC 2396-inspired regex.
@@ -189,7 +189,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * Authority port number regex.
      */
-    final static Pattern PORTREGEX = Pattern.compile("(.*:)([0-9]+)$");
+    static final Pattern PORTREGEX = Pattern.compile("(.*:)([0-9]+)$");
 
     /**
      * Characters we'll accept in the domain label part of a URI
@@ -200,20 +200,20 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * years counter to spec; we also accept dash patterns and ACE
      * prefixes that will be rejected by IDN-punycoding attempt.)
      */
-    final static String ACCEPTABLE_ASCII_DOMAIN =
+    static final String ACCEPTABLE_ASCII_DOMAIN =
         "^(?:[a-zA-Z0-9_-]++(?:\\.)?)++$";
 
     /**
      * Pattern that looks for case of three or more slashes after the
      * scheme.  If found, we replace them with two only as mozilla does.
      */
-    final static Pattern HTTP_SCHEME_SLASHES =
+    static final Pattern HTTP_SCHEME_SLASHES =
         Pattern.compile("^(https?://)/+(.*)");
 
     /**
      * Pattern that looks for case of two or more slashes in a path.
      */
-    final static Pattern MULTIPLE_SLASHES = Pattern.compile("//+");
+    static final Pattern MULTIPLE_SLASHES = Pattern.compile("//+");
 
     /**
      * System property key for list of supported schemes.
@@ -263,7 +263,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @throws URIException
      */
     public static UURI getInstance(String uri, String charset)
-    		throws URIException {
+        throws URIException {
         return NetarchiveSuiteUURIFactory.factory.create(uri, charset);
     }
 
@@ -274,7 +274,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @throws URIException
      */
     public static UURI getInstance(UURI base, String relative)
-    		throws URIException {
+        throws URIException {
         return NetarchiveSuiteUURIFactory.factory.create(base, relative);
     }
 
@@ -291,7 +291,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
             return hasScheme;
         }
         String tmpStr = possibleUrl.substring(0, possibleUrl.indexOf(':'));
-        return Arrays.binarySearch(NetarchiveSuiteUURIFactory.factory.schemes, tmpStr) >= 0;
+        return Arrays.binarySearch(
+                NetarchiveSuiteUURIFactory.factory.schemes, tmpStr) >= 0;
     }
 
     /**
@@ -326,13 +327,13 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      * @throws URIException
      */
     private UURI create(UURI base, String relative) throws URIException {
-        UURI uuri = new UURI(base, new UURI(fixup(relative, base, base.getProtocolCharset()),
+        UURI uuri = new UURI(base, new UURI(
+                fixup(relative, base, base.getProtocolCharset()),
             true, base.getProtocolCharset()){}){};
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(" URI " + relative +
-                " PRODUCT " + uuri.toString() +
-                " CHARSET " + base.getProtocolCharset() +
-                " BASE " + base);
+            logger.fine(" URI " + relative + " PRODUCT " + uuri.toString()
+                            + " CHARSET " + base.getProtocolCharset()
+                            + " BASE " + base);
         }
         return validityCheck(uuri);
     }
@@ -350,8 +351,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
      */
     protected UURI validityCheck(UURI uuri) throws URIException {
         if (uuri.getRawURI().length > UURI.MAX_URL_LENGTH) {
-           throw new URIException("Created (escaped) uuri > " +
-              UURI.MAX_URL_LENGTH +": "+uuri.toString());
+           throw new URIException("Created (escaped) uuri > " 
+                   + UURI.MAX_URL_LENGTH +": " + uuri.toString());
         }
         return uuri;
     }
@@ -381,8 +382,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
         if (uri.length() > UURI.MAX_URL_LENGTH) {
             // We check length here and again later after all convertions.
-            throw new URIException("URI length > " + UURI.MAX_URL_LENGTH +
-                ": " + uri);
+            throw new URIException("URI length > " + UURI.MAX_URL_LENGTH
+                    + ": " + uri);
         }
 
         // Replace nbsp with normal spaces (so that they get stripped if at
@@ -397,7 +398,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         // IE actually converts backslashes to slashes rather than to %5C.
         // Since URIs that have backslashes usually work only with IE, we will
         // convert backslashes to slashes as well.
-        // TODO: Maybe we can first convert backslashes by specs and than by IE
+        // TODO Maybe we can first convert backslashes by specs and than by IE
         // so that we fetch both versions.
         if (uri.indexOf(BACKSLASH) >= 0) {
             uri = TextUtils.replaceAll(BACKSLASH_PATTERN, uri, SLASH);
@@ -433,9 +434,9 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         // If a scheme, is it a supported scheme?
         if (uriScheme != null && uriScheme.length() > 0 &&
                 this.schemes != null) {
-            if (!(Arrays.binarySearch(schemes,uriScheme)>=0)) {
+            if (!(Arrays.binarySearch(schemes, uriScheme)>=0)) {
                 // unsupported; see if silently ignored
-                if((Arrays.binarySearch(ignoredSchemes,uriScheme)>=0)) {
+                if((Arrays.binarySearch(ignoredSchemes, uriScheme)>=0)) {
                     throw new URIException(
                             IGNORED_SCHEME, "Ignored scheme: " + uriScheme);
                 } else {
@@ -450,8 +451,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
                 throw new URIException("Relative URI but no base: " + uri);
             }
         } else {
-        	checkHttpSchemeSpecificPartSlashPrefix(base, uriScheme,
-        		uriSchemeSpecificPart);
+            checkHttpSchemeSpecificPartSlashPrefix(base, uriScheme,
+                    uriSchemeSpecificPart);
         }
 
         // fixup authority portion: lowercase/IDN-punycode any domain;
@@ -459,8 +460,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         uriAuthority = fixupAuthority(uriAuthority);
 
         // Do some checks if absolute path.
-        if (uriSchemeSpecificPart != null &&
-                uriSchemeSpecificPart.startsWith(SLASH)) {
+        if (uriSchemeSpecificPart != null 
+                && uriSchemeSpecificPart.startsWith(SLASH)) {
             if (uriPath != null) {
                 // Eliminate '..' if its first thing in the path.  IE does this.
                 uriPath = TextUtils.replaceFirst(SLASHDOTDOTSLASH, uriPath,
@@ -475,12 +476,12 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         }
 
         if (uriAuthority != null) {
-            if (uriScheme != null && uriScheme.length() > 0 &&
-                    uriScheme.equals(HTTP)) {
+            if (uriScheme != null && uriScheme.length() > 0 
+                    && uriScheme.equals(HTTP)) {
                 uriAuthority = checkPort(uriAuthority);
                 uriAuthority = stripTail(uriAuthority, HTTP_PORT);
-            } else if (uriScheme != null && uriScheme.length() > 0 &&
-                    uriScheme.equals(HTTPS)) {
+            } else if (uriScheme != null && uriScheme.length() > 0 
+                    && uriScheme.equals(HTTPS)) {
                 uriAuthority = checkPort(uriAuthority);
                 uriAuthority = stripTail(uriAuthority, HTTPS_PORT);
             }
@@ -511,7 +512,7 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         // correctly (See the testEscapedEncoding unit test).
         //
         // This fixup may cause us to miss content.  There is the charset case
-        // noted above.  TODO: Look out for cases where we fail other than for
+        // noted above.  TODO Look out for cases where we fail other than for
         // the above given reason which will be fixed when we address
         // '[ 913687 ] Make extractors interrogate for charset'.
 
@@ -539,32 +540,32 @@ public class NetarchiveSuiteUURIFactory extends UURI {
     /**
      * If http(s) scheme, check scheme specific part begins '//'.
      * @throws URIException
-     * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. Common Internet
-     * Scheme Syntax</A>
+     * @see <A href="http://www.faqs.org/rfcs/rfc1738.html">Section 3.1. 
+     * Common Internet Scheme Syntax</A>
      */
     protected void checkHttpSchemeSpecificPartSlashPrefix(final URI base,
-    		final String scheme, final String schemeSpecificPart)
-    throws URIException {
-    	if (scheme == null || scheme.length() <= 0) {
-    		return;
-    	}
-    	if (!scheme.equals("http") && !scheme.equals("https")) {
-    		return;
-    	}
-    	if ( schemeSpecificPart == null
-    	        || !schemeSpecificPart.startsWith("//")) {
-    	    // only acceptable if schemes match
-    	    if (base == null || !scheme.equals(base.getScheme())) {
-    	        throw new URIException(
-    	                "relative URI with scheme only allowed for " +
-    	                "scheme matching base");
-    	    }
-    	    return;
-    	}
-    	if (schemeSpecificPart.length() <= 2) {
-    		throw new URIException("http scheme specific part is " +
-        		"too short: " + schemeSpecificPart);
-    	}
+            final String scheme, final String schemeSpecificPart)
+            throws URIException {
+        if (scheme == null || scheme.length() <= 0) {
+            return;
+        }
+        if (!scheme.equals("http") && !scheme.equals("https")) {
+            return;
+        }
+        if (schemeSpecificPart == null 
+                || !schemeSpecificPart.startsWith("//")) {
+            // only acceptable if schemes match
+            if (base == null || !scheme.equals(base.getScheme())) {
+                throw new URIException(
+                        "relative URI with scheme only allowed for "
+                                + "scheme matching base");
+            }
+            return;
+        }
+        if (schemeSpecificPart.length() <= 2) {
+            throw new URIException("http scheme specific part is "
+                    + "too short: " + schemeSpecificPart);
+        }
     }
 
     /**
@@ -583,32 +584,37 @@ public class NetarchiveSuiteUURIFactory extends UURI {
         if (uriAuthority != null) {
             // Get rid of any trailing escaped spaces:
             // http://www.archive.org%20.  Rare but happens.
-            // TODO: reevaluate: do IE or firefox do such mid-URI space-removal?
+            // TODO reevaluate: do IE or firefox do such mid-URI space-removal?
             // if not, we shouldn't either.
             while(uriAuthority.endsWith(ESCAPED_SPACE)) {
-                uriAuthority = uriAuthority.substring(0,uriAuthority.length()-3);
+                uriAuthority = uriAuthority.substring(
+                        0, uriAuthority.length() - 3);
             }
 
             // lowercase & IDN-punycode only the domain portion
             int atIndex = uriAuthority.indexOf(COMMERCIAL_AT);
-            int portColonIndex = uriAuthority.indexOf(COLON,(atIndex<0)?0:atIndex);
+            int portColonIndex = uriAuthority.indexOf(COLON, 
+                    (atIndex < 0)? 0 : atIndex);
             if(atIndex<0 && portColonIndex<0) {
                 // most common case: neither userinfo nor port
                 return fixupDomainlabel(uriAuthority);
-            } else if (atIndex<0 && portColonIndex>-1) {
+            } else if (atIndex <0 && portColonIndex > -1) {
                 // next most common: port but no userinfo
-                String domain = fixupDomainlabel(uriAuthority.substring(0,portColonIndex));
+                String domain = fixupDomainlabel(uriAuthority.substring(
+                        0, portColonIndex));
                 String port = uriAuthority.substring(portColonIndex);
                 return domain + port;
-            } else if (atIndex>-1 && portColonIndex<0) {
+            } else if (atIndex > -1 && portColonIndex < 0) {
                 // uncommon: userinfo, no port
-                String userinfo = uriAuthority.substring(0,atIndex+1);
-                String domain = fixupDomainlabel(uriAuthority.substring(atIndex+1));
+                String userinfo = uriAuthority.substring(0, atIndex + 1);
+                String domain = fixupDomainlabel(
+                        uriAuthority.substring(atIndex + 1));
                 return userinfo + domain;
             } else {
                 // uncommon: userinfo, port
-                String userinfo = uriAuthority.substring(0,atIndex+1);
-                String domain = fixupDomainlabel(uriAuthority.substring(atIndex+1,portColonIndex));
+                String userinfo = uriAuthority.substring(0, atIndex + 1);
+                String domain = fixupDomainlabel(uriAuthority.substring(
+                        atIndex + 1, portColonIndex));
                 String port = uriAuthority.substring(portColonIndex);
                 return userinfo + domain + port;
             }
@@ -630,18 +636,18 @@ public class NetarchiveSuiteUURIFactory extends UURI {
 
         // apply IDN-punycoding, as necessary
         try {
-            // TODO: optimize: only apply when necessary, or
+            // TODO optimize: only apply when necessary, or
             // keep cache of recent encodings
             label = IDNA.toASCII(label);
         } catch (IDNAException e) {
-            if(TextUtils.matches(ACCEPTABLE_ASCII_DOMAIN,label)) {
+            if(TextUtils.matches(ACCEPTABLE_ASCII_DOMAIN, label)) {
                 // domain name has ACE prefix, leading/trailing dash, or
                 // underscore -- but is still a name we wish to tolerate;
                 // simply continue
             } else {
                 // problematic domain: neither ASCII acceptable characters
                 // nor IDN-punycodable, so throw exception
-                // TODO: change to HeritrixURIException so distinguishable
+                // TODO change to HeritrixURIException so distinguishable
                 // from URIExceptions in library code
                 URIException ue = new URIException(e+" "+label);
                 ue.initCause(e);
@@ -719,8 +725,10 @@ public class NetarchiveSuiteUURIFactory extends UURI {
             char c = uri.charAt(i);
             if (Character.isWhitespace(c)) {
                 if (buffer == null) {
-                    buffer = new MutableString(uri.length() +
-                        2 /*If space, two extra characters (at least)*/);
+                    buffer = new MutableString(
+                            uri.length() 
+                            + 2 /*If space, two extra characters (at least)*/
+                            );
                     buffer.append(uri.substring(0, i));
                 }
                 buffer.append("%");
@@ -772,8 +780,8 @@ public class NetarchiveSuiteUURIFactory extends UURI {
                     // just catch and leave portNo at illegal 0
                 }
                 if (portNo <= 0 || portNo > 65535) {
-                    throw new URIException("Port out of bounds: " +
-                        uriAuthority);
+                    throw new URIException("Port out of bounds: " 
+                            + uriAuthority);
                 }
             }
         }

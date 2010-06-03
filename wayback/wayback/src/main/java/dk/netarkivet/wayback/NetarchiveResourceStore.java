@@ -184,7 +184,7 @@ public class NetarchiveResourceStore implements ResourceStore {
 
         // create ARCRecord.
         try {
-            arcRecord = new ARCRecord(is,header, 0,false,false,true);
+            arcRecord = new ARCRecord(is, header, 0, false, false, true);
             int code = arcRecord.getStatusCode();
             logger.debug("ARCRecord created with code '" + code + "'");
             arcRecord.skipHttpHeader();

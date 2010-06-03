@@ -66,6 +66,7 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
+import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -472,7 +473,8 @@ public class HarvestSchedulerTester extends TestCase {
             newJob.setStatus(JobStatus.STARTED);
             jdao.create(newJob);
         }
-        List<JobStatusInfo> oldInfos = jdao.getStatusInfo();
+        List<JobStatusInfo> oldInfos = 
+        	jdao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         // Since initial DB contains one NEW job, we now have one of each
         // status plus one extra NEW (i.e. 7 jobs).
         assertTrue("There should have been 13 jobs now, but there was "
@@ -534,7 +536,8 @@ public class HarvestSchedulerTester extends TestCase {
             jdao.create(newJob);
         }
 
-        List<JobStatusInfo> oldInfos = jdao.getStatusInfo();
+        List<JobStatusInfo> oldInfos = 
+        	jdao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         // Since initial DB contains one NEW job, we now have one of each
         // status plus one extra NEW (i.e. 7 jobs).
         
@@ -544,7 +547,8 @@ public class HarvestSchedulerTester extends TestCase {
         Method rescheduleJobs = ReflectUtils.getPrivateMethod(HarvestScheduler.class,
                                                               "rescheduleJobs");
         rescheduleJobs.invoke(hsch);
-        List<JobStatusInfo> newInfos = jdao.getStatusInfo();
+        List<JobStatusInfo> newInfos = 
+        	jdao.getStatusInfo(new HarvestStatusQuery()).getJobStatusInfo();
         // Check that all old jobs are there, with one changed status
         OLDS: for (JobStatusInfo oldInfo : oldInfos) {
             for (JobStatusInfo newInfo : newInfos) {

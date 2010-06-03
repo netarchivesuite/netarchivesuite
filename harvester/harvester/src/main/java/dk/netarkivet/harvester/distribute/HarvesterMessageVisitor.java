@@ -23,6 +23,7 @@
 
 package dk.netarkivet.harvester.distribute;
 
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 
@@ -44,12 +45,17 @@ public interface HarvesterMessageVisitor {
      *
      * @param msg A received message.
      */
-    public void visit(CrawlStatusMessage msg);
+    void visit(CrawlStatusMessage msg);
 
     /** This method should be overridden to handle the receipt of a message.
      *
      * @param msg A received message.
      */
-    public void visit(DoOneCrawlMessage msg);
-
+    void visit(DoOneCrawlMessage msg);
+    
+    /** This method should be overridden to handle the receipt of a message.
+    *
+    * @param msg A received message.
+    */
+    void visit(CrawlProgressMessage msg);
 }

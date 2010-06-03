@@ -121,8 +121,14 @@ public class HarvestController {
         if (arcRepController != null) {
             arcRepController.close();
         }
+        //instance = null;
+        resetInstance();
+    }
+    
+    private static void resetInstance() {
         instance = null;
     }
+    
 
     /**
      * Writes the files involved with a harvests.
@@ -233,7 +239,8 @@ public class HarvestController {
      */
     public void runHarvest(HeritrixFiles files) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(files, "HeritrixFiles files");
-        HeritrixLauncher hl = HeritrixLauncher.getInstance(files);
+        HeritrixLauncher hl = 
+        	HeritrixLauncherFactory.getInstance(files);
         hl.doCrawl();
     }
 

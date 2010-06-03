@@ -42,9 +42,11 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
                  dk.netarkivet.harvester.datamodel.SparseFullHarvest,
                  dk.netarkivet.harvester.datamodel.SparsePartialHarvest,
                  dk.netarkivet.harvester.webinterface.HarvestStatus, 
-                 dk.netarkivet.harvester.webinterface.Constants"
+                 dk.netarkivet.harvester.webinterface.Constants,
+                 dk.netarkivet.harvester.webinterface.HarvestStatusQuery"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
        basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
@@ -191,7 +193,7 @@ harvestname (Constants.HARVEST_PARAM): The name of the harvest that will be
             <a href="Harveststatus-perharvestrun.jsp?<%=
             Constants.HARVEST_ID_PARAM%>=<%=hri.getHarvestID()%>&amp;<%=
             Constants.HARVEST_NUM_PARAM%>=<%=hri.getRunNr()%>&amp;<%=
-            Constants.JOBSTATUS_PARAM%>=<%=HarvestStatus.JOBSTATUS_ALL%>">
+            Constants.JOBSTATUS_PARAM%>=<%=HarvestStatusQuery.JOBSTATUS_ALL%>">
                 <fmt:message key="show.jobs"/>
             </a>
         </td>

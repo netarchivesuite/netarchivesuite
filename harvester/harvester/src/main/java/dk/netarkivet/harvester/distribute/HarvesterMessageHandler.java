@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.netarkivet.common.distribute.JMSConnection;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.PermissionDenied;
+import dk.netarkivet.harvester.harvesting.distribute.CrawlProgressMessage;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DoOneCrawlMessage;
 
@@ -62,6 +63,7 @@ public abstract class HarvesterMessageHandler
      *
      * @param msg an ObjectMessage
      */
+    @Override
     public void onMessage(Message msg) {
         ArgumentNotValid.checkNotNull(msg, "msg");
         log.trace("Message received:\n" + msg.toString());
@@ -91,6 +93,7 @@ public abstract class HarvesterMessageHandler
      * @param msg a CrawlStatusMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(CrawlStatusMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
@@ -102,8 +105,23 @@ public abstract class HarvesterMessageHandler
      * @param msg a DoOneCrawlMessage
      * @throws PermissionDenied when invoked
      */
+    @Override
     public void visit(DoOneCrawlMessage msg) throws PermissionDenied {
         ArgumentNotValid.checkNotNull(msg, "msg");
         deny(msg);
     }
+
+    /**
+     * This method should be overridden and implemented by a sub class if
+     * message handling is wanted.
+     * @param msg a {@link CrawlProgressMessage}
+     * @throws PermissionDenied when invoked
+     */
+    @Override
+    public void visit(CrawlProgressMessage msg) {
+        ArgumentNotValid.checkNotNull(msg, "msg");
+        deny(msg);
+    }
+    
+    
 }

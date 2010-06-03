@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -208,4 +209,28 @@ public class XmlUtils {
                                 + f.getAbsolutePath() + "'", e);
         }
     }
+    
+    /** Parses a given string to produce a {@link org.w3c.dom.Document} 
+     * instance.
+     * @param xml Some XML text.
+     * @return a {@link org.w3c.dom.Document} parsed from the given xml. 
+     * @throws DocumentException If unable to parse the given text as XML.
+     */
+    public static Document documentFromString(String xml) 
+    throws DocumentException {
+        Document doc;
+        try {
+            SAXReader reader = new SAXReader();
+            StringReader in = new StringReader(xml);
+            doc = reader.read(in);
+            in.close();
+        } catch (DocumentException e) {
+            log.warn(
+                    "Failed to read the contents of the string as XML:" 
+                    +  xml);
+            throw e;
+        }
+        return doc;
+    }
+    
 }

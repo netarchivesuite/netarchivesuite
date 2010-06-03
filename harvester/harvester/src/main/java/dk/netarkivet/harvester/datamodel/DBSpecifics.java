@@ -40,20 +40,21 @@ import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.SettingsFactory;
 
 /**
- * Abstract collection of DB methods that are not standard SQL.  This class
- * is a singleton class whose actual implementation is provided by a subclass
- * as determined by the DB_SPECIFICS_CLASS setting.
- *
+ * Abstract collection of DB methods that are not standard SQL. This class is a
+ * singleton class whose actual implementation is provided by a subclass as
+ * determined by the DB_SPECIFICS_CLASS setting.
+ * 
  */
 public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
-    
+
     /** The instance of the DBSpecifics class. */
     private static DBSpecifics instance;
-    
+
     Log log = LogFactory.getLog(DBSpecifics.class);
 
-    /** Get the singleton instance of the DBSpecifics implementation class.
-     *
+    /**
+     * Get the singleton instance of the DBSpecifics implementation class.
+     * 
      * @return An instance of DBSpecifics with implementations for a given DB.
      */
     public static synchronized DBSpecifics getInstance() {
@@ -64,73 +65,89 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
     }
 
     /**
-     * Shutdown the database system, if running embeddedly.  Otherwise, this
-     * is ignored.
-     *
+     * Shutdown the database system, if running embeddedly. Otherwise, this is
+     * ignored.
+     * 
      * Will log a warning on errors, but otherwise ignore them.
      */
     public abstract void shutdownDatabase();
 
-    /** Get a temporary table for short-time use.  The table should be
-     * disposed of with dropTemporaryTable.  The table has two columns
-     * domain_name varchar(Constants.MAX_NAME_SIZE)
-     + config_name varchar(Constants.MAX_NAME_SIZE)
-     * All rows in the table must be deleted at commit or rollback.
-     *
-     * @param c The DB connection to use.
-     * @throws SQLException if there is a problem getting the table.
+    /**
+     * Get a temporary table for short-time use. The table should be disposed of
+     * with dropTemporaryTable. The table has two columns domain_name
+     * varchar(Constants.MAX_NAME_SIZE) + config_name
+     * varchar(Constants.MAX_NAME_SIZE) All rows in the table must be deleted at
+     * commit or rollback.
+     * 
+     * @param c
+     *            The DB connection to use.
+     * @throws SQLException
+     *             if there is a problem getting the table.
      * @return The name of the created table
      */
     public abstract String getJobConfigsTmpTable(Connection c)
-    throws SQLException;
+            throws SQLException;
 
-    /** Dispose of a temporary table gotten with getTemporaryTable. This can be
+    /**
+     * Dispose of a temporary table gotten with getTemporaryTable. This can be
      * expected to be called from within a finally clause, so it mustn't throw
      * exceptions.
-     *
-     * @param c The DB connection to use.
-     * @param tableName The name of the temporarily created table.
+     * 
+     * @param c
+     *            The DB connection to use.
+     * @param tableName
+     *            The name of the temporarily created table.
      */
     public abstract void dropJobConfigsTmpTable(Connection c, String tableName);
 
     /**
-     * Backup the database.  For server-based databases, where the administrator
-     * is expected to perform the backups, this method should do nothing.
-     * This method gets called within one hour of the hour-of-day indicated
-     * by the DB_BACKUP_INIT_HOUR settings.
-     *
-     * @param backupDir Directory to which the database should be backed up
-     * @throws SQLException On SQL trouble backing up database
-     * @throws PermissionDenied if the directory cannot be created.
+     * Backup the database. For server-based databases, where the administrator
+     * is expected to perform the backups, this method should do nothing. This
+     * method gets called within one hour of the hour-of-day indicated by the
+     * DB_BACKUP_INIT_HOUR settings.
+     * 
+     * @param backupDir
+     *            Directory to which the database should be backed up
+     * @throws SQLException
+     *             On SQL trouble backing up database
+     * @throws PermissionDenied
+     *             if the directory cannot be created.
      */
     public abstract void backupDatabase(File backupDir) throws SQLException;
 
-    /** Get the name of the JDBC driver class that handles interfacing
-     * to this server.
-     *
+    /**
+     * Get the name of the JDBC driver class that handles interfacing to this
+     * server.
+     * 
      * @return The name of a JDBC driver class
      */
     public abstract String getDriverClassName();
 
-    /** Update a table to a newer version, if necessary.  This will check the
+    /**
+     * Update a table to a newer version, if necessary. This will check the
      * schemaversions table to see the current version and perform a
      * table-specific update if required.
-     *
-     * @param tableName The table to update
-     * @param toVersion The version to update the table to.
-     * @throws IllegalState If the table is an unsupported version, and
-     * the toVersion is less than the current version of the table  
-     * @throws NotImplementedException If no method exists for migration from
-     * current version of the table to the toVersion of the table.
-     * @throws IOFailure in case of problems in interacting with the database
+     * 
+     * @param tableName
+     *            The table to update
+     * @param toVersion
+     *            The version to update the table to.
+     * @throws IllegalState
+     *             If the table is an unsupported version, and the toVersion is
+     *             less than the current version of the table
+     * @throws NotImplementedException
+     *             If no method exists for migration from current version of the
+     *             table to the toVersion of the table.
+     * @throws IOFailure
+     *             in case of problems in interacting with the database
      */
-   
+
     public synchronized void updateTable(String tableName, int toVersion) {
         ArgumentNotValid.checkNotNullOrEmpty(tableName, "String tableName");
         ArgumentNotValid.checkPositive(toVersion, "int toVersion");
 
-        int currentVersion = DBUtils.getTableVersion(
-                DBConnect.getDBConnection(), tableName);
+        int currentVersion = DBUtils.getTableVersion(DBConnect
+                .getDBConnection(), tableName);
         log.info("Trying to migrate table '" + tableName + "' from version '"
                 + currentVersion + "' to version '" + toVersion + "'.");
         if (currentVersion == toVersion) {
@@ -242,7 +259,7 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
                                 + " to version " + toVersion);
             }
         } else if (tableName.equals("global_crawler_trap_expressions")) {
-           if (currentVersion == 0 && toVersion == 1) {
+            if (currentVersion == 0 && toVersion == 1) {
                 createGlobalCrawlerTrapExpressions();
                 currentVersion = 1;
             }
@@ -261,27 +278,35 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
         }
     }
 
-    /** Migrates the 'jobs' table from version 3 to version 4
-     * consisting of a change of the field forcemaxbytes from int to bigint
-     * and setting its default to -1. 
-     * Furthermore the default value for field num_configs is set to 0.
-     * @throws IOFailure in case of problems in interacting with the database
+    /**
+     * Migrates the 'jobs' table from version 3 to version 4 consisting of a
+     * change of the field forcemaxbytes from int to bigint and setting its
+     * default to -1. Furthermore the default value for field num_configs is set
+     * to 0.
+     * 
+     * @throws IOFailure
+     *             in case of problems in interacting with the database
      */
     protected abstract void migrateJobsv3tov4();
-    
-    /** Migrates the 'jobs' table from version 4 to version 5
-     * consisting of adding new fields 'resubmitted_as_job' and 'submittedDate'.
-     * @throws IOFailure in case of problems in interacting with the database
+
+    /**
+     * Migrates the 'jobs' table from version 4 to version 5 consisting of
+     * adding new fields 'resubmitted_as_job' and 'submittedDate'.
+     * 
+     * @throws IOFailure
+     *             in case of problems in interacting with the database
      */
     protected abstract void migrateJobsv4tov5();
-    
-    /** Migrates the 'configurations' table from version 3 to version 4.
-     * This consists of altering the default value of field 'maxbytes' to -1.
+
+    /**
+     * Migrates the 'configurations' table from version 3 to version 4. This
+     * consists of altering the default value of field 'maxbytes' to -1.
      */
     protected abstract void migrateConfigurationsv3ov4();
- 
-    /** Migrates the 'fullharvests' table from version 2 to version 3.
-     * This consists of altering the default value of field 'maxbytes' to -1.
+
+    /**
+     * Migrates the 'fullharvests' table from version 2 to version 3. This
+     * consists of altering the default value of field 'maxbytes' to -1.
      */
     protected abstract void migrateFullharvestsv2tov3();
 
@@ -296,4 +321,45 @@ public abstract class DBSpecifics extends SettingsFactory<DBSpecifics> {
      */
     protected abstract void createGlobalCrawlerTrapExpressions();
 
+    /**
+     * Checks that the connection is valid (i.e. still open on the server side).
+     * This implementation can be overriden if a specific RDBM is not handling
+     * the {@link Connection#isValid(int)} JDBC4 method properly.
+     * 
+     * @param connection
+     *            the connection to check
+     * @param validityTimeout
+     *            the time in seconds to wait for the database operation used to
+     *            validate the connection to complete. If the timeout period
+     *            expires before the operation completes, this method returns
+     *            false.
+     * 
+     * @return true if the connection is valid false otherwise.
+     * @see Connection#isValid(int)
+     * @throws SQLException
+     */
+    public abstract boolean connectionIsValid(Connection connection,
+            int validityTimeout) throws SQLException;
+
+    /**
+     * Formats the LIMIT sub-clause of an SQL order clause. This sub-clause
+     * allows to paginate query results and its syntax might be dependant on the
+     * target RDBMS
+     * 
+     * @param limit
+     *            the maximum number of rows to fetch.
+     * @param offset
+     *            the starting offset in the full query results.
+     * @return the proper sub-clause.
+     */
+    public abstract String getOrderByLimitAndOffsetSubClause(long limit,
+            long offset);
+
+    /**
+     * Returns true if the target RDBMS supports CLOBs. If possible seedlists
+     * will be stored as CLOBs.
+     * 
+     * @return true if CLOBs are supported, false otherwise.
+     */
+    public abstract boolean supportsClob();
 }

@@ -33,11 +33,13 @@ This page displays harvest details for one harvest definition run
                  dk.netarkivet.harvester.datamodel.JobStatus,
                  dk.netarkivet.harvester.datamodel.JobStatusInfo,
                  dk.netarkivet.harvester.webinterface.Constants,
-                 dk.netarkivet.harvester.webinterface.HarvestStatus"
+                 dk.netarkivet.harvester.webinterface.HarvestStatus,
+                 dk.netarkivet.harvester.webinterface.HarvestStatusQuery"
          pageEncoding="UTF-8"
 %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"
-%><fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
+%>
+<fmt:setLocale value="<%=HTMLUtils.getLocale(request)%>" scope="page"
 /><fmt:setBundle scope="page"
                  basename="<%=dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE%>"/><%!
     private static final I18n I18N = new I18n(
@@ -53,17 +55,15 @@ This page displays harvest details for one harvest definition run
 
     // Look for optional parameters for search of jobs.
     // Moved up to make it possible to transfer paraemters when redirecting.
-    HarvestStatus.DefaultedRequest dfltRequest =
-        new HarvestStatus.DefaultedRequest(request);
-    Set<Integer> selectedJobStatusCodes =
-            HarvestStatus.getSelectedJobStatusCodes(dfltRequest);
-    String selectedSortOrder = HarvestStatus.getSelectedSortOrder(dfltRequest);
+    HarvestStatusQuery query = new HarvestStatusQuery(request);
+    Set<JobStatus> selectedStatuses = query.getSelectedJobStatusesAsSet();
+    boolean sortAscending = query.isSortAscending();
 
     // After a resubmit, forward to this page.
     if (request.getParameter(Constants.JOB_RESUBMIT_PARAM) != null) {
         String jobsStatusCodes = "&";
         for (JobStatus st : JobStatus.values()) {
-            if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
+            if (selectedStatuses.contains(st)) {
                 jobsStatusCodes = jobsStatusCodes.concat(Constants.JOBSTATUS_PARAM + "=" +
                 st.name() + "&");
             }
@@ -98,12 +98,8 @@ This page displays harvest details for one harvest definition run
 
 
     // List of information to be shown.
-    List<JobStatusInfo> jobStatusList = HarvestStatus.getjobStatusList(
-                                            harvestID,
-                                            harvestNum,
-                                            selectedJobStatusCodes, 
-                                            selectedSortOrder
-                                        );
+    List<JobStatusInfo> jobStatusList = 
+    	HarvestStatus.getjobStatusList(query).getJobStatusInfo();
                                         
     final String harvestName
             = HarvestDefinitionDAO.getInstance().getHarvestName(harvestID);
@@ -126,21 +122,21 @@ This page displays harvest details for one harvest definition run
        value="<%=request.getParameter(Constants.HARVEST_NUM_PARAM)%>"/>
 <h4>
 
-<fmt:message key="status.0.sort.order.1.job.choice">
+<fmt:message key="status.job.filters.group3">
 <fmt:param>
 <select multiple name="<%= Constants.JOBSTATUS_PARAM %>"
         size="<%= JobStatus.values().length %>">
     <%
-    selected = (selectedJobStatusCodes.contains(new Integer(JobStatus.ALL_STATUS_CODE)))
+    selected = (selectedStatuses.isEmpty())
                ? "selected=\"selected\"" : "";
     %>
-        <option <%=selected%>  value="<%=HarvestStatus.JOBSTATUS_ALL%>">
+        <option <%=selected%>  value="<%=HarvestStatusQuery.JOBSTATUS_ALL%>">
              <fmt:message key="status.job.all"/>
         </option>
     <%
     for (JobStatus st : JobStatus.values()) {
         selected = "";
-        if (selectedJobStatusCodes.contains(new Integer(st.ordinal()))) {
+        if (selectedStatuses.contains(st)) {
             selected = "selected=\"selected\"";
             selectedJobs.add(st.name());
         }
@@ -159,19 +155,15 @@ This page displays harvest details for one harvest definition run
 <fmt:param>
 <select name="<%= Constants.JOBIDORDER_PARAM %>" size="1">
     <%
-    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_ASCENDING))
-               ? "selected=\"selected\""
-               : "";
+    selected = (sortAscending ? "selected=\"selected\"" : "");
     %>
-        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_ASCENDING%>">
+        <option <%=selected%> value="<%=HarvestStatusQuery.SORT_ORDER.ASC.name()%>">
              <fmt:message key="sort.order.asc"/>
         </option>
     <%
-    selected = (selectedSortOrder.equals(HarvestStatus.SORTORDER_DESCENDING))
-               ? "selected=\"selected\""
-               : "";
+    selected = (! sortAscending ? "selected=\"selected\"" : "");
     %>
-        <option <%=selected%> value="<%=HarvestStatus.SORTORDER_DESCENDING%>">
+        <option <%=selected%> value="<%=HarvestStatusQuery.SORT_ORDER.DESC.name()%>">
              <fmt:message key="sort.order.desc"/>
         </option>
 </select>
@@ -243,7 +235,9 @@ This page displays harvest details for one harvest definition run
                                        value="<%=harvestNum%>"/>
                                 <input type="hidden"
                                        name="<%=Constants.JOBIDORDER_PARAM%>"
-                                       value="<%=selectedSortOrder%>"/>
+                                       value="<%=sortAscending ?
+                                        HarvestStatusQuery.SORT_ORDER.ASC.name()
+                                        : HarvestStatusQuery.SORT_ORDER.DESC.name()%>"/>
                                 <%
                                 // Add jobstatusname to param list.
                                 for(String job: selectedJobs) {

@@ -23,6 +23,8 @@
 
 package dk.netarkivet.harvester.datamodel;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -59,7 +61,8 @@ public class TemplateDBDAO extends TemplateDAO {
      * Only used by TemplateDAO,getInstance().
      */
     TemplateDBDAO() {
-        DBUtils.checkTableVersion(DBConnect.getDBConnection(), "ordertemplates", 1);
+        DBUtils.checkTableVersion(DBConnect.getDBConnection(), 
+                "ordertemplates", 1);
     }
 
     /**
@@ -81,10 +84,16 @@ public class TemplateDBDAO extends TemplateDAO {
             if (!res.next()) {
                 throw new UnknownID("Can't find template " + orderXmlName);
             }
-            Clob clob = res.getClob(1);
+            Reader orderTemplateReader = null;
+            if (DBSpecifics.getInstance().supportsClob()) {
+                Clob clob = res.getClob(1);
+                orderTemplateReader = clob.getCharacterStream();
+            } else {
+                orderTemplateReader = new StringReader(res.getString(1));
+            }
             SAXReader reader = new SAXReader();
             // TODO Check what happens on non-ascii
-            Document orderXMLdoc = reader.read(clob.getCharacterStream());
+            Document orderXMLdoc = reader.read(orderTemplateReader);
             return new HeritrixTemplate(orderXMLdoc);
         } catch (SQLException e) {
             final String message = "SQL error finding order.xml for "
