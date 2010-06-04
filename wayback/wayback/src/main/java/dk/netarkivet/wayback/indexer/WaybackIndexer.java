@@ -21,11 +21,19 @@
  */
 package dk.netarkivet.wayback.indexer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.NotImplementedException;
+import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
@@ -78,9 +86,55 @@ public class WaybackIndexer implements CleanupIF {
                 WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         FileUtils.createDir(temporaryBatchDir);
         FileUtils.createDir(batchOutputDir);
+        ingestInitialFiles();
         startProducerThread();
         startConsumerThreads();
     }
+
+    /**
+     * The file represented by WAYBACK_INDEXER_INITIAL_FILES
+     * is read line by line and each line is ingested as an
+     * already-indexed archive file
+     */
+    private static void ingestInitialFiles() {
+        File initialFile = null;
+        try {
+            initialFile = Settings.
+                    getFile(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES);
+        } catch (UnknownID e) {
+            log.info("No initial list of indexed files is set");
+            return;
+        }
+        if (!initialFile.isFile()) {
+            throw new ArgumentNotValid("The file '" +
+                                       initialFile.getAbsolutePath()
+                                       + "' does not exist or is not a file");
+        }
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(initialFile));
+        } catch (FileNotFoundException e) {
+            throw new IOFailure("Could not find file '" + initialFile + "'", e);
+        }
+        String fileName = null;
+        ArchiveFileDAO dao = new ArchiveFileDAO();
+        Date today = new Date();
+        try {
+            while ((fileName = br.readLine()) != null) {
+                ArchiveFile archiveFile = new ArchiveFile();
+                archiveFile.setFilename(fileName);
+                archiveFile.setIndexed(true);
+                archiveFile.setIndexedDate(today);
+                if (!dao.exists(fileName)) {
+                    log.info("Ingesting '" + fileName + "'");
+                    dao.create(archiveFile);
+                }
+            }
+        } catch (IOException e) {
+            throw new IOFailure("Error reading file", e);
+        }
+    }
+
 
     private static void startConsumerThreads() {
         int consumerThreads = Settings.getInt(

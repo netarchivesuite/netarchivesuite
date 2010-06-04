@@ -26,6 +26,7 @@ import dk.netarkivet.wayback.indexer.ArchiveFileTester;
 import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
 import dk.netarkivet.wayback.indexer.HibernateUtilTester;
 import dk.netarkivet.wayback.indexer.IndexerQueueTester;
+import dk.netarkivet.wayback.indexer.WaybackIndexerTester;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -63,6 +64,7 @@ public class WaybackTesterSuite {
         suite.addTestSuite(ExtractDeduplicateCDXBatchJobTester.class);
         suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
         suite.addTestSuite(HibernateUtilTester.class);
+        suite.addTestSuite(WaybackIndexerTester.class);
     }
 
     public static void main(String args[]) {

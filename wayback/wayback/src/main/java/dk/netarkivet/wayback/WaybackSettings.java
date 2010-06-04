@@ -142,4 +142,12 @@ public class WaybackSettings {
      */
     public static String WAYBACK_INDEXER_CONSUMER_THREADS =
             "settings.wayback.indexer.consumerThreads";
+
+    /**
+     * A file containing a list of files which have been archived and
+     * therefore do not need to be archived again. This key may be unset.
+     */
+    public static String WAYBACK_INDEXER_INITIAL_FILES =
+            "settings.wayback.indexer.initialFiles";
+
 }

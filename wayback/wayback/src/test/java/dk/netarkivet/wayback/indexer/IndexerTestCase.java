@@ -45,6 +45,7 @@ public class IndexerTestCase extends TestCase {
 
     public void setUp() {
         rs.setUp();
+        System.setProperty(WaybackSettings.HIBERNATE_HBM2DDL_AUTO, "create-drop");
         HibernateUtil.getSession().getSessionFactory().close();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);

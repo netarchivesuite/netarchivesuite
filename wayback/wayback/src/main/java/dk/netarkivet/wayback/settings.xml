@@ -21,7 +21,7 @@
             <dialect>org.hibernate.dialect.DerbyDialect</dialect>
             <show_sql>true</show_sql>
             <format_sql>true</format_sql>
-            <hbm2ddl_auto>create-drop</hbm2ddl_auto>
+            <hbm2ddl_auto>update</hbm2ddl_auto>
             <user></user>
             <password></password>
         </hibernate>
@@ -33,6 +33,7 @@
             <producerDelay>0</producerDelay>
             <producerInterval>86400000</producerInterval>
             <consumerThreads>5</consumerThreads>
+            <initialFiles></initialFiles>
         </indexer>
     </wayback>
 </settings>
