@@ -58,6 +58,8 @@ import dk.netarkivet.testutils.XmlAsserts;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
+import dk.netarkivet.harvester.harvesting.controller.DirectHeritrixController;
+import dk.netarkivet.harvester.harvesting.controller.HeritrixController;
 
 /**
  * Tests various aspects of launching Heritrix and Heritrix' capabilities.
