@@ -210,6 +210,19 @@
             <tld>fk</tld>
             <tld>fm</tld>
             <tld>fo</tld>
+            <tld>aeroport.fr</tld>
+            <tld>asso.fr</tld>
+            <tld>avoues.fr</tld>
+            <tld>chambagri.fr</tld>
+            <tld>com.fr</tld>
+            <tld>gouv.fr</tld>
+            <tld>medecin.fr</tld>
+            <tld>nom.fr</tld>
+            <tld>pharmacien.fr</tld>
+            <tld>port.fr</tld>
+            <tld>prd.fr</tld>
+            <tld>presse.fr</tld>
+            <tld>tm.fr</tld>
             <tld>fr</tld>
             <tld>ga</tld>
             <tld>gb</tld>
@@ -333,6 +346,8 @@
             <tld>pw</tld>
             <tld>py</tld>
             <tld>qa</tld>
+            <tld>asso.re</tld>
+            <tld>com.re</tld>
             <tld>re</tld>
             <tld>ro</tld>
             <tld>ru</tld>
@@ -510,7 +525,7 @@
                 <javaOpts/>                
             </heritrix>
             <heritrixController>
-                <class>dk.netarkivet.harvester.harvesting.JMXHeritrixController</class>
+                <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
             </heritrixController>
             <deduplication>
                 <enabled>true</enabled>
