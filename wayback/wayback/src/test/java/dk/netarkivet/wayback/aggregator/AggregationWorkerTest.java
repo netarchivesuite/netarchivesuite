@@ -86,7 +86,20 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * process
      */
     public void testMaxIntermediateIndexFileLimit() {
-                   
+        testFirstAggregationRun();
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile109KName});
+
+        TestIndex testIndex = new TestIndex();
+        testIndex.addIndexesFromFiles(inputFiles);
+        testIndex.addIndexesFromFiles(new File[] { AggregationWorker.INTERMEDIATE_INDEX_FILE });
+
+        worker.runAggregation();
+
+        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        assertTrue("InputFiles remain after aggregation", new File(inputDirName).list().length == 0);
+        assertTrue("Temporary intermediate index file remains after aggregation", !AggregationWorker.tempIntermediateIndexFile.exists());
+        assertTrue("Temporary index file remains after aggregation", !AggregationWorker.TEMP_FILE_INDEX.exists());
+        assertTrue("Intermediate file not cleared after merge to final index file", AggregationWorker.INTERMEDIATE_INDEX_FILE.length() == 0);
     }
 
     /**
@@ -95,7 +108,16 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * set to 0
      */
     public void testZeroIntermediateIndexFileLimit() {
+        System.setProperty(WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE, "0");
 
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile1Name, inputFile2Name});
+
+        TestIndex testIndex = new TestIndex();
+        testIndex.addIndexesFromFiles(inputFiles);
+
+        worker.runAggregation();
+
+        assertNull("Unexpected content of aggregated index", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
     }
 
     /**
@@ -105,6 +127,18 @@ public class AggregationWorkerTest extends AggregatorTestCase {
      * renamed to ${finalIndexFileName}.1
      */
     public void testMaxFinalIndexFileLimit() {
+        testMaxIntermediateIndexFileLimit();
+
+        File[] inputFiles = prepareSourceIndex(new String[] {inputFile155KName});
+        
+        TestIndex testIndex = new TestIndex();
+        testIndex.addIndexesFromFiles(inputFiles);
+
+        worker.runAggregation();
+
+        assertNull("Unexpected content of aggregated index after roll-over", testIndex.compareToIndex(AggregationWorker.FINAL_INDEX_FILE));
+        File oldIndexFile = new File(AggregationWorker.indexOutputDir, "wayback.index.1");;
+        assertTrue("No wayback.index.1 present", oldIndexFile.exists());
 
     }
 }

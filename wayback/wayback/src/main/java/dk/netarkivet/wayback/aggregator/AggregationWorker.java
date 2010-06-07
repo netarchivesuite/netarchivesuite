@@ -24,6 +24,8 @@
 package dk.netarkivet.wayback.aggregator;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -54,11 +56,13 @@ public class AggregationWorker implements CleanupIF {
             WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR);
     private static File indexInputDir = Settings.getFile(
             WaybackSettings.WAYBACK_AGGREGATOR_INPUT_DIR);
-    private static File indexOutputDir = Settings.getFile(
+    static File indexOutputDir = Settings.getFile(
             WaybackSettings.WAYBACK_AGGREGATOR_OUTPUT_DIR);
 
     static File tempIntermediateIndexFile = new File(temporaryDir,
                                                      "temp_intermediate.index");
+    static File tempFinalIndexFile = new File(temporaryDir,
+                                              "temp_final.index");
 
     private int maxIndexFileSize = Settings.getInt(
             WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE);
@@ -176,11 +180,87 @@ public class AggregationWorker implements CleanupIF {
             }
         }
 
+        handlePossibleIntemediateIndexFileLimit();
+
         // Clean the up
         for (File inputFile : filesToProcess) {
-            inputFile.delete();    
+            inputFile.delete();
         }
         TEMP_FILE_INDEX.delete();
+
+    }
+
+    private void handlePossibleIntemediateIndexFileLimit() {
+        if (INTERMEDIATE_INDEX_FILE.length() > 1024 * Settings.getLong(
+                WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE)) {
+            handleFinalIndexFileMerge();
+        }
+    }
+
+    private void handleFinalIndexFileMerge() {
+        if (INTERMEDIATE_INDEX_FILE.length() + FINAL_INDEX_FILE.length()
+            > 1024 * Settings.getLong(
+                WaybackSettings.WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE)) {
+
+            rolloverFinalIndexFiles();
+        }
+
+        if (!FINAL_INDEX_FILE.exists()) {
+            INTERMEDIATE_INDEX_FILE.renameTo(FINAL_INDEX_FILE);
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Promoting Intermediate Index file to final index file");
+            }
+        } else {
+            aggregator.mergeFiles(new File[]{FINAL_INDEX_FILE,
+                                             INTERMEDIATE_INDEX_FILE},
+                                  tempFinalIndexFile);
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Merged intermediate file into final index file");
+            }
+
+            tempFinalIndexFile.renameTo(FINAL_INDEX_FILE);
+
+            INTERMEDIATE_INDEX_FILE.delete();
+        }
+
+        try {
+            INTERMEDIATE_INDEX_FILE.createNewFile();
+        } catch (IOException e) {
+            log.error("Failed to create new Intermediate Index file",
+                      e);
+        }
+
+    }
+
+    private void rolloverFinalIndexFiles() {
+        if (log.isInfoEnabled()) {
+            log.info(
+                    "Rolling over the final index files.");
+        }
+
+        // Get a list of all final wayback index files
+        int numberOverFinalIndexFiles = indexOutputDir.list(
+                new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.indexOf(FINAL_INDEX_FILE.getName()) != -1;
+                    }
+                }).length;
+
+        for (int i = numberOverFinalIndexFiles - 1; i >= 0; i--) {
+            String nameOfFileToRename;
+            if (i == 0) {
+                nameOfFileToRename = FINAL_INDEX_FILE.getName();
+            } else {
+                nameOfFileToRename = FINAL_INDEX_FILE.getName() + "." + i;
+            }
+            File fileToRename = new File(indexOutputDir, nameOfFileToRename);
+            File newName = new File(indexOutputDir,
+                                    FINAL_INDEX_FILE.getName() + "." + (i + 1));
+            fileToRename.renameTo(newName);
+        }
+
 
     }
 

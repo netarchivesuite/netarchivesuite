@@ -46,7 +46,9 @@ public class AggregatorTestCase extends TestCase {
 
     protected static final String inputFile1Name = "index1.txt";
     protected static final String inputFile2Name = "index2.txt";
-    protected static final String inputFile3Name = "index3.txt";
+    protected static final String inputFile3Name = "index3.txt";     
+    protected static final String inputFile109KName = "index109K.txt";
+    protected static final String inputFile155KName = "index155K.txt";
 
     private final ReloadSettings originalSettings = new ReloadSettings();
 
