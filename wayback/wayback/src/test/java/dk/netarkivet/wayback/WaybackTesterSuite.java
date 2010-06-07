@@ -21,6 +21,8 @@
  */
 package dk.netarkivet.wayback;
 
+import dk.netarkivet.wayback.aggregator.AggregationWorkerTest;
+import dk.netarkivet.wayback.aggregator.IndexAggregatorTest;
 import dk.netarkivet.wayback.indexer.ArchiveFileDAOTester;
 import dk.netarkivet.wayback.indexer.ArchiveFileTester;
 import dk.netarkivet.wayback.indexer.FileNameHarvesterTester;
@@ -65,6 +67,8 @@ public class WaybackTesterSuite {
         suite.addTestSuite(DeduplicateToCDXApplicationTester.class);
         suite.addTestSuite(HibernateUtilTester.class);
         suite.addTestSuite(WaybackIndexerTester.class);
+        suite.addTestSuite(IndexAggregatorTest.class);
+        suite.addTestSuite(AggregationWorkerTest.class);
     }
 
     public static void main(String args[]) {

@@ -24,32 +24,87 @@
 
 package dk.netarkivet.wayback.aggregator;
 
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * Encapsulates the functionality for sorting and merging index files. Uses the
+ * Unix sort cmd for optimized sorting and file merging. Operations in this
+ * class are synchronized to avoid multiple jobs running at the same time (by
+ * the same object at least).
+ */
 public class IndexAggregator {
-    
-    /* Logger. */
     private Log log = LogFactory.getLog(getClass().getName());
 
     /**
-     * Generates a sorted CDX index file based on the set of unsorted CDX input files
-     * @param filesNames A list of the files to aggregate
-     * @param outputFile  Name of the outputfile 
+     * Generates a sorted CDX index file based on the set of unsorted CDX input
+     * files.<p> The operation will not run on a folder which already has a
+     * process job running.
+     *
+     * @param files      A list of the files to aggregate
+     * @param outputFile Name of the outputfile. In case of a empty filesNames
+     *                   array no outputFiles will be generated
      */
-    public void processFiles(String[] filesNames, String outputFile) {
-        Process p = null;
-        StringBuffer cmdStringBuffer = new StringBuffer("sort");
-        for (int i = 0 ; i<filesNames.length ; i++) {
-            cmdStringBuffer.append(" " + filesNames[i]);
-        }
+    public void sortAndMergeFiles(File[] files, File outputFile) {
+        processFiles(files, outputFile, null);
+    }
 
-        cmdStringBuffer.append(" -o "+outputFile);
-        
+    public void mergeFiles(File[] files, File outputFile) {
+        List<String> args = new LinkedList<String>();
+        args.add("-m");
+        processFiles(files, outputFile, args);
+    }
+
+    /**
+     * Calls the Unix sort command with the options <code>$filesNames -o
+     * $outputfile -T WaybackSettings#WAYBACK_AGGREGATOR_TEMP_DIR.
+     *
+     * Sets the LC_ALL environment variable before making the call.
+     *
+     * @param files The files to merge and sort
+     * @param outputFile The resulting sorted file
+     * @param additionalArgs A list af extra arguments, which (if different from
+     *                       null) are added to the sort call.<p> Note: If any
+     *                       of the args contain a whitespace the call will
+     *                       fail.
+     */
+    private void processFiles(File[] files, File outputFile,
+                              List<String> additionalArgs) {
+        if (files.length == 0) {
+            return;
+        } // Empty file list will cause sort to wait for further input, and the call will therefor never return
+
+        Process p = null;
+
         try {
-            p = Runtime.getRuntime().exec(cmdStringBuffer.toString());
+            List<String> inputFileList = new LinkedList<String>();
+            for (int i = 0; i < files.length; i++) {
+                inputFileList.add(files[i].getCanonicalPath());
+            }
+            List<String> cmd = new LinkedList<String>();
+            cmd.add("sort");
+            cmd.addAll(inputFileList);
+            cmd.add("-o");
+            cmd.add(outputFile.getCanonicalPath());
+            cmd.add("-T");
+            cmd.add("Settings.get(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR)");
+            if (additionalArgs != null) {
+                cmd.addAll(additionalArgs);
+            }
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.environment().put("LC_ALL", "C"); // Reset all locale definitions
+            pb.directory(new File(System.getProperty("user.dir")));
+            p = pb.start();
             p.waitFor();
-            if (p.exitValue() == -1);
+            if (p.exitValue() != 0) {
+                log.error(
+                        "Failed to sort index files, sort exited with return code "
+                        + p.exitValue());
+            }
         } catch (Exception e) {
             log.error("Failed to aggregate indexes ", e);
         }
