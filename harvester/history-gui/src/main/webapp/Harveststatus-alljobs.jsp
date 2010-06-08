@@ -413,7 +413,7 @@ function resubmitSelectedJobs() {
         <th><fmt:message key="table.job.uploaderror"/></th>
         <th><fmt:message key="table.job.number.of.domainconfigurations"/></th>
         <% if (generateResubmitForm) { %>
-            <th><input type="checkbox" name="resubmit_all" onchange="resubmitToggleSelection()"/></tr></th>
+            <th><input type="checkbox" name="resubmit_all" onchange="resubmitToggleSelection()"/></th></tr>
         <% } %>
     <%
         int rowcount = 0;

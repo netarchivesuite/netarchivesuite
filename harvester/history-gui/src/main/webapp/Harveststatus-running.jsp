@@ -87,7 +87,7 @@ This page displays a list of running jobs.
 
 <tr class="spacerRowBig"><td colspan="12">&nbsp;</td></tr>
 <tr><th colspan="12">
-    <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href=<%=harvestDetailsLink%>><%=harvestName %></a>
+    <fmt:message key="table.running.jobs.harvestName"/>&nbsp;<a href="<%=harvestDetailsLink%>"><%=harvestName %></a>
 </th>
 </tr> 
 <tr class="spacerRowSmall"><td colspan="12">&nbsp;</td></tr>
