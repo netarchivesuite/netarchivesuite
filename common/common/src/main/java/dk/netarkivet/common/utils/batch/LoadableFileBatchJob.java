@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
+import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
 
 /** This implementation of FileBatchJob is a bridge to a class file given
@@ -105,16 +106,21 @@ public class LoadableFileBatchJob extends FileBatchJob {
     
     /**
      * Method for initializing the loaded batchjob.
+     * @throws IOFailure If the batchjob cannot be loaded.
      */
-    protected void loadBatchJob() {
+    protected void loadBatchJob() throws IOFailure {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
         try {
             loadedJob = (FileBatchJob) singleClassLoader
                     .defineClass().newInstance();
         } catch (InstantiationException e) {
-            log.warn("Cannot load job from byte array", e);
+            String errMsg = "Cannot load job from byte array";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         } catch (IllegalAccessException e) {
-            log.warn("Cannot access loaded job from byte array", e);
+            String errMsg = "Cannot access loaded job from byte array";
+            log.warn(errMsg, e);
+            throw new IOFailure(errMsg, e);
         }
     }
 

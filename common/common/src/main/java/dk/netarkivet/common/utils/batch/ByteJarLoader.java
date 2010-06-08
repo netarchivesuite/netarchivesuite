@@ -1,7 +1,7 @@
-/* $Id: LoadableJarBatchJob.java 1400 2010-05-19 12:07:24Z jolf $
- * $Revision: 1400 $
- * $Date: 2010-05-19 14:07:24 +0200 (Wed, 19 May 2010) $
- * $Author: jolf $
+/* $Id$
+ * $Revision$
+ * $Date$
+ * $Author$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark

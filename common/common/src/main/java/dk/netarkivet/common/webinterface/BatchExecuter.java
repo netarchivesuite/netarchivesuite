@@ -95,8 +95,7 @@ public class BatchExecuter extends Thread {
         String jobName = BatchGUI.getJobName(batchJob.getClass().getName());
 
         // handle if loaded batchjob.
-        if(batchJob.getClass().getName().equals(
-                LoadableJarBatchJob.class.getName())) {
+        if(batchJob instanceof LoadableJarBatchJob) {
             LoadableJarBatchJob ljbj = (LoadableJarBatchJob) batchJob;
             jobName = BatchGUI.getJobName(ljbj.getLoadedJobClass());
             log.debug("LoadableJarBatchJob is actually the batchjob '"

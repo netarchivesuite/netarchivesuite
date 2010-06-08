@@ -445,11 +445,11 @@
             <batchjobs>
                 <batchjob>
                     <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
-                    <arcfile></arcfile>
+                    <jarfile></jarfile>
                 </batchjob>
                 <batchjob>
                     <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
-                    <arcfile></arcfile>
+                    <jarfile></jarfile>
                 </batchjob>
             </batchjobs>
         </batch>

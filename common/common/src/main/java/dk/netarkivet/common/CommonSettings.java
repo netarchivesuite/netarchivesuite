@@ -414,14 +414,14 @@ public class CommonSettings {
     
     /**
      * <b>settings.common.batch.batchjobs.batchjob.arcfile</b>: <br/>
-     * The list of the corresponding arc-files containing the batchjob.
-     * This will be used for LoadableArcBatchJobs. If no file is specified, 
+     * The list of the corresponding jar-files containing the batchjob.
+     * This will be used for LoadableJarBatchJobs. If no file is specified, 
      * it is assumed, that the batchjob exists with the default classpath of 
      * the involved applications (BitarchiveMonitor, ArcRepository, 
      * GUIWebServer and BitArchive).
      */
-    public static String BATCHJOBS_ARCFILE 
-            = "settings.common.batch.batchjobs.batchjob.arcfile";    
+    public static String BATCHJOBS_JARFILE 
+            = "settings.common.batch.batchjobs.batchjob.jarfile";    
 
     /**
      * <b>settings.common.batch.baseDir</b>: <br/>

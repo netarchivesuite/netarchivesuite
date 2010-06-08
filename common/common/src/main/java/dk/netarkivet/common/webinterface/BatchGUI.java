@@ -212,15 +212,15 @@ public final class BatchGUI {
 
             FileBatchJob batchjob;
             
-            File arcfile = getArcFile(jobName);
-            if(arcfile == null) {
+            File jarfile = getJarFile(jobName);
+            if(jarfile == null) {
                 // get the constructor and instantiate it.
                 Constructor construct = findStringConstructor(
                         getBatchClass(jobName));
                 batchjob = (FileBatchJob) 
                 construct.newInstance(new Object[]{});
             } else {
-                batchjob = new LoadableJarBatchJob(jobName, arcfile);
+                batchjob = new LoadableJarBatchJob(jobName, jarfile);
             }
 
             // get the regular expression.
@@ -263,7 +263,7 @@ public final class BatchGUI {
         Class res;
         // validate whether a class with the classname can be found
         try {
-            File arcfile = getArcFile(className);
+            File arcfile = getJarFile(className);
 
             // handle whether internal or loadable batchjob.
             if(arcfile != null) {
@@ -398,6 +398,8 @@ public final class BatchGUI {
      * Argument 3 (missing argument metadata)<br/>
      * <input name="arg3" size="50" value="" /><br/>
      * 
+     * TODO this does not work untill batchjobs can be used with arguments.
+     * 
      * @param c The class whose constructor should be used.
      * @param locale The language package.
      * @return The HTML code for the arguments for executing the batchjob.
@@ -437,10 +439,13 @@ public final class BatchGUI {
                         + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
             }
         } else {
+            // handle the case, when there is arguments.
             int parmIndex = 0;
+            // retrieve the arguments from the resources.
             for(int i = 0; i < resource.length && parmIndex < params.length; 
                     i++) {
                 if(resource[i].type() == params[parmIndex]) {
+                    // Use the resource to descript the argument.
                     parmIndex++;
                     res.append(resource[i].name());
                     if(resource[i].description() != null 
@@ -449,16 +454,20 @@ public final class BatchGUI {
                     }
                     res.append("<br/>\n");
                     res.append("<input name=\"arg" + parmIndex + "\" size=\"" 
-                            + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
+                            + Constants.HTML_INPUT_SIZE 
+                            + "\" value=\"\"><br/>\n");
                 }
             }
+            // If some arguments did not have a resource description, then
+            // use a default 'unknown argument' input box.
             if(parmIndex < params.length) {
                 for(int i = parmIndex + 1; i <= params.length; i++) {
                     res.append(I18N.getString(locale, 
                             "batchpage;Argument.i.missing.argument.metadata", 
                             i) + "<br/>\n");
                     res.append("<input name=\"arg" + i + "\" size=\"" 
-                            + Constants.HTML_INPUT_SIZE + "\" value=\"\"><br/>\n");
+                            + Constants.HTML_INPUT_SIZE 
+                            + "\" value=\"\"><br/>\n");
                 }
             }
         }
@@ -508,6 +517,7 @@ public final class BatchGUI {
                     && (filename.endsWith(Constants.ERROR_FILE_EXTENSION) 
                     || filename.endsWith(Constants.OUTPUT_FILE_EXTENSION))) {
                 String prefix = filename.split("[.]")[0];
+                // the prefix is not added twice, since it is a hash-set.
                 prefices.add(prefix);
             }
         }
@@ -1008,7 +1018,7 @@ public final class BatchGUI {
     private static String getArcFileForBatchjob(String classpath) 
             throws UnknownID {
         String[] jobs = Settings.getAll(CommonSettings.BATCHJOBS_CLASS);
-        String[] arcfiles = Settings.getAll(CommonSettings.BATCHJOBS_ARCFILE);
+        String[] arcfiles = Settings.getAll(CommonSettings.BATCHJOBS_JARFILE);
 
         // go through the lists to find the arc-file.
         for(int i = 0; i < jobs.length; i++) {
@@ -1031,7 +1041,7 @@ public final class BatchGUI {
      * string. 
      * @throws IOFailure If the file does not exist, or it is not a valid file.
      */
-    public static File getArcFile(String classPath) throws ArgumentNotValid, 
+    public static File getJarFile(String classPath) throws ArgumentNotValid, 
             IOFailure {
         ArgumentNotValid.checkNotNullOrEmpty(classPath, "String classPath");
         

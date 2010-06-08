@@ -57,7 +57,12 @@ public final class Constants {
     public static final String REGEX_ALL = ".*";
     /** The regular expression for metadata files.*/
     public static final String REGEX_METADATA = "metadata.*";
-    /** The regular expression for content files.*/
+    /** The regular expression for content files.
+     * This ensures that there is 2 dots in the filename, which is only the 
+     * case for the content-files (due to the harvester machine name).
+     * Alternatively the following has been suggested: 
+     * .*(?<!metadata-[0-9]+).arc 
+     */
     public static final String REGEX_CONTENT = "(.*[.]){2}.*";
     
     /** The size of the &lt;input&gt; HTML code.*/
