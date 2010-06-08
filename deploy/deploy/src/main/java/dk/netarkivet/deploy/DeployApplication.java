@@ -75,7 +75,7 @@ public final class DeployApplication {
     private static File externalJarFolder; 
 
     /**
-     * Run the new deploy.
+     * Run deploy.
      * 
      * @param args The Command-line arguments in no particular order:
      * 
@@ -91,7 +91,10 @@ public final class DeployApplication {
      * -E  [OPTIONAL] Evaluating the deployConfig file (arguments: 'y' or 'yes')
      * -A  [OPTIONAL] For archive database.
      * -J  [OPTIONAL] For deploying with external jar files. Must be the total
-     *                path to the directory containing jar-files.
+     *                path to the directory containing jar-files. These external
+     *                files will be placed on every machine, and they have to 
+     *                manually be put into the classpath, where they should be 
+     *                used.
      */
     public static void main(String[] args) {
         try {

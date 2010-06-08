@@ -122,6 +122,10 @@
                 <class>dk.netarkivet.monitor.webinterface.StatusSiteSection</class>
                 <webapplication>webpages/Status.war</webapplication>
             </siteSection>
+	    <harvestStatus>
+           	<defaultPageSize>100</defaultPageSize>
+            </harvestStatus>
+
         </webinterface>
         <topLevelDomains>
             <tld>ac</tld>
@@ -450,8 +454,14 @@
             <defaultBatchTimeout>604800000</defaultBatchTimeout>
             <baseDir>batch</baseDir>
             <batchjobs>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</job>
-                <job>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</job>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob</class>
+                    <arcfile/>
+                </batchjob>
+                <batchjob>
+                    <class>dk.netarkivet.archive.arcrepository.bitpreservation.FileListJob</class>
+                    <arcfile/>
+                </batchjob>
             </batchjobs>
         </batch>
         <replicas> <!-- The entire settings for replicas. -->
@@ -515,6 +525,13 @@
                 <inactivityTimeout>1800</inactivityTimeout>
                 <!-- 30 minutes -->
                 <noresponseTimeout>1800</noresponseTimeout>
+                <!--  5 minutes -->
+                <monitorResetInterval>300</monitorResetInterval>
+                <!--  10 minutes -->
+                <waitForReportGenerationTimeout>600</waitForReportGenerationTimeout>
+                <!--  20 seconds -->
+                <crawlLoopWaitTime>20</crawlLoopWaitTime>
+                <abortIfConnectionLost>true</abortIfConnectionLost>
                 <adminName>admin</adminName>
                 <adminPassword>adminPassword</adminPassword>
                 <guiPort>8090</guiPort>
@@ -524,6 +541,9 @@
                 <heapSize>1598M</heapSize>
                 <javaOpts/>                
             </heritrix>
+            <heritrixLauncher>
+                <class>dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher</class>
+            </heritrixLauncher>
             <heritrixController>
                 <class>dk.netarkivet.harvester.harvesting.controller.JMXHeritrixController</class>
             </heritrixController>
