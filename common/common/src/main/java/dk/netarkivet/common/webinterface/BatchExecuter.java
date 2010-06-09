@@ -47,7 +47,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
  * Class for execution of a batchjob in a separate thread.
  */
 public class BatchExecuter extends Thread {
-    /** Whether the results should be appended to the file */
+    /** Whether the results should be appended to the file. */
     private static final boolean APPEND = true;
     
     /** The log.*/

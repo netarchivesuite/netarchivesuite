@@ -46,7 +46,7 @@ public class ConstantsTester extends TestCase {
 
     public void testgetHeritrixVersionString() {
         assertEquals("HeritrixVersionString is wrong",
-                "1.14.3",
+                "1.14.4",
                 Constants.getHeritrixVersionString()
                 );
     }
