@@ -33,8 +33,8 @@ import org.hibernate.criterion.Criterion;
 /**
  * An implementation of Generic DAO which is specialised for hibernate object
  * stores.
- * @param <T>
- * @param <PK>
+ * @param <T> The type of the persistent entity.
+ * @param <PK> The type of the primary key for the entity.
  */
 public class GenericHibernateDAO<T, PK extends Serializable> implements GenericDAO<T, PK> {
 
@@ -48,6 +48,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         this.type = type;
     }
 
+    @Override
     public PK create(T o) {
         Session sess = getSession();
         sess.beginTransaction();
@@ -57,6 +58,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         return key;
     }
 
+    @Override
     public T read(PK id) {
         Session sess = getSession();
         T result =  (T) sess.get(type, id);
@@ -64,6 +66,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         return result;
     }
 
+    @Override
     public void update(T o) {
         Session sess = getSession();
         sess.beginTransaction();
@@ -72,6 +75,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         sess.close();
     }
 
+    @Override
     public void delete(T o) {
         Session sess = getSession();
         sess.beginTransaction();
@@ -88,9 +92,7 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         return HibernateUtil.getSession();
     }
 
-    public void flush() {
-        getSession().flush();
-    }
+
 
     /**
      * Use this inside subclasses as a convenience method to find objects
@@ -106,7 +108,4 @@ public class GenericHibernateDAO<T, PK extends Serializable> implements GenericD
         }
         return crit.list();
     }
-
-
-
 }

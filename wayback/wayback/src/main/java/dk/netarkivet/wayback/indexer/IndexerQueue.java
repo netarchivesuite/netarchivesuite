@@ -64,7 +64,9 @@ public class IndexerQueue {
         return instance;
     }
 
-
+    /**
+     * Private constructor for this method. Initialises an empty queue.
+     */
     private IndexerQueue() {
         queue = new LinkedBlockingQueue<ArchiveFile>();
     }
@@ -78,10 +80,10 @@ public class IndexerQueue {
                 .getFilesAwaitingIndexing();
         for (ArchiveFile file: files) {
             if (!queue.contains(file)) {
-                log.debug("Adding file '" + file.getFilename() +
+                log.info("Adding file '" + file.getFilename() +
                           "' to indexing queue.");
                 queue.add(file);
-                log.debug("Files in queue: '" + queue.size() + "'");
+                log.info("Files in queue: '" + queue.size() + "'");
             }
         }
     }
@@ -97,9 +99,9 @@ public class IndexerQueue {
             ArchiveFile file = null;
             try {
                 file = queue.take();
-                log.debug("Taken file '" + file.getFilename() +
+                log.info("Taken file '" + file.getFilename() +
                           "' from indexing queue.");
-                log.debug("Files in queue: '" + queue.size() + "'");                
+                log.info("Files in queue: '" + queue.size() + "'");                
             } catch (InterruptedException e) {
                 String message = "Unexpected interrupt in indexer while waiting "
                                  + "for new elements";

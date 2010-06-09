@@ -62,8 +62,7 @@ public class FileNameHarvester {
         ArchiveFileDAO dao = new ArchiveFileDAO();
         PreservationArcRepositoryClient client = ArcRepositoryClientFactory
                 .getPreservationInstance();
-        FileBatchJob job = new FileListJob();
-        BatchStatus status = client.batch(job,
+        BatchStatus status = client.batch(new FileListJob(),
                                  Settings.get(WaybackSettings.WAYBACK_REPLICA));
         RemoteFile results = status.getResultFile();
         InputStream is = results.getInputStream();
@@ -78,7 +77,8 @@ public class FileNameHarvester {
                     log.info("Creating object store entry for '" +
                              file.getFilename() + "'");
                     dao.create(file);
-                }
+                } // If the file is already known in the persistent store, no
+                // action needs to be taken.
             }
         } catch (IOException e) {
             throw new IOFailure("Error reading remote file", e);

@@ -69,7 +69,8 @@ public class WaybackIndexer implements CleanupIF {
     /**
      * Factory method which creates a singleton wayback indexer and sets it
      * running. It has the side effect of creating the output directories
-     * for the indexer if these do not already exist.
+     * for the indexer if these do not already exist. It also reads files for
+     * the initial ingest if necessary.
      * @return the indexer.
      */
     public static synchronized WaybackIndexer getInstance() {
@@ -79,6 +80,9 @@ public class WaybackIndexer implements CleanupIF {
           return instance;
     }
 
+    /**
+     * Private contructor.
+     */
     private WaybackIndexer() {
         File temporaryBatchDir = Settings.getFile(
                 WaybackSettings.WAYBACK_INDEX_TEMPDIR);
@@ -135,7 +139,10 @@ public class WaybackIndexer implements CleanupIF {
         }
     }
 
-
+    /**
+     * Starts the consumer threads which do the indexing by sending
+     * concurrent batch jobs to the arcrepository.
+     */
     private static void startConsumerThreads() {
         int consumerThreads = Settings.getInt(
                 WaybackSettings.WAYBACK_INDEXER_CONSUMER_THREADS);
@@ -146,10 +153,10 @@ public class WaybackIndexer implements CleanupIF {
                  @Override
                  public void run() {
                      super.run();
-                     log.debug("Started thread '" +
+                     log.info("Started thread '" +
                                Thread.currentThread().getName() + "'");
                      IndexerQueue.getInstance().consume();
-                     log.debug("Ending thread '" +
+                     log.info("Ending thread '" +
                                Thread.currentThread().getName() + "'");
 
                  }
@@ -157,6 +164,11 @@ public class WaybackIndexer implements CleanupIF {
         }
     }
 
+    /**
+     * Starts the producer thread. This thread runs on a timer. It downloads a
+     * list of all files in the archive and adds any new ones to the database. It
+     * then checks the database for unindexed files and adds them to the queue.
+     */
     private static void startProducerThread() {
         Long producerDelay =
             Settings.getLong(WaybackSettings.WAYBACK_INDEXER_PRODUCER_DELAY);
@@ -165,6 +177,7 @@ public class WaybackIndexer implements CleanupIF {
         TimerTask producerTask = new TimerTask() {
             @Override
             public void run() {
+                log.info("Starting producer thread");
                 FileNameHarvester.harvest();
                 IndexerQueue.getInstance().populate();
             }
@@ -180,6 +193,7 @@ public class WaybackIndexer implements CleanupIF {
      * the hibernate session factory.
      */
     public void cleanup() {
+        log.info("Cleaning up WaybackIndexer");
         File temporaryBatchDir = Settings.getFile(
                 WaybackSettings.WAYBACK_INDEX_TEMPDIR);
         FileUtils.removeRecursively(temporaryBatchDir);

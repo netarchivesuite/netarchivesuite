@@ -23,6 +23,12 @@ package dk.netarkivet.wayback.indexer;
 
 import dk.netarkivet.common.utils.ApplicationUtils;
 
+/**
+ * The entry point for the wayback indexer. This application determines what
+ * files in the arcrepository remain to be indexed and indexes them concurrently
+ * via batch jobs. The status of all files in the archive is maintained in a
+ * persistent object store managed by Hibernate.
+ */
 public class WaybackIndexerApplication {
 
     /**

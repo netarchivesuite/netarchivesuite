@@ -73,11 +73,6 @@ public class ArchiveFile {
      */
     private String originalIndexFileName;
 
-    /**
-     * The name of the sorted index file to which entries from this file have
-     * been added.
-     */
-    private String finalIndexFileName;
 
     /**
      * The number of times an attempt to index this file has failed.
@@ -90,31 +85,42 @@ public class ArchiveFile {
      */
     private Date indexedDate;
 
+    /**
+     * Constructor, creates a new instance in the unindexed state.
+     */
     public ArchiveFile() {
         isIndexed = false;
         indexedDate = null;
     }
 
+    /**
+     * Gets originalIndexFileName
+     * @return the originalIndexFileName
+     */
     public String getOriginalIndexFileName() {
         return originalIndexFileName;
     }
 
+    /**
+     * Sets originalIndexFileName
+     * @param originalIndexFileName
+     */
     public void setOriginalIndexFileName(String originalIndexFileName) {
         this.originalIndexFileName = originalIndexFileName;
     }
 
-    public String getFinalIndexFileName() {
-        return finalIndexFileName;
-    }
-
-    public void setFinalIndexFileName(String finalIndexFileName) {
-        this.finalIndexFileName = finalIndexFileName;
-    }
-
+    /**
+     * Returns indexedDate.
+     * @return the date indexed.
+     */
     public Date getIndexedDate() {
         return indexedDate;
     }
 
+    /**
+     * Sets indexedDate.
+     * @param indexedDate
+     */
     public void setIndexedDate(Date indexedDate) {
         this.indexedDate = indexedDate;
     }
@@ -129,22 +135,42 @@ public class ArchiveFile {
         return filename;
     }
 
+    /**
+     * Sets the filename
+     * @param filename
+     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
+    /**
+     * Returns true if the file has been indexed.
+     * @return  whether the file is indexed
+     */
     public boolean isIndexed() {
         return isIndexed;
     }
 
+    /**
+     * Sets whether the file has been indexed.
+     * @param indexed
+     */
     public void setIndexed(boolean indexed) {
         isIndexed = indexed;
     }
 
+    /**
+     * Gets the number of failed indexing attempts.
+     * @return the number of failed attempts
+     */
     public int getIndexingFailedAttempts() {
         return indexingFailedAttempts;
     }
 
+    /**
+     * Sets the number of failed indexing attempts.
+     * @param indexingFailedAttempts
+     */
     public void setIndexingFailedAttempts(int indexingFailedAttempts) {
         this.indexingFailedAttempts = indexingFailedAttempts;
     }
@@ -157,6 +183,7 @@ public class ArchiveFile {
      * datastore.
      */
     public void index() throws IllegalState {
+        log.info("Indexing " + toString());
         if (isIndexed) {
             throw new IllegalState("Attempted to index file '" + filename +
                                    "' which is already indexed");
@@ -179,6 +206,9 @@ public class ArchiveFile {
                 ArcRepositoryClientFactory.getPreservationInstance();
         BatchStatus batchStatus = client.batch(theJob, Settings.get(
                 WaybackSettings.WAYBACK_REPLICA));
+        // Since we index exactly one file at a time, the batch job
+        // is considered to have failed unless the result shows exactly one
+        // file processed with no exceptions thrown.
         if (!batchStatus.getFilesFailed().isEmpty() ||
             batchStatus.getNoOfFilesProcessed() != 1 ||
             !batchStatus.getExceptions().isEmpty()) {
@@ -188,27 +218,55 @@ public class ArchiveFile {
         }
     }
 
+    /**
+     * Collects the batch results from the BatchStatus, first to a
+     * file in temporary directory, after which they are renamed to the
+     * directory WAYBACK_BATCH_OUTPUTDIR. The status of this object is then
+     * updated to reflect that the object has been indexed.
+     * @param status
+     */
     private void collectResults(BatchStatus status) {
+        // Use an arbitrary filename for the output
         String outputFilename = UUID.randomUUID().toString();
+
+        // Read the name of the temporary output directory and create it if
+        // necessary
         String tempBatchOutputDir =
                 Settings.get(WaybackSettings.WAYBACK_INDEX_TEMPDIR);
         final File outDir = new File(tempBatchOutputDir);
         FileUtils.createDir(outDir);
+        
+        // Copy the batch output to the temporary directory.
         File batchOutputFile =
                 new File(outDir, outputFilename);
         status.copyResults(batchOutputFile);
+
+        // Read the name of the final batch output directory and create it if
+        // necessary
         String finalBatchOutputDir =
                 Settings.get(WaybackSettings.WAYBACK_BATCH_OUTPUTDIR);
         final File finalDirectory = new File(finalBatchOutputDir);
         FileUtils.createDir(finalDirectory);
+
+        // Move the output file from the temporary directory to the final
+        // directory
         File finalFile =
                 new File(finalDirectory, outputFilename);
         batchOutputFile.renameTo(finalFile);
+
+        // Update the file status in the object store
         originalIndexFileName = outputFilename;
         isIndexed = true;
+        log.info("Indexed '" + this.filename + "' to '" + originalIndexFileName
+                 + "'");
         (new ArchiveFileDAO()).update(this);
     }
 
+    /**
+     * Logs the error and increments the number of failed attempts for this
+     * ArchiveFile.
+     * @param status the status of the batch job.
+     */
     private void logBatchError(BatchStatus status) {
         String message = "Error indexing file '" + getFilename() + "\n" +
                          "Number of files processed: '" +
@@ -226,6 +284,8 @@ public class ArchiveFile {
         (new ArchiveFileDAO()).update(this);
     }
 
+
+    //Autogenerated code
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -246,10 +306,7 @@ public class ArchiveFile {
         if (!filename.equals(that.filename)) {
             return false;
         }
-        if (finalIndexFileName != null ? !finalIndexFileName.equals(
-                that.finalIndexFileName) : that.finalIndexFileName != null) {
-            return false;
-        }
+
         if (indexedDate != null ? !indexedDate.equals(that.indexedDate)
                                 : that.indexedDate != null) {
             return false;
@@ -263,14 +320,13 @@ public class ArchiveFile {
         return true;
     }
 
+    //Autogenerated code
     @Override
     public int hashCode() {
         int result = filename.hashCode();
         result = 31 * result + (isIndexed ? 1 : 0);
         result = 31 * result + (originalIndexFileName != null
                                 ? originalIndexFileName.hashCode() : 0);
-        result = 31 * result + (finalIndexFileName != null
-                                ? finalIndexFileName.hashCode() : 0);
         result = 31 * result + indexingFailedAttempts;
         result = 31 * result + (indexedDate != null ? indexedDate.hashCode()
                                                     : 0);

@@ -213,6 +213,10 @@ public class NetarchiveResourceStore implements ResourceStore {
         return resource;
     }
 
+    /**
+     * Shuts down this resource store, closing the arcrepository client.
+     * @throws IOException if an exception ocurred while closing the client.
+     */
     public void shutdown() throws IOException {
         // Close JMS connection.
         client.close();

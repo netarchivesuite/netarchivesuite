@@ -45,6 +45,47 @@ public class HibernateUtil {
     /** Logger for this class. */
     private static final Log log = LogFactory.getLog(HibernateUtil.class.getName());
 
+    /**i
+     * key indicating the connection provider to be used by hibernate.
+     */
+    private static final String CONNECTION_PROVIDER_CLASS
+            = "connection.provider_class";
+
+    /**
+     * value indicating use of the c3p0 as connection provider. This is hard
+     * coded and no other connection providers have been tested.
+     */
+    private static final String
+            ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER
+            = "org.hibernate.connection.C3P0ConnectionProvider";
+
+    // For documentation of these values see the corresponding constants in
+    // the WaybackSettings class
+    private static final String C3P0_ACQUIRE_INCREMENT
+            = "c3p0.acquire_increment";
+    private static final String C3P0_IDLE_TEST_PERIOD = "c3p0.idle_test_period";
+    private static final String C3P0_MAX_SIZE = "c3p0.max_size";
+    private static final String C3P0_MAX_STATEMENTS = "c3p0.max_statements";
+    private static final String C3P0_MIN_SIZE = "c3p0.min_size";
+    private static final String C3P0_TIMEOUT = "c3p0.timeout";
+    private static final String HIBERNATE_CONNECTION_DRIVER_CLASS
+            = "hibernate.connection.driver_class";
+    private static final String HIBERNATE_CONNECTION_URL
+            = "hibernate.connection.url";
+    private static final String HIBERNATE_DIALECT = "hibernate.dialect";
+    private static final String HIBERNATE_FORMAT_SQL = "hibernate.format_sql";
+    private static final String HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER
+            = "hibernate.bytecode.use_reflection_optimizer";
+    private static final String HIBERNATE_HBM2DDL_AUTO
+            = "hibernate.hbm2ddl.auto";
+    private static final String HIBERNATE_TRANSACTION_FACTORY_CLASS
+            = "hibernate.transaction.factory_class";
+    private static final String HIBERNATE_SHOW_SQL = "hibernate.show_sql";
+    private static final String HIBERNATE_CONNECTION_USERNAME
+            = "hibernate.connection.username";
+    private static final String HIBERNATE_CONNECTION_PASSWORD
+            = "hibernate.connection.password";
+
     /**
      * Private constructor as this class is never instantiated.
      */
@@ -65,42 +106,45 @@ public class HibernateUtil {
         if (sessionFactory == null || sessionFactory.isClosed()) {
             try {
                 AnnotationConfiguration config = new AnnotationConfiguration();
-                config.setProperty("connection.provider_class",
-                            "org.hibernate.connection.C3P0ConnectionProvider");
-                config.setProperty("c3p0.acquire_increment",
+                config.setProperty(CONNECTION_PROVIDER_CLASS,
+                                   ORG_HIBERNATE_CONNECTION_C3_P0_CONNECTION_PROVIDER);
+                config.setProperty(C3P0_ACQUIRE_INCREMENT,
                          Settings.get(WaybackSettings.C3P0_ACQUIRE_INCREMENT));
-                config.setProperty("c3p0.idle_test_period",
+                config.setProperty(C3P0_IDLE_TEST_PERIOD,
                                Settings.get(WaybackSettings.C3P0_IDLE_PERIOD));
-                config.setProperty("c3p0.max_size",
+                config.setProperty(C3P0_MAX_SIZE,
                                    Settings.get(WaybackSettings.C3P0_MAX_SIZE));
-                config.setProperty("c3p0.max_statements",
+                config.setProperty(C3P0_MAX_STATEMENTS,
                              Settings.get(WaybackSettings.C3P0_MAX_STATEMENTS));
-                config.setProperty("c3p0.min_size",
+                config.setProperty(C3P0_MIN_SIZE,
                                    Settings.get(WaybackSettings.C3P0_MIN_SIZE));
-                config.setProperty("c3p0.timeout",
+                config.setProperty(C3P0_TIMEOUT,
                                    Settings.get(WaybackSettings.C3P0_TIMEOUT));
-                config.setProperty("hibernate.connection.driver_class",
+                config.setProperty(HIBERNATE_CONNECTION_DRIVER_CLASS,
                              Settings.get(WaybackSettings.HIBERNATE_DB_DRIVER));
-                config.setProperty("hibernate.connection.url",
+                config.setProperty(HIBERNATE_CONNECTION_URL,
                                 Settings.get(WaybackSettings.HIBERNATE_DB_URL));
-                config.setProperty("hibernate.dialect",
+                config.setProperty(HIBERNATE_DIALECT,
                                Settings.get(WaybackSettings.HIBERNATE_DIALECT));
-                config.setProperty("hibernate.format_sql",
+                config.setProperty(HIBERNATE_FORMAT_SQL,
                             Settings.get(WaybackSettings.HIBERNATE_FORMAT_SQL));
-                config.setProperty("hibernate.bytecode.use_reflection_optimizer",
+                config.setProperty(HIBERNATE_BYTECODE_USE_REFLECTION_OPTIMIZER,
                   Settings.get(WaybackSettings.HIBERNATE_REFLECTION_OPTIMIZER));
-                config.setProperty("hibernate.hbm2ddl.auto",
+                config.setProperty(HIBERNATE_HBM2DDL_AUTO,
                           Settings.get(WaybackSettings.HIBERNATE_HBM2DDL_AUTO));
-                config.setProperty("hibernate.transaction.factory_class",
+                config.setProperty(HIBERNATE_TRANSACTION_FACTORY_CLASS,
                    Settings.get(WaybackSettings.HIBERNATE_TRANSACTION_FACTORY));
-                config.setProperty("hibernate.show_sql",
+                config.setProperty(HIBERNATE_SHOW_SQL,
                               Settings.get(WaybackSettings.HIBERNATE_SHOW_SQL));
+                // Specifically allow unset username/password for the database
+                // so that we can use database without authentication, e.g. in
+                // testing.
                 if (!Settings.get(WaybackSettings.HIBERNATE_USERNAME).isEmpty()) {
-                    config.setProperty("hibernate.connection.username",
+                    config.setProperty(HIBERNATE_CONNECTION_USERNAME,
                               Settings.get(WaybackSettings.HIBERNATE_USERNAME));
                 }
                 if (!Settings.get(WaybackSettings.HIBERNATE_PASSWORD).isEmpty()) {
-                    config.setProperty("hibernate.connection.password",
+                    config.setProperty(HIBERNATE_CONNECTION_PASSWORD,
                               Settings.get(WaybackSettings.HIBERNATE_PASSWORD));
                 }
                 config.addAnnotatedClass(ArchiveFile.class);
@@ -112,11 +156,6 @@ public class HibernateUtil {
                                                 + "object store - exiting", ex);
             }
         }
-    }
-
-    private static SessionFactory getSessionFactory() {
-        initialiseFactory();
-        return sessionFactory;
     }
 
     /**
