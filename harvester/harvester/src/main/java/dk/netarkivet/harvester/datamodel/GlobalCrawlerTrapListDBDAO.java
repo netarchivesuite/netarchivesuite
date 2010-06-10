@@ -43,7 +43,6 @@ import dk.netarkivet.common.utils.ExceptionUtils;
  * A singleton giving access to global crawler traps.
  *
  */
-
 public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
 
     /**
@@ -66,6 +65,7 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
      * version of global_crawler_trap_expressions needed by the code.
      */
     private static final int EXPRESSION_LIST_VERSION_NEEDED = 1;
+    
     /**
      * private constructor of this class. Checks if any migration
      * are needed before operation starts.
@@ -135,6 +135,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                              + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new UnknownID(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(stmt);
         }
     }
 
@@ -148,22 +150,19 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
            return getAllByActivity(false);
     }
 
-    /**
-     * Statement to select all distinct trap expressions from all active trap
-     * lists.
-     */
-    private static final String SELECT_EXPRS_STMT =
-            "SELECT DISTINCT trap_expression "
-            + "FROM global_crawler_trap_lists, global_crawler_trap_expressions "
-            + "WHERE global_crawler_trap_list_id = crawler_trap_list_id "
-            + "AND isActive = 1";
-
     @Override
     public List<String> getAllActiveTrapExpressions() {
         Connection conn = DBConnect.getDBConnection();
         List<String> result = new ArrayList<String>();
+        PreparedStatement stmt = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_EXPRS_STMT);
+            stmt = conn.prepareStatement("SELECT DISTINCT trap_expression "
+                    + "FROM global_crawler_trap_lists, "
+                    + "global_crawler_trap_expressions "
+                    + "WHERE global_crawler_trap_list_id = "
+                    + "crawler_trap_list_id "
+                    + "AND isActive = ?");
+            stmt.setBoolean(1, true);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 result.add(rs.getString(1));
@@ -171,9 +170,11 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             return result;
         } catch (SQLException e) {
             String message = "Error retrieving expressions.\n"
-                    + ExceptionUtils.getSQLExceptionCause(e);
+                + ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(stmt);
         }
     }
 
@@ -363,6 +364,8 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                              +  ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
+        } finally {
+            DBUtils.closeStatementIfOpen(stmt);
         }
     }
 
