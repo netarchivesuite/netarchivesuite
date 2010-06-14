@@ -101,6 +101,12 @@ public class WaybackIndexer implements CleanupIF {
      * already-indexed archive file
      */
     private static void ingestInitialFiles() {
+        String initialFileString = Settings.
+                    get(WaybackSettings.WAYBACK_INDEXER_INITIAL_FILES);
+        if ("".equals(initialFileString)) {
+            log.info("No initial list of indexed files is set");
+            return;
+        }
         File initialFile = null;
         try {
             initialFile = Settings.
