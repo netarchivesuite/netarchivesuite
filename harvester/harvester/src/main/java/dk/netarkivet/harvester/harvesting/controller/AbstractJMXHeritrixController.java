@@ -61,7 +61,7 @@ import dk.netarkivet.harvester.harvesting.HeritrixFiles;
 /**
  * Abstract base class for JMX-based Heritrix controllers.
  */
-abstract class AbstractJMXHeritrixController 
+public abstract class AbstractJMXHeritrixController 
 implements HeritrixController {
 
     /** The logger for this class. */
