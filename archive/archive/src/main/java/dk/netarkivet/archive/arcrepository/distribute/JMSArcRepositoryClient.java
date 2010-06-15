@@ -690,6 +690,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * @param credentials A string with the password for allowing changes inside
      * an archive. If it does not correspond to the credentials of the archive, 
      * the correction will not be allowed.
+     * @return The corrupted file from the archive.
      * @throws IOFailure If the message is not handled properly.
      * @throws ArgumentNotValid If the replicaId, the checksum or the 
      * credentials are either null or empty, or if file is null.

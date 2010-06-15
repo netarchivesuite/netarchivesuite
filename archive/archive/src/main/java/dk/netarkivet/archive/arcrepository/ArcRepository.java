@@ -326,7 +326,8 @@ public class ArcRepository implements CleanupIF {
         NetarkivetMessage msg;
         
         // Retrieve the checksum of the file.
-        msg = replicaClient.sendGetChecksumMessage(Channels.getTheRepos(), filename);
+        msg = replicaClient.sendGetChecksumMessage(Channels.getTheRepos(), 
+                filename);
 
         outstandingChecksumFiles.put(msg.getID(), filename);
         log.debug("Checksum job message submitted for file '" + filename 

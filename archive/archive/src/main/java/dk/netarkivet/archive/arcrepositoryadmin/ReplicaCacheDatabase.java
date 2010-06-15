@@ -1,7 +1,7 @@
-/* File:        $Id$
- * Revision:    $Revision$
- * Author:      $Author$
- * Date:        $Date$
+/* File:     $Id$
+ * Revision: $Revision$
+ * Author:   $Author$
+ * Date:     $Date$
  *
  * The Netarchive Suite - Software to harvest and preserve websites
  * Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
@@ -2400,6 +2400,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
                         Thread.sleep(delaybetweenretries);
                     } catch (InterruptedException e1) {
                         // ignore this exception
+                        log.trace("Interruption ignored.", e1);
                     }
                 }
             }

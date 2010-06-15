@@ -167,7 +167,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * @throws IOFailure If access to file denied.
      * @throws ArgumentNotValid If arcfile is null.
      */
-    public void sendUploadMessage(RemoteFile rf) throws IOFailure, ArgumentNotValid {
+    public void sendUploadMessage(RemoteFile rf) throws IOFailure, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(rf, "rf");
         UploadMessage up = new UploadMessage(anyBa, clientId, rf);
         log.debug("Sending upload message\n" + up.toString());
@@ -182,7 +183,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * @return The submitted message.
      * @throws ArgumentNotValid If message is null.
      */
-    public BatchMessage sendBatchJob(BatchMessage bMsg) throws ArgumentNotValid {
+    public BatchMessage sendBatchJob(BatchMessage bMsg) 
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(bMsg, "bMsg");
         log.debug("Resending batch message '" + bMsg + "' to bitarchive"
                 + " monitor " + this.theBamon);
@@ -279,7 +281,8 @@ public final class BitarchiveClient implements ReplicaClient {
      * archive though the jms connection.
      * @throws ArgumentNotValid If the GetChecksumMessage is null.
      */
-    public void sendGetChecksumMessage(GetChecksumMessage msg) throws ArgumentNotValid {
+    public void sendGetChecksumMessage(GetChecksumMessage msg) 
+            throws ArgumentNotValid {
         // Validate arguments
         ArgumentNotValid.checkNotNull(msg, "GetChecksumMessage msg");
 

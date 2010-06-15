@@ -67,7 +67,7 @@ public class ReplicaFileInfo {
      * @param css The checksumstatus.
      * @param fDate The date for the last filelist update.
      * @param cDate The date for the last checksum update.
-     * @throws ArgumenNotValid If gId or fId is negative, the rId is either
+     * @throws ArgumentNotValid If gId or fId is negative, the rId is either
      * null or the empty string. The other variables are not validated, since
      * they are allowed to be null (e.g. the dates before they are updated). 
      */

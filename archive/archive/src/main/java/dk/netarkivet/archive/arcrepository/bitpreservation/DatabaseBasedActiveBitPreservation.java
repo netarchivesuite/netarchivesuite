@@ -398,7 +398,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findChangedFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
@@ -421,7 +422,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findMissingFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
@@ -555,7 +557,8 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         ArgumentNotValid.checkPositive(filenames.length, "Length of argument "
                 + "String... filenames");
-        log.info("UploadMissingFiles initiated of " +  filenames.length + " filenames");
+        log.info("UploadMissingFiles initiated of " +  filenames.length 
+                + " filenames");
         // make record of files, which is not uploaded correct.
         List<String> filesFailedReestablishment = new ArrayList<String>();
 

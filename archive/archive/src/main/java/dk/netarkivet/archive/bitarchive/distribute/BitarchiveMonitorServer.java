@@ -206,7 +206,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * @param beMsg The BatchEndedMessage to be handled.
      * @throws ArgumentNotValid If the BatchEndedMessage is null.
      */
-    public void visit(final BatchEndedMessage beMsg) {
+    public void visit(final BatchEndedMessage beMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
         
         log.info("Received batch ended from bitarchive '"
@@ -702,7 +702,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
                 // check if any different values.
                 String firstVal = output.get(0);
-                for(int i=1; i < output.size(); i++) {
+                for(int i = 1; i < output.size(); i++) {
                     if(!output.get(i).equals(firstVal)) {
                         String errorString = "Replica '" + msg.getReplicaId() 
                                 + "' has unidentical duplicates: '" + firstVal 

@@ -281,7 +281,8 @@ public class ChecksumClient implements ReplicaClient {
      * kind of messages.
      * @throws ArgumentNotValid If the message is null.
      */
-    public void sendGetMessage(GetMessage msg) throws IllegalState, ArgumentNotValid {
+    public void sendGetMessage(GetMessage msg) throws IllegalState, 
+            ArgumentNotValid {
         ArgumentNotValid.checkNotNull(msg, "GetMessage msg");
         
         String errMsg = "A checksum replica cannot handle a GetMessage such "

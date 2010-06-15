@@ -63,7 +63,8 @@ public class Constants {
     /** BitPreservation page that checks files in archive for wrong checksum. */
     public static final String FILESTATUS_CHECKSUM_PAGE
             = "Bitpreservation-filestatus-checksum.jsp";
-    /** BitPreservation page that initiates update of the filestatus information. */ 
+    /** BitPreservation page that initiates update of the filestatus 
+     * information. */ 
     public static final String FILESTATUS_UPDATE_PAGE
             = "Bitpreservation-filestatus-update.jsp";
 
