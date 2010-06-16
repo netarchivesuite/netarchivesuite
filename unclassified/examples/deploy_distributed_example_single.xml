@@ -35,6 +35,7 @@
     <deployClassPath>lib/dk.netarkivet.archive.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.viewerproxy.jar</deployClassPath>
     <deployClassPath>lib/dk.netarkivet.monitor.jar</deployClassPath>
+    <deployClassPath>lib/dk.netarkivet.wayback.jar</deployClassPath>
     <deployJavaOpt>-Xmx1536m</deployJavaOpt>
     <settings>
         <common>
