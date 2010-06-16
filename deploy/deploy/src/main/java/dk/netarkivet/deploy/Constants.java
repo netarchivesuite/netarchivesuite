@@ -270,11 +270,11 @@ public final class Constants {
     /** The offset for the digit to replace during test in the 
      * heritrix jmx port.
      */
-    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_JMX_PORT = 2;
     /** The offset for the digit to replace during test in the 
      * heritrix gui port.
      */
-    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 1;
+    static final int TEST_OFFSET_HERITRIX_GUI_PORT = 2;
     /** The offset for the digit to replace during test of the
      * port in the archive database url.
      */
