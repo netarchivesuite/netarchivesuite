@@ -48,9 +48,9 @@ public class HistorySiteSectionTester extends TestCase {
         int harvestRun = 5;
         assertEquals("Should get correctly formatted link for run",
                 "<a href=\"/History/Harveststatus-perharvestrun.jsp?"
-                        + "harvestID=" + harvestID 
-                        + "&amp;harvestNum=" + harvestRun
-                        + "&amp;jobstatusname=" 
+                        + "HARVEST_ID=" + harvestID 
+                        + "&amp;HARVEST_RUN=" + harvestRun
+                        + "&amp;JOB_STATUS=" 
                         + HarvestStatusQuery.JOBSTATUS_ALL
                         + "\">" + harvestRun + "</a>",
                 HarvestStatus.makeHarvestRunLink(harvestID, harvestRun));
