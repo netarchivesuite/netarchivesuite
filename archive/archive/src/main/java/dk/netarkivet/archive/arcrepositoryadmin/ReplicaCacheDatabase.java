@@ -1648,7 +1648,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         }
 
         log.info("Starting processing of " + checksumOutput.size() 
-                + " checksum entries");
+                + " checksum entries for replica " + replica.getId());
         
         // Sort for finding duplicates.
         Collections.sort(checksumOutput);
@@ -1729,7 +1729,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         updateFilelistDateForReplica(replica);
         
         log.info("Finished processing of " + checksumOutput.size() 
-                + " checksum entries");
+                + " checksum entries for replica " + replica.getId());
     }
 
     /**
