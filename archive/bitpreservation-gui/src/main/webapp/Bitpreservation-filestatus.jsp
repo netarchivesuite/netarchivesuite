@@ -44,7 +44,7 @@ There are no parameters.
 %>
 <h3 class="page_heading"><fmt:message key="pagetitle;filestatus"/></h3>
 
-<h4><fmt:message key="bitarchive.state"/></h4>
+<h4><fmt:message key="replica.state"/></h4>
 
 <%
     Collection<Replica> knownReplicas = Replica.getKnown(); 

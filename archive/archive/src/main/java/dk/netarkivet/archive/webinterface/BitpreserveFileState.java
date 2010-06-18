@@ -198,12 +198,12 @@ public class BitpreserveFileState {
                     preserve.uploadMissingFiles(ba, filename);
                     res.append(HTMLUtils.escapeHtmlValues(I18N.getString(
                             l,
-                            "file.0.has.been.restored.in.bitarchive.on.1",
+                            "file.0.has.been.restored.in.replica.on.1",
                             filename, ba.getName())));
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, ba));
                     res.append("<br/>");
                     res.append(e.getMessage());
@@ -337,7 +337,7 @@ public class BitpreserveFileState {
             } else if (credentials == null) { // param CREDENTIALS_PARAM not set
                 res.append(I18N.getString(
                         l,
-                        "errormsg;lacking.privileges.to.correct.in.bitarchive")
+                        "errormsg;lacking.privileges.to.correct.in.replica")
                 );
                 res.append("<br/>");
             } else {
@@ -352,7 +352,7 @@ public class BitpreserveFileState {
                     res.append("<br/>");
                 } catch (Exception e) {
                     res.append(I18N.getString(
-                            l, "errormsg;attempt.at.restoring.0.in.bitarchive"
+                            l, "errormsg;attempt.at.restoring.0.in.replica"
                             + ".at.1.failed", filename, bitarchive));
                     res.append("<br/>");
                     res.append(e.getMessage());

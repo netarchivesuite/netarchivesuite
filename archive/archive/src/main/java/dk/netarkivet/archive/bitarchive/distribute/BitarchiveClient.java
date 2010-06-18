@@ -48,7 +48,7 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
 public final class BitarchiveClient implements ReplicaClient {
     // Each message is assigned a message id
     /** The log.*/
-    protected static Log log = LogFactory.getLog(BitarchiveClient.class);
+    private static Log log = LogFactory.getLog(BitarchiveClient.class);
 
     /** Connection to JMS provider.*/
     private JMSConnection jmsCon;

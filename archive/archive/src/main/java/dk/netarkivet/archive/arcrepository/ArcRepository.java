@@ -1080,8 +1080,8 @@ public class ArcRepository implements CleanupIF {
             arcReposhandler = null;
         }
         if (connectedReplicas != null) {
-            for (ReplicaClient cba : connectedReplicas.values()) {
-                cba.close();
+            for (ReplicaClient rc : connectedReplicas.values()) {
+                rc.close();
             }
             connectedReplicas.clear();
         }
