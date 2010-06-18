@@ -56,8 +56,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ActiveBitPreservation, CleanupIF {
     /** The log.*/
     private Log log
-            = LogFactory.getLog(
-                    DatabaseBasedActiveBitPreservation.class);
+            = LogFactory.getLog(DatabaseBasedActiveBitPreservation.class);
     
     /**
      * When replacing a broken file, the broken file is downloaded and stored in
@@ -180,6 +179,9 @@ public final class DatabaseBasedActiveBitPreservation implements
             arcrep.store(missingFile);
             // remove the temporary file afterwards.
             tmpDir.delete();
+            
+            // update database
+            cache.updateChecksumStatus();
         } catch (Exception e) {
             String errMsg = "Failed to reestablish '" + filename
                     + "' with copy from '" + repWithFile + "'";
