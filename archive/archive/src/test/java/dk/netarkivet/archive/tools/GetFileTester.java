@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import dk.netarkivet.archive.bitarchive.distribute.GetFileMessage;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
+import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
 import dk.netarkivet.common.distribute.NetarkivetMessage;
 import dk.netarkivet.common.utils.Settings;
@@ -53,6 +54,7 @@ public class GetFileTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
 
     public void setUp(){
+        ChannelsTester.resetChannels();
         rs.setUp();
         mjms.setUp();
         listener = new GetFileListener(mtf.working(

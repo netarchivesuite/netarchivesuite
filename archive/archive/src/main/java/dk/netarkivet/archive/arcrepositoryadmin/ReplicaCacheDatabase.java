@@ -1653,6 +1653,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // Sort for finding duplicates.
         Collections.sort(checksumOutput);
         
+        // retrieve the list of files already known by this cache.
+        List<Long> missingReplicaRFIs = retrieveReplicaFileInfoGuidsForReplica(
+                replica.getId());
+        
         String lastFilename = "";
         String lastChecksum = "";
         
@@ -1722,8 +1726,22 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             updateReplicaFileInfoChecksum(rfiId, checksum);
             log.trace("Updated file '" + filename + "' for replica '"
                     + replica.toString() + "' into replicafileinfo.");
+            
+            // remove the replicafileinfo guid from the missing entries.
+            missingReplicaRFIs.remove(rfiId);
         }
-
+        
+        // go through the not found replicafileinfo for this replica to change
+        // their filelist_status to missing.
+        if(missingReplicaRFIs.size() > 0) {
+            log.warn("Found " + missingReplicaRFIs.size() + " missing files "
+                    + "for replica '" + replica + "'.");
+            for (long rfi : missingReplicaRFIs) {
+                // set the replicafileinfo in the database to missing.
+                updateReplicaFileInfoMissingFromFilelist(rfi);
+            }
+        }
+        
         // update the checksum updated date for this replica.
         updateChecksumDateForReplica(replica);
         updateFilelistDateForReplica(replica);

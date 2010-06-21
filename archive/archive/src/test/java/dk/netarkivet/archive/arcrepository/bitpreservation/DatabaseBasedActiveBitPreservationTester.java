@@ -192,7 +192,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * @throws Exception if error.
      */
     public void testChangedFiles() throws Exception {
-	// initialise the database. Clean database and put new intries.
+	// initialise the database. Clean database and put new entries.
 	ReplicaCacheDatabase.getInstance();
 
 	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
@@ -256,7 +256,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         } catch (IOFailure e) {
             // expected.
         }
-
+        
         // make replica THREE be missing 2 files (integrity11.ARC and integrity12.ARC)
         List<String> filelist = new ArrayList<String>();
         filelist.add("integrity1.ARC");
@@ -269,7 +269,7 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
                 misFiles.contains("integrity11.ARC"));
         assertTrue("integrity12.ARC should be missing", 
                 misFiles.contains("integrity12.ARC"));
-        
+
         // reupload the missing files.
         dbabp.uploadMissingFiles(THREE, "integrity11.ARC", "integrity12.ARC");
         
@@ -280,7 +280,40 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
                 misFiles.contains("integrity11.ARC"));
         assertFalse("integrity12.ARC should not be missing anymore", 
                 misFiles.contains("integrity12.ARC"));
+    }
+    
+    /**
+     * Check whether it finds missing files from checksum jobs.
+     */
+    public void testMissingDuringChecksum() throws Exception {
+        ReplicaCacheDatabase.getInstance().cleanup();
+        clearDatabase(DBConnect.getDBConnection(Settings.get(
+                ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE)));
 
+        ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
+        dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+        
+        // add a simple checksum list to replica TWO.
+        List<String> checksumlist = new ArrayList<String>();
+        checksumlist.add("1.arc##1234");
+        checksumlist.add("2.arc##2345");
+        
+        cache.addChecksumInformation(checksumlist, TWO);
+
+        // verify that all replicas has both files, and no 'wrong' entries.
+        assertEquals("Unexpected number of files for " + TWO, 2, cache.getNumberOfFiles(TWO));
+        assertEquals("Unexpected number of missing files for " + TWO, 0, cache.getNumberOfMissingFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of wrong files for " + TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(TWO));
+        
+        checksumlist.clear();
+        checksumlist.add("1.arc##1234");
+
+        cache.addChecksumInformation(checksumlist, TWO);        
+
+        // verify that replica TWO is missing a file, but has no wrong files.
+        assertEquals("Unexpected number of files for " + TWO, 1, cache.getNumberOfFiles(TWO));
+        assertEquals("Unexpected number of missing files for " + TWO, 1, cache.getNumberOfMissingFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of wrong files for " + TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(TWO));
     }
     
     public void testFails() {
