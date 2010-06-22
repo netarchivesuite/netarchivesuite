@@ -256,23 +256,35 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         } catch (IOFailure e) {
             // expected.
         }
-        
+
         // make replica THREE be missing 2 files (integrity11.ARC and integrity12.ARC)
         List<String> filelist = new ArrayList<String>();
         filelist.add("integrity1.ARC");
         filelist.add("integrity7.ARC");
-        filelist.add("integrity2.ARC");
         ReplicaCacheDatabase.getInstance().addFileListInformation(filelist, THREE);
         
         String misFiles = dbabp.getMissingFiles(THREE).toString();
+        assertTrue("integrity2.ARC should be missing", 
+                misFiles.contains("integrity2.ARC"));
         assertTrue("integrity11.ARC should be missing", 
                 misFiles.contains("integrity11.ARC"));
         assertTrue("integrity12.ARC should be missing", 
                 misFiles.contains("integrity12.ARC"));
-
-        // reupload the missing files.
-        dbabp.uploadMissingFiles(THREE, "integrity11.ARC", "integrity12.ARC");
         
+        // reupload the missing files.
+        dbabp.uploadMissingFiles(THREE, "integrity2.ARC", "integrity12.ARC");
+        
+        // try to upload files, which does not exist anywhere!
+        try {
+            dbabp.uploadMissingFiles(THREE, "integrity11.ARC");
+            fail("This should throw an IOFailure, since no bitarchive replica "
+                    + "should have the file.");
+        } catch (IOFailure e) {
+            // expected!
+        }
+        
+        // send a filelist message which will tell that the file 
+        // 'integrity11.ARC' actually exists within the replica.
         dbabp.findMissingFiles(THREE);
         
         misFiles = dbabp.getMissingFiles(THREE).toString();

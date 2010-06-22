@@ -252,6 +252,21 @@ public final class DatabaseBasedActiveBitPreservation implements
         // update database with new checksums
         cache.addChecksumInformation(checksumEntries, replica);
     }
+    
+    /**
+     * Retrieves and update the status of a file for a specific replica.
+     * 
+     * @param filename The name of the file.
+     * @param replica The replica to retrieve and update the file status for.
+     */
+    private void updateChecksumStatus(String filename, Replica replica) {
+        // retrieve the checksum.
+        String checksum = ArcRepositoryClientFactory.getPreservationInstance()
+                .getChecksum(replica.getId(), filename);
+     
+        // insert the checksum results for the file into the database.
+        cache.insertSingleChecksumResult(filename, checksum, replica);
+    }
 
     /**
      * The method calculates the number of files which has a wrong checksum
@@ -457,6 +472,9 @@ public final class DatabaseBasedActiveBitPreservation implements
         
         // retrieve each entry for the file, and put it into the list.
         for(Replica replica : Replica.getKnown()) {
+            // update the status before use!
+            updateChecksumStatus(filename, replica);
+            
             rfis.add(cache.getReplicaFileInfo(filename, replica));
         }
         

@@ -1120,12 +1120,26 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // unique checksums.
         Set<String> hs = new HashSet<String>(rfis.size());
         for (ReplicaFileInfo rfi : rfis) {
-            hs.add(rfi.getChecksum());
+            // only accept those files which can be found.
+            if(rfi.getFileListState() == FileListStatus.OK) {
+                hs.add(rfi.getChecksum());
+            }
+        }
+        
+        // handle the unlikely case, where the file is missing from everywhere!
+        if(hs.size() == 0) {
+            String errMsg = "All instances of the file '" + fileId 
+                    + "' is missing";
+            
+            log.warn(errMsg);
+            NotificationsFactory.getInstance().errorEvent(errMsg);
+            
+            return;
         }
 
-        // if at most one unique checksum is found, then no irregularities
+        // if at exactly one unique checksum is found, then no irregularities
         // among the checksums are found.
-        if (hs.size() <= 1) {
+        if (hs.size() == 1) {
             log.trace("No irregularities found for the file with id '"
                     + fileId + "'.");
 
@@ -1143,9 +1157,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         int[] csCount = new int[hs.size()];
         String[] uniqueCs = hs.toArray(new String[hs.size()]);
         for (ReplicaFileInfo rfi : rfis) {
-            for (int i = 0; i < hs.size(); i++) {
-                if (rfi.getChecksum().equals(uniqueCs[i])) {
-                    csCount[i]++;
+            // only accept those files, which can be found.
+            if(rfi.getFileListState() == FileListStatus.OK) {
+                for (int i = 0; i < hs.size(); i++) {
+                    if (rfi.getChecksum().equals(uniqueCs[i])) {
+                        csCount[i]++;
+                    }
                 }
             }
         }
@@ -2104,12 +2121,12 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
         // Make sure, that the bad replica is not returned.
         replicaIds.remove(badReplica.getId());
-
+        
         // go through the list, and return the first valid bitarchive-replica.
         for (String repId : replicaIds) {
             // Retrieve the replica type.
-            ReplicaType repType = ReplicaType
-                    .fromOrdinal(retrieveReplicaType(repId));
+            ReplicaType repType = ReplicaType.fromOrdinal(
+                    retrieveReplicaType(repId));
 
             // If the replica is of type BITARCHIVE then return it.
             if (repType.equals(ReplicaType.BITARCHIVE)) {
@@ -2128,6 +2145,57 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // then return null.
         return null;
     }
+
+    /**
+     * Method for updating a specific entry in the replicafileinfo table. Based
+     * on the filename, checksum and replica it is verified whether a file
+     * is missing, corrupt or valid. 
+     * 
+     * @param filename Name of the file.
+     * @param checksum The checksum of the file.
+     * @param replica The replica where the file exists.
+     */
+    @Override
+    public void insertSingleChecksumResult(String filename, String checksum, 
+            Replica replica) throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(filename, "String filename");
+        ArgumentNotValid.checkNotNull(replica, "Replica replica");
+        // The checksum can be null!
+
+        // retrieve the guid.
+        try {
+            long fileId = retrieveIdForFile(filename);
+            long guid = retrieveReplicaFileInfoGuid(fileId, replica.getId());
+            Date now = new Date(Calendar.getInstance().getTimeInMillis());
+
+            PreparedStatement statement = null;
+            Connection connection = getDbConnection();
+            
+            // handle differently whether a checksum was retrieved.
+            if(checksum == null) {
+                // Set to MISSING! and do not update the checksum 
+                // (cannot insert null).
+                String sql = "UPDATE replicafileinfo SET "
+                    + "filelist_status = ?, checksum_status = ?, "
+                    + "filelist_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
+                statement = DBUtils.prepareStatement(connection, sql, 
+                        FileListStatus.MISSING.ordinal(), 
+                        ChecksumStatus.UNKNOWN.ordinal(), now, guid);
+            } else {
+                String sql = "UPDATE replicafileinfo SET checksum = ?, "
+                    + "filelist_status = ?, filelist_checkdatetime = ? "
+                    + "WHERE replicafileinfo_guid = ?";
+                statement = DBUtils.prepareStatement(connection, sql, checksum, 
+                        FileListStatus.OK.ordinal(), now, guid);
+            }
+            statement.executeUpdate();
+            connection.commit();
+        } catch (Exception e) {
+            throw new IOFailure("Could not update single checksum entry.", e);
+        }
+    }
+ 
     
     /**
      * Method for inserting a line of Admin.Data into the database.

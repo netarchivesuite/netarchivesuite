@@ -161,6 +161,18 @@ public interface BitPreservationDAO extends CleanupIF {
     ReplicaFileInfo getReplicaFileInfo(String filename, Replica replica);
     
     /**
+     * Method for updating a specific entry in the replicafileinfo table. Based
+     * on the filename, checksum and replica it is verified whether a file
+     * is missing, corrupt or valid. 
+     * 
+     * @param filename Name of the file.
+     * @param checksum The checksum of the file.
+     * @param replica The replica where the file exists.
+     */
+    void insertSingleChecksumResult(String filename, String checksum, 
+            Replica replica);
+    
+    /**
      * Method for cleaning up when done.
      */
     void cleanup();
