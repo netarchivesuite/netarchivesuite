@@ -33,8 +33,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -1078,6 +1080,52 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     }
     
     /**
+     * Method for finding the checksum which are present most times in the 
+     * list.
+     * 
+     * @param checksums The list of checksum to vote about.
+     * @return The most common checksum, or null if several exists.
+     */
+    private String vote(List<String> checksums) {
+        log.trace("voting for checksums: " + checksums.toString());
+        
+        // count the occurrences of each unique checksum.
+        Map<String, Integer> csMap = new HashMap<String, Integer>();
+        for(String cs : checksums) {
+            if(csMap.containsKey(cs)) {
+                // count one more!
+                Integer count = csMap.get(cs) + 1;
+                csMap.put(cs, count);
+            } else {
+                csMap.put(cs, 1);
+            }
+        }
+        
+        // find the checksum with the largest count.
+        int largestCount = -1;
+        boolean unique = false;
+        String checksum = null;
+        for(Map.Entry<String, Integer> entry : csMap.entrySet()) {
+            if(entry.getValue() > largestCount) {
+                largestCount = entry.getValue();
+                checksum = entry.getKey();
+                unique = true;
+            } else if(entry.getValue() == largestCount) {
+                unique = false;
+            }
+        }
+        
+        // if not unique, then log an error and return null!
+        if(!unique) {
+            log.error("No checksum has the most occurrences in '"
+                    + csMap + "'. A null has been returned!");
+            return null;
+        }
+        
+        return checksum;
+    }
+    
+    /**
      * The method for voting about the checksum of a file. <br/>
      * Each entry in the replicafileinfo table containing the file is retrieved.
      * All the unique checksums are retrieved, e.g. if a checksum is found more
@@ -1128,11 +1176,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         
         // handle the unlikely case, where the file is missing from everywhere!
         if(hs.size() == 0) {
-            String errMsg = "All instances of the file '" + fileId 
-                    + "' is missing";
-            
-            log.warn(errMsg);
-            NotificationsFactory.getInstance().errorEvent(errMsg);
+            log.warn("The file '" + retrieveFilenameForFileId(fileId) 
+                    + "' is missing in all replicas");
             
             return;
         }
@@ -1153,44 +1198,24 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             return;
         }
 
-        // else count the amount of times each checksum is found.
-        int[] csCount = new int[hs.size()];
-        String[] uniqueCs = hs.toArray(new String[hs.size()]);
+        // Make a list of the checksums for voting.
+        List<String> checksums = new ArrayList<String>();
         for (ReplicaFileInfo rfi : rfis) {
-            // only accept those files, which can be found.
             if(rfi.getFileListState() == FileListStatus.OK) {
-                for (int i = 0; i < hs.size(); i++) {
-                    if (rfi.getChecksum().equals(uniqueCs[i])) {
-                        csCount[i]++;
-                    }
-                }
+                checksums.add(rfi.getChecksum());
             }
         }
-
-        // find the one with the largest unique amount of checksums.
-        // save the index and whether it is unique largest amount.
-        int largest = 0;
-        boolean unique = false;
-        int index = -1;
-        for (int i = 0; i < csCount.length; i++) {
-            if (csCount[i] > largest) {
-                // new largest found, set relevant variables.
-                largest = csCount[i];
-                unique = true;
-                index = i;
-            } else if (csCount[i] == largest) {
-                // If they have the same value then add to indices.
-                unique = false;
-            }
-        }
-
-        if (unique) {
+        
+        // vote to find the unique most common checksum (null if no unique).
+        String uniqueChecksum = vote(checksums);
+        
+        if (uniqueChecksum != null) {
             // change checksum_status to CORRUPT for the replicafileinfo
             // which
             // does not have the chosen checksum.
             // Set the others replciafileinfo entries to OK.
             for (ReplicaFileInfo rfi : rfis) {
-                if (!rfi.getChecksum().equals(uniqueCs[index])) {
+                if (!rfi.getChecksum().equals(uniqueChecksum)) {
                     updateReplicaFileInfoChecksumCorrupt(rfi.getGuid());
                 } else {
                     updateReplicaFileInfoChecksumOk(rfi.getGuid());
@@ -1269,24 +1294,47 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         // log that we vote about the file.
         log.debug("No commonly accepted checksum for the file '" + filename 
                 + "' has previously been found. Voting to achieve one.");
-        // vote about the file.
-        fileChecksumVote(fileId);
         
-        // Check if now is possible to find a checksum with status OK in 
-        // the database
+        // retrieves all the UNKNOWN_STATE checksums, and return if unanimous.
+        Set<String> checksums = new HashSet<String>();
+        
         for(Replica rep : Replica.getKnown()) {
-            // Return the checksum, if it has a valid status.
             if(retrieveChecksumStatusForReplicaFileInfoEntry(fileId, 
-                    rep.getId()) == ChecksumStatus.OK) {
-                return retrieveChecksumForReplicaFileInfoEntry(fileId, 
-                        rep.getId());
+                    rep.getId()) != ChecksumStatus.CORRUPT) {
+                String tmpChecksum = retrieveChecksumForReplicaFileInfoEntry(
+                        fileId, rep.getId());
+                if(tmpChecksum != null) {
+                    checksums.add(tmpChecksum);
+                }
             }
         }
         
-        // If no entries with OK status can be found, then return a null.
-        log.warn("No common checksum for the file '" + filename + "' could "
-                + " be found. A null is returned.");
-        return null;
+        // check if unanimous (thus exactly one!)
+        if(checksums.size() == 1) {
+            // return the first and only value.
+            return checksums.iterator().next();
+        }
+        
+        // If no checksums are found, then return null.
+        if(checksums.size() == 0) {
+            log.warn("No checksums found for file '" + filename + "'.");
+            return null;
+        }
+        
+        log.info("No unanious checksum found for file '" + filename + "'");
+        // put all into a list for voting
+        List<String> checksumList = new ArrayList<String>();
+        for(Replica rep : Replica.getKnown()) {
+            String cs = retrieveChecksumForReplicaFileInfoEntry(fileId, 
+                    rep.getId());
+            
+            if(cs != null) {
+                checksumList.add(cs);
+            }
+        }
+        
+        // vote and return the most occurred checksum. 
+        return vote(checksumList);
     }
     
     /**
