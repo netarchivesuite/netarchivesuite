@@ -1196,7 +1196,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
             // Tell all the replicafileinfo entries that their checksum
             // is ok
             for (ReplicaFileInfo rfi : rfis) {
-                updateReplicaFileInfoChecksumOk(rfi.getGuid());
+                // only set OK for those replica where the file is.
+                if(rfi.getFileListState() == FileListStatus.OK) {
+                    updateReplicaFileInfoChecksumOk(rfi.getGuid());
+                }
             }
 
             // go to next entry in the file table.
