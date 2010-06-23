@@ -150,6 +150,17 @@ public interface BitPreservationDAO extends CleanupIF {
     void updateChecksumStatus();
     
     /**
+     * Method for updating the status for a specific file for all the replicas.
+     * If the checksums for the replicas differ for some replica, then based on 
+     * a checksum vote, a specific checksum is chosen as the 'correct' one, and
+     * the entries with another checksum than the 'correct one' will be marked
+     * as corrupt.
+     *  
+     * @param filename The name of the file to update the status for.
+     */
+    void updateChecksumStatus(String filename);
+    
+    /**
      * Method for retrieving the entry in the replicafileinfo table for a
      * given file and replica.
      * 

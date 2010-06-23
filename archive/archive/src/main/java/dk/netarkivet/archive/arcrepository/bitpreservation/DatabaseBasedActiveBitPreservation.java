@@ -259,13 +259,20 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param filename The name of the file.
      * @param replica The replica to retrieve and update the file status for.
      */
-    private void updateChecksumStatus(String filename, Replica replica) {
-        // retrieve the checksum.
-        String checksum = ArcRepositoryClientFactory.getPreservationInstance()
-                .getChecksum(replica.getId(), filename);
-     
-        // insert the checksum results for the file into the database.
-        cache.insertSingleChecksumResult(filename, checksum, replica);
+    private void updateChecksumStatus(String filename) {
+        // retrieve the checksum status for the file for all the replicas
+        for(Replica replica : Replica.getKnown()) {
+            // retrieve the checksum.
+            String checksum = ArcRepositoryClientFactory
+                    .getPreservationInstance().getChecksum(replica.getId(), 
+                            filename);
+
+            // insert the checksum results for the file into the database.
+            cache.insertSingleChecksumResult(filename, checksum, replica);
+        }
+        
+        // Vote for the specific file.
+        cache.updateChecksumStatus(filename);
     }
 
     /**
@@ -470,11 +477,11 @@ public final class DatabaseBasedActiveBitPreservation implements
         List<ReplicaFileInfo> rfis = new ArrayList<ReplicaFileInfo>(
                 Replica.getKnown().size());
         
-        // retrieve each entry for the file, and put it into the list.
+        // update the checksum status for the file for all the replicas.
+        updateChecksumStatus(filename);
+        
+        // Retrieve the replicafileinfo entries for the file.
         for(Replica replica : Replica.getKnown()) {
-            // update the status before use!
-            updateChecksumStatus(filename, replica);
-            
             rfis.add(cache.getReplicaFileInfo(filename, replica));
         }
         

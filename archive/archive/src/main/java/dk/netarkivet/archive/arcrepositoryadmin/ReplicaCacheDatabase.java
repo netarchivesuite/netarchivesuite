@@ -1683,6 +1683,22 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         }
     }
     
+    /**
+     * Method for updating the status for a specific file for all the replicas.
+     * If the checksums for the replicas differ for some replica, then based on 
+     * a checksum vote, a specific checksum is chosen as the 'correct' one, and
+     * the entries with another checksum than the 'correct one' will be marked
+     * as corrupt.
+     *  
+     * @param filename The name of the file to update the status for.
+     */
+    @Override
+    public void updateChecksumStatus(String filename) {
+        // retrieve the id and vote!
+        Long fileId = retrieveIdForFile(filename);
+        fileChecksumVote(fileId);
+    }
+    
     /** Given the output of a checksum job, add the results to the database.
      *
      * The following fields in the table are updated for each corresponding 
