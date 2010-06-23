@@ -271,21 +271,29 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
         log.info("Receiving CorrectMessage: " + cm);
         
-        // Create the RemoveAndGetFileMessage for removing the file.
-        RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
-                Channels.getAllBa(), Channels.getTheBamon(), 
-                cm.getArcfileName(), cm.getReplicaId(), 
-                cm.getIncorrectChecksum(), cm.getCredentials());
-        
-        // Send the message.
-        con.send(ragfm);
-        
-        log.info("Step 1 of handling CorrectMessage. Sending "
-                + "RemoveAndGetFileMessage: " + ragfm);
-        
-        // Put the CorrectMessage into the map along the id of the 
-        // RemoveAndGetFileMessage
-        correctMessages.put(ragfm.getID(), cm);
+        try {
+            // Create the RemoveAndGetFileMessage for removing the file.
+            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
+                    Channels.getAllBa(), Channels.getTheBamon(), 
+                    cm.getArcfileName(), cm.getReplicaId(), 
+                    cm.getIncorrectChecksum(), cm.getCredentials());
+
+            // Send the message.
+            con.send(ragfm);
+
+            log.info("Step 1 of handling CorrectMessage. Sending "
+                    + "RemoveAndGetFileMessage: " + ragfm);
+
+            // Put the CorrectMessage into the map along the id of the 
+            // RemoveAndGetFileMessage
+            correctMessages.put(ragfm.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 1 of handling "
+                + " the CorrectMessage: sending RemoveAndGetFileMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
@@ -310,9 +318,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // Retrieve the correct message
         CorrectMessage cm = correctMessages.remove(msg.getID());
 
-        // update the correct message.
-        cm.setRemovedFile(msg.getRemoteFile());
-
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
         // has also failed, and should be returned as a fail.
         if(!msg.isOk()) {
@@ -324,16 +329,27 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(cm);
             return;
         }
-        
-        // Create the upload message, send it. 
-        UploadMessage um = new UploadMessage(Channels.getAllBa(), 
-                Channels.getTheBamon(), cm.getCorrectFile());
-        con.send(um);
-        log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
-                + um);
-        
-        // Store the CorrectMessage along with the ID of the UploadMessage.
-        correctMessages.put(um.getID(), cm);
+
+        try {
+            // update the correct message.
+            cm.setRemovedFile(msg.getRemoteFile());
+
+            // Create the upload message, send it. 
+            UploadMessage um = new UploadMessage(Channels.getAllBa(), 
+                    Channels.getTheBamon(), cm.getCorrectFile());
+            con.send(um);
+            log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
+                    + um);
+
+            // Store the CorrectMessage along with the ID of the UploadMessage.
+            correctMessages.put(um.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 2 of handling "
+                + " the CorrectMessage: sending UploadMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
