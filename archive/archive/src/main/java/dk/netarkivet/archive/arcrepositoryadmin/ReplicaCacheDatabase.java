@@ -696,7 +696,10 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
      * Method for updating the checksum status of a replicafileinfo instance.
      * Updates the following fields for the entry in the replicafileinfo:
      * <br/> checksum_status = OK.
+     * <br/> upload_status = UPLOAD_COMLPETE.
      * <br/> checksum_checkdatetime = current time. 
+     * <br/><br/>
+     * The file is required to exist in the replica.
      * 
      * @param replicafileinfoId The id of the replicafileinfo.
      */
@@ -704,7 +707,7 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         try {
             // The SQL statement
             String sql = "UPDATE replicafileinfo SET checksum_status = ?, "
-                    + "checksum_checkdatetime = ? "
+                    + "checksum_checkdatetime = ?, upload_status = ? "
                     + "WHERE replicafileinfo_guid = ?";
 
             // init.
@@ -714,7 +717,9 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
 
             // complete the SQL statement.
             statement = DBUtils.prepareStatement(connection, sql,
-                    ChecksumStatus.OK.ordinal(), now, replicafileinfoId);
+                    ChecksumStatus.OK.ordinal(), now, 
+                    ReplicaStoreState.UPLOAD_COMPLETED.ordinal(),
+                    replicafileinfoId);
 
             // execute the SQL statement
             statement.executeUpdate();
