@@ -180,8 +180,8 @@ public final class DatabaseBasedActiveBitPreservation implements
             // remove the temporary file afterwards.
             tmpDir.delete();
             
-            // update database
-            cache.updateChecksumStatus();
+            // Update the checksum status for the file.
+            cache.updateChecksumStatus(filename);
         } catch (Exception e) {
             String errMsg = "Failed to reestablish '" + filename
                     + "' with copy from '" + repWithFile + "'";
@@ -257,18 +257,20 @@ public final class DatabaseBasedActiveBitPreservation implements
      * Retrieves and update the status of a file for a specific replica.
      * 
      * @param filename The name of the file.
-     * @param replica The replica to retrieve and update the file status for.
      */
     private void updateChecksumStatus(String filename) {
+        // retrieve the ArcRepositoryClient before using it in the for-loop.
+        PreservationArcRepositoryClient arcClient = ArcRepositoryClientFactory
+                .getPreservationInstance();
+        
         // retrieve the checksum status for the file for all the replicas
         for(Replica replica : Replica.getKnown()) {
             // retrieve the checksum.
-            String checksum = ArcRepositoryClientFactory
-                    .getPreservationInstance().getChecksum(replica.getId(), 
+            String checksum = arcClient.getChecksum(replica.getId(), 
                             filename);
 
             // insert the checksum results for the file into the database.
-            cache.insertSingleChecksumResult(filename, checksum, replica);
+            cache.updateChecksumInformationForFileOnReplica(filename, checksum, replica);
         }
         
         // Vote for the specific file.
