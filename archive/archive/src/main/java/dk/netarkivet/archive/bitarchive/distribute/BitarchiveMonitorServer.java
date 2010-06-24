@@ -98,8 +98,8 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * Map for managing the messages, which are made into batchjobs.
      * The String is the ID of the message.
      */
-    private Map<String, NetarkivetMessage> batchConversions = 
-        new HashMap<String, NetarkivetMessage>();
+    private Map<String, NetarkivetMessage> batchConversions 
+            = new HashMap<String, NetarkivetMessage>();
     
     /**
      * The map for managing the CorrectMessages. This involves three stages.
@@ -149,7 +149,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         return instance;
     }
 
-
     /**
      * This is the message handling method for BatchMessages.
      *
@@ -195,7 +194,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
      * @param beMsg The BatchEndedMessage to be handled.
      * @throws ArgumentNotValid If the BatchEndedMessage is null.
      */
-    public void visit(final BatchEndedMessage beMsg) {
+    public void visit(final BatchEndedMessage beMsg) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(beMsg, "BatchEndedMessage beMsg");
         
         log.info("Received batch ended from bitarchive '"
@@ -260,21 +259,29 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         ArgumentNotValid.checkNotNull(cm, "CorrectMessage cm");
         log.info("Receiving CorrectMessage: " + cm);
         
-        // Create the RemoveAndGetFileMessage for removing the file.
-        RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
-                Channels.getAllBa(), Channels.getTheBamon(), 
-                cm.getArcfileName(), cm.getReplicaId(), 
-                cm.getIncorrectChecksum(), cm.getCredentials());
-        
-        // Send the message.
-        con.send(ragfm);
-        
-        log.info("Step 1 of handling CorrectMessage. Sending "
-                + "RemoveAndGetFileMessage: " + ragfm);
-        
-        // Put the CorrectMessage into the map along the id of the 
-        // RemoveAndGetFileMessage
-        correctMessages.put(ragfm.getID(), cm);
+        try {
+            // Create the RemoveAndGetFileMessage for removing the file.
+            RemoveAndGetFileMessage ragfm = new RemoveAndGetFileMessage(
+                    Channels.getAllBa(), Channels.getTheBamon(), 
+                    cm.getArcfileName(), cm.getReplicaId(), 
+                    cm.getIncorrectChecksum(), cm.getCredentials());
+
+            // Send the message.
+            con.send(ragfm);
+
+            log.info("Step 1 of handling CorrectMessage. Sending "
+                    + "RemoveAndGetFileMessage: " + ragfm);
+
+            // Put the CorrectMessage into the map along the id of the 
+            // RemoveAndGetFileMessage
+            correctMessages.put(ragfm.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 1 of handling "
+                + " the CorrectMessage: sending RemoveAndGetFileMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
@@ -299,9 +306,6 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
         // Retrieve the correct message
         CorrectMessage cm = correctMessages.remove(msg.getID());
 
-        // update the correct message.
-        cm.setRemovedFile(msg.getRemoteFile());
-
         // If the RemoveAndGetFileMessage has failed, then the CorrectMessage
         // has also failed, and should be returned as a fail.
         if(!msg.isOk()) {
@@ -313,16 +317,27 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
             con.reply(cm);
             return;
         }
-        
-        // Create the upload message, send it. 
-        UploadMessage um = new UploadMessage(Channels.getAllBa(), 
-                Channels.getTheBamon(), cm.getCorrectFile());
-        con.send(um);
-        log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
-                + um);
-        
-        // Store the CorrectMessage along with the ID of the UploadMessage.
-        correctMessages.put(um.getID(), cm);
+
+        try {
+            // update the correct message.
+            cm.setRemovedFile(msg.getRemoteFile());
+
+            // Create the upload message, send it. 
+            UploadMessage um = new UploadMessage(Channels.getAllBa(), 
+                    Channels.getTheBamon(), cm.getCorrectFile());
+            con.send(um);
+            log.info("Step 2 of handling CorrectMessage. Sending UploadMessage: " 
+                    + um);
+
+            // Store the CorrectMessage along with the ID of the UploadMessage.
+            correctMessages.put(um.getID(), cm);
+        } catch (Exception e) {
+            String errMsg = "An error occurred during step 2 of handling "
+                + " the CorrectMessage: sending UploadMessage";
+            log.warn(errMsg, e);
+            cm.setNotOk(e);
+            con.reply(cm);
+        }
     }
     
     /**
@@ -518,7 +533,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
     private void doBatchReply(BitarchiveMonitor.BatchJobStatus bjs) {
         RemoteFile resultsFile = null;
         try {
-            //Get remote file for batch  result
+            //Get remote file for batch result
             resultsFile = RemoteFileFactory.getMovefileInstance(
                     bjs.batchResultFile);
         } catch (Exception e) {
@@ -665,7 +680,7 @@ public class BitarchiveMonitorServer extends ArchiveMessageHandler
 
                 // check if any different values.
                 String firstVal = output.get(0);
-                for(int i=1; i < output.size(); i++) {
+                for(int i = 1; i < output.size(); i++) {
                     if(!output.get(i).equals(firstVal)) {
                         String errorString = "Replica '" + msg.getReplicaId() 
                                 + "' has unidentical duplicates: '" + firstVal 

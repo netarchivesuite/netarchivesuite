@@ -56,8 +56,7 @@ public final class DatabaseBasedActiveBitPreservation implements
         ActiveBitPreservation, CleanupIF {
     /** The log.*/
     private Log log
-            = LogFactory.getLog(
-                    DatabaseBasedActiveBitPreservation.class);
+            = LogFactory.getLog(DatabaseBasedActiveBitPreservation.class);
     
     /**
      * When replacing a broken file, the broken file is downloaded and stored in
@@ -180,6 +179,9 @@ public final class DatabaseBasedActiveBitPreservation implements
             arcrep.store(missingFile);
             // remove the temporary file afterwards.
             tmpDir.delete();
+            
+            // Update the checksum status for the file.
+            cache.updateChecksumStatus(filename);
         } catch (Exception e) {
             String errMsg = "Failed to reestablish '" + filename
                     + "' with copy from '" + repWithFile + "'";
@@ -249,6 +251,30 @@ public final class DatabaseBasedActiveBitPreservation implements
 
         // update database with new checksums
         cache.addChecksumInformation(checksumEntries, replica);
+    }
+    
+    /**
+     * Retrieves and update the status of a file for a specific replica.
+     * 
+     * @param filename The name of the file.
+     */
+    private void updateChecksumStatus(String filename) {
+        // retrieve the ArcRepositoryClient before using it in the for-loop.
+        PreservationArcRepositoryClient arcClient = ArcRepositoryClientFactory
+                .getPreservationInstance();
+        
+        // retrieve the checksum status for the file for all the replicas
+        for(Replica replica : Replica.getKnown()) {
+            // retrieve the checksum.
+            String checksum = arcClient.getChecksum(replica.getId(), 
+                            filename);
+
+            // insert the checksum results for the file into the database.
+            cache.updateChecksumInformationForFileOnReplica(filename, checksum, replica);
+        }
+        
+        // Vote for the specific file.
+        cache.updateChecksumStatus(filename);
     }
 
     /**
@@ -398,7 +424,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the changed files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findChangedFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findChangedFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         log.info("Initiating findChangedFiles for replica '" +  replica + "'.");
@@ -421,7 +448,8 @@ public final class DatabaseBasedActiveBitPreservation implements
      * @param replica The replica to find the missing files for.
      * @throws ArgumentNotValid If the replica is null.
      */
-    public synchronized void findMissingFiles(Replica replica) throws ArgumentNotValid {
+    public synchronized void findMissingFiles(Replica replica) 
+            throws ArgumentNotValid {
         // validate
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
         log.info("Initiating findMissingFiles for replica '" +  replica + "'.");
@@ -451,7 +479,10 @@ public final class DatabaseBasedActiveBitPreservation implements
         List<ReplicaFileInfo> rfis = new ArrayList<ReplicaFileInfo>(
                 Replica.getKnown().size());
         
-        // retrieve each entry for the file, and put it into the list.
+        // update the checksum status for the file for all the replicas.
+        updateChecksumStatus(filename);
+        
+        // Retrieve the replicafileinfo entries for the file.
         for(Replica replica : Replica.getKnown()) {
             rfis.add(cache.getReplicaFileInfo(filename, replica));
         }
@@ -555,7 +586,8 @@ public final class DatabaseBasedActiveBitPreservation implements
         ArgumentNotValid.checkNotNull(filenames, "String... filenames");
         ArgumentNotValid.checkPositive(filenames.length, "Length of argument "
                 + "String... filenames");
-        log.info("UploadMissingFiles initiated of " +  filenames.length + " filenames");
+        log.info("UploadMissingFiles initiated of " +  filenames.length 
+                + " filenames");
         // make record of files, which is not uploaded correct.
         List<String> filesFailedReestablishment = new ArrayList<String>();
 
