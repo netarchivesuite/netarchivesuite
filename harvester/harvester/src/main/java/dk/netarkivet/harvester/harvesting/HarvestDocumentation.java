@@ -406,8 +406,7 @@ public class HarvestDocumentation {
             long harvestID, File crawlDir, ARCWriter writer,
             String heritrixVersion) {
         List<File> filesAdded = new ArrayList<File>();
-        HeritrixFiles harvestFiles =
-            new HeritrixFiles(crawlDir, jobID, harvestID);
+       
         // We will sort the files by URL
         TreeSet<MetadataFile> files = new TreeSet<MetadataFile>();
 
