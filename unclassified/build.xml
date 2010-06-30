@@ -33,9 +33,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     db/derby-10.5.3.0.jar
     db/derbyclient-10.5.3.0.jar
     db/derbytools-10.5.3.0.jar
-    commons-cli-1.0.jar	
+    commons-cli-1.0.jar
     commons-fileupload-1.2.1.jar
-    commons-io-1.4.jar	
+    commons-io-1.4.jar
     commons-net-2.0.jar
     dom4j-1.5.2.jar
     heritrix/lib/heritrix-1.14.4.jar
@@ -219,18 +219,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="jmxremote.password"/>
             </fileset>
         </chmod>
-        <junit fork="true" timeout="300000">
+        <junit fork="true" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
             <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
             <jvmarg value="-Djava.security.manager"/>
-            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/test.policy"/>
+            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/ant-test.policy"/>
             <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
-            <formatter type="brief" usefile="false"/>
-            <test name="dk.netarkivet.UnitTesterSuite"/>
+            <test name="dk.netarkivet.UnitTesterSuite" todir="./report">
+                <formatter type="xml"/>
+            </test>
         </junit>
+        <junitreport todir="./report">
+            <fileset dir="./report">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="./report/html"/>
+        </junitreport>
     </target>
 
     <target name="fulltest" depends="compiletestsclean"

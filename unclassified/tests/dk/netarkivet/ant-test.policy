@@ -1,0 +1,10 @@
+/* AUTOMATICALLY GENERATED ON Tue Jun 15 12:31:18 CEST 2010*/
+/* DO NOT EDIT */
+
+grant codeBase "file:/-" {
+  permission java.security.AllPermission;
+  permission java.util.PropertyPermission "user.dir", "read";
+  permission java.io.FilePermission "${user.dir}/-", "read";
+  permission java.io.FilePermission "${user.dir}/-", "write";
+};
+
