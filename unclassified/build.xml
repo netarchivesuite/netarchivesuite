@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <property name="classdir" value="classes"/>
     <property name="webpages" value="webpages"/>
     <property name="testdir" value="tests"/>
+    <property name="report.dir" value="reports"/>
     <property name="builder" value="NetarchiveSuite development group"/>
     <property name="releasetestdir" value="${user.home}/tmp_releasetest"/>
     <property name="depcheckdir" value="${user.home}/tmp_dependencycheck"/>
@@ -171,6 +172,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <target name="clean" 
             description="Remove all compiled code and generated wars and jars">
         <delete dir="${classdir}/dk"/>
+        <delete dir="${report.dir}"/>
         <delete verbose="false">
            <fileset dir="lib">
               <include name="dk.netarkivet.*.jar"/>
@@ -219,6 +221,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
                 <include name="jmxremote.password"/>
             </fileset>
         </chmod>
+        <mkdir dir="${report.dir}"/>
         <junit fork="true" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
@@ -228,17 +231,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/ant-test.policy"/>
             <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
-            <test name="dk.netarkivet.UnitTesterSuite" todir="./report">
+            <test name="dk.netarkivet.UnitTesterSuite" todir="${report.dir}">
                 <formatter type="xml"/>
             </test>
         </junit>
-        <junitreport todir="./report">
-            <fileset dir="./report">
+    </target>
+
+    <target name="unittestreports" description="Generates a HTML report based on the unittest results">         
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
-            <report format="frames" todir="./report/html"/>
+            <report format="frames" todir="${report.dir}/html"/>
         </junitreport>
     </target>
+
 
     <target name="fulltest" depends="compiletestsclean"
             description="Run unit and integrity tests on a clean compile">
