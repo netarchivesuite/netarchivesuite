@@ -216,7 +216,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="test" depends="compiletestsclean" description="Run dk.netarkivet.${suite} defined in the suite property">
         <mkdir dir="${report.dir}"/>
-        <junit fork="true" printsummary="true" timeout="3000000">
+        <junit fork="true" forkmode="once" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
             <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
@@ -232,12 +232,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     </target>
 
     <target name="unittest" description="Run unit tests on a clean compile">
-        <property name="suite" value="dk.netarkivet.UnitTesterSuite"/>
+        <property name="suite" value="UnitTesterSuite"/>
         <antcall target="test"/>
     </target>
 
     <target name="fulltest" description="Run unit and integrity tests on a clean compile">
-        <property name="suite" value="dk.netarkivet.FullTesterSuite"/>
+        <property name="suite" value="FullTesterSuite"/>
         <antcall target="test"/>
     </target>
 
