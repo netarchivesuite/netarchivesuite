@@ -38,8 +38,9 @@
         <aggregator>
             <index_file-input_dir>batchOutputDir</index_file-input_dir>
             <index_file-output_dir>indexDir</index_file-output_dir>
-            <temp_aggregator_dir>aggregator_tempdir</temp_aggregator_dir>
-            <aggregation_interval>86400000</aggregation_interval>
+            <temp_aggregator_dir>aggregator_tempdir</temp_aggregator_dir>             
+            <!-- 600000 milliseconds = 10 minutes -->
+            <aggregation_interval>600000</aggregation_interval>
             <!-- 102400 KB = 100 MB -->
             <max_intermediate_index_file_size>102400</max_intermediate_index_file_size>
             <!-- 104857600 KB = 100 GB -->

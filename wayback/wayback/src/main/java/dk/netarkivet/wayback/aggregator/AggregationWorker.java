@@ -63,10 +63,7 @@ public class AggregationWorker implements CleanupIF {
                                                      "temp_intermediate.index");
     static File tempFinalIndexFile = new File(temporaryDir,
                                               "temp_final.index");
-
-    private int maxIndexFileSize = Settings.getInt(
-            WaybackSettings.WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE);
-
+    
     private TimerTask aggregatorTask = null;
 
     /**
@@ -138,7 +135,13 @@ public class AggregationWorker implements CleanupIF {
         }
     }
 
-    protected void runAggregation() {
+    /**
+     * Runs the actual aggregation. See package description for details.
+     *
+     * Is synchronized so several subsequent sheduled runs of the method will have
+     * to run one at a time. 
+     */
+    protected synchronized void runAggregation() {
         String[] fileNamesToProcess = indexInputDir.list();
 
         File[] filesToProcess = new File[fileNamesToProcess.length];
@@ -156,7 +159,7 @@ public class AggregationWorker implements CleanupIF {
 
         if (log.isInfoEnabled()) {
             log.info("Starting Agregation of the following raw index files: "
-                     + fileNamesToProcess);
+                     + fileNamesToProcess.toString());
         }
 
         aggregator.sortAndMergeFiles(filesToProcess, TEMP_FILE_INDEX);
@@ -173,7 +176,7 @@ public class AggregationWorker implements CleanupIF {
             aggregator.mergeFiles(new File[]{TEMP_FILE_INDEX,
                                              INTERMEDIATE_INDEX_FILE},
                                   tempIntermediateIndexFile);
-            tempIntermediateIndexFile.renameTo(INTERMEDIATE_INDEX_FILE);
+            tempIntermediateIndexFile.renameTo(INTERMEDIATE_INDEX_FILE); 
             if (log.isDebugEnabled()) {
                 log.debug(
                         "Merged temporary index file into intermediate index file");
@@ -264,6 +267,7 @@ public class AggregationWorker implements CleanupIF {
 
     }
 
+    @Override
     public void cleanup() {
         FileUtils.removeRecursively(temporaryDir);
     }

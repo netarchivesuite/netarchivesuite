@@ -41,7 +41,7 @@ public class AggregationWorkerTest extends AggregatorTestCase {
     }
 
     /**
-     * Verifies that a simple aggregation two unsorted index files behave correctly
+     * Verifies that a simple aggregation of two unsorted index files behave correctly
      * the first time the aggregator is run. No intermediate index file merging
      * is performed at this time.
      */

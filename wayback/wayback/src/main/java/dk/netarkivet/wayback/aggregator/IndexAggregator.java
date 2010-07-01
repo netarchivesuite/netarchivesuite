@@ -53,6 +53,12 @@ public class IndexAggregator {
         processFiles(files, outputFile, null);
     }
 
+    /**
+     * Takes a list of sorted files and merges them
+     * @param files The files to merge
+     * @param outputFile The resulting file containing total sorted set of index lines found in all the provided index files                 
+     */
+
     public void mergeFiles(File[] files, File outputFile) {
         List<String> args = new LinkedList<String>();
         args.add("-m");
