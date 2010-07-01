@@ -214,13 +214,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Clean up before doing a compiletests">
     </target>
 
-    <target name="unittest" depends="compiletestsclean"
-            description="Run unit tests on a clean compile">
-        <chmod perm="0600">
-            <fileset dir="conf">
-                <include name="jmxremote.password"/>
-            </fileset>
-        </chmod>
+    <target name="test" depends="compiletestsclean" description="Run dk.netarkivet.${suite} defined in the suite property">
         <mkdir dir="${report.dir}"/>
         <junit fork="true" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
@@ -231,36 +225,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/ant-test.policy"/>
             <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
             <classpath refid="unittest.jars.path"/>
-            <test name="dk.netarkivet.UnitTesterSuite" todir="${report.dir}">
+            <test name="dk.netarkivet.${suite}" todir="${report.dir}">
                 <formatter type="xml"/>
             </test>
         </junit>
     </target>
 
-    <target name="unittestreports" description="Generates a HTML report based on the unittest results">         
+    <target name="unittest" description="Run unit tests on a clean compile">
+        <property name="suite" value="dk.netarkivet.UnitTesterSuite"/>
+        <antcall target="test"/>
+    </target>
+
+    <target name="fulltest" description="Run unit and integrity tests on a clean compile">
+        <property name="suite" value="dk.netarkivet.FullTesterSuite"/>
+        <antcall target="test"/>
+    </target>
+
+    <target name="testreports" description="Generates a HTML report based on the test results">
         <junitreport todir="${report.dir}">
             <fileset dir="${report.dir}">
                 <include name="TEST-*.xml"/>
             </fileset>
             <report format="frames" todir="${report.dir}/html"/>
         </junitreport>
-    </target>
-
-
-    <target name="fulltest" depends="compiletestsclean"
-            description="Run unit and integrity tests on a clean compile">
-        <junit fork="true">
-            <jvmarg value="-Xmx512m"/>
-            <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
-            <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Jdk14Logger"/>
-            <jvmarg value="-Djava.util.logging.config.file=tests/dk/netarkivet/testlog.prop"/>
-            <jvmarg value="-Djava.security.manager"/>
-            <jvmarg value="-Djava.security.policy=tests/dk/netarkivet/test.policy"/>
-            <jvmarg value="-Dorg.archive.crawler.frontier.AbstractFrontier.queue-assignment-policy=org.archive.crawler.frontier.HostnameQueueAssignmentPolicy,org.archive.crawler.frontier.IPQueueAssignmentPolicy,org.archive.crawler.frontier.BucketQueueAssignmentPolicy,org.archive.crawler.frontier.SurtAuthorityQueueAssignmentPolicy,org.archive.crawler.frontier.TopmostAssignedSurtQueueAssignmentPolicy,dk.netarkivet.harvester.harvesting.DomainnameQueueAssignmentPolicy"/>
-            <classpath refid="unittest.jars.path"/>
-            <formatter type="brief" usefile="false"/>
-            <test name="dk.netarkivet.FullTesterSuite"/>
-        </junit>
     </target>
 
     <target name="jarfiles"
