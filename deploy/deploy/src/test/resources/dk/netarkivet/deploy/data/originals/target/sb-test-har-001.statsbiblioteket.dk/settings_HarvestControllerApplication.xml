@@ -75,9 +75,9 @@
                         <harvesting>
                             <queuePriority>HIGHPRIORITY</queuePriority>
                             <heritrix>
-                                <guiPort>8190</guiPort> 
+                                <guiPort>8111</guiPort> 
                                 <!-- T: jmxPort to be modified by test (was 8091) -->
-                                <jmxPort>8191</jmxPort>
+                                <jmxPort>8211</jmxPort>
                                  <jmxUsername>myControlRole</jmxUsername>
                                  <jmxPassword>R_D</jmxPassword>
                             </heritrix>
