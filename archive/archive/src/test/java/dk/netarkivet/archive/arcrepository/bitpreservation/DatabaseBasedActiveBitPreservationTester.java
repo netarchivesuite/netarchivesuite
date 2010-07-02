@@ -192,21 +192,21 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
      * @throws Exception if error.
      */
     public void testChangedFiles() throws Exception {
-	// initialise the database. Clean database and put new intries.
-	ReplicaCacheDatabase.getInstance();
+    // initialise the database. Clean database and put new entries.
+    ReplicaCacheDatabase.getInstance();
 
-	dbabp = DatabaseBasedActiveBitPreservation.getInstance();
-	Date date = dbabp.getDateForMissingFiles(THREE);
-	assertTrue("The date for last missing files check should be less than 30 min, but was: " 
-	        + (Calendar.getInstance().getTimeInMillis() - date.getTime()), 
-	        Calendar.getInstance().getTimeInMillis() - date.getTime() < 1000*60*30);
-	dbabp.findMissingFiles(THREE);
-	
+    dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+    Date date = dbabp.getDateForMissingFiles(THREE);
+    assertTrue("The date for last missing files check should be less than 30 min, but was: " 
+            + (Calendar.getInstance().getTimeInMillis() - date.getTime()), 
+            Calendar.getInstance().getTimeInMillis() - date.getTime() < 1000*60*30);
+    dbabp.findMissingFiles(THREE);
+    
         
-	// get checksum from all the first time.
-	Date beforeUpdate = new Date(Calendar.getInstance().getTimeInMillis());
-	
-	dbabp.findChangedFiles(ONE);
+    // get checksum from all the first time.
+    Date beforeUpdate = new Date(Calendar.getInstance().getTimeInMillis());
+    
+    dbabp.findChangedFiles(ONE);
 
         date = dbabp.getDateForChangedFiles(ONE);
         assertTrue("The date for last changed files check for replica THREE after "
@@ -217,35 +217,35 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
                 date.getTime() < Calendar.getInstance().getTimeInMillis());
         
        
-	assertEquals("Replica '" + THREE + "' should have 2 corrupted files", 
-		2, dbabp.getNumberOfChangedFiles(THREE));
-	assertEquals("Replica '" + THREE + "' should have corrupted the files "
-		+ "'integrity11.ARC' and 'integrity12.ARC'.", 
-		Arrays.asList("integrity11.ARC", "integrity12.ARC"), 
-		dbabp.getChangedFiles(THREE));
+    assertEquals("Replica '" + THREE + "' should have 2 corrupted files", 
+        2, dbabp.getNumberOfChangedFiles(THREE));
+    assertEquals("Replica '" + THREE + "' should have corrupted the files "
+        + "'integrity11.ARC' and 'integrity12.ARC'.", 
+        Arrays.asList("integrity11.ARC", "integrity12.ARC"), 
+        dbabp.getChangedFiles(THREE));
 
-	
-	dbabp.replaceChangedFile(ONE, "integrity11.ARC", "XX", 
-		"399d2f9583da5516d7cdd4dfe3ed3b71");
-	
-	dbabp.replaceChangedFile(THREE, "integrity2.ARC", "XX", 
-		"b3bb49b72718b89950f8b861d2e0e2ca");
-	
-	Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(
-	        new String[]{"integrity11.ARC"});
-	
-	assertEquals("The map should only contain a single element",
-	        1, presMap.size());
-	
-	PreservationState pres = presMap.get("integrity11.ARC");
-	assertNotNull("The preservation state should not be null.", pres);
+    
+    dbabp.replaceChangedFile(ONE, "integrity11.ARC", "XX", 
+        "399d2f9583da5516d7cdd4dfe3ed3b71");
+    
+    dbabp.replaceChangedFile(THREE, "integrity2.ARC", "XX", 
+        "b3bb49b72718b89950f8b861d2e0e2ca");
+    
+    Map<String, PreservationState> presMap = dbabp.getPreservationStateMap(
+            new String[]{"integrity11.ARC"});
+    
+    assertEquals("The map should only contain a single element",
+            1, presMap.size());
+    
+    PreservationState pres = presMap.get("integrity11.ARC");
+    assertNotNull("The preservation state should not be null.", pres);
 
-	assertEquals("It should be upload completely, but not registret yet", 
-	        ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminReplicaState(THREE));
-	
-	dbabp.findChangedFiles(THREE);
-	
-	pres = dbabp.getPreservationState("integrity11.ARC");
+    assertEquals("It should be upload completely, but not registret yet", 
+            ReplicaStoreState.UPLOAD_FAILED.toString(), pres.getAdminReplicaState(THREE));
+    
+    dbabp.findChangedFiles(THREE);
+    
+    pres = dbabp.getPreservationState("integrity11.ARC");
         assertEquals("It should be now be registreret as upload completely.", 
                 ReplicaStoreState.UPLOAD_COMPLETED.toString(), pres.getAdminReplicaState(THREE));
         
@@ -261,18 +261,30 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
         List<String> filelist = new ArrayList<String>();
         filelist.add("integrity1.ARC");
         filelist.add("integrity7.ARC");
-        filelist.add("integrity2.ARC");
         ReplicaCacheDatabase.getInstance().addFileListInformation(filelist, THREE);
         
         String misFiles = dbabp.getMissingFiles(THREE).toString();
+        assertTrue("integrity2.ARC should be missing", 
+                misFiles.contains("integrity2.ARC"));
         assertTrue("integrity11.ARC should be missing", 
                 misFiles.contains("integrity11.ARC"));
         assertTrue("integrity12.ARC should be missing", 
                 misFiles.contains("integrity12.ARC"));
         
         // reupload the missing files.
-        dbabp.uploadMissingFiles(THREE, "integrity11.ARC", "integrity12.ARC");
+        dbabp.uploadMissingFiles(THREE, "integrity2.ARC", "integrity12.ARC");
         
+        // try to upload files, which does not exist anywhere!
+        try {
+            dbabp.uploadMissingFiles(THREE, "integrity11.ARC");
+            fail("This should throw an IOFailure, since no bitarchive replica "
+                    + "should have the file.");
+        } catch (IOFailure e) {
+            // expected!
+        }
+        
+        // send a filelist message which will tell that the file 
+        // 'integrity11.ARC' actually exists within the replica.
         dbabp.findMissingFiles(THREE);
         
         misFiles = dbabp.getMissingFiles(THREE).toString();
@@ -280,8 +292,42 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
                 misFiles.contains("integrity11.ARC"));
         assertFalse("integrity12.ARC should not be missing anymore", 
                 misFiles.contains("integrity12.ARC"));
-
     }
+        
+    /**
+     * Check whether it finds missing files from checksum jobs.
+     */
+    public void testMissingDuringChecksum() throws Exception {
+        ReplicaCacheDatabase.getInstance().cleanup();
+        clearDatabase(DBConnect.getDBConnection(Settings.get(
+                ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE)));
+
+        ReplicaCacheDatabase cache = ReplicaCacheDatabase.getInstance();
+        dbabp = DatabaseBasedActiveBitPreservation.getInstance();
+        
+        // add a simple checksum list to replica TWO.
+        List<String> checksumlist = new ArrayList<String>();
+        checksumlist.add("1.arc##1234");
+        checksumlist.add("2.arc##2345");
+        
+        cache.addChecksumInformation(checksumlist, TWO);
+
+        // verify that all replicas has both files, and no 'wrong' entries.
+        assertEquals("Unexpected number of files for " + TWO, 2, cache.getNumberOfFiles(TWO));
+        assertEquals("Unexpected number of missing files for " + TWO, 0, cache.getNumberOfMissingFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of wrong files for " + TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(TWO));
+        
+        checksumlist.clear();
+        checksumlist.add("1.arc##1234");
+
+        cache.addChecksumInformation(checksumlist, TWO);        
+
+        // verify that replica TWO is missing a file, but has no wrong files.
+        assertEquals("Unexpected number of files for " + TWO, 1, cache.getNumberOfFiles(TWO));
+        assertEquals("Unexpected number of missing files for " + TWO, 1, cache.getNumberOfMissingFilesInLastUpdate(TWO));
+        assertEquals("Unexpected number of wrong files for " + TWO, 0, cache.getNumberOfWrongFilesInLastUpdate(TWO));
+    }
+
     
     public void testFails() {
         dbabp = DatabaseBasedActiveBitPreservation.getInstance();
