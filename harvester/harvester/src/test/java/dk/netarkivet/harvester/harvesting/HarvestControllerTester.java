@@ -264,19 +264,31 @@ public class HarvestControllerTester extends TestCase {
         return ar.isValid();
     }
 
+    /** 
+     * test constructor behaviour given bad arguments.
+     * The introduction of a factory for the HeritrixLauncher hides the actual
+     * cause behind the message "Error creating singleton of class 
+     * 'dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher'.
+     */
     public void testRunHarvest() throws Exception {
-        HeritrixFiles files = new HeritrixFiles(new File(TestInfo.WORKING_DIR, "bogus"), 42L, 23L);
+        HeritrixFiles files = new HeritrixFiles(
+                new File(TestInfo.WORKING_DIR, "bogus"), 42L, 23L);
         hc = HarvestController.getInstance();
+        String cause =  "Error creating singleton of class '"
+            + "dk.netarkivet.harvester.harvesting.controller.DefaultHeritrixLauncher':";
+        //String cause = "File 'order.xml' must exist.*bogus/order.xml:"
         try {
             hc.runHarvest(files);
             fail("Should have died with bogus file structure");
         } catch (IOFailure e) {
             System.out.println("error: " + e.getMessage());
-            StringAsserts.assertStringContains("Should have the right error message",
-                                               "Unable to create index directory:", e.getMessage());
+            StringAsserts.assertStringContains(
+                    "Should have the right error message",
+                    "Unable to create index directory:", e.getMessage());
         } catch (ArgumentNotValid e) {
-            StringAsserts.assertStringMatches("Should have the right error message",
-                                              "File 'order.xml' must exist.*bogus/order.xml", e.getMessage());
+            StringAsserts.assertStringMatches(
+                    "Should have the right error message",
+                     cause, e.getMessage());
 
         }
     }
