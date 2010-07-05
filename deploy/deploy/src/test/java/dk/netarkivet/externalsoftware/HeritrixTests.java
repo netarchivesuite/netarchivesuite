@@ -37,13 +37,19 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import is.hi.bok.deduplicator.DeDuplicator;
 import junit.framework.TestCase;
 import org.apache.commons.httpclient.URIException;
+import org.archive.io.ArchiveReader;
+import org.archive.io.ArchiveReaderFactory;
+import org.archive.io.ArchiveRecord;
+import org.archive.io.arc.ARCRecord;
 import org.archive.net.UURI;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -60,6 +66,7 @@ import dk.netarkivet.common.utils.DomainUtils;
 import dk.netarkivet.common.utils.ExceptionUtils;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.FixedUURI;
+import dk.netarkivet.common.utils.StringUtils;
 import dk.netarkivet.common.utils.XmlUtils;
 import dk.netarkivet.common.utils.cdx.CDXUtils;
 import dk.netarkivet.harvester.datamodel.HeritrixTemplate;
@@ -539,7 +546,9 @@ public class HeritrixTests extends TestCase {
         }
 
         // we must harvest at max MAX_OBJECTS + 1 (the harvester some times stops at MAX_OBJECTS + 1)
-        assertTrue("Number of objects harvested", num_harvested < TestInfo.MAX_OBJECTS + 2);
+        assertTrue("Number of objects harvested(" 
+                + num_harvested + ") should be less than "
+                + (TestInfo.MAX_OBJECTS + 2), num_harvested < TestInfo.MAX_OBJECTS + 2);
     }
 
     /**
@@ -561,7 +570,9 @@ public class HeritrixTests extends TestCase {
         File first_arcfile = files[0];
         assertNotNull("Should be ARC files in " + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath(),
                 first_arcfile);
+        
         String arcfile = FileUtils.readFile(files[0]);
+        
         // Testing that cookie1 exists because cookie0 will be there
         // with 404.
         StringAsserts.assertStringContains("Must find the web pages", "http://netarkivet.dk/website/testsite/cookie1.php", arcfile);
@@ -832,6 +843,49 @@ public class HeritrixTests extends TestCase {
                 new File(TestInfo.HERITRIX_TEMP_DIR, "processors-report.txt"));
     }
 
+    /**
+     * Test we can harvest from FTP-sites using the FTP processor.
+     * Downloads max 25 files from klid.dk using the seed: 
+     * ftp://ftp.klid.dk/OpenOffice/haandbog
+     * @throws Exception
+     */
+    public void testFtpHarvesting() throws Exception {
+        validateOrder(TestInfo.FTPHARVESTING_ORDERXML_FILE);
+        File tempDir = mtf.newTmpDir();
+        LuceneUtils.makeDummyIndex(tempDir);
+        runHeritrix(TestInfo.FTPHARVESTING_ORDERXML_FILE, 
+                TestInfo.FTP_HARVESTING_SEEDLIST_FILE, tempDir);
+
+        // test that both the heritrix-temp-dir and the bitarchive has at least one file - and has the same file !!
+        File[] files = TestInfo.HERITRIX_ARCS_DIR.listFiles(FileUtils.ARCS_FILTER);
+        assertNotNull("Files array should be non-null", files);
+        assertEquals("Should be exactly one file in " + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath(),
+                1, files.length);
+        File first_arcfile = files[0];
+        assertNotNull("Should be ARC files in " + TestInfo.HERITRIX_ARCS_DIR.getAbsolutePath(),
+                first_arcfile);
+        ArchiveReader reader = ArchiveReaderFactory.get(files[0]);
+        Iterator<ArchiveRecord> i = reader.iterator();
+        Set<String> urlSet = new HashSet<String>();
+        while (i.hasNext()) {
+            ArchiveRecord o = i.next();
+            if (o instanceof ARCRecord) {
+                ARCRecord a = (ARCRecord) o;
+                urlSet.add(a.getMetaData().getUrl());
+            } else {
+                fail("ARCrecords expected, not objects of class" 
+                        + o.getClass().getName());
+            }
+        }      
+        assertTrue("Should have harvested more than 10 objects but only harvested "
+                + urlSet.size(), urlSet.size() > 10);
+        String searchString = "ftp://ftp.klid.dk/OpenOffice/haandbog/Haandbog-2-2.pdf";
+        if (!urlSet.contains(searchString)) {
+            fail("Expected to harvest '" + searchString + "' but we only harvested : " 
+                    + StringUtils.conjoin(",", urlSet));
+        }
+    }
+    
     private void validateOrder(File anOrderFile) {
         SAXReader reader = new SAXReader();
         reader.setValidation(true);
@@ -852,7 +906,7 @@ public class HeritrixTests extends TestCase {
        }
 
        // Find alle classes in the order.xml, and try to load/instantiate these classes
-       // TODO: Try to instantiate all classes in the given xml.
+       // TODO Try to instantiate all classes in the given xml.
         iterateChildren(document.getRootElement());
 
         } catch (SAXException e) {
@@ -884,7 +938,7 @@ public class HeritrixTests extends TestCase {
     }
 
     /** Check, if class exists, and can be loaded.
-     * TODO: try to instantiate the class as well.
+     * TODO try to instantiate the class as well.
      * @param className a name for a class
      * @return true, if class exists, and can be loaded.XS
      */

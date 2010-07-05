@@ -361,14 +361,19 @@ public class IntegrityTests extends TestCase {
                     Channels.getThisReposClient(), FILENAME_TO_GET, "ONE", "FFFF", "42");
             bac.sendRemoveAndGetFileMessage(rMsg);
         }
-
-        while (Thread.activeCount() > beforeCount) {
+        int loop = 0;
+        while (Thread.activeCount() > beforeCount && loop > 15) {
+            loop++;
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }
 
+        if (loop > 5) {
+            fail("Test timed out; would have waited forever");
+        }
+        
         ((JMSConnectionMockupMQ) JMSConnectionFactory.getInstance()).waitForConcurrentTasksToFinish();
         try {
             Thread.sleep(1000);

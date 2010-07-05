@@ -74,6 +74,8 @@ public class TestInfo {
     
     static final File EMPTY_CRAWLLOG_FILE = new File(ORIGINALS_DIR, "empty_crawl.log");
     static final File DEDUPLICATOR_ORDERXML_FILE = new File(ORIGINALS_DIR, "deduplicator_orderxml.xml");
+    static final File FTPHARVESTING_ORDERXML_FILE = new File(ORIGINALS_DIR, "default_withftp.xml");
+    static final File FTP_HARVESTING_SEEDLIST_FILE = new File(ORIGINALS_DIR, "klid_ftp_seed.txt");
     
     static final File TEST_LAUNCH_HARVEST_DIR =
         new File("tests/dk/netarkivet/harvester/harvesting/data/launcher/originals/netarkivet/testLaunchHarvest");
