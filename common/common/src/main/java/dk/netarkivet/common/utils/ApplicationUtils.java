@@ -76,7 +76,7 @@ public abstract class ApplicationUtils {
     /**
      * Helper class for logging an exception (at level fatal)
      * and printing it to STDOUT at the same time.
-     * Also invokes the error notifyer.
+     * Also invokes the error notifier.
      * @param s a given String.
      * @param t a given Exception.
      */
@@ -128,7 +128,8 @@ public abstract class ApplicationUtils {
      * @param c The class to be started.
      * @param args The arguments to the application (should be empty).
      */
-    public static void startApp(Class c, String[] args) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void startApp(Class c, String[] args) {
         String appName = c.getName();
         Settings.set(CommonSettings.APPLICATION_NAME, appName);
         logAndPrint("Starting " + appName + "\n"
