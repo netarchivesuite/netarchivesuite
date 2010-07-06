@@ -116,7 +116,8 @@ public class TestMessageListener implements MessageListener {
      * @return The instance that was most recently received, or null if no
      * messages of the specified type has been received.
      */
-    public NetarkivetMessage getLastInstance(Class msgClass) {
+    @SuppressWarnings("rawtypes")
+	public NetarkivetMessage getLastInstance(Class msgClass) {
         NetarkivetMessage result = null;
         for (NetarkivetMessage msg : received) {
             if (msgClass.isInstance(msg)) {

@@ -45,6 +45,7 @@ import dk.netarkivet.common.utils.StreamUtils;
  * the key to the map is the class name, and the value is the class stored
  * as a byte array.
  */
+@SuppressWarnings("serial")
 public class ByteJarLoader extends ClassLoader implements Serializable {
     /** The log. */
     transient Log log = LogFactory.getLog(this.getClass().getName());
@@ -101,7 +102,8 @@ public class ByteJarLoader extends ClassLoader implements Serializable {
      * @return the Class with the given className.
      * 
      */
-    public Class findClass(String className) throws ClassNotFoundException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public Class findClass(String className) throws ClassNotFoundException {
         ArgumentNotValid.checkNotNullOrEmpty(className, "String className");
         // replace all dots with '/' in the className before looking it up
         // in the

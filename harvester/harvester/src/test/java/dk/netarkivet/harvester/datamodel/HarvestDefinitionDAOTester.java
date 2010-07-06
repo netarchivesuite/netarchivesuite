@@ -904,10 +904,15 @@ public class HarvestDefinitionDAOTester extends DataModelTestCase {
     }
     
     public void testGetDomains() throws Exception {
-        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();
-        
-        List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(TestInfo.DEFAULT_HARVEST_NAME);
-        
+        HarvestDefinitionDAO hddao = HarvestDefinitionDAO.getInstance();        
+        List<String> domains = hddao.getListOfDomainsOfHarvestDefinition(
+        		TestInfo.DEFAULT_HARVEST_NAME);
+        assertTrue("List of domains in harvestdefinition '" 
+        		+ TestInfo.DEFAULT_HARVEST_NAME +  "' shouldn't be null", 
+        		domains != null);
+        assertTrue("List of domains in harvestdefinition '" 
+        		+ TestInfo.DEFAULT_HARVEST_NAME +  "' should be 0 but was "
+        		+ domains.size(), domains.size() == 0);
     }
     /**
      * Tests the getHarvestInfo() method.

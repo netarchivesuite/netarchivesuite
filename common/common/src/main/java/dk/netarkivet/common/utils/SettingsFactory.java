@@ -63,7 +63,8 @@ public class SettingsFactory<T> {
      * class.
      * @throws PermissionDenied if the class or methods cannot be accessed.
      */
-    public static<T> T getInstance(String settingsField, Object... args) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static<T> T getInstance(String settingsField, Object... args) {
         ArgumentNotValid.checkNotNull(settingsField, "String settingsField");
         String className = Settings.get(settingsField);
         try {

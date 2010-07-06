@@ -32,7 +32,6 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DomainDAOTester;
 import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
-import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAOTester;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAOTester;
 import dk.netarkivet.harvester.datamodel.JobDAOTester;
 import dk.netarkivet.harvester.datamodel.ScheduleDAOTester;

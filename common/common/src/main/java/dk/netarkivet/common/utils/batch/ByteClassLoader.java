@@ -60,7 +60,8 @@ public class ByteClassLoader extends ClassLoader {
      *
      * @return A new Class object for this class.
      */
-    public Class defineClass() {
+    @SuppressWarnings("rawtypes")
+	public Class defineClass() {
         return super.defineClass(null, binaryData, 0, binaryData.length);
     }
 }

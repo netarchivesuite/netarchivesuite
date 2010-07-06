@@ -48,9 +48,9 @@ public class CachingLogHandler extends Handler {
     /** The size of the logging cache. */
     private final int loggingHistorySize;
     /** The logging cache itself, caching the last
-     * "loggingHistorySize" logentries. */
+     * "loggingHistorySize" log entries. */
     private final List<LogRecord> loggingHistory;
-    /** The logentries exposed as MBeans. */
+    /** The log entries exposed as MBeans. */
     private final List<CachingLogRecord> loggingMBeans;
     /** The place in the loggingHistory for the next LogRecord. */ 
     private int currentIndex;
@@ -94,7 +94,8 @@ public class CachingLogHandler extends Handler {
      * @return The filter from the property if set and parsable, the
      *         defaultValue otherwise
      */
-    private Filter getFilterProperty(String name, Filter defaultValue) {
+    @SuppressWarnings("rawtypes")
+	private Filter getFilterProperty(String name, Filter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {
             if (val != null) {
@@ -125,7 +126,8 @@ public class CachingLogHandler extends Handler {
      * @return The formatter from the property if set and parsable, the
      *         defaultValue otherwise
      */
-    private Formatter getFormatterProperty(String name,
+    @SuppressWarnings("rawtypes")
+	private Formatter getFormatterProperty(String name,
                                            Formatter defaultValue) {
         String val = LogManager.getLogManager().getProperty(name);
         try {

@@ -150,8 +150,8 @@ public final class BatchGUI {
      * required information.
      * @throws IOFailure If there is problems with the JspWriter.
      */
-    @SuppressWarnings("unchecked")
-    public static void getPageForClass(PageContext context) throws UnknownID,
+    @SuppressWarnings("rawtypes")
+	public static void getPageForClass(PageContext context) throws UnknownID,
             ArgumentNotValid, IllegalState, ForwardedToErrorPage, IOFailure {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
 
@@ -199,6 +199,7 @@ public final class BatchGUI {
      * @param context The page context containing the needed information for 
      * executing the batchjob.
      */
+    @SuppressWarnings("rawtypes")
     public static void execute(PageContext context) {
         try {
             ServletRequest request = context.getRequest();
@@ -257,7 +258,7 @@ public final class BatchGUI {
      * @throws UnknownID If the className does not refer to a known class.
      * @throws IllegalState If the class is not an instance of FileBatchJob.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private static Class getBatchClass(String className) 
             throws UnknownID, IllegalState {
         Class res;
@@ -299,7 +300,7 @@ public final class BatchGUI {
      * @return The string argument based constructor of the class.
      * @throws UnknownID If no valid constructor can be found.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private static Constructor findStringConstructor(Class c) throws UnknownID {
         for(Constructor con : c.getConstructors()) {
             boolean valid = true;
@@ -345,7 +346,8 @@ public final class BatchGUI {
      * @param locale The locale language package.
      * @return The HTML code describing the class.
      */
-    private static String getClassDescription(Class c, Locale locale) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private static String getClassDescription(Class c, Locale locale) {
         // retrieve the resources.
         Resources r = (Resources) c.getAnnotation(Resources.class);
         if(r == null) {
@@ -398,13 +400,13 @@ public final class BatchGUI {
      * Argument 3 (missing argument metadata)<br/>
      * <input name="arg3" size="50" value="" /><br/>
      * 
-     * TODO this does not work untill batchjobs can be used with arguments.
+     * TODO this does not work until batchjobs can be used with arguments.
      * 
      * @param c The class whose constructor should be used.
      * @param locale The language package.
      * @return The HTML code for the arguments for executing the batchjob.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static String getHTMLarguments(Class c, Locale locale) {
         Constructor con = findStringConstructor(c);
         Type[] params = con.getParameterTypes();
@@ -445,7 +447,7 @@ public final class BatchGUI {
             for(int i = 0; i < resource.length && parmIndex < params.length; 
                     i++) {
                 if(resource[i].type() == params[parmIndex]) {
-                    // Use the resource to descript the argument.
+                    // Use the resource to describe the argument.
                     parmIndex++;
                     res.append(resource[i].name());
                     if(resource[i].description() != null 

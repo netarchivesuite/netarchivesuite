@@ -50,7 +50,8 @@ public class Serial {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static<T  extends Serializable> T serial (T input_object) throws IOException, ClassNotFoundException {
+    @SuppressWarnings("unchecked")
+	public static<T  extends Serializable> T serial (T input_object) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         ObjectOutputStream ous = new ObjectOutputStream(baos);

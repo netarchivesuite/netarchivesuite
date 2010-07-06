@@ -27,6 +27,7 @@ import java.util.Collection;
 /**
  * Indicates that one or more arguments are invalid.
  */
+@SuppressWarnings("serial")
 public class ArgumentNotValid extends NetarkivetException {
     /**
      * Constructs new ArgumentNotValid with the specified detail message.
@@ -141,7 +142,7 @@ public class ArgumentNotValid extends NetarkivetException {
      * @param name the name and type of the value being checked.
      * @throws ArgumentNotValid if test fails
      */
-    public static void checkNotNullOrEmpty(Collection c, String name) {
+    public static void checkNotNullOrEmpty(Collection<?> c, String name) {
         checkNotNull(c, name);
 
         if (c.isEmpty()) {
