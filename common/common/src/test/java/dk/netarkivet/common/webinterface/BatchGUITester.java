@@ -1,24 +1,18 @@
 package dk.netarkivet.common.webinterface;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
 import com.mockobjects.servlet.MockHttpServletRequest;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.AdminDataMessage;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
-import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.common.utils.batch.UrlSearch;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -147,7 +141,7 @@ public class BatchGUITester extends TestCase {
 //    }        
     
     public void testOverviewPage() throws ArgumentNotValid, IOException {
-      
+
       MockHttpServletRequest request = new MockHttpServletRequest(){
           @Override
           public Locale getLocale() {
@@ -160,5 +154,37 @@ public class BatchGUITester extends TestCase {
       PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
 
       BatchGUI.getBatchOverviewPage(context);
+      System.out.println(out.sw.toString());
+    }
+    
+    public void testExecute() {
+        File arcFile = new File(TestInfo.BATCH_DIR, "MimeUrlSearch.jar");
+        assertTrue(arcFile.isFile());
+        
+        Settings.set("settings.common.batch.batchjobs.batchjob.class", 
+                "dk.netarkivet.common.utils.batch.UrlSearch");
+        Settings.set("settings.common.batch.batchjobs.batchjob.jarfile",
+                arcFile.getAbsolutePath());
+
+        MockHttpServletRequest request = new MockHttpServletRequest(){
+           @Override
+           public Locale getLocale() {
+               return new Locale("en");
+           }
+       };
+       request.setupAddParameter(Constants.FILETYPE_PARAMETER, BatchFileType.Metadata.toString());
+       request.setupAddParameter(Constants.JOB_ID_PARAMETER, "1234567890");
+       request.setupAddParameter(Constants.BATCHJOB_PARAMETER, 
+               "dk.netarkivet.common.utils.batch.UrlSearch");
+       request.setupAddParameter(Constants.REPLICA_PARAMETER, "BarOne");
+       request.setupAddParameter("arg1", "DUMMY-ARG");
+       request.setupAddParameter("arg2", "url");
+       request.setupAddParameter("arg3", "mimetype");
+
+       Locale l = new Locale("en");
+       JspWriterMockup out = new JspWriterMockup();
+       
+       PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
+       BatchGUI.execute(context);
     }
 }

@@ -69,6 +69,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         tmpDir = FileUtils.getTempDir();
     }
 
+    @Override
     public void getFile(String arcfilename, Replica replica, File toFile) {
         ArgumentNotValid.checkNotNullOrEmpty(arcfilename, "arcfilename");
         ArgumentNotValid.checkNotNull(replica, "replica");
@@ -89,6 +90,7 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         }
     }
 
+    @Override
     public BitarchiveRecord get(String arcfile, long index)
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(arcfile, "arcfile");
@@ -105,8 +107,8 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
         }
     }
 
-
-    public BatchStatus batch(FileBatchJob job, String replicaId) {
+    @Override
+    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) {
         batchCounter++;
         if (batchMustDie) {
             throw new IOFailure("Committing suicide as ordered, SIR!");
@@ -145,12 +147,14 @@ public class TestArcRepositoryClient extends JMSArcRepositoryClient {
                 }
             }
         }
+
         job.finish(os);
         try {
             os.close();
         } catch (IOException e) {
             throw new IOFailure("Error in close", e);
         }
+
         return new BatchStatus(replicaId,
                 failures, processed, 
                 new TestRemoteFile(f, batchMustDie,

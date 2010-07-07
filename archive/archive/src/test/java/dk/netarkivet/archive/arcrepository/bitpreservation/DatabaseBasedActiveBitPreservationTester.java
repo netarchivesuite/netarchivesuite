@@ -464,7 +464,8 @@ public class DatabaseBasedActiveBitPreservationTester extends TestCase {
             FileUtils.copyFile(file, f);
         }
 
-        public BatchStatus batch(FileBatchJob job, String locationName) {
+        public BatchStatus batch(FileBatchJob job, String locationName, 
+                String... args) {
             if (overrideBatch != null) {
                 return overrideBatch;
             }

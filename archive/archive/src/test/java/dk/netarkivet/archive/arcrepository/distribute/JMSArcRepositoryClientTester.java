@@ -830,7 +830,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         runner.start();
         
         synchronized (this) {
-            wait(50);
+            wait(100);
         }
         jmsCon.waitForConcurrentTasksToFinish();
         

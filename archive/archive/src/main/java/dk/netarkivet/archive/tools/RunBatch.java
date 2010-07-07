@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -407,7 +408,8 @@ public class RunBatch extends ToolRunnerBase {
 
                 // Try to load the jar batch job.
                 try {
-                    new LoadableJarBatchJob(className, jarFiles);
+                    new LoadableJarBatchJob(className, new ArrayList<String>(),
+                            jarFiles);
                 } catch(Throwable e) {
                     System.err.println("Cannot create batchjob '" + className 
                             + "' from the jarfiles '" + jars + "'");
@@ -521,7 +523,8 @@ public class RunBatch extends ToolRunnerBase {
                     jarFiles[i] = new File(jarNames[i]);
                 }
 
-                job = new LoadableJarBatchJob(className, jarFiles);
+                job = new LoadableJarBatchJob(className, 
+                        new ArrayList<String>(), jarFiles);
             }
             
             String reg = parms.cmd.getOptionValue(REGEXP_OPTION_KEY);

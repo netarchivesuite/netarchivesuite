@@ -28,6 +28,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +55,8 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The name of the loaded Job. */
     private String jobClass;
+    /** The arguments for instantiating the batchjob.*/
+    private List<String> args;
 
     /**
      * Load a given class from a jar file.
@@ -63,16 +68,22 @@ public class LoadableJarBatchJob extends FileBatchJob {
      *            The class to load initially. This must be a subclass of
      *            FileBatchJob
      */
-    public LoadableJarBatchJob(String jobClass, File... jarFiles) {
+    public LoadableJarBatchJob(String jobClass, List<String> arguments, 
+            File... jarFiles) {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
+        ArgumentNotValid.checkNotNull(arguments, "List<String> args");
         this.jobClass = jobClass;
+        this.args = arguments;
         StringBuffer res = new StringBuffer(
                 "Loading loadableJarBatchJob using jarfiles: ");
         for (File jarFile : jarFiles) {
             res.append(jarFile.getName());
         }
         res.append(" and jobclass '" + jobClass);
+        if(!args.isEmpty()) {
+            res.append(", and arguments: '" + args + "'.");
+        }
         log.info(res.toString());
         multipleClassLoader = new ByteJarLoader(jarFiles);
         
@@ -87,8 +98,33 @@ public class LoadableJarBatchJob extends FileBatchJob {
      */
     private void loadBatchJob() throws IOFailure {
         try {
-            loadedJob = (FileBatchJob) multipleClassLoader.loadClass(jobClass)
-                    .newInstance();
+            Class batchClass = multipleClassLoader.loadClass(jobClass);
+            
+            if(args.size() == 0) {
+                // just load if no arguments.
+                loadedJob = (FileBatchJob) batchClass.newInstance();
+            } else {
+                // get argument classes (string only).
+                Class[] argClasses = new Class[args.size()];
+                for(int i = 0; i < args.size(); i++) {
+                    argClasses[i] = String.class;
+                }
+
+                // extract the constructor and instantiate the batchjob.
+                Constructor con = batchClass.getConstructor(argClasses);
+                loadedJob = (FileBatchJob) con.newInstance(args.toArray());
+                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+            }
+        } catch (InvocationTargetException e) {
+            final String msg = "Not allowed to invoce the batchjob '" 
+                + jobClass + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (NoSuchMethodException e) {
+            final String msg = "No constructor for the arguments '" + args 
+                    + "' can be found for the batchjob '" + jobClass + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
             final String msg = "Cannot instantiate loaded job class";
             log.warn(msg, e);

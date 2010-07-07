@@ -26,6 +26,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
+import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
+import dk.netarkivet.common.distribute.arcrepository.ViewerArcRepositoryClient;
 import dk.netarkivet.common.utils.arc.ARCBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -87,7 +89,9 @@ public class RawMetadataCacheTester extends CacheTestCase {
         RawMetadataCache rmc = new RawMetadataCache("test3",
                 Pattern.compile(".*index/cdx.*"), null);
         arcrepfield.set(rmc, tarc);
+        // TODO find out why it stops here!
         Long id1 = rmc.cache(4L);
+        // TODO find out why it stops here!
         assertEquals("Should have exactly the one id asked for",
                 (Long) 4L, id1);
         File cacheFile1 = rmc.getCacheFile(id1);

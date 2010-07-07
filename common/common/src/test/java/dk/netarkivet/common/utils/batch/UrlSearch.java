@@ -29,6 +29,10 @@ import dk.netarkivet.common.utils.arc.ARCBatchJob;
 public class UrlSearch extends ARCBatchJob {
     private String regex;
     private String mimetype;
+    private long urlCount = 0L;
+    private long mimeCount = 0L;
+    private long totalCount = 0L;
+    private long bothCount = 0L;
 
     public UrlSearch(String arg1, String regex, String mimetype) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(regex, "String regex");
@@ -40,7 +44,19 @@ public class UrlSearch extends ARCBatchJob {
     @Override
     public void finish(OutputStream os) {
         // TODO Auto-generated method stub
-        
+
+        try {
+            os.write(new String("\nResults:\n").getBytes());
+            os.write(new String("Urls matched = " + urlCount 
+                    + "\n").getBytes());
+            os.write(new String("Mimetypes matched = " + mimeCount 
+                    + "\n").getBytes());
+            os.write(new String("Url and Mimetype matches = " + bothCount 
+                    + "\n").getBytes());
+        } catch (IOException e) {
+            throw new IOFailure("Unexpected problem when writing to output "
+                    + "stream.", e);
+        }
     }
 
     @Override
@@ -51,21 +67,29 @@ public class UrlSearch extends ARCBatchJob {
 
     @Override
     public void processRecord(ARCRecord record, OutputStream os) {
-        if(!record.getMetaData().getUrl().matches(regex)) {
-            return;
+        totalCount++;
+        boolean valid = true;
+        if(record.getMetaData().getUrl().matches(regex)) {
+            urlCount++;
+        } else {
+            valid = false;
         }
-        if(!record.getMetaData().getMimetype().matches(mimetype)) {
-            return;
+        if(record.getMetaData().getMimetype().matches(mimetype)) {
+            mimeCount++;
+        } else {
+            valid = false;
         }
-        try {
-            os.write(new String(record.getMetaData().getUrl() 
-                    + "\n").getBytes());
-        } catch (IOException e) {
-            throw new IOFailure("Unexpected problem when writing to output "
-                    + "stream.", e);
-        }
-        // TODO Auto-generated method stub
         
+        if(valid) {
+            bothCount++;
+            try {
+            os.write(new String(record.getMetaData().getUrl() + " : " 
+                    + record.getMetaData().getMimetype() + "\n").getBytes());
+            } catch (IOException e) {
+                // unexpected!
+                throw new IOFailure("Cannot print to os!", e);
+            }
+        }
     }
     
 

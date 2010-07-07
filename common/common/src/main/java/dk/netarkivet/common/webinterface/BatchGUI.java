@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.annotation.Resources;
@@ -210,18 +211,39 @@ public final class BatchGUI {
             String jobId = request.getParameter(Constants.JOB_ID_PARAMETER);
             String jobName = request.getParameter(Constants.BATCHJOB_PARAMETER);
             String repName = request.getParameter(Constants.REPLICA_PARAMETER);
-
+            
             FileBatchJob batchjob;
+            
+            // Retrieve the list of arguments.
+            List<String> args = new ArrayList<String>();
+            String arg;
+            Integer i = 1;
+            // retrieve the constructor to find out how many arguments
+            Class c = getBatchClass(jobName);
+            Constructor con = findStringConstructor(c);
+            
+            // retrieve the arguments and put them into the list.
+            while(i <= con.getParameterTypes().length) {
+                arg = request.getParameter("arg" + i.toString());
+                if(arg != null) {
+                    args.add(arg);
+                } else {
+                    log.warn("Should contain argument number " + i + ", but "
+                            + "found a null instead, indicating missing "
+                            + "argument. Use empty string instead.");
+                    args.add("");
+                }
+                i += 1;
+            }
             
             File jarfile = getJarFile(jobName);
             if(jarfile == null) {
                 // get the constructor and instantiate it.
                 Constructor construct = findStringConstructor(
                         getBatchClass(jobName));
-                batchjob = (FileBatchJob) 
-                construct.newInstance(new Object[]{});
+                batchjob = (FileBatchJob) construct.newInstance(args);
             } else {
-                batchjob = new LoadableJarBatchJob(jobName, jarfile);
+                batchjob = new LoadableJarBatchJob(jobName, args, jarfile);
             }
 
             // get the regular expression.
@@ -234,6 +256,9 @@ public final class BatchGUI {
             } else {
                 regex += Constants.REGEX_ALL;
             }
+
+            // validate the regular expression (throws exception if wrong).
+            Pattern.compile(regex);
             
             Replica rep = Replica.getReplicaFromName(repName);
             
