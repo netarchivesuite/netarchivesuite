@@ -91,4 +91,12 @@ public abstract class GlobalCrawlerTrapListDAO {
      * the database.
      */
     public abstract GlobalCrawlerTrapList read(int id) throws UnknownID;
+
+    /**
+     * Does crawlertrap with this name already exist
+     * @param name The name for a crawlertrap
+     * @return true, if a crawlertrap with the given name already exists 
+     * in the database; otherwise false
+     */
+    public abstract boolean exists(String name);
 }

@@ -119,9 +119,16 @@ public class TrapCreateOrUpdateAction extends TrapAction {
         } else {  //create new trap list
             GlobalCrawlerTrapList trap = new GlobalCrawlerTrapList(is, name,
                                                        description, isActive);
-            dao.create(trap);
+            if (!dao.exists(name)) {
+                dao.create(trap);
+            } else {
+                // crawlertrap named like this already exists.
+                HTMLUtils.forwardWithErrorMessage(context, i18n,
+                "errormsg;crawlertrap.0.exists.error", name );
+                throw new
+                ForwardedToErrorPage("Crawlertrap with name '" 
+                        + name + "' exists already");
+            }
         }
-
-
     }
 }

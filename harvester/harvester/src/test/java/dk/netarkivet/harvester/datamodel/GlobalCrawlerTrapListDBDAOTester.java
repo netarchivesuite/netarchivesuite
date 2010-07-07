@@ -28,13 +28,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
+import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
 
-/**
- * csr forgot to comment this!
- *
- */
 
+/**
+ * Unitests for the class GlobalCrawlerTrapListDBDAO.
+ */
 public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
 
     GlobalCrawlerTrapList list1;
@@ -85,6 +85,12 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
                = GlobalCrawlerTrapListDBDAO.getInstance();
        int id = dao.create(list1);
        assertEquals("Should have set list id to returned id", id, list1.getId());
+       try { 
+           dao.create(list1);
+           fail("Should throw ArgumentNotValid exception");
+       } catch (ArgumentNotValid e) {
+           // expected
+       }
     }
 
     /**
@@ -167,6 +173,13 @@ public class GlobalCrawlerTrapListDBDAOTester extends DataModelTestCase {
         assertEquals("Should combine the two lists to get 9 distinct traps"
                 , 9, dao.getAllActiveTrapExpressions().size());
     }
-
-
+    
+    public void testExists()  {
+        GlobalCrawlerTrapListDBDAO dao =
+            GlobalCrawlerTrapListDBDAO.getInstance();
+        String name = list1.getName();
+        assertFalse("Crawlertrap with name '" + name + "' should not exist now", dao.exists(name));
+        dao.create(list1);
+        assertTrue("Crawlertrap with name '" + name + "' should exist now", dao.exists(name));
+    }
 }

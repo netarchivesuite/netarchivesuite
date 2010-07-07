@@ -44,7 +44,7 @@ public class GlobalCrawlerTrapList {
     /**
      * The unique id of this collection of crawler traps.
      */
-    int id;
+    private int id;
 
     /**
      * The list of traps. Each item is a regular expression matching url's to
@@ -52,7 +52,7 @@ public class GlobalCrawlerTrapList {
      * global_crawler_trap_expressions so we model
      * the traps as a Set to avoid possible duplicates.
      */
-    Set<String> traps;
+    private Set<String> traps;
 
     /**
      * Get the name of the list.
@@ -74,17 +74,17 @@ public class GlobalCrawlerTrapList {
     /**
      * A unique name by which this list is identified.
      */
-    String name;
+    private String name;
 
     /**
      * A free-text description of the traps in this collection.
      */
-    String description;
+    private String description;
 
     /**
      * Whether or not this set of traps is active (in use).
      */
-    boolean isActive;
+    private boolean isActive;
 
     /**
      * Protected constructor used by the DAO to create instances of this class.
@@ -156,7 +156,7 @@ public class GlobalCrawlerTrapList {
     }
 
     /**
-     * Gte the id of this list.
+     * Get the id of this list.
      * @return the id.
      */
     public int getId() {
