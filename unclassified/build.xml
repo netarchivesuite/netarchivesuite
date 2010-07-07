@@ -83,6 +83,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     wayback-core-1.4.2.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
+    <property name="build.classes.excludes" value="overview.html,*/doc-files/,/package.html"/>
     <path id="jars.path">
         <pathelement path="${classdir}"/>
         <fileset dir="lib">
@@ -299,12 +300,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
             description="Build the javadocs">
         <javadoc author="false"
                  destdir="docs/apidocs"
-                 packagenames="dk.netarkivet.common.*, dk.netarkivet.deploy.*,
-        						dk.netarkivet.harvester.*,dk.netarkivet.archive.*,
-                        		dk.netarkivet.viewerproxy.*, dk.netarkivet.monitor.*,
-        						dk.netarkivet.wayback.*"
+                 packagenames="dk.netarkivet.*"
                  sourcepath="src"
                  use="true"
+                 overview="src/overview.html"
                  version="false"
                  package="true">
             <classpath refid="jars.path"/>
