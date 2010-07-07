@@ -82,8 +82,8 @@
     </settings>
 
     <thisPhysicalLocation name="NATIONAL_LIBRARY">
-      <!-- TODO chaneg to fit your setup. -->
-      <deployInstallDir>~/run_archive</deployInstallDir>
+      <!-- TODO change to fit your setup. -->
+      <deployInstallDir>/path/to/installationdir</deployInstallDir>
       <deployMachineUserName>test</deployMachineUserName>
     
     <settings>
@@ -95,6 +95,10 @@
                 <userPassword>admin</userPassword>
             </remoteFile>
             <useReplicaId>A</useReplicaId>
+            <!-- TODO change to fit your setup. 
+                The "mail.yourdomain.com" as mail server needs to be replaced as
+                well as the values for "receiver" and "sender".
+             -->
             <mail>
                 <server>mail.yourdomain.com</server>
             </mail>
@@ -141,7 +145,7 @@
                 </common>
                 <archive>
                     <bitarchive>
-                        <!-- TODO: Point this directory at your ARC files. -->
+                        <!-- TODO Point this directory at your ARC files. -->
                         <baseFileDir>/arcs/</baseFileDir>
                     </bitarchive>
                 </archive>
