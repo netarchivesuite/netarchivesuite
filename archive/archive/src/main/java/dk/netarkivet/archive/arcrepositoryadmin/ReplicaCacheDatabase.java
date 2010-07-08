@@ -42,6 +42,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.netarkivet.archive.ArchiveSettings;
 import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -53,6 +54,7 @@ import dk.netarkivet.common.exceptions.IllegalState;
 import dk.netarkivet.common.utils.DBUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.NotificationsFactory;
+import dk.netarkivet.common.utils.Settings;
 
 /**
  * Method for storing the bitpreservation cache in a database.
@@ -74,10 +76,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     private Connection dbConnection;
     
     /** max number of database retries. */
-    private final int maxdatabaseRetries = 5;
+    private final int maxdatabaseRetries = Settings.getInt(
+            ArchiveSettings.RECONNECT_MAX_TRIES_ADMIN_DATABASE);
     /** max time to wait between retries. */
-    private final int delaybetweenretries = 5*60*1000;
-    
+    private final int delaybetweenretries = Settings.getInt(
+            ArchiveSettings.RECONNECT_DELAY_ADMIN_DATABASE);
     /**
      * Constructor.
      */

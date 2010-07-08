@@ -203,6 +203,22 @@ public class ArchiveSettings {
             = "settings.archive.admin.database.class";
     
     /**
+     * <b>settings.archive.admin.database.reconnectMaxRetries</b>:<br/>
+     * Setting for the maximum number of attempts to reconnect to the admin
+     * database.
+     */
+    public static String RECONNECT_MAX_TRIES_ADMIN_DATABASE
+            = "settings.archive.admin.database.reconnectMaxRetries";
+    
+    /**
+     * <b>settings.archive.admin.database.reconnectRetryDelay</b>:<br/>
+     * Settings for the delay between the attempts to reconnect to the admin
+     * database.
+     */
+    public static String RECONNECT_DELAY_ADMIN_DATABASE
+            = "settings.archive.admin.database.reconnectRetryDelay";
+    
+    /**
      * <b>settings.archive.bitpreservation.class</b>: <br>
      * Setting for which instance of ActiveBitPreservation that should be used
      * for preservation.
