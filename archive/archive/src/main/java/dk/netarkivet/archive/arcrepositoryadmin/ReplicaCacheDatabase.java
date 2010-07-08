@@ -1767,7 +1767,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String lastFilename = "";
         String lastChecksum = "";
         
+        int i = 0;
         for (String line : checksumOutput) {
+            // log for every 10000 entry.
+            if(i % 10000 == 0) {
+                log.info("Processed checksum list entry number " + i 
+                        + " for replica " + replica);
+            }
+            i++;
+            
             // parse the input.
             KeyValuePair<String, String> entry = ChecksumJob.parseLine(line);
             String filename = entry.getKey();
@@ -1891,7 +1899,15 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         Collections.sort(filelist);
 
         String lastFileName = "";
+        int i = 0;
         for (String file : filelist) {
+            // log for every 10000 entry.
+            if(i % 10000 == 0) {
+                log.info("Processed file list entry number " + i 
+                        + " for replica " + replica);
+            }
+            i++;
+            
             // handle duplicates.
             if(file.equals(lastFileName)) {
                 log.warn("There have been found multiple files with the name '" 
