@@ -1005,13 +1005,13 @@ public class DomainDBDAO extends DomainDAO {
             s.close();
             Domain d = new Domain(domainName);
             d.setComments(comments);
-            d.setCrawlerTraps(Arrays.asList(crawlertraps.split("\n")));
+            boolean strictMode = false; // don't throw exception if illegal regexps are found.
+            d.setCrawlerTraps(Arrays.asList(crawlertraps.split("\n")), strictMode);
             d.setID(domainId);
             d.setEdition(edition);
             if (alias != null) {
-                d
-                        .setAliasInfo(new AliasInfo(domainName, alias,
-                                lastAliasUpdate));
+                d.setAliasInfo(
+                        new AliasInfo(domainName, alias, lastAliasUpdate));
             }
 
             readSeedlists(d);

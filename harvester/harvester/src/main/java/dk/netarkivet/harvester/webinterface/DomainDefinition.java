@@ -164,7 +164,7 @@ public class DomainDefinition {
                     trapList.add(trap);
                 }
             }
-            domain.setCrawlerTraps(trapList);
+            domain.setCrawlerTraps(trapList, true);
         }
 
         //Update alias information

@@ -648,7 +648,8 @@ public class JobTester extends DataModelTestCase {
     public void testAddConfigurationUpdatesOrderXml() {
         //Make a configuration with no crawlertraps
         DomainConfiguration dc1 = TestInfo.getDefaultDomain().getDefaultConfiguration();
-        dc1.getDomain().setCrawlerTraps(Collections.<String>emptyList());
+        boolean strictMode = true;
+        dc1.getDomain().setCrawlerTraps(Collections.<String>emptyList(), strictMode);
         String domain1name = dc1.getDomain().getName();
 
         //Make a configuration with two crawlertraps
@@ -659,7 +660,7 @@ public class JobTester extends DataModelTestCase {
         String crawlerTrap2 = ".*[a-z]+";
         traps.add(crawlerTrap1);
         traps.add(crawlerTrap2);
-        dc2.getDomain().setCrawlerTraps(traps);
+        dc2.getDomain().setCrawlerTraps(traps, strictMode);
         String domain2name = dc2.getDomain().getName();
 
         //Make a job with the two configurations

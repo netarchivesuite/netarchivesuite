@@ -817,7 +817,8 @@ public class DomainTester extends DataModelTestCase {
         List<String> definedregexps = new ArrayList<String>();
         definedregexps.add(".*dr\\.dk.*/.*\\.cgi");
         definedregexps.add(".*statsbiblioteket\\.dk/gentofte.*");
-        d.setCrawlerTraps(definedregexps);
+        boolean strictMode = true;
+        d.setCrawlerTraps(definedregexps, strictMode);
         List<String> foundregexps = d.getCrawlerTraps();
         assertEquals("Crawler traps should be remembered as given",
                      definedregexps, foundregexps);
@@ -827,22 +828,39 @@ public class DomainTester extends DataModelTestCase {
 
         definedregexps = new ArrayList<String>();
         definedregexps.add(" ");
-        d.setCrawlerTraps(definedregexps);
+        d.setCrawlerTraps(definedregexps, strictMode);
         assertEquals("Crawler traps containing only whitespace should not be considered as a valid crawler-trap",
                      0, d.getCrawlerTraps().size());
 
         // Whitespace is not removed from a crawler-trap containing other characters than whitespace.
         definedregexps = new ArrayList<String>();
         definedregexps.add("http://valid crawlertrap ");
-        d.setCrawlerTraps(definedregexps);
-        assertEquals("Leading and trailing whitespace should be conserved in a regexp containing other characters than whitespace",
+        d.setCrawlerTraps(definedregexps, strictMode);
+        assertEquals("Leading and trailing whitespace should be conserved in a regexp containing other "
+        		+ "characters than whitespace",
                      definedregexps, d.getCrawlerTraps());
 
         try {
-            d.setCrawlerTraps(null);
+            d.setCrawlerTraps(null, strictMode);
             fail("Expected error on null argument");
         } catch (ArgumentNotValid e) {
             //expected
+        }
+        
+        final String invalidRegexp = ".*starpaint\\dk\\";
+        definedregexps.add(invalidRegexp);
+        
+        try {
+            d.setCrawlerTraps(definedregexps, strictMode);
+            fail("Expected error on invalid regexp in strictMode");
+        } catch (ArgumentNotValid e) {
+            // Expected
+        }
+        strictMode = false;
+        try {
+            d.setCrawlerTraps(definedregexps, strictMode);
+        } catch (ArgumentNotValid e) {
+            fail("Unexpected error on invalid regexp in strictMode=false");
         }
     }
 
@@ -1293,6 +1311,4 @@ public class DomainTester extends DataModelTestCase {
                 thePassword.getUsername(),
                 thePassword.getPassword());
     }
-
-
 }
