@@ -152,7 +152,7 @@ public final class BatchGUI {
      * @throws IOFailure If there is problems with the JspWriter.
      */
     @SuppressWarnings("rawtypes")
-	public static void getPageForClass(PageContext context) throws UnknownID,
+    public static void getPageForClass(PageContext context) throws UnknownID,
             ArgumentNotValid, IllegalState, ForwardedToErrorPage, IOFailure {
         ArgumentNotValid.checkNotNull(context, "PageContext context");
 
@@ -372,7 +372,7 @@ public final class BatchGUI {
      * @return The HTML code describing the class.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	private static String getClassDescription(Class c, Locale locale) {
+    private static String getClassDescription(Class c, Locale locale) {
         // retrieve the resources.
         Resources r = (Resources) c.getAnnotation(Resources.class);
         if(r == null) {

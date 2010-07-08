@@ -370,8 +370,8 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      * null or the empty string.
      * @throws IOFailure If no result file is returned.
      */
-    public BatchStatus batch(FileBatchJob job, String replicaId, String... args) 
-            throws IOFailure, ArgumentNotValid {
+    public BatchStatus batch(FileBatchJob job, String replicaId, 
+            String... args) throws IOFailure, ArgumentNotValid {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
 

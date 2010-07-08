@@ -270,7 +270,8 @@ public final class DatabaseBasedActiveBitPreservation implements
                             filename);
 
             // insert the checksum results for the file into the database.
-            cache.updateChecksumInformationForFileOnReplica(filename, checksum, replica);
+            cache.updateChecksumInformationForFileOnReplica(filename, 
+                    checksum, replica);
         }
         
         // Vote for the specific file.

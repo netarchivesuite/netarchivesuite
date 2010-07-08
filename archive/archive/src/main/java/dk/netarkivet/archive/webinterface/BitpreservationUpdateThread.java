@@ -1,4 +1,4 @@
-/* File:   $Id$
+/* File:  $Id$
  * Revision: $Revision$
  * Author:   $Author$
  * Date:     $Date$
@@ -61,8 +61,8 @@ public class BitpreservationUpdateThread extends Thread {
     public BitpreservationUpdateThread(Replica replica, 
             BitpreservationUpdateType updateType) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(replica, "Replica replica");
-        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType " +
-        		"updateType");
+        ArgumentNotValid.checkNotNull(updateType, "BitpreservationUpdateType " 
+                + "updateType");
         preserve = ActiveBitPreservationFactory.getInstance();
         type = updateType;
         theReplica = replica;
