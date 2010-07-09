@@ -81,6 +81,11 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
     /** max time to wait between retries. */
     private final int delaybetweenretries = Settings.getInt(
             ArchiveSettings.RECONNECT_DELAY_ADMIN_DATABASE);
+    
+    /** The number of entries between logging in either file list or checksum 
+     * list. */
+    private final int LOGGING_ENTRY_INTERVAL = 1000;
+    
     /**
      * Constructor.
      */
@@ -1769,8 +1774,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         
         int i = 0;
         for (String line : checksumOutput) {
-            // log for every 10000 entry.
-            if(i % 10000 == 0) {
+            // log that it is in progress every so often.
+            if((i % LOGGING_ENTRY_INTERVAL) == 0) {
                 log.info("Processed checksum list entry number " + i 
                         + " for replica " + replica);
             }
@@ -1901,8 +1906,8 @@ public final class ReplicaCacheDatabase implements BitPreservationDAO {
         String lastFileName = "";
         int i = 0;
         for (String file : filelist) {
-            // log for every 10000 entry.
-            if(i % 10000 == 0) {
+            // log that it is in progress every so often.
+            if((i % LOGGING_ENTRY_INTERVAL) == 0) {
                 log.info("Processed file list entry number " + i 
                         + " for replica " + replica);
             }
