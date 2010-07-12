@@ -217,6 +217,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
     <target name="test" depends="compiletestsclean" description="Run dk.netarkivet.${suite} defined in the suite property">
         <mkdir dir="${report.dir}"/>
+        <chmod file="${testdir}/dk/netarkivet/jmxremote.password" perm="400"/>
         <junit fork="true" forkmode="once" printsummary="true" timeout="3000000">
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="-Ddk.netarkivet.settings.file=tests/dk/netarkivet/test-settings.xml"/>
