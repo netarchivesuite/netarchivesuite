@@ -109,7 +109,7 @@ public class IndexAggregator {
             cmd.add(outputFile.getCanonicalPath());
             cmd.add("-T");
             cmd.add(Settings.get(WaybackSettings.WAYBACK_AGGREGATOR_TEMP_DIR));
-            if (additionalArgs != null || additionalArgs.isEmpty()) {
+            if (additionalArgs != null && !additionalArgs.isEmpty()) {
                 for (String argument:additionalArgs) {
                     ArgumentNotValid.checkTrue(argument.indexOf(' ') == -1,
                                                "The argument '"+argument+"' contains spaces, this isn't allowed ");
