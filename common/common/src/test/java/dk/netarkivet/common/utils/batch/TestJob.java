@@ -22,7 +22,6 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 
 public class TestJob extends ChecksumJob {
     private String testId;

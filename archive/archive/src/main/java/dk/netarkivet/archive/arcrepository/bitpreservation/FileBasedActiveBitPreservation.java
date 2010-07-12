@@ -54,6 +54,7 @@ import dk.netarkivet.common.utils.CleanupHook;
 import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * Class handling integrity check of the arcrepository. <p/> This class must

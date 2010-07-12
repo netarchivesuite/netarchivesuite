@@ -40,7 +40,6 @@ import javax.jms.ObjectMessage;
 
 import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitor;
 import dk.netarkivet.archive.bitarchive.BitarchiveMonitorApplication;
 import dk.netarkivet.archive.checksum.distribute.CorrectMessage;
@@ -66,6 +65,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.common.utils.batch.TestJob;
 import dk.netarkivet.testutils.ClassAsserts;

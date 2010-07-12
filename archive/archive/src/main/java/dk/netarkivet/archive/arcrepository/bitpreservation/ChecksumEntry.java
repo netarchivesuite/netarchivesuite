@@ -30,6 +30,7 @@ import java.util.List;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.KeyValuePair;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * Method for storing a checksum along with its filename.

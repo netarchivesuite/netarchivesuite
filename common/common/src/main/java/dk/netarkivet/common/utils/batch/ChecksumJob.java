@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *   USA
  */
-package dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.common.utils.batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,18 +36,21 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
-import dk.netarkivet.common.utils.batch.FileBatchJob;
 
 
 /**
- * Class responsible for checksumming files locally in a
- * bit archive application.
+ * Class responsible for checksumming a list of files.
  *
  */
 public class ChecksumJob extends FileBatchJob {
 
     /** The log.*/
     protected transient Log log = LogFactory.getLog(getClass().getName());
+    
+    /** Characters used for separating a file identifier 
+     * from the checksum in the output from a checksum job.
+     */
+    public static final String STRING_FILENAME_SEPARATOR = "##";
     
     /** The constructor.*/
     public ChecksumJob() {
@@ -80,8 +83,7 @@ public class ChecksumJob extends FileBatchJob {
         ArgumentNotValid.checkNotNull(file, "file");
         try {
             os.write((file.getName()
-                    + dk.netarkivet.archive.arcrepository.bitpreservation
-                        .Constants.STRING_FILENAME_SEPARATOR
+                    + STRING_FILENAME_SEPARATOR
                     + MD5.generateMD5onFile(file) + "\n").getBytes());
         } catch (IOException e) {
             log.warn("Checksumming of file " + file.getName()
@@ -109,7 +111,7 @@ public class ChecksumJob extends FileBatchJob {
     public static String makeLine(String filename, String checksum) {
         ArgumentNotValid.checkNotNullOrEmpty(filename, "filename");
         ArgumentNotValid.checkNotNullOrEmpty(checksum, "checksum");
-        return filename + Constants.STRING_FILENAME_SEPARATOR + checksum;
+        return filename + STRING_FILENAME_SEPARATOR + checksum;
     }
 
     /** Parse a line of output into a key-value pair.
@@ -122,7 +124,7 @@ public class ChecksumJob extends FileBatchJob {
     public static KeyValuePair<String, String> parseLine(String line) 
             throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(line, "checksum line");
-        String[] parts = line.split(Constants.STRING_FILENAME_SEPARATOR);
+        String[] parts = line.split(STRING_FILENAME_SEPARATOR);
         if (parts.length != 2) {
             throw new ArgumentNotValid("String '" + line + "' is not on"
                     + " checksum output form");

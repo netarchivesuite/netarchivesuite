@@ -20,7 +20,6 @@ import javax.jms.MessageListener;
 
 import junit.framework.TestCase;
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumJob;
 import dk.netarkivet.archive.arcrepository.distribute.StoreMessage;
 import dk.netarkivet.archive.arcrepositoryadmin.Admin;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminFactory;
@@ -55,6 +54,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
@@ -450,7 +450,7 @@ public class ArcRepositoryDatabaseTester extends TestCase {
         String line;
         while ((line = reader.readLine()) != null) {
             jobChecksums.add(line.split(
-                    dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR)[1]);
+                    ChecksumJob.STRING_FILENAME_SEPARATOR)[1]);
         }
 
         reader.close();

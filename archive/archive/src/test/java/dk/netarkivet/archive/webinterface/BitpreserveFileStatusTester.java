@@ -41,7 +41,6 @@ import com.mockobjects.servlet.MockHttpServletRequest;
 import com.mockobjects.servlet.MockJspWriter;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
 import dk.netarkivet.archive.arcrepository.bitpreservation.FileBasedActiveBitPreservation;
 import dk.netarkivet.archive.arcrepository.bitpreservation.PreservationState;
 import dk.netarkivet.archive.arcrepositoryadmin.AdminData;
@@ -49,6 +48,7 @@ import dk.netarkivet.common.distribute.JMSConnectionMockupMQ;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.StringUtils;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
@@ -73,6 +73,7 @@ public class BitpreserveFileStatusTester extends TestCase {
     private static final String DATE_MISSING_FILES = "getDateForMissingFiles";
     private static final String NUM_CHANGED_FILES = "getNumberOfChangedFiles";
     private static final String DATE_CHANGED_FILES = "getDateForChangedFiles";
+    private static final String STRING_FILENAME_SEPARATOR = ChecksumJob.STRING_FILENAME_SEPARATOR;
 
     ReloadSettings rs = new ReloadSettings();
     MoveTestFiles mtf = new MoveTestFiles(TestInfo.ORIGINALS_DIR, TestInfo.WORKING_DIR);
@@ -129,13 +130,13 @@ public class BitpreserveFileStatusTester extends TestCase {
         args.put(ADD_COMMAND,
                  new String[]{
                          Replica.getReplicaFromId(replicaID1).getName()
-                         + Constants.STRING_FILENAME_SEPARATOR + filename1
+                         + STRING_FILENAME_SEPARATOR + filename1
                  });
         request.setupAddParameter(ADD_COMMAND,
                                   new String[]{
                                           Replica.getReplicaFromId(
                                                   replicaID1).getName()
-                                          + Constants.STRING_FILENAME_SEPARATOR
+                                          + STRING_FILENAME_SEPARATOR
                                           + filename1
                                   });
         args.put(GET_INFO_COMMAND, new String[]{filename1});
@@ -195,19 +196,19 @@ public class BitpreserveFileStatusTester extends TestCase {
                                   new String[]{
                                           Replica.getReplicaFromId(
                                                   replicaID2).getName()
-                                          + Constants.STRING_FILENAME_SEPARATOR
+                                          + STRING_FILENAME_SEPARATOR
                                           + filename1,
                                           Replica.getReplicaFromId(
                                                   replicaID2).getName()
-                                          + Constants.STRING_FILENAME_SEPARATOR
+                                          + STRING_FILENAME_SEPARATOR
                                           + filename1
                                   });
         args.put(ADD_COMMAND,
                  new String[]{
                          Replica.getReplicaFromId(replicaID2).getName()
-                         + Constants.STRING_FILENAME_SEPARATOR + filename1,
+                         + STRING_FILENAME_SEPARATOR + filename1,
                          Replica.getReplicaFromId(replicaID2).getName()
-                         + Constants.STRING_FILENAME_SEPARATOR + filename1
+                         + STRING_FILENAME_SEPARATOR + filename1
                  });
         request.setupAddParameter(GET_INFO_COMMAND,
                                   new String[]{filename1, filename2,

@@ -54,6 +54,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.ClassAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
@@ -290,7 +291,7 @@ public class ArcRepositoryTester extends TestCase {
                                                          new ArrayList<File>(0),
                                                          new StringRemoteFile(
                                                                  arcname1
-                                                                 + dk.netarkivet.archive.arcrepository.bitpreservation.Constants.STRING_FILENAME_SEPARATOR
+                                                                 + ChecksumJob.STRING_FILENAME_SEPARATOR
                                                                  + "f00\n"));
         JMSConnectionMockupMQ.updateMsgID(bamsg0, id1);
         a.onBatchReply(bamsg0);

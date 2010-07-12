@@ -19,7 +19,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package dk.netarkivet.archive.arcrepository.bitpreservation;
+package dk.netarkivet.common.utils.batch;
 
 
 import java.io.ByteArrayOutputStream;
@@ -30,10 +30,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
+import dk.netarkivet.archive.arcrepository.bitpreservation.TestInfo;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
 import dk.netarkivet.common.utils.batch.BatchLocalFiles;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 import dk.netarkivet.testutils.Serial;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
@@ -85,10 +88,10 @@ public class ChecksumJobTester extends TestCase {
                      ourChecksums.size(), result_parts.length);
         for (String result_part : result_parts) {
             String[] line_parts = result_part.split(
-                    Constants.STRING_FILENAME_SEPARATOR);
+                    ChecksumJob.STRING_FILENAME_SEPARATOR);
             assertEquals("Line in the checksum result must have two"
                          + " parts split by '"
-                         + Constants.STRING_FILENAME_SEPARATOR + "', but was '"
+                         + ChecksumJob.STRING_FILENAME_SEPARATOR + "', but was '"
                          + result_part + "' "
                          + " Results is\n" + result + "\nOur checksums are \n"
                          + ourChecksums,
@@ -109,7 +112,7 @@ public class ChecksumJobTester extends TestCase {
     /** Tests that makeLine works as expected. */
     public void testMakeLine() {
         assertEquals("Should generate lines as expected",
-                     "A" + Constants.STRING_FILENAME_SEPARATOR + "b",
+                     "A" + ChecksumJob.STRING_FILENAME_SEPARATOR + "b",
                      ChecksumJob.makeLine("A", "b"));
         try {
             ChecksumJob.makeLine(null, "a");
@@ -150,7 +153,7 @@ public class ChecksumJobTester extends TestCase {
 
     public void testParseLine() {
         KeyValuePair<String, String> pair = ChecksumJob.parseLine(
-                "a" + Constants.STRING_FILENAME_SEPARATOR + "b");
+                "a" + ChecksumJob.STRING_FILENAME_SEPARATOR + "b");
         assertEquals("Should get right key", "a", pair.getKey());
         assertEquals("Should get right value", "b", pair.getValue());
 
@@ -173,7 +176,7 @@ public class ChecksumJobTester extends TestCase {
         }
 
         try {
-            ChecksumJob.parseLine("x" + Constants.STRING_FILENAME_SEPARATOR);
+            ChecksumJob.parseLine("x" + ChecksumJob.STRING_FILENAME_SEPARATOR);
             fail("Should throw ANV on malformed parameter");
         } catch (ArgumentNotValid e) {
             //Expected
@@ -182,8 +185,8 @@ public class ChecksumJobTester extends TestCase {
         }
 
         try {
-            ChecksumJob.parseLine("x" + Constants.STRING_FILENAME_SEPARATOR
-                                  + Constants.STRING_FILENAME_SEPARATOR + "y");
+            ChecksumJob.parseLine("x" + ChecksumJob.STRING_FILENAME_SEPARATOR
+                                  + ChecksumJob.STRING_FILENAME_SEPARATOR + "y");
             fail("Should throw ANV on malformed parameter");
         } catch (ArgumentNotValid e) {
             //Expected

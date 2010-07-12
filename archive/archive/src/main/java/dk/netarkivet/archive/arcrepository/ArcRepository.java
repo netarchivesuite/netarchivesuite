@@ -63,6 +63,7 @@ import dk.netarkivet.common.utils.CleanupIF;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.batch.ChecksumJob;
 
 /**
  * The Arcrepository handles the communication with the different replicas.
@@ -740,8 +741,7 @@ public class ArcRepository implements CleanupIF {
             String readFileName = "";
             String checksum = "";
             String[] tokens = line.split(
-                    dk.netarkivet.archive.arcrepository
-                      .bitpreservation.Constants.STRING_FILENAME_SEPARATOR);
+                    ChecksumJob.STRING_FILENAME_SEPARATOR);
             boolean ignoreLine = false;
             
             //Check line format
