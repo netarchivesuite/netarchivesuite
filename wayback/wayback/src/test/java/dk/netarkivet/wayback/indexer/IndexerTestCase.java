@@ -24,7 +24,6 @@ package dk.netarkivet.wayback.indexer;
 import java.io.File;
 
 import dk.netarkivet.common.CommonSettings;
-import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.ArcRepositoryClientFactory;
 import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
 import dk.netarkivet.common.utils.FileUtils;
