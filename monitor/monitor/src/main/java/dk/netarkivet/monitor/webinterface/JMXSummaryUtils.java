@@ -38,8 +38,6 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.ForwardedToErrorPage;
 import dk.netarkivet.common.utils.I18n;
 import dk.netarkivet.common.webinterface.HTMLUtils;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
 
 /**
  * Various utility methods and classes for the JMX Monitor page.

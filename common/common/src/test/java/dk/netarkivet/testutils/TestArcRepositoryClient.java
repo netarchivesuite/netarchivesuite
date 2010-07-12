@@ -37,11 +37,12 @@ import org.archive.io.arc.ARCReader;
 import org.archive.io.arc.ARCReaderFactory;
 import org.archive.io.arc.ARCRecord;
 
-import dk.netarkivet.archive.arcrepository.distribute.JMSArcRepositoryClient;
 import dk.netarkivet.common.distribute.TestRemoteFile;
 import dk.netarkivet.common.distribute.arcrepository.BatchStatus;
 import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
+import dk.netarkivet.common.distribute.arcrepository.LocalArcRepositoryClient;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
+import dk.netarkivet.common.distribute.arcrepository.TrivialArcRepositoryClient;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
@@ -53,7 +54,8 @@ import dk.netarkivet.common.utils.batch.FileBatchJob;
  *
  */
 
-public class TestArcRepositoryClient extends JMSArcRepositoryClient {
+//public class TestArcRepositoryClient extends JMSArcRepositoryClient {
+public class TestArcRepositoryClient extends TrivialArcRepositoryClient {
     public File arcDir;
     /** How many times batch has been called */
     public int batchCounter;

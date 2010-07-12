@@ -42,7 +42,6 @@ import dk.netarkivet.monitor.jmx.HostForwarding;
 import dk.netarkivet.monitor.logging.SingleLogRecord;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
-import javax.management.ObjectInstance;
 
 /**
  * Implementation of StatusEntry, that receives its data from the MBeanServer

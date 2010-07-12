@@ -35,7 +35,6 @@ import org.archive.util.JmxUtils;
 
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.IllegalState;
-import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.JMXUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.utils.SystemUtils;
