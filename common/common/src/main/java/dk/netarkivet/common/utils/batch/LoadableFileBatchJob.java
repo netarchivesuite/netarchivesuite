@@ -28,6 +28,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,14 +53,19 @@ public class LoadableFileBatchJob extends FileBatchJob {
     byte[] fileContents;
     /** The name of the file before they are turned into a class. */    
     String fileName;
+    /** The arguments for instantiating the batchjob.*/
+    private List<String> args;
 
     /** Create a new batch job that runs the loaded class.
      * @param classFile the classfile for the batch job we want to run.
      */
-    public LoadableFileBatchJob(File classFile) {
+    public LoadableFileBatchJob(File classFile, List<String> arguments) {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
         fileName = classFile.getName();
+        this.args = arguments;
+        
+        loadBatchJob();
     }
 
     /** Override of the default toString to include name of loaded class.
@@ -111,8 +119,31 @@ public class LoadableFileBatchJob extends FileBatchJob {
     protected void loadBatchJob() throws IOFailure {
         ByteClassLoader singleClassLoader = new ByteClassLoader(fileContents);
         try {
-            loadedJob = (FileBatchJob) singleClassLoader
-                    .defineClass().newInstance();
+            Class batchClass = singleClassLoader.defineClass();
+            if(args.size() == 0) {
+                loadedJob = (FileBatchJob) batchClass.newInstance();
+            } else {
+                // get argument classes (string only).
+                Class[] argClasses = new Class[args.size()];
+                for(int i = 0; i < args.size(); i++) {
+                    argClasses[i] = String.class;
+                }
+
+                // extract the constructor and instantiate the batchjob.
+                Constructor con = batchClass.getConstructor(argClasses);
+                loadedJob = (FileBatchJob) con.newInstance(args.toArray());
+                log.debug("Loaded batchjob with arguments: '" + args + "'.");
+            }
+        } catch (InvocationTargetException e) {
+            final String msg = "Not allowed to invoce the batchjob '" 
+                + fileName + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
+        } catch (NoSuchMethodException e) {
+            final String msg = "No constructor for the arguments '" + args 
+                    + "' can be found for the batchjob '" + fileName + "'.";
+            log.warn(msg, e);
+            throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
             String errMsg = "Cannot load job from byte array";
             log.warn(errMsg, e);

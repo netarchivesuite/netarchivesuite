@@ -55,6 +55,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
 
     /** The name of the loaded Job. */
     private String jobClass;
+    
     /** The arguments for instantiating the batchjob.*/
     private List<String> args;
 

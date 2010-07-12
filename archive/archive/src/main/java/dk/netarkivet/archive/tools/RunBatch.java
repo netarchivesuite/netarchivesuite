@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -77,15 +78,17 @@ import dk.netarkivet.common.utils.batch.FileBatchJob.ExceptionOccurrence;
  * will be written. By default, it goes to stderr.
  * <br/>-N&lt;className&gt; is the name of the primary class to be loaded 
  * when doing a LoadableJarBatchJob
- * <p/>
+ * <br/>-A&lt;Arguments&gt; The arguments for the batchjob, separated by '##', 
+ * e.g. -Aarg1##arg2##...
+ * <br/>
  * Examples:
- * <p/>
+ * <br/>
  * java dk.netarkivet.archive.tools.RunBatch -CFindMime.class \ 
  *                          -R10-*.arc -BReplicaOne -Omimes
- * <p/>
+ * <br/>
  * java dk.netarkivet.archive.tools.RunBatch -JFindMime.jar -NFindMime \ 
  *                          -R10-*.arc -BReplicaOne -Omimes
- * <p/>
+ * <br/>
  * Note that you probably want to set the application instance id setting
  * ({@literal CommonSettings#APPLICATION_INSTANCE_ID}) to something other than
  * its default value to avoid clashing with other channel listeners.
@@ -149,6 +152,9 @@ public class RunBatch extends ToolRunnerBase {
         /** The errorfile, if any was given. */
         private File errorFile;
         
+        /** The list of arguments for the batchjob. */
+        private List<String> argumentList = new ArrayList<String>();
+        
         /** File types in input parameter. */
         private enum FileType {OTHER, JAR, CLASS};
         
@@ -172,6 +178,8 @@ public class RunBatch extends ToolRunnerBase {
         private static final String ERRORFILE_OPTION_KEY = "E";
         /** The classname option key. */
         private static final String CLASSNAME_OPTION_KEY = "N";
+        /** The arguments option key. */
+        private static final String ARGUMENTS_OPTION_KEY = "A";
 
         /** To contain parameters defined by options to batchjob. */
         private BatchParameters parms = new BatchParameters();
@@ -263,7 +271,7 @@ public class RunBatch extends ToolRunnerBase {
                 options.addOption(REGEXP_OPTION_KEY, hasArg,
                         "Regular expression for files to be processed "
                                 + "(default: '" + regexp + "')");
-                options.addOption("B", hasArg,
+                options.addOption(REPLICA_OPTION_KEY, hasArg,
                         "Name of bitarchive replica where batch must "
                                  + "be run "
                                  + "(default: '"
@@ -277,6 +285,9 @@ public class RunBatch extends ToolRunnerBase {
                 options.addOption(ERRORFILE_OPTION_KEY, hasArg,
                         "Error file to contain errors from run "
                                 + "(default is stderr)");
+                options.addOption(ARGUMENTS_OPTION_KEY, hasArg,
+                        "Arguments for the batchjob. If several arguments, "
+                        + "then separate with '##'. Default no arguments.");
             }
             
             /**
@@ -466,6 +477,15 @@ public class RunBatch extends ToolRunnerBase {
                 return false;
             }
             
+            // check arguments for the batchjob.
+            String arguments = parms.cmd.getOptionValue(ARGUMENTS_OPTION_KEY);
+            if(arguments != null) {
+                // go through all the arguments and put them into the list.
+                for(String arg : arguments.split("##")) {
+                    argumentList.add(arg);
+                }
+            }
+            
             return true;
         }
 
@@ -511,7 +531,7 @@ public class RunBatch extends ToolRunnerBase {
 
             if (jarArgs == null) {
                 LoadableFileBatchJob classJob = new LoadableFileBatchJob(
-                        new File(classFileName));
+                        new File(classFileName), argumentList);
                 job = classJob;
             } else {
                 // split jar argument into jar file names
@@ -524,7 +544,7 @@ public class RunBatch extends ToolRunnerBase {
                 }
 
                 job = new LoadableJarBatchJob(className, 
-                        new ArrayList<String>(), jarFiles);
+                        argumentList, jarFiles);
             }
             
             String reg = parms.cmd.getOptionValue(REGEXP_OPTION_KEY);
