@@ -62,15 +62,15 @@ public class WaybackSettings {
      * documentation for their meaning.
      */
     public static String C3P0_ACQUIRE_INCREMENT =
-            "settings.wayback.hibernate.c3p0.acquire_increment";
+            "settings.wayback.hibernate.c3p0.acquireIncrement";
     public static String C3P0_IDLE_PERIOD =
-            "settings.wayback.hibernate.c3p0.idle_test_period";
+            "settings.wayback.hibernate.c3p0.idleTestPeriod";
     public static String  C3P0_MAX_SIZE =
-            "settings.wayback.hibernate.c3p0.max_size";
+            "settings.wayback.hibernate.c3p0.maxSize";
     public static String C3P0_MAX_STATEMENTS =
-             "settings.wayback.hibernate.c3p0.max_statements";
+             "settings.wayback.hibernate.c3p0.maxStatements";
     public static String C3P0_MIN_SIZE =
-             "settings.wayback.hibernate.c3p0.min_size";
+             "settings.wayback.hibernate.c3p0.minSize";
     public static String C3P0_TIMEOUT =
              "settings.wayback.hibernate.c3p0.timeout";
     /**
@@ -78,21 +78,21 @@ public class WaybackSettings {
      * for their meaning.
      */
     public static String HIBERNATE_DB_URL =
-            "settings.wayback.hibernate.connection_url";
+            "settings.wayback.hibernate.connectionUrl";
     public static String HIBERNATE_DB_DRIVER =
-            "settings.wayback.hibernate.db_driver_class";
+            "settings.wayback.hibernate.dbDriverClass";
     public static String HIBERNATE_REFLECTION_OPTIMIZER =
-            "settings.wayback.hibernate.use_reflection_optimizer";
+            "settings.wayback.hibernate.useReflectionOptimizer";
     public static String HIBERNATE_TRANSACTION_FACTORY =
-            "settings.wayback.hibernate.transaction_factory";
+            "settings.wayback.hibernate.transactionFactory";
     public static String HIBERNATE_DIALECT =
             "settings.wayback.hibernate.dialect";
     public static String HIBERNATE_SHOW_SQL =
-            "settings.wayback.hibernate.show_sql";
+            "settings.wayback.hibernate.showSql";
     public static String HIBERNATE_FORMAT_SQL =
-            "settings.wayback.hibernate.format_sql";
+            "settings.wayback.hibernate.formatSql";
     public static String HIBERNATE_HBM2DDL_AUTO =
-            "settings.wayback.hibernate.hbm2ddl_auto";
+            "settings.wayback.hibernate.hbm2ddlAuto";
     public static String HIBERNATE_USERNAME =
             "settings.wayback.hibernate.user";
     public static String HIBERNATE_PASSWORD =
@@ -108,14 +108,14 @@ public class WaybackSettings {
      * The directory to which batch output is written during indexing.
      */
     public static String WAYBACK_INDEX_TEMPDIR =
-            "settings.wayback.indexer.temp_batch_output_dir";
+            "settings.wayback.indexer.tempBatchOutputDir";
 
     /**
      * The directory to which batch output is moved after a batch indexing
      * job is successfully completed.
      */
     public static String WAYBACK_BATCH_OUTPUTDIR =
-            "settings.wayback.indexer.final_batch_output_dir";
+            "settings.wayback.indexer.finalBatchOutputDir";
 
     /**
      * The maximum number of times an archive file may generate a batch error
@@ -153,19 +153,19 @@ public class WaybackSettings {
     /**-------------------------Aggregator Settings---------------------------*/
     /** The directory the Aggregator consumes raw index files from */
     public static String WAYBACK_AGGREGATOR_INPUT_DIR =
-            "settings.wayback.aggregator.index_file-input_dir";
+            "settings.wayback.aggregator.indexFileInputDir";
 
     /** The directory the Aggregator places the Aggregated and sorted files into */
     public static String WAYBACK_AGGREGATOR_OUTPUT_DIR =
-            "settings.wayback.aggregator.index_file-output_dir";
+            "settings.wayback.aggregator.indexFileOutputIir";
     
     /** The directory used by the aggregator to store temporary files.*/
     public static String WAYBACK_AGGREGATOR_TEMP_DIR =
-            "settings.wayback.aggregator.temp_aggregator_dir";
+            "settings.wayback.aggregator.tempAggregatorDir";
 
     /** The time to between each scheduled aggregation run (in miliseconds)*/
     public static String WAYBACK_AGGREGATOR_AGGREGATION_INTERVAL =
-            "settings.wayback.aggregator.aggregation_interval";
+            "settings.wayback.aggregator.aggregationInterval";
 
     /** The maximum size of the Intermediate index file in MB. When this limit is reached
      * a new index file is created and new indexes are added to this file. In
@@ -173,12 +173,12 @@ public class WaybackSettings {
      * the main index file.
      */
     public static String WAYBACK_AGGREGATOR_MAX_INTERMEDIATE_INDEX_FILE_SIZE =
-            "settings.wayback.aggregator.max_intermediate_index_file_size";
+            "settings.wayback.aggregator.maxIntermediateIndexFileSize";
 
     /** The maximum size of the main wayback index file in MB. When this limit is reached
      * a new index file is created and new indexes are added to this file. The
      * old index file will be rename to ${finalIndexFileSizeLimit}.1
      */
     public static String WAYBACK_AGGREGATOR_MAX_MAIN_INDEX_FILE_SIZE =
-            "settings.wayback.aggregator.max_main_index_file_size";
+            "settings.wayback.aggregator.maxMainIndexFileSize";
 }

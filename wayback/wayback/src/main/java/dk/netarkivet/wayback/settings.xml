@@ -7,28 +7,28 @@
          </urlcanonicalizer>
         <hibernate>
             <c3p0>
-                <acquire_increment>1</acquire_increment>
-                <idle_test_period>100</idle_test_period>
-                <max_size>100</max_size>
-                <max_statements>100</max_statements>
-                <min_size>10</min_size>
+                <acquireIncrement>1</acquireIncrement>
+                <idleTestPeriod>100</idleTestPeriod>
+                <maxSize>100</maxSize>
+                <maxStatements>100</maxStatements>
+                <minSize>10</minSize>
                 <timeout>100</timeout>
             </c3p0>
-            <connection_url>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connection_url>
-            <db_driver_class>org.apache.derby.jdbc.ClientDriver</db_driver_class>
-            <use_reflection_optimizer>false</use_reflection_optimizer>
-            <transaction_factory>org.hibernate.transaction.JDBCTransactionFactory</transaction_factory>
+            <connectionUrl>jdbc:derby:derbyDB/wayback_indexer_db;create=true</connectionUrl>
+            <dbDriverClass>org.apache.derby.jdbc.ClientDriver</dbDriverClass>
+            <useReflectionOptimizer>false</useReflectionOptimizer>
+            <transactionFactory>org.hibernate.transaction.JDBCTransactionFactory</transactionFactory>
             <dialect>org.hibernate.dialect.DerbyDialect</dialect>
-            <show_sql>true</show_sql>
-            <format_sql>true</format_sql>
-            <hbm2ddl_auto>update</hbm2ddl_auto>
+            <showSql>true</showSql>
+            <formatSql>true</formatSql>
+            <hbm2ddlAuto>update</hbm2ddlAuto>
             <user></user>
             <password></password>
         </hibernate>
         <indexer>
             <replicaId>ONE</replicaId>
-            <final_batch_output_dir>batchOutputDir</final_batch_output_dir>
-            <temp_batch_output_dir>tempdir</temp_batch_output_dir>
+            <finalBatchOutputDir>batchOutputDir</finalBatchOutputDir>
+            <tempBatchOutputDir>tempdir</tempBatchOutputDir>
             <maxFailedAttempts>3</maxFailedAttempts>
             <producerDelay>0</producerDelay>
             <producerInterval>86400000</producerInterval>
@@ -36,15 +36,15 @@
             <initialFiles></initialFiles>
         </indexer>
         <aggregator>
-            <index_file-input_dir>batchOutputDir</index_file-input_dir>
-            <index_file-output_dir>indexDir</index_file-output_dir>
-            <temp_aggregator_dir>aggregator_tempdir</temp_aggregator_dir>             
+            <indexFileInputDir>batchOutputDir</indexFileInputDir>
+            <indexFileOutputDir>indexDir</indexFileOutputDir>
+            <tempAggregatorDir>aggregator_tempdir</tempAggregatorDir>
             <!-- 600000 milliseconds = 10 minutes -->
-            <aggregation_interval>600000</aggregation_interval>
+            <aggregationInterval>600000</aggregationInterval>
             <!-- 102400 KB = 100 MB -->
-            <max_intermediate_index_file_size>102400</max_intermediate_index_file_size>
+            <maxIntermediateIndexFileSize>102400</maxIntermediateIndexFileSize>
             <!-- 104857600 KB = 100 GB -->
-            <max_main_index_file_size>104857600</max_main_index_file_size>
+            <maxMainIndexFileSize>104857600</maxMainIndexFileSize>
         </aggregator>
     </wayback>
 </settings>

@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     wayback-core-1.4.2.jar
     "/>
     <property name="toolclasspath" value="${jarclasspath} "/>
-    <property name="build.classes.excludes" value="overview.html,*/doc-files/,/package.html"/>
+    <property name="build.classes.excludes" value="overview.html,*/doc-files/,*/diagram-files/,/package.html"/>
     <path id="jars.path">
         <pathelement path="${classdir}"/>
         <fileset dir="lib">
