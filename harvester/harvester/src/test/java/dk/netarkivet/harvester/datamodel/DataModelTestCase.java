@@ -56,9 +56,7 @@ import dk.netarkivet.testutils.preconfigured.SetSystemProperty;
  * sets up the various DAOs etc.
  */
 public class DataModelTestCase extends TestCase {
-   
-    
-    
+        
     SetSystemProperty derbyLog
         = new SetSystemProperty(
                 "derby.stream.error.file",

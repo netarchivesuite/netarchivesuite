@@ -34,6 +34,27 @@ import dk.netarkivet.common.exceptions.UnknownID;
  */
 public abstract class GlobalCrawlerTrapListDAO {
 
+    /** The database singleton model. */
+    private static GlobalCrawlerTrapListDAO instance;
+  
+    /**
+     * Factory method to return the singleton instance of this class.
+     * @return the singleton instance of this class.
+     */
+    public static synchronized GlobalCrawlerTrapListDAO getInstance() {
+        if (instance == null) {
+            instance = new GlobalCrawlerTrapListDBDAO();
+        }
+        return instance;
+    }
+    
+    /**
+     * Resets the singleton instance of this class. Mostly for testing.
+     */
+    public static void reset() {
+        instance = null;
+    }
+    
     /**
      * Get all active crawler traps.
      * @return a list of all active crawler traps.

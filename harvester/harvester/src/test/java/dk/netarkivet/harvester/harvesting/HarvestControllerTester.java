@@ -110,11 +110,15 @@ public class HarvestControllerTester extends TestCase {
      * get an exception.
      */
     public void testFailingArcRepositoryClient() {
+        // If the harvestController is already instantiated,
+        // make sure that isn't any longer.
+        HarvestController hc = HarvestController.getInstance(); 
+        hc.cleanup();
         Settings.set(JMSArcRepositoryClient.ARCREPOSITORY_STORE_RETRIES,
                      "Not a number");
         try {
-            HarvestController.getInstance();
-            fail("Arc repository client should have thrown an exception");
+            hc = HarvestController.getInstance();
+            fail("The ArcRepositoryClient should have thrown an exception");
         } catch (ArgumentNotValid e) {
             //expected
         }
@@ -173,7 +177,8 @@ public class HarvestControllerTester extends TestCase {
         FileAsserts.assertFileContains("Should have jobID in harvestinfo file",
                                        "<jobId>" + j.getJobID() + "</jobId>", harvestInfo);
         FileAsserts.assertFileContains("Should have harvestID in harvestinfo file",
-                                       "<origHarvestDefinitionID>" + j.getOrigHarvestDefinitionID() + "</origHarvestDefinitionID>",
+                                       "<origHarvestDefinitionID>" 
+                + j.getOrigHarvestDefinitionID() + "</origHarvestDefinitionID>",
                                        harvestInfo);
         FileAsserts.assertFileContains("Should have correct order.xml file",
                                        "OneLevel-order", orderXml);

@@ -20,10 +20,12 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.harvester.datamodel;
+package dk.netarkivet.common.webinterface;
 
 import java.io.IOException;
 import java.security.Permission;
+
+import junit.framework.TestCase;
 
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebResponse;
@@ -34,12 +36,11 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.GUIWebServer;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
-import dk.netarkivet.viewerproxy.webinterface.QASiteSection;
 
 /**
- * Integritytests for the package dk.netarkivet.harvester.datamodel.
+ * Integritytests for the package dk.netarkivet.common.webinterface
  */
-public class IntegrityTests extends DataModelTestCase {
+public class IntegrityTests extends TestCase {
     private SecurityManager m;
     private GUIWebServer gui;
     ReloadSettings rs = new ReloadSettings();
@@ -53,7 +54,7 @@ public class IntegrityTests extends DataModelTestCase {
         rs.setUp();
         Settings.set(CommonSettings.SITESECTION_WEBAPPLICATION, TestInfo.GUI_WEB_SERVER_JSP_DIRECTORY);
         //Settings.set(CommonSettings.SITESECTION_DEPLOYPATH, TestInfo.GUI_WEB_SERVER_WEBBASE);
-        Settings.set(CommonSettings.SITESECTION_CLASS, QASiteSection.class.getName());
+        Settings.set(CommonSettings.SITESECTION_CLASS, TestSiteSection.class.getName());
         Settings.set(CommonSettings.HTTP_PORT_NUMBER, Integer.toString(TestInfo.GUI_WEB_SERVER_PORT));
 
         m = System.getSecurityManager();
@@ -83,8 +84,12 @@ public class IntegrityTests extends DataModelTestCase {
         gui = GUIWebServer.getInstance();
         WebConversation conv = new WebConversation();
         conv.setExceptionsThrownOnErrorStatus(false);
-        WebResponse resp = conv.getResponse("http://localhost:"+Integer.toString(TestInfo.GUI_WEB_SERVER_PORT)+"/" + TestInfo.GUI_WEB_SERVER_WEBBASE);
-        assertTrue("Expected responsecode 200 for "+resp.getURL()+", got "+resp.getResponseCode(),resp.getResponseCode()==200);
+        WebResponse resp = conv.getResponse("http://localhost:"
+                + Integer.toString(TestInfo.GUI_WEB_SERVER_PORT)
+                + "/" + TestInfo.GUI_WEB_SERVER_WEBBASE);
+        assertTrue("Expected responsecode 200 for "
+                + resp.getURL() + ", got " + resp.getResponseCode(), 
+                resp.getResponseCode()==200);
     }
 
     public void testContextWorksStaticPages() throws IOException, SAXException {

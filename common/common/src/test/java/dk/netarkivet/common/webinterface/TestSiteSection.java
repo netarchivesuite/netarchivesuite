@@ -20,9 +20,7 @@
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package dk.netarkivet.harvester.datamodel;
-
-import dk.netarkivet.common.webinterface.SiteSection;
+package dk.netarkivet.common.webinterface;
 
 /**
  * A site section for test use.

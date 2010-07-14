@@ -52,11 +52,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
             getLog(GlobalCrawlerTrapListDBDAO.class);
 
     /**
-     * The unique instance of this class.
-     */
-    private static GlobalCrawlerTrapListDBDAO instance;
-
-    /**
      * version of global_crawler_trap_lists needed by the code.
      */
     private static final int TRAP_LIST_VERSION_NEEDED = 1;
@@ -67,15 +62,15 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     private static final int EXPRESSION_LIST_VERSION_NEEDED = 1;
     
     /**
-     * private constructor of this class. Checks if any migration
+     * protected constructor of this class. Checks if any migration
      * are needed before operation starts.
      */
-    private GlobalCrawlerTrapListDBDAO() {
+    protected GlobalCrawlerTrapListDBDAO() {
         int trapListVersion =
                 DBUtils.getTableVersion(DBConnect.getDBConnection(),
                                   "global_crawler_trap_lists");
         if (trapListVersion < TRAP_LIST_VERSION_NEEDED) {
-            log.info("Migrating table 'global_crawler_traps_list' from"
+            log.info("Migrating table 'global_crawler_traps_list' from "
                      + "version " + trapListVersion + " to " 
                      + TRAP_LIST_VERSION_NEEDED);
             DBSpecifics.getInstance().updateTable("global_crawler_trap_lists",
@@ -85,24 +80,13 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                 DBUtils.getTableVersion(DBConnect.getDBConnection(),
                                   "global_crawler_trap_expressions");
        if (expressionListVersion < EXPRESSION_LIST_VERSION_NEEDED) {
-            log.info("Migrating table 'global_crawler_trap_expressions' from"
+            log.info("Migrating table 'global_crawler_trap_expressions' from "
                      + "version " + expressionListVersion + " to " 
                      + EXPRESSION_LIST_VERSION_NEEDED);
             DBSpecifics.getInstance()
                     .updateTable("global_crawler_trap_expressions",
                                                EXPRESSION_LIST_VERSION_NEEDED);
         }
-    }
-
-    /**
-     * Factory method to return the singleton instance of this class.
-     * @return the singleton instance of this class.
-     */
-    public static synchronized GlobalCrawlerTrapListDBDAO getInstance() {
-        if (instance == null) {
-            instance = new GlobalCrawlerTrapListDBDAO();
-        }
-        return instance;
     }
 
     /**
@@ -374,13 +358,6 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
         } finally {
             DBUtils.closeStatementIfOpen(stmt);
         }
-    }
-
-    /**
-     * Resets the singleton instance of this class. Mostly for testing.
-     */
-    public static void reset() {
-        instance = null;
     }
 
     /**

@@ -113,7 +113,7 @@ public class BinSearchTester extends TestCase {
         // It can sometimes look like it passes,
         // since it hits some bug in IDEA's JUnit framework.  It should
         // therefore not be included until a more robust way of random access
-        // if found.
+        // is found.
         // This is not really a problem, since our CDX files are all in
         // pure ASCII -- domain names are IDNA-encoded, and paths are %XX-
         // encoded.

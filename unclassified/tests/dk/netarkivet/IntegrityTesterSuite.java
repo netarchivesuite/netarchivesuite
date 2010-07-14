@@ -38,7 +38,7 @@ public class IntegrityTesterSuite {
         suite.addTestSuite(dk.netarkivet.common.distribute.IntegrityTestsFTPRemoteFile.class);
         suite.addTestSuite(dk.netarkivet.harvester.harvesting.distribute.IntegrityTests.class);
         suite.addTestSuite(dk.netarkivet.archive.bitarchive.distribute.IntegrityTests.class);
-        suite.addTestSuite(dk.netarkivet.harvester.datamodel.IntegrityTests.class);
+        suite.addTestSuite(dk.netarkivet.common.webinterface.IntegrityTests.class);
         suite.addTestSuite(dk.netarkivet.common.utils.IntegrityTester.class);
         suite.addTestSuite(dk.netarkivet.harvester.harvesting.distribute.HangingListenerTest.class);
     }

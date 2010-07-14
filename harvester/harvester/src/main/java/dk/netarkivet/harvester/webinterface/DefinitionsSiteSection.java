@@ -32,6 +32,7 @@ import dk.netarkivet.common.webinterface.SiteSection;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
+import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDAO;
 import dk.netarkivet.harvester.datamodel.HarvestDefinitionDAO;
 import dk.netarkivet.harvester.datamodel.JobDAO;
 import dk.netarkivet.harvester.datamodel.ScheduleDAO;
@@ -114,6 +115,7 @@ public class DefinitionsSiteSection extends SiteSection {
         ScheduleDAO.getInstance();
         HarvestDefinitionDAO.getInstance();
         JobDAO.getInstance();
+        GlobalCrawlerTrapListDAO.getInstance();
 
         // Start the scheduler in a new thread, to allow the website to start 
         // while rescheduling happens.

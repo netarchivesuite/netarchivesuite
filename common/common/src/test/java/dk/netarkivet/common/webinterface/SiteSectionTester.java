@@ -21,9 +21,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package dk.netarkivet.common.webinterface;
-/**
- * Tests of the SiteSection clas
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +34,9 @@ import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 
-
+/**
+ * Tests of the SiteSection class.
+ */
 public class SiteSectionTester extends TestCase {
     public SiteSectionTester(String s) {
         super(s);

@@ -136,12 +136,6 @@ public class JobTester extends DataModelTestCase {
         		"No warnings should be generated. The logfile is: "
         		+ FileUtils.readFile(TestInfo.LOG_FILE),
         		TestInfo.LOG_FILE, "WARNING");
-        // TODO This fails currently, because four warnings occur in the logfile because of implementation 
-        // of FR 1116 Global crawlertraps: 
-        //17-Feb-2010 11:54:15 dk.netarkivet.common.utils.DBUtils getTableVersion
-        //WARNING: Unknown table 'global_crawler_trap_expressions'
-        //17-Feb-2010 11:54:15 dk.netarkivet.common.utils.DBUtils getTableVersion
-        //WARNING: Unknown table 'global_crawler_trap_lists'
     }
 
     public void testAddConfigurationMinCountObjects() {
@@ -988,7 +982,7 @@ public class JobTester extends DataModelTestCase {
         GlobalCrawlerTrapList list2 = new GlobalCrawlerTrapList(
                 new FileInputStream(new File(TestInfo.TOPDATADIR, TestInfo.CRAWLER_TRAPS_02)), "list2",
                 "A Description of list2", true);
-        GlobalCrawlerTrapListDBDAO trapDao = GlobalCrawlerTrapListDBDAO.getInstance();
+        GlobalCrawlerTrapListDAO trapDao = GlobalCrawlerTrapListDAO.getInstance();
         trapDao.create(list1);
         trapDao.create(list2);
         Job job = Job.createJob(new Long(42),

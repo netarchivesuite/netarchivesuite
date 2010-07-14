@@ -396,8 +396,8 @@ public class Job implements Serializable {
      * database and adds them to the crawl template for this job.
      */
     private void addGlobalCrawlerTraps() {
-        GlobalCrawlerTrapListDBDAO dao =
-                GlobalCrawlerTrapListDBDAO.getInstance();
+        GlobalCrawlerTrapListDAO dao =
+                GlobalCrawlerTrapListDAO.getInstance();
         editOrderXMLAddCrawlerTraps(Constants.GLOBAL_CRAWLER_TRAPS_ELEMENT_NAME,
                                     dao.getAllActiveTrapExpressions());
     }
