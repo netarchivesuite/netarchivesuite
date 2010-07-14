@@ -22,10 +22,6 @@
 */
 package dk.netarkivet.harvester.datamodel;
 
-/**
- * Tests the JobPriority class.
- */
-
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -33,6 +29,9 @@ import junit.framework.TestCase;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.I18n;
 
+/**
+ * Tests the JobPriority class.
+ */
 public class JobPriorityTester extends TestCase {
     
     private static final I18n I18N =
