@@ -45,7 +45,7 @@ import dk.netarkivet.harvester.datamodel.JobStatusInfo;
 /**
  * Test of Harvest Status utility method for resubmitting jobs.
  */
-public class HarvestStatusTester extends WebinterfaceTestCase {
+public class HarvestStatusTester extends HarvesterWebinterfaceTestCase {
     private static final I18n I18N = new I18n(
             dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
 

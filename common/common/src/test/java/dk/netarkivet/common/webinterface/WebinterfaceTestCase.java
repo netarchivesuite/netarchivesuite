@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.webinterface;
+package dk.netarkivet.common.webinterface;
 
 import javax.el.ELContext;
 import javax.servlet.RequestDispatcher;
@@ -39,7 +39,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -54,13 +53,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.NotImplementedException;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -71,8 +66,6 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
  * dk.netarkivet.archive.webinterface.BitpreserveFileStatusTester
  */
 public class WebinterfaceTestCase extends TestCase {
-    static final File HARVEST_DEFINITION_BASEDIR
-            = new File(TestInfo.WORKING_DIR, "harvestdefinitionbasedir");
     ReloadSettings rs = new ReloadSettings();
 
     public WebinterfaceTestCase(String s) {
@@ -83,18 +76,10 @@ public class WebinterfaceTestCase extends TestCase {
         super.setUp();
         rs.setUp();
         TestFileUtils.copyDirectoryNonCVS(TestInfo.ORIGINALS_DIR,
-                                          TestInfo.WORKING_DIR);
-        TestUtils.resetDAOs();
-        Settings.set(CommonSettings.DB_URL, "jdbc:derby:"
-                                            + HARVEST_DEFINITION_BASEDIR.getCanonicalPath()
-                                            + "/fullhddb");
-        DatabaseTestUtils.getHDDB(TestInfo.DBFILE, "fullhddb",
-                                  HARVEST_DEFINITION_BASEDIR);
-    }
+                TestInfo.WORKING_DIR);
+   }
 
     public void tearDown() throws Exception {
-        DatabaseTestUtils.dropHDDB();
-        TestUtils.resetDAOs();
         FileUtils.removeRecursively(TestInfo.WORKING_DIR);
         rs.tearDown();
         super.tearDown();

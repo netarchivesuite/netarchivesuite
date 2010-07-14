@@ -1,3 +1,25 @@
+/*$Id$
+* $Revision$
+* $Date$
+* $Author$
+*
+* The Netarchive Suite - Software to harvest and preserve websites
+* Copyright 2004-2010 Det Kongelige Bibliotek and Statsbiblioteket, Denmark
+*
+* This library is free software; you can redistribute it and/or
+* modify it under the terms of the GNU Lesser General Public
+* License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+*
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public
+* License along with this library; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 package dk.netarkivet.common.webinterface;
 
 import java.io.File;
@@ -13,7 +35,7 @@ import com.mockobjects.servlet.MockHttpServletRequest;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.webinterface.WebinterfaceTestCase;
+import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTestCase;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -151,7 +173,7 @@ public class BatchGUITester extends TestCase {
       Locale l = new Locale("en");
       JspWriterMockup out = new JspWriterMockup();
       
-      PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
+      PageContext context = new HarvesterWebinterfaceTestCase.TestPageContext(request, out, l);
 
       BatchGUI.getBatchOverviewPage(context);
       System.out.println(out.sw.toString());
@@ -184,7 +206,7 @@ public class BatchGUITester extends TestCase {
        Locale l = new Locale("en");
        JspWriterMockup out = new JspWriterMockup();
        
-       PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
+       PageContext context = new HarvesterWebinterfaceTestCase.TestPageContext(request, out, l);
        BatchGUI.execute(context);
     }
 }

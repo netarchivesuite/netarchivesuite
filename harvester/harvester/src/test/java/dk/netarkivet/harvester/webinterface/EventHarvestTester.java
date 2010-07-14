@@ -42,7 +42,7 @@ import dk.netarkivet.harvester.datamodel.SeedList;
  * Unit-tests for the webinterface class
  * dk.netarkivet.harvester.webinterface.EventHarvest.
  */
-public class EventHarvestTester extends WebinterfaceTestCase {
+public class EventHarvestTester extends HarvesterWebinterfaceTestCase {
 
     private PartialHarvest harvest;
     private static final String harvestName = "Test Event Harvest";

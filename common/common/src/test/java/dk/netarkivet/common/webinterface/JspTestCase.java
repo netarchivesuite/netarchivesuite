@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.harvester.webinterface;
+package dk.netarkivet.common.webinterface;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -75,10 +75,10 @@ public class JspTestCase extends TestCase {
     protected static final File WORKING_DIR = new File(TOP_DATA_DIR, "working");
     protected static Map<String, Class<HttpJspBase>> compiledPages =
             new HashMap<String, Class<HttpJspBase>>();
-    HttpJspBase instance;
-    MockHttpServletRequest request;
-    MockHttpServletResponse response;
-    StringBuilder output;
+    protected HttpJspBase instance;
+    protected MockHttpServletRequest request;
+    protected MockHttpServletResponse response;
+    protected StringBuilder output;
 
     /** Setup for testing a given webpage.
      * Note that all parameters used by the JSP page must be defined using

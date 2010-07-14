@@ -168,7 +168,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         List<String> illegalDomains = new ArrayList<String>();
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(confRequest);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(
                 pageContext, I18N, unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("web-test1");
@@ -204,7 +204,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         List<String> illegalDomains = new ArrayList<String>();
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(confRequest);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(pageContext, I18N,
                 unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning");
@@ -244,7 +244,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning").getEdition();
         ServletRequest confRequest = dummyRequest(confs);
         I18n I18N = new I18n(dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(confRequest);
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(confRequest);
         SelectiveHarvest.processRequest(pageContext, I18N, unknownDomains, illegalDomains);
         PartialHarvest hdd = (PartialHarvest) HarvestDefinitionDAO.getInstance().getHarvestDefinition("Testhøstning");
         assertEquals("Check af felter","kommentar",hdd.getComments());
@@ -285,7 +285,7 @@ public class SelectiveHarvestTester extends DataModelTestCase {
         List<String> illegalDomains = new ArrayList<String>();
         I18n I18N = new I18n(
                 dk.netarkivet.harvester.Constants.TRANSLATIONS_BUNDLE);
-        PageContext pageContext = new WebinterfaceTestCase.TestPageContext(
+        PageContext pageContext = new HarvesterWebinterfaceTestCase.TestPageContext(
                 confRequest);
         SelectiveHarvest.processRequest(pageContext, I18N, unknownDomains,
                                         illegalDomains);
