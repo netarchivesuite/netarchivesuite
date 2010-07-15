@@ -35,7 +35,7 @@ import com.mockobjects.servlet.MockHttpServletRequest;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.webinterface.HarvesterWebinterfaceTestCase;
+import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
@@ -173,7 +173,7 @@ public class BatchGUITester extends TestCase {
       Locale l = new Locale("en");
       JspWriterMockup out = new JspWriterMockup();
       
-      PageContext context = new HarvesterWebinterfaceTestCase.TestPageContext(request, out, l);
+      PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
 
       BatchGUI.getBatchOverviewPage(context);
       System.out.println(out.sw.toString());
@@ -206,7 +206,7 @@ public class BatchGUITester extends TestCase {
        Locale l = new Locale("en");
        JspWriterMockup out = new JspWriterMockup();
        
-       PageContext context = new HarvesterWebinterfaceTestCase.TestPageContext(request, out, l);
+       PageContext context = new WebinterfaceTestCase.TestPageContext(request, out, l);
        BatchGUI.execute(context);
     }
 }
