@@ -5,12 +5,12 @@
 # structured source files in the this folder so the structure in the M2-build folder reflects a multiproject M2 compliant structure.
 # See 
 
-M2_BUILD_HOME=./m2-build
-
 PROJECT_HOME=`dirname $0`
-WORKING-DIR=$PWD
+WORKING_DIR=$PWD	
 
 cd $PROJECT_HOME
+		
+M2_BUILD_HOME=./m2-build
 
 ln -s $PWD/tests/dk/netarkivet/testutils $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/
 

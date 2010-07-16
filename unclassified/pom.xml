@@ -15,8 +15,8 @@
     </parent>
 
     <modules>
-        <module>netarchivesuite-common</module>
-        <module>netarchivesuite-archive</module>
+        <module>m2-build/netarchivesuite-common</module>
+        <module>m2-build/netarchivesuite-archive</module>
     </modules>
     
     <organization>
