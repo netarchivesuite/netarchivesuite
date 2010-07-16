@@ -96,7 +96,7 @@ public class BitarchiveClientTester extends TestCase {
     /**
      * Number of ARC records in the file uploaded.
      */
-    private static final int NUM_RECORDS = 13;
+    private static final int NUM_RECORDS = 21;
     private JMSConnectionMockupMQ con;
     ReloadSettings rs = new ReloadSettings();
 
@@ -394,6 +394,7 @@ public class BitarchiveClientTester extends TestCase {
      * chekcs that - exactly one reply was generated - that the reply had its OK
      * flag set to true - that the output file contains a text that indicates
      * proper processing was done.
+     * @throws Exception 
      */
     private void verifyBatchWentWell() {
         // Wait for up to 10 seconds to see if the message gets back
@@ -418,10 +419,13 @@ public class BitarchiveClientTester extends TestCase {
         }
         msg.getResultFile().copyTo(BATCH_OUTPUT_FILE);
 
-        FileAsserts.assertFileContains("Expected record report not found: ",
-                                       "Records Processed = " + NUM_RECORDS,
-                                       BATCH_OUTPUT_FILE);
-
+        try {
+            FileAsserts.assertFileContains("Expected record report not found: " 
+                    + NUM_RECORDS + ", but found: " + FileUtils.readFile(BATCH_OUTPUT_FILE), 
+                    "Records Processed = " + NUM_RECORDS, BATCH_OUTPUT_FILE);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
     /**

@@ -159,6 +159,22 @@ public final class BitarchiveClient implements ReplicaClient {
         ArgumentNotValid.checkNotNull(msg, "msg");
         jmsCon.resend(msg, this.allBa);
     }
+    
+    /**
+     * Sends a message to terminate a running batchjob.
+     * 
+     * @param batchID The ID of the batchjob to terminate.
+     * @throws ArgumentNotValid If the batchID is either null or the empty 
+     * string.
+     */
+    public void sendBatchTerminationMessage(String batchID) 
+           throws ArgumentNotValid {
+        ArgumentNotValid.checkNotNullOrEmpty(batchID, "String batchID");
+        // create and send the BatchTerminationMessage.
+        BatchTerminationMessage msg = new BatchTerminationMessage(this.allBa, 
+                batchID);
+        jmsCon.send(msg);
+    }
 
     /**
      * Submit an upload request to the bitarchive.

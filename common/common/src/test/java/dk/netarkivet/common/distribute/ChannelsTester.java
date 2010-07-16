@@ -75,6 +75,7 @@ public class ChannelsTester extends TestCase {
      * @throws Exception
      */
     public void testBadLocation() throws Exception {
+        resetChannels();
         String env = Settings.get(CommonSettings.ENVIRONMENT_NAME);
         assertEquals("Channel must have default name before changing settings",
                 env + "_" + Settings.get(

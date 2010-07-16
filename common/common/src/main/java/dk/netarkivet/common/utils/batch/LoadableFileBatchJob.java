@@ -145,7 +145,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
             log.warn(msg, e);
             throw new IOFailure(msg, e);
         } catch (InstantiationException e) {
-            String errMsg = "Cannot load job from byte array";
+            String errMsg = "Cannot instantiate batchjob from byte array";
             log.warn(errMsg, e);
             throw new IOFailure(errMsg, e);
         } catch (IllegalAccessException e) {

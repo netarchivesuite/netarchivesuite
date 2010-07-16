@@ -251,8 +251,6 @@ public class LoadableFileBatchJobTester extends TestCase {
                      baos.toString());
     }
     
-    // TODO make unit-test for LoadableFileBatchJob with arguments
-
     /**
      * Tests the loadable batchjobs with arguments.
      */
@@ -271,9 +269,12 @@ public class LoadableFileBatchJobTester extends TestCase {
         job.finish(os);
         
         String result1 = os.toString();
-        assertTrue("expected: Urls matched = 3, but got:\n" + result1, result1.contains("Urls matched = 3"));
-        assertTrue("expected: Mimetypes mached = 4, but got:\n" + result1, result1.contains("Mimetypes matched = 4"));
-        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1, result1.contains("Url and Mimetype matches = 3"));
+        assertTrue("expected: Urls matched = 3, but got:\n" + result1, 
+                result1.contains("Urls matched = 3"));
+        assertTrue("expected: Mimetypes mached = 4, but got:\n" + result1, 
+                result1.contains("Mimetypes matched = 4"));
+        assertTrue("expected: Url and Mimetype maches = 3, but got:\n" + result1, 
+                result1.contains("Url and Mimetype matches = 3"));
 
         // try with different
         args.clear();
@@ -310,4 +311,83 @@ public class LoadableFileBatchJobTester extends TestCase {
                 + "\nResults3:\n" + result3, result1.equals(result3));
     }
 
+    public void testBatchjobWithArgumentsFail() {
+        // Verify that the batchjob cannot be loaded, when it requires arguments
+        // but none are given. 
+        try {
+            new LoadableFileBatchJob(new File(TestInfo.WORKING_DIR, "UrlSearch.class"), 
+                    new ArrayList<String>());
+            fail("The should not be allowed. Batchjob should require arguments.");
+        } catch (Exception e) {
+            assertTrue("A InstantiationException should be thrown through a IOFailure: " + e, 
+                    e instanceof IOFailure);
+            assertTrue("A InstantiationException should be thrown through a IOFailure:" + e, 
+                    e.getCause() instanceof InstantiationException);
+        }
+        // Verify that the batchjob does not work when bad arguments.
+        try {
+            List<String> arg = new ArrayList<String>();
+            arg.add(".*");
+            new LoadableFileBatchJob(new File(TestInfo.WORKING_DIR, "UrlSearch.class"), 
+                    arg);
+            fail("The should not be allowed. Batchjob should require more arguments.");
+        } catch (Exception e) {
+            assertTrue("A NoSuchMethod should be thrown through a IOFailure", 
+                    e instanceof IOFailure);
+            assertTrue("A NoSuchMethod should be thrown through a IOFailure", 
+                    e.getCause() instanceof NoSuchMethodException);
+        }
+    }
+    
+    
+    public void testThread() {
+        ThreadTest t = new ThreadTest("TEST-THREAD!");
+        t.start();
+        try {
+            synchronized(this) {
+                this.wait(250);
+            }
+        } catch (Throwable e) {
+            // ignore
+            System.out.println(e);
+        }
+        t.interrupt();
+        System.out.println(t.getName());
+        System.out.println(t.getId());
+        System.out.println(t.isInterrupted());
+        try {
+            synchronized(this) {
+                this.wait(1000);
+            }
+        } catch (Throwable e) {
+            // ignore
+            System.out.println(e);
+        }
+    }
+    
+    public class ThreadTest extends Thread {
+        public ThreadTest(String name) {
+            super(name);
+        }
+
+        @Override
+        public void run() {
+            System.out.println("I AM COUNTING FROM 0");
+            long i = 0;
+            try {
+                //              while(!this.isInterrupted()) {
+                while(true) {
+                    if((i % 10000) == 0) {
+//                        System.out.println(i/10000);
+                        System.out.print("i");
+                    }
+                    i++;
+                }
+            } catch (Throwable e) {
+                System.err.println("Exception: " + e.getMessage());
+                e.printStackTrace();
+                System.out.println("I REACHED: " + i);
+            }
+        }
+    };
 }
