@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>dk.netarchivesuite</groupId>
-    <artifactId>netarchivesuite-archive</artifactId>
+    <artifactId>netarchivesuite-monitor</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -15,18 +15,12 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <name>NetarchiveSuite archive module</name>
-    <description>Contains the NetarchiveSuite archive functionality</description>
-
+    <name>NetarchiveSuite monitor module</name>
+    <description>Contains the NetarchiveSuite monitor functionality</description>
     <dependencies>
         <dependency>
             <groupId>dk.netarchivesuite</groupId>
             <artifactId>netarchivesuite-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>dk.netarchivesuite</groupId>
-            <artifactId>netarchivesuite-harvester</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
