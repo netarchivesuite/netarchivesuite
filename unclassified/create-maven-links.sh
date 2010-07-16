@@ -7,8 +7,14 @@
 
 M2_BUILD_HOME=./m2-build
 
+PROJECT_HOME=`dirname $0`
+WORKING-DIR=$PWD
+
+cd $PROJECT_HOME
 
 ln -s $PWD/tests/dk/netarkivet/testutils $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/
 
 ln -s $PWD/src/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/main/java/dk/netarkivet/
 ln -s $PWD/tests/dk/netarkivet/common $M2_BUILD_HOME/netarchivesuite-common/src/test/java/dk/netarkivet/
+
+cd $WORKING_DIR
