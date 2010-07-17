@@ -553,7 +553,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     <target name="clover.report" depends="with.clover, unittest.with.clover"
             description="Generate a clover report on all unit tests. Requires the clover extension in your ant classpath.">
         <clover-report>
-            <current outfile="/usr/local/apache/htdocs/clover/clover_current">
+            <current outfile="/home/httpd/www/html/netarchivesuite/clover/clover_current">
                 <!-- In the HTML output, put least absolute covered on top -->
                 <format type="html" orderby="ElementsUncoveredDesc"/>
                 <fileset dir="src" includes="**/*">
