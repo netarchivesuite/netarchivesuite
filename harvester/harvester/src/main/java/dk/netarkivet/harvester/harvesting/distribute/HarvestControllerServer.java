@@ -105,7 +105,7 @@ public class HarvestControllerServer extends HarvesterMessageHandler
     /** The message to write to log when server is stopped. */
     private static final String CLOSED_MESSAGE
             = "Closed down HarvestControllerServer";
-    /** The message to write to log whan starting a crawl. */
+    /** The message to write to log when starting a crawl. */
     private static final String STARTCRAWL_MESSAGE = "Starting crawl of job :";
     /** The message to write to log after ending a crawl. */
     private static final String ENDCRAWL_MESSAGE = "Ending crawl of job :";
@@ -578,10 +578,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
             CrawlStatusMessage csm;
 
             if (crawlException == null && errorMessage.length() == 0) {
-                log.warn("JobID: " + jobID + " done.");
+                log.info("Job with ID " + jobID + " finished with status DONE");
                 csm = new CrawlStatusMessage(jobID, JobStatus.DONE, dhr);
             } else {
-                log.warn("JobID: " + jobID + " failed.");
+                log.warn("Job with ID " + jobID + " finished with status FAILED");
                 csm = new CrawlStatusMessage(jobID, JobStatus.FAILED, dhr);
                 setErrorMessages(csm, crawlException, errorMessage.toString(),
                         dhr == null, failedFiles.size());
