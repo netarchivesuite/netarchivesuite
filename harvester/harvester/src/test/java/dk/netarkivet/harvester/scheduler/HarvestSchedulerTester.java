@@ -40,6 +40,7 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelID;
 import dk.netarkivet.common.distribute.Channels;
@@ -53,6 +54,7 @@ import dk.netarkivet.common.utils.IteratorUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DataModelTestCase;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
@@ -68,10 +70,8 @@ import dk.netarkivet.harvester.harvesting.distribute.MetadataEntry;
 import dk.netarkivet.harvester.webinterface.DomainDefinition;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.testutils.ClassAsserts;
-import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.MockupJMS;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 

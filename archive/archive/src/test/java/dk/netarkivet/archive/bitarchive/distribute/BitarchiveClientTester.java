@@ -50,11 +50,11 @@ import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.MessageAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -311,7 +311,7 @@ public class BitarchiveClientTester extends TestCase {
         assertNotNull("ARC record should be non-null", record);
         assertEquals(ARC_FILE_NAME, record.getFile());
 
-        byte[] contents = TestUtils.inputStreamToBytes(
+        byte[] contents = StreamUtils.inputStreamToBytes(
                 record.getData(), (int) record.getLength());
 
         String targetcontents = FileUtils.readFile(ARC_RECORD_FILE);

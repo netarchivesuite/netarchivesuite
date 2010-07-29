@@ -34,7 +34,6 @@ import org.dom4j.Node;
  * Helper methods for asserts in Xml documents.
  *
  */
-
 public class XmlAsserts {
     public static void assertElementHasAttribute(Element theElement, String attributeName, String attributeText) {
         Attribute theAttribute = theElement.attribute(attributeName);
@@ -74,7 +73,7 @@ public class XmlAsserts {
         }
     }
 
-    public static  void assertNodeTextInXpath(String message, Document doc,
+    public static void assertNodeTextInXpath(String message, Document doc,
                                               String xpath, String expected) {
         Node dedup_index_node = doc.selectSingleNode(xpath);
         Assert.assertEquals(message, expected, dedup_index_node.getText().trim());

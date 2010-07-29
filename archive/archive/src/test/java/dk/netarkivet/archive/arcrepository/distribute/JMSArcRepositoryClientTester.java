@@ -81,13 +81,13 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.NotificationsFactory;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
+import dk.netarkivet.common.utils.StreamUtils;
 import dk.netarkivet.common.utils.batch.FileBatchJob;
 import dk.netarkivet.testutils.CollectionAsserts;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.ReflectUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 import dk.netarkivet.testutils.preconfigured.UseTestRemoteFile;
 
@@ -230,7 +230,7 @@ public class JMSArcRepositoryClientTester extends TestCase {
         assertNotNull("The reply should not be null", bar);
         // BitarchiveRecord.getData() now returns a InputStream instead of a byte[]
         InputStream theData = bar.getData();
-        byte[] contents = TestUtils.inputStreamToBytes(theData,
+        byte[] contents = StreamUtils.inputStreamToBytes(theData,
                                                        (int) bar.getLength());
         assertEquals("The reply doesn't contain the correct data",
                      filename + " " + index, new String(contents));

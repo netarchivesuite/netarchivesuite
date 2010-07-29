@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.testutils;
+package dk.netarkivet.harvester.datamodel;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +39,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.harvester.datamodel.DBConnect;
 import dk.netarkivet.harvester.datamodel.DBSpecifics;
+import dk.netarkivet.testutils.ReflectUtils;
 
 /**
  * Utilities to allow testing databases.

@@ -25,13 +25,13 @@ package dk.netarkivet.harvester.webinterface;
 
 import java.io.File;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.common.webinterface.WebinterfaceTestCase;
-import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**

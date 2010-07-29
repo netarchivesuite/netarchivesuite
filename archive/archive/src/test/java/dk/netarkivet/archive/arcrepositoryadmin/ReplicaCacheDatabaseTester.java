@@ -37,7 +37,6 @@ import junit.framework.TestCase;
 import org.apache.commons.collections.IteratorUtils;
 
 import dk.netarkivet.archive.ArchiveSettings;
-import dk.netarkivet.archive.arcrepository.bitpreservation.ChecksumEntry;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.ChannelsTester;
 import dk.netarkivet.common.distribute.arcrepository.Replica;
@@ -47,7 +46,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.PrintNotifications;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.testutils.DatabaseTestUtils;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.preconfigured.MoveTestFiles;
@@ -72,9 +71,12 @@ public class ReplicaCacheDatabaseTester extends TestCase {
         Settings.set(CommonSettings.NOTIFICATIONS_CLASS, 
                 RememberNotifications.class.getName());
         
-        DatabaseTestUtils.takeDatabase(TestInfo.DATABASE_FILE, 
-                TestInfo.DATABASE_DIR);
-
+        /** Setup the database. **/
+        String driverName = "org.apache.derby.jdbc.EmbeddedDriver";
+        Class.forName(driverName).newInstance();
+        FileUtils.removeRecursively(TestInfo.DATABASE_DIR);
+        ZipUtils.unzip(TestInfo.DATABASE_FILE, TestInfo.DATABASE_DIR);
+        
         Settings.set(ArchiveSettings.BASEURL_ARCREPOSITORY_ADMIN_DATABASE,
                 TestInfo.DATABASE_URL);
         Settings.set(ArchiveSettings.MACHINE_ARCREPOSITORY_ADMIN_DATABASE,

@@ -201,4 +201,25 @@ public class StreamUtils {
         
         return res.toString();
     }
+
+
+    /**
+     * Convert inputStream to byte array.
+     *
+     * @param data       inputstream
+     * @param dataLength length of inputstream (must be larger than 0)
+     * @return byte[] containing data in inputstream
+     */
+    public static byte[] inputStreamToBytes(InputStream data, int dataLength) {
+        ArgumentNotValid.checkNotNull(data, "data");
+        ArgumentNotValid.checkNotNegative(dataLength, "dataLength");
+        byte[] contents = new byte[dataLength];
+        try {
+            data.read(contents, 0, dataLength);
+        } catch (IOException e) {
+            throw new IOFailure("Unable to convert inputstream to byte array",
+                                e);
+        }
+        return contents;
+    }
 }

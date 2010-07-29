@@ -21,13 +21,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package dk.netarkivet.testutils;
+package dk.netarkivet;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 
-import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.DomainDAOTester;
@@ -40,7 +37,6 @@ import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
 /**
  * This class allows checking who's running the tests.
  */
-
 public class TestUtils {
     private static final String RUN_AS_USER
             = "dk.netarkivet.testutils.runningAs";
@@ -82,23 +78,5 @@ public class TestUtils {
         ScheduleDAOTester.resetDAO();
         JobDAOTester.resetDAO();
         GlobalCrawlerTrapListDBDAO.reset();
-    }
-
-    /**
-     * Convert inputStream to byte array.
-     *
-     * @param data       inputstream
-     * @param dataLength length of inputstream
-     * @return byte[] containing data in inputstream
-     */
-    public static byte[] inputStreamToBytes(InputStream data, int dataLength) {
-        byte[] contents = new byte[dataLength];
-        try {
-            data.read(contents, 0, dataLength);
-        } catch (IOException e) {
-            throw new IOFailure("Unable to convert inputstream to byte array",
-                                e);
-        }
-        return contents;
     }
 }

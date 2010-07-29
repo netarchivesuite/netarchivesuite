@@ -33,6 +33,7 @@ import java.util.logging.LogManager;
 
 import junit.framework.TestCase;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.distribute.Channels;
 import dk.netarkivet.common.distribute.JMSConnectionFactory;
@@ -42,6 +43,7 @@ import dk.netarkivet.common.utils.FileUtils;
 import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.datamodel.Constants;
+import dk.netarkivet.harvester.datamodel.DatabaseTestUtils;
 import dk.netarkivet.harvester.datamodel.Domain;
 import dk.netarkivet.harvester.datamodel.DomainConfiguration;
 import dk.netarkivet.harvester.datamodel.DomainDAO;
@@ -60,11 +62,9 @@ import dk.netarkivet.harvester.datamodel.TemplateDAOTester;
 import dk.netarkivet.harvester.harvesting.HeritrixDomainHarvestReport;
 import dk.netarkivet.harvester.harvesting.distribute.CrawlStatusMessage;
 import dk.netarkivet.harvester.harvesting.distribute.DomainHarvestReport;
-import dk.netarkivet.testutils.DatabaseTestUtils;
 import dk.netarkivet.testutils.FileAsserts;
 import dk.netarkivet.testutils.LogUtils;
 import dk.netarkivet.testutils.TestFileUtils;
-import dk.netarkivet.testutils.TestUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**

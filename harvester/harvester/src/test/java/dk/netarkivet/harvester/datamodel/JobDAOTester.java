@@ -36,6 +36,7 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
+import dk.netarkivet.TestUtils;
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
@@ -47,7 +48,6 @@ import dk.netarkivet.common.utils.RememberNotifications;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.webinterface.HarvestStatusQuery;
 import dk.netarkivet.harvester.webinterface.HarvestStatusTester;
-import dk.netarkivet.testutils.TestUtils;
 
 /**
  * Unit tests for the JobDAO class.

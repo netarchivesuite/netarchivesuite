@@ -30,7 +30,7 @@ import dk.netarkivet.common.distribute.arcrepository.BitarchiveRecord;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.IOFailure;
 import dk.netarkivet.common.utils.FileUtils;
-import dk.netarkivet.testutils.TestUtils;
+import dk.netarkivet.common.utils.StreamUtils;
 
 /**
  * This class tests the get() operation of the bit archive.
@@ -180,7 +180,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             assertNotNull("ARC record should be non-null", record);
             assertEquals("ARC record should be for the right file",
                          ARC_FILE_NAME, record.getFile());
-            byte[] contents = TestUtils.inputStreamToBytes(
+            byte[] contents = StreamUtils.inputStreamToBytes(
                     record.getData(), (int) record.getLength());
             assertEquals("There should be no contents",
                          contents.length, 0);
@@ -200,7 +200,7 @@ public class BitarchiveTesterGet extends BitarchiveTestCase {
             assertNotNull("ARC record should be non-null", record);
             assertEquals("ARC record should be for the right file",
                          ARC_FILE_NAME, record.getFile());
-            byte[] contents = TestUtils.inputStreamToBytes(
+            byte[] contents = StreamUtils.inputStreamToBytes(
                     record.getData(), (int) record.getLength());
             assertEquals("Contents length should match file",
                          17111, contents.length);
