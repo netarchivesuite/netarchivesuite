@@ -482,6 +482,7 @@ public class IntegrityTests extends TestCase {
                                                  RemoteFileFactory.getInstance(
                                                          testARCFile, true,
                                                          false, true));
+            assertTrue("uploadMessage should not be null", um != null);
             upLoadedFiles.add(testARCFile.getName());
         } catch (IOException e) {
             throw new IOFailure("Creation of UploadMessage failed", e);
