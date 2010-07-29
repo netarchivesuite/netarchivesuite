@@ -21,7 +21,6 @@
  */
 package dk.netarkivet.common.utils.batch;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +29,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import dk.netarkivet.archive.arcrepository.bitpreservation.Constants;
-import dk.netarkivet.archive.arcrepository.bitpreservation.TestInfo;
+import dk.netarkivet.common.utils.arc.TestInfo;
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.utils.KeyValuePair;
 import dk.netarkivet.common.utils.MD5;
