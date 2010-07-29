@@ -23,6 +23,7 @@
 package dk.netarkivet.common.tools;
 
 import dk.netarkivet.common.utils.FileUtils;
+import dk.netarkivet.common.utils.ZipUtils;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.PreventSystemExit;
 
@@ -46,12 +47,13 @@ public class CreateharvestMappingsFromAdminDataTester extends TestCase {
     public void setUp() throws Exception {
 
         FileUtils.createDir(admindatadir);
-        assertTrue("original admindata should exist: " + admindataFile.getAbsolutePath(), admindataFile.exists());
-        //System.out.println("destination: " + admindataFileUnzipped.getAbsolutePath());
-        dk.netarkivet.common.utils.TestInfo.unzipTo(admindataFile, admindatadir);
+        assertTrue("original admindata should exist: " + admindataFile.getAbsolutePath(), 
+                admindataFile.exists());
+        ZipUtils.unzip(admindataFile, admindatadir);
         FileUtils.copyFile(admindataReducedFile,
                 admindataFileUnzipped);
-        assertTrue("admin.data should exist here: " + admindatadir.getAbsolutePath(), admindataFileUnzipped.exists());
+        assertTrue("admin.data should exist here: " 
+                + admindatadir.getAbsolutePath(), admindataFileUnzipped.exists());
         pse.setUp();
     }
 

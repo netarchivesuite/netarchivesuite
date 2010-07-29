@@ -31,12 +31,13 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.exceptions.ArgumentNotValid;
 import dk.netarkivet.common.exceptions.UnknownID;
-import dk.netarkivet.harvester.HarvesterSettings;
+import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.testutils.TestFileUtils;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Unit tests for the Settings class.
+ * 
  */
 public class SettingsTester extends TestCase  {
     ReloadSettings rs = new ReloadSettings(new File(TestInfo.SETTINGSFILENAME));
@@ -69,39 +70,41 @@ public class SettingsTester extends TestCase  {
      * Verify the simple read and write functionality.
      */
     public void testReadAndWrite() {
-        String defaultseed = Settings.get(TestInfo.DEFAULTSEEDLIST);
+                
+        String processTimeout = Settings.get(CommonSettings.PROCESS_TIMEOUT);
         String port = Settings.get(TestInfo.PORT);
-
-        assertEquals("Must match xml data", TestInfo.DEFAULTSEEDLIST_VALUE, defaultseed  );
+        
+        assertEquals("Must match xml data", TestInfo.PROCESS_TIMEOUT_VALUE, processTimeout);
         assertEquals("Must match xml data", TestInfo.PORTVALUE, port );
 
         Settings.set(TestInfo.TIMEOUT, "42");
-        assertEquals("Must value just added", Settings.get(TestInfo.TIMEOUT), "42" );
+        assertEquals("Must value just added", Settings.get(TestInfo.TIMEOUT), "42");
 
-        Settings.set(TestInfo.DEFAULTSEEDLIST, "default_2");
-        defaultseed = Settings.get(TestInfo.DEFAULTSEEDLIST);
-        assertEquals("Must match new value", "default_2", defaultseed );
+        Settings.set(CommonSettings.PROCESS_TIMEOUT, "default_2");
+        processTimeout = Settings.get(CommonSettings.PROCESS_TIMEOUT);
+        assertEquals("Must match new value", "default_2", processTimeout);
 
         // verify that properties settings override loaded settings
         Settings.set(TestInfo.UNUSED_PROPERTY, "first value");
         assertEquals("Must match old value", "first value",
                      Settings.get(TestInfo.UNUSED_PROPERTY));
-        System.setProperty(TestInfo.UNUSED_PROPERTY, "overide" );
-        defaultseed = Settings.get(TestInfo.UNUSED_PROPERTY);
-        assertEquals("Must match new value", "overide", defaultseed );
+        System.setProperty(TestInfo.UNUSED_PROPERTY, "override");
+        processTimeout = Settings.get(TestInfo.UNUSED_PROPERTY);
+        assertEquals("Must match new value", "override", processTimeout);
     }
 
     /**
      * Test that reload functionality resets settings to original values.
      */
-    public void testReload(){
-        String backup_value = Settings.get(HarvesterSettings.DEFAULT_SEEDLIST);
-        Settings.set(HarvesterSettings.DEFAULT_SEEDLIST, "hello world");
+    public void testReload() {
+        String setting = CommonSettings.NOTIFICATIONS_CLASS;
+        String backup_value = Settings.get(setting);
+        Settings.set(setting, "hello world");
         assertEquals("Failed to change setting: ",
-                     Settings.get(HarvesterSettings.DEFAULT_SEEDLIST), "hello world");
+                     Settings.get(setting), "hello world");
         Settings.reload();
         assertEquals("Failed to reset settings: ",
-                     Settings.get(HarvesterSettings.DEFAULT_SEEDLIST), backup_value);
+                     Settings.get(setting), backup_value);
     }
 
     /**
@@ -117,9 +120,9 @@ public class SettingsTester extends TestCase  {
      * Test that creating a key that already exists throws an exception.
      */
     public void testCreatePreExistingKey() {
-        Settings.set(HarvesterSettings.DOMAIN_CONFIG_MAXRATE, "hest");
+        Settings.set(CommonSettings.CACHE_DIR, "hest");
         assertEquals("Should have new value", "hest",
-                     Settings.get(HarvesterSettings.DOMAIN_CONFIG_MAXRATE));
+                     Settings.get(CommonSettings.CACHE_DIR));
     }
 
     /**
@@ -316,8 +319,4 @@ public class SettingsTester extends TestCase  {
             }
         }
     }
-
-
-    
-    
 }
