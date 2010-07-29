@@ -31,20 +31,18 @@ import junit.framework.TestCase;
 
 import dk.netarkivet.common.CommonSettings;
 import dk.netarkivet.common.exceptions.PermissionDenied;
-import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
-import dk.netarkivet.harvester.HarvesterSettings;
-import dk.netarkivet.harvester.datamodel.JobPriority;
 import dk.netarkivet.testutils.StringAsserts;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests the ChannelID class that defines instances of message channels
- * (ie. queues and topics).
+ * (ie. queues and topics). The testChannelIdentity test has been moved
+ * to dk.netarkivet.harvester.distribute.ChannelIDTester. 
  */
 public class ChannelIDTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
-
+   
     public void setUp() {
         rs.setUp();
         Settings.set(CommonSettings.APPLICATION_NAME,
@@ -85,72 +83,6 @@ public class ChannelIDTester extends TestCase {
         assertEquals("The two channels should have the same name", q1.getName(), q2.getName());
         assertEquals("The two channels should be of same type (queue or topic)", q1.isTopic(), q2.isTopic());
     }
-
-    /**
-     * Test that each channel is equal only to itself
-     */
-    public void testChannelIdentity(){
-        String priority1 = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        JobPriority p = JobPriority.valueOf(priority1);
-        ChannelID result1;
-        switch(p) {
-            case LOWPRIORITY:
-                result1 = Channels.getAnyLowpriorityHaco();
-                break;
-            case HIGHPRIORITY:
-                result1 = Channels.getAnyHighpriorityHaco();
-                break;
-            default:
-                throw new UnknownID(priority1 + " is not a valid priority");
-        }
-        ChannelID[] l1 =
-         {Channels.getAllBa(), result1, Channels.getAnyBa(),
-          Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
-          Channels.getTheSched(), Channels.getThisReposClient()};
-        String priority = Settings.get(
-                HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        JobPriority p1 = JobPriority.valueOf(priority1);
-        switch(p1) {
-            case LOWPRIORITY:
-                result = Channels.getAnyLowpriorityHaco();
-                break;
-            case HIGHPRIORITY:
-                result = Channels.getAnyHighpriorityHaco();
-                break;
-            default:
-                throw new UnknownID(priority + " is not a valid priority");
-        }
-        ChannelID[] l2 =
-                {Channels.getAllBa(), result, Channels.getAnyBa(),
-                 Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
-                 Channels.getTheSched(), Channels.getThisReposClient()};
-
-        for (int i = 0; i<l1.length; i++){
-            for (int j = 0; j<l2.length; j++){
-                if (i == j) {
-                    assertEquals("Two different instances of same queue "
-                            +l1[i].getName(), l1[i],
-                            l2[j]);
-                    assertEquals("Two instances of same channel have different " +
-                            "names: "
-                            + l1[i].getName() + " and " +
-                            l2[j].getName(), l1[i].getName(),
-                            l2[j].getName() ) ;
-                }
-                else{
-                    assertNotSame("Two different queues are the same object "
-                            +l1[i].getName() + " "
-                            + l2[j].getName(), l1[i],
-                            l2[j]);
-                    assertNotSame("Two different channels have same name",
-                            l1[i].getName(), l2[j].getName());
-                }
-            }
-        }
-    }
-
 
     /**
      * Verify that a topic instance is Serializable.
