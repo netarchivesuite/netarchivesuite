@@ -886,18 +886,18 @@ public class Domain implements Named {
             }
         }
         // Validate regexps
-        for (String regexp: cleanedListOfCrawlerTraps) {
-        	try {
-        		Pattern.compile(regexp);
-        	} catch (PatternSyntaxException e) {
-        	    final String errMsg = "The regular expression '" + regexp
-                    + "' is invalid. Please correct the expression.";
-        	    if (strictMode) {
-        	        throw new ArgumentNotValid(errMsg);
-        	    } else {
-        	        log.warn(errMsg);
-        	    }
-        	}
+        for (String regexp : cleanedListOfCrawlerTraps) {
+            try {
+                Pattern.compile(regexp);
+            } catch (PatternSyntaxException e) {
+                final String errMsg = "The regular expression '" + regexp
+                        + "' is invalid. Please correct the expression.";
+                if (strictMode) {
+                    throw new ArgumentNotValid(errMsg, e);
+                } else {
+                    log.warn(errMsg, e);
+                }
+            }
         }
         crawlerTraps = Collections.unmodifiableList(cleanedListOfCrawlerTraps);
     }

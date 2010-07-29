@@ -50,14 +50,13 @@ import dk.netarkivet.harvester.datamodel.GlobalCrawlerTrapListDBDAO;
  * determined by whether the TRAP_ID is specified in the request.
  *
  */
-
 public class TrapCreateOrUpdateAction extends TrapAction {
 
     /**
      * The logger for this class.
      */
     private static final Log log =
-            LogFactory.getLog(TrapCreateOrUpdateAction.class) ;
+            LogFactory.getLog(TrapCreateOrUpdateAction.class);
 
     @Override
     protected void doAction(PageContext context, I18n i18n) {
@@ -110,9 +109,9 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             trap.setActive(isActive);
             trap.setDescription(description);
             trap.setName(name);
-            if (fileName != null && !"".equals(fileName)) {
-                log.debug("Reading global crawler trap list from '" +
-                          fileName + "'");
+            if (fileName != null && !fileName.isEmpty()) {
+                log.debug("Reading global crawler trap list from '"
+                        + fileName + "'");
                 trap.setTrapsFromInputStream(is);
             }
             dao.update(trap);
@@ -124,7 +123,7 @@ public class TrapCreateOrUpdateAction extends TrapAction {
             } else {
                 // crawlertrap named like this already exists.
                 HTMLUtils.forwardWithErrorMessage(context, i18n,
-                "errormsg;crawlertrap.0.exists.error", name );
+                "errormsg;crawlertrap.0.exists.error", name);
                 throw new
                 ForwardedToErrorPage("Crawlertrap with name '" 
                         + name + "' exists already");

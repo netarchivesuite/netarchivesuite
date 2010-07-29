@@ -38,7 +38,6 @@ import dk.netarkivet.common.exceptions.IOFailure;
  * of regular expressions. 
  *
  */
-
 public class GlobalCrawlerTrapList {
 
     /**
@@ -92,7 +91,7 @@ public class GlobalCrawlerTrapList {
      * @param id  the id of this list.
      * @param name a name by which this list is known.
      * @param traps the set of trap expressions.
-     * @param description A textual description of this list.
+     * @param description A textual description of this list (may be null).
      * @param isActive flag indicating whether this list is isActive.
      * @throws ArgumentNotValid if the name is empty or null.
      */
@@ -100,6 +99,7 @@ public class GlobalCrawlerTrapList {
                                     String description, boolean isActive) throws
                                                              ArgumentNotValid {
         ArgumentNotValid.checkNotNullOrEmpty(name, "name");
+        ArgumentNotValid.checkNotNull(traps, "traps");
         this.id = id;
         this.traps = new HashSet<String>(traps.size());
         this.traps.addAll(traps);
@@ -140,6 +140,8 @@ public class GlobalCrawlerTrapList {
      * A utility method to read the list of traps from an InputStream,
      * line-by-line.
      * @param is  The input stream from which to read.
+     * @throws IOFailure if the input stream cannot be read.
+     * @throws ArgumentNotValid if the input stream is null
      */
     public void setTrapsFromInputStream(InputStream is) {
         ArgumentNotValid.checkNotNull(is, "is");
@@ -147,7 +149,7 @@ public class GlobalCrawlerTrapList {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         try {
-            while  ( (line = reader.readLine()) != null ) {
+            while ((line = reader.readLine()) != null) {
                   traps.add(line.trim());
             }
         } catch (IOException e) {

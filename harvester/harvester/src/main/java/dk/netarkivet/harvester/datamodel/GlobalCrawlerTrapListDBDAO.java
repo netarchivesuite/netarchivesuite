@@ -363,11 +363,11 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
     /**
      * Statement to read the elementary properties of a trap list.
      */
-    private static final String EXISTS_TRAPLIST_STMT = "SELECT * FROM global_crawler_trap_lists WHERE "
-          + "name = ?";
+    private static final String EXISTS_TRAPLIST_STMT 
+        = "SELECT * FROM global_crawler_trap_lists WHERE name = ?";
     
     /**
-     * Does crawlertrap with this name already exist
+     * Does crawlertrap with this name already exist.
      * @param name The name for a crawlertrap
      * @return true, if a crawlertrap with the given name already exists 
      * in the database; otherwise false
@@ -386,8 +386,9 @@ public class GlobalCrawlerTrapListDBDAO extends GlobalCrawlerTrapListDAO {
                 exists = true;
             }
         } catch (SQLException e) {
-            String message = "Error checking for existence of trap list with name '" + name + "'\n"
-            +  ExceptionUtils.getSQLExceptionCause(e);
+            String message = "Error checking for existence of trap list " 
+                + "with name '" + name + "'\n"
+                +  ExceptionUtils.getSQLExceptionCause(e);
             log.warn(message, e);
             throw new IOFailure(message, e);
         } finally {
