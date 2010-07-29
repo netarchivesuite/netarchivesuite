@@ -354,7 +354,7 @@ public class JMSArcRepositoryClient extends Synchronizer implements
     }
 
     /**
-     * Runs a batch batch job on each file in the ArcRepository.
+     * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The
      *  initialize() method will be called before processing and the finish()
@@ -364,21 +364,21 @@ public class JMSArcRepositoryClient extends Synchronizer implements
      *  etc.
      *
      * @param replicaId The archive to execute the job on.
-     * @param args The arguments for the batchjob.
-     * @return The status of the batch job after it ended.
+     * @param args The arguments for the batchjob. This is allowed to be null.
+     * @return The status of the batch job after it has ended.
      * @throws ArgumentNotValid If the job is null or the replicaId is either 
      * null or the empty string.
      * @throws IOFailure If no result file is returned.
      */
     public BatchStatus batch(FileBatchJob job, String replicaId, 
             String... args) throws IOFailure, ArgumentNotValid {
-        ArgumentNotValid.checkNotNull(job, "job");
-        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "replicaId");
+        ArgumentNotValid.checkNotNull(job, "FileBatchJob job");
+        ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
 
         log.debug("Starting batchjob '" + job + "' running on replica '"
                   + replicaId + "'");
         BatchMessage bMsg = new BatchMessage(Channels.getTheRepos(), replyQ,
-                                             job, replicaId);
+                                             job, replicaId, args);
         log.debug("Sending batchmessage to queue '" + Channels.getTheRepos()
                   + "' with replyqueue set to '" + replyQ + "'");
         BatchReplyMessage brMsg =

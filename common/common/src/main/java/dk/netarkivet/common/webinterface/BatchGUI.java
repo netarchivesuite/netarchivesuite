@@ -233,7 +233,7 @@ public final class BatchGUI {
                             + "argument. Use empty string instead.");
                     args.add("");
                 }
-                i += 1;
+                i++;
             }
             
             File jarfile = getJarFile(jobName);

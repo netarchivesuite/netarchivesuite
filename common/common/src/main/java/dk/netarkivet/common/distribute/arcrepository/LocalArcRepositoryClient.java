@@ -192,7 +192,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
     }
 
     /**
-     * Runs a batch batch job on each file in the ArcRepository.
+     * Runs a batch job on each file in the ArcRepository.
      *
      * @param job An object that implements the FileBatchJob interface. The
      *  initialize() method will be called before processing and the finish()
@@ -202,7 +202,7 @@ public class LocalArcRepositoryClient implements ArcRepositoryClient {
      *  etc.
      *
      * @param replicaId The archive to execute the job on.
-     * @param args The arguments for the batchjob.
+     * @param args The arguments for the batchjob. This can be null.
      * @return The status of the batch job after it ended.
      * @throws ArgumentNotValid If the job is null or the replicaId is either
      * null or the empty string.

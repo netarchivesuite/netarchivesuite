@@ -75,19 +75,20 @@ public class BatchMessage extends ArchiveMessage {
      * @param replyTo The channel whereto the reply to this message is sent.
      * @param job  The batch job to be executed
      * @param replicaId id of this replica.
-     * @param arguments The arguments for initialising the batchjob.
+     * @param arguments The arguments for initialising the batchjob. This is 
+     * allowed to be null.
      * @throws ArgumentNotValid If the job is null, or the replica is either 
      * null or the empty string.
      */
     public BatchMessage(ChannelID to, ChannelID replyTo, FileBatchJob job, 
-            String replicaId, String ... arguments) throws ArgumentNotValid {
+            String replicaId, String... arguments) throws ArgumentNotValid {
         super(to, replyTo);
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNullOrEmpty(replicaId, "String replicaId");
         this.job = job;
         this.replicaId = replicaId;
         this.args = new ArrayList<String>();
-        if(args != null && !args.isEmpty()) {
+        if(arguments != null && !(arguments.length == 0)) {
             Collections.addAll(this.args, arguments);
         }
     }

@@ -62,18 +62,18 @@ public class LoadableJarBatchJob extends FileBatchJob {
     /**
      * Load a given class from a jar file.
      * 
-     * @param jarFiles
-     *            The jar file(s) to load from. This file may also contain other
-     *            classes required by the FileBatchJob class.
-     * @param jobClass
-     *            The class to load initially. This must be a subclass of
-     *            FileBatchJob
+     * @param jarFiles The jar file(s) to load from. This file may also contain 
+     * other classes required by the FileBatchJob class.
+     * @param arguments The arguments for the batchjob.
+     * @param jobClass The class to load initially. This must be a subclass of
+     * FileBatchJob.
+     * @throws ArgumentNotValid If any of the arguments are null.
      */
     public LoadableJarBatchJob(String jobClass, List<String> arguments, 
-            File... jarFiles) {
+            File... jarFiles) throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(jarFiles, "File jarFile");
         ArgumentNotValid.checkNotNullOrEmpty(jobClass, "String jobClass");
-        ArgumentNotValid.checkNotNull(arguments, "List<String> args");
+        ArgumentNotValid.checkNotNull(arguments, "List<String> arguments");
         this.jobClass = jobClass;
         this.args = arguments;
         StringBuffer res = new StringBuffer(
@@ -117,7 +117,7 @@ public class LoadableJarBatchJob extends FileBatchJob {
                 log.debug("Loaded batchjob with arguments: '" + args + "'.");
             }
         } catch (InvocationTargetException e) {
-            final String msg = "Not allowed to invoce the batchjob '" 
+            final String msg = "Not allowed to invoke the batchjob '" 
                 + jobClass + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);

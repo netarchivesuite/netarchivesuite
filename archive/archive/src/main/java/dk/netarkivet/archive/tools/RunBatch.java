@@ -183,6 +183,11 @@ public class RunBatch extends ToolRunnerBase {
 
         /** To contain parameters defined by options to batchjob. */
         private BatchParameters parms = new BatchParameters();
+        
+        /** String to separate the arguments for the batchjob.
+         * TODO make into global constant.
+         * */
+        private static final String ARGUMENT_SEPARATOR = "##";
  
         /** 
          * Getting FileType from given file name. 
@@ -374,7 +379,7 @@ public class RunBatch extends ToolRunnerBase {
             // Validate the situation where -C is used and not -J
             if (classFileName != null && jars == null) {
                 if (!getFileType(classFileName).equals(FileType.CLASS)) {
-                    System.err.println("Argument '"+ classFileName 
+                    System.err.println("Argument '" + classFileName 
                             + "' is not denoting a class file");
                     return false;
                 }
@@ -419,8 +424,7 @@ public class RunBatch extends ToolRunnerBase {
 
                 // Try to load the jar batch job.
                 try {
-                    new LoadableJarBatchJob(className, new ArrayList<String>(),
-                            jarFiles);
+                    new LoadableJarBatchJob(className, argumentList, jarFiles);
                 } catch(Throwable e) {
                     System.err.println("Cannot create batchjob '" + className 
                             + "' from the jarfiles '" + jars + "'");
@@ -481,7 +485,7 @@ public class RunBatch extends ToolRunnerBase {
             String arguments = parms.cmd.getOptionValue(ARGUMENTS_OPTION_KEY);
             if(arguments != null) {
                 // go through all the arguments and put them into the list.
-                for(String arg : arguments.split("##")) {
+                for(String arg : arguments.split(ARGUMENT_SEPARATOR)) {
                     argumentList.add(arg);
                 }
             }

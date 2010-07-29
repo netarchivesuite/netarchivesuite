@@ -30,6 +30,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -58,12 +59,19 @@ public class LoadableFileBatchJob extends FileBatchJob {
 
     /** Create a new batch job that runs the loaded class.
      * @param classFile the classfile for the batch job we want to run.
+     * @param arguments The arguments for the batchjobs. This can be null.
+     * @throws ArgumentNotValid If the classfile is null.
      */
-    public LoadableFileBatchJob(File classFile, List<String> arguments) {
+    public LoadableFileBatchJob(File classFile, List<String> arguments)
+            throws ArgumentNotValid {
         ArgumentNotValid.checkNotNull(classFile, "File classFile");
         fileContents = FileUtils.readBinaryFile(classFile);
         fileName = classFile.getName();
-        this.args = arguments;
+        if(arguments == null) {
+            this.args = new ArrayList<String>();
+        } else {
+            this.args = arguments;
+        }
         
         loadBatchJob();
     }
@@ -135,7 +143,7 @@ public class LoadableFileBatchJob extends FileBatchJob {
                 log.debug("Loaded batchjob with arguments: '" + args + "'.");
             }
         } catch (InvocationTargetException e) {
-            final String msg = "Not allowed to invoce the batchjob '" 
+            final String msg = "Not allowed to invoke the batchjob '" 
                 + fileName + "'.";
             log.warn(msg, e);
             throw new IOFailure(msg, e);
