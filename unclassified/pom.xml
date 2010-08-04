@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.sbforge</groupId>
         <artifactId>SBForge-parent</artifactId>
-        <version>1.0</version>
+        <version>RELEASE</version>
     </parent>
 
     <modules>
@@ -51,6 +51,18 @@
         </developerConnection>
         <url>http://kb-prod-udv-001.kb.dk:8060/browse/netarchiveSuite/trunk</url>
     </scm>
+    
+    <developers>
+		<developer>
+			<name>Mikis Seth Sørensen</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<email>mss@statsbiblioteket.dk</email>
+			<organization>Statsbiblioteket</organization>
+			<organizationUrl>http://statsbiblioteket.dk</organizationUrl>
+		</developer>
+	</developers>
 
     <dependencies>
         <dependency>
@@ -156,7 +168,6 @@
             <version>1.6</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -171,7 +182,4 @@
         </plugins>
     </build>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>                                                                                                              
