@@ -22,10 +22,11 @@
  */
 package dk.netarkivet.common.distribute;
 
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import java.util.Arrays;
+import javax.jms.QueueSession;
+import javax.jms.Session;
 
 import com.sun.messaging.ConnectionConfiguration;
 import com.sun.messaging.Queue;
@@ -131,7 +132,7 @@ public class JMSConnectionSunMQ extends JMSConnection {
      *                      to 1, imqBrokerHostname and imqBrokerHostPort set to
      *                      the values defined in our settings.
      */
-    protected ConnectionFactory getConnectionFactory()
+    protected com.sun.messaging.ConnectionFactory getConnectionFactory()
             throws JMSException {
         log.info("Establishing SunMQ JMS Connection to '"
                  + Settings.get(JMS_BROKER_HOST) + ":" + Settings.getInt(
@@ -198,5 +199,10 @@ public class JMSConnectionSunMQ extends JMSConnection {
                      + "Don't know how to handle exceptions with errorcode "
                      + errorcode, e);
         }
+    }
+
+    @Override
+    protected QueueSession getQueueSession() throws JMSException {
+        return getConnectionFactory().createQueueConnection().createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 }

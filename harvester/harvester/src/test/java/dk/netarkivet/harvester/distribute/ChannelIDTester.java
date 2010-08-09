@@ -29,6 +29,7 @@ import dk.netarkivet.common.exceptions.UnknownID;
 import dk.netarkivet.common.utils.Settings;
 import dk.netarkivet.harvester.HarvesterSettings;
 import dk.netarkivet.harvester.datamodel.JobPriority;
+import dk.netarkivet.harvester.harvesting.distribute.JobChannelUtil;
 import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
@@ -49,60 +50,31 @@ public class ChannelIDTester extends TestCase {
      * Test that each channel is equal only to itself.
      */
     public void testChannelIdentity(){
-        String priority1 = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        JobPriority p = JobPriority.valueOf(priority1);
-        ChannelID result1;
-        switch(p) {
-            case LOWPRIORITY:
-                result1 = Channels.getAnyLowpriorityHaco();
-                break;
-            case HIGHPRIORITY:
-                result1 = Channels.getAnyHighpriorityHaco();
-                break;
-            default:
-                throw new UnknownID(priority1 + " is not a valid priority");
-        }
-        ChannelID[] l1 =
-         {Channels.getAllBa(), result1, Channels.getAnyBa(),
+        JobPriority priority = JobPriority.valueOf(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
+        ChannelID harvestJobChannel = JobChannelUtil.getChannel(priority);
+        ChannelID[] channelArray =
+         {Channels.getAllBa(), harvestJobChannel, Channels.getAnyBa(),
           Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
           Channels.getTheSched(), Channels.getThisReposClient()};
-        String priority = Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY);
-        ChannelID result;
-        JobPriority p1 = JobPriority.valueOf(priority1);
-        switch(p1) {
-            case LOWPRIORITY:
-                result = Channels.getAnyLowpriorityHaco();
-                break;
-            case HIGHPRIORITY:
-                result = Channels.getAnyHighpriorityHaco();
-                break;
-            default:
-                throw new UnknownID(priority + " is not a valid priority");
-        }
-        ChannelID[] l2 =
-                {Channels.getAllBa(), result, Channels.getAnyBa(),
-                 Channels.getError(), Channels.getTheRepos(), Channels.getTheBamon(),
-                 Channels.getTheSched(), Channels.getThisReposClient()};
-
-        for (int i = 0; i<l1.length; i++){
-            for (int j = 0; j<l2.length; j++){
+        for (int i = 0; i<channelArray.length; i++){
+            for (int j = 0; j<channelArray.length; j++){
                 if (i == j) {
                     assertEquals("Two different instances of same queue "
-                            +l1[i].getName(), l1[i],
-                            l2[j]);
+                            +channelArray[i].getName(), channelArray[i],
+                            channelArray[j]);
                     assertEquals("Two instances of same channel have different " +
                             "names: "
-                            + l1[i].getName() + " and " +
-                            l2[j].getName(), l1[i].getName(),
-                            l2[j].getName() ) ;
+                            + channelArray[i].getName() + " and " +
+                            channelArray[j].getName(), channelArray[i].getName(),
+                            channelArray[j].getName() ) ;
                 }
-                else{
+                else {
                     assertNotSame("Two different queues are the same object "
-                            +l1[i].getName() + " "
-                            + l2[j].getName(), l1[i],
-                            l2[j]);
+                            +channelArray[i].getName() + " "
+                            + channelArray[j].getName(), channelArray[i],
+                            channelArray[j]);
                     assertNotSame("Two different channels have same name",
-                            l1[i].getName(), l2[j].getName());
+                            channelArray[i].getName(), channelArray[j].getName());
                 }
             }
         }

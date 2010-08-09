@@ -37,8 +37,7 @@ import dk.netarkivet.testutils.preconfigured.ReloadSettings;
 
 /**
  * Tests the ChannelID class that defines instances of message channels
- * (ie. queues and topics). The testChannelIdentity test has been moved
- * to dk.netarkivet.harvester.distribute.ChannelIDTester. 
+ * (ie. queues and topics).
  */
 public class ChannelIDTester extends TestCase {
     ReloadSettings rs = new ReloadSettings();
@@ -48,20 +47,6 @@ public class ChannelIDTester extends TestCase {
         Settings.set(CommonSettings.APPLICATION_NAME,
                 "dk.netarkivet.archive.indexserver.IndexServerApplication");
         Settings.set(CommonSettings.APPLICATION_INSTANCE_ID, "XXX");
-    }
-
-    /**
-     * Verify that the old ChannelID.getInstance(String s) method has been
-     * removed.
-     */
-    public void testOldFactoryMethodGone() {
-        try{
-            Channels.getAllBa().getClass().getMethod("getInstance", new Class[] {"".getClass()} );
-            fail("Have not deleted deprecated factory method getInstance()" );
-        } catch (NoSuchMethodException e) {
-            // expected
-        }
-
     }
 
     /**
@@ -109,26 +94,24 @@ public class ChannelIDTester extends TestCase {
      * distinct and all contain ALL_BA in name.
      */
     public void testALL_ALL_BAs() {
-      ChannelID[] ALL_BAs = Channels.getAllArchives_ALL_BAs();
-      for (int i = 0; i < ALL_BAs.length; i++) {
-          // Ignore the channels for the checksum replicas.
-	  if(ALL_BAs[i] == null) {
-	      continue;
-	  }
-          StringAsserts.assertStringContains(
-                  "ChannelID.getAllArchives_ALL_BAs() returned a channel"
-                          + " without ALL_BA in its name",
-                  "ALL_BA", ALL_BAs[i].getName());
-          for (int j = 0; j < ALL_BAs.length; j++) {
-              // Ignore the channels for the checksum replicas.
-              if(ALL_BAs[j] == null) {
-        	  continue;
-              }
-              if (i != j) assertNotSame("Two ALL_BAs have the same name " +
-                      ALL_BAs[i].getName(), ALL_BAs[i].getName(),
-                      ALL_BAs[j].getName());
-          }
-      }
+        ChannelID[] ALL_BAs = Channels.getAllArchives_ALL_BAs();
+        for (int i = 0; i < ALL_BAs.length; i++) {
+            // Ignore the channels for the checksum replicas.
+            if(ALL_BAs[i] != null) {
+                StringAsserts.assertStringContains(
+                        "ChannelID.getAllArchives_ALL_BAs() returned a channel"
+                        + " without ALL_BA in its name",
+                        "ALL_BA", ALL_BAs[i].getName());
+                for (int j = 0; j < ALL_BAs.length; j++) {
+                    // Ignore the channels for the checksum replicas.
+                    if(ALL_BAs[j] != null) {
+                        if (i != j) assertNotSame("Two ALL_BAs have the same name " +
+                                ALL_BAs[i].getName(), ALL_BAs[i].getName(),
+                                ALL_BAs[j].getName());
+                    }
+                }
+            }
+        }
     }
 
      /**

@@ -201,19 +201,9 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         processOldJobs();
 
         // Environment and connections are now ready for processing of messages
-        JobPriority p = JobPriority.valueOf(Settings
-                .get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY));
-        switch (p) {
-        case HIGHPRIORITY:
-            jobChannel = Channels.getAnyHighpriorityHaco();
-            break;
-        case LOWPRIORITY:
-            jobChannel = Channels.getAnyLowpriorityHaco();
-            break;
-        default:
-            throw new UnknownID(p + " is not a valid priority");
-        }
-        // Only listen for harvesterjobs if enough available space
+        jobChannel = JobChannelUtil.getChannel(
+                JobPriority.valueOf(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
+        // Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
     }
 
