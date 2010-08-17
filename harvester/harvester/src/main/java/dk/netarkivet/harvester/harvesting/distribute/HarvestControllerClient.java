@@ -91,8 +91,9 @@ public class HarvestControllerClient {
         ArgumentNotValid.checkNotNull(job, "job");
         ArgumentNotValid.checkNotNull(metadata, "metadata");
 
-        DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, JobChannelUtil.getChannel(job.getPriority()), metadata);
-        log.debug(sendMessage + nMsg);
+		DoOneCrawlMessage nMsg = new DoOneCrawlMessage(job, JobChannelUtil
+				.getChannel(job.getPriority()), metadata);
+		log.debug(sendMessage + nMsg);
         jmsConnection.send(nMsg);
     }
 

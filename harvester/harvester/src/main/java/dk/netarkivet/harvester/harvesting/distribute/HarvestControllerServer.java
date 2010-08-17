@@ -200,10 +200,10 @@ public class HarvestControllerServer extends HarvesterMessageHandler
         // If any unprocessed jobs are left on the server, process them now
         processOldJobs();
 
-        // Environment and connections are now ready for processing of messages
-        jobChannel = JobChannelUtil.getChannel(
-                JobPriority.valueOf(Settings.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
-        // Only listen for harvester jobs if enough available space
+		// Environment and connections are now ready for processing of messages
+		jobChannel = JobChannelUtil.getChannel(JobPriority.valueOf(Settings
+				.get(HarvesterSettings.HARVEST_CONTROLLER_PRIORITY)));
+		// Only listen for harvester jobs if enough available space
         beginListeningIfSpaceAvailable();
     }
 
