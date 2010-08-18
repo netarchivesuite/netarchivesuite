@@ -157,7 +157,7 @@ public class WaybackSettings {
 
     /** The directory the Aggregator places the Aggregated and sorted files into */
     public static String WAYBACK_AGGREGATOR_OUTPUT_DIR =
-            "settings.wayback.aggregator.indexFileOutputIir";
+            "settings.wayback.aggregator.indexFileOutputDir";
     
     /** The directory used by the aggregator to store temporary files.*/
     public static String WAYBACK_AGGREGATOR_TEMP_DIR =
