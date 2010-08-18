@@ -379,7 +379,7 @@ public class LoadableFileBatchJobTester extends TestCase {
                 while(true) {
                     if((i % 10000) == 0) {
 //                        System.out.println(i/10000);
-                        System.out.print("i");
+//                        System.out.print("i");
                     }
                     i++;
                 }
